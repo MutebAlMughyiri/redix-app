@@ -11,6 +11,39 @@ mixin WordGetters {
   /// The word `app.title`.
   String get appTitle => text('app.title');
 
+  /// The word `changePassword.accountLocked`.
+  String get changePasswordAccountLocked => text('changePassword.accountLocked');
+
+  /// The word `changePassword.confirm`.
+  String get changePasswordConfirm => text('changePassword.confirm');
+
+  /// The word `changePassword.current`.
+  String get changePasswordCurrent => text('changePassword.current');
+
+  /// The word `changePassword.hint`.
+  String get changePasswordHint => text('changePassword.hint');
+
+  /// The word `changePassword.invalidCredentials`.
+  String get changePasswordInvalidCredentials => text('changePassword.invalidCredentials');
+
+  /// The word `changePassword.mismatch`.
+  String get changePasswordMismatch => text('changePassword.mismatch');
+
+  /// The word `changePassword.new`.
+  String get changePasswordNew => text('changePassword.new');
+
+  /// The word `changePassword.noConnection`.
+  String get changePasswordNoConnection => text('changePassword.noConnection');
+
+  /// The word `changePassword.submit`.
+  String get changePasswordSubmit => text('changePassword.submit');
+
+  /// The word `changePassword.title`.
+  String get changePasswordTitle => text('changePassword.title');
+
+  /// The word `changePassword.weakPassword`.
+  String get changePasswordWeakPassword => text('changePassword.weakPassword');
+
   /// The word `signIn.accountLocked`.
   String get signInAccountLocked => text('signIn.accountLocked');
 

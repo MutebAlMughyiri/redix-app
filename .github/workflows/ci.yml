@@ -93,4 +93,4 @@ jobs:
           arch: x86_64
           target: google_apis
           working-directory: redix-app
-          script: patrol test --device emulator-5554 --dart-define=TEST_USERNAME=${{ env.REDIX_Owner__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Owner__Password }}
+          script: patrol test --device emulator-5554 --dart-define=TEST_USERNAME=${{ env.REDIX_Owner__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Owner__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd

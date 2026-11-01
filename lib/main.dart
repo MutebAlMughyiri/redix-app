@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
+import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
 import 'home/home_screen.dart';
@@ -16,7 +17,7 @@ Future<void> main() async {
   runApp(RedixApp(session: session));
 }
 
-/// The app: its theme, its languages, and its screens. Without a session every screen leads to sign-in.
+/// The app: its theme, its languages, and its screens. Without a session every screen leads to sign-in; with a temporary password, to the password change.
 class RedixApp extends StatefulWidget {
   /// The app, signed in through [session].
   const RedixApp({super.key, required this.session});
@@ -37,18 +38,19 @@ class _RedixAppState extends State<RedixApp> {
     routes: [
       GoRoute(path: HomeScreen.path, builder: (context, state) => const HomeScreen()),
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session)),
+      GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
     ],
   );
 
   String? _redirect(String location) {
-    final onSignIn = location == SignInScreen.path;
-    if (!widget.session.isOpen && !onSignIn) {
-      return SignInScreen.path;
+    final session = widget.session;
+    if (!session.isOpen) {
+      return location == SignInScreen.path ? null : SignInScreen.path;
     }
-    if (widget.session.isOpen && onSignIn) {
-      return HomeScreen.path;
+    if (session.mustChangePassword) {
+      return location == ChangePasswordScreen.path ? null : ChangePasswordScreen.path;
     }
-    return null;
+    return location == SignInScreen.path ? HomeScreen.path : null;
   }
 
   @override
