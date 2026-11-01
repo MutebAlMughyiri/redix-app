@@ -15,7 +15,8 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 
 | Screen | Who sees it |
 | --- | --- |
-| [Home](guide/home.md) | Everyone |
+| [Sign in](guide/sign-in.md) | Everyone not signed in |
+| [Home](guide/home.md) | Everyone signed in |
 
 ## Use cases
 
@@ -24,3 +25,4 @@ Numbered in build order; the same number in the API's documentation is the same 
 | Use case | What it does | Who |
 | --- | --- | --- |
 | [UC-001](use-cases/UC-001-setup.md) | The base: Arabic and English from the database, the theme, the home screen, the no-network screen | Everyone |
+| [UC-002](use-cases/UC-002-sign-in.md) | Sign in with a username and password, and stay signed in | Every user |

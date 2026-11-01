@@ -5,10 +5,8 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../api.dart';
 import 'word_getters.g.dart';
-
-/// The API's address. `10.0.2.2` is the developer's machine as the Android emulator sees it; another address is passed with `--dart-define=API_BASE_URL=...`.
-const apiBaseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: 'http://10.0.2.2:5010');
 
 /// The words of the language in use, fetched from the API. The app's code names a word by its key; [WordGetters] gives one typed getter per key.
 class Words with WordGetters {
@@ -52,7 +50,7 @@ class Words with WordGetters {
   static Future<void> _fetch(SharedPreferences preferences, String language, String etag) async {
     try {
       final response = await http.get(
-        Uri.parse('$apiBaseUrl/translations/$language'),
+        apiUri('/translations/$language'),
         headers: {if (etag.isNotEmpty) 'If-None-Match': etag},
       );
       if (response.statusCode == 200) {

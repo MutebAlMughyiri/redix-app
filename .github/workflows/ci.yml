@@ -36,13 +36,27 @@ jobs:
           --health-retries 12
     env:
       ConnectionStrings__Redix: Server=localhost;Database=Redix;User Id=sa;Password=Ci-only-Passw0rd;TrustServerCertificate=True
+      REDIX_Owner__Username: ci-owner
+      REDIX_Owner__Password: Ci-owner-passw0rd
     steps:
       - uses: actions/checkout@v4
         with:
           path: redix-app
+      - name: Pick the redix-api branch of the same name, else main
+        id: api
+        env:
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+          TOKEN: ${{ secrets.REDIX_API_TOKEN }}
+        run: |
+          if git ls-remote --exit-code --heads "https://x-access-token:${TOKEN}@github.com/MutebAlMughyiri/redix-api.git" "$BRANCH" > /dev/null; then
+            echo "ref=$BRANCH" >> "$GITHUB_OUTPUT"
+          else
+            echo "ref=main" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/checkout@v4
         with:
           repository: MutebAlMughyiri/redix-api
+          ref: ${{ steps.api.outputs.ref }}
           token: ${{ secrets.REDIX_API_TOKEN }}
           path: redix-api
       - uses: actions/setup-dotnet@v4
@@ -51,9 +65,11 @@ jobs:
       - name: Create the database and start the API
         working-directory: redix-api
         run: |
+          export REDIX_Jwt__SigningKey="$(openssl rand -base64 64 | tr -d '\n')"
           dotnet tool install --global dotnet-ef
-          dotnet ef database update --project src/Redix.Api
-          nohup dotnet run --project src/Redix.Api --launch-profile http > api.log 2>&1 &
+          dotnet build src/Redix.Api
+          dotnet ef database update --project src/Redix.Api --no-build
+          nohup dotnet run --project src/Redix.Api --launch-profile http --no-build > api.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://localhost:5010/health && break; sleep 2; done
       - uses: actions/setup-java@v4
         with:
@@ -77,4 +93,4 @@ jobs:
           arch: x86_64
           target: google_apis
           working-directory: redix-app
-          script: patrol test --device emulator-5554
+          script: patrol test --device emulator-5554 --dart-define=TEST_USERNAME=${{ env.REDIX_Owner__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Owner__Password }}

@@ -10,4 +10,31 @@ mixin WordGetters {
 
   /// The word `app.title`.
   String get appTitle => text('app.title');
+
+  /// The word `signIn.accountLocked`.
+  String get signInAccountLocked => text('signIn.accountLocked');
+
+  /// The word `signIn.forgotPassword`.
+  String get signInForgotPassword => text('signIn.forgotPassword');
+
+  /// The word `signIn.hint`.
+  String get signInHint => text('signIn.hint');
+
+  /// The word `signIn.invalidCredentials`.
+  String get signInInvalidCredentials => text('signIn.invalidCredentials');
+
+  /// The word `signIn.noConnection`.
+  String get signInNoConnection => text('signIn.noConnection');
+
+  /// The word `signIn.password`.
+  String get signInPassword => text('signIn.password');
+
+  /// The word `signIn.sessionExpired`.
+  String get signInSessionExpired => text('signIn.sessionExpired');
+
+  /// The word `signIn.submit`.
+  String get signInSubmit => text('signIn.submit');
+
+  /// The word `signIn.username`.
+  String get signInUsername => text('signIn.username');
 }
