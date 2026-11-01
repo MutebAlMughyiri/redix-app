@@ -3,9 +3,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'words/words.dart';
 
+/// Starts the app.
 void main() => runApp(const RedixApp());
 
+/// The app: its theme, its languages, and the screen it opens on.
 class RedixApp extends StatefulWidget {
+  /// The app.
   const RedixApp({super.key});
 
   @override
@@ -35,10 +38,15 @@ class _RedixAppState extends State<RedixApp> {
   }
 }
 
+/// The screen the app opens on: its name and what it is for.
 class HomeScreen extends StatelessWidget {
+  /// The home screen.
   const HomeScreen({super.key});
 
+  /// The app's name.
   static const titleKey = Key('home.title');
+
+  /// What the app is for.
   static const subtitleKey = Key('home.subtitle');
 
   @override
@@ -59,12 +67,18 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+/// Shown on a first start without a network, when the app has no words yet; it needs none, only an icon and a retry button.
 class NoWordsScreen extends StatelessWidget {
+  /// The screen, calling [onRetry] when the user retries.
   const NoWordsScreen({super.key, required this.onRetry});
 
+  /// Loads the words again.
   final VoidCallback onRetry;
 
+  /// The no-network icon.
   static const iconKey = Key('noWords.icon');
+
+  /// The retry button.
   static const retryKey = Key('noWords.retry');
 
   @override

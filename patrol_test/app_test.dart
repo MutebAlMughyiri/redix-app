@@ -8,5 +8,6 @@ void main() {
     await $(HomeScreen.titleKey).waitUntilVisible();
 
     expect($(HomeScreen.subtitleKey), findsOneWidget);
+    await $.takeNativeScreenshot('home');
   });
 }

@@ -27,6 +27,13 @@ description: How REDIX app code is written - best practice of Flutter, simple, c
 - Names come from the translations glossary (issue "Translations: English terms and their Arabic"). Its "In code" column is the Dart name.
 - No null where a value can stand in: an empty value of its own type, not `?` and a check at every reader.
 
+## Documented
+
+- Every public class and member has a `///` doc comment saying what it is for, in one or two sentences, never how it does it. The lint `public_member_api_docs` makes a missing one an analyzer issue, and `flutter analyze` stays at zero.
+- A use case is done only when `docs/use-cases/UC-NNN-<name>.md` exists: its purpose, who may use it, its screens with every element's `Key`, the API calls behind it, and each rule with the code that enforces it and the test that proves it. It is listed in `docs/README.md`.
+- Every screen has a user guide page, `docs/guide/<screen>.md`, in English and Arabic, whose picture is taken by its Patrol test (`$.takeNativeScreenshot('<screen>')`) and copied by `tool/update_guide_images.dart`.
+- A decision goes into `docs/decisions.md`; a change to the structure goes into `docs/ARCHITECTURE.md`.
+
 ## Structured well
 
 - One folder per feature under `lib/` (for example `lib/words/`). Tests mirror it under `test/` and `patrol_test/`.

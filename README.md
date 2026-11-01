@@ -1,7 +1,7 @@
 # REDIX app
 
 The mobile app of REDIX (Real Estate Development Intelligence): one Flutter codebase for Android, iPhone and Huawei, in Arabic and English.
-What it does, use case by use case, is in this repo's issues.
+What it does, use case by use case, is in this repo's issues; how it works, and the user guide, are in the [documentation](docs/README.md).
 
 ## Run it
 
@@ -41,7 +41,10 @@ Every element a user sees or acts on carries a `Key`, declared as a constant on 
 flutter analyze
 flutter test
 patrol test --device emulator-5554
+dart run tool/update_guide_images.dart
 ```
+
+The last line copies the screenshots the Patrol tests took into the user guide's `docs/guide/images/`.
 
 `flutter test` runs the widget tests, with the API replaced by a fake. `patrol test` runs the real app end to end on a running emulator (`patrol_cli`: `dart pub global activate patrol_cli`), so the API must be running too: `dotnet run --project src/Redix.Api --launch-profile http` in redix-api.
 
