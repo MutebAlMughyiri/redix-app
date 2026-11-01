@@ -1,10 +1,13 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
+import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/session.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
+import 'package:redix/words/app_language.dart';
 
 /// The test owner, created by the API with a temporary password.
 const username = String.fromEnvironment('TEST_USERNAME');
@@ -12,10 +15,12 @@ const temporaryPassword = String.fromEnvironment('TEST_PASSWORD');
 const newPassword = String.fromEnvironment('TEST_NEW_PASSWORD');
 
 void main() {
-  patrolTest('a new user signs in, must change the temporary password, and lands on home', ($) async {
+  patrolTest('a new user signs in, must change the temporary password, lands on home, and switches the language in My account', ($) async {
     final session = Session();
+    final language = AppLanguage();
     await session.restore();
-    await $.pumpWidgetAndSettle(RedixApp(session: session));
+    await language.restore();
+    await $.pumpWidgetAndSettle(RedixApp(session: session, language: language));
     await $(SignInScreen.usernameKey).waitUntilVisible();
     await $.takeNativeScreenshot('sign-in');
 
@@ -33,5 +38,18 @@ void main() {
 
     expect($(HomeScreen.subtitleKey), findsOneWidget);
     await $.takeNativeScreenshot('home');
+
+    await $(HomeScreen.myAccountKey).tap();
+    await $(MyAccountScreen.arabicKey).waitUntilVisible();
+    await $.takeNativeScreenshot('my-account');
+
+    await $(MyAccountScreen.arabicKey).tap();
+    await $.pumpAndSettle();
+    expect(Directionality.of($.tester.element(find.byKey(MyAccountScreen.arabicKey))), TextDirection.rtl);
+    await $.takeNativeScreenshot('my-account-arabic');
+
+    await $(MyAccountScreen.englishKey).tap();
+    await $.pumpAndSettle();
+    expect(Directionality.of($.tester.element(find.byKey(MyAccountScreen.englishKey))), TextDirection.ltr);
   });
 }

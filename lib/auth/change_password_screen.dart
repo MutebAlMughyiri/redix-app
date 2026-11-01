@@ -76,9 +76,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final theme = Theme.of(context);
     InputDecoration field(String label) => InputDecoration(labelText: label, border: const OutlineInputBorder());
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
           children: [
             Text(words.changePasswordTitle, style: theme.textTheme.headlineMedium),
             const SizedBox(height: 8),

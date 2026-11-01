@@ -7,6 +7,7 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 ```
 lib/
   main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
+  account/my_account_screen.dart  My account: the language and the way into the password change
   api.dart                  the API's address, shared by every feature
   auth/
     session.dart            Session: the signed-in session, kept in the Keychain or Keystore
@@ -15,6 +16,7 @@ lib/
   home/home_screen.dart     the screen a signed-in user lands on
   words/
     words.dart              Words: the words of the language in use, from the API
+    app_language.dart       AppLanguage: the language the user chose, kept on the phone
     word_getters.g.dart     one typed getter per word key; generated, never edited
     no_words_screen.dart    the word-free screen of a first start without a network
 test/                       widget tests, mirroring lib/; app_harness.dart owns the fake API and storage
@@ -30,9 +32,10 @@ docs/                       these pages
 
 The code holds a word's key, never its value. `Words.of(context).appTitle` reads the key `app.title` in the language in use.
 
-1. `WordsDelegate` asks `Words.load` for the phone's language (Arabic for any language other than Arabic or English).
+1. `WordsDelegate` asks `Words.load` for the language in use: the one chosen in My account (`AppLanguage`), else the phone's (Arabic for any language other than Arabic or English).
 2. The phone keeps one language with its ETag. Kept words show at once and are refreshed in the background; another language is fetched from `GET /translations/{language}` first.
 3. A first start without a network has no words: `NoWordsScreen` shows only an icon and a retry button, and a retry loads the words again.
+4. Choosing a language in My account fetches its words first; only then does `AppLanguage` keep the choice and tell `RedixApp`, which rebuilds in the new `locale`. Without a network nothing changes.
 
 ## Session and screens
 

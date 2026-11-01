@@ -44,6 +44,24 @@ mixin WordGetters {
   /// The word `changePassword.weakPassword`.
   String get changePasswordWeakPassword => text('changePassword.weakPassword');
 
+  /// The word `myAccount.arabic`.
+  String get myAccountArabic => text('myAccount.arabic');
+
+  /// The word `myAccount.changePassword`.
+  String get myAccountChangePassword => text('myAccount.changePassword');
+
+  /// The word `myAccount.english`.
+  String get myAccountEnglish => text('myAccount.english');
+
+  /// The word `myAccount.language`.
+  String get myAccountLanguage => text('myAccount.language');
+
+  /// The word `myAccount.languageNeedsNetwork`.
+  String get myAccountLanguageNeedsNetwork => text('myAccount.languageNeedsNetwork');
+
+  /// The word `myAccount.title`.
+  String get myAccountTitle => text('myAccount.title');
+
   /// The word `signIn.accountLocked`.
   String get signInAccountLocked => text('signIn.accountLocked');
 

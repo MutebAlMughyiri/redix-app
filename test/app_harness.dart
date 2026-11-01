@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:redix/auth/session.dart';
 import 'package:redix/main.dart';
+import 'package:redix/words/app_language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// The words the fake API serves: each key's value names its language and key, so a test reads which word is shown.
@@ -18,6 +19,8 @@ Map<String, String> wordsIn(String language) => {
     'changePassword.title', 'changePassword.hint', 'changePassword.current', 'changePassword.new', 'changePassword.confirm',
     'changePassword.submit', 'changePassword.mismatch', 'changePassword.invalidCredentials', 'changePassword.accountLocked',
     'changePassword.weakPassword', 'changePassword.noConnection',
+    'myAccount.title', 'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
+    'myAccount.changePassword',
   ])
     key: '$language $key',
 };
@@ -98,9 +101,11 @@ Future<Session> pumpRedix(
   tester.platformDispatcher.localesTestValue = [locale];
   addTearDown(tester.platformDispatcher.clearLocalesTestValue);
   final session = Session();
+  final language = AppLanguage();
   await http.runWithClient(() async {
     await session.restore();
-    await tester.pumpWidget(RedixApp(session: session));
+    await language.restore();
+    await tester.pumpWidget(RedixApp(session: session, language: language));
     await tester.pumpAndSettle();
   }, () => api.client);
   return session;

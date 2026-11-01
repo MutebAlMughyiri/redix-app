@@ -2,33 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
+import 'account/my_account_screen.dart';
 import 'api.dart';
 import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
 import 'home/home_screen.dart';
+import 'words/app_language.dart';
 import 'words/no_words_screen.dart';
 import 'words/words.dart';
 
-/// Starts the app with the session kept from an earlier sign-in, if any. An app built without its environment's config file stops here,
-/// rather than calling an address nobody chose.
+/// Starts the app with the session and the language kept from an earlier start, if any. An app built without its environment's config
+/// file stops here, rather than calling an address nobody chose.
 Future<void> main() async {
   if (apiBaseUrl.isEmpty) {
     throw StateError('No API address: build with --dart-define-from-file=config/<environment>.json, which sets API_BASE_URL.');
   }
   WidgetsFlutterBinding.ensureInitialized();
   final session = Session();
+  final language = AppLanguage();
   await session.restore();
-  runApp(RedixApp(session: session));
+  await language.restore();
+  runApp(RedixApp(session: session, language: language));
 }
 
 /// The app: its theme, its languages, and its screens. Without a session every screen leads to sign-in; with a temporary password, to the password change.
 class RedixApp extends StatefulWidget {
-  /// The app, signed in through [session].
-  const RedixApp({super.key, required this.session});
+  /// The app, signed in through [session] and shown in [language].
+  const RedixApp({super.key, required this.session, required this.language});
 
   /// The signed-in session the screens depend on.
   final Session session;
+
+  /// The language the user chose; the phone's while none is chosen.
+  final AppLanguage language;
 
   @override
   State<RedixApp> createState() => _RedixAppState();
@@ -44,6 +51,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: HomeScreen.path, builder: (context, state) => const HomeScreen()),
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session)),
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
+      GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(language: widget.language)),
     ],
   );
 
@@ -66,20 +74,24 @@ class _RedixAppState extends State<RedixApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router,
-      onGenerateTitle: (context) => Words.of(context).appTitle,
-      localizationsDelegates: [
-        WordsDelegate(_wordsAttempt),
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: [for (final language in Words.languages) Locale(language)],
-      theme: ThemeData(colorSchemeSeed: const Color(0xFF0E6B68), fontFamily: 'IBMPlexSansArabic'),
-      builder: (context, child) => Words.of(context).isEmpty
-          ? NoWordsScreen(onRetry: () => setState(() => _wordsAttempt++))
-          : child ?? const SizedBox.shrink(),
+    return ListenableBuilder(
+      listenable: widget.language,
+      builder: (context, _) => MaterialApp.router(
+        routerConfig: _router,
+        locale: widget.language.locale,
+        onGenerateTitle: (context) => Words.of(context).appTitle,
+        localizationsDelegates: [
+          WordsDelegate(_wordsAttempt),
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: [for (final language in Words.languages) Locale(language)],
+        theme: ThemeData(colorSchemeSeed: const Color(0xFF0E6B68), fontFamily: 'IBMPlexSansArabic'),
+        builder: (context, child) => Words.of(context).isEmpty
+            ? NoWordsScreen(onRetry: () => setState(() => _wordsAttempt++))
+            : child ?? const SizedBox.shrink(),
+      ),
     );
   }
 }

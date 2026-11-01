@@ -33,7 +33,7 @@ Every word the app shows lives in the REDIX database (the `TranslationKeys` and 
 - Screens read words through `Words.of(context)`, with one typed getter per key, for example `words.appTitle` for the key `app.title`.
 - The words of the language in use come from `GET /translations/{language}`. The phone keeps that one language only, with its version tag: next start it shows the kept words at once and asks the API whether they changed (an unchanged bundle costs an empty `304`).
 - The first start needs a network. Without one, the app shows a no-network icon and a retry button, which need no words.
-- The language follows the phone: Arabic right to left, English left to right, Arabic for any other language.
+- The language is the one chosen in My account, kept on the phone; until one is chosen it follows the phone, Arabic for any other language. Arabic reads right to left, English left to right.
 - After adding a word key in the database, run the API and regenerate the getters, then commit the result:
 
 ```
