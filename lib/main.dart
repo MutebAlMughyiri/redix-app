@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
+import 'api.dart';
 import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
@@ -9,8 +10,12 @@ import 'home/home_screen.dart';
 import 'words/no_words_screen.dart';
 import 'words/words.dart';
 
-/// Starts the app with the session kept from an earlier sign-in, if any.
+/// Starts the app with the session kept from an earlier sign-in, if any. An app built without its environment's config file stops here,
+/// rather than calling an address nobody chose.
 Future<void> main() async {
+  if (apiBaseUrl.isEmpty) {
+    throw StateError('No API address: build with --dart-define-from-file=config/<environment>.json, which sets API_BASE_URL.');
+  }
   WidgetsFlutterBinding.ensureInitialized();
   final session = Session();
   await session.restore();

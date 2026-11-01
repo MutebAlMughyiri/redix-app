@@ -18,7 +18,7 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
-      - run: flutter build apk --debug
+      - run: flutter build apk --debug --dart-define-from-file=config/local.json
 
   patrol:
     runs-on: ubuntu-latest
@@ -93,4 +93,4 @@ jobs:
           arch: x86_64
           target: google_apis
           working-directory: redix-app
-          script: patrol test --device emulator-5554 --dart-define=TEST_USERNAME=${{ env.REDIX_Owner__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Owner__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd
+          script: adb reverse tcp:5010 tcp:5010 && patrol test --device emulator-5554 --dart-define-from-file=config/local.json --dart-define=TEST_USERNAME=${{ env.REDIX_Owner__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Owner__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd

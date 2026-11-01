@@ -19,6 +19,7 @@ lib/
     no_words_screen.dart    the word-free screen of a first start without a network
 test/                       widget tests, mirroring lib/; app_harness.dart owns the fake API and storage
 patrol_test/                end-to-end tests on a real emulator, against the real API
+config/                     one file per environment, naming the API's address
 tool/
   sync_translations.dart    regenerates word_getters.g.dart from the database keys
   update_guide_images.dart  copies Patrol's screenshots into docs/guide/images
@@ -47,7 +48,7 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 | No word value in the code; words come from the API | `lib/words/` |
 | Every element a user sees or acts on has a `Key` constant on its screen | Each screen |
 | Every public class and member has a doc comment | The lint `public_member_api_docs` |
-| The API's address comes from `--dart-define=API_BASE_URL`, the emulator's view of the developer's machine by default | `apiBaseUrl` |
+| The API's address comes from the environment's config file (`--dart-define-from-file=config/local.json`); none is built in | `apiBaseUrl`, `config/` |
 
 ## Tests
 
