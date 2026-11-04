@@ -4,6 +4,9 @@ import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/projects/new_project_screen.dart';
+import 'package:redix/projects/projects_screen.dart';
+import 'package:redix/settings/settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../app_harness.dart';
@@ -13,7 +16,10 @@ void main() {
 
   TextDirection direction(WidgetTester tester, Key key) => Directionality.of(tester.element(find.byKey(key)));
 
-  Future<void> openMyAccount(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(HomeScreen.myAccountKey)));
+  Future<void> openMyAccount(WidgetTester tester, FakeApi api) async {
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
+  }
 
   Future<void> choose(WidgetTester tester, FakeApi api, Key language) => act(tester, api, () => tester.tap(find.byKey(language)));
 
@@ -26,6 +32,7 @@ void main() {
 
     expect(text(tester, MyAccountScreen.englishKey), 'en myAccount.english');
     expect(direction(tester, MyAccountScreen.englishKey), TextDirection.ltr);
+    await act(tester, api, tester.pageBack);
     await act(tester, api, tester.pageBack);
     expect(text(tester, HomeScreen.subtitleKey), 'en app.subtitle');
     expect(direction(tester, HomeScreen.subtitleKey), TextDirection.ltr);
@@ -82,7 +89,11 @@ void main() {
         expect(rect.right, lessThanOrEqualTo(360), reason: '$key ends off the screen');
       }
 
-      final api = FakeApi()..mustChangePassword = true;
+      final api = FakeApi()
+        ..mustChangePassword = true
+        ..isOwner = true;
+      final running = api.addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الجنوبية']);
+      final finished = api.addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
       await pumpRedix(tester, api, locale: Locale(language));
       [SignInScreen.logoKey, SignInScreen.titleKey, SignInScreen.usernameKey, SignInScreen.passwordKey, SignInScreen.submitKey].forEach(expectFits);
 
@@ -101,9 +112,35 @@ void main() {
         await tester.enterText(find.byKey(ChangePasswordScreen.confirmKey), 'chosen-pass');
         await tester.tap(find.byKey(ChangePasswordScreen.submitKey));
       });
-      [HomeScreen.titleKey, HomeScreen.subtitleKey, HomeScreen.myAccountKey].forEach(expectFits);
+      [HomeScreen.titleKey, HomeScreen.subtitleKey, HomeScreen.settingsKey].forEach(expectFits);
 
-      await openMyAccount(tester, api);
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+      [SettingsScreen.projectsKey, SettingsScreen.myAccountKey].forEach(expectFits);
+
+      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
+      final runningId = running['id'] as String;
+      final finishedId = finished['id'] as String;
+      [
+        ProjectsScreen.newProjectKey,
+        ProjectsScreen.nameKey(runningId),
+        ProjectsScreen.detailsKey(runningId),
+        ProjectsScreen.statusKey(runningId),
+        ProjectsScreen.addUnitKey(runningId),
+        ProjectsScreen.closeKey(runningId),
+        ProjectsScreen.statusKey(finishedId),
+        ProjectsScreen.detailsKey(finishedId),
+      ].forEach(expectFits);
+
+      await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.closeKey(runningId))));
+      [ProjectsScreen.closeExplainKey, ProjectsScreen.confirmCloseKey, ProjectsScreen.cancelCloseKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cancelCloseKey)));
+
+      await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.newProjectKey)));
+      [NewProjectScreen.nameKey, NewProjectScreen.startDateKey, NewProjectScreen.unitNameKey, NewProjectScreen.addUnitKey, NewProjectScreen.submitKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
       [MyAccountScreen.arabicKey, MyAccountScreen.englishKey, MyAccountScreen.changePasswordKey].forEach(expectFits);
     });
   }

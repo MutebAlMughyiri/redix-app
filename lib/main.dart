@@ -8,6 +8,10 @@ import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
 import 'home/home_screen.dart';
+import 'projects/new_project_screen.dart';
+import 'projects/projects.dart';
+import 'projects/projects_screen.dart';
+import 'settings/settings_screen.dart';
 import 'words/app_language.dart';
 import 'words/no_words_screen.dart';
 import 'words/words.dart';
@@ -43,6 +47,7 @@ class RedixApp extends StatefulWidget {
 
 class _RedixAppState extends State<RedixApp> {
   var _wordsAttempt = 0;
+  late final _projects = Projects(widget.session);
 
   late final _router = GoRouter(
     refreshListenable: widget.session,
@@ -52,6 +57,9 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session)),
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
       GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(language: widget.language)),
+      GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session)),
+      GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects)),
+      GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
     ],
   );
 
@@ -69,6 +77,7 @@ class _RedixAppState extends State<RedixApp> {
   @override
   void dispose() {
     _router.dispose();
+    _projects.dispose();
     super.dispose();
   }
 

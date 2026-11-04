@@ -18,6 +18,7 @@ class Session extends ChangeNotifier {
   var _accessToken = '';
   var _refreshToken = '';
   var _mustChangePassword = false;
+  var _isOwner = false;
   var _notice = '';
 
   /// True from sign-in until the session ends.
@@ -28,6 +29,9 @@ class Session extends ChangeNotifier {
 
   /// True while the password is a temporary one that must be changed before anything else (UC-003).
   bool get mustChangePassword => _mustChangePassword;
+
+  /// True for an owner, who is a financial supervisor in every project (BR-29); the app shows what only an owner may do.
+  bool get isOwner => _isOwner;
 
   /// The word key of why the last session ended, for the sign-in screen; empty when there is nothing to say.
   String get notice => _notice;
@@ -76,19 +80,24 @@ class Session extends ChangeNotifier {
     }
   }
 
+  /// Reads the API [path] as the signed-in user, renewing an expired access token like [post].
+  Future<http.Response> get(String path) => _send(() => http.get(apiUri(path), headers: _authorized));
+
   /// Sends [body] as JSON to the API [path] as the signed-in user. An expired access token is renewed once and the request sent again;
   /// a session the API refuses to renew ends.
-  Future<http.Response> post(String path, Map<String, Object> body) async {
-    final response = await _postWithAccessToken(path, body);
+  Future<http.Response> post(String path, Map<String, Object> body) =>
+      _send(() => http.post(apiUri(path), headers: {...jsonHeaders, ..._authorized}, body: jsonEncode(body)));
+
+  Map<String, String> get _authorized => {'Authorization': 'Bearer $_accessToken'};
+
+  Future<http.Response> _send(Future<http.Response> Function() request) async {
+    final response = await request();
     if (response.statusCode != 401) {
       return response;
     }
     await _renew();
-    return isOpen ? _postWithAccessToken(path, body) : response;
+    return isOpen ? request() : response;
   }
-
-  Future<http.Response> _postWithAccessToken(String path, Map<String, Object> body) =>
-      http.post(apiUri(path), headers: {...jsonHeaders, 'Authorization': 'Bearer $_accessToken'}, body: jsonEncode(body));
 
   Future<void> _renew() async {
     try {
@@ -120,5 +129,6 @@ class Session extends ChangeNotifier {
     _accessToken = session['accessToken'] as String? ?? '';
     _refreshToken = session['refreshToken'] as String? ?? '';
     _mustChangePassword = session['mustChangePassword'] as bool? ?? false;
+    _isOwner = session['isOwner'] as bool? ?? false;
   }
 }

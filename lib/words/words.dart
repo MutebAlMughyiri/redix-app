@@ -54,7 +54,7 @@ class Words with WordGetters {
         headers: {if (etag.isNotEmpty) 'If-None-Match': etag},
       );
       if (response.statusCode == 200) {
-        final kept = {'language': language, 'etag': response.headers['etag'] ?? '', 'words': jsonDecode(utf8.decode(response.bodyBytes))};
+        final kept = {'language': language, 'etag': response.headers['etag'] ?? '', 'words': jsonOf(response)};
         await preferences.setString(_keptKey, jsonEncode(kept));
       }
     } on Exception catch (error) {

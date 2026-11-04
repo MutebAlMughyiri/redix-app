@@ -8,7 +8,14 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 lib/
   main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
   account/my_account_screen.dart  My account: the language and the way into the password change
-  api.dart                  the API's address, shared by every feature
+  settings/settings_screen.dart   Settings: the way into My account and, for owners, Projects
+  projects/
+    project.dart            Project and Unit, as the API answers them
+    projects.dart           Projects: the list as the API last answered it, and every change to it
+    projects_screen.dart    the projects, one card each, with the Add unit and close dialogs
+    new_project_screen.dart the new project form
+  format/date_format.dart   formatDate: the app's one date format, dd.MM.yyyy
+  api.dart                  the API's address and how a reply's JSON is read, shared by every feature
   auth/
     session.dart            Session: the signed-in session, kept in the Keychain or Keystore
     sign_in_screen.dart     the sign-in screen
@@ -43,6 +50,10 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 2. `go_router` sends every route to `/sign-in` while the session is closed, to `/change-password` while the password is temporary, and away from sign-in once open; it listens to `Session`, so a sign-in, a password change or an ended session moves the screen at once.
 3. Every request made as the user goes through `Session.post`: it sends the access token, and on a `401` renews the session once and sends again.
 4. Each screen declares its `path` and its element `Key`s.
+
+## Data the API owns
+
+Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `Projects` reads the list again after every answer, so its order and each status have one source.
 
 ## Rules every part follows
 

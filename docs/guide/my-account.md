@@ -7,7 +7,7 @@
 ## English
 
 **What it is for:** your own settings: the app's language, and changing your password.
-**Who sees it:** everyone signed in. Open it with the account button at the top of the home screen.
+**Who sees it:** everyone signed in. Open it from [Settings](settings.md), with the settings button at the top of the home screen.
 
 1. Under **Language**, tap **العربية** or **English**. Every screen switches at once: Arabic right to left, English left to right.
 2. Tap **Change password** to choose a new password; the back arrow returns here.
@@ -21,7 +21,7 @@ The app remembers your language on this phone. Until you choose one, it follows 
 ## العربية
 
 **الغرض:** إعداداتك الخاصة: لغة التطبيق، وتغيير كلمة المرور.
-**من يراها:** كل من سجّل الدخول. افتحها من زر الحساب أعلى الشاشة الرئيسية.
+**من يراها:** كل من سجّل الدخول. افتحها من [الإعدادات](settings.md)، بزر الإعدادات أعلى الشاشة الرئيسية.
 
 1. تحت **اللغة**، اضغط **العربية** أو **English**، فتتحول كل الشاشات فوراً: العربية من اليمين لليسار، والإنجليزية من اليسار لليمين.
 2. اضغط **تغيير كلمة المرور** لاختيار كلمة مرور جديدة؛ وسهم الرجوع يعيدك إلى هنا.

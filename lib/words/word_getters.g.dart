@@ -62,6 +62,81 @@ mixin WordGetters {
   /// The word `myAccount.title`.
   String get myAccountTitle => text('myAccount.title');
 
+  /// The word `projects.addUnit`.
+  String get projectsAddUnit => text('projects.addUnit');
+
+  /// The word `projects.cancel`.
+  String get projectsCancel => text('projects.cancel');
+
+  /// The word `projects.close`.
+  String get projectsClose => text('projects.close');
+
+  /// The word `projects.closeExplain`.
+  String get projectsCloseExplain => text('projects.closeExplain');
+
+  /// The word `projects.closeQuestion`.
+  String get projectsCloseQuestion => text('projects.closeQuestion');
+
+  /// The word `projects.create`.
+  String get projectsCreate => text('projects.create');
+
+  /// The word `projects.empty`.
+  String get projectsEmpty => text('projects.empty');
+
+  /// The word `projects.finished`.
+  String get projectsFinished => text('projects.finished');
+
+  /// The word `projects.invalidName`.
+  String get projectsInvalidName => text('projects.invalidName');
+
+  /// The word `projects.loadFailed`.
+  String get projectsLoadFailed => text('projects.loadFailed');
+
+  /// The word `projects.name`.
+  String get projectsName => text('projects.name');
+
+  /// The word `projects.new`.
+  String get projectsNew => text('projects.new');
+
+  /// The word `projects.noConnection`.
+  String get projectsNoConnection => text('projects.noConnection');
+
+  /// The word `projects.noUnits`.
+  String get projectsNoUnits => text('projects.noUnits');
+
+  /// The word `projects.projectFinished`.
+  String get projectsProjectFinished => text('projects.projectFinished');
+
+  /// The word `projects.readOnly`.
+  String get projectsReadOnly => text('projects.readOnly');
+
+  /// The word `projects.refused`.
+  String get projectsRefused => text('projects.refused');
+
+  /// The word `projects.removeUnit`.
+  String get projectsRemoveUnit => text('projects.removeUnit');
+
+  /// The word `projects.retry`.
+  String get projectsRetry => text('projects.retry');
+
+  /// The word `projects.running`.
+  String get projectsRunning => text('projects.running');
+
+  /// The word `projects.startDate`.
+  String get projectsStartDate => text('projects.startDate');
+
+  /// The word `projects.title`.
+  String get projectsTitle => text('projects.title');
+
+  /// The word `projects.unitName`.
+  String get projectsUnitName => text('projects.unitName');
+
+  /// The word `projects.units`.
+  String get projectsUnits => text('projects.units');
+
+  /// The word `settings.title`.
+  String get settingsTitle => text('settings.title');
+
   /// The word `signIn.accountLocked`.
   String get signInAccountLocked => text('signIn.accountLocked');
 

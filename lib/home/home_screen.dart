@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../account/my_account_screen.dart';
+import '../settings/settings_screen.dart';
 import '../words/words.dart';
 
-/// The screen a signed-in user lands on: today the app's name and what it is for, and the way into My account; projects join it with UC-010.
+/// The screen a signed-in user lands on: today the app's name and what it is for, and the way into Settings; projects join it with UC-010.
 class HomeScreen extends StatelessWidget {
   /// The home screen.
   const HomeScreen({super.key});
@@ -18,8 +18,8 @@ class HomeScreen extends StatelessWidget {
   /// What the app is for.
   static const subtitleKey = Key('home.subtitle');
 
-  /// The button that opens My account.
-  static const myAccountKey = Key('home.myAccount');
+  /// The button that opens Settings.
+  static const settingsKey = Key('home.settings');
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +29,10 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         actions: [
           IconButton(
-            key: myAccountKey,
-            icon: const Icon(Icons.account_circle_outlined),
-            tooltip: words.myAccountTitle,
-            onPressed: () => context.push(MyAccountScreen.path),
+            key: settingsKey,
+            icon: const Icon(Icons.tune),
+            tooltip: words.settingsTitle,
+            onPressed: () => context.push(SettingsScreen.path),
           ),
         ],
       ),

@@ -8,7 +8,7 @@
 
 ## Screen
 
-[My account](../guide/my-account.md) (حسابي), `MyAccountScreen` at `/my-account`, opened from the account button on home's top bar (`HomeScreen.myAccountKey`):
+[My account](../guide/my-account.md) (حسابي), `MyAccountScreen` at `/my-account`, opened from [Settings](../guide/settings.md) (`SettingsScreen.myAccountKey`):
 
 | Element | `Key` | Does |
 | --- | --- | --- |

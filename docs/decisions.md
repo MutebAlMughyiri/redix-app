@@ -6,6 +6,11 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | Settings is a list of rows holding Projects and My account, and home opens it | The canvas puts Settings in both roles' navigation with My account inside it; rows are Material's own, and only two members exist so far, against the canvas's nine pills |
+| 2026-11-05 | Each project is a card on the list, carrying Add unit and Close project, with no details screen | The canvas draws settings sections this way, and it means one screen fewer |
+| 2026-11-05 | Close and Add unit are Material dialogs, not the canvas's bottom sheet | Flutter's dialog handles the keyboard by itself |
+| 2026-11-05 | `Projects` reads the list again after every answer from the API, and keeps nothing on the phone | One source of order and status, and another owner's change shows up; FR-16's offline work is about entries |
+| 2026-11-05 | One `formatDate`, with Western digits and no new package | Two lines; the canvas shows 26.10.2026 on its Arabic screens, as the accountant's statement does |
 | 2026-11-04 | The sign-in screen is headed by the logo and the app's name, not by what the app is for | Muteb's call on seeing the app on a real phone: the first screen carries the brand |
 | 2026-11-01 | My account (حسابي) is built with UC-004, from Material's own parts, and holds the language and the way into the password change | UC-004 needs a place to choose the language; the screens canvas has no design for it yet (findings row 20) |
 | 2026-11-01 | The chosen language is kept on the phone, and switches only after its words arrive | UC-004 keeps it on the phone; fetching first means a failed switch leaves the app as it was, never without words |
