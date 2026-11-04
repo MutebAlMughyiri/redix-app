@@ -42,6 +42,20 @@ dart run tool/sync_translations.dart
 
 It rewrites `lib/words/word_getters.g.dart` from the keys alone. Never edit it by hand.
 
+## App icon
+
+`assets/icon/icon.svg` is the master: the letter R under a roof, white on the theme teal. `icon_foreground.svg` is the same mark without the background, for Android's adaptive icon. After changing either, render each to a 1024 px PNG beside it, for example with headless Chrome:
+
+```
+chrome --headless --hide-scrollbars --default-background-color=00000000 --window-size=1024,1024 --screenshot=assets/icon/icon.png assets/icon/icon.svg
+```
+
+Then regenerate every Android and iPhone size, never editing them by hand:
+
+```
+dart run flutter_launcher_icons
+```
+
 ## Every element has a key
 
 Every element a user sees or acts on carries a `Key`, declared as a constant on its own screen, for example `HomeScreen.titleKey`. Widget tests and Patrol tests find elements by these constants, never by typed strings.

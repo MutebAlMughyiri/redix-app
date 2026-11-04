@@ -22,6 +22,15 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   patrol: ^4.10.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/icon/icon.png
+  remove_alpha_ios: true
+  adaptive_icon_background: "#0E6B68"
+  adaptive_icon_foreground: assets/icon/icon_foreground.png
 
 patrol:
   app_name: REDIX
