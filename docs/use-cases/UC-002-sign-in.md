@@ -12,6 +12,8 @@
 
 | Element | `Key` | Does |
 | --- | --- | --- |
+| Logo | `SignInScreen.logoKey` | The app icon, at the top of the screen |
+| App name | `SignInScreen.titleKey` | Under the logo: REDIX |
 | Username | `SignInScreen.usernameKey` | The name the user signs in with |
 | Password | `SignInScreen.passwordKey` | Hidden as typed; Enter signs in |
 | Sign in | `SignInScreen.submitKey` | Sends both; disabled while waiting |

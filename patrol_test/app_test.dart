@@ -22,6 +22,10 @@ void main() {
     await language.restore();
     await $.pumpWidgetAndSettle(RedixApp(session: session, language: language));
     await $(SignInScreen.usernameKey).waitUntilVisible();
+    final logo = find.byKey(SignInScreen.logoKey);
+    await precacheImage($.tester.widget<Image>(logo).image, $.tester.element(logo));
+    await $.pumpAndSettle();
+    expect($.tester.widget<RawImage>(find.descendant(of: logo, matching: find.byType(RawImage))).image, isNotNull);
     await $.takeNativeScreenshot('sign-in');
 
     await $(SignInScreen.usernameKey).enterText(username);

@@ -84,7 +84,7 @@ void main() {
 
       final api = FakeApi()..mustChangePassword = true;
       await pumpRedix(tester, api, locale: Locale(language));
-      [SignInScreen.usernameKey, SignInScreen.passwordKey, SignInScreen.submitKey].forEach(expectFits);
+      [SignInScreen.logoKey, SignInScreen.titleKey, SignInScreen.usernameKey, SignInScreen.passwordKey, SignInScreen.submitKey].forEach(expectFits);
 
       await act(tester, api, () async {
         await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');

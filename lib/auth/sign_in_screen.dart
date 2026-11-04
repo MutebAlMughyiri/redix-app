@@ -14,6 +14,12 @@ class SignInScreen extends StatefulWidget {
   /// The screen's route.
   static const path = '/sign-in';
 
+  /// The app's logo, at the top of the screen.
+  static const logoKey = Key('signIn.logo');
+
+  /// The app's name, under the logo.
+  static const titleKey = Key('signIn.title');
+
   /// The username field.
   static const usernameKey = Key('signIn.username');
 
@@ -63,7 +69,15 @@ class _SignInScreenState extends State<SignInScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
           children: [
-            Text(words.appSubtitle, style: theme.textTheme.headlineMedium),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.asset('assets/icon/icon.png', key: SignInScreen.logoKey, height: 72),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(words.appTitle, key: SignInScreen.titleKey, style: theme.textTheme.headlineMedium),
             const SizedBox(height: 8),
             Text(words.signInHint, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 32),

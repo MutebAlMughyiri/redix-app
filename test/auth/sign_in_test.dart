@@ -22,6 +22,18 @@ void main() {
     expect(find.byKey(HomeScreen.titleKey), findsNothing);
   });
 
+  testWidgets('the sign-in screen is headed with the logo, drawn from its picture, then the app name', (tester) async {
+    await pumpRedix(tester, FakeApi());
+    final logo = find.byKey(SignInScreen.logoKey);
+
+    await tester.runAsync(() => precacheImage(tester.widget<Image>(logo).image, tester.element(logo)));
+    await tester.pump();
+
+    expect(tester.widget<RawImage>(find.descendant(of: logo, matching: find.byType(RawImage))).image, isNotNull);
+    expect(tester.widget<Text>(find.byKey(SignInScreen.titleKey)).data, 'en app.title');
+    expect(tester.getBottomLeft(logo).dy, lessThan(tester.getTopLeft(find.byKey(SignInScreen.titleKey)).dy));
+  });
+
   testWidgets('the right password opens home and keeps the session in secure storage', (tester) async {
     final api = FakeApi();
     final session = await pumpRedix(tester, api);

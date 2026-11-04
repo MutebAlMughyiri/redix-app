@@ -6,6 +6,7 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-04 | The sign-in screen is headed by the logo and the app's name, not by what the app is for | Muteb's call on seeing the app on a real phone: the first screen carries the brand |
 | 2026-11-01 | My account (حسابي) is built with UC-004, from Material's own parts, and holds the language and the way into the password change | UC-004 needs a place to choose the language; the screens canvas has no design for it yet (findings row 20) |
 | 2026-11-01 | The chosen language is kept on the phone, and switches only after its words arrive | UC-004 keeps it on the phone; fetching first means a failed switch leaves the app as it was, never without words |
 | 2026-11-01 | The API's address comes from a config file per environment (`config/local.json` is `http://127.0.0.1:5010`, routed to the developer's machine with `adb reverse`); production gets its own file | One owner of each address; publishing changes a file, not code; `127.0.0.1` with `adb reverse` works on the emulator and on a USB phone alike |
