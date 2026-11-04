@@ -12,6 +12,9 @@ import 'projects/new_project_screen.dart';
 import 'projects/projects.dart';
 import 'projects/projects_screen.dart';
 import 'settings/settings_screen.dart';
+import 'users/new_user_screen.dart';
+import 'users/users.dart';
+import 'users/users_screen.dart';
 import 'words/app_language.dart';
 import 'words/no_words_screen.dart';
 import 'words/words.dart';
@@ -48,6 +51,7 @@ class RedixApp extends StatefulWidget {
 class _RedixAppState extends State<RedixApp> {
   var _wordsAttempt = 0;
   late final _projects = Projects(widget.session);
+  late final _users = Users(widget.session);
 
   late final _router = GoRouter(
     refreshListenable: widget.session,
@@ -60,6 +64,8 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session)),
       GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects)),
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
+      GoRoute(path: UsersScreen.path, builder: (context, state) => UsersScreen(users: _users)),
+      GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _users)),
     ],
   );
 
@@ -78,6 +84,7 @@ class _RedixAppState extends State<RedixApp> {
   void dispose() {
     _router.dispose();
     _projects.dispose();
+    _users.dispose();
     super.dispose();
   }
 

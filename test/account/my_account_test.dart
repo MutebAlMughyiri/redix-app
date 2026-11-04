@@ -7,6 +7,8 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/users/new_user_screen.dart';
+import 'package:redix/users/users_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../app_harness.dart';
@@ -94,6 +96,10 @@ void main() {
         ..isOwner = true;
       final running = api.addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الجنوبية']);
       final finished = api.addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
+      api
+        ..addUser('متعب', username: 'muteb', isOwner: true)
+        ..addUser('نواف', username: 'nawaf', mobile: '0500000000')
+        ..addUser('سالم', username: 'salem', isActive: false);
       await pumpRedix(tester, api, locale: Locale(language));
       [SignInScreen.logoKey, SignInScreen.titleKey, SignInScreen.usernameKey, SignInScreen.passwordKey, SignInScreen.submitKey].forEach(expectFits);
 
@@ -137,6 +143,30 @@ void main() {
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.newProjectKey)));
       [NewProjectScreen.nameKey, NewProjectScreen.startDateKey, NewProjectScreen.unitNameKey, NewProjectScreen.addUnitKey, NewProjectScreen.submitKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
+      [
+        UsersScreen.newUserKey,
+        UsersScreen.nameKey('user-0'),
+        UsersScreen.statusKey('user-0'),
+        UsersScreen.menuKey('user-0'),
+        UsersScreen.detailsKey('user-1'),
+        UsersScreen.menuKey('user-1'),
+        UsersScreen.statusKey('user-2'),
+      ].forEach(expectFits);
+
+      await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-1'))));
+      [UsersScreen.editKey, UsersScreen.resetPasswordKey, UsersScreen.disableKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(UsersScreen.resetPasswordKey)));
+      [UsersScreen.resetExplainKey, UsersScreen.resetPasswordFieldKey, UsersScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+
+      await act(tester, api, () => tester.tap(find.byKey(UsersScreen.newUserKey)));
+      [NewUserScreen.nameKey, NewUserScreen.usernameKey, NewUserScreen.mobileKey, NewUserScreen.passwordKey].forEach(expectFits);
+      await tester.ensureVisible(find.byKey(NewUserScreen.submitKey));
+      expectFits(NewUserScreen.submitKey);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 

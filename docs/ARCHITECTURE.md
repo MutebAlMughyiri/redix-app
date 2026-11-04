@@ -9,11 +9,23 @@ lib/
   main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
   account/my_account_screen.dart  My account: the language and the way into the password change
   settings/settings_screen.dart   Settings: the way into My account and, for owners, Projects
+  api_list.dart             ApiList: a list the API owns, and the way to change it; every settings list extends it
+  ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, showRefusalOf
   projects/
     project.dart            Project and Unit, as the API answers them
-    projects.dart           Projects: the list as the API last answered it, and every change to it
-    projects_screen.dart    the projects, one card each, with the Add unit and close dialogs
+    projects.dart           Projects: the ApiList of projects, and its changes
+    projects_screen.dart    the projects
+    project_card.dart       one project on the list
+    add_unit_dialog.dart    the Add unit dialog
     new_project_screen.dart the new project form
+  users/
+    user.dart               User, as the API answers it
+    users.dart              Users: the ApiList of users, and its changes
+    users_screen.dart       the users
+    user_row.dart           one user on the list, with its menu
+    edit_user_dialog.dart   the Edit dialog
+    reset_password_dialog.dart  the Reset password dialog
+    new_user_screen.dart    the new user form
   format/date_format.dart   formatDate: the app's one date format, dd.MM.yyyy
   api.dart                  the API's address and how a reply's JSON is read, shared by every feature
   auth/
@@ -53,7 +65,7 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 
 ## Data the API owns
 
-Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `Projects` reads the list again after every answer, so its order and each status have one source.
+Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `ApiList` reads the list again after every answer, so its order and each status have one source. `Projects` and `Users` extend it, and hold only their own calls; `ApiListBody` draws its states on every such screen.
 
 ## Rules every part follows
 
@@ -61,6 +73,7 @@ Settings such as projects keep nothing on the phone: the API owns every rule, th
 | --- | --- |
 | No word value in the code; words come from the API | `lib/words/` |
 | Every element a user sees or acts on has a `Key` constant on its screen | Each screen |
+| One class to a file: a screen's card, row and dialogs are files of their own | Each feature folder |
 | Every public class and member has a doc comment | The lint `public_member_api_docs` |
 | The API's address comes from the environment's config file (`--dart-define-from-file=config/local.json`); none is built in | `apiBaseUrl`, `config/` |
 

@@ -12,6 +12,7 @@
 | Row | Who sees it | Opens |
 | --- | --- | --- |
 | Projects | Owners | [Projects](projects.md) |
+| Users | Owners | [Users](users.md) |
 | My account | Everyone | [My account](my-account.md) |
 
 ## العربية
@@ -22,4 +23,5 @@
 | الصف | من يراه | يفتح |
 | --- | --- | --- |
 | المشاريع | الملّاك | [المشاريع](projects.md) |
+| المستخدمون | الملّاك | [المستخدمون](users.md) |
 | حسابي | الجميع | [حسابي](my-account.md) |

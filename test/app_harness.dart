@@ -21,11 +21,16 @@ Map<String, String> wordsIn(String language) => {
     'changePassword.weakPassword', 'changePassword.noConnection',
     'myAccount.title', 'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
     'myAccount.changePassword',
-    'settings.title', 'projects.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'projects.retry', 'projects.running',
+    'settings.title', 'projects.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.running',
     'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
-    'projects.unitName', 'projects.addUnit', 'projects.removeUnit', 'projects.create', 'projects.cancel', 'projects.close',
+    'projects.unitName', 'projects.addUnit', 'projects.removeUnit', 'projects.create', 'common.cancel', 'projects.close',
     'projects.closeQuestion', 'projects.closeExplain', 'projects.invalidName', 'projects.projectFinished', 'projects.noConnection',
     'projects.refused',
+    'users.title', 'users.new', 'users.loadFailed', 'users.owner', 'users.disabled', 'users.edit', 'users.resetPassword', 'users.disable',
+    'users.enable', 'users.name', 'users.nameHint', 'users.username', 'users.mobile', 'users.temporaryPassword',
+    'users.temporaryPasswordHint', 'users.add', 'users.save', 'users.disableQuestion', 'users.disableExplain', 'users.resetExplain',
+    'users.invalidName', 'users.invalidUsername', 'users.invalidMobile', 'users.usernameTaken', 'users.weakPassword',
+    'users.ownerCannotBeDisabled', 'users.noConnection', 'users.refused',
   ])
     key: '$language $key',
 };
@@ -68,6 +73,15 @@ class FakeApi {
   /// The changes of a project the app sent, as `path` and body.
   final sentProjectChanges = <(String, Map<String, dynamic>)>[];
 
+  /// The users the API holds, as it answers them.
+  final users = <Map<String, Object>>[];
+
+  /// The status and problem code the API answers to a change of a user; 2xx makes the change. An empty code sends none.
+  var userAnswer = (status: 200, code: '');
+
+  /// The changes of a user the app sent, as `path` and body.
+  final sentUserChanges = <(String, Map<String, dynamic>)>[];
+
   /// Access tokens the API treats as expired, answering 401 with no body.
   final expiredAccessTokens = <String>{};
 
@@ -84,7 +98,7 @@ class FakeApi {
       return http.Response.bytes(utf8.encode(jsonEncode(wordsIn(request.url.pathSegments.last))), 200, headers: {'etag': '"1"'});
     }
     final accessToken = (request.headers['Authorization'] ?? '').replaceFirst('Bearer ', '');
-    if (path == '/auth/change-password' || path.startsWith('/projects')) {
+    if (path == '/auth/change-password' || path.startsWith('/projects') || path.startsWith('/users')) {
       sentAccessTokens.add(accessToken);
       if (expiredAccessTokens.contains(accessToken)) {
         return http.Response('', 401);
@@ -92,6 +106,9 @@ class FakeApi {
     }
     if (path.startsWith('/projects')) {
       return _answerProjects(request);
+    }
+    if (path.startsWith('/users')) {
+      return _answerUsers(request);
     }
     final (status, code) = switch (path) {
       '/auth/sign-in' => (signInAnswer.status, signInAnswer.code),
@@ -119,6 +136,46 @@ class FakeApi {
     };
     projects.add(project);
     return project;
+  }
+
+  /// Adds a user to what the API holds.
+  Map<String, Object> addUser(String displayName, {required String username, String mobile = '', bool isOwner = false, bool isActive = true}) {
+    final user = <String, Object>{
+      'id': 'user-${users.length}',
+      'username': username,
+      'displayName': displayName,
+      'mobile': mobile,
+      'isOwner': isOwner,
+      'isActive': isActive,
+      'mustChangePassword': false,
+    };
+    users.add(user);
+    return user;
+  }
+
+  http.Response _answerUsers(http.Request request) {
+    if (request.method == 'GET') {
+      return _json(users, 200);
+    }
+    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    final path = request.url.path;
+    sentUserChanges.add((path, body));
+    if (userAnswer.status >= 300) {
+      return _json({if (userAnswer.code.isNotEmpty) 'code': userAnswer.code}, userAnswer.status);
+    }
+    if (path == '/users') {
+      return _json(addUser(body['displayName'] as String, username: body['username'] as String, mobile: body['mobile'] as String), 201);
+    }
+    final user = users.singleWhere((user) => user['id'] == request.url.pathSegments[1]);
+    if (path.endsWith('/disable')) {
+      user['isActive'] = false;
+    } else if (path.endsWith('/enable')) {
+      user['isActive'] = true;
+    } else if (!path.endsWith('/reset-password')) {
+      user['displayName'] = body['displayName'] as String;
+      user['mobile'] = body['mobile'] as String;
+    }
+    return _json(user, 200);
   }
 
   /// Answers as bytes with no character set, as a JSON reply may arrive, so reading Arabic takes UTF-8 on the app's side.

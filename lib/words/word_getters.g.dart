@@ -44,6 +44,12 @@ mixin WordGetters {
   /// The word `changePassword.weakPassword`.
   String get changePasswordWeakPassword => text('changePassword.weakPassword');
 
+  /// The word `common.cancel`.
+  String get commonCancel => text('common.cancel');
+
+  /// The word `common.retry`.
+  String get commonRetry => text('common.retry');
+
   /// The word `myAccount.arabic`.
   String get myAccountArabic => text('myAccount.arabic');
 
@@ -64,9 +70,6 @@ mixin WordGetters {
 
   /// The word `projects.addUnit`.
   String get projectsAddUnit => text('projects.addUnit');
-
-  /// The word `projects.cancel`.
-  String get projectsCancel => text('projects.cancel');
 
   /// The word `projects.close`.
   String get projectsClose => text('projects.close');
@@ -116,9 +119,6 @@ mixin WordGetters {
   /// The word `projects.removeUnit`.
   String get projectsRemoveUnit => text('projects.removeUnit');
 
-  /// The word `projects.retry`.
-  String get projectsRetry => text('projects.retry');
-
   /// The word `projects.running`.
   String get projectsRunning => text('projects.running');
 
@@ -163,4 +163,88 @@ mixin WordGetters {
 
   /// The word `signIn.username`.
   String get signInUsername => text('signIn.username');
+
+  /// The word `users.add`.
+  String get usersAdd => text('users.add');
+
+  /// The word `users.disable`.
+  String get usersDisable => text('users.disable');
+
+  /// The word `users.disableExplain`.
+  String get usersDisableExplain => text('users.disableExplain');
+
+  /// The word `users.disableQuestion`.
+  String get usersDisableQuestion => text('users.disableQuestion');
+
+  /// The word `users.disabled`.
+  String get usersDisabled => text('users.disabled');
+
+  /// The word `users.edit`.
+  String get usersEdit => text('users.edit');
+
+  /// The word `users.enable`.
+  String get usersEnable => text('users.enable');
+
+  /// The word `users.invalidMobile`.
+  String get usersInvalidMobile => text('users.invalidMobile');
+
+  /// The word `users.invalidName`.
+  String get usersInvalidName => text('users.invalidName');
+
+  /// The word `users.invalidUsername`.
+  String get usersInvalidUsername => text('users.invalidUsername');
+
+  /// The word `users.loadFailed`.
+  String get usersLoadFailed => text('users.loadFailed');
+
+  /// The word `users.mobile`.
+  String get usersMobile => text('users.mobile');
+
+  /// The word `users.name`.
+  String get usersName => text('users.name');
+
+  /// The word `users.nameHint`.
+  String get usersNameHint => text('users.nameHint');
+
+  /// The word `users.new`.
+  String get usersNew => text('users.new');
+
+  /// The word `users.noConnection`.
+  String get usersNoConnection => text('users.noConnection');
+
+  /// The word `users.owner`.
+  String get usersOwner => text('users.owner');
+
+  /// The word `users.ownerCannotBeDisabled`.
+  String get usersOwnerCannotBeDisabled => text('users.ownerCannotBeDisabled');
+
+  /// The word `users.refused`.
+  String get usersRefused => text('users.refused');
+
+  /// The word `users.resetExplain`.
+  String get usersResetExplain => text('users.resetExplain');
+
+  /// The word `users.resetPassword`.
+  String get usersResetPassword => text('users.resetPassword');
+
+  /// The word `users.save`.
+  String get usersSave => text('users.save');
+
+  /// The word `users.temporaryPassword`.
+  String get usersTemporaryPassword => text('users.temporaryPassword');
+
+  /// The word `users.temporaryPasswordHint`.
+  String get usersTemporaryPasswordHint => text('users.temporaryPasswordHint');
+
+  /// The word `users.title`.
+  String get usersTitle => text('users.title');
+
+  /// The word `users.username`.
+  String get usersUsername => text('users.username');
+
+  /// The word `users.usernameTaken`.
+  String get usersUsernameTaken => text('users.usernameTaken');
+
+  /// The word `users.weakPassword`.
+  String get usersWeakPassword => text('users.weakPassword');
 }

@@ -21,6 +21,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Settings](guide/settings.md) | Everyone signed in |
 | [My account](guide/my-account.md) | Everyone signed in |
 | [Projects](guide/projects.md) | Owners |
+| [Users](guide/users.md) | Owners |
 
 ## Use cases
 
@@ -33,3 +34,4 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-003](use-cases/UC-003-change-password.md) | Change the password, forced while it is temporary | Every signed-in user |
 | [UC-004](use-cases/UC-004-language.md) | Switch the app between Arabic and English in My account | Every signed-in user |
 | [UC-006](use-cases/UC-006-projects.md) | Create a project with its units, and close it when finished | The financial supervisor (an owner, until UC-008) |
+| [UC-007](use-cases/UC-007-users.md) | Add users, correct them, disable them, and reset a forgotten password | Owners |

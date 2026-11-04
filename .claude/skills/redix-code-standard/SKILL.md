@@ -37,4 +37,6 @@ description: How REDIX app code is written - best practice of Flutter, simple, c
 ## Structured well
 
 - One folder per feature under `lib/` (for example `lib/words/`). Tests mirror it under `test/` and `patrol_test/`.
+- One class to a file: a screen's card, row and dialogs are files of their own, and each class has one job.
+- What a second feature needs moves to one owner (`ApiList`, `lib/ui/`), never a second copy.
 - The generated `lib/words/word_getters.g.dart` comes only from `tool/sync_translations.dart` and is never edited by hand.

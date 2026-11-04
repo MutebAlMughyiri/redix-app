@@ -10,6 +10,8 @@ import 'package:redix/main.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/users/new_user_screen.dart';
+import 'package:redix/users/users_screen.dart';
 import 'package:redix/words/app_language.dart';
 
 /// The test owner, created by the API with a temporary password.
@@ -18,7 +20,7 @@ const temporaryPassword = String.fromEnvironment('TEST_PASSWORD');
 const newPassword = String.fromEnvironment('TEST_NEW_PASSWORD');
 
 void main() {
-  patrolTest('a new user signs in, must change the temporary password, lands on home, manages a project, and switches the language', ($) async {
+  patrolTest('an owner signs in, then manages projects, users and the language', ($) async {
     final session = Session();
     final language = AppLanguage();
     await session.restore();
@@ -87,6 +89,41 @@ void main() {
     expect($(keyStartingWith('projects.addUnit.')), findsNothing);
 
     await $(BackButton).tap();
+    await $(SettingsScreen.usersKey).tap();
+    await $(keyStartingWith('users.menu.')).waitUntilVisible();
+
+    await $(UsersScreen.newUserKey).tap();
+    await $(NewUserScreen.nameKey).enterText('نواف');
+    await $(NewUserScreen.usernameKey).enterText('patrol-nawaf');
+    await $(NewUserScreen.mobileKey).enterText('0500000000');
+    await $(NewUserScreen.passwordKey).enterText('Temporary-1');
+    await $.takeNativeScreenshot('new-user');
+    await $(NewUserScreen.submitKey).scrollTo().tap();
+    await $(find.text('نواف')).waitUntilVisible();
+    await $.takeNativeScreenshot('users');
+
+    final newUserMenu = $(keyStartingWith('users.menu.')).last;
+    await newUserMenu.tap();
+    await $(UsersScreen.editKey).tap();
+    await $(UsersScreen.editNameKey).enterText('نواف الأول');
+    await $(UsersScreen.saveKey).tap();
+    await $(find.text('نواف الأول')).waitUntilVisible();
+
+    await newUserMenu.tap();
+    await $(UsersScreen.resetPasswordKey).tap();
+    await $(UsersScreen.resetPasswordFieldKey).enterText('Temporary-2');
+    await $(UsersScreen.saveKey).tap();
+    await $.pumpAndSettle();
+
+    await newUserMenu.tap();
+    await $(UsersScreen.disableKey).tap();
+    await $(UsersScreen.confirmDisableKey).tap();
+    await $(keyStartingWith('users.status.')).last.waitUntilVisible();
+    await newUserMenu.tap();
+    await $(UsersScreen.enableKey).tap();
+    await $.pumpAndSettle();
+
+    await $(BackButton).tap();
     await $(SettingsScreen.myAccountKey).tap();
     await $(MyAccountScreen.arabicKey).waitUntilVisible();
     await $.takeNativeScreenshot('my-account');
@@ -101,6 +138,10 @@ void main() {
     await $(keyStartingWith('projects.status.')).waitUntilVisible();
     expect(Directionality.of($.tester.element(keyStartingWith('projects.status.'))), TextDirection.rtl);
     await $.takeNativeScreenshot('projects-arabic');
+    await $(BackButton).tap();
+    await $(SettingsScreen.usersKey).tap();
+    await $(keyStartingWith('users.menu.')).waitUntilVisible();
+    await $.takeNativeScreenshot('users-arabic');
     await $(BackButton).tap();
     await $(SettingsScreen.myAccountKey).tap();
     await $(MyAccountScreen.englishKey).waitUntilVisible();

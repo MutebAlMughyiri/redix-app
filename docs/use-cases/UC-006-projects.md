@@ -72,16 +72,16 @@ All go through `Session`, which renews an expired access token once and sends ag
 | A unit typed but not yet added goes with the project | `NewProjectScreen` | `new_project_test.dart`: a unit typed but not yet added |
 | A project needs no units | `NewProjectScreen` | `new_project_test.dart`: a project needs no units |
 | Add unit waits for a name | `NewProjectScreen` | `new_project_test.dart`: Add unit waits for a name |
-| A refused name shows its own line, and nothing typed is lost | `Projects._change`, `NewProjectScreen` | `new_project_test.dart`: a refused name |
-| Without a network the form and the close say so, and nothing changes | `Projects._change` | `new_project_test.dart`: without a network; `projects_test.dart`: closing without a network |
-| A refusal with no code shows the general word | `Projects._change` | `projects_test.dart`: a refusal with no code |
+| A refused name shows its own line, and nothing typed is lost | `ApiList.change`, `NewProjectScreen` | `new_project_test.dart`: a refused name |
+| Without a network the form and the close say so, and nothing changes | `ApiList.change` | `new_project_test.dart`: without a network; `projects_test.dart`: closing without a network |
+| A refusal with no code shows the general word | `ApiList.change` | `projects_test.dart`: a refusal with no code |
 | An expired access token is renewed once when reading the list too | `Session._send` | `projects_test.dart`: an expired access token |
 | A unit can be removed until the project is created | `NewProjectScreen` | `new_project_test.dart`: a unit can be removed |
 | The start date is today until changed, and shows as dd.MM.yyyy (NFR-04) | `NewProjectScreen`, `formatDate` | `new_project_test.dart`: the start date; `date_format_test.dart` |
-| Closing asks first and says what it means; Cancel changes nothing | `ProjectsScreen` | `projects_test.dart`: closing asks first |
-| A finished project is read-only and stays listed (AC-04.1) | `Project.isFinished`, `ProjectsScreen`; `Project.IsReadOnly` in the API | `projects_test.dart`: a finished project stays listed; Patrol |
-| The list says when it is empty, and when it cannot load | `Projects.load`, `ProjectsScreen` | `projects_test.dart`: with no projects yet; without a network |
-| The list is read again after every answer, so another owner's change shows | `Projects._change` | `projects_test.dart`: a project another owner closed |
+| Closing asks first and says what it means; Cancel changes nothing | `ProjectsScreen`, `ConfirmDialog` | `projects_test.dart`: closing asks first |
+| A finished project is read-only and stays listed (AC-04.1) | `Project.isFinished`, `ProjectCard`; `Project.IsReadOnly` in the API | `projects_test.dart`: a finished project stays listed; Patrol |
+| The list says when it is empty, and when it cannot load | `ApiList.load`, `ApiListBody` | `projects_test.dart`: with no projects yet; without a network |
+| The list is read again after every answer, so another owner's change shows | `ApiList.change` | `projects_test.dart`: a project another owner closed |
 | Arabic names show as typed | `jsonOf` | `projects_test.dart`: Arabic names |
 | AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `my_account_test.dart`: AC-N03, once per language |
 
