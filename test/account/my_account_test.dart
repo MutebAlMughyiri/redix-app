@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
@@ -7,6 +8,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -77,6 +79,82 @@ void main() {
 
     await act(tester, api, tester.pageBack);
     expect(find.byKey(MyAccountScreen.changePasswordKey), findsOneWidget);
+  });
+
+  Future<void> signOut(WidgetTester tester, FakeApi api) async {
+    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.signOutKey)));
+    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.confirmSignOutKey)));
+  }
+
+  testWidgets('signing out asks first, says what it means, and Cancel changes nothing', (tester) async {
+    final api = FakeApi();
+    final session = await pumpRedix(tester, api, stored: {'session': keptSession});
+    await openMyAccount(tester, api);
+
+    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.signOutKey)));
+    expect(text(tester, MyAccountScreen.signOutExplainKey), 'en myAccount.signOutExplain');
+    expect(find.byKey(ConfirmDialog.subjectKey), findsNothing);
+
+    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.cancelSignOutKey)));
+    expect(api.signOuts, 0);
+    expect(session.isOpen, isTrue);
+    expect(find.byKey(MyAccountScreen.signOutKey), findsOneWidget);
+  });
+
+  testWidgets('signing out tells the API, forgets the session, and leads to sign-in with no message', (tester) async {
+    final api = FakeApi();
+    final session = await pumpRedix(tester, api, stored: {'session': keptSession});
+    await openMyAccount(tester, api);
+
+    await signOut(tester, api);
+
+    expect(api.signOuts, 1);
+    expect(session.isOpen, isFalse);
+    expect(await const FlutterSecureStorage().read(key: 'session'), isNull);
+    expect(find.byKey(SignInScreen.usernameKey), findsOneWidget);
+    expect(find.byKey(SignInScreen.messageKey), findsNothing);
+  });
+
+  testWidgets('without a network the phone still signs out', (tester) async {
+    final api = FakeApi();
+    final session = await pumpRedix(tester, api, stored: {'session': keptSession});
+    await openMyAccount(tester, api);
+
+    api.online = false;
+    await signOut(tester, api);
+
+    expect(session.isOpen, isFalse);
+    expect(find.byKey(SignInScreen.usernameKey), findsOneWidget);
+  });
+
+  testWidgets('the chosen language stays after signing out', (tester) async {
+    final api = FakeApi();
+    await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession});
+    await openMyAccount(tester, api);
+    await choose(tester, api, MyAccountScreen.englishKey);
+
+    await signOut(tester, api);
+
+    expect(text(tester, SignInScreen.titleKey), 'en app.title');
+    expect(direction(tester, SignInScreen.titleKey), TextDirection.ltr);
+  });
+
+  testWidgets('the next user signs in as themselves', (tester) async {
+    final api = FakeApi()..isOwner = true;
+    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await openMyAccount(tester, api);
+    await signOut(tester, api);
+
+    api.isOwner = false;
+    await act(tester, api, () async {
+      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+      await tester.enterText(find.byKey(SignInScreen.passwordKey), 'secret');
+      await tester.tap(find.byKey(SignInScreen.submitKey));
+    });
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+
+    expect(find.byKey(SettingsScreen.projectsKey), findsNothing);
+    expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
   });
 
   for (final (language, textDirection) in [('ar', TextDirection.rtl), ('en', TextDirection.ltr)]) {
@@ -171,7 +249,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
-      [MyAccountScreen.arabicKey, MyAccountScreen.englishKey, MyAccountScreen.changePasswordKey].forEach(expectFits);
+      [MyAccountScreen.arabicKey, MyAccountScreen.englishKey, MyAccountScreen.changePasswordKey, MyAccountScreen.signOutKey].forEach(expectFits);
     });
   }
 }

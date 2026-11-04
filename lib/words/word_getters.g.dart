@@ -65,6 +65,15 @@ mixin WordGetters {
   /// The word `myAccount.languageNeedsNetwork`.
   String get myAccountLanguageNeedsNetwork => text('myAccount.languageNeedsNetwork');
 
+  /// The word `myAccount.signOut`.
+  String get myAccountSignOut => text('myAccount.signOut');
+
+  /// The word `myAccount.signOutExplain`.
+  String get myAccountSignOutExplain => text('myAccount.signOutExplain');
+
+  /// The word `myAccount.signOutQuestion`.
+  String get myAccountSignOutQuestion => text('myAccount.signOutQuestion');
+
   /// The word `myAccount.title`.
   String get myAccountTitle => text('myAccount.title');
 

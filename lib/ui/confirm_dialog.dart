@@ -8,7 +8,7 @@ class ConfirmDialog extends StatelessWidget {
   const ConfirmDialog({
     super.key,
     required this.title,
-    required this.subject,
+    this.subject = '',
     required this.explanation,
     required this.confirmLabel,
     required this.onConfirm,
@@ -17,7 +17,7 @@ class ConfirmDialog extends StatelessWidget {
   /// The question.
   final String title;
 
-  /// What the question is about, such as a project's name.
+  /// What the question is about, such as a project's name; empty when it needs none.
   final String subject;
 
   /// What going ahead means.
@@ -50,12 +50,10 @@ class ConfirmDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            subject,
-            key: subjectKey,
-            style: const TextStyle(fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 8),
+          if (subject.isNotEmpty) ...[
+            Text(subject, key: subjectKey, style: const TextStyle(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 8),
+          ],
           Text(explanation, key: explanationKey),
         ],
       ),

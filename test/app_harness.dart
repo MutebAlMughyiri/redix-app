@@ -20,7 +20,7 @@ Map<String, String> wordsIn(String language) => {
     'changePassword.submit', 'changePassword.mismatch', 'changePassword.invalidCredentials', 'changePassword.accountLocked',
     'changePassword.weakPassword', 'changePassword.noConnection',
     'myAccount.title', 'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
-    'myAccount.changePassword',
+    'myAccount.changePassword', 'myAccount.signOut', 'myAccount.signOutQuestion', 'myAccount.signOutExplain',
     'settings.title', 'projects.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.running',
     'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
     'projects.unitName', 'projects.addUnit', 'projects.removeUnit', 'projects.create', 'common.cancel', 'projects.close',
@@ -82,6 +82,9 @@ class FakeApi {
   /// The changes of a user the app sent, as `path` and body.
   final sentUserChanges = <(String, Map<String, dynamic>)>[];
 
+  /// How many times the app told the API it signed out.
+  var signOuts = 0;
+
   /// Access tokens the API treats as expired, answering 401 with no body.
   final expiredAccessTokens = <String>{};
 
@@ -103,6 +106,10 @@ class FakeApi {
       if (expiredAccessTokens.contains(accessToken)) {
         return http.Response('', 401);
       }
+    }
+    if (path == '/auth/sign-out') {
+      signOuts++;
+      return http.Response('', 204);
     }
     if (path.startsWith('/projects')) {
       return _answerProjects(request);

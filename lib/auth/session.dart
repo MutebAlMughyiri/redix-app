@@ -63,6 +63,17 @@ class Session extends ChangeNotifier {
     }
   }
 
+  /// Signs out of this phone (UC-062). The phone forgets its tokens whatever the server answers, so leaving always works; the server closes
+  /// the session now, or after 12 hours unused when it cannot be reached.
+  Future<void> signOut() async {
+    try {
+      await post('/auth/sign-out', {});
+    } on Exception catch (error) {
+      debugPrint('Sign-out not sent: $error');
+    }
+    await _end('');
+  }
+
   /// Replaces the password (UC-003): ends the forced change of a temporary one and signs out the user's other phones. Returns an empty string
   /// once changed, otherwise the word key of the refusal: `changePassword.invalidCredentials`, `changePassword.accountLocked`,
   /// `changePassword.weakPassword` or `changePassword.noConnection`.

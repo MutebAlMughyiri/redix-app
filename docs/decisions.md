@@ -6,6 +6,7 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | Signing out always leaves this phone; the server is told when it can be reached | Leaving a shared phone must always work; the phone forgets its tokens, and the server closes the session after 12 hours unused |
 | 2026-11-05 | One class to a file, and what a second feature needs moves to one owner: `ApiList`, `ApiListBody`, `ConfirmDialog`, `ChangeDialog`, `showRefusalOf` | Muteb: "our code must be simple and clean, well structured"; seven more settings lists are coming, and a copy would drift |
 | 2026-11-05 | New user is a form of its own, not under the list as on the canvas, and a row's actions are in Material's menu, not a strip under the row | One look across settings lists, and Material draws and places the menu |
 | 2026-11-05 | The form has Mobile, which may be empty | The canvas lacks it; the issues and the database design have it, and nothing uses it yet |

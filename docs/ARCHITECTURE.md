@@ -7,7 +7,7 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 ```
 lib/
   main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
-  account/my_account_screen.dart  My account: the language and the way into the password change
+  account/my_account_screen.dart  My account: the language, the way into the password change, and signing out
   settings/settings_screen.dart   Settings: the way into My account and, for owners, Projects
   api_list.dart             ApiList: a list the API owns, and the way to change it; every settings list extends it
   ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, showRefusalOf

@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../auth/change_password_screen.dart';
+import '../auth/session.dart';
+import '../ui/confirm_dialog.dart';
 import '../words/app_language.dart';
 import '../words/words.dart';
 
-/// My account (حسابي): the user's own settings. Today the language (UC-004) and the way to change the password (UC-003); the default
-/// project and face ID join it with UC-010 and UC-011.
+/// My account (حسابي): the user's own settings. Today the language (UC-004), the way to change the password (UC-003), and signing out
+/// (UC-062); the default project and face ID join it with UC-010 and UC-011.
 class MyAccountScreen extends StatefulWidget {
-  /// The screen, switching [language].
-  const MyAccountScreen({super.key, required this.language});
+  /// The screen, switching [language] and signing out of [session].
+  const MyAccountScreen({super.key, required this.language, required this.session});
 
   /// The language choice this screen changes.
   final AppLanguage language;
+
+  /// The session this screen signs out of.
+  final Session session;
 
   /// The screen's route.
   static const path = '/my-account';
@@ -28,6 +33,18 @@ class MyAccountScreen extends StatefulWidget {
 
   /// The way into the password change.
   static const changePasswordKey = Key('myAccount.changePassword');
+
+  /// The row that signs out, after asking.
+  static const signOutKey = Key('myAccount.signOut');
+
+  /// What signing out means, in the question.
+  static const signOutExplainKey = ConfirmDialog.explanationKey;
+
+  /// The button that signs out, in the question.
+  static const confirmSignOutKey = ConfirmDialog.confirmKey;
+
+  /// The button that changes nothing, in the question.
+  static const cancelSignOutKey = ConfirmDialog.cancelKey;
 
   @override
   State<MyAccountScreen> createState() => _MyAccountScreenState();
@@ -46,6 +63,19 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         _message = refusal;
       });
     }
+  }
+
+  void _askToSignOut() {
+    final words = Words.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (_) => ConfirmDialog(
+        title: words.myAccountSignOutQuestion,
+        explanation: words.myAccountSignOutExplain,
+        confirmLabel: words.myAccountSignOut,
+        onConfirm: widget.session.signOut,
+      ),
+    );
   }
 
   @override
@@ -79,6 +109,15 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             title: Text(words.myAccountChangePassword),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => context.push(ChangePasswordScreen.path),
+          ),
+          ListTile(
+            key: MyAccountScreen.signOutKey,
+            contentPadding: EdgeInsets.zero,
+            iconColor: theme.colorScheme.error,
+            textColor: theme.colorScheme.error,
+            leading: const Icon(Icons.logout),
+            title: Text(words.myAccountSignOut),
+            onTap: _askToSignOut,
           ),
         ],
       ),

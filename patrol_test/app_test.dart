@@ -20,7 +20,7 @@ const temporaryPassword = String.fromEnvironment('TEST_PASSWORD');
 const newPassword = String.fromEnvironment('TEST_NEW_PASSWORD');
 
 void main() {
-  patrolTest('an owner signs in, then manages projects, users and the language', ($) async {
+  patrolTest('an owner signs in, then manages projects, users and the language; a new user follows', ($) async {
     final session = Session();
     final language = AppLanguage();
     await session.restore();
@@ -35,14 +35,14 @@ void main() {
 
     await $(SignInScreen.usernameKey).enterText(username);
     await $(SignInScreen.passwordKey).enterText(temporaryPassword);
-    await $(SignInScreen.submitKey).tap();
+    await $(SignInScreen.submitKey).scrollTo().tap();
     await $(ChangePasswordScreen.currentKey).waitUntilVisible();
     await $.takeNativeScreenshot('change-password');
 
     await $(ChangePasswordScreen.currentKey).enterText(temporaryPassword);
     await $(ChangePasswordScreen.newKey).enterText(newPassword);
     await $(ChangePasswordScreen.confirmKey).enterText(newPassword);
-    await $(ChangePasswordScreen.submitKey).tap();
+    await $(ChangePasswordScreen.submitKey).scrollTo().tap();
     await $(HomeScreen.titleKey).waitUntilVisible();
 
     expect($(HomeScreen.subtitleKey), findsOneWidget);
@@ -149,5 +149,24 @@ void main() {
     await $(MyAccountScreen.englishKey).tap();
     await $.pumpAndSettle();
     expect(Directionality.of($.tester.element(find.byKey(MyAccountScreen.englishKey))), TextDirection.ltr);
+
+    await $(MyAccountScreen.signOutKey).tap();
+    await $(MyAccountScreen.cancelSignOutKey).tap();
+    expect($(MyAccountScreen.signOutKey), findsOneWidget);
+    await $(MyAccountScreen.signOutKey).tap();
+    await $(MyAccountScreen.confirmSignOutKey).tap();
+
+    await $(SignInScreen.usernameKey).enterText('patrol-nawaf');
+    await $(SignInScreen.passwordKey).enterText('Temporary-2');
+    await $(SignInScreen.submitKey).scrollTo().tap();
+    await $(ChangePasswordScreen.currentKey).enterText('Temporary-2');
+    await $(ChangePasswordScreen.newKey).enterText('Nawaf-chosen-1');
+    await $(ChangePasswordScreen.confirmKey).enterText('Nawaf-chosen-1');
+    await $(ChangePasswordScreen.submitKey).scrollTo().tap();
+
+    await $(HomeScreen.settingsKey).tap();
+    await $(SettingsScreen.myAccountKey).waitUntilVisible();
+    expect($(SettingsScreen.projectsKey), findsNothing);
+    expect($(SettingsScreen.usersKey), findsNothing);
   });
 }
