@@ -9,6 +9,7 @@ import '../words/words.dart';
 import 'edit_user_dialog.dart';
 import 'new_user_screen.dart';
 import 'reset_password_dialog.dart';
+import 'user_projects_screen.dart';
 import 'user.dart';
 import 'user_row.dart';
 import 'users.dart';
@@ -35,6 +36,9 @@ class UsersScreen extends StatefulWidget {
 
   /// Edit, in a row's menu.
   static const editKey = Key('users.edit');
+
+  /// Projects and roles, in a row's menu.
+  static const projectsKey = Key('users.projects');
 
   /// Reset password, in a row's menu.
   static const resetPasswordKey = Key('users.resetPassword');
@@ -87,6 +91,9 @@ class UsersScreen extends StatefulWidget {
   /// The username and mobile of the user [id].
   static Key detailsKey(String id) => Key('users.details.$id');
 
+  /// The projects and roles of the user [id].
+  static Key projectsLineKey(String id) => Key('users.projectsLine.$id');
+
   /// The badge of the user [id], an owner or disabled.
   static Key statusKey(String id) => Key('users.status.$id');
 
@@ -138,6 +145,7 @@ class _UsersScreenState extends State<UsersScreen> {
             context: context,
             builder: (_) => EditUserDialog(user: user, users: widget.users),
           ),
+          onProjects: () => context.push(UserProjectsScreen.pathOf(user.id)),
           onResetPassword: () => showDialog<void>(
             context: context,
             builder: (_) => ResetPasswordDialog(user: user, users: widget.users),

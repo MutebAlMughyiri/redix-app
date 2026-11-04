@@ -34,6 +34,13 @@ void main() {
     expect(text(tester, UsersScreen.detailsKey('user-0')), 'muteb');
   });
 
+  testWidgets("a row says an owner is in every project, and anyone else's projects", (tester) async {
+    await openUsers(tester);
+
+    expect(text(tester, UsersScreen.projectsLineKey('user-0')), 'en users.everyProject');
+    expect(text(tester, UsersScreen.projectsLineKey('user-1')), 'en users.noProjects');
+  });
+
   testWidgets("an owner's row has the Owner badge and offers Edit only", (tester) async {
     final api = await openUsers(tester);
 
@@ -41,6 +48,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-0'))));
     expect(find.byKey(UsersScreen.editKey), findsOneWidget);
+    expect(find.byKey(UsersScreen.projectsKey), findsNothing);
     expect(find.byKey(UsersScreen.resetPasswordKey), findsNothing);
     expect(find.byKey(UsersScreen.disableKey), findsNothing);
     expect(find.byKey(UsersScreen.enableKey), findsNothing);
@@ -53,6 +61,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-1'))));
     expect(find.byKey(UsersScreen.editKey), findsOneWidget);
+    expect(find.byKey(UsersScreen.projectsKey), findsOneWidget);
     expect(find.byKey(UsersScreen.resetPasswordKey), findsOneWidget);
     expect(find.byKey(UsersScreen.disableKey), findsOneWidget);
     expect(find.byKey(UsersScreen.enableKey), findsNothing);

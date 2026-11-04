@@ -1,5 +1,6 @@
 import '../api_list.dart';
 import '../auth/session.dart';
+import 'project_role.dart';
 import 'user.dart';
 
 /// The users (UC-007), and the one way to change them. Each change returns an empty string once made, otherwise the word key of the refusal.
@@ -23,4 +24,10 @@ class Users extends ApiList<User> {
 
   /// Lets the disabled [user] sign in again.
   Future<String> enable(User user) => change('/users/${user.id}/enable', {});
+
+  /// Gives [user] the project [projectId] with [role], or changes the role they have in it.
+  Future<String> assign(User user, String projectId, ProjectRole role) => change('/users/${user.id}/projects/$projectId', {'role': role.name});
+
+  /// Takes the project [projectId] away from [user].
+  Future<String> remove(User user, String projectId) => change('/users/${user.id}/projects/$projectId/remove', {});
 }

@@ -4,13 +4,14 @@ import '../words/words.dart';
 import 'user.dart';
 import 'users_screen.dart';
 
-/// One user on the list: their name, username and mobile, a badge for an owner or a disabled user, and a menu of what can be done to them.
+/// One user on the list: their name, username, mobile and projects, a badge for an owner or a disabled user, and a menu of what can be done to them.
 class UserRow extends StatelessWidget {
   /// The row of [user], calling the given callback when its menu item is chosen.
   const UserRow({
     super.key,
     required this.user,
     required this.onEdit,
+    required this.onProjects,
     required this.onResetPassword,
     required this.onDisable,
     required this.onEnable,
@@ -22,6 +23,9 @@ class UserRow extends StatelessWidget {
   /// Called when Edit is chosen.
   final VoidCallback onEdit;
 
+  /// Called when Projects and roles is chosen.
+  final VoidCallback onProjects;
+
   /// Called when Reset password is chosen.
   final VoidCallback onResetPassword;
 
@@ -30,6 +34,16 @@ class UserRow extends StatelessWidget {
 
   /// Called when Enable is chosen.
   final VoidCallback onEnable;
+
+  String _projectsLine(Words words) {
+    if (user.isOwner) {
+      return words.usersEveryProject;
+    }
+    if (user.projects.isEmpty) {
+      return words.usersNoProjects;
+    }
+    return user.projects.map((project) => '${words.text(project.role.wordKey)} · ${project.name}').join(' / ');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,13 +73,20 @@ class UserRow extends StatelessWidget {
               ),
           ],
         ),
-        subtitle: Text(user.mobile.isEmpty ? user.username : '${user.username} · ${user.mobile}', key: UsersScreen.detailsKey(user.id)),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(user.mobile.isEmpty ? user.username : '${user.username} · ${user.mobile}', key: UsersScreen.detailsKey(user.id)),
+            Text(_projectsLine(words), key: UsersScreen.projectsLineKey(user.id)),
+          ],
+        ),
         trailing: PopupMenuButton<VoidCallback>(
           key: UsersScreen.menuKey(user.id),
           onSelected: (action) => action(),
           itemBuilder: (context) => [
             PopupMenuItem(key: UsersScreen.editKey, value: onEdit, child: Text(words.usersEdit)),
             if (!user.isOwner) ...[
+              PopupMenuItem(key: UsersScreen.projectsKey, value: onProjects, child: Text(words.usersProjects)),
               PopupMenuItem(key: UsersScreen.resetPasswordKey, value: onResetPassword, child: Text(words.usersResetPassword)),
               if (user.isActive)
                 PopupMenuItem(key: UsersScreen.disableKey, value: onDisable, child: Text(words.usersDisable))

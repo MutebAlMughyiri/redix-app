@@ -6,6 +6,8 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | Projects and roles is its own screen, saved at each tick, not a section of the new user form | One way to assign, for new and existing users; it differs from the canvas, and a new user takes two steps |
+| 2026-11-05 | A newly ticked project starts as Reader, and the role is three chips that wrap | Reader is the least a user can be given; Muteb added it, and three choices do not fit the canvas's switch at 360 points |
 | 2026-11-05 | Signing out always leaves this phone; the server is told when it can be reached | Leaving a shared phone must always work; the phone forgets its tokens, and the server closes the session after 12 hours unused |
 | 2026-11-05 | One class to a file, and what a second feature needs moves to one owner: `ApiList`, `ApiListBody`, `ConfirmDialog`, `ChangeDialog`, `showRefusalOf` | Muteb: "our code must be simple and clean, well structured"; seven more settings lists are coming, and a copy would drift |
 | 2026-11-05 | New user is a form of its own, not under the list as on the canvas, and a row's actions are in Material's menu, not a strip under the row | One look across settings lists, and Material draws and places the menu |

@@ -13,6 +13,7 @@ import 'projects/projects.dart';
 import 'projects/projects_screen.dart';
 import 'settings/settings_screen.dart';
 import 'users/new_user_screen.dart';
+import 'users/user_projects_screen.dart';
 import 'users/users.dart';
 import 'users/users_screen.dart';
 import 'words/app_language.dart';
@@ -66,6 +67,10 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(path: UsersScreen.path, builder: (context, state) => UsersScreen(users: _users)),
       GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _users)),
+      GoRoute(
+        path: UserProjectsScreen.path,
+        builder: (context, state) => UserProjectsScreen(userId: state.pathParameters['userId'] ?? '', users: _users, projects: _projects),
+      ),
     ],
   );
 

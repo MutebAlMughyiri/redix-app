@@ -20,6 +20,7 @@ Map<String, String> wordsIn(String language) => {
     'changePassword.submit', 'changePassword.mismatch', 'changePassword.invalidCredentials', 'changePassword.accountLocked',
     'changePassword.weakPassword', 'changePassword.noConnection',
     'myAccount.title', 'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
+    'users.projects', 'users.roleFinance', 'users.roleField', 'users.roleReader', 'users.everyProject', 'users.noProjects', 'users.projectsHint', 'users.ownerIsInEveryProject',
     'myAccount.changePassword', 'myAccount.signOut', 'myAccount.signOutQuestion', 'myAccount.signOutExplain',
     'settings.title', 'projects.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.running',
     'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
@@ -155,6 +156,7 @@ class FakeApi {
       'isOwner': isOwner,
       'isActive': isActive,
       'mustChangePassword': false,
+      'projects': <Map<String, Object>>[],
     };
     users.add(user);
     return user;
@@ -173,7 +175,17 @@ class FakeApi {
     if (path == '/users') {
       return _json(addUser(body['displayName'] as String, username: body['username'] as String, mobile: body['mobile'] as String), 201);
     }
-    final user = users.singleWhere((user) => user['id'] == request.url.pathSegments[1]);
+    final segments = request.url.pathSegments;
+    final user = users.singleWhere((user) => user['id'] == segments[1]);
+    if (segments.length >= 4 && segments[2] == 'projects') {
+      final given = user['projects'] as List<Map<String, Object>>;
+      given.removeWhere((project) => project['projectId'] == segments[3]);
+      if (segments.length == 4) {
+        final project = projects.singleWhere((project) => project['id'] == segments[3]);
+        given.add({'projectId': segments[3], 'name': project['name'] as String, 'role': body['role'] as String});
+      }
+      return _json(user, 200);
+    }
     if (path.endsWith('/disable')) {
       user['isActive'] = false;
     } else if (path.endsWith('/enable')) {

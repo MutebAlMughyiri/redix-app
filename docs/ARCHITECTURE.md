@@ -23,6 +23,10 @@ lib/
     users.dart              Users: the ApiList of users, and its changes
     users_screen.dart       the users
     user_row.dart           one user on the list, with its menu
+    project_role.dart       ProjectRole: the three roles, each knowing its word
+    user_project.dart       a project a user works on, and as what
+    user_projects_screen.dart  a user's projects and roles
+    user_project_row.dart   one project on that screen
     edit_user_dialog.dart   the Edit dialog
     reset_password_dialog.dart  the Reset password dialog
     new_user_screen.dart    the new user form

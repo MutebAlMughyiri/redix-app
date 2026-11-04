@@ -194,6 +194,9 @@ mixin WordGetters {
   /// The word `users.enable`.
   String get usersEnable => text('users.enable');
 
+  /// The word `users.everyProject`.
+  String get usersEveryProject => text('users.everyProject');
+
   /// The word `users.invalidMobile`.
   String get usersInvalidMobile => text('users.invalidMobile');
 
@@ -221,11 +224,23 @@ mixin WordGetters {
   /// The word `users.noConnection`.
   String get usersNoConnection => text('users.noConnection');
 
+  /// The word `users.noProjects`.
+  String get usersNoProjects => text('users.noProjects');
+
   /// The word `users.owner`.
   String get usersOwner => text('users.owner');
 
   /// The word `users.ownerCannotBeDisabled`.
   String get usersOwnerCannotBeDisabled => text('users.ownerCannotBeDisabled');
+
+  /// The word `users.ownerIsInEveryProject`.
+  String get usersOwnerIsInEveryProject => text('users.ownerIsInEveryProject');
+
+  /// The word `users.projects`.
+  String get usersProjects => text('users.projects');
+
+  /// The word `users.projectsHint`.
+  String get usersProjectsHint => text('users.projectsHint');
 
   /// The word `users.refused`.
   String get usersRefused => text('users.refused');
@@ -235,6 +250,15 @@ mixin WordGetters {
 
   /// The word `users.resetPassword`.
   String get usersResetPassword => text('users.resetPassword');
+
+  /// The word `users.roleField`.
+  String get usersRoleField => text('users.roleField');
+
+  /// The word `users.roleFinance`.
+  String get usersRoleFinance => text('users.roleFinance');
+
+  /// The word `users.roleReader`.
+  String get usersRoleReader => text('users.roleReader');
 
   /// The word `users.save`.
   String get usersSave => text('users.save');

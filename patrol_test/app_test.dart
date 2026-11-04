@@ -123,6 +123,16 @@ void main() {
     await $(UsersScreen.enableKey).tap();
     await $.pumpAndSettle();
 
+    await newUserMenu.tap();
+    await $(UsersScreen.projectsKey).tap();
+    await $(keyStartingWith('userProjects.tick.')).tap();
+    await $(keyStartingWith('userProjects.fieldSupervisor.')).waitUntilVisible();
+    await $(keyStartingWith('userProjects.fieldSupervisor.')).tap();
+    await $.pumpAndSettle();
+    await $.takeNativeScreenshot('user-projects');
+    await $(BackButton).tap();
+    await $.pumpAndSettle();
+
     await $(BackButton).tap();
     await $(SettingsScreen.myAccountKey).tap();
     await $(MyAccountScreen.arabicKey).waitUntilVisible();

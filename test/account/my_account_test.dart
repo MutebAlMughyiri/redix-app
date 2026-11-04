@@ -10,6 +10,8 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/users/new_user_screen.dart';
+import 'package:redix/users/project_role.dart';
+import 'package:redix/users/user_projects_screen.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -231,6 +233,7 @@ void main() {
         UsersScreen.statusKey('user-0'),
         UsersScreen.menuKey('user-0'),
         UsersScreen.detailsKey('user-1'),
+        UsersScreen.projectsLineKey('user-1'),
         UsersScreen.menuKey('user-1'),
         UsersScreen.statusKey('user-2'),
       ].forEach(expectFits);
@@ -240,6 +243,19 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.resetPasswordKey)));
       [UsersScreen.resetExplainKey, UsersScreen.resetPasswordFieldKey, UsersScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+
+      await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-1'))));
+      await act(tester, api, () => tester.tap(find.byKey(UsersScreen.projectsKey)));
+      await act(tester, api, () => tester.tap(find.byKey(UserProjectsScreen.tickKey(runningId))));
+      [
+        UserProjectsScreen.nameKey,
+        UserProjectsScreen.hintKey,
+        UserProjectsScreen.tickKey(runningId),
+        UserProjectsScreen.roleKey(runningId, ProjectRole.financeSupervisor),
+        UserProjectsScreen.roleKey(runningId, ProjectRole.fieldSupervisor),
+        UserProjectsScreen.roleKey(runningId, ProjectRole.reader),
+      ].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.newUserKey)));
       [NewUserScreen.nameKey, NewUserScreen.usernameKey, NewUserScreen.mobileKey, NewUserScreen.passwordKey].forEach(expectFits);

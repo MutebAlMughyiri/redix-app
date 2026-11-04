@@ -3,7 +3,7 @@
 # Users · المستخدمون
 
 <img src="images/users.png" alt="The users" width="300"> <img src="images/users-arabic.png" alt="المستخدمون بالعربية" width="300">
-<img src="images/new-user.png" alt="A new user" width="300">
+<img src="images/new-user.png" alt="A new user" width="300"> <img src="images/user-projects.png" alt="A user's projects and roles" width="300">
 
 ## English
 
@@ -17,11 +17,14 @@
 3. Type a temporary password of at least 8 characters.
 4. Tap **Add user**, then give them their username and temporary password. At their first sign-in, the app makes them choose their own.
 
+**Give someone projects:** tap the three dots on their row, then **Projects and roles**. Tick a project, and choose **Finance**, **Field** or **Reader**. It is saved at once, and they see only these projects. An owner is already a financial supervisor in every project.
+
 **Look after a user:** tap the three dots on their row.
 
 | Choice | What it does |
 | --- | --- |
 | Edit | Corrects their name and mobile. A username never changes. |
+| Projects and roles | Gives them projects, as above. |
 | Reset password | For a forgotten password. Type a new temporary one and pass it on. They are signed out, and choose their own at their next sign-in. |
 | Disable | They are signed out at their next action and cannot sign in. They stay in the list, and their entries are kept. |
 | Enable | Lets a disabled user sign in again. |
@@ -52,11 +55,14 @@ An owner can only be edited here.
 3. اكتب كلمة مرور مؤقتة من 8 أحرف على الأقل.
 4. اضغط **إضافة المستخدم**، ثم أعطه اسم المستخدم وكلمة المرور المؤقتة. عند أول دخول، يطلب منه التطبيق اختيار كلمة مروره.
 
+**لإعطاء مستخدم مشاريع:** اضغط النقاط الثلاث في صفه، ثم **المشاريع والأدوار**. حدد المشروع، واختر **مالي** أو **ميداني** أو **قارئ**. يُحفظ ذلك فوراً، ولا يرى غير هذه المشاريع. المالك مشرف مالي في كل المشاريع أصلاً.
+
 **العناية بمستخدم:** اضغط النقاط الثلاث في صفه.
 
 | الخيار | ماذا يفعل |
 | --- | --- |
 | تعديل | يصحح اسمه وجواله. اسم المستخدم لا يتغير. |
+| المشاريع والأدوار | يعطيه مشاريع، كما سبق. |
 | إعادة تعيين كلمة المرور | عند نسيان كلمة المرور. اكتب كلمة مؤقتة جديدة وأعطه إياها. يُسجَّل خروجه، ويختار كلمة مروره عند دخوله التالي. |
 | تعطيل | يُسجَّل خروجه عند أول إجراء تالٍ ولا يستطيع الدخول. يبقى في القائمة، وتبقى قيوده. |
 | تفعيل | يسمح لمستخدم معطّل بالدخول مرة أخرى. |
