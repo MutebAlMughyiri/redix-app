@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/users/users_screen.dart';
 
@@ -9,15 +10,20 @@ import '../app_harness.dart';
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  Future<FakeApi> openUsers(WidgetTester tester) async {
-    final api = FakeApi()..isOwner = true;
+  Future<FakeApi> openProjectUsers(WidgetTester tester) async {
+    final api = FakeApi()..addProject('غصون 6');
+    final manager = api.addUser('متعب', username: 'muteb');
+    final field = api.addUser('نواف', username: 'nawaf', mobile: '0500000000');
+    final disabled = api.addUser('سالم', username: 'salem', isActive: false);
     api
-      ..addUser('متعب', username: 'muteb', isOwner: true)
-      ..addUser('نواف', username: 'nawaf', mobile: '0500000000')
-      ..addUser('سالم', username: 'salem', isActive: false);
+      ..giveRole(manager, 'project-0', 'role-manager')
+      ..giveRole(manager, 'project-0', 'role-finance')
+      ..giveRole(field, 'project-0', 'role-field')
+      ..giveRole(disabled, 'project-0', 'role-reader');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.usersKey('project-0'))));
     return api;
   }
 
@@ -27,48 +33,46 @@ void main() {
   }
 
   testWidgets('a row shows the name, username and mobile; the username alone when there is no mobile', (tester) async {
-    await openUsers(tester);
+    await openProjectUsers(tester);
 
     expect(text(tester, UsersScreen.nameKey('user-1')), 'نواف');
     expect(text(tester, UsersScreen.detailsKey('user-1')), 'nawaf · 0500000000');
     expect(text(tester, UsersScreen.detailsKey('user-0')), 'muteb');
   });
 
-  testWidgets("a row says an owner is in every project, and anyone else's projects", (tester) async {
-    await openUsers(tester);
+  testWidgets('the title names the project, and a row in it shows the roles alone', (tester) async {
+    await openProjectUsers(tester);
 
-    expect(text(tester, UsersScreen.projectsLineKey('user-0')), 'en users.everyProject');
-    expect(text(tester, UsersScreen.projectsLineKey('user-1')), 'en users.noProjects');
+    expect(find.text('en users.title · غصون 6'), findsOneWidget);
+    expect(text(tester, UsersScreen.projectsLineKey('user-0')), 'en users.roleManager · en users.roleFinance');
+    expect(text(tester, UsersScreen.projectsLineKey('user-1')), 'en users.roleField');
   });
 
-  testWidgets("an owner's row has the Owner badge and offers Edit only", (tester) async {
-    final api = await openUsers(tester);
-
-    expect(find.descendant(of: find.byKey(UsersScreen.statusKey('user-0')), matching: find.text('en users.owner')), findsOneWidget);
+  testWidgets('every row has the whole menu, a manager included', (tester) async {
+    final api = await openProjectUsers(tester);
 
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-0'))));
+
     expect(find.byKey(UsersScreen.editKey), findsOneWidget);
-    expect(find.byKey(UsersScreen.projectsKey), findsNothing);
-    expect(find.byKey(UsersScreen.resetPasswordKey), findsNothing);
-    expect(find.byKey(UsersScreen.disableKey), findsNothing);
-    expect(find.byKey(UsersScreen.enableKey), findsNothing);
-  });
-
-  testWidgets('an active user has no badge and offers Edit, Reset password and Disable', (tester) async {
-    final api = await openUsers(tester);
-
-    expect(find.byKey(UsersScreen.statusKey('user-1')), findsNothing);
-
-    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-1'))));
-    expect(find.byKey(UsersScreen.editKey), findsOneWidget);
-    expect(find.byKey(UsersScreen.projectsKey), findsOneWidget);
+    expect(find.byKey(UsersScreen.rolesKey), findsOneWidget);
     expect(find.byKey(UsersScreen.resetPasswordKey), findsOneWidget);
     expect(find.byKey(UsersScreen.disableKey), findsOneWidget);
     expect(find.byKey(UsersScreen.enableKey), findsNothing);
   });
 
+  testWidgets('an active user has no badge, and a disabled one offers Enable', (tester) async {
+    final api = await openProjectUsers(tester);
+
+    expect(find.byKey(UsersScreen.statusKey('user-1')), findsNothing);
+    expect(find.descendant(of: find.byKey(UsersScreen.statusKey('user-2')), matching: find.text('en users.disabled')), findsOneWidget);
+
+    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-2'))));
+    expect(find.byKey(UsersScreen.enableKey), findsOneWidget);
+    expect(find.byKey(UsersScreen.disableKey), findsNothing);
+  });
+
   testWidgets('disabling asks first, says what it means, and Cancel changes nothing', (tester) async {
-    final api = await openUsers(tester);
+    final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.disableKey);
     expect(text(tester, UsersScreen.disableNameKey), 'نواف');
@@ -81,7 +85,7 @@ void main() {
   });
 
   testWidgets('a disabled user stays listed with the Disabled badge, and Enable brings them back', (tester) async {
-    final api = await openUsers(tester);
+    final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.disableKey);
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.confirmDisableKey)));
@@ -93,18 +97,23 @@ void main() {
     expect(find.byKey(UsersScreen.statusKey('user-1')), findsNothing);
   });
 
-  testWidgets('a refused disable shows its word in a SnackBar', (tester) async {
-    final api = await openUsers(tester);
+  testWidgets("a refused disable shows its word in a SnackBar: the last manager, or someone also in another project", (tester) async {
+    final api = await openProjectUsers(tester);
     await choose(tester, api, 'user-1', UsersScreen.disableKey);
 
-    api.userAnswer = (status: 409, code: 'ownerCannotBeDisabled');
+    api.userAnswer = (status: 409, code: 'lastManager');
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.confirmDisableKey)));
+    expect(find.text('en users.lastManager'), findsOneWidget);
 
-    expect(find.text('en users.ownerCannotBeDisabled'), findsOneWidget);
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+    await choose(tester, api, 'user-1', UsersScreen.disableKey);
+    api.userAnswer = (status: 403, code: 'otherProject');
+    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.confirmDisableKey)));
+    expect(find.text('en users.otherProject'), findsOneWidget);
   });
 
   testWidgets('Edit starts from the current name and mobile, and the row shows the change', (tester) async {
-    final api = await openUsers(tester);
+    final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.editKey);
     expect(tester.widget<TextField>(find.byKey(UsersScreen.editNameKey)).controller!.text, 'نواف');
@@ -121,7 +130,7 @@ void main() {
   });
 
   testWidgets('a refused edit stays in the dialog with what was typed', (tester) async {
-    final api = await openUsers(tester);
+    final api = await openProjectUsers(tester);
     await choose(tester, api, 'user-1', UsersScreen.editKey);
 
     api.userAnswer = (status: 400, code: 'invalidName');
@@ -135,7 +144,7 @@ void main() {
   });
 
   testWidgets('Reset password names the user, says what it means, and sends the temporary password', (tester) async {
-    final api = await openUsers(tester);
+    final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.resetPasswordKey);
     expect(text(tester, UsersScreen.resetNameKey), 'نواف');
@@ -152,9 +161,59 @@ void main() {
     expect(body, {'temporaryPassword': 'Temporary-2'});
   });
 
+  testWidgets('an existing user is added by their username', (tester) async {
+    final api = await openProjectUsers(tester);
+    api.addUser('ريم', username: 'reem');
+
+    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.addExistingKey)));
+    await act(tester, api, () async {
+      await tester.enterText(find.byKey(UsersScreen.existingUsernameKey), 'reem');
+      await tester.tap(find.byKey(UsersScreen.saveKey));
+    });
+
+    expect(api.sentUserChanges.single.$1, '/projects/project-0/users/existing');
+    expect(api.sentUserChanges.single.$2, {'username': 'reem'});
+    expect(find.byKey(UsersScreen.saveKey), findsNothing);
+    expect(text(tester, UsersScreen.projectsLineKey('user-3')), 'en users.roleReader');
+  });
+
+  testWidgets('an unknown username stays in the dialog and says so', (tester) async {
+    final api = await openProjectUsers(tester);
+    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.addExistingKey)));
+
+    api.userAnswer = (status: 404, code: 'unknownUser');
+    await act(tester, api, () async {
+      await tester.enterText(find.byKey(UsersScreen.existingUsernameKey), 'nobody');
+      await tester.tap(find.byKey(UsersScreen.saveKey));
+    });
+
+    expect(text(tester, UsersScreen.dialogMessageKey), 'en users.unknownUser');
+  });
+
+  testWidgets('every login, for the system admin, says each person\'s projects and roles and offers no Roles', (tester) async {
+    final api = FakeApi()
+      ..permissions = systemAdmin
+      ..addProject('غصون 6');
+    final user = api.addUser('نواف', username: 'nawaf');
+    api
+      ..addUser('سالم', username: 'salem')
+      ..giveRole(user, 'project-0', 'role-field');
+    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
+
+    expect(text(tester, UsersScreen.projectsLineKey('user-0')), 'en users.roleField · غصون 6');
+    expect(text(tester, UsersScreen.projectsLineKey('user-1')), 'en users.noProjects');
+
+    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-0'))));
+    expect(find.byKey(UsersScreen.rolesKey), findsNothing);
+    expect(find.byKey(UsersScreen.resetPasswordKey), findsOneWidget);
+  });
+
   testWidgets('without a network the list says so, and Try again reads it', (tester) async {
-    final api = FakeApi()..isOwner = true;
-    api.addUser('متعب', username: 'muteb', isOwner: true);
+    final api = FakeApi()
+      ..permissions = systemAdmin
+      ..addUser('متعب', username: 'muteb');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
 

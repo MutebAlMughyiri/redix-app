@@ -1,43 +1,48 @@
 [Documentation](../README.md) › UC-008
 
-# UC-008: Assign users to projects with a role
+# UC-008: Add people to a project and give their roles
 
-**What it is for:** deciding who works on which project, and as what (FR-36).
-**Who uses it:** owners. What each role may then do is UC-009.
+**What it is for:** deciding who works on each project, and as what (FR-36).
+**Who uses it:** each project's manager, for that project alone. What each role may then do is UC-009.
 **Issue:** redix-app #28; the API side is redix-api #26.
 
-## Screen
+## Screens
 
-Projects and roles, `UserProjectsScreen` at `/users/:userId/projects`, opened from a user's menu (`UsersScreen.projectsKey`); an owner's menu does not offer it:
+A project's Users, `UsersScreen` at `/projects/:projectId/users`, opened from the project's card (`ProjectsScreen.usersKey(id)`), and Roles, `UserRolesScreen` at `/projects/:projectId/users/:userId/roles`, opened from a person's menu (`UsersScreen.rolesKey`):
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Whose | `UserProjectsScreen.nameKey` | The user's name |
-| A project's tick | `UserProjectsScreen.tickKey(projectId)` | Gives or takes away the project, at once |
-| Finance, Field and Reader | `UserProjectsScreen.roleKey(projectId, role)` | The role in that project, at once; shown while ticked |
+| New user | `UsersScreen.newUserKey` | Opens the form; a new login is born in this project, as the last role |
+| Add an existing user | `UsersScreen.addExistingKey` | Asks for their exact username (`UsersScreen.existingUsernameKey`), as the last role |
+| Whose | `UserRolesScreen.nameKey` | The person's name |
+| A role's tick | `UserRolesScreen.roleKey(roleId)` | Gives or takes the role, at once |
 
-A project starts as Reader when ticked: the least a user can be given, so a stray tick gives the least. A refusal shows in a SnackBar.
+The roles come from the API, in its order, so a role added in the database appears with no release. Someone can hold more than one. A refusal shows in a SnackBar.
 
 ## API calls
 
 | Call | When |
 | --- | --- |
-| `GET /projects`, `GET /users` | Opening the screen, and after every answer |
-| `POST /users/{userId}/projects/{projectId}` | Ticking, or choosing a role |
-| `POST /users/{userId}/projects/{projectId}/remove` | Unticking |
+| `GET /projects/{projectId}/users` | Opening Users, and after every answer |
+| `GET /projects/{projectId}/roles` | Opening Roles |
+| `POST /projects/{projectId}/users` | Adding a new user |
+| `POST /projects/{projectId}/users/existing` | Adding an existing user |
+| `POST /projects/{projectId}/users/{userId}/roles/{roleId}` | Ticking a role |
+| `POST /projects/{projectId}/users/{userId}/roles/{roleId}/remove` | Unticking a role |
 
 ## Rules and where they live
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Ticking gives the project as Reader | `UserProjectRow` | `user_projects_test.dart`: ticking |
-| Choosing a role changes it at once | `Users.assign` | `user_projects_test.dart`: choosing a role |
-| Unticking takes the project away | `Users.remove` | `user_projects_test.dart`: unticking |
-| A finished project can be given, and says it is finished | `UserProjectRow` | `user_projects_test.dart`: a finished project |
-| A user's row shows their projects and roles | `UserRow` | `users_test.dart`: a row shows |
-| An owner's row says every project, and its menu has no Projects and roles | `UserRow` | `users_test.dart`: an owner's row |
+| A tick gives the role at once, and someone can hold more than one | `UserRolesScreen`, `Users.give` | `user_roles_test.dart`: a tick gives the role |
+| Unticking takes the role away | `Users.take` | `user_roles_test.dart`: unticking |
+| Roles come from the API, a new one included | `Roles` | `user_roles_test.dart`: roles come from the API |
+| Taking the last role takes them off the list | `Users.take`, `UserRolesScreen` | `user_roles_test.dart`: taking their last role |
+| The last manager's refusal shows its word | `showRefusalOf` | `user_roles_test.dart`: a refusal |
+| A row on a project's list shows the roles alone | `UserRow` | `users_test.dart`: the title names the project |
+| An existing user is added by username, and an unknown one says so | `AddExistingUserDialog` | `users_test.dart`: an existing user, an unknown username |
 | AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `my_account_test.dart`: AC-N03, once per language |
 
 ## Left to later use cases
 
-What each role may do (UC-009), and the list where a user opens their projects, with the default project (UC-010).
+Opening the project list right after sign-in, and the default project (UC-010).

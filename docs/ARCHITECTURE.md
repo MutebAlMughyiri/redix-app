@@ -8,7 +8,7 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 lib/
   main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
   account/my_account_screen.dart  My account: the language, the way into the password change, and signing out
-  settings/settings_screen.dart   Settings: the way into My account and, for owners, Projects
+  settings/settings_screen.dart   Settings: the way into Projects, My account and, for the system admin, every login
   api_list.dart             ApiList: a list the API owns, and the way to change it; every settings list extends it
   ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, showRefusalOf
   projects/
@@ -20,19 +20,21 @@ lib/
     new_project_screen.dart the new project form
   users/
     user.dart               User, as the API answers it
-    users.dart              Users: the ApiList of users, and its changes
-    users_screen.dart       the users
+    users.dart              Users: the ApiList of one project's people or of every login, and its changes
+    users_screen.dart       a project's people, or every login
     user_row.dart           one user on the list, with its menu
-    project_role.dart       ProjectRole: the three roles, each knowing its word
-    user_project.dart       a project a user works on, and as what
-    user_projects_screen.dart  a user's projects and roles
-    user_project_row.dart   one project on that screen
+    role.dart               Role, as the API answers it; the app names no role
+    roles.dart              Roles: the ApiList of what a project can give
+    user_project.dart       one role a user holds in one project
+    user_roles_screen.dart  a person's roles in a project
+    add_existing_user_dialog.dart  the Add an existing user dialog
     edit_user_dialog.dart   the Edit dialog
     reset_password_dialog.dart  the Reset password dialog
     new_user_screen.dart    the new user form
   format/date_format.dart   formatDate: the app's one date format, dd.MM.yyyy
   api.dart                  the API's address and how a reply's JSON is read, shared by every feature
   auth/
+    permission.dart         Permission: what the API says a user may do, as its name in the API
     session.dart            Session: the signed-in session, kept in the Keychain or Keystore
     sign_in_screen.dart     the sign-in screen
     change_password_screen.dart  the password change, forced while the password is temporary

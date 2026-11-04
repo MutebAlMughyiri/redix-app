@@ -3,7 +3,7 @@
 # UC-006: Manage projects and units
 
 **What it is for:** creating a project with its units, adding a unit later, and closing a finished project (FR-04).
-**Who uses it:** the financial supervisor. Until project roles arrive with UC-008, that means an owner, who is a financial supervisor in every project (BR-29).
+**Who uses it:** the system admin starts a project; its financial supervisors add units and close it; everyone with a role in it reads it (UC-009).
 **Issue:** redix-app #26; the API side is redix-api #24.
 
 ## Screens
@@ -12,7 +12,7 @@
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Projects | `SettingsScreen.projectsKey` | Opens the projects; shown to owners only |
+| Projects | `SettingsScreen.projectsKey` | Opens the projects |
 | My account | `SettingsScreen.myAccountKey` | Opens My account |
 
 [Projects](../guide/projects.md), `ProjectsScreen` at `/projects`:
@@ -67,7 +67,7 @@ All go through `Session`, which renews an expired access token once and sends ag
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Only an owner sees Projects | `SettingsScreen`, `Session.isOwner` | `settings_test.dart`: an owner sees Projects; anyone else sees My account only |
+| Everyone sees Projects | `SettingsScreen` | `settings_test.dart`: anyone else sees Projects and My account |
 | A project is created with its units, at once | `Projects.create`; `ProjectsEndpoints.Create` in the API | `new_project_test.dart`: a project is created with its units; Patrol |
 | A unit typed but not yet added goes with the project | `NewProjectScreen` | `new_project_test.dart`: a unit typed but not yet added |
 | A project needs no units | `NewProjectScreen` | `new_project_test.dart`: a project needs no units |
@@ -81,7 +81,7 @@ All go through `Session`, which renews an expired access token once and sends ag
 | Closing asks first and says what it means; Cancel changes nothing | `ProjectsScreen`, `ConfirmDialog` | `projects_test.dart`: closing asks first |
 | A finished project is read-only and stays listed (AC-04.1) | `Project.isFinished`, `ProjectCard`; `Project.IsReadOnly` in the API | `projects_test.dart`: a finished project stays listed; Patrol |
 | The list says when it is empty, and when it cannot load | `ApiList.load`, `ApiListBody` | `projects_test.dart`: with no projects yet; without a network |
-| The list is read again after every answer, so another owner's change shows | `ApiList.change` | `projects_test.dart`: a project another owner closed |
+| The list is read again after every answer, so someone else's change shows | `ApiList.change` | `projects_test.dart`: a project someone else closed |
 | Arabic names show as typed | `jsonOf` | `projects_test.dart`: Arabic names |
 | AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `my_account_test.dart`: AC-N03, once per language |
 
@@ -90,6 +90,5 @@ All go through `Session`, which renews an expired access token once and sends ag
 | What | Use case |
 | --- | --- |
 | Copying the structure from the template or an earlier project (AC-05.2) | UC-012, the first with categories and items to copy |
-| A project's own financial supervisors, besides owners | UC-008 and UC-009 |
 | Refusing new entries and approvals in a finished project | Each entry use case |
 | Settings' other rows | Their own use cases, from UC-007 |

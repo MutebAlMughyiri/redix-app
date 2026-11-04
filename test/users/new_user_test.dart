@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
@@ -9,11 +10,12 @@ import '../app_harness.dart';
 
 void main() {
   Future<FakeApi> openForm(WidgetTester tester) async {
-    final api = FakeApi()..isOwner = true;
-    api.addUser('متعب', username: 'muteb', isOwner: true);
+    final api = FakeApi()..addProject('غصون 6');
+    api.giveRole(api.addUser('متعب', username: 'muteb'), 'project-0', 'role-manager');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.usersKey('project-0'))));
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.newUserKey)));
     return api;
   }
@@ -35,13 +37,13 @@ void main() {
     await fillAndSubmit(tester, api);
 
     final (path, body) = api.sentUserChanges.single;
-    expect(path, '/users');
+    expect(path, '/projects/project-0/users');
     expect(body, {'displayName': 'نواف', 'username': 'nawaf', 'mobile': '0500000000', 'temporaryPassword': 'Temporary-1'});
     expect(find.byKey(NewUserScreen.submitKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(UsersScreen.nameKey('user-1'))).data, 'نواف');
   });
 
-  testWidgets('the temporary password shows as typed, so the owner can pass it on', (tester) async {
+  testWidgets('the temporary password shows as typed, so the project manager can pass it on', (tester) async {
     await openForm(tester);
 
     expect(tester.widget<TextField>(find.byKey(NewUserScreen.passwordKey)).obscureText, isFalse);

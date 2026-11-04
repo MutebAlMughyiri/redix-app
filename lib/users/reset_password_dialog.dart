@@ -6,7 +6,7 @@ import 'user.dart';
 import 'users.dart';
 import 'users_screen.dart';
 
-/// Sets a new temporary password for a user, typed by the owner, who passes it on.
+/// Sets a new temporary password for a user, typed by whoever manages them, who passes it on.
 class ResetPasswordDialog extends StatefulWidget {
   /// The dialog resetting [user] through [users].
   const ResetPasswordDialog({super.key, required this.user, required this.users});

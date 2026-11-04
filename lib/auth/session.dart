@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../api.dart';
+import 'permission.dart';
 
 /// The signed-in session (UC-002): the tokens the API issued, kept only in the Keychain or Keystore (NFR-09), and the one way to call the API as the user.
 class Session extends ChangeNotifier {
@@ -18,7 +19,7 @@ class Session extends ChangeNotifier {
   var _accessToken = '';
   var _refreshToken = '';
   var _mustChangePassword = false;
-  var _isOwner = false;
+  var _permissions = <String>{};
   var _notice = '';
 
   /// True from sign-in until the session ends.
@@ -30,8 +31,8 @@ class Session extends ChangeNotifier {
   /// True while the password is a temporary one that must be changed before anything else (UC-003).
   bool get mustChangePassword => _mustChangePassword;
 
-  /// True for an owner, who is a financial supervisor in every project (BR-29); the app shows what only an owner may do.
-  bool get isOwner => _isOwner;
+/// Whether the user holds [permission] everywhere; what they hold in a project comes with the project.
+  bool may(Permission permission) => _permissions.contains(permission.name);
 
   /// The word key of why the last session ended, for the sign-in screen; empty when there is nothing to say.
   String get notice => _notice;
@@ -140,6 +141,6 @@ class Session extends ChangeNotifier {
     _accessToken = session['accessToken'] as String? ?? '';
     _refreshToken = session['refreshToken'] as String? ?? '';
     _mustChangePassword = session['mustChangePassword'] as bool? ?? false;
-    _isOwner = session['isOwner'] as bool? ?? false;
+    _permissions = {...(session['permissions'] as List<dynamic>? ?? []).cast<String>()};
   }
 }

@@ -4,14 +4,15 @@ import '../words/words.dart';
 import 'user.dart';
 import 'users_screen.dart';
 
-/// One user on the list: their name, username, mobile and projects, a badge for an owner or a disabled user, and a menu of what can be done to them.
+/// One user on the list: their name, username, mobile and roles, a badge when disabled, and a menu of what can be done to them.
 class UserRow extends StatelessWidget {
-  /// The row of [user], calling the given callback when its menu item is chosen.
+  /// The row of [user] on a project's list when [inProject], otherwise on the list of every login, calling the given callback when its menu item is chosen.
   const UserRow({
     super.key,
     required this.user,
+    required this.inProject,
     required this.onEdit,
-    required this.onProjects,
+    required this.onRoles,
     required this.onResetPassword,
     required this.onDisable,
     required this.onEnable,
@@ -20,11 +21,14 @@ class UserRow extends StatelessWidget {
   /// The user this row shows.
   final User user;
 
+  /// True on a project's list, which shows the roles alone and offers Roles.
+  final bool inProject;
+
   /// Called when Edit is chosen.
   final VoidCallback onEdit;
 
-  /// Called when Projects and roles is chosen.
-  final VoidCallback onProjects;
+  /// Called when Roles is chosen.
+  final VoidCallback onRoles;
 
   /// Called when Reset password is chosen.
   final VoidCallback onResetPassword;
@@ -36,11 +40,11 @@ class UserRow extends StatelessWidget {
   final VoidCallback onEnable;
 
   String _projectsLine(Words words) {
-    if (user.isOwner) {
-      return words.usersEveryProject;
-    }
     if (user.projects.isEmpty) {
       return words.usersNoProjects;
+    }
+    if (inProject) {
+      return user.projects.map((project) => words.text(project.role.wordKey)).join(' · ');
     }
     return user.projects.map((project) => '${words.text(project.role.wordKey)} · ${project.name}').join(' / ');
   }
@@ -63,11 +67,11 @@ class UserRow extends StatelessWidget {
               key: UsersScreen.nameKey(user.id),
               style: user.isActive ? null : TextStyle(color: colors.onSurfaceVariant),
             ),
-            if (user.isOwner || !user.isActive)
+            if (!user.isActive)
               Chip(
                 key: UsersScreen.statusKey(user.id),
-                label: Text(user.isOwner ? words.usersOwner : words.usersDisabled),
-                backgroundColor: user.isOwner ? colors.tertiaryContainer : colors.surfaceContainerHighest,
+                label: Text(words.usersDisabled),
+                backgroundColor: colors.surfaceContainerHighest,
                 side: BorderSide.none,
                 visualDensity: VisualDensity.compact,
               ),
@@ -85,14 +89,12 @@ class UserRow extends StatelessWidget {
           onSelected: (action) => action(),
           itemBuilder: (context) => [
             PopupMenuItem(key: UsersScreen.editKey, value: onEdit, child: Text(words.usersEdit)),
-            if (!user.isOwner) ...[
-              PopupMenuItem(key: UsersScreen.projectsKey, value: onProjects, child: Text(words.usersProjects)),
-              PopupMenuItem(key: UsersScreen.resetPasswordKey, value: onResetPassword, child: Text(words.usersResetPassword)),
-              if (user.isActive)
-                PopupMenuItem(key: UsersScreen.disableKey, value: onDisable, child: Text(words.usersDisable))
-              else
-                PopupMenuItem(key: UsersScreen.enableKey, value: onEnable, child: Text(words.usersEnable)),
-            ],
+            if (inProject) PopupMenuItem(key: UsersScreen.rolesKey, value: onRoles, child: Text(words.usersRoles)),
+            PopupMenuItem(key: UsersScreen.resetPasswordKey, value: onResetPassword, child: Text(words.usersResetPassword)),
+            if (user.isActive)
+              PopupMenuItem(key: UsersScreen.disableKey, value: onDisable, child: Text(words.usersDisable))
+            else
+              PopupMenuItem(key: UsersScreen.enableKey, value: onEnable, child: Text(words.usersEnable)),
           ],
         ),
       ),

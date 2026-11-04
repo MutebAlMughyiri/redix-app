@@ -1,12 +1,12 @@
-import 'project_role.dart';
+import 'role.dart';
 
-/// A project a user works on, and as what.
+/// One role a user holds in one project.
 class UserProject {
-  /// The project the API describes in [json].
+  /// The line the API describes in [json].
   UserProject.fromJson(Map<String, dynamic> json)
     : projectId = json['projectId'] as String,
       name = json['name'] as String,
-      role = ProjectRole.values.byName(json['role'] as String);
+      role = Role.fromJson(json['role'] as Map<String, dynamic>);
 
   /// The project's id.
   final String projectId;
@@ -14,6 +14,6 @@ class UserProject {
   /// The project's name.
   final String name;
 
-  /// The user's role in it.
-  final ProjectRole role;
+  /// The role.
+  final Role role;
 }

@@ -10,7 +10,7 @@ import '../app_harness.dart';
 
 void main() {
   Future<void> openForm(WidgetTester tester, FakeApi api) async {
-    api.isOwner = true;
+    api.permissions = systemAdmin;
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));

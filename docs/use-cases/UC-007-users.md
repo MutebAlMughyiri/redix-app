@@ -3,7 +3,7 @@
 # UC-007: Manage users
 
 **What it is for:** creating the accounts of the people who use the app, correcting them, disabling them, and resetting a forgotten password (FR-02).
-**Who uses it:** owners, who manage the users (BR-29).
+**Who uses it:** project managers, from a project's card; the system admin, for every login, from Settings (BR-29).
 **Issue:** redix-app #27; the API side is redix-api #25.
 
 ## Screens
@@ -13,11 +13,11 @@
 | Element | `Key` | Does |
 | --- | --- | --- |
 | New user | `UsersScreen.newUserKey` | Opens the new user form |
-| A user's row | `UsersScreen.rowKey(id)` | One user; owners first, then active users, by name |
+| A user's row | `UsersScreen.rowKey(id)` | One user; active users first, by name |
 | Name | `UsersScreen.nameKey(id)` | Their name, muted once disabled |
 | Details | `UsersScreen.detailsKey(id)` | Their username and mobile |
-| Owner or Disabled | `UsersScreen.statusKey(id)` | The badge of an owner or a disabled user |
-| The row's menu | `UsersScreen.menuKey(id)` | Edit; and Reset password and Disable or Enable, except on an owner |
+| Disabled | `UsersScreen.statusKey(id)` | The badge of a disabled user |
+| The row's menu | `UsersScreen.menuKey(id)` | Edit, Roles on a project's list, Reset password, and Disable or Enable |
 | Edit | `UsersScreen.editKey` | Opens the Edit dialog: `editNameKey`, `editMobileKey` |
 | Reset password | `UsersScreen.resetPasswordKey` | Opens the Reset password dialog: `resetNameKey`, `resetExplainKey`, `resetPasswordFieldKey` |
 | Save, in both dialogs | `UsersScreen.saveKey` | Sends the change; disabled while waiting |
@@ -52,17 +52,17 @@ New user, `NewUserScreen` at `/users/new`:
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Only an owner sees Users | `SettingsScreen`, `Session.isOwner` | `settings_test.dart`: an owner sees Projects, Users and My account; anyone else sees My account only |
-| A new user can sign in and must change the temporary password (AC-02.1) | The API; `RedixApp`'s redirect | `UsersTests.AnOwnerCreatesAUserWhoMustChangeThePassword`, in the API |
+| Only whoever manages logins sees every login | `SettingsScreen`, `Session.may` | `settings_test.dart`: anyone else sees Projects and My account |
+| A new user can sign in and must change the temporary password (AC-02.1) | The API; `RedixApp`'s redirect | `ProjectUsersTests.AManagerCreatesALoginInTheProjectWhoStartsAsTheLastRoleAndMustChangeThePassword`, in the API |
 | A refusal shows its own line, and nothing typed is lost | `Users`, `NewUserScreen` | `new_user_test.dart`: a taken username |
 | A row shows the username alone when there is no mobile | `UserRow` | `users_test.dart`: a row shows |
-| The temporary password shows as typed, so the owner can pass it on | `NewUserScreen` | `new_user_test.dart`: the temporary password shows as typed |
+| The temporary password shows as typed, so the project manager can pass it on | `NewUserScreen` | `new_user_test.dart`: the temporary password shows as typed |
 | Disabling asks first and says what it means; Cancel changes nothing | `UsersScreen`, `ConfirmDialog` | `users_test.dart`: disabling asks first |
 | A refused change stays in its dialog with what was typed | `ChangeDialog` | `users_test.dart`: a refused edit |
 | Reset password names the user and says what it means | `ResetPasswordDialog` | `users_test.dart`: Reset password |
 | Without a network the list and the form say so | `ApiList`, `NewUserScreen` | `users_test.dart`, `new_user_test.dart`: without a network |
 | A disabled user stays listed, muted, and can be enabled | `UserRow`, `UsersScreen` | `users_test.dart`: a disabled user stays listed |
-| An owner's row offers Edit only | `UserRow` | `users_test.dart`: an owner's row |
+| Every row has the whole menu | `UserRow` | `users_test.dart`: every row has the whole menu |
 | A disabled user's session ends at their next request (AC-01.3) | The API | `UsersTests.DisablingAUserEndsTheOpenSessionAtTheNextRequest`, in the API |
 | AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `my_account_test.dart`: AC-N03, once per language |
 
@@ -70,5 +70,5 @@ New user, `NewUserScreen` at `/users/new`:
 
 | What | Use case |
 | --- | --- |
-| Each user's projects and role on the form and the row | UC-008 |
+| A user's roles on the row | UC-008, UC-009 |
 | A cash custody created with the user | UC-015 |

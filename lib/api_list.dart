@@ -6,7 +6,9 @@ import 'auth/session.dart';
 /// A list the API owns, as it last answered, and the way to change it. Nothing about it is kept on the phone.
 abstract class ApiList<T> extends ChangeNotifier {
   /// The list at the API [_path], made from JSON by [_fromJson], whose word keys start with [_wordPrefix].
-  ApiList(this._session, this._path, this._wordPrefix, this._fromJson);
+  ApiList(this._session, this._path, this._wordPrefix, this._fromJson) {
+    _session.addListener(_forgetAtSignOut);
+  }
 
   final Session _session;
   final String _path;
@@ -25,6 +27,19 @@ abstract class ApiList<T> extends ChangeNotifier {
 
   /// True while the list is being read.
   bool get isLoading => _isLoading;
+
+  /// What one user read never shows to the next on this phone, even for the moment the next list takes to load (BR-33).
+  void _forgetAtSignOut() {
+    if (!_session.isOpen) {
+      _all = [];
+    }
+  }
+
+  @override
+  void dispose() {
+    _session.removeListener(_forgetAtSignOut);
+    super.dispose();
+  }
 
   /// Reads the list from the API.
   Future<void> load() async {
@@ -46,7 +61,7 @@ abstract class ApiList<T> extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Sends a change to the API [path] and, once it has answered, reads the list again, so what another owner changed shows as it is now.
+  /// Sends a change to the API [path] and, once it has answered, reads the list again, so what someone else changed shows as it is now.
   /// Returns an empty string once changed, otherwise the word key of the refusal.
   @protected
   Future<String> change(String path, Map<String, Object> body) async {

@@ -13,7 +13,7 @@ void main() {
       tester.widget<Text>(find.descendant(of: find.byKey(ProjectsScreen.statusKey(id)), matching: find.byType(Text))).data!;
 
   Future<void> openProjects(WidgetTester tester, FakeApi api) async {
-    api.isOwner = true;
+    api.permissions = systemAdmin;
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
@@ -27,9 +27,7 @@ void main() {
   });
 
   testWidgets('without a network the list says so, and Try again reads it', (tester) async {
-    final api = FakeApi()
-      ..isOwner = true
-      ..addProject('غصون 6');
+    final api = FakeApi()..addProject('غصون 6');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
 
@@ -122,7 +120,7 @@ void main() {
     expect(status(tester, 'project-0'), 'en projects.running');
   });
 
-  testWidgets('a project another owner closed shows its refusal, and the list is read again', (tester) async {
+  testWidgets('a project someone else closed shows its refusal, and the list is read again', (tester) async {
     final api = FakeApi();
     final project = api.addProject('غصون 6');
     await openProjects(tester, api);
@@ -180,9 +178,8 @@ void main() {
 
   testWidgets('an expired access token is renewed once when reading the list', (tester) async {
     final api = FakeApi()
-      ..isOwner = true
       ..refreshStatus = 500;
-    await pumpRedix(tester, api, stored: {'session': keptOwnerSession});
+    await pumpRedix(tester, api, stored: {'session': keptSession});
     api
       ..expiredAccessTokens.add('kept-access')
       ..refreshStatus = 200;
@@ -192,5 +189,66 @@ void main() {
 
     expect(api.sentAccessTokens, ['kept-access', 'new-access']);
     expect(find.byKey(ProjectsScreen.emptyKey), findsOneWidget);
+  });
+
+  Future<void> openAsAnyone(WidgetTester tester, FakeApi api) async {
+    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
+  }
+
+  testWidgets('New project shows only with startProject', (tester) async {
+    await openAsAnyone(tester, FakeApi()..addProject('غصون 6'));
+
+    expect(find.byKey(ProjectsScreen.newProjectKey), findsNothing);
+  });
+
+  testWidgets('each project says what the user is in it', (tester) async {
+    final api = FakeApi()
+      ..addProject('غصون 6')
+      ..addProject('غصون 7', roles: ['users.roleReader'], permissions: ['readProject']);
+    await openAsAnyone(tester, api);
+
+    expect(text(tester, ProjectsScreen.rolesKey('project-0')), 'en users.roleManager · en users.roleFinance');
+    expect(text(tester, ProjectsScreen.rolesKey('project-1')), 'en users.roleReader');
+  });
+
+  testWidgets('a reader or a field supervisor sees the project and can change nothing', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', roles: ['users.roleReader'], permissions: ['readProject']);
+    await openAsAnyone(tester, api);
+
+    expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsOneWidget);
+    expect(find.byKey(ProjectsScreen.usersKey('project-0')), findsNothing);
+    expect(find.byKey(ProjectsScreen.addUnitKey('project-0')), findsNothing);
+    expect(find.byKey(ProjectsScreen.closeKey('project-0')), findsNothing);
+  });
+
+  testWidgets('a manager with no other role has Users, but no Add unit or Close', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', roles: ['users.roleManager'], permissions: ['manageUsers', 'readProject', 'seeAllCapital']);
+    await openAsAnyone(tester, api);
+
+    expect(find.byKey(ProjectsScreen.usersKey('project-0')), findsOneWidget);
+    expect(find.byKey(ProjectsScreen.addUnitKey('project-0')), findsNothing);
+    expect(find.byKey(ProjectsScreen.closeKey('project-0')), findsNothing);
+  });
+
+  testWidgets('a financial supervisor has Add unit and Close, but no Users', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', roles: ['users.roleFinance'], permissions: ['readProject', 'seeAllCapital', 'manageProject']);
+    await openAsAnyone(tester, api);
+
+    expect(find.byKey(ProjectsScreen.usersKey('project-0')), findsNothing);
+    expect(find.byKey(ProjectsScreen.addUnitKey('project-0')), findsOneWidget);
+    expect(find.byKey(ProjectsScreen.closeKey('project-0')), findsOneWidget);
+  });
+
+  testWidgets('Users stays on a finished project, and the list is read again on coming back', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', status: 'finished', roles: ['users.roleManager'], permissions: ['manageUsers', 'readProject']);
+    await openAsAnyone(tester, api);
+
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.usersKey('project-0'))));
+    api.projects.single['permissions'] = ['readProject'];
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+    expect(find.byKey(ProjectsScreen.usersKey('project-0')), findsNothing);
   });
 }

@@ -13,7 +13,8 @@ import 'projects/projects.dart';
 import 'projects/projects_screen.dart';
 import 'settings/settings_screen.dart';
 import 'users/new_user_screen.dart';
-import 'users/user_projects_screen.dart';
+import 'users/roles.dart';
+import 'users/user_roles_screen.dart';
 import 'users/users.dart';
 import 'users/users_screen.dart';
 import 'words/app_language.dart';
@@ -53,6 +54,8 @@ class _RedixAppState extends State<RedixApp> {
   var _wordsAttempt = 0;
   late final _projects = Projects(widget.session);
   late final _users = Users(widget.session);
+  final _projectUsers = <String, Users>{};
+  final _projectRoles = <String, Roles>{};
 
   late final _router = GoRouter(
     refreshListenable: widget.session,
@@ -63,16 +66,29 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
       GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(language: widget.language, session: widget.session)),
       GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session)),
-      GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects)),
+      GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects, session: widget.session)),
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(path: UsersScreen.path, builder: (context, state) => UsersScreen(users: _users)),
-      GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _users)),
       GoRoute(
-        path: UserProjectsScreen.path,
-        builder: (context, state) => UserProjectsScreen(userId: state.pathParameters['userId'] ?? '', users: _users, projects: _projects),
+        path: UsersScreen.projectPath,
+        builder: (context, state) => UsersScreen(users: _usersOf(state.pathParameters['projectId'] ?? ''), projectName: state.extra as String? ?? ''),
+      ),
+      GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _usersOf(state.pathParameters['projectId'] ?? ''))),
+      GoRoute(
+        path: UserRolesScreen.path,
+        builder: (context, state) => UserRolesScreen(
+          userId: state.pathParameters['userId'] ?? '',
+          users: _usersOf(state.pathParameters['projectId'] ?? ''),
+          roles: _rolesOf(state.pathParameters['projectId'] ?? ''),
+          projectName: state.extra as String? ?? '',
+        ),
       ),
     ],
   );
+
+  Users _usersOf(String projectId) => _projectUsers.putIfAbsent(projectId, () => Users(widget.session, projectId: projectId));
+
+  Roles _rolesOf(String projectId) => _projectRoles.putIfAbsent(projectId, () => Roles(widget.session, projectId));
 
   String? _redirect(String location) {
     final session = widget.session;

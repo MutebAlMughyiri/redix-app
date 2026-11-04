@@ -6,24 +6,41 @@ import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
+import 'add_existing_user_dialog.dart';
 import 'edit_user_dialog.dart';
 import 'new_user_screen.dart';
 import 'reset_password_dialog.dart';
-import 'user_projects_screen.dart';
 import 'user.dart';
+import 'user_roles_screen.dart';
 import 'user_row.dart';
 import 'users.dart';
 
-/// The users (UC-007): one row per user, with a menu to edit, reset the password, and disable or enable. An owner can only be edited (BR-29).
+/// The people of one project, for its manager, or every login, for the system admin (UC-007, UC-009): one row per user, with a menu to edit, reset the password,
+/// and disable or enable. A project's list also adds people and gives their roles.
 class UsersScreen extends StatefulWidget {
-  /// The screen, showing and changing [users].
-  const UsersScreen({super.key, required this.users});
+  /// The screen, showing and changing [users], of the project [projectName] if they belong to one.
+  const UsersScreen({super.key, required this.users, this.projectName = ''});
 
   /// The users this screen shows and changes.
   final Users users;
 
-  /// The screen's route.
+  /// The name of their project; empty on the list of every login.
+  final String projectName;
+
+  /// The route of every login.
   static const path = '/users';
+
+  /// The route of a project's people.
+  static const projectPath = '/projects/:projectId/users';
+
+  /// The route of the people of the project [projectId].
+  static String pathOf(String projectId) => '/projects/$projectId/users';
+
+  /// The button that adds someone who already has a login.
+  static const addExistingKey = Key('users.addExisting');
+
+  /// Their username, in the Add an existing user dialog.
+  static const existingUsernameKey = Key('users.existingUsername');
 
   /// The button that opens the new user form.
   static const newUserKey = Key('users.new');
@@ -37,8 +54,8 @@ class UsersScreen extends StatefulWidget {
   /// Edit, in a row's menu.
   static const editKey = Key('users.edit');
 
-  /// Projects and roles, in a row's menu.
-  static const projectsKey = Key('users.projects');
+  /// Roles, in a row's menu.
+  static const rolesKey = Key('users.roles');
 
   /// Reset password, in a row's menu.
   static const resetPasswordKey = Key('users.resetPassword');
@@ -64,10 +81,10 @@ class UsersScreen extends StatefulWidget {
   /// The new temporary password, in the Reset password dialog.
   static const resetPasswordFieldKey = Key('users.resetPasswordField');
 
-  /// The button that saves, in the Edit and Reset password dialogs.
+  /// The button that saves, in the Edit, Reset password and Add an existing user dialogs.
   static const saveKey = ChangeDialog.saveKey;
 
-  /// The line that says why a change was refused, in the Edit and Reset password dialogs.
+  /// The line that says why a change was refused, in the Edit, Reset password and Add an existing user dialogs.
   static const dialogMessageKey = ChangeDialog.messageKey;
 
   /// Who is being disabled, in the disable question.
@@ -94,7 +111,7 @@ class UsersScreen extends StatefulWidget {
   /// The projects and roles of the user [id].
   static Key projectsLineKey(String id) => Key('users.projectsLine.$id');
 
-  /// The badge of the user [id], an owner or disabled.
+  /// The badge of the user [id], when disabled.
   static Key statusKey(String id) => Key('users.status.$id');
 
   /// The menu of the user [id].
@@ -128,24 +145,42 @@ class _UsersScreenState extends State<UsersScreen> {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
+    final users = widget.users;
     return Scaffold(
-      appBar: AppBar(title: Text(words.usersTitle)),
-      floatingActionButton: FloatingActionButton.extended(
-        key: UsersScreen.newUserKey,
-        icon: const Icon(Icons.add),
-        label: Text(words.usersNew),
-        onPressed: () => context.push(NewUserScreen.path),
+      appBar: AppBar(
+        title: Text(widget.projectName.isEmpty ? words.usersTitle : '${words.usersTitle} · ${widget.projectName}'),
+        actions: [
+          if (users.isOfAProject)
+            IconButton(
+              key: UsersScreen.addExistingKey,
+              icon: const Icon(Icons.person_search_outlined),
+              tooltip: words.usersAddExisting,
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) => AddExistingUserDialog(users: users),
+              ),
+            ),
+        ],
       ),
+      floatingActionButton: users.isOfAProject
+          ? FloatingActionButton.extended(
+              key: UsersScreen.newUserKey,
+              icon: const Icon(Icons.add),
+              label: Text(words.usersNew),
+              onPressed: () => context.push(NewUserScreen.pathOf(users.projectId)),
+            )
+          : null,
       body: ApiListBody(
         list: widget.users,
         emptyText: '',
         itemBuilder: (user) => UserRow(
           user: user,
+          inProject: users.isOfAProject,
           onEdit: () => showDialog<void>(
             context: context,
             builder: (_) => EditUserDialog(user: user, users: widget.users),
           ),
-          onProjects: () => context.push(UserProjectsScreen.pathOf(user.id)),
+          onRoles: () => context.push(UserRolesScreen.pathOf(users.projectId, user.id), extra: widget.projectName),
           onResetPassword: () => showDialog<void>(
             context: context,
             builder: (_) => ResetPasswordDialog(user: user, users: widget.users),

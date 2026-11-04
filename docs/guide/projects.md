@@ -8,7 +8,7 @@
 ## English
 
 **What it is for:** starting a project with its units, and closing it when it is finished.
-**Who sees it:** owners. Open it from **Settings**, then **Projects**. It needs a network.
+**Who sees it:** everyone, with the projects they have a role in. Open it from **Settings**, then **Projects**. It needs a network. Under each name are your roles in that project, and its buttons follow them: the system admin starts a project and becomes its project manager; a financial supervisor adds units and closes it; a project manager opens its **Users**.
 
 **Create a project**
 
@@ -33,12 +33,12 @@ A closed project shows **Finished** and **Read-only**, stays in the list, and ca
 | Enter a name of 1 to 100 characters. | A project or a unit needs a name, no longer than 100 characters. |
 | This project is finished, so it cannot change. | Someone closed it meanwhile; the list now shows it. |
 | No connection to the server. Try again. | The phone cannot reach REDIX; nothing was changed. |
-| The server refused this change. | You may no longer be allowed to do this; ask an owner. |
+| The server refused this change. | You may no longer be allowed to do this; ask your project manager. |
 
 ## العربية
 
 **الغرض:** بدء مشروع بوحداته، وإغلاقه عند انتهائه.
-**من يراها:** الملّاك. افتحها من **الإعدادات** ثم **المشاريع**. تحتاج إلى شبكة.
+**من يراها:** الجميع، كلٌّ بالمشاريع التي له دور فيها. افتحها من **الإعدادات** ثم **المشاريع**. تحتاج إلى شبكة. تحت كل اسم أدوارك في المشروع، وأزراره تتبعها: مسؤول النظام ينشئ المشروع ويصبح مديره، والمشرف المالي يضيف الوحدات ويغلقه، ومدير المشروع يفتح **المستخدمون**.
 
 **إنشاء مشروع**
 
@@ -63,4 +63,4 @@ A closed project shows **Finished** and **Read-only**, stays in the list, and ca
 | اكتب اسماً من 1 إلى 100 حرف. | يحتاج المشروع أو الوحدة إلى اسم لا يزيد عن 100 حرف. |
 | هذا المشروع منتهٍ، فلا يمكن تغييره. | أغلقه شخص آخر في الأثناء؛ والقائمة تظهره الآن. |
 | لا يوجد اتصال بالخادم. حاول مرة أخرى. | لا يصل الجوال إلى REDIX؛ لم يتغير شيء. |
-| رفض الخادم هذا التغيير. | ربما لم يعد مسموحاً لك بذلك؛ راجع أحد الملّاك. |
+| رفض الخادم هذا التغيير. | ربما لم يعد مسموحاً لك بذلك؛ راجع مدير مشروعك. |

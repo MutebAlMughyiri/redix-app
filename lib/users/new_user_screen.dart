@@ -4,16 +4,19 @@ import 'package:go_router/go_router.dart';
 import '../words/words.dart';
 import 'users.dart';
 
-/// The new user form (UC-007): their name, username, mobile and a temporary password they change at first sign-in (AC-02.1).
+/// The new user form (UC-007): their name, username, mobile and a temporary password they change at first sign-in (AC-02.1). A new login is born in a project.
 class NewUserScreen extends StatefulWidget {
-  /// The form, adding to [users].
+  /// The form, adding to the project's [users].
   const NewUserScreen({super.key, required this.users});
 
   /// The users the new one joins.
   final Users users;
 
   /// The screen's route.
-  static const path = '/users/new';
+  static const path = '/projects/:projectId/users/new';
+
+  /// The route of this screen for the project [projectId].
+  static String pathOf(String projectId) => '/projects/$projectId/users/new';
 
   /// The user's name.
   static const nameKey = Key('newUser.name');
@@ -24,7 +27,7 @@ class NewUserScreen extends StatefulWidget {
   /// The user's mobile.
   static const mobileKey = Key('newUser.mobile');
 
-  /// The temporary password, shown as typed so the owner can pass it on.
+  /// The temporary password, shown as typed so the project manager can pass it on.
   static const passwordKey = Key('newUser.password');
 
   /// The button that adds the user.

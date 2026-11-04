@@ -20,18 +20,19 @@ Map<String, String> wordsIn(String language) => {
     'changePassword.submit', 'changePassword.mismatch', 'changePassword.invalidCredentials', 'changePassword.accountLocked',
     'changePassword.weakPassword', 'changePassword.noConnection',
     'myAccount.title', 'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
-    'users.projects', 'users.roleFinance', 'users.roleField', 'users.roleReader', 'users.everyProject', 'users.noProjects', 'users.projectsHint', 'users.ownerIsInEveryProject',
+    'users.roles', 'users.rolesHint', 'users.roleManager', 'users.roleFinance', 'users.roleField', 'users.roleReader', 'users.noProjects',
+    'users.addExisting', 'users.unknownUser', 'users.invalidRole', 'users.lastManager', 'users.otherProject',
     'myAccount.changePassword', 'myAccount.signOut', 'myAccount.signOutQuestion', 'myAccount.signOutExplain',
     'settings.title', 'projects.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.running',
     'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
     'projects.unitName', 'projects.addUnit', 'projects.removeUnit', 'projects.create', 'common.cancel', 'projects.close',
     'projects.closeQuestion', 'projects.closeExplain', 'projects.invalidName', 'projects.projectFinished', 'projects.noConnection',
     'projects.refused',
-    'users.title', 'users.new', 'users.loadFailed', 'users.owner', 'users.disabled', 'users.edit', 'users.resetPassword', 'users.disable',
+    'users.title', 'users.new', 'users.loadFailed', 'users.disabled', 'users.edit', 'users.resetPassword', 'users.disable',
     'users.enable', 'users.name', 'users.nameHint', 'users.username', 'users.mobile', 'users.temporaryPassword',
     'users.temporaryPasswordHint', 'users.add', 'users.save', 'users.disableQuestion', 'users.disableExplain', 'users.resetExplain',
     'users.invalidName', 'users.invalidUsername', 'users.invalidMobile', 'users.usernameTaken', 'users.weakPassword',
-    'users.ownerCannotBeDisabled', 'users.noConnection', 'users.refused',
+    'users.noConnection', 'users.refused',
   ])
     key: '$language $key',
 };
@@ -42,8 +43,11 @@ const keptSession = '{"accessToken": "kept-access", "refreshToken": "kept-refres
 /// A kept session whose password is temporary.
 const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": true}';
 
-/// A kept session of an owner.
-const keptOwnerSession = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": false, "isOwner": true}';
+/// What a system admin holds everywhere.
+const systemAdmin = ['startProject', 'manageLogins'];
+
+/// What a project manager who also does the finance may do in a project.
+const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject'];
 
 /// The API as the app's tests see it: words for any language, and the answers of sign-in, refresh and password change each test chooses.
 class FakeApi {
@@ -62,8 +66,16 @@ class FakeApi {
   /// The status and problem code `POST /auth/change-password` answers; 200 changes the password.
   var changePasswordAnswer = (status: 200, code: '');
 
-  /// Whether the signed-in user is an owner: every session says so.
-  var isOwner = false;
+  /// What the signed-in user holds everywhere: every session says so.
+  var permissions = <String>[];
+
+  /// The roles a project can give, in their order.
+  final roles = <Map<String, String>>[
+    {'id': 'role-manager', 'wordKey': 'users.roleManager'},
+    {'id': 'role-finance', 'wordKey': 'users.roleFinance'},
+    {'id': 'role-field', 'wordKey': 'users.roleField'},
+    {'id': 'role-reader', 'wordKey': 'users.roleReader'},
+  ];
 
   /// The projects the API holds, as it answers them.
   final projects = <Map<String, Object>>[];
@@ -127,13 +139,20 @@ class FakeApi {
       mustChangePassword = false;
     }
     final body = status == 200
-        ? '{"accessToken": "new-access", "refreshToken": "new-refresh", "mustChangePassword": $mustChangePassword, "isOwner": $isOwner}'
+        ? '{"accessToken": "new-access", "refreshToken": "new-refresh", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}}'
         : '{"code": "$code"}';
     return http.Response(body, status);
   });
 
   /// Adds a project to what the API holds, with [units] named in order.
-  Map<String, Object> addProject(String name, {String status = 'running', String startDate = '2026-03-01', List<String> units = const []}) {
+  Map<String, Object> addProject(
+    String name, {
+    String status = 'running',
+    String startDate = '2026-03-01',
+    List<String> units = const [],
+    List<String> roles = const ['users.roleManager', 'users.roleFinance'],
+    List<String> permissions = managerAndFinance,
+  }) {
     final id = 'project-${projects.length}';
     final project = <String, Object>{
       'id': id,
@@ -141,25 +160,69 @@ class FakeApi {
       'startDate': startDate,
       'status': status,
       'units': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}],
+      'roles': roles,
+      'permissions': permissions,
     };
     projects.add(project);
     return project;
   }
 
   /// Adds a user to what the API holds.
-  Map<String, Object> addUser(String displayName, {required String username, String mobile = '', bool isOwner = false, bool isActive = true}) {
+  Map<String, Object> addUser(String displayName, {required String username, String mobile = '', bool isActive = true}) {
     final user = <String, Object>{
       'id': 'user-${users.length}',
       'username': username,
       'displayName': displayName,
       'mobile': mobile,
-      'isOwner': isOwner,
       'isActive': isActive,
       'mustChangePassword': false,
       'projects': <Map<String, Object>>[],
     };
     users.add(user);
     return user;
+  }
+
+  /// Gives [user], as [addUser] answered them, a role in the project [projectId].
+  void giveRole(Map<String, Object> user, String projectId, String roleId) {
+    final project = projects.singleWhere((project) => project['id'] == projectId);
+    final role = roles.singleWhere((role) => role['id'] == roleId);
+    (user['projects'] as List<Map<String, Object>>).add({'projectId': projectId, 'name': project['name'] as String, 'role': role});
+  }
+
+  /// [user] as a project's list answers them: only that project's lines.
+  Map<String, Object> _inProject(Map<String, Object> user, String projectId) => {
+    ...user,
+    'projects': (user['projects'] as List<Map<String, Object>>).where((line) => line['projectId'] == projectId).toList(),
+  };
+
+  http.Response _answerProjectUsers(http.Request request, String projectId) {
+    final segments = request.url.pathSegments;
+    if (request.method == 'GET') {
+      final inProject = users.where((user) => (_inProject(user, projectId)['projects'] as List<Map<String, Object>>).isNotEmpty);
+      return _json([for (final user in inProject) _inProject(user, projectId)], 200);
+    }
+    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    sentUserChanges.add((request.url.path, body));
+    if (userAnswer.status >= 300) {
+      return _json({if (userAnswer.code.isNotEmpty) 'code': userAnswer.code}, userAnswer.status);
+    }
+    if (segments.length == 3) {
+      final user = addUser(body['displayName'] as String, username: body['username'] as String, mobile: body['mobile'] as String);
+      giveRole(user, projectId, roles.last['id']!);
+      return _json(_inProject(user, projectId), 201);
+    }
+    if (segments[3] == 'existing') {
+      final user = users.singleWhere((user) => user['username'] == body['username']);
+      giveRole(user, projectId, roles.last['id']!);
+      return _json(_inProject(user, projectId), 200);
+    }
+    final user = users.singleWhere((user) => user['id'] == segments[3]);
+    if (segments.last == 'remove') {
+      (user['projects'] as List<Map<String, Object>>).removeWhere((line) => line['projectId'] == projectId && (line['role']! as Map<String, String>)['id'] == segments[5]);
+    } else {
+      giveRole(user, projectId, segments[5]);
+    }
+    return _json(_inProject(user, projectId), 200);
   }
 
   http.Response _answerUsers(http.Request request) {
@@ -172,20 +235,8 @@ class FakeApi {
     if (userAnswer.status >= 300) {
       return _json({if (userAnswer.code.isNotEmpty) 'code': userAnswer.code}, userAnswer.status);
     }
-    if (path == '/users') {
-      return _json(addUser(body['displayName'] as String, username: body['username'] as String, mobile: body['mobile'] as String), 201);
-    }
     final segments = request.url.pathSegments;
     final user = users.singleWhere((user) => user['id'] == segments[1]);
-    if (segments.length >= 4 && segments[2] == 'projects') {
-      final given = user['projects'] as List<Map<String, Object>>;
-      given.removeWhere((project) => project['projectId'] == segments[3]);
-      if (segments.length == 4) {
-        final project = projects.singleWhere((project) => project['id'] == segments[3]);
-        given.add({'projectId': segments[3], 'name': project['name'] as String, 'role': body['role'] as String});
-      }
-      return _json(user, 200);
-    }
     if (path.endsWith('/disable')) {
       user['isActive'] = false;
     } else if (path.endsWith('/enable')) {
@@ -201,6 +252,13 @@ class FakeApi {
   http.Response _json(Object body, int status) => http.Response.bytes(utf8.encode(jsonEncode(body)), status);
 
   http.Response _answerProjects(http.Request request) {
+    final segments = request.url.pathSegments;
+    if (segments.length >= 3 && segments[2] == 'roles') {
+      return _json(roles, 200);
+    }
+    if (segments.length >= 3 && segments[2] == 'users') {
+      return _answerProjectUsers(request, segments[1]);
+    }
     if (request.method == 'GET') {
       return _json(projects, 200);
     }

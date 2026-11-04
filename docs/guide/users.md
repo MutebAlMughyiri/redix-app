@@ -3,12 +3,14 @@
 # Users · المستخدمون
 
 <img src="images/users.png" alt="The users" width="300"> <img src="images/users-arabic.png" alt="المستخدمون بالعربية" width="300">
-<img src="images/new-user.png" alt="A new user" width="300"> <img src="images/user-projects.png" alt="A user's projects and roles" width="300">
+<img src="images/new-user.png" alt="A new user" width="300"> <img src="images/user-roles.png" alt="A person's roles in a project" width="300"> <img src="images/all-users.png" alt="Every login" width="300">
 
 ## English
 
-**What it is for:** creating the accounts of the people who use REDIX, and looking after them.
-**Who sees it:** owners. Open it from **Settings**, then **Users**. It needs a network.
+**What it is for:** adding the people of a project, giving their roles, and looking after their accounts.
+**Who sees it:** each project's project manager, from **Users** on the project's card; the system admin sees every login from **Settings**, then **Users**. It needs a network.
+
+Each project has its own project manager, who manages its users and roles. Open **Users** on the project's card. Add a new user, or add someone who already has a login by their exact username. To change what someone does, open their menu, choose **Roles** and tick what applies; someone can hold more than one. A project needs at least one project manager, and a manager changes the project itself only if also given Finance. If a person also works in another project, the system admin resets their password or disables them.
 
 **Add a user**
 
@@ -17,19 +19,17 @@
 3. Type a temporary password of at least 8 characters.
 4. Tap **Add user**, then give them their username and temporary password. At their first sign-in, the app makes them choose their own.
 
-**Give someone projects:** tap the three dots on their row, then **Projects and roles**. Tick a project, and choose **Finance**, **Field** or **Reader**. It is saved at once, and they see only these projects. An owner is already a financial supervisor in every project.
+**Change what someone does:** tap the three dots on their row, then **Roles**, and tick what applies. It is saved at once.
 
 **Look after a user:** tap the three dots on their row.
 
 | Choice | What it does |
 | --- | --- |
 | Edit | Corrects their name and mobile. A username never changes. |
-| Projects and roles | Gives them projects, as above. |
+| Roles | Says what they do in this project, as above. |
 | Reset password | For a forgotten password. Type a new temporary one and pass it on. They are signed out, and choose their own at their next sign-in. |
 | Disable | They are signed out at their next action and cannot sign in. They stay in the list, and their entries are kept. |
 | Enable | Lets a disabled user sign in again. |
-
-An owner can only be edited here.
 
 | Message | Meaning |
 | --- | --- |
@@ -38,7 +38,9 @@ An owner can only be edited here.
 | Enter a username of 1 to 50 characters. | The username is empty or too long. |
 | Enter a mobile of up to 20 characters. | The mobile is too long. |
 | Use at least 8 characters. | The temporary password is too short. |
-| An owner cannot be disabled. | REDIX always keeps its owner. |
+| A project needs at least one project manager. | Make someone else a manager first. |
+| This person also works in another project, so the system admin does this. | Only the system admin can change a login shared with a project you do not manage. |
+| No user has this username. | Check the exact username with them. |
 | Could not load the users. Check the network and try again. | The phone cannot reach REDIX; tap **Try again**. |
 | No connection to the server. Try again. | The phone cannot reach REDIX; nothing was changed. |
 | The server refused this change. | You may no longer be allowed to do this. |
@@ -46,7 +48,9 @@ An owner can only be edited here.
 ## العربية
 
 **الغرض:** إنشاء حسابات مستخدمي REDIX والعناية بها.
-**من يراها:** الملّاك. افتحها من **الإعدادات** ثم **المستخدمون**. تحتاج إلى شبكة.
+**من يراها:** مدير كل مشروع، من **المستخدمون** في بطاقة المشروع؛ ويرى مسؤول النظام كل الحسابات من **الإعدادات** ثم **المستخدمون**. تحتاج إلى شبكة.
+
+لكل مشروع مدير مشروع خاص به يدير مستخدميه وأدوارهم. افتح **المستخدمون** من بطاقة المشروع. أضف مستخدماً جديداً، أو من له حساب باسم مستخدمه بالضبط. لتغيير ما يقوم به شخص، افتح قائمته واختر **الأدوار** وحدد ما ينطبق؛ ويمكن أن يجمع أكثر من دور. يحتاج المشروع إلى مدير مشروع واحد على الأقل، ولا يغيّر المدير المشروع نفسه إلا إذا أُسند إليه دور «مالي». وإذا كان الشخص يعمل في مشروع آخر أيضاً، فمسؤول النظام هو من يعيد تعيين كلمة مروره أو يعطّله.
 
 **إضافة مستخدم**
 
@@ -55,19 +59,17 @@ An owner can only be edited here.
 3. اكتب كلمة مرور مؤقتة من 8 أحرف على الأقل.
 4. اضغط **إضافة المستخدم**، ثم أعطه اسم المستخدم وكلمة المرور المؤقتة. عند أول دخول، يطلب منه التطبيق اختيار كلمة مروره.
 
-**لإعطاء مستخدم مشاريع:** اضغط النقاط الثلاث في صفه، ثم **المشاريع والأدوار**. حدد المشروع، واختر **مالي** أو **ميداني** أو **قارئ**. يُحفظ ذلك فوراً، ولا يرى غير هذه المشاريع. المالك مشرف مالي في كل المشاريع أصلاً.
+**لتغيير ما يقوم به شخص:** اضغط النقاط الثلاث في صفه، ثم **الأدوار**، وحدد ما ينطبق. يُحفظ فوراً.
 
 **العناية بمستخدم:** اضغط النقاط الثلاث في صفه.
 
 | الخيار | ماذا يفعل |
 | --- | --- |
 | تعديل | يصحح اسمه وجواله. اسم المستخدم لا يتغير. |
-| المشاريع والأدوار | يعطيه مشاريع، كما سبق. |
+| الأدوار | يحدد ما يقوم به في هذا المشروع، كما سبق. |
 | إعادة تعيين كلمة المرور | عند نسيان كلمة المرور. اكتب كلمة مؤقتة جديدة وأعطه إياها. يُسجَّل خروجه، ويختار كلمة مروره عند دخوله التالي. |
 | تعطيل | يُسجَّل خروجه عند أول إجراء تالٍ ولا يستطيع الدخول. يبقى في القائمة، وتبقى قيوده. |
 | تفعيل | يسمح لمستخدم معطّل بالدخول مرة أخرى. |
-
-المالك يمكن تعديله فقط هنا.
 
 | الرسالة | معناها |
 | --- | --- |
@@ -76,7 +78,9 @@ An owner can only be edited here.
 | اكتب اسم مستخدم من 1 إلى 50 حرفاً. | اسم المستخدم فارغ أو طويل. |
 | اكتب رقم جوال من 20 حرفاً على الأكثر. | رقم الجوال طويل. |
 | استخدم 8 أحرف على الأقل. | كلمة المرور المؤقتة قصيرة. |
-| لا يمكن تعطيل المالك. | يحتفظ REDIX بمالكه دائماً. |
+| يحتاج المشروع إلى مدير مشروع واحد على الأقل. | اجعل شخصاً آخر مديراً أولاً. |
+| يعمل هذا الشخص في مشروع آخر أيضاً، لذا يتولى ذلك مسؤول النظام. | وحده مسؤول النظام يغيّر حساباً مشتركاً مع مشروع لا تديره. |
+| لا يوجد مستخدم بهذا الاسم. | تأكد منه من اسم المستخدم بالضبط. |
 | تعذّر تحميل المستخدمين. تحقق من الشبكة وحاول مرة أخرى. | لا يصل الجوال إلى REDIX؛ اضغط **حاول مرة أخرى**. |
 | لا يوجد اتصال بالخادم. حاول مرة أخرى. | لا يصل الجوال إلى REDIX؛ لم يتغير شيء. |
 | رفض الخادم هذا التغيير. | ربما لم يعد مسموحاً لك بذلك. |

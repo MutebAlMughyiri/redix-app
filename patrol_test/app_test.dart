@@ -14,13 +14,13 @@ import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:redix/words/app_language.dart';
 
-/// The test owner, created by the API with a temporary password.
+/// The test's system admin, created by the API with a temporary password.
 const username = String.fromEnvironment('TEST_USERNAME');
 const temporaryPassword = String.fromEnvironment('TEST_PASSWORD');
 const newPassword = String.fromEnvironment('TEST_NEW_PASSWORD');
 
 void main() {
-  patrolTest('an owner signs in, then manages projects, users and the language; a new user follows', ($) async {
+  patrolTest('a system admin starts a project and manages it; a new user sees it by their role', ($) async {
     final session = Session();
     final language = AppLanguage();
     await session.restore();
@@ -66,6 +66,20 @@ void main() {
     await $.takeNativeScreenshot('new-project');
     await $(NewProjectScreen.submitKey).scrollTo().tap();
 
+    final projectUsers = $(keyStartingWith('projects.users.'));
+    await projectUsers.waitUntilVisible();
+    expect($(keyStartingWith('projects.addUnit.')), findsNothing);
+    await projectUsers.tap();
+    await $(keyStartingWith('users.menu.')).waitUntilVisible();
+    await $(keyStartingWith('users.menu.')).tap();
+    await $(UsersScreen.rolesKey).tap();
+    await $(keyStartingWith('userRoles.role.')).at(1).waitUntilVisible();
+    await $(keyStartingWith('userRoles.role.')).at(1).tap();
+    await $.pumpAndSettle();
+    await $.takeNativeScreenshot('user-roles');
+    await $(BackButton).tap();
+    await $(BackButton).tap();
+
     final addUnit = $(keyStartingWith('projects.addUnit.'));
     await addUnit.waitUntilVisible();
     expect($(find.text('الفلة الشرقية')), findsOneWidget);
@@ -88,8 +102,7 @@ void main() {
     expect($(keyStartingWith('projects.close.')), findsNothing);
     expect($(keyStartingWith('projects.addUnit.')), findsNothing);
 
-    await $(BackButton).tap();
-    await $(SettingsScreen.usersKey).tap();
+    await projectUsers.tap();
     await $(keyStartingWith('users.menu.')).waitUntilVisible();
 
     await $(UsersScreen.newUserKey).tap();
@@ -124,15 +137,20 @@ void main() {
     await $.pumpAndSettle();
 
     await newUserMenu.tap();
-    await $(UsersScreen.projectsKey).tap();
-    await $(keyStartingWith('userProjects.tick.')).tap();
-    await $(keyStartingWith('userProjects.fieldSupervisor.')).waitUntilVisible();
-    await $(keyStartingWith('userProjects.fieldSupervisor.')).tap();
+    await $(UsersScreen.rolesKey).tap();
+    await $(keyStartingWith('userRoles.role.')).at(2).waitUntilVisible();
+    await $(keyStartingWith('userRoles.role.')).at(2).tap();
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('user-projects');
+    await $(keyStartingWith('userRoles.role.')).at(3).tap();
+    await $.pumpAndSettle();
     await $(BackButton).tap();
     await $.pumpAndSettle();
 
+    await $(BackButton).tap();
+    await $(BackButton).tap();
+    await $(SettingsScreen.usersKey).tap();
+    await $(keyStartingWith('users.menu.')).waitUntilVisible();
+    await $.takeNativeScreenshot('all-users');
     await $(BackButton).tap();
     await $(SettingsScreen.myAccountKey).tap();
     await $(MyAccountScreen.arabicKey).waitUntilVisible();
@@ -148,10 +166,10 @@ void main() {
     await $(keyStartingWith('projects.status.')).waitUntilVisible();
     expect(Directionality.of($.tester.element(keyStartingWith('projects.status.'))), TextDirection.rtl);
     await $.takeNativeScreenshot('projects-arabic');
-    await $(BackButton).tap();
-    await $(SettingsScreen.usersKey).tap();
+    await projectUsers.tap();
     await $(keyStartingWith('users.menu.')).waitUntilVisible();
     await $.takeNativeScreenshot('users-arabic');
+    await $(BackButton).tap();
     await $(BackButton).tap();
     await $(SettingsScreen.myAccountKey).tap();
     await $(MyAccountScreen.englishKey).waitUntilVisible();
@@ -176,7 +194,12 @@ void main() {
 
     await $(HomeScreen.settingsKey).tap();
     await $(SettingsScreen.myAccountKey).waitUntilVisible();
-    expect($(SettingsScreen.projectsKey), findsNothing);
     expect($(SettingsScreen.usersKey), findsNothing);
+    await $(SettingsScreen.projectsKey).tap();
+    await $(keyStartingWith('projects.card.')).waitUntilVisible();
+    expect($(ProjectsScreen.newProjectKey), findsNothing);
+    expect($(keyStartingWith('projects.users.')), findsNothing);
+    expect($(keyStartingWith('projects.addUnit.')), findsNothing);
+    expect($(keyStartingWith('projects.close.')), findsNothing);
   });
 }
