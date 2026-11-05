@@ -6,6 +6,10 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | The camera is `cunning_document_scanner`, whose scanner finds the invoice's edges and crops it (FR-10); there is no camera or crop screen of our own | The BRS asks for an automatic crop, and this is a maintained package that does it on Android and iPhone in one call. A phone without Google Play services, such as a Huawei, gets the message and picks from its files. Made without Muteb; see the findings |
+| 2026-11-05 | Pictures are compressed in plain Dart (`package:image`), only when they are 1 MB or more: at most 2000 pixels long, then quality 85 down to 40, and only then fewer pixels | It runs the same in a test and on a phone, so "under 1 MB" is proved without a device. A smaller picture is left as the scanner made it. Made without Muteb |
+| 2026-11-05 | A contract's document is kept the moment it is picked, and named when the contract is saved; it stays once attached | The API keeps a file first and an entry or a contract names it. A dialog cancelled afterwards leaves a file nobody names, which harms nothing. Made without Muteb |
+| 2026-11-05 | `InvoiceCapture` is passed into `RedixApp` | The camera and the files are the one hardware the app reaches that a test cannot have, as `Biometrics` is for the fingerprint. Made without Muteb |
 | 2026-11-05 | The Contracts screen follows the canvas: filters with counts, and each card's value, paid, remaining and bar | They need nothing the app lacks, though the overrun filter stays at 0 until payments exist. Made without Muteb |
 | 2026-11-05 | A disabled contract is one more standing on its card, in place of the others | Whether it is overrun no longer asks anything of anyone. Made without Muteb |
 | 2026-11-05 | The contract's contractor comes from `SupplierPicker`, and a missing one is added from there | A contractor is a supplier (the database design), and this is the sheet's first real place. Made without Muteb |

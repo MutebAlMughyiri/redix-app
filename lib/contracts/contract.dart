@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import '../attachments/attachment.dart';
+
 /// A contract of a project, as the API answers it. The API reckons what remains; the app only draws it.
 class Contract {
   /// The contract the API describes in [json].
@@ -16,10 +18,11 @@ class Contract {
       paid = (json['paid'] as num).toDouble(),
       remaining = (json['remaining'] as num).toDouble(),
       isOverrun = json['isOverrun'] as bool,
-      isActive = json['isActive'] as bool;
+      isActive = json['isActive'] as bool,
+      documents = [for (final document in json['documents'] as List<dynamic>) Attachment.fromJson(document as Map<String, dynamic>)];
 
   /// No contract, for the dialog that adds one.
-  Contract.none() : id = '', supplierName = '', itemName = '', unitName = '', value = 0, isOpenValue = false, unitPrice = 0, quantity = 0, notes = '', paid = 0, remaining = 0, isOverrun = false, isActive = true;
+  Contract.none() : documents = [], id = '', supplierName = '', itemName = '', unitName = '', value = 0, isOpenValue = false, unitPrice = 0, quantity = 0, notes = '', paid = 0, remaining = 0, isOverrun = false, isActive = true;
 
   /// The contract's id; empty for a contract not added yet.
   final String id;
@@ -59,6 +62,9 @@ class Contract {
 
   /// False once disabled.
   final bool isActive;
+
+  /// The documents it carries, in the order they were kept.
+  final List<Attachment> documents;
 
   /// The key of the word that says how it stands.
   String get standingWordKey {

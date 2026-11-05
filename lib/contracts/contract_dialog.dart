@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../attachments/attachment.dart';
+import '../attachments/attachments.dart';
+import '../attachments/invoice_capture.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../structure/item_picker.dart';
@@ -16,8 +19,8 @@ import 'contracts_screen.dart';
 
 /// Asks for a contract's terms, and for a new contract its contractor, item and unit, which are set once.
 class ContractDialog extends StatefulWidget {
-  /// The dialog amending [contract], or adding one when it is [Contract.none], through [contracts] of [project], picking from [suppliers] and [items].
-  const ContractDialog({super.key, required this.contract, required this.project, required this.contracts, required this.suppliers, required this.items});
+  /// The dialog amending [contract], or adding one when it is [Contract.none], through [contracts] of [project], picking from [suppliers] and [items], and keeping its documents through [attachments] from what [capture] picks.
+  const ContractDialog({super.key, required this.contract, required this.project, required this.contracts, required this.suppliers, required this.items, required this.attachments, required this.capture});
 
   /// The contract this dialog amends.
   final Contract contract;
@@ -34,6 +37,12 @@ class ContractDialog extends StatefulWidget {
   /// The items that take contractor payments.
   final OfferedItems items;
 
+  /// The way to keep a document.
+  final Attachments attachments;
+
+  /// The phone's files.
+  final InvoiceCapture capture;
+
   @override
   State<ContractDialog> createState() => _ContractDialogState();
 }
@@ -48,6 +57,8 @@ class _ContractDialogState extends State<ContractDialog> {
   var _itemId = '';
   var _itemName = '';
   var _unitId = '';
+  final _addedDocuments = <Attachment>[];
+  var _documentMessage = '';
 
   bool get _isNew => widget.contract.id.isEmpty;
 
@@ -75,9 +86,36 @@ class _ContractDialogState extends State<ContractDialog> {
     if (quantity.isNaN) {
       return 'contracts.invalidQuantity';
     }
-    final terms = (value: value, isOpenValue: _isOpenValue, unitPrice: unitPrice, quantity: quantity, notes: _notes.text);
+    final terms = (value: value, isOpenValue: _isOpenValue, unitPrice: unitPrice, quantity: quantity, notes: _notes.text, attachmentIds: [for (final document in _addedDocuments) document.id]);
     return _isNew ? widget.contracts.add(_contractor.id, _itemId, _unitId, terms) : widget.contracts.amend(widget.contract, terms);
   }
+
+  Future<void> _addDocument() async {
+    final file = await widget.capture.fromFiles();
+    final refusal = file.isNone ? file.failure : await widget.attachments.keep(file);
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _documentMessage = refusal;
+      if (!file.isNone && refusal.isEmpty) {
+        _addedDocuments.add(widget.attachments.kept);
+      }
+    });
+  }
+
+  List<Widget> _documents(Words words) => [
+    const SizedBox(height: 16),
+    Text(words.contractsDocuments, style: Theme.of(context).textTheme.titleSmall),
+    for (final document in [...widget.contract.documents, ..._addedDocuments])
+      Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Text(document.fileName, key: ContractsScreen.documentKey(document.id)),
+      ),
+    const SizedBox(height: 8),
+    OutlinedButton.icon(key: ContractsScreen.addDocumentKey, icon: const Icon(Icons.attach_file), label: Text(words.contractsAddDocument), onPressed: _addDocument),
+    if (_documentMessage.isNotEmpty) Text(words.text(_documentMessage), key: ContractsScreen.documentMessageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+  ];
 
   Future<void> _pickContractor() async {
     final picked = await SupplierPicker.show(context, widget.project, widget.suppliers);
@@ -147,6 +185,7 @@ class _ContractDialogState extends State<ContractDialog> {
           maxLines: 3,
           decoration: InputDecoration(labelText: words.contractsNotes, border: const OutlineInputBorder()),
         ),
+        ..._documents(words),
       ],
     );
   }

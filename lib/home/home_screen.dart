@@ -6,6 +6,7 @@ import '../accounts/accounts_screen.dart';
 import '../accounts/my_custody.dart';
 import '../auth/session.dart';
 import '../contracts/contracts_screen.dart';
+import '../expenses/add_expense_screen.dart';
 import '../partners/partners_screen.dart';
 import '../projects/add_unit_dialog.dart';
 import '../projects/project.dart';
@@ -115,6 +116,9 @@ class HomeScreen extends StatefulWidget {
   /// The way into the suppliers of the project [id].
   static Key suppliersKey(String id) => Key('home.suppliers.$id');
 
+  /// The button that enters a new purchase expense in the running project [id].
+  static Key addExpenseKey(String id) => Key('home.addExpense.$id');
+
   /// The way into the contracts of the project [id].
   static Key contractsKey(String id) => Key('home.contracts.$id');
 
@@ -221,6 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPartners: () => context.push(PartnersScreen.pathOf(project.id), extra: project),
                     onSuppliers: () => context.push(SuppliersScreen.pathOf(project.id), extra: project),
                     onContracts: () => context.push(ContractsScreen.pathOf(project.id), extra: project),
+                    onAddExpense: () => context.push(AddExpenseScreen.pathOf(project.id), extra: project),
                     onAddUnit: () => _askForUnit(project),
                     onClose: () => _askToClose(project),
                   ),

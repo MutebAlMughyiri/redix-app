@@ -57,5 +57,6 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-018](use-cases/UC-018-pick-a-supplier.md) | Find a supplier by name or VAT number, and pick it | Whoever enters an expense or a contract |
 | [UC-019](use-cases/UC-019-quick-add-supplier.md) | Add a missing supplier without leaving what is being entered | Finance and Field |
 | [UC-020](use-cases/UC-020-contracts.md) | Record and follow what each contractor was promised | Whoever does a project's finance changes; everyone with access reads |
+| [UC-021](use-cases/UC-021-capture-invoice.md) | Photograph an invoice, cropped and under 1 MB, and keep a contract's document | Whoever may enter an expense; Finance for a contract |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

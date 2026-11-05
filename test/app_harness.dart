@@ -7,6 +7,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:redix/attachments/invoice_capture.dart';
+import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/auth/biometrics.dart';
 import 'package:redix/auth/session.dart';
 import 'package:redix/main.dart';
@@ -67,7 +69,9 @@ Map<String, String> wordsIn(String language) => {
     'contracts.unknownUnit', 'contracts.invalidValue', 'contracts.invalidUnitPrice', 'contracts.invalidQuantity', 'contracts.invalidNotes', 'contracts.new', 'contracts.edit', 'contracts.save',
     'contracts.contractor', 'contracts.item', 'contracts.unit', 'contracts.openValue', 'contracts.contractValue', 'contracts.unitPrice', 'contracts.quantity', 'contracts.notes', 'contracts.value',
     'contracts.paid', 'contracts.remaining', 'contracts.open', 'contracts.overrun', 'contracts.notStarted', 'contracts.running', 'contracts.filterAll', 'contracts.filterOverrun',
-    'contracts.filterOpenValue', 'contracts.disable', 'contracts.enable', 'contracts.disabled',
+    'contracts.filterOpenValue', 'contracts.disable', 'contracts.enable', 'contracts.disabled', 'contracts.documents', 'contracts.addDocument', 'contracts.unknownAttachment',
+    'attachments.invalidFileType', 'attachments.imageTooLarge', 'attachments.projectFinished', 'attachments.noConnection', 'attachments.refused', 'attachments.cameraFailed', 'attachments.unreadable',
+    'attachments.invoicePhoto', 'attachments.retake', 'attachments.takePhoto', 'attachments.pickFile', 'expenses.new',
     'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
   ])
     key: '$language $key',
@@ -89,7 +93,35 @@ const admin = ['approveProjects'];
 const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier'];
 
 /// What someone in the field may do in a project.
-const field = ['readProject', 'addSupplier'];
+const field = ['readProject', 'addSupplier', 'attachFiles'];
+
+/// A picture of one pixel, which a test can draw.
+const onePixelPng = [
+  0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+  0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0xF8, 0xCF, 0xC0, 0xF0, 0x1F, 0x00, 0x05, 0x00, 0x01, 0xFF, 0x89, 0x99, 0x3D, 0x1D, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45,
+  0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
+];
+
+/// The phone's camera and files, as the app's tests see them: each answers what the test chose, and nothing until it chooses.
+class FakeCapture extends InvoiceCapture {
+  /// What the camera answers.
+  var camera = PickedFile.none();
+
+  /// What the files answer.
+  var files = PickedFile.none();
+
+  /// How many times the camera opened.
+  var cameraOpened = 0;
+
+  @override
+  Future<PickedFile> fromCamera() async {
+    cameraOpened++;
+    return camera;
+  }
+
+  @override
+  Future<PickedFile> fromFiles() async => files;
+}
 
 /// The phone's own fingerprint or face prompt, as the app's tests see it.
 class FakePrompt extends Fake implements FlutterSecureStorage {
@@ -251,6 +283,12 @@ class FakeApi {
 
   /// Each project's contracts, as the API answers them.
   final contracts = <String, List<Map<String, Object>>>{};
+
+  /// The files the app sent, as the bytes of each request read as text, which name each file.
+  final sentAttachments = <String>[];
+
+  /// The status and problem code the API answers to a file; 2xx keeps it. An empty code sends none.
+  var attachmentAnswer = (status: 201, code: '');
 
   /// The people of every project, as the API answers them.
   final members = <Map<String, String>>[];
@@ -596,6 +634,7 @@ class FakeApi {
       'remaining': isOpenValue ? 0.0 : value - paid,
       'isOverrun': !isOpenValue && paid > value,
       'isActive': isActive,
+      'documents': <Map<String, String>>[],
     };
     contracts.putIfAbsent(projectId, () => []).add(contract);
     return contract;
@@ -924,6 +963,13 @@ class FakeApi {
     if (segments.length >= 3 && segments[2] == 'contracts') {
       return _answerContracts(request);
     }
+    if (segments.length >= 3 && segments[2] == 'attachments') {
+      sentAttachments.add(latin1.decode(request.bodyBytes));
+      if (attachmentAnswer.status >= 300) {
+        return _json({if (attachmentAnswer.code.isNotEmpty) 'code': attachmentAnswer.code}, attachmentAnswer.status);
+      }
+      return _json({'id': 'attachment-${_nextStructureId++}', 'fileName': RegExp('filename="([^"]*)"').firstMatch(latin1.decode(request.bodyBytes))!.group(1)!}, attachmentAnswer.status);
+    }
     if (segments.length >= 3 && segments[2] == 'members') {
       return _json(members, 200);
     }
@@ -965,6 +1011,7 @@ Future<Session> pumpRedix(
   Map<String, String> stored = const {},
   Map<String, Object> preferences = const {},
   FakePrompt? prompt,
+  InvoiceCapture? capture,
 }) async {
   SharedPreferences.setMockInitialValues(preferences);
   FlutterSecureStorage.setMockInitialValues(Map.of(stored));
@@ -975,7 +1022,7 @@ Future<Session> pumpRedix(
   await http.runWithClient(() async {
     await session.restore();
     await language.restore();
-    await tester.pumpWidget(RedixApp(session: session, language: language));
+    await tester.pumpWidget(RedixApp(session: session, language: language, capture: capture ?? FakeCapture()));
     await tester.pumpAndSettle();
   }, () => api.client);
   return session;

@@ -183,6 +183,19 @@ class Session extends ChangeNotifier {
   Future<http.Response> post(String path, Map<String, Object> body) =>
       _send(() => http.post(apiUri(path), headers: {...jsonHeaders, ..._authorized}, body: jsonEncode(body)));
 
+  /// Sends the file [bytes], named [fileName], to the API [path] as the signed-in user, renewing an expired access token like [post].
+  Future<http.Response> postFile(String path, String fileName, List<int> bytes) => _send(() async {
+    final request = http.MultipartRequest('POST', apiUri(path))
+      ..headers.addAll(_authorized)
+      ..files.add(http.MultipartFile.fromBytes('file', bytes, filename: fileName));
+    final client = http.Client();
+    try {
+      return await http.Response.fromStream(await client.send(request));
+    } finally {
+      client.close();
+    }
+  });
+
   Map<String, String> get _authorized => {'Authorization': 'Bearer $_accessToken'};
 
   Future<http.Response> _send(Future<http.Response> Function() request) async {

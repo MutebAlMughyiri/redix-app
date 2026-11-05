@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/contracts/contract.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/home/home_screen.dart';
@@ -12,6 +15,8 @@ import '../app_harness.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
+
+  late FakeApi apiOfDocuments;
 
   /// A project with a contract running, one overrun and one of open value, opened as far as its contracts.
   Future<({FakeApi api, String running, String overrun, String open, String contractor, String item})> openContracts(WidgetTester tester, {String status = 'running', List<String> permissions = managerAndFinance}) async {
@@ -45,6 +50,60 @@ void main() {
     await tapVisible(tester, api, ContractsScreen.itemKey);
     await act(tester, api, () => tester.tap(find.byKey(ItemPicker.optionKey(id))));
   }
+
+  Future<FakeCapture> openAmendWithFiles(WidgetTester tester, PickedFile picked) async {
+    final capture = FakeCapture()..files = picked;
+    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة الغربية']);
+    final contract = api.addContract('project-0', 'مبلط الغربية', value: 34000);
+    contract['documents'] = [
+      {'id': 'kept-document', 'fileName': 'العقد.pdf'},
+    ];
+    apiOfDocuments = api;
+    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+    await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.menuKey(contract['id']! as String))));
+    await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
+    return capture;
+  }
+
+  final pdf = PickedFile('ملحق.pdf', '/phone/ملحق.pdf', Uint8List.fromList([0x25, 0x50, 0x44, 0x46]));
+
+  testWidgets("the dialog shows a contract's documents, and a document picked is kept and named on save", (tester) async {
+    await openAmendWithFiles(tester, pdf);
+    final api = apiOfDocuments;
+    expect(find.text('العقد.pdf'), findsOneWidget);
+
+    await tapVisible(tester, api, ContractsScreen.addDocumentKey);
+    expect(api.sentAttachments, hasLength(1));
+    await save(tester, api);
+
+    final (path, body) = api.sentSettingsChanges.single;
+    expect(path, endsWith('/contracts/contract-0'));
+    expect((body['attachmentIds'] as List<dynamic>).single, startsWith('attachment-'));
+  });
+
+  testWidgets('a document the API refuses says why, and nothing is named on save', (tester) async {
+    await openAmendWithFiles(tester, pdf);
+    final api = apiOfDocuments..attachmentAnswer = (status: 400, code: 'invalidFileType');
+
+    await tapVisible(tester, api, ContractsScreen.addDocumentKey);
+
+    expect(tester.widget<Text>(find.byKey(ContractsScreen.documentMessageKey)).data, 'en attachments.invalidFileType');
+    await save(tester, api);
+    expect(api.sentSettingsChanges.single.$2.containsKey('attachmentIds'), isFalse);
+  });
+
+  testWidgets('going back from the files keeps nothing', (tester) async {
+    await openAmendWithFiles(tester, PickedFile.none());
+    final api = apiOfDocuments;
+
+    await tapVisible(tester, api, ContractsScreen.addDocumentKey);
+
+    expect(api.sentAttachments, isEmpty);
+    expect(find.byKey(ContractsScreen.documentMessageKey), findsNothing);
+  });
 
   testWidgets('each contract shows its contractor, item, unit and figures', (tester) async {
     final opened = await openContracts(tester);

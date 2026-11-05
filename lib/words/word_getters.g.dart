@@ -83,6 +83,39 @@ mixin WordGetters {
   /// The word `app.title`.
   String get appTitle => text('app.title');
 
+  /// The word `attachments.cameraFailed`.
+  String get attachmentsCameraFailed => text('attachments.cameraFailed');
+
+  /// The word `attachments.imageTooLarge`.
+  String get attachmentsImageTooLarge => text('attachments.imageTooLarge');
+
+  /// The word `attachments.invalidFileType`.
+  String get attachmentsInvalidFileType => text('attachments.invalidFileType');
+
+  /// The word `attachments.invoicePhoto`.
+  String get attachmentsInvoicePhoto => text('attachments.invoicePhoto');
+
+  /// The word `attachments.noConnection`.
+  String get attachmentsNoConnection => text('attachments.noConnection');
+
+  /// The word `attachments.pickFile`.
+  String get attachmentsPickFile => text('attachments.pickFile');
+
+  /// The word `attachments.projectFinished`.
+  String get attachmentsProjectFinished => text('attachments.projectFinished');
+
+  /// The word `attachments.refused`.
+  String get attachmentsRefused => text('attachments.refused');
+
+  /// The word `attachments.retake`.
+  String get attachmentsRetake => text('attachments.retake');
+
+  /// The word `attachments.takePhoto`.
+  String get attachmentsTakePhoto => text('attachments.takePhoto');
+
+  /// The word `attachments.unreadable`.
+  String get attachmentsUnreadable => text('attachments.unreadable');
+
   /// The word `biometrics.failed`.
   String get biometricsFailed => text('biometrics.failed');
 
@@ -353,6 +386,9 @@ mixin WordGetters {
   /// The word `common.retry`.
   String get commonRetry => text('common.retry');
 
+  /// The word `contracts.addDocument`.
+  String get contractsAddDocument => text('contracts.addDocument');
+
   /// The word `contracts.contractValue`.
   String get contractsContractValue => text('contracts.contractValue');
 
@@ -364,6 +400,9 @@ mixin WordGetters {
 
   /// The word `contracts.disabled`.
   String get contractsDisabled => text('contracts.disabled');
+
+  /// The word `contracts.documents`.
+  String get contractsDocuments => text('contracts.documents');
 
   /// The word `contracts.edit`.
   String get contractsEdit => text('contracts.edit');
@@ -455,6 +494,9 @@ mixin WordGetters {
   /// The word `contracts.unitPrice`.
   String get contractsUnitPrice => text('contracts.unitPrice');
 
+  /// The word `contracts.unknownAttachment`.
+  String get contractsUnknownAttachment => text('contracts.unknownAttachment');
+
   /// The word `contracts.unknownSupplier`.
   String get contractsUnknownSupplier => text('contracts.unknownSupplier');
 
@@ -463,6 +505,9 @@ mixin WordGetters {
 
   /// The word `contracts.value`.
   String get contractsValue => text('contracts.value');
+
+  /// The word `expenses.new`.
+  String get expensesNew => text('expenses.new');
 
   /// The word `myAccount.arabic`.
   String get myAccountArabic => text('myAccount.arabic');

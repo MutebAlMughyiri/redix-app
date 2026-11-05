@@ -39,6 +39,15 @@ lib/
     supplier_search.dart    SupplierSearch: the ApiList of what the API finds for what was typed
     supplier_picker.dart    the sheet that picks a supplier by name or VAT number
     quick_add_supplier_dialog.dart  the dialog that adds a missing supplier, or offers the one already holding its number
+  attachments/
+    attachment.dart         Attachment: a file the API keeps, as it answers it
+    attachments.dart        Attachments: the way to keep a file on the API
+    picked_file.dart        PickedFile: what the camera or the files gave
+    invoice_capture.dart    InvoiceCapture: the one place that touches the camera and the files
+    picture_compression.dart  compressedPicture: a picture under 1 MB
+  expenses/
+    add_expense_screen.dart a new purchase expense
+    invoice_section.dart    its invoice: the picture, and the ways to take or pick it
   contracts/
     contract.dart           Contract and ContractFilter, as the API answers them
     contracts.dart          Contracts: the ApiList of one project's contracts, and its changes

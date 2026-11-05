@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../attachments/attachments.dart';
+import '../attachments/invoice_capture.dart';
 import '../projects/project.dart';
 import '../structure/offered_items.dart';
 import '../suppliers/suppliers.dart';
@@ -13,8 +15,8 @@ import 'contracts.dart';
 
 /// A project's contracts (UC-020): everyone with access follows each one's value, paid and remaining, and whoever keeps the settings adds, amends and disables them. Nothing is deleted.
 class ContractsScreen extends StatefulWidget {
-  /// The screen, showing and changing the [contracts] of [project], picking a contractor from [suppliers] and an item from [items].
-  const ContractsScreen({super.key, required this.project, required this.contracts, required this.suppliers, required this.items});
+  /// The screen, showing and changing the [contracts] of [project], picking a contractor from [suppliers] and an item from [items], and keeping a document through [attachments] from what [capture] picks.
+  const ContractsScreen({super.key, required this.project, required this.contracts, required this.suppliers, required this.items, required this.attachments, required this.capture});
 
   /// The project they belong to.
   final Project project;
@@ -27,6 +29,12 @@ class ContractsScreen extends StatefulWidget {
 
   /// The items that take contractor payments.
   final OfferedItems items;
+
+  /// The way to keep a document.
+  final Attachments attachments;
+
+  /// The phone's files.
+  final InvoiceCapture capture;
 
   /// The screen's route.
   static const path = '/projects/:projectId/contracts';
@@ -70,6 +78,12 @@ class ContractsScreen extends StatefulWidget {
   /// The notes, in the dialog.
   static const notesKey = Key('contracts.notes');
 
+  /// The button that adds a document, in the dialog.
+  static const addDocumentKey = Key('contracts.addDocument');
+
+  /// The line that says why a document was not kept, in the dialog.
+  static const documentMessageKey = Key('contracts.documentMessage');
+
   /// The button that saves, in the dialog.
   static const saveKey = ChangeDialog.saveKey;
 
@@ -81,6 +95,9 @@ class ContractsScreen extends StatefulWidget {
 
   /// The line shown while the project has no contracts.
   static const emptyKey = ApiListBody.emptyKey;
+
+  /// The document [id], in the dialog.
+  static Key documentKey(String id) => Key('contracts.document.$id');
 
   /// The choice of the filter [filter].
   static Key filterKey(ContractFilter filter) => Key('contracts.filter.${filter.name}');
@@ -134,7 +151,7 @@ class _ContractsScreenState extends State<ContractsScreen> {
   void _ask(Contract contract) {
     showDialog<void>(
       context: context,
-      builder: (_) => ContractDialog(contract: contract, project: widget.project, contracts: widget.contracts, suppliers: widget.suppliers, items: widget.items),
+      builder: (_) => ContractDialog(contract: contract, project: widget.project, contracts: widget.contracts, suppliers: widget.suppliers, items: widget.items, attachments: widget.attachments, capture: widget.capture),
     );
   }
 

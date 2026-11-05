@@ -6,11 +6,14 @@ import 'account/my_account_screen.dart';
 import 'accounts/accounts.dart';
 import 'accounts/accounts_screen.dart';
 import 'api.dart';
+import 'attachments/attachments.dart';
+import 'attachments/invoice_capture.dart';
 import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
 import 'contracts/contracts.dart';
 import 'contracts/contracts_screen.dart';
+import 'expenses/add_expense_screen.dart';
 import 'home/home_screen.dart';
 import 'partners/partners.dart';
 import 'partners/partners_screen.dart';
@@ -58,14 +61,17 @@ Future<void> main() async {
 
 /// The app: its theme, its languages, and its screens. Without a session every screen leads to sign-in; with a temporary password, to the password change.
 class RedixApp extends StatefulWidget {
-  /// The app, signed in through [session] and shown in [language].
-  const RedixApp({super.key, required this.session, required this.language});
+  /// The app, signed in through [session], shown in [language], and reaching the phone's camera and files through [capture].
+  const RedixApp({super.key, required this.session, required this.language, this.capture = const InvoiceCapture()});
 
   /// The signed-in session the screens depend on.
   final Session session;
 
   /// The language the user chose; the phone's while none is chosen.
   final AppLanguage language;
+
+  /// The phone's camera and files.
+  final InvoiceCapture capture;
 
   @override
   State<RedixApp> createState() => _RedixAppState();
@@ -86,6 +92,7 @@ class _RedixAppState extends State<RedixApp> {
   final _projectSuppliers = <String, Suppliers>{};
   final _offeredItemLists = <String, OfferedItems>{};
   final _projectContracts = <String, Contracts>{};
+  final _projectAttachments = <String, Attachments>{};
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -150,8 +157,11 @@ class _RedixAppState extends State<RedixApp> {
           contracts: _contractsOf(state.pathParameters['projectId'] ?? ''),
           suppliers: _suppliersOf(state.pathParameters['projectId'] ?? ''),
           items: _offeredItemsOf(state.pathParameters['projectId'] ?? '', ItemType.contractorPayments),
+          attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
+          capture: widget.capture,
         ),
       ),
+      GoRoute(path: AddExpenseScreen.path, builder: (context, state) => AddExpenseScreen(project: state.extra! as Project, capture: widget.capture)),
       GoRoute(
         path: SubgroupsScreen.path,
         builder: (context, state) => SubgroupsScreen(
@@ -182,6 +192,8 @@ class _RedixAppState extends State<RedixApp> {
   OfferedItems _offeredItemsOf(String projectId, ItemType type) => _offeredItemLists.putIfAbsent('$projectId/${type.name}', () => OfferedItems(widget.session, projectId, type));
 
   Contracts _contractsOf(String projectId) => _projectContracts.putIfAbsent(projectId, () => Contracts(widget.session, projectId));
+
+  Attachments _attachmentsOf(String projectId) => _projectAttachments.putIfAbsent(projectId, () => Attachments(widget.session, projectId));
 
   Columns _columnsAt(String path) => _columnLists.putIfAbsent(path, () => Columns(widget.session, path));
 

@@ -19,6 +19,9 @@ enum Permission {
   /// Add a supplier to a project's register; without [manageSettings] it waits for approval.
   addSupplier,
 
+  /// Keep a picture or a PDF in a project, for an entry or a contract.
+  attachFiles,
+
   /// See every partner in a project and their capital, not only their own.
   seeAllCapital,
 }
