@@ -27,18 +27,25 @@ import '../ui/entry_field.dart';
 import '../ui/form_section.dart';
 import '../ui/picker_field.dart';
 import '../ui/two_fields.dart';
+import '../structure/column_label.dart';
+import '../structure/offered_items.dart';
+import '../ui/labelled_chips.dart';
 import '../words/words.dart';
 import 'contract_figures.dart';
 import 'contract_picker.dart';
 
 /// A payment against a contract (UC-027): what the contract stands at with it shows before saving, and going beyond its value only warns. A negative amount is a deduction, which says why in place of a receipt. The figures only show what the API will compute.
 class ContractorPaymentScreen extends StatefulWidget {
+  /// The choice of the subgroup [id].
+  static Key subgroupKey(String id) => Key('contractorPayment.subgroup.$id');
+
   /// The screen entering a payment in [project], recorded through [expenses], picking from [contracts], [accounts] and [paymentMethods], asking what [columnsOf] the contract's item says, and keeping the receipt through [attachments] from what [capture] gives.
   const ContractorPaymentScreen({
     super.key,
     required this.project,
     required this.expenses,
     required this.contracts,
+    required this.items,
     required this.accounts,
     required this.paymentMethods,
     required this.columnsOf,
@@ -48,6 +55,9 @@ class ContractorPaymentScreen extends StatefulWidget {
 
   /// The project the payment belongs to.
   final Project project;
+
+  /// The items on offer, for the subgroups of the contract's item.
+  final OfferedItems items;
 
   /// The way to record it.
   final Expenses expenses;
@@ -177,6 +187,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
   final _payment = PaymentChoice();
   final _customValues = <String, String>{};
   var _contract = Contract.none();
+  var _subgroupId = '';
   var _columns = <ItemColumn>[];
   var _columnsMessage = '';
   var _date = DateTime.now();
@@ -194,6 +205,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
   void initState() {
     super.initState();
     widget.contracts.loadOnOpen();
+    widget.items.loadOnOpen();
     widget.accounts.loadOnOpen();
     widget.paymentMethods.loadOnOpen();
   }
@@ -222,6 +234,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
   Future<void> _chooseContract(Contract contract) async {
     setState(() {
       _contract = contract;
+      _subgroupId = '';
       _columns = [];
       _customValues.clear();
       _refusedColumn = '';
@@ -282,6 +295,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
     return {
       'id': _entryId,
       if (_contract.id.isNotEmpty) 'contractId': _contract.id,
+      if (_subgroupId.isNotEmpty) 'subgroupId': _subgroupId,
       'isOutsideContract': _isOutside,
       'paymentDate': _isoOf(_date),
       if (_amount.text.trim().isNotEmpty) 'amount': parseNumber(_amount.text),
@@ -349,11 +363,28 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
   List<Widget> _theContract(Words words) => [
     ContractPicker(key: ContractorPaymentScreen.contractKey, contracts: widget.contracts, chosen: _contract, onChanged: _chooseContract),
     if (_contract.id.isNotEmpty) ContractFigures(contract: _contract, counted: _isOutside ? 0 : _typed(_amount)),
+    ListenableBuilder(listenable: widget.items, builder: (_, _) => _subgroupChoice(words)),
   ];
+
+  /// The subgroups of the contract's item, when it has named ones (UC-012); a payment goes under its general one otherwise.
+  Widget _subgroupChoice(Words words) {
+    final item = widget.items.all.expand((category) => category.items).where((item) => item.id == _contract.itemId);
+    if (item.isEmpty || item.first.namedSubgroups.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    return LabelledChips(
+      label: words.expensesSubgroup,
+      choices: item.first.subgroups,
+      keyOf: (subgroup) => ContractorPaymentScreen.subgroupKey(subgroup.id),
+      nameOf: (subgroup) => subgroup.name.isEmpty ? words.expensesGeneralSubgroup : subgroup.name,
+      isChosen: (subgroup) => _subgroupId == subgroup.id || (_subgroupId.isEmpty && subgroup.name.isEmpty),
+      onChosen: (subgroup) => setState(() => _subgroupId = subgroup.id),
+    );
+  }
 
   List<Widget> _thePayment(Words words) => [
     TwoFields(
-      _textField(ContractorPaymentScreen.amountKey, _amount, words.expensesAmount, isNumber: true, isSigned: true),
+      _textField(ContractorPaymentScreen.amountKey, _amount, columnLabel(context, _columns, 'amount', words.expensesAmount), isNumber: true, isSigned: true),
       PickerField(key: ContractorPaymentScreen.dateKey, label: words.contractorPaymentsDate, value: formatDate(_date), onTap: () => _chooseDate(_date, (date) => _date = date)),
     ),
     Column(
@@ -444,7 +475,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
             FormSection(_theReceipt(words)),
             if (ownFields.isNotEmpty) FormSection(ownFields),
             const SizedBox(height: 16),
-            _textField(ContractorPaymentScreen.notesKey, _notes, words.expensesNotes, maxLines: 2),
+            _textField(ContractorPaymentScreen.notesKey, _notes, columnLabel(context, _columns, 'notes', words.expensesNotes), maxLines: 2),
             const SizedBox(height: 16),
             if (_message.isNotEmpty) ...[
               Text(words.text(_message), key: ContractorPaymentScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),

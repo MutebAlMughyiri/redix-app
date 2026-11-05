@@ -288,4 +288,38 @@ void main() {
 
     expect(find.byKey(HomeScreen.contractorPaymentKey('project-0')), findsNothing);
   });
+
+  testWidgets('a payment goes under the subgroup chosen, when the contract\'s item has named ones', (tester) async {
+    var contractId = '';
+    var subgroupId = '';
+    final opened = await openPayment(
+      tester,
+      arrange: (api) {
+        api.expenseAnswer = (status: 201, body: const {'isOverrun': false});
+        final item = api.addItem(api.addCategory('project-0', 'العظم'), 'بند الحديد', subgroups: ['الدور الأرضي']);
+        contractId = api.addContract('project-0', 'مقاول الحديد', value: 1000, itemId: item['id']! as String)['id']! as String;
+        subgroupId = (item['subgroups']! as List<Map<String, Object>>).last['id']! as String;
+      },
+    );
+    await pickContract(tester, opened.api, contractId);
+    await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
+    await tapVisible(tester, opened.api, ContractorPaymentScreen.subgroupKey(subgroupId));
+    await type(tester, ContractorPaymentScreen.amountKey, '500');
+
+    await tapVisible(tester, opened.api, ContractorPaymentScreen.draftKey);
+
+    expect(opened.api.sentContractorPayments.single['subgroupId'], subgroupId);
+  });
+
+  testWidgets('a contract whose item has no named subgroups offers none, and the payment goes under the general one', (tester) async {
+    final opened = await openPayment(tester, arrange: (api) => api.expenseAnswer = (status: 201, body: const {'isOverrun': false}));
+    await pickContract(tester, opened.api, opened.running);
+    await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
+    await type(tester, ContractorPaymentScreen.amountKey, '500');
+
+    await tapVisible(tester, opened.api, ContractorPaymentScreen.draftKey);
+
+    expect(find.byKey(ContractorPaymentScreen.subgroupKey('any')), findsNothing);
+    expect(opened.api.sentContractorPayments.single.containsKey('subgroupId'), isFalse);
+  });
 }

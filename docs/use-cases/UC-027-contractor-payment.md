@@ -40,6 +40,7 @@ Tests are in `test/contractor_payments/contractor_payment_screen_test.dart`.
 
 | Rule | Code | Test |
 | --- | --- | --- |
+| The contract's item's named subgroups are offered, and the choice is sent | `ContractorPaymentScreen._subgroupChoice` | `contractor_payment_screen_test.dart`: a payment goes under the subgroup chosen |
 | AC-12.1: value, paid and what remains show before saving | `ContractFigures` | AC-12.1: choosing a contract |
 | AC-07.1: an overrun alerts with (1,000), and is still saved | `Contract.remainingAfter`, `isOverrunBy` | AC-07.1 |
 | What waits shows beside what was paid, and counts | `Contract.pending` | what waits for approval; `contracts_test`: BR-10 |

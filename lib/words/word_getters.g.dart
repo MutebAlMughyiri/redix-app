@@ -179,6 +179,9 @@ mixin WordGetters {
   /// The word `categories.invalidOrder`.
   String get categoriesInvalidOrder => text('categories.invalidOrder');
 
+  /// The word `categories.itemHasContract`.
+  String get categoriesItemHasContract => text('categories.itemHasContract');
+
   /// The word `categories.itemHasEntries`.
   String get categoriesItemHasEntries => text('categories.itemHasEntries');
 

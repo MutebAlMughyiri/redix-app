@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
@@ -11,6 +13,7 @@ import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../settings/payment_methods.dart';
 import '../structure/category.dart';
+import '../structure/column_label.dart';
 import '../structure/columns.dart';
 import '../structure/item_column.dart';
 import '../structure/item_picker.dart';
@@ -398,6 +401,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       _original = CreditableInvoice.none();
     }
     _supplier = supplier;
+    final usual = widget.items.all.expand((category) => category.items).where((item) => item.id == supplier.defaultItemId);
+    if (_item.id.isEmpty && usual.isNotEmpty) {
+      unawaited(_chooseItem(usual.first));
+    }
   }
 
   void _setCreditNote(bool isCreditNote) {
@@ -556,7 +563,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   bool _requires(String key) => _columns.any((column) => column.key == key && column.isRequired);
 
-  String _labelOf(String key, String word) => _requires(key) ? '$word *' : word;
+  String _nameOf(String key, String word) => columnLabel(context, _columns, key, word);
+
+  String _labelOf(String key, String word) => _requires(key) ? '${_nameOf(key, word)} *' : _nameOf(key, word);
 
   String? _errorOf(String key, Words words) => _refusedColumn == key ? words.text(_message) : null;
 
@@ -582,7 +591,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         onChosen: (subgroup) => setState(() => _subgroupId = subgroup.id),
       ),
     LabelledChips(
-      label: words.expensesUnit,
+      label: _nameOf('unit', words.expensesUnit),
       choices: widget.project.entryUnits,
       keyOf: (unit) => AddExpenseScreen.unitKey(unit.id),
       nameOf: (unit) => unit.name,
@@ -592,13 +601,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        PickerField(key: AddExpenseScreen.supplierKey, label: words.expensesSupplier, value: _supplier.name, onTap: _pickSupplier),
+        PickerField(key: AddExpenseScreen.supplierKey, label: _nameOf('supplier', words.expensesSupplier), value: _supplier.name, onTap: _pickSupplier),
         if (_supplier.id.isNotEmpty) Text(_supplier.detailsIn(words), key: AddExpenseScreen.supplierDetailsKey, style: Theme.of(context).textTheme.bodySmall),
       ],
     ),
     if (!_withoutInvoice)
       TwoFields(
-        _textField(AddExpenseScreen.invoiceNumberKey, _invoiceNumber, words.expensesInvoiceNumber),
+        _textField(AddExpenseScreen.invoiceNumberKey, _invoiceNumber, _nameOf('invoiceNumber', words.expensesInvoiceNumber)),
         PickerField(key: AddExpenseScreen.invoiceDateKey, label: words.expensesInvoiceDate, value: formatDate(_invoiceDate), onTap: () => _chooseDate(_invoiceDate, (date) => _invoiceDate = date)),
       ),
     if (!_withoutInvoice)
@@ -636,7 +645,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       ),
     TwoFields(
       _textField(AddExpenseScreen.amountKey, _amount, _amountLabel(words), isNumber: true, isSigned: true),
-      _textField(AddExpenseScreen.discountKey, _discount, words.expensesDiscount, isNumber: true),
+      _textField(AddExpenseScreen.discountKey, _discount, _nameOf('discount', words.expensesDiscount), isNumber: true),
     ),
     if (!_withoutInvoice)
       SwitchListTile(

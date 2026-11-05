@@ -208,6 +208,7 @@ class _RedixAppState extends State<RedixApp> {
   OfferedAccounts _offeredAccountsOf(String projectId) => _projectOfferedAccounts.putIfAbsent(projectId, () => OfferedAccounts(widget.session, projectId));
 
   ContractorPaymentScreen _contractorPaymentScreen(String projectId, Project project) => ContractorPaymentScreen(
+    items: _offeredItemsOf(projectId, ItemType.contractorPayments),
     project: project,
     expenses: _expensesOf(projectId),
     contracts: _contractsOf(projectId),

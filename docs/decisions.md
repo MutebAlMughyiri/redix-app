@@ -6,6 +6,9 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | The journey's name sits on a group and the test's own description is blank | The test binding paints a test's description across the app; nothing else clears it, and the guide's pictures should show the app as a person gets it |
+| 2026-11-05 | A renamed built-in column names its field on the entry forms in Arabic only | A column's name is typed in one language; in English the field keeps its own word |
+| 2026-11-05 | A screen title with what it belongs to takes two lines, through `ScreenTitle` | On a 360-point phone "Categories and items · غصون 7" cut the project's name to one letter |
 | 2026-11-05 | A read waits for the changes already sent, in `Session` | The Huawei showed it: ticking a role and going back at once read the home before the save finished, and the home kept the old role. One owner closes it for every list, instead of each screen holding its reload until a save ends |
 | 2026-11-05 | The duplicate question always names the earlier entry; it has no wording for a project the user cannot read | AC-17.1 as it now reads: the API never mentions such a project, so the app has nothing to say about one. Findings row 98. |
 | 2026-11-05 | Subgroups are dragged and removed on their own screen, removal asking first as a column's does; an item's type is a menu entry opening a dialog that shares its choice with Add item | Rows 49 and 51. `ItemTypeChoice` has one owner so the two dialogs cannot drift. |

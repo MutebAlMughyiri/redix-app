@@ -57,6 +57,7 @@ Tests are in `test/expenses/add_expense_test.dart` and `invoice_figures_test.dar
 
 | Rule | Code | Test |
 | --- | --- | --- |
+| Choosing a supplier fills its usual item while none is chosen | `AddExpenseScreen._useSupplier` | `add_expense_test.dart`: choosing a supplier fills its usual item |
 | AC-08.1, AC-08.2, AC-08.3: the amounts show as the accountant's, to two decimals | `InvoiceFigures`, `formatMoney` | `invoice_figures_test`; AC-08.1, AC-08.2, AC-08.3 on the screen |
 | NFR-04: an amount rounds half up | `formatMoney` | `invoice_figures_test`: the group on it |
 | BR-14: no VAT for a supplier not registered or an invoice not taxable | `_hasNoVat` | a supplier not VAT-registered and an invoice not taxable show no VAT |

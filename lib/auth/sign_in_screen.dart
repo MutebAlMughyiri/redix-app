@@ -100,7 +100,7 @@ class _SignInScreenState extends State<SignInScreen> {
               alignment: AlignmentDirectional.centerStart,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Image.asset('assets/icon/icon.png', key: SignInScreen.logoKey, height: 72),
+                child: Image.asset('assets/icon/icon.png', key: SignInScreen.logoKey, height: 72, cacheHeight: (72 * MediaQuery.devicePixelRatioOf(context)).round()),
               ),
             ),
             const SizedBox(height: 16),

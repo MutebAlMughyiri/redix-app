@@ -691,4 +691,32 @@ void main() {
 
     expect(find.byKey(HomeScreen.addExpenseKey('project-0')), findsNothing);
   });
+
+  testWidgets('choosing a supplier fills its usual item while none is chosen', (tester) async {
+    final opened = await openExpense(tester);
+    final usual = opened.api.addSupplier('project-0', 'مورد الجبس', defaultItemId: opened.otherItem, defaultItemName: 'الجبس');
+
+    await pickSupplier(tester, opened.api, usual['id']! as String);
+
+    expect(tester.widget<ItemPicker>(find.byKey(AddExpenseScreen.itemKey)).itemName, 'الجبس');
+  });
+
+  testWidgets('an item already chosen stays when the supplier usually has another', (tester) async {
+    final opened = await openExpense(tester);
+    final usual = opened.api.addSupplier('project-0', 'مورد الجبس', defaultItemId: opened.otherItem, defaultItemName: 'الجبس');
+
+    await pickItem(tester, opened.api, opened.item);
+    await pickSupplier(tester, opened.api, usual['id']! as String);
+
+    expect(tester.widget<ItemPicker>(find.byKey(AddExpenseScreen.itemKey)).itemName, 'البلاط');
+  });
+
+  testWidgets('a usual item no longer on offer fills nothing', (tester) async {
+    final opened = await openExpense(tester);
+    final usual = opened.api.addSupplier('project-0', 'مورد قديم', defaultItemId: 'item-gone', defaultItemName: 'بند معطّل');
+
+    await pickSupplier(tester, opened.api, usual['id']! as String);
+
+    expect(tester.widget<ItemPicker>(find.byKey(AddExpenseScreen.itemKey)).itemName, '');
+  });
 }

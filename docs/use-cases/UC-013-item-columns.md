@@ -58,6 +58,7 @@ The question after a change to the template, `ApplyToAllDialog`:
 
 | Rule | Code | Test |
 | --- | --- | --- |
+| In Arabic a built-in field on the entry forms carries its column's name | `columnLabel` | `column_label_test.dart` |
 | It opens on this item, and says where the item sits and what it is | `ItemColumnsScreen` | `item_columns_test.dart`: it opens on this item |
 | A row says what the column is | `ColumnRow` | `item_columns_test.dart`: a row says |
 | AC-41.2: a core column has a lock and no delete; any other a delete and no lock | `ColumnRow` | `item_columns_test.dart`: AC-41.2 |
