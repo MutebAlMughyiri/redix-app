@@ -57,7 +57,8 @@ void main() {
   testWidgets('it opens on this item, saying where the item sits and what it is', (tester) async {
     final opened = await openColumns(tester);
 
-    expect(find.text('en columns.title · البلاط'), findsOneWidget);
+    expect(find.text('en columns.title'), findsOneWidget);
+    expect(find.text('البلاط'), findsWidgets);
     expect(text(tester, ItemColumnsScreen.itemDetailsKey), 'التشطيب · en categories.typeBoth');
     expect(text(tester, ItemColumnsScreen.nameKey(opened.date)), 'التاريخ');
   });

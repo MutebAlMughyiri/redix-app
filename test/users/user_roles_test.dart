@@ -48,7 +48,8 @@ void main() {
     await openScreen(tester);
 
     expect(tester.widget<Text>(find.byKey(UserRolesScreen.nameKey)).data, 'نواف');
-    expect(find.text('en users.roles · غصون 6'), findsOneWidget);
+    expect(find.text('en users.roles'), findsOneWidget);
+    expect(find.text('غصون 6'), findsOneWidget);
     expect(isTicked(tester, 'role-reader'), isTrue);
     expect(isTicked(tester, 'role-finance'), isFalse);
   });

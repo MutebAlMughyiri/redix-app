@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../ui/api_list_body.dart';
 import '../ui/refusal_snack_bar.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'role.dart';
 import 'roles.dart';
@@ -67,7 +68,7 @@ class _UserRolesScreenState extends State<UserRolesScreen> {
     final words = Words.of(context);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text('${words.usersRoles} · ${widget.projectName}')),
+      appBar: AppBar(title: ScreenTitle(words.usersRoles, subject: widget.projectName)),
       body: ListenableBuilder(
         listenable: widget.users,
         builder: (context, _) {

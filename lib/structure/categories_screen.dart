@@ -5,6 +5,7 @@ import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'categories.dart';
 import 'category.dart';
@@ -131,7 +132,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final categories = widget.categories;
     final project = widget.project;
     return Scaffold(
-      appBar: AppBar(title: Text('${words.categoriesTitle} · ${project.name}')),
+      appBar: AppBar(title: ScreenTitle(words.categoriesTitle, subject: project.name)),
       floatingActionButton: project.mayChangeStructure
           ? FloatingActionButton.extended(
               key: CategoriesScreen.addCategoryKey,

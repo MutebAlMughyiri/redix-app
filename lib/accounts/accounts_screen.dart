@@ -4,6 +4,7 @@ import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'account.dart';
 import 'account_dialog.dart';
@@ -98,7 +99,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
     final project = widget.project;
     final accounts = widget.accounts;
     return Scaffold(
-      appBar: AppBar(title: Text('${words.accountsTitle} · ${project.name}')),
+      appBar: AppBar(title: ScreenTitle(words.accountsTitle, subject: project.name)),
       floatingActionButton: project.mayManageSettings
           ? FloatingActionButton.extended(
               key: AccountsScreen.addKey,

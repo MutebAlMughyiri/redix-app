@@ -7,6 +7,7 @@ import '../structure/offered_items.dart';
 import '../suppliers/suppliers.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'contract.dart';
 import 'contract_card.dart';
@@ -164,7 +165,7 @@ class _ContractsScreenState extends State<ContractsScreen> {
     final project = widget.project;
     final contracts = widget.contracts;
     return Scaffold(
-      appBar: AppBar(title: Text('${words.contractsTitle} · ${project.name}')),
+      appBar: AppBar(title: ScreenTitle(words.contractsTitle, subject: project.name)),
       floatingActionButton: project.mayManageSettings
           ? FloatingActionButton.extended(key: ContractsScreen.addKey, icon: const Icon(Icons.add), label: Text(words.contractsNew), onPressed: () => _ask(Contract.none()))
           : null,

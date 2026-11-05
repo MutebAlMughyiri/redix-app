@@ -5,6 +5,7 @@ import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'add_existing_user_dialog.dart';
 import 'edit_user_dialog.dart';
@@ -144,7 +145,7 @@ class _UsersScreenState extends State<UsersScreen> {
     final users = widget.users;
     return Scaffold(
       appBar: AppBar(
-        title: Text('${words.usersTitle} · ${widget.projectName}'),
+        title: ScreenTitle(words.usersTitle, subject: widget.projectName),
         actions: [
           IconButton(
             key: UsersScreen.addExistingKey,

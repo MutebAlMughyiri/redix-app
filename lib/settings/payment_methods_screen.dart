@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../projects/projects.dart';
+import '../ui/screen_title.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
@@ -128,7 +129,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     final project = widget.project;
     final paymentMethods = widget.paymentMethods;
     return Scaffold(
-      appBar: AppBar(title: Text(words.paymentMethodsTitle)),
+      appBar: AppBar(title: ScreenTitle(words.paymentMethodsTitle, subject: widget.project.name)),
       floatingActionButton: project.mayManageSettings
           ? FloatingActionButton.extended(
               key: PaymentMethodsScreen.addKey,

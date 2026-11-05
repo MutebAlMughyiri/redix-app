@@ -4,6 +4,7 @@ import '../projects/project.dart';
 import '../structure/offered_items.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'supplier.dart';
 import 'supplier_dialog.dart';
@@ -101,7 +102,7 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
     final project = widget.project;
     final suppliers = widget.suppliers;
     return Scaffold(
-      appBar: AppBar(title: Text('${words.suppliersTitle} · ${project.name}')),
+      appBar: AppBar(title: ScreenTitle(words.suppliersTitle, subject: project.name)),
       floatingActionButton: project.mayManageSettings
           ? FloatingActionButton.extended(
               key: SuppliersScreen.addKey,

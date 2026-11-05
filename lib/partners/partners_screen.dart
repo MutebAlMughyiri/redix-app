@@ -4,6 +4,7 @@ import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'partner.dart';
 import 'partner_dialog.dart';
@@ -88,7 +89,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
     final words = Words.of(context);
     final project = widget.project;
     return Scaffold(
-      appBar: AppBar(title: Text('${words.partnersTitle} · ${project.name}')),
+      appBar: AppBar(title: ScreenTitle(words.partnersTitle, subject: project.name)),
       floatingActionButton: project.mayManageSettings
           ? FloatingActionButton.extended(key: PartnersScreen.addKey, icon: const Icon(Icons.add), label: Text(words.partnersNew), onPressed: () => _ask(Partner.none()))
           : null,

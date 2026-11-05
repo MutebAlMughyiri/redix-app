@@ -41,7 +41,8 @@ void main() {
   testWidgets('the title names the project, and a row in it shows the roles alone', (tester) async {
     await openProjectUsers(tester);
 
-    expect(find.text('en users.title · غصون 6'), findsOneWidget);
+    expect(find.text('en users.title'), findsOneWidget);
+    expect(find.text('غصون 6'), findsOneWidget);
     expect(text(tester, UsersScreen.rolesLineKey('user-0')), 'en users.roleManager · en users.roleFinance');
     expect(text(tester, UsersScreen.rolesLineKey('user-1')), 'en users.roleField');
   });

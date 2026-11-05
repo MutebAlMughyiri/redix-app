@@ -5,6 +5,7 @@ import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'add_column_dialog.dart';
 import 'apply_to_all_dialog.dart';
@@ -175,7 +176,7 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
     final textTheme = Theme.of(context).textTheme;
     final mayChange = widget.project.mayChangeStructure;
     return Scaffold(
-      appBar: AppBar(title: Text('${words.columnsTitle} · ${widget.item.name}')),
+      appBar: AppBar(title: ScreenTitle(words.columnsTitle, subject: widget.item.name)),
       floatingActionButton: mayChange
           ? FloatingActionButton.extended(
               key: ItemColumnsScreen.addKey,

@@ -5,6 +5,7 @@ import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'categories.dart';
 import 'category.dart';
@@ -123,7 +124,7 @@ class SubgroupsScreen extends StatelessWidget {
       builder: (context, _) {
         final item = categories.itemOf(itemId);
         return Scaffold(
-          appBar: AppBar(title: Text('${words.categoriesSubgroups} · ${item.name}')),
+          appBar: AppBar(title: ScreenTitle(words.categoriesSubgroups, subject: item.name)),
           floatingActionButton: project.mayChangeStructure
               ? FloatingActionButton.extended(
                   key: addKey,
