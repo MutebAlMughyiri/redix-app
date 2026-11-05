@@ -2,16 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../projects/new_project_screen.dart';
+import '../words/app_language.dart';
+import '../words/language_switch.dart';
 import '../words/words.dart';
 import 'session.dart';
 
-/// The sign-in screen (UC-002, تسجيل الدخول): username and password, or a fingerprint or face on a phone that uses them (UC-011). A refusal shows as one line that never says which field was wrong (AC-01.2).
+/// The sign-in screen (UC-002, تسجيل الدخول): username and password, or a fingerprint or face on a phone that uses them (UC-011), with the language choice at the top so it can be read before signing in (UC-004). A refusal shows as one line that never says which field was wrong (AC-01.2).
 class SignInScreen extends StatefulWidget {
-  /// The screen, signing in to [session].
-  const SignInScreen({super.key, required this.session});
+  /// The screen, signing in to [session], in the language [language] holds.
+  const SignInScreen({super.key, required this.session, required this.language});
 
   /// The session this screen opens.
   final Session session;
+
+  /// The language choice, the same as My account's.
+  final AppLanguage language;
 
   /// The screen's route.
   static const path = '/sign-in';
@@ -94,8 +99,10 @@ class _SignInScreenState extends State<SignInScreen> {
     return Scaffold(
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
           children: [
+            Align(alignment: AlignmentDirectional.centerEnd, child: LanguageSwitch(language: widget.language)),
+            const SizedBox(height: 16),
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: ClipRRect(

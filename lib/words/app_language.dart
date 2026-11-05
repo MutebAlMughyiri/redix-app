@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'words.dart';
 
-/// The language the user chose in My account (UC-004), kept on the phone; empty while the app follows the phone's language.
+/// The language the user chose, on the sign-in screen or in My account (UC-004), kept on the phone; empty while the app follows the phone's language.
 class AppLanguage extends ChangeNotifier {
   static const _preferenceKey = 'language';
 

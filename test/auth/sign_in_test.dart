@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
+import 'package:redix/words/language_switch.dart';
 
 import '../app_harness.dart';
 
@@ -32,6 +33,30 @@ void main() {
     expect(tester.widget<RawImage>(find.descendant(of: logo, matching: find.byType(RawImage))).image, isNotNull);
     expect(tester.widget<Text>(find.byKey(SignInScreen.titleKey)).data, 'en app.title');
     expect(tester.getBottomLeft(logo).dy, lessThan(tester.getTopLeft(find.byKey(SignInScreen.titleKey)).dy));
+  });
+
+  testWidgets('UC-004: the language is chosen before signing in, and kept for after', (tester) async {
+    final api = FakeApi();
+    await pumpRedix(tester, api, locale: const Locale('ar'));
+    expect(tester.widget<Text>(find.byKey(SignInScreen.titleKey)).data, 'ar app.title');
+
+    await act(tester, api, () => tester.tap(find.byKey(LanguageSwitch.englishKey)));
+    expect(tester.widget<Text>(find.byKey(SignInScreen.titleKey)).data, 'en app.title');
+    expect(Directionality.of(tester.element(find.byKey(SignInScreen.titleKey))), TextDirection.ltr);
+
+    await signIn(tester, api);
+    expect(tester.widget<Text>(find.byKey(ProjectsScreen.titleKey)).data, 'en projects.choose');
+  });
+
+  testWidgets('without a network the sign-in screen keeps its language and says switching needs one', (tester) async {
+    final api = FakeApi();
+    await pumpRedix(tester, api, locale: const Locale('ar'));
+
+    api.online = false;
+    await act(tester, api, () => tester.tap(find.byKey(LanguageSwitch.englishKey)));
+
+    expect(tester.widget<Text>(find.byKey(LanguageSwitch.messageKey)).data, 'ar myAccount.languageNeedsNetwork');
+    expect(tester.widget<Text>(find.byKey(SignInScreen.titleKey)).data, 'ar app.title');
   });
 
   testWidgets('the right password opens home and keeps the session in secure storage', (tester) async {

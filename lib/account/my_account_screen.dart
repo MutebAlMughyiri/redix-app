@@ -5,6 +5,7 @@ import '../auth/change_password_screen.dart';
 import '../auth/session.dart';
 import '../ui/confirm_dialog.dart';
 import '../words/app_language.dart';
+import '../words/language_switch.dart';
 import '../words/words.dart';
 
 /// My account (حسابي): the user's own settings: the language (UC-004), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out
@@ -23,13 +24,13 @@ class MyAccountScreen extends StatefulWidget {
   static const path = '/my-account';
 
   /// The Arabic choice.
-  static const arabicKey = Key('myAccount.arabic');
+  static const arabicKey = LanguageSwitch.arabicKey;
 
   /// The English choice.
-  static const englishKey = Key('myAccount.english');
+  static const englishKey = LanguageSwitch.englishKey;
 
   /// The line that says why the language could not be switched.
-  static const messageKey = Key('myAccount.message');
+  static const messageKey = LanguageSwitch.messageKey;
 
   /// The switch that turns fingerprint or face on and off for this phone.
   static const biometricsKey = Key('myAccount.biometrics');
@@ -57,20 +58,7 @@ class MyAccountScreen extends StatefulWidget {
 }
 
 class _MyAccountScreenState extends State<MyAccountScreen> {
-  var _message = '';
-  var _switching = false;
   var _biometricsMessage = '';
-
-  Future<void> _choose(String language) async {
-    setState(() => _switching = true);
-    final refusal = await widget.language.choose(language);
-    if (mounted) {
-      setState(() {
-        _switching = false;
-        _message = refusal;
-      });
-    }
-  }
 
   /// Nothing waits on the prompt, because a cancelled one may never answer: the switch can always be tapped again.
   Future<void> _setBiometrics(bool on) async {
@@ -104,18 +92,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         children: [
           Text(words.myAccountLanguage, style: theme.textTheme.titleMedium),
           const SizedBox(height: 12),
-          SegmentedButton<String>(
-            segments: [
-              ButtonSegment(value: 'ar', label: Text(words.myAccountArabic, key: MyAccountScreen.arabicKey)),
-              ButtonSegment(value: 'en', label: Text(words.myAccountEnglish, key: MyAccountScreen.englishKey)),
-            ],
-            selected: {Localizations.localeOf(context).languageCode},
-            onSelectionChanged: _switching ? null : (selection) => _choose(selection.single),
-          ),
-          if (_message.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(words.text(_message), key: MyAccountScreen.messageKey, style: TextStyle(color: theme.colorScheme.error)),
-          ],
+          LanguageSwitch(language: widget.language),
           const SizedBox(height: 32),
           ListenableBuilder(
             listenable: widget.session,
