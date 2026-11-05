@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -132,7 +130,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    unawaited(widget.projects.loadOnOpen().then((_) => widget.accounts.load()));
+    widget.projects.loadOnOpen();
+    widget.accounts.loadOnOpen();
     widget.projects.addListener(_leaveIfGone);
   }
 

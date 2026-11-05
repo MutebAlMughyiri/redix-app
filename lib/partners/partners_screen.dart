@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../projects/members.dart';
@@ -72,9 +70,9 @@ class _PartnersScreenState extends State<PartnersScreen> {
   @override
   void initState() {
     super.initState();
-    final read = widget.partners.loadOnOpen();
+    widget.partners.loadOnOpen();
     if (widget.project.mayManageSettings) {
-      unawaited(read.then((_) => widget.members.load()));
+      widget.members.loadOnOpen();
     }
   }
 

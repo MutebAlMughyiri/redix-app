@@ -24,6 +24,7 @@ class Session extends ChangeNotifier {
 
   var _accessToken = '';
   var _refreshToken = '';
+  var _renewal = Future<void>.value();
   var _mustChangePassword = false;
   var _permissions = <String>{};
   var _defaultProjectId = '';
@@ -193,7 +194,13 @@ class Session extends ChangeNotifier {
     return isOpen ? request() : response;
   }
 
-  Future<void> _renew() async {
+  /// One renewal after another, each with the token the last one left: the API replaces the refresh token at every renewal, so a second sent at once would end the session.
+  Future<void> _renew() => _renewal = _renewal.then((_) => _renewOnce());
+
+  Future<void> _renewOnce() async {
+    if (!isOpen) {
+      return;
+    }
     try {
       final response = await http.post(apiUri('/auth/refresh'), headers: jsonHeaders, body: jsonEncode({'refreshToken': _refreshToken}));
       if (response.statusCode == 200) {

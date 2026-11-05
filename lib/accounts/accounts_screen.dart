@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../projects/members.dart';
@@ -88,9 +86,9 @@ class _AccountsScreenState extends State<AccountsScreen> {
   @override
   void initState() {
     super.initState();
-    final read = widget.accounts.loadOnOpen();
+    widget.accounts.loadOnOpen();
     if (widget.project.mayManageSettings) {
-      unawaited(read.then((_) => widget.members.load()));
+      widget.members.loadOnOpen();
     }
   }
 

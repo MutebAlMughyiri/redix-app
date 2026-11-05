@@ -42,7 +42,7 @@ void main() {
     expect(text(tester, ProjectsScreen.nameKey('project-0')), 'غصون 6');
   });
 
-  testWidgets('an expired access token is renewed once when reading the list', (tester) async {
+  testWidgets('an expired access token is renewed once for each list read at once, and the session stays open', (tester) async {
     final api = FakeApi()
       ..refreshStatus = 500
       ..addProject('غصون 6');
@@ -55,8 +55,8 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
 
-    expect(api.sentAccessTokens, ['kept-access', 'new-access', 'new-access']);
-    expect(api.refreshes, 1);
+    expect(api.sentAccessTokens, ['kept-access', 'kept-access', 'new-access', 'new-access']);
+    expect(api.refreshes, 2);
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsOneWidget);
   });
 

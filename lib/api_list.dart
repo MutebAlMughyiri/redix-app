@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 
@@ -51,13 +49,10 @@ abstract class ApiList<T> extends ChangeNotifier {
     super.dispose();
   }
 
-  /// Reads the list for a screen that is opening, and completes once it is read. The read waits for the frame in progress, because another screen sharing this list may still be building.
-  /// A screen that reads a second list reads it after this one: two requests with an expired token would both renew it, and the second renewal ends the session (findings row 64).
-  Future<void> loadOnOpen() {
+  /// Reads the list for a screen that is opening. The read waits for the frame in progress, because another screen sharing this list may still be building.
+  void loadOnOpen() {
     _isLoading = true;
-    final read = Completer<void>();
-    SchedulerBinding.instance.addPostFrameCallback((_) => read.complete(load()));
-    return read.future;
+    SchedulerBinding.instance.addPostFrameCallback((_) => load());
   }
 
   /// Reads the list from the API.

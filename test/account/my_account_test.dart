@@ -144,7 +144,7 @@ void main() {
     final kept = {for (final key in preferences.getKeys()) key: preferences.get(key) ?? ''};
 
     await tester.pumpWidget(const SizedBox());
-    await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession}, preferences: kept);
+    await pumpRedix(tester, FakeApi(), locale: const Locale('ar'), stored: {'session': keptSession}, preferences: kept);
 
     expect(text(tester, ProjectsScreen.titleKey), 'en projects.choose');
   });

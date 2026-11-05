@@ -6,12 +6,12 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | Renewals run one after another, each with the token the last one left, and a screen reads its lists at once | The API replaces the refresh token at every renewal, so two renewals at once ended the session. Sharing one renewal would make fewer calls, but could answer a change of default project with a session read before the change |
 | 2026-11-06 | The title of Payment methods and VAT leaves out the project's name | The emulator cut the name to one letter beside so long a title. Made without Muteb |
 | 2026-11-06 | The Partners screen holds the list of partners only, with its way in for `seeAllCapital` | The canvas draws capital, shares and movements, which need the ledger, and someone seeing only their own has nothing there until UC-044. Made without Muteb; findings row 70 |
 | 2026-11-06 | A partner's login is chosen in the partner's dialog, among the project's people | The BRS has no such step, but BR-31 needs the link, and a person with no role in the project could not see anything anyway. Made without Muteb |
 | 2026-11-06 | The Accounts screen holds the list of accounts only, under the title Accounts | The canvas draws reconciliation and transfers on it too, which need the ledger and have their own use cases. Made without Muteb |
 | 2026-11-06 | What a custodian holds is a card above the project on the home, for anyone who holds something | AC-22.1 asks it of the home, and the app names no role; UC-037 adds the counts and the shortcuts around it. Made without Muteb |
-| 2026-11-06 | A screen with two lists reads them one after the other | Two requests with an expired token at once each renew it, and the second renewal ends the session. The session code stays as it is tonight; findings row 64 proposes the fix there |
 | 2026-11-06 | Choosing someone in a project is one `MemberPicker`, a list of choices rather than a dropdown, which keeps whoever holds the thing on offer even after they leave | Accounts and partners both need it. On the emulator a dropdown opened and closed again while the keyboard was up, because hiding the keyboard resizes the window and Flutter closes the menu then; a project has few people, and each name shows in full. Made without Muteb |
 | 2026-11-06 | Payment methods and the VAT rate share one screen, from the project's home | The canvas has none (findings row 7), and both are short. Built from Material's parts. Made without Muteb; findings row 62 |
 | 2026-11-06 | The Add button says "Add" where a screen's title already says what is added, with the full phrase as its tooltip | The full phrase was too wide at 360 points. Made without Muteb |

@@ -43,8 +43,6 @@ The project's home, `HomeScreen`:
 | `GET /projects/{id}/members` | Opening the screen with `manageSettings`, after the accounts |
 | `POST /projects/{id}/accounts`, `.../{accountId}`, `.../{accountId}/disable`, `.../{accountId}/enable` | Adding, editing, disabling and enabling |
 
-The home and this screen read their two lists one after the other, because two requests with an expired token at once end the session (findings row 64).
-
 ## Rules and where they live
 
 | Rule | Code | Test in `test/accounts/accounts_test.dart` |
@@ -63,7 +61,7 @@ The home and this screen read their two lists one after the other, because two r
 | A custodian sees their custody on the home, and nobody else does (AC-22.1) | `MyCustody`, `Accounts.mine` | `a custodian sees their custody on the home, and nobody else does (AC-22.1)` |
 | A disabled custody leaves the home | `Accounts.mine` | `a disabled custody leaves the home` |
 | A list that cannot be read says so | `ApiListBody` | `a list that cannot be read says so` |
-| An expired token is renewed once when the home opens | `HomeScreen`, `ApiList.loadOnOpen` | `an expired access token is renewed once when reading the list`, in `test/projects/projects_test.dart` |
+| An expired token is renewed for each list when the home opens, and the session stays open | `HomeScreen`, `Session._renew` | `an expired access token is renewed once for each list read at once`, in `test/projects/projects_test.dart` |
 | It fits 360 points wide in both languages (AC-N03) | `AccountsScreen`, `MyCustody` | `AC-N03` in `test/account/my_account_test.dart` |
 
 The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, which adds a bank account and a custody and sees the custody on the home.

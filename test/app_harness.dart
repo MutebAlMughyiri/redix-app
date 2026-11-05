@@ -242,6 +242,12 @@ class FakeApi {
   /// How many times the app told the API it signed out.
   var signOuts = 0;
 
+  /// Refresh tokens already replaced. One sent again answers 401, as the real API answers it.
+  final _replacedRefreshTokens = <String>{};
+
+  /// How many sessions the API has issued, so that each gets a refresh token of its own.
+  var _issued = 0;
+
   /// Access tokens the API treats as expired, answering 401 with no body.
   final expiredAccessTokens = <String>{};
 
@@ -279,6 +285,13 @@ class FakeApi {
     }
     if (path == '/auth/refresh') {
       refreshes++;
+      final refreshToken = (jsonDecode(request.body) as Map<String, dynamic>)['refreshToken'] as String;
+      if (_replacedRefreshTokens.contains(refreshToken)) {
+        return http.Response('{"code": "sessionExpired"}', 401);
+      }
+      if (refreshStatus == 200) {
+        _replacedRefreshTokens.add(refreshToken);
+      }
     }
     if (path == '/auth/biometrics') {
       final on = (jsonDecode(request.body) as Map<String, dynamic>)['on'] as bool;
@@ -295,7 +308,7 @@ class FakeApi {
       mustChangePassword = false;
     }
     final body = status == 200
-        ? '{"accessToken": "new-access", "refreshToken": "new-refresh", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "openDefaultProject": $openDefaultProject, "usesBiometrics": $usesBiometrics}'
+        ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "openDefaultProject": $openDefaultProject, "usesBiometrics": $usesBiometrics}'
         : '{"code": "$code"}';
     return http.Response(body, status);
   });
