@@ -13,6 +13,9 @@ enum Permission {
   /// Shape a project's expense structure: its categories, items, subgroups and columns.
   manageStructure,
 
-  /// Keep a project's payment methods and VAT rate.
+  /// Keep a project's payment methods, VAT rate, accounts and partners.
   manageSettings,
+
+  /// See every partner in a project and their capital, not only their own.
+  seeAllCapital,
 }

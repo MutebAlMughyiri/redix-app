@@ -10,6 +10,8 @@ import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
 import 'home/home_screen.dart';
+import 'partners/partners.dart';
+import 'partners/partners_screen.dart';
 import 'projects/members.dart';
 import 'projects/new_project_screen.dart';
 import 'projects/projects.dart';
@@ -74,6 +76,7 @@ class _RedixAppState extends State<RedixApp> {
   final _projectPaymentMethods = <String, PaymentMethods>{};
   final _projectAccounts = <String, Accounts>{};
   final _projectMembers = <String, Members>{};
+  final _projectPartners = <String, Partners>{};
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -120,6 +123,10 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => AccountsScreen(project: state.extra! as Project, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), members: _membersOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(
+        path: PartnersScreen.path,
+        builder: (context, state) => PartnersScreen(project: state.extra! as Project, partners: _partnersOf(state.pathParameters['projectId'] ?? ''), members: _membersOf(state.pathParameters['projectId'] ?? '')),
+      ),
+      GoRoute(
         path: SubgroupsScreen.path,
         builder: (context, state) => SubgroupsScreen(
           itemId: state.pathParameters['itemId'] ?? '',
@@ -141,6 +148,8 @@ class _RedixAppState extends State<RedixApp> {
   Accounts _accountsOf(String projectId) => _projectAccounts.putIfAbsent(projectId, () => Accounts(widget.session, projectId));
 
   Members _membersOf(String projectId) => _projectMembers.putIfAbsent(projectId, () => Members(widget.session, projectId));
+
+  Partners _partnersOf(String projectId) => _projectPartners.putIfAbsent(projectId, () => Partners(widget.session, projectId));
 
   Columns _columnsAt(String path) => _columnLists.putIfAbsent(path, () => Columns(widget.session, path));
 

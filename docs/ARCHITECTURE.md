@@ -24,6 +24,11 @@ lib/
     account_row.dart        one account, with its menu
     account_dialog.dart     the dialog that adds or edits an account
     my_custody.dart         what the signed-in user holds, on the project's home
+  partners/
+    partner.dart            Partner, as the API answers them
+    partners.dart           Partners: the ApiList of one project's partners, and its changes
+    partners_screen.dart    a project's partners
+    partner_dialog.dart     the dialog that adds or edits a partner
   projects/
     project.dart            Project and Unit, as the API answers them
     projects.dart           Projects: the ApiList of projects, and its changes

@@ -8,6 +8,7 @@ import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/main.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
@@ -231,6 +232,24 @@ void main() {
     await $(BackButton).tap();
     await $(keyStartingWith('home.custody.')).waitUntilVisible();
     await $.takeNativeScreenshot('my-custody');
+
+    await $(keyStartingWith('home.partners.')).scrollTo().tap();
+    await $(PartnersScreen.addKey).waitUntilVisible();
+    await $(PartnersScreen.addKey).tap();
+    await $(PartnersScreen.partnerNameKey).enterText('هيثم');
+    await $(PartnersScreen.saveKey).tap();
+    await $(find.text('هيثم')).waitUntilVisible();
+    await $(PartnersScreen.addKey).tap();
+    await $(PartnersScreen.partnerNameKey).enterText('مدير المشروع');
+    await $.tester.ensureVisible(keyStartingWith('memberPicker.option.').last);
+    await $.pumpAndSettle();
+    await $(keyStartingWith('memberPicker.option.')).last.tap();
+    await $.pumpAndSettle();
+    await $.takeNativeScreenshot('partner-dialog');
+    await $(PartnersScreen.saveKey).tap();
+    await $(find.text('مدير المشروع')).waitUntilVisible();
+    await $.takeNativeScreenshot('partners');
+    await $(BackButton).tap();
 
     await $(keyStartingWith('home.close.')).tap();
     await $(HomeScreen.confirmCloseKey).waitUntilVisible();

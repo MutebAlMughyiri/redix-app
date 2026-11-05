@@ -380,6 +380,54 @@ mixin WordGetters {
   /// The word `myAccount.title`.
   String get myAccountTitle => text('myAccount.title');
 
+  /// The word `partners.edit`.
+  String get partnersEdit => text('partners.edit');
+
+  /// The word `partners.empty`.
+  String get partnersEmpty => text('partners.empty');
+
+  /// The word `partners.invalidName`.
+  String get partnersInvalidName => text('partners.invalidName');
+
+  /// The word `partners.loadFailed`.
+  String get partnersLoadFailed => text('partners.loadFailed');
+
+  /// The word `partners.login`.
+  String get partnersLogin => text('partners.login');
+
+  /// The word `partners.loginHint`.
+  String get partnersLoginHint => text('partners.loginHint');
+
+  /// The word `partners.name`.
+  String get partnersName => text('partners.name');
+
+  /// The word `partners.new`.
+  String get partnersNew => text('partners.new');
+
+  /// The word `partners.noConnection`.
+  String get partnersNoConnection => text('partners.noConnection');
+
+  /// The word `partners.noLogin`.
+  String get partnersNoLogin => text('partners.noLogin');
+
+  /// The word `partners.projectFinished`.
+  String get partnersProjectFinished => text('partners.projectFinished');
+
+  /// The word `partners.refused`.
+  String get partnersRefused => text('partners.refused');
+
+  /// The word `partners.save`.
+  String get partnersSave => text('partners.save');
+
+  /// The word `partners.title`.
+  String get partnersTitle => text('partners.title');
+
+  /// The word `partners.unknownUser`.
+  String get partnersUnknownUser => text('partners.unknownUser');
+
+  /// The word `partners.userTaken`.
+  String get partnersUserTaken => text('partners.userTaken');
+
   /// The word `paymentMethods.changeVatRate`.
   String get paymentMethodsChangeVatRate => text('paymentMethods.changeVatRate');
 

@@ -7,6 +7,7 @@ import '../accounts/accounts.dart';
 import '../accounts/accounts_screen.dart';
 import '../accounts/my_custody.dart';
 import '../auth/session.dart';
+import '../partners/partners_screen.dart';
 import '../projects/add_unit_dialog.dart';
 import '../projects/project.dart';
 import '../projects/project_card.dart';
@@ -108,6 +109,9 @@ class HomeScreen extends StatefulWidget {
   /// The way into the accounts of the project [id].
   static Key accountsKey(String id) => Key('home.accounts.$id');
 
+  /// The way into the partners of the project [id].
+  static Key partnersKey(String id) => Key('home.partners.$id');
+
   /// The card of the account [id], which the signed-in user holds.
   static Key custodyKey(String id) => Key('home.custody.$id');
 
@@ -207,6 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onCategories: () => context.push(CategoriesScreen.pathOf(project.id), extra: project),
                     onPaymentMethods: () => context.push(PaymentMethodsScreen.pathOf(project.id), extra: project),
                     onAccounts: () => context.push(AccountsScreen.pathOf(project.id), extra: project),
+                    onPartners: () => context.push(PartnersScreen.pathOf(project.id), extra: project),
                     onAddUnit: () => _askForUnit(project),
                     onClose: () => _askToClose(project),
                   ),

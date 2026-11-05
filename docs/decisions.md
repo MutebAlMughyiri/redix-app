@@ -6,6 +6,9 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-06 | The title of Payment methods and VAT leaves out the project's name | The emulator cut the name to one letter beside so long a title. Made without Muteb |
+| 2026-11-06 | The Partners screen holds the list of partners only, with its way in for `seeAllCapital` | The canvas draws capital, shares and movements, which need the ledger, and someone seeing only their own has nothing there until UC-044. Made without Muteb; findings row 70 |
+| 2026-11-06 | A partner's login is chosen in the partner's dialog, among the project's people | The BRS has no such step, but BR-31 needs the link, and a person with no role in the project could not see anything anyway. Made without Muteb |
 | 2026-11-06 | The Accounts screen holds the list of accounts only, under the title Accounts | The canvas draws reconciliation and transfers on it too, which need the ledger and have their own use cases. Made without Muteb |
 | 2026-11-06 | What a custodian holds is a card above the project on the home, for anyone who holds something | AC-22.1 asks it of the home, and the app names no role; UC-037 adds the counts and the shortcuts around it. Made without Muteb |
 | 2026-11-06 | A screen with two lists reads them one after the other | Two requests with an expired token at once each renew it, and the second renewal ends the session. The session code stays as it is tonight; findings row 64 proposes the fix there |

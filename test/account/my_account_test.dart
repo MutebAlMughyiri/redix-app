@@ -7,6 +7,7 @@ import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/member_picker.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
@@ -489,6 +490,25 @@ void main() {
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       expectFits(HomeScreen.custodyKey(custody));
       expectFits(HomeScreen.custodyBalanceKey(custody));
+
+      final partner = api.addPartner(runningId, 'متعب بن عبدالله بن محمد المغيري الشريك المؤسس في المشروع', userId: 'user-nawaf', userName: 'نواف بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني')['id'] as String;
+      final partnerWithNoLogin = api.addPartner(runningId, 'هيثم')['id'] as String;
+      await tester.ensureVisible(find.byKey(HomeScreen.partnersKey(runningId)));
+      expectFits(HomeScreen.partnersKey(runningId));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.partnersKey(runningId))));
+      [
+        PartnersScreen.addKey,
+        PartnersScreen.nameKey(partner),
+        PartnersScreen.detailsKey(partner),
+        PartnersScreen.editKey(partner),
+        PartnersScreen.nameKey(partnerWithNoLogin),
+        PartnersScreen.detailsKey(partnerWithNoLogin),
+        PartnersScreen.editKey(partnerWithNoLogin),
+      ].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.editKey(partner))));
+      [PartnersScreen.partnerNameKey, PartnersScreen.loginKey, PartnersScreen.loginHintKey, PartnersScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await tester.ensureVisible(find.byKey(HomeScreen.usersKey(runningId)));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey(runningId))));

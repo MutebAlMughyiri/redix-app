@@ -57,6 +57,8 @@ Map<String, String> wordsIn(String language) => {
     'paymentMethods.vatRate', 'paymentMethods.vatHint', 'paymentMethods.changeVatRate', 'paymentMethods.vatPercent',
     'accounts.title', 'accounts.empty', 'accounts.loadFailed', 'accounts.noConnection', 'accounts.refused', 'accounts.projectFinished', 'accounts.invalidName', 'accounts.invalidOpeningBalance',
     'accounts.custodianRequired', 'accounts.unknownCustodian', 'accounts.new', 'accounts.edit', 'accounts.save', 'accounts.type', 'accounts.typeBank', 'accounts.typeCashCustody', 'accounts.name',
+    'partners.title', 'partners.empty', 'partners.loadFailed', 'partners.noConnection', 'partners.refused', 'partners.projectFinished', 'partners.invalidName', 'partners.unknownUser', 'partners.userTaken',
+    'partners.new', 'partners.edit', 'partners.save', 'partners.name', 'partners.login', 'partners.noLogin', 'partners.loginHint',
     'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
   ])
     key: '$language $key',
@@ -219,6 +221,9 @@ class FakeApi {
 
   /// Each project's accounts, as the API answers them.
   final accounts = <String, List<Map<String, Object>>>{};
+
+  /// Each project's partners, as the API answers them.
+  final partners = <String, List<Map<String, Object>>>{};
 
   /// The people of every project, as the API answers them.
   final members = <Map<String, String>>[];
@@ -416,6 +421,36 @@ class FakeApi {
           ..['balance'] = body['openingBalance'] as double
           ..['custodianId'] = custodianId
           ..['custodianName'] = _memberName(custodianId);
+    }
+    return _json({}, 200);
+  }
+
+  /// Adds a partner to the project [projectId], as the API holds them.
+  Map<String, Object> addPartner(String projectId, String name, {String userId = '', String userName = ''}) {
+    final partner = <String, Object>{'id': 'partner-${_nextStructureId++}', 'name': name, 'userId': userId, 'userName': userName};
+    partners.putIfAbsent(projectId, () => []).add(partner);
+    return partner;
+  }
+
+  http.Response _answerPartners(http.Request request) {
+    final segments = request.url.pathSegments;
+    final list = partners.putIfAbsent(segments[1], () => []);
+    if (request.method == 'GET') {
+      return _json(list, 200);
+    }
+    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    sentSettingsChanges.add((request.url.path, body));
+    if (settingsAnswer.status >= 300) {
+      return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
+    }
+    final userId = body['userId'] as String? ?? '';
+    if (segments.length == 3) {
+      addPartner(segments[1], body['name'] as String, userId: userId, userName: _memberName(userId));
+    } else {
+      list.singleWhere((row) => row['id'] == segments[3])
+        ..['name'] = body['name'] as String
+        ..['userId'] = userId
+        ..['userName'] = _memberName(userId);
     }
     return _json({}, 200);
   }
@@ -687,6 +722,9 @@ class FakeApi {
     }
     if (segments.length >= 3 && segments[2] == 'accounts') {
       return _answerAccounts(request);
+    }
+    if (segments.length >= 3 && segments[2] == 'partners') {
+      return _answerPartners(request);
     }
     if (segments.length >= 3 && segments[2] == 'members') {
       return _json(members, 200);

@@ -128,7 +128,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     final project = widget.project;
     final paymentMethods = widget.paymentMethods;
     return Scaffold(
-      appBar: AppBar(title: Text('${words.paymentMethodsTitle} · ${project.name}')),
+      appBar: AppBar(title: Text(words.paymentMethodsTitle)),
       floatingActionButton: project.mayManageSettings
           ? FloatingActionButton.extended(
               key: PaymentMethodsScreen.addKey,
