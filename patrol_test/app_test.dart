@@ -29,7 +29,6 @@ import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/category.dart';
 import 'package:redix/structure/apply_to_all_dialog.dart';
-import 'package:redix/structure/item_column.dart';
 import 'package:redix/structure/item_columns_screen.dart';
 import 'package:redix/structure/subgroups_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
@@ -98,10 +97,43 @@ String get madeUpInvoiceQr {
 }
 
 void main() {
-  // The binding paints a test's own description across the app, so the journey's name sits on its group: the guide's pictures show the app as a person gets it.
-  group('a project is registered, approved and managed; a new user sees it by role', () {
-    patrolTest(' ', config: const PatrolTesterConfig(visibleTimeout: Duration(seconds: 30)), ($) async {
+  patrolTest(
+    'a project is registered, approved and managed; a new user sees it by role',
+    config: const PatrolTesterConfig(existsTimeout: Duration(seconds: 30), visibleTimeout: Duration(seconds: 30)),
+    ($) async {
       WidgetsApp.debugAllowBannerOverride = false;
+
+      /// Waits until [finder] finds nothing, because the row leaves only once the API has answered.
+      Future<void> gone(PatrolFinder finder) async {
+        for (var tries = 0; tries < 60 && finder.evaluate().isNotEmpty; tries++) {
+          await Future<void>.delayed(const Duration(milliseconds: 500));
+          await $.pump();
+        }
+        expect(finder, findsNothing);
+      }
+
+      /// Brings [finder] into view, above or below what shows now: one not built yet is further down the list.
+      Future<void> goTo(PatrolFinder finder) async {
+        await $.pumpAndSettle();
+        if (finder.evaluate().isEmpty) {
+          await finder.scrollTo();
+          return;
+        }
+        if (finder.hitTestable().evaluate().isEmpty) {
+          await $.tester.ensureVisible(finder.first);
+          await $.pumpAndSettle();
+        }
+      }
+
+      /// Waits for [finder], and brings it into view: a phone 360 points wide shows less than the emulator.
+      Future<void> reach(PatrolFinder finder) async {
+        await finder.waitUntilExists();
+        await $.pumpAndSettle();
+        if (finder.hitTestable().evaluate().isEmpty) {
+          await $.tester.ensureVisible(finder.first);
+        await $.pumpAndSettle();
+        }
+      }
 
       /// Takes a guide's picture with the keyboard closed, because under Patrol it stays up once a field was typed in, even after the field loses focus.
       Future<void> picture(String name) async {
@@ -116,7 +148,7 @@ void main() {
       await session.restore();
       await language.restore();
       await $.pumpWidgetAndSettle(RedixApp(session: session, language: language, capture: const CameraWithAPicture()));
-      await $(SignInScreen.usernameKey).waitUntilVisible();
+      await reach($(SignInScreen.usernameKey));
       final logo = find.byKey(SignInScreen.logoKey);
       await precacheImage($.tester.widget<Image>(logo).image, $.tester.element(logo));
       await $.pumpAndSettle();
@@ -132,24 +164,32 @@ void main() {
 
       Finder rowShowing(String name) => find.descendant(of: find.byType(ListTile), matching: find.text(name));
 
-      await $(SignInScreen.registerKey).scrollTo().tap();
+      await goTo($(SignInScreen.registerKey));
+
+      await $(SignInScreen.registerKey).tap();
       await $(NewProjectScreen.nameKey).enterText('غصون 7');
       await $(NewProjectScreen.unitNameKey).enterText('الفلة الشرقية');
       await $(NewProjectScreen.addUnitKey).tap();
       await $(NewProjectScreen.unitNameKey).enterText('الفلة الشمالية');
       await $(NewProjectScreen.addUnitKey).tap();
-      await $(NewProjectScreen.managerNameKey).scrollTo().enterText('ريم');
-      await $(NewProjectScreen.usernameKey).scrollTo().enterText('patrol-reem');
-      await $(NewProjectScreen.mobileKey).scrollTo().enterText('0511111111');
-      await $(NewProjectScreen.passwordKey).scrollTo().enterText('Reem-chosen-1');
+      await goTo($(NewProjectScreen.managerNameKey));
+      await $(NewProjectScreen.managerNameKey).enterText('ريم');
+      await goTo($(NewProjectScreen.usernameKey));
+      await $(NewProjectScreen.usernameKey).enterText('patrol-reem');
+      await goTo($(NewProjectScreen.mobileKey));
+      await $(NewProjectScreen.mobileKey).enterText('0511111111');
+      await goTo($(NewProjectScreen.passwordKey));
+      await $(NewProjectScreen.passwordKey).enterText('Reem-chosen-1');
       await picture('register-project');
-      await $(NewProjectScreen.submitKey).scrollTo().tap();
+      await goTo($(NewProjectScreen.submitKey));
+      await $(NewProjectScreen.submitKey).tap();
 
-      await $(SignInScreen.usernameKey).waitUntilVisible();
+      await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText('patrol-reem');
       await $(SignInScreen.passwordKey).enterText('Reem-chosen-1');
-      await $(SignInScreen.submitKey).scrollTo().tap();
-      await $(keyStartingWith('projects.status.')).waitUntilVisible();
+      await goTo($(SignInScreen.submitKey));
+      await $(SignInScreen.submitKey).tap();
+      await reach($(keyStartingWith('projects.status.')));
       expect($(keyStartingWith('projects.star.')), findsNothing);
       await picture('project-waiting');
       await $(keyStartingWith('projects.card.')).tap();
@@ -160,48 +200,52 @@ void main() {
       await $(MyAccountScreen.signOutKey).tap();
       await $(MyAccountScreen.confirmSignOutKey).tap();
 
-      await $(SignInScreen.usernameKey).waitUntilVisible();
+      await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText(username);
       await $(SignInScreen.passwordKey).enterText(temporaryPassword);
-      await $(SignInScreen.submitKey).scrollTo().tap();
-      await $(ChangePasswordScreen.currentKey).waitUntilVisible();
+      await goTo($(SignInScreen.submitKey));
+      await $(SignInScreen.submitKey).tap();
+      await reach($(ChangePasswordScreen.currentKey));
       await picture('change-password');
 
       await $(ChangePasswordScreen.currentKey).enterText(temporaryPassword);
       await $(ChangePasswordScreen.newKey).enterText(newPassword);
       await $(ChangePasswordScreen.confirmKey).enterText(newPassword);
-      await $(ChangePasswordScreen.submitKey).scrollTo().tap();
-      await $(ProjectsScreen.titleKey).waitUntilVisible();
+      await goTo($(ChangePasswordScreen.submitKey));
+      await $(ChangePasswordScreen.submitKey).tap();
+      await reach($(ProjectsScreen.titleKey));
 
       await $(ProjectsScreen.settingsKey).tap();
-      await $(SettingsScreen.registeredKey).waitUntilVisible();
+      await reach($(SettingsScreen.registeredKey));
       await picture('settings');
       await $(SettingsScreen.registeredKey).tap();
-      await $(keyStartingWith('registered.approve.')).waitUntilVisible();
+      await reach($(keyStartingWith('registered.approve.')));
       await picture('registered-projects');
       await $(keyStartingWith('registered.approve.')).tap();
-      await $(RegisteredProjectsScreen.emptyKey).waitUntilVisible();
+      await reach($(RegisteredProjectsScreen.emptyKey));
       await $(BackButton).tap();
       await $(SettingsScreen.myAccountKey).tap();
       await $(MyAccountScreen.signOutKey).tap();
       await $(MyAccountScreen.confirmSignOutKey).tap();
 
-      await $(SignInScreen.usernameKey).waitUntilVisible();
+      await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText('patrol-reem');
       await $(SignInScreen.passwordKey).enterText('Reem-chosen-1');
-      await $(SignInScreen.submitKey).scrollTo().tap();
-      await $(keyStartingWith('projects.card.')).waitUntilVisible();
+      await goTo($(SignInScreen.submitKey));
+      await $(SignInScreen.submitKey).tap();
+      await reach($(keyStartingWith('projects.card.')));
       expect($(keyStartingWith('home.users.')), findsNothing);
       await $(keyStartingWith('projects.card.')).tap();
 
       final projectUsers = $(keyStartingWith('home.users.'));
-      await projectUsers.waitUntilVisible();
+      await reach(projectUsers);
       expect($(keyStartingWith('home.addUnit.')), findsNothing);
-      await projectUsers.scrollTo().tap();
-      await $(keyStartingWith('users.menu.')).waitUntilVisible();
+      await goTo(projectUsers);
+      await projectUsers.tap();
+      await reach($(keyStartingWith('users.menu.')));
       await $(keyStartingWith('users.menu.')).tap();
       await $(UsersScreen.rolesKey).tap();
-      await $(keyStartingWith('userRoles.role.')).at(1).waitUntilVisible();
+      await reach($(keyStartingWith('userRoles.role.')).at(1));
       await $(keyStartingWith('userRoles.role.')).at(1).tap();
       await $.pumpAndSettle();
       await picture('user-roles');
@@ -209,40 +253,43 @@ void main() {
       await $(BackButton).tap();
 
       final addUnit = $(keyStartingWith('home.addUnit.'));
-      await addUnit.waitUntilVisible();
+      await reach(addUnit);
       expect($(find.text('الفلة الشرقية')), findsOneWidget);
       expect($(find.text('الفلة الشمالية')), findsOneWidget);
       await addUnit.tap();
       await $(HomeScreen.unitNameKey).enterText('الفلة الغربية');
       await $(HomeScreen.saveUnitKey).tap();
-      await $(keyStartingWith('home.unit.')).at(2).waitUntilVisible();
+      await reach($(keyStartingWith('home.unit.')).at(2));
       await picture('home');
 
       await addUnit.tap();
       await $(HomeScreen.unitNameKey).enterText('ملحق');
       await $(HomeScreen.saveUnitKey).tap();
-      await $(keyStartingWith('home.unit.')).at(3).waitUntilVisible();
+      await reach($(keyStartingWith('home.unit.')).at(3));
       await $(keyStartingWith('home.unitMenu.')).at(3).tap();
       await $(HomeScreen.renameUnitKey).tap();
       await $(NameDialog.nameKey).enterText('ملحق الفلة');
       await $(ChangeDialog.saveKey).tap();
-      await $(find.text('ملحق الفلة')).waitUntilVisible();
+      await reach($(find.text('ملحق الفلة')));
       await $(keyStartingWith('home.unitMenu.')).at(3).tap();
       await $(HomeScreen.deleteUnitKey).tap();
       await $(ConfirmDialog.confirmKey).tap();
-      await $.pumpAndSettle();
-      expect($(find.text('ملحق الفلة')), findsNothing);
-      await $(keyStartingWith('home.rename.')).scrollTo().tap();
+      await gone($(find.text('ملحق الفلة')));
+      await goTo($(keyStartingWith('home.rename.')));
+      await $(keyStartingWith('home.rename.')).tap();
       await $(NameDialog.nameKey).enterText('غصون 7 الأولى');
       await $(ChangeDialog.saveKey).tap();
-      await $(find.text('غصون 7 الأولى')).waitUntilVisible();
-      await $(keyStartingWith('home.rename.')).scrollTo().tap();
+      await reach($(find.text('غصون 7 الأولى')));
+      await goTo($(keyStartingWith('home.rename.')));
+      await $(keyStartingWith('home.rename.')).tap();
       await $(NameDialog.nameKey).enterText('غصون 7');
       await $(ChangeDialog.saveKey).tap();
-      await $(find.text('غصون 7')).waitUntilVisible();
+      await reach($(find.text('غصون 7')));
 
-      await $(keyStartingWith('home.categories.')).scrollTo().tap();
-      await $(keyStartingWith('categories.tile.')).at(4).waitUntilVisible();
+      await goTo($(keyStartingWith('home.categories.')));
+
+      await $(keyStartingWith('home.categories.')).tap();
+      await reach($(keyStartingWith('categories.tile.')).at(4));
       String firstCategory() => $.tester.widget<Text>(keyStartingWith('categories.name.').first).data!;
       expect(firstCategory(), 'تكلفة الأراضي');
       await $.tester.timedDrag(keyStartingWith('categories.handle.').first, const Offset(0, 160), const Duration(milliseconds: 600));
@@ -252,14 +299,15 @@ void main() {
       await $(CategoriesScreen.addCategoryKey).tap();
       await $(CategoriesScreen.nameKey).enterText('الملاحق');
       await $(CategoriesScreen.saveKey).tap();
-      await $(CategoriesScreen.addCategoryKey).waitUntilVisible();
-      await $(find.text('الملاحق')).scrollTo();
+      await reach($(CategoriesScreen.addCategoryKey));
+      await goTo($(find.text('الملاحق')));
 
       await $(keyStartingWith('categories.tile.')).at(5).tap();
-      await $(keyStartingWith('categories.addItem.')).scrollTo().tap();
+      await goTo($(keyStartingWith('categories.addItem.')));
+      await $(keyStartingWith('categories.addItem.')).tap();
       await $(CategoriesScreen.nameKey).enterText('المظلة');
       await $(CategoriesScreen.saveKey).tap();
-      await $(keyStartingWith('categories.itemMenu.')).scrollTo();
+      await goTo($(keyStartingWith('categories.itemMenu.')));
       await $.pumpAndSettle();
       await picture('categories');
 
@@ -268,104 +316,110 @@ void main() {
       await $(SubgroupsScreen.addKey).tap();
       await $(SubgroupsScreen.nameKey).enterText('مواد');
       await $(SubgroupsScreen.saveKey).tap();
-      await $(find.text('مواد')).waitUntilVisible();
+      await reach($(find.text('مواد')));
       await picture('subgroups');
       await $(SubgroupsScreen.addKey).tap();
       await $(SubgroupsScreen.nameKey).enterText('دفان');
       await $(SubgroupsScreen.saveKey).tap();
-      await $(find.text('دفان')).waitUntilVisible();
+      await reach($(find.text('دفان')));
       await $(keyStartingWith('subgroups.delete.')).last.tap();
       await $(ConfirmDialog.confirmKey).tap();
-      await $.pumpAndSettle();
-      expect($(find.text('دفان')), findsNothing);
+      await gone($(find.text('دفان')));
       await $(BackButton).tap();
 
       await $(keyStartingWith('categories.itemMenu.')).tap();
       await $(CategoriesScreen.changeTypeKey).tap();
       await $(CategoriesScreen.itemTypeKey(ItemType.purchases)).tap();
       await $(ChangeDialog.saveKey).tap();
-      await $(keyStartingWith('categories.itemMenu.')).waitUntilVisible();
+      await reach($(keyStartingWith('categories.itemMenu.')));
       await $.pumpAndSettle();
       await $(keyStartingWith('categories.itemMenu.')).tap();
       await $(CategoriesScreen.changeTypeKey).tap();
       await $(CategoriesScreen.itemTypeKey(ItemType.both)).tap();
       await $(ChangeDialog.saveKey).tap();
-      await $(keyStartingWith('categories.itemMenu.')).waitUntilVisible();
+      await reach($(keyStartingWith('categories.itemMenu.')));
       await $.pumpAndSettle();
 
       await $(keyStartingWith('categories.itemColumns.')).tap();
-      await $(keyStartingWith('columns.lock.')).first.waitUntilVisible();
+      await reach($(keyStartingWith('columns.lock.')).first);
       await $(ItemColumnsScreen.addKey).tap();
       await $(ItemColumnsScreen.columnNameKey).enterText('المساحة م²');
       await $(ItemColumnsScreen.requiredKey).tap();
       await $(ItemColumnsScreen.saveKey).tap();
-      await $(ItemColumnsScreen.addKey).waitUntilVisible();
-      await $(find.text('المساحة م²')).scrollTo();
+      await reach($(ItemColumnsScreen.addKey));
+      await goTo($(find.text('المساحة م²')));
       await picture('item-columns');
-      await $(keyStartingWith('columns.delete.')).last.scrollTo().tap();
+      await goTo($(keyStartingWith('columns.delete.')).last);
+      await $(keyStartingWith('columns.delete.')).last.tap();
       await $(ItemColumnsScreen.confirmDeleteKey).tap();
-      await $.pumpAndSettle();
-      expect($(find.text('المساحة م²')), findsNothing);
+      await gone($(find.text('المساحة م²')));
 
       await $(ItemColumnsScreen.addKey).tap();
       await $(ItemColumnsScreen.columnNameKey).enterText('الجهة');
+      await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+      await $.pumpAndSettle();
       await $(ItemColumnsScreen.dataTypeKey).tap();
-      await $(find.byWidgetPredicate((widget) => widget is DropdownMenuItem<ColumnDataType> && widget.value == ColumnDataType.list)).last.tap();
+      await $(find.text('Pick list')).last.tap();
       await $.pumpAndSettle();
       await $(ItemColumnsScreen.choicesKey).enterText('شرق');
       await $(ItemColumnsScreen.saveKey).tap();
-      await $(find.text('الجهة')).scrollTo();
-      await $(keyStartingWith('columns.edit.')).last.scrollTo().tap();
+      await goTo($(find.text('الجهة')));
+      await goTo($(keyStartingWith('columns.edit.')).last);
+      await $(keyStartingWith('columns.edit.')).last.tap();
       await $(ItemColumnsScreen.newChoicesKey).enterText('غرب');
       await $(ItemColumnsScreen.saveKey).tap();
-      await $(find.text('الجهة')).scrollTo();
-      await $(keyStartingWith('columns.delete.')).last.scrollTo().tap();
+      await goTo($(find.text('الجهة')));
+      await goTo($(keyStartingWith('columns.delete.')).last);
+      await $(keyStartingWith('columns.delete.')).last.tap();
       await $(ItemColumnsScreen.confirmDeleteKey).tap();
-      await $.pumpAndSettle();
-      expect($(find.text('الجهة')), findsNothing);
+      await gone($(find.text('الجهة')));
 
       await $(ItemColumnsScreen.templateKey).tap();
-      await $(keyStartingWith('columns.lock.')).first.waitUntilVisible();
+      await reach($(keyStartingWith('columns.lock.')).first);
       await $(ItemColumnsScreen.addKey).tap();
       await $(ItemColumnsScreen.columnNameKey).enterText('رقم أمر الشراء');
       await $(ItemColumnsScreen.saveKey).tap();
-      await $(ApplyToAllDialog.applyKey).waitUntilVisible();
+      await reach($(ApplyToAllDialog.applyKey));
       await picture('apply-to-all');
       await $(ApplyToAllDialog.applyKey).tap();
-      await $(find.text('رقم أمر الشراء')).scrollTo();
+      await goTo($(find.text('رقم أمر الشراء')));
       await $(ItemColumnsScreen.thisItemKey).tap();
-      await $(find.text('رقم أمر الشراء')).scrollTo();
+      await goTo($(find.text('رقم أمر الشراء')));
       await $(BackButton).tap();
 
       await $(keyStartingWith('categories.itemMenu.')).tap();
       await $(CategoriesScreen.disableItemKey).tap();
-      await $(keyStartingWith('categories.itemMenu.')).waitUntilVisible();
+      await reach($(keyStartingWith('categories.itemMenu.')));
       await $.pumpAndSettle();
       await $(BackButton).tap();
 
-      await $(keyStartingWith('home.paymentMethods.')).scrollTo().tap();
-      await $(find.text('شبكة')).waitUntilVisible();
+      await goTo($(keyStartingWith('home.paymentMethods.')));
+
+      await $(keyStartingWith('home.paymentMethods.')).tap();
+      await reach($(find.text('شبكة')));
       await $(PaymentMethodsScreen.addKey).tap();
       await $(PaymentMethodsScreen.dialogNameKey).enterText('مدى');
       await $(PaymentMethodsScreen.saveKey).tap();
-      await $(find.text('مدى')).waitUntilVisible();
+      await reach($(find.text('مدى')));
       await $(keyStartingWith('paymentMethods.menu.')).last.tap();
       await $(PaymentMethodsScreen.disableKey).tap();
-      await $(keyStartingWith('paymentMethods.disabled.')).waitUntilVisible();
+      await reach($(keyStartingWith('paymentMethods.disabled.')));
       await $(PaymentMethodsScreen.changeVatRateKey).tap();
       await $(PaymentMethodsScreen.vatPercentKey).enterText('7.5');
       await $(PaymentMethodsScreen.saveKey).tap();
-      await $(find.text('7.5%')).waitUntilVisible();
+      await reach($(find.text('7.5%')));
       await picture('payment-methods');
       await $(BackButton).tap();
 
-      await $(keyStartingWith('home.accounts.')).scrollTo().tap();
-      await $(AccountsScreen.addKey).waitUntilVisible();
+      await goTo($(keyStartingWith('home.accounts.')));
+
+      await $(keyStartingWith('home.accounts.')).tap();
+      await reach($(AccountsScreen.addKey));
       await $(AccountsScreen.addKey).tap();
       await $(AccountsScreen.accountNameKey).enterText('حساب المؤسسة');
       await $(AccountsScreen.openingBalanceKey).enterText('64250.75');
       await $(AccountsScreen.saveKey).tap();
-      await $(find.text('64,250.75')).waitUntilVisible();
+      await reach($(find.text('64,250.75')));
       await $(AccountsScreen.addKey).tap();
       await $(AccountsScreen.typeKey(AccountType.cashCustody)).tap();
       await $(AccountsScreen.accountNameKey).enterText('كاش مع مدير المشروع');
@@ -376,18 +430,20 @@ void main() {
       await $.pumpAndSettle();
       await picture('account-dialog');
       await $(AccountsScreen.saveKey).tap();
-      await $(find.text('2,750.00')).waitUntilVisible();
+      await reach($(find.text('2,750.00')));
       await picture('accounts');
       await $(BackButton).tap();
-      await $(keyStartingWith('home.custody.')).waitUntilVisible();
+      await reach($(keyStartingWith('home.custody.')));
       await picture('my-custody');
 
-      await $(keyStartingWith('home.partners.')).scrollTo().tap();
-      await $(PartnersScreen.addKey).waitUntilVisible();
+      await goTo($(keyStartingWith('home.partners.')));
+
+      await $(keyStartingWith('home.partners.')).tap();
+      await reach($(PartnersScreen.addKey));
       await $(PartnersScreen.addKey).tap();
       await $(PartnersScreen.partnerNameKey).enterText('هيثم');
       await $(PartnersScreen.saveKey).tap();
-      await $(find.text('هيثم')).waitUntilVisible();
+      await reach($(find.text('هيثم')));
       await $(PartnersScreen.addKey).tap();
       await $(PartnersScreen.partnerNameKey).enterText('مدير المشروع');
       await $.tester.ensureVisible(keyStartingWith('memberPicker.option.').last);
@@ -396,13 +452,15 @@ void main() {
       await $.pumpAndSettle();
       await picture('partner-dialog');
       await $(PartnersScreen.saveKey).tap();
-      await $(rowShowing('مدير المشروع')).waitUntilVisible();
+      await reach($(rowShowing('مدير المشروع')));
       await $.pumpAndSettle();
       await picture('partners');
       await $(BackButton).tap();
 
-      await $(keyStartingWith('home.suppliers.')).scrollTo().tap();
-      await $(SuppliersScreen.addKey).waitUntilVisible();
+      await goTo($(keyStartingWith('home.suppliers.')));
+
+      await $(keyStartingWith('home.suppliers.')).tap();
+      await reach($(SuppliersScreen.addKey));
       await $(SuppliersScreen.addKey).tap();
       await $(SuppliersScreen.supplierNameKey).enterText('شركة النخيل');
       await $(SuppliersScreen.vatNumberKey).enterText('300000000000003');
@@ -412,16 +470,18 @@ void main() {
       await $.pumpAndSettle();
       await picture('supplier-dialog');
       await $(SuppliersScreen.saveKey).tap();
-      await $(rowShowing('شركة النخيل')).waitUntilVisible();
+      await reach($(rowShowing('شركة النخيل')));
       await $.pumpAndSettle();
       await picture('suppliers');
       await $(BackButton).tap();
 
-      await $(keyStartingWith('home.contracts.')).scrollTo().tap();
-      await $(ContractsScreen.addKey).waitUntilVisible();
+      await goTo($(keyStartingWith('home.contracts.')));
+
+      await $(keyStartingWith('home.contracts.')).tap();
+      await reach($(ContractsScreen.addKey));
       await $(ContractsScreen.addKey).tap();
       await $(ContractsScreen.contractorKey).tap();
-      await $(keyStartingWith('supplierPicker.row.')).waitUntilVisible();
+      await reach($(keyStartingWith('supplierPicker.row.')));
       await picture('supplier-picker');
       await $(SupplierPicker.searchKey).enterText('مبلط الغربية');
       await $(SupplierPicker.quickAddKey).tap();
@@ -429,7 +489,7 @@ void main() {
       await $.pumpAndSettle();
       await picture('quick-add-supplier');
       await $(SuppliersScreen.saveKey).last.tap();
-      await $(find.text('مبلط الغربية')).waitUntilVisible();
+      await reach($(find.text('مبلط الغربية')));
       await $(ContractsScreen.itemKey).tap();
       await $(keyStartingWith('itemPicker.option.')).first.tap();
       await $.pumpAndSettle();
@@ -442,7 +502,7 @@ void main() {
       await $.tester.drag(find.byKey(ContractsScreen.contractorKey), const Offset(0, 200));
       await picture('contract-dialog');
       await $(ContractsScreen.saveKey).tap();
-      await $(find.text('34,000.00')).waitUntilVisible();
+      await reach($(find.text('34,000.00')));
       await $.pumpAndSettle();
       await picture('contracts');
       await $(keyStartingWith('contracts.menu.')).tap();
@@ -451,12 +511,14 @@ void main() {
       await $(keyStartingWith('contracts.unit.')).last.tap();
       await $.pumpAndSettle();
       await $(ContractsScreen.saveKey).tap();
-      await $(find.text('34,000.00')).waitUntilVisible();
+      await reach($(find.text('34,000.00')));
       await $.pumpAndSettle();
       await $(BackButton).tap();
 
-      await projectUsers.scrollTo().tap();
-      await $(keyStartingWith('users.menu.')).waitUntilVisible();
+      await goTo(projectUsers);
+
+      await projectUsers.tap();
+      await reach($(keyStartingWith('users.menu.')));
 
       await $(UsersScreen.newUserKey).tap();
       await $(NewUserScreen.nameKey).enterText('نواف');
@@ -464,8 +526,9 @@ void main() {
       await $(NewUserScreen.mobileKey).enterText('0500000000');
       await $(NewUserScreen.passwordKey).enterText('Temporary-1');
       await picture('new-user');
-      await $(NewUserScreen.submitKey).scrollTo().tap();
-      await $(find.text('نواف')).waitUntilVisible();
+      await goTo($(NewUserScreen.submitKey));
+      await $(NewUserScreen.submitKey).tap();
+      await reach($(find.text('نواف')));
       await picture('users');
 
       final newUserMenu = $(keyStartingWith('users.menu.')).last;
@@ -473,7 +536,7 @@ void main() {
       await $(UsersScreen.editKey).tap();
       await $(UsersScreen.editNameKey).enterText('نواف الأول');
       await $(UsersScreen.saveKey).tap();
-      await $(find.text('نواف الأول')).waitUntilVisible();
+      await reach($(find.text('نواف الأول')));
 
       await newUserMenu.tap();
       await $(UsersScreen.resetPasswordKey).tap();
@@ -484,14 +547,14 @@ void main() {
       await newUserMenu.tap();
       await $(UsersScreen.disableKey).tap();
       await $(UsersScreen.confirmDisableKey).tap();
-      await $(keyStartingWith('users.status.')).last.waitUntilVisible();
+      await reach($(keyStartingWith('users.status.')).last);
       await newUserMenu.tap();
       await $(UsersScreen.enableKey).tap();
       await $.pumpAndSettle();
 
       await newUserMenu.tap();
       await $(UsersScreen.rolesKey).tap();
-      await $(keyStartingWith('userRoles.role.')).at(2).waitUntilVisible();
+      await reach($(keyStartingWith('userRoles.role.')).at(2));
       await $(keyStartingWith('userRoles.role.')).at(2).tap();
       await $.pumpAndSettle();
       await $(keyStartingWith('userRoles.role.')).at(3).tap();
@@ -500,17 +563,17 @@ void main() {
       await $.pumpAndSettle();
 
       await $(BackButton).tap();
-      await projectUsers.waitUntilVisible();
+      await reach(projectUsers);
       await $(BackButton).tap();
       await $(keyStartingWith('projects.star.')).tap();
-      await $(Icons.star).waitUntilVisible();
+      await reach($(Icons.star));
       await $(ProjectsScreen.openDefaultKey).tap();
-      await $(find.byWidgetPredicate((widget) => widget is SwitchListTile && widget.value)).waitUntilVisible();
+      await reach($(find.byWidgetPredicate((widget) => widget is SwitchListTile && widget.value)));
       await picture('projects');
 
       await $(ProjectsScreen.settingsKey).tap();
       await $(SettingsScreen.myAccountKey).tap();
-      await $(MyAccountScreen.arabicKey).waitUntilVisible();
+      await reach($(MyAccountScreen.arabicKey));
       await picture('my-account');
 
       await $(MyAccountScreen.arabicKey).tap();
@@ -520,18 +583,21 @@ void main() {
 
       await $(BackButton).tap();
       await $(SettingsScreen.switchProjectKey).tap();
-      await $(keyStartingWith('projects.status.')).waitUntilVisible();
+      await reach($(keyStartingWith('projects.status.')));
       expect(Directionality.of($.tester.element(keyStartingWith('projects.status.'))), TextDirection.rtl);
       await picture('projects-arabic');
       await $(keyStartingWith('projects.card.')).tap();
-      await projectUsers.scrollTo().tap();
-      await $(keyStartingWith('users.menu.')).waitUntilVisible();
+      await goTo(projectUsers);
+      await projectUsers.tap();
+      await reach($(keyStartingWith('users.menu.')));
       await picture('users-arabic');
       await $(BackButton).tap();
-      await projectUsers.waitUntilVisible();
+      await reach(projectUsers);
 
-      await $(keyStartingWith('home.accounts.')).scrollTo().tap();
-      await $(AccountsScreen.addKey).waitUntilVisible();
+      await goTo($(keyStartingWith('home.accounts.')));
+
+      await $(keyStartingWith('home.accounts.')).tap();
+      await reach($(AccountsScreen.addKey));
       await $(AccountsScreen.addKey).tap();
       await $(AccountsScreen.typeKey(AccountType.cashCustody)).tap();
       await $(AccountsScreen.accountNameKey).enterText('عهدة الميدان');
@@ -542,21 +608,22 @@ void main() {
       await $(nawaf).tap();
       await $.pumpAndSettle();
       await $(AccountsScreen.saveKey).tap();
-      await $(find.text('عهدة الميدان')).waitUntilVisible();
+      await reach($(find.text('عهدة الميدان')));
       await $(BackButton).tap();
-      await projectUsers.waitUntilVisible();
+      await reach(projectUsers);
       await $(BackButton).tap();
       await $(ProjectsScreen.settingsKey).tap();
       await $(SettingsScreen.myAccountKey).tap();
-      await $(MyAccountScreen.englishKey).waitUntilVisible();
+      await reach($(MyAccountScreen.englishKey));
 
       await $(MyAccountScreen.englishKey).tap();
       await $.pumpAndSettle();
       expect(Directionality.of($.tester.element(find.byKey(MyAccountScreen.englishKey))), TextDirection.ltr);
 
       if (!const bool.fromEnvironment('TEST_HAS_FINGERPRINT')) {
-        await $(MyAccountScreen.biometricsKey).scrollTo().tap();
-        await $(MyAccountScreen.biometricsMessageKey).waitUntilVisible();
+        await goTo($(MyAccountScreen.biometricsKey));
+        await $(MyAccountScreen.biometricsKey).tap();
+        await reach($(MyAccountScreen.biometricsMessageKey));
         expect($.tester.widget<SwitchListTile>(find.byKey(MyAccountScreen.biometricsKey)).value, isFalse);
       }
 
@@ -566,145 +633,179 @@ void main() {
       await $(MyAccountScreen.signOutKey).tap();
       await $(MyAccountScreen.confirmSignOutKey).tap();
 
-      await $(SignInScreen.usernameKey).waitUntilVisible();
+      await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText('patrol-nawaf');
       await $(SignInScreen.passwordKey).enterText('Temporary-2');
-      await $(SignInScreen.submitKey).scrollTo().tap();
+      await goTo($(SignInScreen.submitKey));
+      await $(SignInScreen.submitKey).tap();
       await $(ChangePasswordScreen.currentKey).enterText('Temporary-2');
       await $(ChangePasswordScreen.newKey).enterText('Nawaf-chosen-1');
       await $(ChangePasswordScreen.confirmKey).enterText('Nawaf-chosen-1');
-      await $(ChangePasswordScreen.submitKey).scrollTo().tap();
+      await goTo($(ChangePasswordScreen.submitKey));
+      await $(ChangePasswordScreen.submitKey).tap();
 
       await $(ProjectsScreen.settingsKey).tap();
-      await $(SettingsScreen.myAccountKey).waitUntilVisible();
+      await reach($(SettingsScreen.myAccountKey));
       expect($(SettingsScreen.registeredKey), findsNothing);
       await $(SettingsScreen.switchProjectKey).tap();
-      await $(keyStartingWith('projects.card.')).waitUntilVisible();
+      await reach($(keyStartingWith('projects.card.')));
       expect($(ProjectsScreen.newProjectKey), findsOneWidget);
       await $(keyStartingWith('projects.card.')).tap();
-      await $(keyStartingWith('home.roles.')).waitUntilVisible();
+      await reach($(keyStartingWith('home.roles.')));
       expect($(keyStartingWith('home.users.')), findsNothing);
       expect($(keyStartingWith('home.addUnit.')), findsNothing);
       expect($(keyStartingWith('home.close.')), findsNothing);
 
       await $(keyStartingWith('home.addExpense.')).tap();
-      await $(AddExpenseScreen.qrReadKey).waitUntilVisible();
-      await $(AddExpenseScreen.supplierDetailsKey).waitUntilVisible();
+      await reach($(AddExpenseScreen.qrReadKey));
+      await reach($(AddExpenseScreen.supplierDetailsKey));
       expect($.tester.widget<TextField>(find.byKey(AddExpenseScreen.amountKey)).controller!.text, '1075');
 
-      await $(AddExpenseScreen.supplierKey).scrollTo().tap();
+      await goTo($(AddExpenseScreen.supplierKey));
+
+      await $(AddExpenseScreen.supplierKey).tap();
       await $(SupplierPicker.searchKey).enterText('مورد الميدان');
       await $(SupplierPicker.quickAddKey).tap();
       await $(SuppliersScreen.vatNumberKey).enterText('322222222222223');
-      await $(SupplierPicker.pendingHintKey).waitUntilVisible();
+      await reach($(SupplierPicker.pendingHintKey));
       await $(SuppliersScreen.saveKey).last.tap();
       await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
-      await $(find.text('مورد الميدان')).scrollTo();
+      await goTo($(find.text('مورد الميدان')));
 
-      await $(AddExpenseScreen.itemKey).scrollTo().tap();
+      await goTo($(AddExpenseScreen.itemKey));
+
+      await $(AddExpenseScreen.itemKey).tap();
       await $(keyStartingWith('itemPicker.option.')).first.tap();
       await $.pumpAndSettle();
-      await $(keyStartingWith('addExpense.unit.')).first.scrollTo().tap();
-      await $(AddExpenseScreen.invoiceNumberKey).scrollTo().enterText('2617');
+      await goTo($(keyStartingWith('addExpense.unit.')).first);
+      await $(keyStartingWith('addExpense.unit.')).first.tap();
+      await goTo($(AddExpenseScreen.invoiceNumberKey));
+      await $(AddExpenseScreen.invoiceNumberKey).enterText('2617');
       await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
       await $.pumpAndSettle();
       await $.tester.ensureVisible(find.byKey(AddExpenseScreen.cameraKey));
       await $.pumpAndSettle();
       await picture('add-expense');
 
-      await $(keyStartingWith('payment.method.')).first.scrollTo().tap();
-      await $(AddExpenseScreen.paymentDiffersKey).scrollTo().tap();
+      await goTo($(keyStartingWith('payment.method.')).first);
+
+      await $(keyStartingWith('payment.method.')).first.tap();
+      await goTo($(AddExpenseScreen.paymentDiffersKey));
+      await $(AddExpenseScreen.paymentDiffersKey).tap();
       await $.pumpAndSettle();
       await picture('add-expense-payment');
-      await $(AddExpenseScreen.paymentDiffersKey).scrollTo().tap();
+      await goTo($(AddExpenseScreen.paymentDiffersKey));
+      await $(AddExpenseScreen.paymentDiffersKey).tap();
       await $.pumpAndSettle();
 
-      await $(AddExpenseScreen.sendKey).scrollTo();
+      await goTo($(AddExpenseScreen.sendKey));
       await picture('add-expense-send');
       await $(AddExpenseScreen.sendKey).tap();
-      await $(AddExpenseScreen.savedKey).waitUntilVisible();
-      await $(keyStartingWith('home.addExpense.')).waitUntilVisible();
+      await reach($(AddExpenseScreen.savedKey));
+      await reach($(keyStartingWith('home.addExpense.')));
 
       await $(keyStartingWith('home.addExpense.')).tap();
-      await $(AddExpenseScreen.qrReadKey).waitUntilVisible();
-      await $(AddExpenseScreen.supplierDetailsKey).waitUntilVisible();
-      await $(AddExpenseScreen.withoutInvoiceKey).scrollTo().tap();
+      await reach($(AddExpenseScreen.qrReadKey));
+      await reach($(AddExpenseScreen.supplierDetailsKey));
+      await goTo($(AddExpenseScreen.withoutInvoiceKey));
+      await $(AddExpenseScreen.withoutInvoiceKey).tap();
       await $.pumpAndSettle();
       await showInDialog(find.byKey(AddExpenseScreen.withoutInvoiceReasonKey));
       await $(AddExpenseScreen.withoutInvoiceReasonKey).enterText('شراء نقدي من السوق');
-      await $(AddExpenseScreen.itemKey).scrollTo().tap();
+      await goTo($(AddExpenseScreen.itemKey));
+      await $(AddExpenseScreen.itemKey).tap();
       await $(keyStartingWith('itemPicker.option.')).first.tap();
       await $.pumpAndSettle();
-      await $(keyStartingWith('addExpense.unit.')).first.scrollTo().tap();
-      await $(AddExpenseScreen.amountKey).scrollTo().enterText('200');
-      await $(keyStartingWith('payment.method.')).first.scrollTo().tap();
+      await goTo($(keyStartingWith('addExpense.unit.')).first);
+      await $(keyStartingWith('addExpense.unit.')).first.tap();
+      await goTo($(AddExpenseScreen.amountKey));
+      await $(AddExpenseScreen.amountKey).enterText('200');
+      await goTo($(keyStartingWith('payment.method.')).first);
+      await $(keyStartingWith('payment.method.')).first.tap();
       await showInDialog(find.byKey(AddExpenseScreen.withoutInvoiceReasonKey));
       await picture('add-expense-without-invoice');
-      await $(AddExpenseScreen.sendKey).scrollTo().tap();
-      await $(AddExpenseScreen.savedKey).waitUntilVisible();
-      await $(keyStartingWith('home.addExpense.')).waitUntilVisible();
+      await goTo($(AddExpenseScreen.sendKey));
+      await $(AddExpenseScreen.sendKey).tap();
+      await reach($(AddExpenseScreen.savedKey));
+      await reach($(keyStartingWith('home.addExpense.')));
 
       await $(keyStartingWith('home.addExpense.')).tap();
-      await $(AddExpenseScreen.qrReadKey).waitUntilVisible();
-      await $(AddExpenseScreen.supplierDetailsKey).waitUntilVisible();
-      await $(AddExpenseScreen.itemKey).scrollTo().tap();
+      await reach($(AddExpenseScreen.qrReadKey));
+      await reach($(AddExpenseScreen.supplierDetailsKey));
+      await goTo($(AddExpenseScreen.itemKey));
+      await $(AddExpenseScreen.itemKey).tap();
       await $(keyStartingWith('itemPicker.option.')).first.tap();
       await $.pumpAndSettle();
-      await $(keyStartingWith('addExpense.unit.')).first.scrollTo().tap();
-      await $(AddExpenseScreen.supplierKey).scrollTo().tap();
+      await goTo($(keyStartingWith('addExpense.unit.')).first);
+      await $(keyStartingWith('addExpense.unit.')).first.tap();
+      await goTo($(AddExpenseScreen.supplierKey));
+      await $(AddExpenseScreen.supplierKey).tap();
       await $(SupplierPicker.searchKey).enterText('مورد الميدان');
       await $(find.descendant(of: keyStartingWith('supplierPicker.row.'), matching: find.text('مورد الميدان'))).tap();
       await $.pumpAndSettle();
-      await $(AddExpenseScreen.invoiceNumberKey).scrollTo().enterText('CN-1');
-      await $(AddExpenseScreen.creditNoteKey).scrollTo().tap();
+      await goTo($(AddExpenseScreen.invoiceNumberKey));
+      await $(AddExpenseScreen.invoiceNumberKey).enterText('CN-1');
+      await goTo($(AddExpenseScreen.creditNoteKey));
+      await $(AddExpenseScreen.creditNoteKey).tap();
       await $.pumpAndSettle();
-      await $(AddExpenseScreen.originalInvoiceKey).scrollTo().tap();
+      await goTo($(AddExpenseScreen.originalInvoiceKey));
+      await $(AddExpenseScreen.originalInvoiceKey).tap();
       await $(keyStartingWith('originalInvoice.option.')).at(1).tap();
       await $.pumpAndSettle();
-      await $(AddExpenseScreen.amountKey).scrollTo().enterText('100');
-      await $(keyStartingWith('payment.method.')).first.scrollTo().tap();
+      await goTo($(AddExpenseScreen.amountKey));
+      await $(AddExpenseScreen.amountKey).enterText('100');
+      await goTo($(keyStartingWith('payment.method.')).first);
+      await $(keyStartingWith('payment.method.')).first.tap();
       await showInDialog(find.byKey(AddExpenseScreen.originalInvoiceKey));
       await picture('add-expense-credit-note');
-      await $(AddExpenseScreen.sendKey).scrollTo().tap();
-      await $(AddExpenseScreen.savedKey).waitUntilVisible();
-      await $(keyStartingWith('home.contractorPayment.')).waitUntilVisible();
+      await goTo($(AddExpenseScreen.sendKey));
+      await $(AddExpenseScreen.sendKey).tap();
+      await reach($(AddExpenseScreen.savedKey));
+      await reach($(keyStartingWith('home.contractorPayment.')));
 
       await $(keyStartingWith('home.contractorPayment.')).tap();
       await $(ContractorPaymentScreen.contractKey).tap();
       await $(keyStartingWith('contractPicker.option.')).first.tap();
       await $.pumpAndSettle();
       await $(ContractorPaymentScreen.amountKey).enterText('35000');
-      await $(ContractorPaymentScreen.overrunKey).waitUntilVisible();
+      await reach($(ContractorPaymentScreen.overrunKey));
       await picture('contractor-payment');
-      await $(keyStartingWith('payment.method.')).first.scrollTo().tap();
-      await $(ContractorPaymentScreen.cameraKey).scrollTo().tap();
+      await goTo($(keyStartingWith('payment.method.')).first);
+      await $(keyStartingWith('payment.method.')).first.tap();
+      await goTo($(ContractorPaymentScreen.cameraKey));
+      await $(ContractorPaymentScreen.cameraKey).tap();
       await $.pumpAndSettle();
-      await $(ContractorPaymentScreen.sendKey).scrollTo();
+      await goTo($(ContractorPaymentScreen.sendKey));
       await picture('contractor-payment-send');
       await $(ContractorPaymentScreen.sendKey).tap();
-      await $(ContractorPaymentScreen.savedKey).waitUntilVisible();
-      await $(keyStartingWith('home.contractorPayment.')).waitUntilVisible();
+      await reach($(ContractorPaymentScreen.savedKey));
+      await reach($(keyStartingWith('home.contractorPayment.')));
 
       await $(HomeScreen.settingsKey).tap();
       await $(SettingsScreen.myAccountKey).tap();
       await $(MyAccountScreen.signOutKey).tap();
       await $(MyAccountScreen.confirmSignOutKey).tap();
 
-      await $(SignInScreen.usernameKey).waitUntilVisible();
+      await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText('patrol-reem');
       await $(SignInScreen.passwordKey).enterText('Reem-chosen-1');
-      await $(SignInScreen.submitKey).scrollTo().tap();
-      await $(HomeScreen.titleKey).waitUntilVisible();
-      await $(find.text('غصون 7')).waitUntilVisible();
+      await goTo($(SignInScreen.submitKey));
+      await $(SignInScreen.submitKey).tap();
+      await reach($(HomeScreen.titleKey));
+      await reach($(find.text('غصون 7')));
       expect($(BackButton), findsNothing);
 
-      await $(keyStartingWith('home.close.')).scrollTo().tap();
-      await $(HomeScreen.confirmCloseKey).waitUntilVisible();
+      await goTo($(keyStartingWith('home.close.')));
+
+      await $(keyStartingWith('home.close.')).tap();
+      await reach($(HomeScreen.confirmCloseKey));
       await picture('close-project');
       await $(HomeScreen.cancelCloseKey).tap();
       expect($(keyStartingWith('home.close.')), findsOneWidget);
 
-      await $(keyStartingWith('home.close.')).scrollTo().tap();
+      await goTo($(keyStartingWith('home.close.')));
+
+      await $(keyStartingWith('home.close.')).tap();
       await $(HomeScreen.confirmCloseKey).tap();
       await $.pumpAndSettle();
       expect($(keyStartingWith('home.close.')), findsNothing);
@@ -712,11 +813,11 @@ void main() {
 
       await $(HomeScreen.settingsKey).tap();
       await $(SettingsScreen.switchProjectKey).tap();
-      await $(ProjectsScreen.titleKey).waitUntilVisible();
+      await reach($(ProjectsScreen.titleKey));
       await $(ProjectsScreen.settingsKey).tap();
       await $(SettingsScreen.myAccountKey).tap();
       await $(MyAccountScreen.signOutKey).tap();
       await $(MyAccountScreen.confirmSignOutKey).tap();
-    });
-  });
+    },
+  );
 }
