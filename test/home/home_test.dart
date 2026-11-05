@@ -189,6 +189,20 @@ void main() {
     expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
   });
 
+  testWidgets('a project with entries waiting for approval stays open and says why (BR-35)', (tester) async {
+    final api = FakeApi();
+    api.addProject('غصون 6');
+    await openHome(tester, api);
+    await tapClose(tester, api);
+
+    api.projectAnswer = (status: 409, code: 'pendingEntries');
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.confirmCloseKey)));
+
+    expect(find.text('en projects.pendingEntries'), findsOneWidget);
+    expect(status(tester, 'project-0'), 'en projects.running');
+    expect(find.byKey(HomeScreen.closeKey('project-0')), findsOneWidget);
+  });
+
   testWidgets('a refusal with no code shows the general word, never a raw key', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openHome(tester, api);

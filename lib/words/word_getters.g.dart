@@ -1028,6 +1028,9 @@ mixin WordGetters {
   /// The word `projects.pending`.
   String get projectsPending => text('projects.pending');
 
+  /// The word `projects.pendingEntries`.
+  String get projectsPendingEntries => text('projects.pendingEntries');
+
   /// The word `projects.projectFinished`.
   String get projectsProjectFinished => text('projects.projectFinished');
 
