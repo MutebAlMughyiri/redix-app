@@ -677,6 +677,81 @@ mixin WordGetters {
   /// The word `subgroups.new`.
   String get subgroupsNew => text('subgroups.new');
 
+  /// The word `suppliers.defaultItem`.
+  String get suppliersDefaultItem => text('suppliers.defaultItem');
+
+  /// The word `suppliers.disable`.
+  String get suppliersDisable => text('suppliers.disable');
+
+  /// The word `suppliers.disabled`.
+  String get suppliersDisabled => text('suppliers.disabled');
+
+  /// The word `suppliers.edit`.
+  String get suppliersEdit => text('suppliers.edit');
+
+  /// The word `suppliers.empty`.
+  String get suppliersEmpty => text('suppliers.empty');
+
+  /// The word `suppliers.enable`.
+  String get suppliersEnable => text('suppliers.enable');
+
+  /// The word `suppliers.holder`.
+  String get suppliersHolder => text('suppliers.holder');
+
+  /// The word `suppliers.invalidMobile`.
+  String get suppliersInvalidMobile => text('suppliers.invalidMobile');
+
+  /// The word `suppliers.invalidName`.
+  String get suppliersInvalidName => text('suppliers.invalidName');
+
+  /// The word `suppliers.invalidVatNumber`.
+  String get suppliersInvalidVatNumber => text('suppliers.invalidVatNumber');
+
+  /// The word `suppliers.loadFailed`.
+  String get suppliersLoadFailed => text('suppliers.loadFailed');
+
+  /// The word `suppliers.mobile`.
+  String get suppliersMobile => text('suppliers.mobile');
+
+  /// The word `suppliers.name`.
+  String get suppliersName => text('suppliers.name');
+
+  /// The word `suppliers.new`.
+  String get suppliersNew => text('suppliers.new');
+
+  /// The word `suppliers.noConnection`.
+  String get suppliersNoConnection => text('suppliers.noConnection');
+
+  /// The word `suppliers.noDefaultItem`.
+  String get suppliersNoDefaultItem => text('suppliers.noDefaultItem');
+
+  /// The word `suppliers.notVatRegistered`.
+  String get suppliersNotVatRegistered => text('suppliers.notVatRegistered');
+
+  /// The word `suppliers.pendingApproval`.
+  String get suppliersPendingApproval => text('suppliers.pendingApproval');
+
+  /// The word `suppliers.projectFinished`.
+  String get suppliersProjectFinished => text('suppliers.projectFinished');
+
+  /// The word `suppliers.refused`.
+  String get suppliersRefused => text('suppliers.refused');
+
+  /// The word `suppliers.save`.
+  String get suppliersSave => text('suppliers.save');
+
+  /// The word `suppliers.title`.
+  String get suppliersTitle => text('suppliers.title');
+
+  /// The word `suppliers.unknownItem`.
+  String get suppliersUnknownItem => text('suppliers.unknownItem');
+
+  /// The word `suppliers.vatNumber`.
+  String get suppliersVatNumber => text('suppliers.vatNumber');
+
+  /// The word `suppliers.vatNumberTaken`.
+  String get suppliersVatNumberTaken => text('suppliers.vatNumberTaken');
+
   /// The word `users.add`.
   String get usersAdd => text('users.add');
 

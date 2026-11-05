@@ -26,6 +26,7 @@ abstract class ApiList<T> extends ChangeNotifier {
   var _all = <T>[];
   var _message = '';
   var _isLoading = false;
+  var _lastAnswer = const <String, dynamic>{};
 
   /// Every item, in the order the API gives.
   List<T> get all => _all;
@@ -35,6 +36,10 @@ abstract class ApiList<T> extends ChangeNotifier {
 
   /// True while the list is being read.
   bool get isLoading => _isLoading;
+
+  /// What the API answered the last change, when that was a JSON object: for a change whose answer says more than a code.
+  @protected
+  Map<String, dynamic> get lastAnswer => _lastAnswer;
 
   /// What one user read never shows to the next on this phone, even for the moment the next list takes to load (BR-33).
   void _forgetAtSignOut() {
@@ -82,10 +87,9 @@ abstract class ApiList<T> extends ChangeNotifier {
     try {
       final response = await _session.post(path, body);
       await load();
-      if (response.statusCode < 300) {
-        return '';
-      }
-      return '$_wordPrefix.${(jsonOf(response) as Map<String, dynamic>)['code'] as String? ?? 'refused'}';
+      final answer = response.body.isEmpty ? null : jsonOf(response);
+      _lastAnswer = answer is Map<String, dynamic> ? answer : const {};
+      return response.statusCode < 300 ? '' : '$_wordPrefix.${_lastAnswer['code'] as String? ?? 'refused'}';
     } on Exception catch (error) {
       debugPrint('$path not changed: $error');
       return '$_wordPrefix.noConnection';

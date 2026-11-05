@@ -14,6 +14,7 @@ import '../projects/projects_screen.dart';
 import '../settings/payment_methods_screen.dart';
 import '../settings/settings_screen.dart';
 import '../structure/categories_screen.dart';
+import '../suppliers/suppliers_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
@@ -109,6 +110,9 @@ class HomeScreen extends StatefulWidget {
 
   /// The way into the partners of the project [id].
   static Key partnersKey(String id) => Key('home.partners.$id');
+
+  /// The way into the suppliers of the project [id].
+  static Key suppliersKey(String id) => Key('home.suppliers.$id');
 
   /// The card of the account [id], which the signed-in user holds.
   static Key custodyKey(String id) => Key('home.custody.$id');
@@ -211,6 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPaymentMethods: () => context.push(PaymentMethodsScreen.pathOf(project.id), extra: project),
                     onAccounts: () => context.push(AccountsScreen.pathOf(project.id), extra: project),
                     onPartners: () => context.push(PartnersScreen.pathOf(project.id), extra: project),
+                    onSuppliers: () => context.push(SuppliersScreen.pathOf(project.id), extra: project),
                     onAddUnit: () => _askForUnit(project),
                     onClose: () => _askToClose(project),
                   ),

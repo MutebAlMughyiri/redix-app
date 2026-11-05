@@ -59,6 +59,9 @@ Map<String, String> wordsIn(String language) => {
     'accounts.custodianRequired', 'accounts.unknownCustodian', 'accounts.new', 'accounts.edit', 'accounts.save', 'accounts.type', 'accounts.typeBank', 'accounts.typeCashCustody', 'accounts.name',
     'partners.title', 'partners.empty', 'partners.loadFailed', 'partners.noConnection', 'partners.refused', 'partners.projectFinished', 'partners.invalidName', 'partners.unknownUser', 'partners.userTaken',
     'partners.new', 'partners.edit', 'partners.save', 'partners.name', 'partners.login', 'partners.noLogin', 'partners.loginHint',
+    'suppliers.title', 'suppliers.empty', 'suppliers.loadFailed', 'suppliers.noConnection', 'suppliers.refused', 'suppliers.projectFinished', 'suppliers.invalidName', 'suppliers.invalidVatNumber',
+    'suppliers.invalidMobile', 'suppliers.vatNumberTaken', 'suppliers.holder', 'suppliers.unknownItem', 'suppliers.new', 'suppliers.edit', 'suppliers.save', 'suppliers.name', 'suppliers.vatNumber',
+    'suppliers.notVatRegistered', 'suppliers.mobile', 'suppliers.defaultItem', 'suppliers.noDefaultItem', 'suppliers.pendingApproval', 'suppliers.disable', 'suppliers.enable', 'suppliers.disabled',
     'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
   ])
     key: '$language $key',
@@ -224,6 +227,12 @@ class FakeApi {
 
   /// Each project's partners, as the API answers them.
   final partners = <String, List<Map<String, Object>>>{};
+
+  /// Each project's supplier register, as the API answers it.
+  final suppliers = <String, List<Map<String, Object>>>{};
+
+  /// The supplier the API names in a refused change of a supplier; empty names none.
+  var supplierHolder = const <String, Object>{};
 
   /// The people of every project, as the API answers them.
   final members = <Map<String, String>>[];
@@ -464,6 +473,64 @@ class FakeApi {
         ..['name'] = body['name'] as String
         ..['userId'] = userId
         ..['userName'] = _memberName(userId);
+    }
+    return _json({}, 200);
+  }
+
+  /// Adds a supplier to the project [projectId], as the API holds it.
+  Map<String, Object> addSupplier(
+    String projectId,
+    String name, {
+    String vatNumber = '',
+    String mobile = '',
+    String defaultItemId = '',
+    String defaultItemName = '',
+    String status = 'approved',
+    bool isActive = true,
+  }) {
+    final supplier = <String, Object>{
+      'id': 'supplier-${_nextStructureId++}',
+      'name': name,
+      'vatNumber': vatNumber,
+      'mobile': mobile,
+      'defaultItemId': defaultItemId,
+      'defaultItemName': defaultItemName,
+      'status': status,
+      'isActive': isActive,
+    };
+    suppliers.putIfAbsent(projectId, () => []).add(supplier);
+    return supplier;
+  }
+
+  http.Response _answerSuppliers(http.Request request) {
+    final segments = request.url.pathSegments;
+    final list = suppliers.putIfAbsent(segments[1], () => []);
+    if (request.method == 'GET') {
+      return _json(list, 200);
+    }
+    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    sentSettingsChanges.add((request.url.path, body));
+    if (settingsAnswer.status >= 300) {
+      return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code, if (supplierHolder.isNotEmpty) 'existing': supplierHolder}, settingsAnswer.status);
+    }
+    final vatNumber = body['vatNumber'] as String? ?? '';
+    final mobile = body['mobile'] as String? ?? '';
+    final defaultItemId = body['defaultItemId'] as String? ?? '';
+    final itemName = [for (final category in categories[segments[1]] ?? const <Map<String, Object>>[]) ...category['items']! as List<Map<String, Object>>].where((item) => item['id'] == defaultItemId).map((item) => item['name']! as String).join();
+    switch (segments.sublist(3)) {
+      case []:
+        return _json(addSupplier(segments[1], body['name'] as String, vatNumber: vatNumber, mobile: mobile, defaultItemId: defaultItemId, defaultItemName: itemName), 201);
+      case [final id, 'disable']:
+        list.singleWhere((row) => row['id'] == id)['isActive'] = false;
+      case [final id, 'enable']:
+        list.singleWhere((row) => row['id'] == id)['isActive'] = true;
+      case [final id]:
+        list.singleWhere((row) => row['id'] == id)
+          ..['name'] = body['name'] as String
+          ..['vatNumber'] = vatNumber
+          ..['mobile'] = mobile
+          ..['defaultItemId'] = defaultItemId
+          ..['defaultItemName'] = itemName;
     }
     return _json({}, 200);
   }
@@ -738,6 +805,9 @@ class FakeApi {
     }
     if (segments.length >= 3 && segments[2] == 'partners') {
       return _answerPartners(request);
+    }
+    if (segments.length >= 3 && segments[2] == 'suppliers') {
+      return _answerSuppliers(request);
     }
     if (segments.length >= 3 && segments[2] == 'members') {
       return _json(members, 200);

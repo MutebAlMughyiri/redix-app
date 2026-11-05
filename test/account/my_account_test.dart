@@ -20,6 +20,7 @@ import 'package:redix/structure/category.dart';
 import 'package:redix/structure/columns.dart';
 import 'package:redix/structure/item_columns_screen.dart';
 import 'package:redix/structure/subgroups_screen.dart';
+import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/user_roles_screen.dart';
@@ -344,6 +345,8 @@ void main() {
         HomeScreen.closeKey(runningId),
       ].forEach(expectFits);
 
+      await tester.ensureVisible(find.byKey(HomeScreen.closeKey(runningId)));
+      await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.closeKey(runningId))));
       [HomeScreen.closeExplainKey, HomeScreen.confirmCloseKey, HomeScreen.cancelCloseKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.cancelCloseKey)));
@@ -507,6 +510,16 @@ void main() {
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.editKey(partner))));
       [PartnersScreen.partnerNameKey, PartnersScreen.loginKey, PartnersScreen.loginHintKey, PartnersScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+      final supplier = api.addSupplier(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', vatNumber: '322222222222223', defaultItemName: 'البلاط والرخام')['id'] as String;
+      await tester.ensureVisible(find.byKey(HomeScreen.suppliersKey(runningId)));
+      expectFits(HomeScreen.suppliersKey(runningId));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey(runningId))));
+      [SuppliersScreen.addKey, SuppliersScreen.nameKey(supplier), SuppliersScreen.detailsKey(supplier), SuppliersScreen.menuKey(supplier)].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(SuppliersScreen.addKey)));
+      [SuppliersScreen.supplierNameKey, SuppliersScreen.notVatRegisteredKey, SuppliersScreen.vatNumberKey, SuppliersScreen.mobileKey, SuppliersScreen.defaultItemKey, SuppliersScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 

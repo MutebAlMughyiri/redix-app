@@ -24,9 +24,13 @@ import 'settings/payment_methods_screen.dart';
 import 'settings/settings_screen.dart';
 import 'structure/categories.dart';
 import 'structure/categories_screen.dart';
+import 'structure/category.dart';
 import 'structure/columns.dart';
 import 'structure/item_columns_screen.dart';
+import 'structure/offered_items.dart';
 import 'structure/subgroups_screen.dart';
+import 'suppliers/suppliers.dart';
+import 'suppliers/suppliers_screen.dart';
 import 'users/new_user_screen.dart';
 import 'users/roles.dart';
 import 'users/user_roles_screen.dart';
@@ -77,6 +81,8 @@ class _RedixAppState extends State<RedixApp> {
   final _projectAccounts = <String, Accounts>{};
   final _projectMembers = <String, Members>{};
   final _projectPartners = <String, Partners>{};
+  final _projectSuppliers = <String, Suppliers>{};
+  final _offeredItemLists = <String, OfferedItems>{};
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -127,6 +133,14 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => PartnersScreen(project: state.extra! as Project, partners: _partnersOf(state.pathParameters['projectId'] ?? ''), members: _membersOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(
+        path: SuppliersScreen.path,
+        builder: (context, state) => SuppliersScreen(
+          project: state.extra! as Project,
+          suppliers: _suppliersOf(state.pathParameters['projectId'] ?? ''),
+          items: _offeredItemsOf(state.pathParameters['projectId'] ?? '', ItemType.purchases),
+        ),
+      ),
+      GoRoute(
         path: SubgroupsScreen.path,
         builder: (context, state) => SubgroupsScreen(
           itemId: state.pathParameters['itemId'] ?? '',
@@ -150,6 +164,10 @@ class _RedixAppState extends State<RedixApp> {
   Members _membersOf(String projectId) => _projectMembers.putIfAbsent(projectId, () => Members(widget.session, projectId));
 
   Partners _partnersOf(String projectId) => _projectPartners.putIfAbsent(projectId, () => Partners(widget.session, projectId));
+
+  Suppliers _suppliersOf(String projectId) => _projectSuppliers.putIfAbsent(projectId, () => Suppliers(widget.session, projectId));
+
+  OfferedItems _offeredItemsOf(String projectId, ItemType type) => _offeredItemLists.putIfAbsent('$projectId/${type.name}', () => OfferedItems(widget.session, projectId, type));
 
   Columns _columnsAt(String path) => _columnLists.putIfAbsent(path, () => Columns(widget.session, path));
 

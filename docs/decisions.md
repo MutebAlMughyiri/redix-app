@@ -6,6 +6,10 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | The register is a screen of its own, from the project's home, for everyone with access | The canvas draws only the picker, and a supplier "pending approval" must be seen somewhere. Built from the same parts as Accounts. Made without Muteb |
+| 2026-11-05 | Not VAT-registered is a switch that hides the number | The issue calls it a flag, and a hidden field cannot send a stale number. Made without Muteb |
+| 2026-11-05 | A default item is chosen in a sheet of what a purchase is offered, from `categories/offered` | A project has dozens of items, so all of them cannot sit in a dialog, and an earlier decision found a dropdown closing again while the keyboard is up. The API owns what is on offer. Made without Muteb |
+| 2026-11-05 | `ApiList.lastAnswer` keeps what the API answered the last change | The refusal of a VAT number names its holder, and every change still goes through `change` |
 | 2026-11-05 | Renewals run one after another, each with the token the last one left, and a screen reads its lists at once | The API replaces the refresh token at every renewal, so two renewals at once ended the session. Sharing one renewal would make fewer calls, but could answer a change of default project with a session read before the change |
 | 2026-11-06 | The title of Payment methods and VAT leaves out the project's name | The emulator cut the name to one letter beside so long a title. Made without Muteb |
 | 2026-11-06 | The Partners screen holds the list of partners only, with its way in for `seeAllCapital` | The canvas draws capital, shares and movements, which need the ledger, and someone seeing only their own has nothing there until UC-044. Made without Muteb; findings row 70 |

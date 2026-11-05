@@ -19,6 +19,7 @@ import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/apply_to_all_dialog.dart';
 import 'package:redix/structure/item_columns_screen.dart';
 import 'package:redix/structure/subgroups_screen.dart';
+import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:redix/words/app_language.dart';
@@ -251,13 +252,27 @@ void main() {
     await $.takeNativeScreenshot('partners');
     await $(BackButton).tap();
 
-    await $(keyStartingWith('home.close.')).tap();
+    await $(keyStartingWith('home.suppliers.')).scrollTo().tap();
+    await $(SuppliersScreen.addKey).waitUntilVisible();
+    await $(SuppliersScreen.addKey).tap();
+    await $(SuppliersScreen.supplierNameKey).enterText('شركة النخيل');
+    await $(SuppliersScreen.vatNumberKey).enterText('300000000000003');
+    await $(SuppliersScreen.defaultItemKey).scrollTo().tap();
+    await $(keyStartingWith('itemPicker.option.')).at(1).tap();
+    await $.pumpAndSettle();
+    await $.takeNativeScreenshot('supplier-dialog');
+    await $(SuppliersScreen.saveKey).tap();
+    await $(find.text('شركة النخيل')).waitUntilVisible();
+    await $.takeNativeScreenshot('suppliers');
+    await $(BackButton).tap();
+
+    await $(keyStartingWith('home.close.')).scrollTo().tap();
     await $(HomeScreen.confirmCloseKey).waitUntilVisible();
     await $.takeNativeScreenshot('close-project');
     await $(HomeScreen.cancelCloseKey).tap();
     expect($(keyStartingWith('home.close.')), findsOneWidget);
 
-    await $(keyStartingWith('home.close.')).tap();
+    await $(keyStartingWith('home.close.')).scrollTo().tap();
     await $(HomeScreen.confirmCloseKey).tap();
     await $.pumpAndSettle();
     expect($(keyStartingWith('home.close.')), findsNothing);

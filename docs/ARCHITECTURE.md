@@ -9,7 +9,7 @@ lib/
   main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
   account/my_account_screen.dart  My account: the language, the way into the password change, and signing out
   api_list.dart             ApiList: a list the API owns, and the way to change it; every settings list extends it
-  ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, NameDialog, showRefusalOf
+  ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, NameDialog, PickerField, showRefusalOf
   settings/
     settings_screen.dart    Settings: the way back to the project list, My account and, for the admin, the registered projects
     payment_method.dart     PaymentMethod, as the API answers it
@@ -29,6 +29,13 @@ lib/
     partners.dart           Partners: the ApiList of one project's partners, and its changes
     partners_screen.dart    a project's partners
     partner_dialog.dart     the dialog that adds or edits a partner
+  suppliers/
+    supplier.dart           Supplier and SupplierStatus, as the API answers them
+    suppliers.dart          Suppliers: the ApiList of one project's register, and its changes
+    suppliers_screen.dart   a project's supplier register
+    supplier_row.dart       one supplier, with its menu
+    supplier_dialog.dart    the dialog that adds or edits a supplier
+    vat_number_field.dart   the VAT number, or that there is none, and who already holds it
   projects/
     project.dart            Project and Unit, as the API answers them
     projects.dart           Projects: the ApiList of projects, and its changes
@@ -67,6 +74,8 @@ lib/
     add_column_dialog.dart  the Add column dialog
     edit_column_dialog.dart the Edit column dialog
     apply_to_all_dialog.dart  the question after a change to the template
+    offered_items.dart      OfferedItems: the ApiList of what an entry of one type may choose
+    item_picker.dart        the field that chooses an item, from a sheet of what is on offer
   format/
     date_format.dart        formatDate: the app's one date format, dd.MM.yyyy
     number_format.dart      formatMoney (NFR-04), formatPlain, and parseNumber: what a person typed, in Arabic or Western digits
@@ -110,7 +119,7 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 
 ## Data the API owns
 
-Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `ApiList` reads the list again after every answer, so its order and each status have one source. A screen with two lists reads them one after the other (findings row 64). `Projects` and `Users` extend it, and hold only their own calls; `ApiListBody` draws its states on every such screen. A dragged row is the one thing shown before the API answers: `ApiList.reorder` keeps it where it was dropped, and a refused or lost order goes back to what the API holds.
+Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `ApiList` reads the list again after every answer, so its order and each status have one source. A screen with two lists reads them at once. `Projects` and `Users` extend it, and hold only their own calls; `ApiListBody` draws its states on every such screen. A dragged row is the one thing shown before the API answers: `ApiList.reorder` keeps it where it was dropped, and a refused or lost order goes back to what the API holds. A change whose answer says more than a code reads `ApiList.lastAnswer`.
 
 ## Rules every part follows
 

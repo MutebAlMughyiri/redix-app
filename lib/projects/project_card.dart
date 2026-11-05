@@ -6,9 +6,9 @@ import '../home/home_screen.dart';
 import '../words/words.dart';
 import 'project.dart';
 
-/// The open project: the signed-in user's roles in it, its start date, status and units, with what those roles allow: Users, Categories and items, Payment methods, Accounts, Partners, and Add unit and Close project while it runs.
+/// The open project: the signed-in user's roles in it, its start date, status and units, with what those roles allow: Users, Categories and items, Payment methods, Accounts, Partners, Suppliers, and Add unit and Close project while it runs.
 class ProjectCard extends StatelessWidget {
-  /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAccounts], [onPartners], [onAddUnit] and [onClose] when those are tapped.
+  /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAccounts], [onPartners], [onSuppliers], [onAddUnit] and [onClose] when those are tapped.
   const ProjectCard({
     super.key,
     required this.project,
@@ -17,6 +17,7 @@ class ProjectCard extends StatelessWidget {
     required this.onPaymentMethods,
     required this.onAccounts,
     required this.onPartners,
+    required this.onSuppliers,
     required this.onAddUnit,
     required this.onClose,
   });
@@ -38,6 +39,9 @@ class ProjectCard extends StatelessWidget {
 
   /// Called when Partners is tapped.
   final VoidCallback onPartners;
+
+  /// Called when Suppliers is tapped.
+  final VoidCallback onSuppliers;
 
   /// Called when Add unit is tapped.
   final VoidCallback onAddUnit;
@@ -130,6 +134,12 @@ class ProjectCard extends StatelessWidget {
                     label: Text(words.partnersTitle),
                     onPressed: onPartners,
                   ),
+                TextButton.icon(
+                  key: HomeScreen.suppliersKey(project.id),
+                  icon: const Icon(Icons.storefront_outlined),
+                  label: Text(words.suppliersTitle),
+                  onPressed: onSuppliers,
+                ),
                 if (mayChange) ...[
                   TextButton.icon(
                     key: HomeScreen.addUnitKey(project.id),

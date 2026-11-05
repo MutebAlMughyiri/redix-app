@@ -11,8 +11,8 @@ String formatMoney(double amount) {
   return amount < 0 ? '($money)' : money;
 }
 
+/// What a person [typed], with any Arabic digits as Western ones, which is how the API keeps a number.
+String westernDigits(String typed) => typed.replaceAllMapped(RegExp('[$_easternDigits]'), (digit) => _easternDigits.indexOf(digit[0]!).toString());
+
 /// The number in what a person [typed], in Arabic or Western digits and with any thousands separators; not a number ([double.nan]) when it holds none.
-double parseNumber(String typed) {
-  final western = typed.trim().replaceAll(',', '').replaceAll('٬', '').replaceAll('٫', '.').replaceAllMapped(RegExp('[$_easternDigits]'), (digit) => _easternDigits.indexOf(digit[0]!).toString());
-  return double.tryParse(western) ?? double.nan;
-}
+double parseNumber(String typed) => double.tryParse(westernDigits(typed.trim().replaceAll(',', '').replaceAll('٬', '').replaceAll('٫', '.'))) ?? double.nan;

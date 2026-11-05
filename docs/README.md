@@ -28,6 +28,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Payment methods and VAT](guide/payment-methods.md) | Whoever does a project's finance |
 | [Accounts](guide/accounts.md) | Everyone in the project; whoever does its finance changes them |
 | [Partners](guide/partners.md) | The project's manager and whoever does its finance |
+| [Suppliers](guide/suppliers.md) | Everyone in the project; whoever does its finance changes them |
 
 ## Use cases
 
@@ -50,5 +51,6 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-014](use-cases/UC-014-payment-methods-and-vat.md) | Keep a project's payment methods and its VAT rate | Whoever does a project's finance |
 | [UC-015](use-cases/UC-015-accounts-and-custodies.md) | Define a project's accounts and custodies, and show each custodian what they hold | Whoever does a project's finance changes; everyone sees |
 | [UC-016](use-cases/UC-016-partners.md) | Keep a project's partners, each linked to their login | Whoever does a project's finance changes; its manager reads |
+| [UC-017](use-cases/UC-017-suppliers.md) | Keep a project's supplier register clean | Whoever does a project's finance changes; everyone with access reads |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |
