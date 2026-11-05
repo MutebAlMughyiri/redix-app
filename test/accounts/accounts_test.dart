@@ -87,6 +87,16 @@ void main() {
     expect(find.byKey(AccountsScreen.accountNameKey), findsOneWidget);
   });
 
+  testWidgets('an opening balance the entries hold in place says so in the dialog', (tester) async {
+    final opened = await openAccounts(tester);
+    opened.api.settingsAnswer = (status: 409, code: 'accountHasEntries');
+
+    await chooseInMenu(tester, opened.api, opened.bank, AccountsScreen.editKey);
+    await save(tester, opened.api, name: 'حساب المؤسسة', openingBalance: '1');
+
+    expect(text(tester, AccountsScreen.dialogMessageKey), 'en accounts.accountHasEntries');
+  });
+
   testWidgets('an opening balance that is not a number is refused without asking the API', (tester) async {
     final opened = await openAccounts(tester);
 

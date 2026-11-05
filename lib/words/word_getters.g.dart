@@ -5,6 +5,9 @@ mixin WordGetters {
   /// The word for [key] in the language in use.
   String text(String key);
 
+  /// The word `accounts.accountHasEntries`.
+  String get accountsAccountHasEntries => text('accounts.accountHasEntries');
+
   /// The word `accounts.custodian`.
   String get accountsCustodian => text('accounts.custodian');
 

@@ -51,6 +51,7 @@ The project's home, `HomeScreen`:
 | Money has two decimals, separators, and negatives in brackets (NFR-04) | `formatMoney` | `money shows two decimals, thousands separators, and negatives in brackets (NFR-04)` |
 | Adding sends the type, name and opening balance | `Accounts.add`, `AccountDialog` | `adding a bank account sends its type, name and opening balance, and nobody`, `adding a cash custody sends who holds it` |
 | A refusal stays in the dialog | `ChangeDialog` | `a refusal stays in the dialog with its reason` |
+| An opening balance cannot change once the account has entries, and the dialog says so | The API; `ChangeDialog` | `an opening balance the entries hold in place says so in the dialog` |
 | An opening balance that is not a number is refused without asking the API | `AccountDialog` | `an opening balance that is not a number is refused without asking the API` |
 | Editing starts from the account, and its type cannot change | `AccountDialog`, `Accounts.edit` | `editing starts from the account and sends what changed, and its type cannot change` |
 | Choosing nobody sends no custodian | `Accounts.edit`, `MemberPicker` | `choosing nobody sends no custodian` |
