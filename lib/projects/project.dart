@@ -76,6 +76,9 @@ class Project {
   /// The VAT rate of its new entries, as a percentage (BR-14).
   final double vatPercent;
 
+  /// Whether [unitId] is the unit shared between all of its units, whose expense may be split between them (FR-15).
+  bool isSharedUnit(String unitId) => entryUnits.any((unit) => unit.id == unitId) && units.every((unit) => unit.id != unitId);
+
   /// Whether the signed-in user holds [permission] in this project.
   bool may(Permission permission) => _permissions.contains(permission.name);
 

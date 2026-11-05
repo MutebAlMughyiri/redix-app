@@ -200,6 +200,7 @@ void main() {
               {'attachmentId': 'attachment-1'},
             ],
             'links': const <Object>[],
+            'unitShares': const <Object>[],
           };
       });
       await openActions(tester, api, 'entry-0');

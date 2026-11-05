@@ -6,6 +6,7 @@ import 'package:redix/accounts/account.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/expenses/payment_choices.dart';
+import 'package:redix/expenses/unit_split.dart';
 import 'package:redix/expenses/original_invoice_picker.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/offline/outbox.dart';
@@ -23,10 +24,11 @@ void main() {
   Future<({FakeApi api, FakeCapture capture, String item, String otherItem, String supplier, String cash, String method, String custody, String bank})> openExpense(
     WidgetTester tester, {
     List<String> permissions = field,
+    List<String> units = const ['الفلة الغربية'],
     PickedFile? camera,
     void Function(FakeApi api)? arrange,
   }) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: units);
     final category = api.addCategory('project-0', 'التشطيب');
     final item = api.addItem(category, 'البلاط', subgroups: ['مواد']);
     final otherItem = api.addItem(category, 'الجبس');
@@ -765,5 +767,57 @@ void main() {
     await pickSupplier(tester, opened.api, usual['id']! as String);
 
     expect(tester.widget<ItemPicker>(find.byKey(AddExpenseScreen.itemKey)).itemName, '');
+  });
+
+  group('UC-060: splitting a shared expense between the units', () {
+    Future<({FakeApi api, FakeCapture capture, String item, String otherItem, String supplier, String cash, String method, String custody, String bank})> openShared(WidgetTester tester) async {
+      final opened = await openExpense(tester, units: ['الفلة الغربية', 'الفلة الشرقية']);
+      await fill(tester, opened);
+      return opened;
+    }
+
+    testWidgets('FR-15: only the shared unit offers a split, and an equal one sends half each', (tester) async {
+      final opened = await openShared(tester);
+      expect(find.byKey(UnitSplitFields.splitKey), findsNothing);
+
+      await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-shared'));
+      await tapVisible(tester, opened.api, UnitSplitFields.splitKey);
+
+      expect(shown(tester, UnitSplitFields.partKey('project-0-unit-1')), 'الفلة الشرقية: 50%');
+      expect(shown(tester, UnitSplitFields.totalKey), 'en expenses.splitTotal: 100%');
+      await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+      expect(opened.api.sentExpenses.single['unitShares'], [
+        {'unitId': 'project-0-unit-0', 'percent': 50},
+        {'unitId': 'project-0-unit-1', 'percent': 50},
+      ]);
+    });
+
+    testWidgets('FR-15: by percentage each unit takes what is typed, and the line under them says what they make together', (tester) async {
+      final opened = await openShared(tester);
+      await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-shared'));
+      await tapVisible(tester, opened.api, UnitSplitFields.splitKey);
+      await tapVisible(tester, opened.api, UnitSplitFields.percentKey);
+
+      await type(tester, UnitSplitFields.partKey('project-0-unit-0'), '70');
+      await type(tester, UnitSplitFields.partKey('project-0-unit-1'), '20');
+
+      expect(shown(tester, UnitSplitFields.totalKey), 'en expenses.splitTotal: 90%');
+      await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+      expect(opened.api.sentExpenses.single['unitShares'], [
+        {'unitId': 'project-0-unit-0', 'percent': 70},
+        {'unitId': 'project-0-unit-1', 'percent': 20},
+      ]);
+    });
+
+    testWidgets('an expense moved off the shared unit sends no split', (tester) async {
+      final opened = await openShared(tester);
+      await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-shared'));
+      await tapVisible(tester, opened.api, UnitSplitFields.splitKey);
+
+      await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-1'));
+      await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+
+      expect(opened.api.sentExpenses.single.containsKey('unitShares'), isFalse);
+    });
   });
 }

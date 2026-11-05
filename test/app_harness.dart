@@ -88,6 +88,8 @@ Map<String, String> wordsIn(String language) => {
     'expenses.withoutInvoice', 'expenses.withoutInvoiceReason', 'expenses.invalidWithoutInvoiceReason', 'expenses.invoiceAndReason', 'expenses.amount',     'expenses.unknownContract', 'expenses.receiptRequired', 'expenses.invalidInvoiceAmount', 'contracts.pending', 'contractorPayments.new', 'contractorPayments.contract', 'contractorPayments.remainingAfter',
     'contractorPayments.overrun', 'contractorPayments.savedOverrun', 'contractorPayments.kind', 'contractorPayments.inside', 'contractorPayments.outside', 'contractorPayments.outsideExplain',
     'contractorPayments.date', 'contractorPayments.receipt', 'contractorPayments.deductionReason', 'contractorPayments.deductionNeedsReason', 'contractorPayments.hasInvoice', 'contractorPayments.invoiceExplain',
+    'expenses.split', 'expenses.splitEqual', 'expenses.splitPercent', 'expenses.splitTotal', 'expenses.splitNeedsSharedUnit', 'expenses.invalidSplit',
+    'reports.units', 'reports.unitDirect', 'reports.unitFromShared', 'reports.unsplit', 'reports.surplus',
     'expenses.creditNote', 'expenses.creditNoteExplain', 'expenses.originalInvoice', 'expenses.noOriginalInvoice', 'expenses.noCreditableInvoice', 'expenses.returnable', 'expenses.loadFailed',
     'expenses.creditNoteAboveOriginal', 'expenses.unknownOriginalInvoice', 'expenses.creditNoteNeedsInvoice', 'expenses.deductionNeedsReason',
     'accounts.accountHasEntries', 'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
@@ -493,6 +495,9 @@ class FakeApi {
 
   /// What an item's report answers.
   var itemReportAnswer = <String, Object>{'itemName': 'البلاط', 'categoryName': 'التشطيب', 'total': 0, 'columns': <String>[], 'subgroups': <Map<String, Object>>[], 'contracts': <Map<String, Object>>[]};
+
+  /// What each unit has cost, as the units report answers it.
+  var unitTotalsAnswer = <Map<String, Object>>[];
 
   /// The periodic reports issued, newest first.
   final periodicRows = <Map<String, Object>>[];
@@ -1365,6 +1370,9 @@ class FakeApi {
     }
     if (segments.length == 3 && segments[2] == 'dashboard') {
       return _json(dashboardAnswer, 200);
+    }
+    if (segments.length == 4 && segments[2] == 'reports' && segments[3] == 'units') {
+      return _json(unitTotalsAnswer, 200);
     }
     if (segments.length == 5 && segments[2] == 'reports' && segments[3] == 'items') {
       return _json(itemReportAnswer, 200);

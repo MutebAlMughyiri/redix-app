@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../auth/permission.dart';
 import '../contracts/contracts_screen.dart';
 import '../format/date_format.dart';
+import '../format/number_format.dart';
 import '../partners/partners_screen.dart';
 import '../projects/project.dart';
 import '../ui/api_object_body.dart';
@@ -15,12 +16,13 @@ import 'item_report_screen.dart';
 import 'periodic_report_screen.dart';
 import 'periodic_reports.dart';
 import 'report_files.dart';
+import 'unit_totals.dart';
 import 'vat_statement_screen.dart';
 
-/// A project's reports (FR-29 to FR-33): the periodic report and those issued before, the VAT statement, an item's report, the contracts, and the partners.
+/// A project's reports (FR-29 to FR-33): the periodic report and those issued before, the VAT statement, an item's report, the contracts, the partners, and what each unit has cost (FR-15).
 class ReportsScreen extends StatefulWidget {
-  /// The reports of [project], whose items come from [dashboard], its periodic reports from [periodicReports] and [nextReport], and its files through [files].
-  const ReportsScreen({super.key, required this.project, required this.dashboard, required this.periodicReports, required this.nextReport, required this.files});
+  /// The reports of [project], whose items come from [dashboard], its periodic reports from [periodicReports] and [nextReport], its units from [unitTotals], and its files through [files].
+  const ReportsScreen({super.key, required this.project, required this.dashboard, required this.periodicReports, required this.nextReport, required this.unitTotals, required this.files});
 
   /// The address of the screen.
   static const path = '/projects/:projectId/reports';
@@ -49,6 +51,9 @@ class ReportsScreen extends StatefulWidget {
   /// The way into the report of the item [id].
   static Key itemKey(String id) => Key('reports.item.$id');
 
+  /// The total of the unit [id].
+  static Key unitKey(String id) => Key('reports.unit.$id');
+
   /// The project.
   final Project project;
 
@@ -60,6 +65,9 @@ class ReportsScreen extends StatefulWidget {
 
   /// What the next one takes.
   final NextReport nextReport;
+
+  /// What each unit has cost.
+  final UnitTotals unitTotals;
 
   /// The way to its files.
   final ReportFiles files;
@@ -75,6 +83,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
     widget.dashboard.loadOnOpen();
     widget.periodicReports.loadOnOpen();
     widget.nextReport.loadOnOpen();
+    widget.unitTotals.loadOnOpen();
   }
 
   Widget _way(Key key, IconData icon, String title, String path) => Card.outlined(
@@ -173,6 +182,22 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           onTap: () => context.push(ItemReportScreen.pathOf(project.id, item.id), extra: project),
                         ),
                     ],
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(words.reportsUnits, style: Theme.of(context).textTheme.titleMedium),
+          ApiObjectBody(
+            object: widget.unitTotals,
+            builder: (units) => Column(
+              children: [
+                for (final unit in units)
+                  ListTile(
+                    key: ReportsScreen.unitKey(unit.unitId),
+                    title: Text(unit.isShared ? words.reportsUnsplit : unit.name),
+                    subtitle: unit.isShared ? null : Text('${words.reportsUnitDirect}: ${formatMoney(unit.direct)} · ${words.reportsUnitFromShared}: ${formatMoney(unit.fromShared)}'),
+                    trailing: Text(formatMoney(unit.total), style: Theme.of(context).textTheme.titleSmall),
                   ),
               ],
             ),

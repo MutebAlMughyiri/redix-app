@@ -44,6 +44,7 @@ import 'original_invoice_picker.dart';
 import 'payment_choice.dart';
 import 'payment_choices.dart';
 import 'qr_summary.dart';
+import 'unit_split.dart';
 
 /// A new purchase expense (UC-021, UC-022): the invoice first, then what it was for and how it was paid. The amounts below the fields only show what the API will compute. A draft can wait for the invoice and the required columns; sending cannot.
 class AddExpenseScreen extends StatefulWidget {
@@ -314,6 +315,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   var _isCreditNote = false;
   var _original = CreditableInvoice.none();
   final _payment = PaymentChoice();
+  final _split = UnitSplit();
   var _message = '';
   var _refusedColumn = '';
   var _saving = false;
@@ -355,6 +357,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final invoice = held['invoice'] as Map<String, dynamic>;
     final files = held['attachments'] as List<dynamic>;
     final links = held['links'] as List<dynamic>;
+    final unitShares = held['unitShares'] as List<dynamic>;
     final items = widget.items.all.expand((category) => category.items).where((item) => item.id == expense['itemId']);
     final accounts = widget.accounts.all.where((account) => account.id == entry['accountId']);
     final number = invoice['number'] as String? ?? '';
@@ -363,6 +366,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       _supplier = widget.suppliers.all.where((supplier) => supplier.id == purchase['supplierId']).firstOrNull ?? Supplier.none();
       _subgroupId = expense['subgroupId'] as String;
       _unitId = expense['unitId'] as String;
+      _split.take(widget.project.units, unitShares);
       _withoutInvoice = number.isEmpty;
       _withoutInvoiceReason.text = expense['withoutInvoiceReason'] as String;
       _invoiceNumber.text = number;
@@ -558,6 +562,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   bool get _paysOtherThanInvoiced => _paymentDiffers && !_withoutInvoice;
 
+  bool get _splits => widget.project.isSharedUnit(_unitId) && widget.project.units.isNotEmpty;
+
   /// Each number field's API name, field and the word key of what can be wrong with it.
   List<(String, TextEditingController, String)> get _numbers => [
     ('unitPrice', _unitPrice, 'expenses.invalidUnitPrice'),
@@ -573,6 +579,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     if (_item.id.isNotEmpty) 'itemId': _item.id,
     if (_subgroupId.isNotEmpty) 'subgroupId': _subgroupId,
     if (_unitId.isNotEmpty) 'unitId': _unitId,
+    if (_splits) 'unitShares': _split.toSend(widget.project.units),
     if (_supplier.id.isNotEmpty) 'supplierId': _supplier.id,
     if (_withoutInvoice)
       'withoutInvoiceReason': _withoutInvoiceReason.text
@@ -699,6 +706,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       isChosen: (unit) => _unitId == unit.id,
       onChosen: (unit) => setState(() => _unitId = unit.id),
     ),
+    if (_splits) UnitSplitFields(split: _split, units: widget.project.units, onChanged: () => setState(() {})),
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

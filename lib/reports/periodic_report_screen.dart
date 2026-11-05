@@ -95,8 +95,8 @@ class _PeriodicReportScreenState extends State<PeriodicReportScreen> {
           _line(words.dashboardSurplusWithoutSales, report.revenueWithoutSales),
         ]),
         _section(words.dashboardByCategory, [for (final category in report.categories) _line(category.label, category.amount), _line(words.dashboardExpenses, report.expenses, isStrong: true)]),
-        _section(words.dashboardSurplus, [
-          _line(words.dashboardSurplus, report.surplus, key: PeriodicReportScreen.surplusKey, isStrong: true),
+        _section(words.reportsSurplus, [
+          _line(words.reportsSurplus, report.surplus, key: PeriodicReportScreen.surplusKey, isStrong: true),
           _line(words.dashboardSurplusWithoutSales, report.surplusWithoutSales),
           _line(words.reportsLiquidation, report.liquidation),
           _line(words.reconciliationsDifference, report.reconciliationDifference),

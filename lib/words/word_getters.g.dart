@@ -1151,6 +1151,9 @@ mixin WordGetters {
   /// The word `expenses.invalidQuantity`.
   String get expensesInvalidQuantity => text('expenses.invalidQuantity');
 
+  /// The word `expenses.invalidSplit`.
+  String get expensesInvalidSplit => text('expenses.invalidSplit');
+
   /// The word `expenses.invalidUnitPrice`.
   String get expensesInvalidUnitPrice => text('expenses.invalidUnitPrice');
 
@@ -1279,6 +1282,21 @@ mixin WordGetters {
 
   /// The word `expenses.sent`.
   String get expensesSent => text('expenses.sent');
+
+  /// The word `expenses.split`.
+  String get expensesSplit => text('expenses.split');
+
+  /// The word `expenses.splitEqual`.
+  String get expensesSplitEqual => text('expenses.splitEqual');
+
+  /// The word `expenses.splitNeedsSharedUnit`.
+  String get expensesSplitNeedsSharedUnit => text('expenses.splitNeedsSharedUnit');
+
+  /// The word `expenses.splitPercent`.
+  String get expensesSplitPercent => text('expenses.splitPercent');
+
+  /// The word `expenses.splitTotal`.
+  String get expensesSplitTotal => text('expenses.splitTotal');
 
   /// The word `expenses.subgroup`.
   String get expensesSubgroup => text('expenses.subgroup');
@@ -1874,11 +1892,26 @@ mixin WordGetters {
   /// The word `reports.share`.
   String get reportsShare => text('reports.share');
 
+  /// The word `reports.surplus`.
+  String get reportsSurplus => text('reports.surplus');
+
   /// The word `reports.title`.
   String get reportsTitle => text('reports.title');
 
+  /// The word `reports.unitDirect`.
+  String get reportsUnitDirect => text('reports.unitDirect');
+
+  /// The word `reports.unitFromShared`.
+  String get reportsUnitFromShared => text('reports.unitFromShared');
+
   /// The word `reports.unitPrice`.
   String get reportsUnitPrice => text('reports.unitPrice');
+
+  /// The word `reports.units`.
+  String get reportsUnits => text('reports.units');
+
+  /// The word `reports.unsplit`.
+  String get reportsUnsplit => text('reports.unsplit');
 
   /// The word `revenue.account`.
   String get revenueAccount => text('revenue.account');
