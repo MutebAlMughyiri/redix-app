@@ -20,10 +20,11 @@ class Supplier {
       defaultItemId = json['defaultItemId'] as String,
       defaultItemName = json['defaultItemName'] as String,
       status = SupplierStatus.values.byName(json['status'] as String),
-      isActive = json['isActive'] as bool;
+      isActive = json['isActive'] as bool,
+      timesUsed = json['timesUsed'] as int;
 
   /// No supplier, for the dialog that adds one and for a choice not made yet.
-  Supplier.none() : id = '', name = '', vatNumber = '', mobile = '', defaultItemId = '', defaultItemName = '', status = SupplierStatus.approved, isActive = true;
+  Supplier.none() : id = '', name = '', vatNumber = '', mobile = '', defaultItemId = '', defaultItemName = '', status = SupplierStatus.approved, isActive = true, timesUsed = 0;
 
   /// The supplier's id; empty for no supplier.
   final String id;
@@ -48,6 +49,9 @@ class Supplier {
 
   /// False once disabled: it disappears from entry and stays in the reports.
   final bool isActive;
+
+  /// How many of the signed-in user's purchases name it, in a search; 0 otherwise.
+  final int timesUsed;
 
   /// What a list says about it, in [words]: that it is disabled or pending approval, its VAT number or that it has none, and its default item.
   String detailsIn(Words words) => [

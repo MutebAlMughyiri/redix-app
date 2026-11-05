@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/expenses/add_expense_screen.dart';
+import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/project.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/suppliers/supplier.dart';
@@ -14,6 +16,31 @@ import 'package:redix/words/words.dart';
 import '../app_harness.dart';
 
 void main() {
+  testWidgets('AC-43.1: the title over what was used most shows only while nothing is typed, and only once something was used', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
+    final supplier = api.addSupplier('project-0', 'شركة النخيل', vatNumber: '300000000000003', timesUsed: 3);
+    api.addCategory('project-0', 'التشطيب');
+    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await tester.ensureVisible(find.byKey(HomeScreen.addExpenseKey('project-0')));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
+    await tester.ensureVisible(find.byKey(AddExpenseScreen.supplierKey));
+    await tester.pumpAndSettle();
+    await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.supplierKey)));
+
+    expect(tester.widget<Text>(find.byKey(SupplierPicker.mostUsedKey)).data, 'en suppliers.mostUsed');
+
+    await act(tester, api, () => tester.enterText(find.byKey(SupplierPicker.searchKey), 'نخيل'));
+    expect(find.byKey(SupplierPicker.mostUsedKey), findsNothing);
+
+    await act(tester, api, () => tester.enterText(find.byKey(SupplierPicker.searchKey), ''));
+    expect(find.byKey(SupplierPicker.mostUsedKey), findsOneWidget);
+
+    supplier['timesUsed'] = 0;
+    await act(tester, api, () => tester.enterText(find.byKey(SupplierPicker.searchKey), ' '));
+    expect(find.byKey(SupplierPicker.mostUsedKey), findsNothing);
+  });
+
   const vatNumber = '300000000000003';
 
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;

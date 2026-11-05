@@ -92,7 +92,7 @@ class Project {
   bool get mayAddSupplier => !isFinished && may(Permission.addSupplier);
 
   /// Whether the signed-in user may enter an expense in the project now.
-  bool get mayEnterExpenses => !isFinished && may(Permission.attachFiles);
+  bool get mayEnterExpenses => !isFinished && may(Permission.recordEntries);
 
   /// Whether the signed-in user may change the project's settings now.
   bool get mayManageSettings => !isFinished && may(Permission.manageSettings);

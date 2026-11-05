@@ -6,6 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/accounts/account.dart';
+import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/sign_in_screen.dart';
@@ -558,13 +559,48 @@ void main() {
         ],
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
-      [ContractsScreen.contractorKey, ContractsScreen.itemKey, ContractsScreen.unitKey('$runningId-unit-0'), ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.unitPriceKey, ContractsScreen.quantityKey, ContractsScreen.notesKey, ContractsScreen.saveKey].forEach(expectFits);
+      [ContractsScreen.contractorKey, ContractsScreen.itemKey, ContractsScreen.unitKey('$runningId-unit-0'), ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.unitPriceKey, ContractsScreen.quantityKey, ContractsScreen.notesKey, ContractsScreen.addDocumentKey, ContractsScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.menuKey(overrun))));
       [ContractsScreen.editKey, ContractsScreen.disableKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
       [ContractsScreen.partiesKey, ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+      await tester.ensureVisible(find.byKey(HomeScreen.addExpenseKey(runningId)));
+      expectFits(HomeScreen.addExpenseKey(runningId));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey(runningId))));
+      [
+        AddExpenseScreen.cameraKey,
+        AddExpenseScreen.filesKey,
+        AddExpenseScreen.invoiceNameKey,
+        AddExpenseScreen.itemKey,
+        AddExpenseScreen.unitKey('$runningId-unit-0'),
+        AddExpenseScreen.unitKey('$runningId-unit-shared'),
+        AddExpenseScreen.supplierKey,
+        AddExpenseScreen.invoiceNumberKey,
+        AddExpenseScreen.invoiceDateKey,
+        AddExpenseScreen.productKey,
+        AddExpenseScreen.unitPriceKey,
+        AddExpenseScreen.quantityKey,
+        AddExpenseScreen.includingVatKey,
+        AddExpenseScreen.beforeVatKey,
+        AddExpenseScreen.amountKey,
+        AddExpenseScreen.discountKey,
+        AddExpenseScreen.notTaxableKey,
+        AddExpenseScreen.afterDiscountKey,
+        AddExpenseScreen.vatKey,
+        AddExpenseScreen.totalKey,
+        AddExpenseScreen.paymentDiffersKey,
+        AddExpenseScreen.notesKey,
+        AddExpenseScreen.sendKey,
+        AddExpenseScreen.draftKey,
+      ].forEach(expectFits);
+      await tester.ensureVisible(find.byKey(AddExpenseScreen.paymentDiffersKey));
+      await tester.pumpAndSettle();
+      await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.paymentDiffersKey)));
+      [AddExpenseScreen.paymentDateKey, AddExpenseScreen.paymentAmountKey, AddExpenseScreen.bankFeesKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await tester.ensureVisible(find.byKey(HomeScreen.usersKey(runningId)));

@@ -506,8 +506,224 @@ mixin WordGetters {
   /// The word `contracts.value`.
   String get contractsValue => text('contracts.value');
 
+  /// The word `expenses.account`.
+  String get expensesAccount => text('expenses.account');
+
+  /// The word `expenses.accountNotOffered`.
+  String get expensesAccountNotOffered => text('expenses.accountNotOffered');
+
+  /// The word `expenses.afterDiscount`.
+  String get expensesAfterDiscount => text('expenses.afterDiscount');
+
+  /// The word `expenses.amountBeforeVat`.
+  String get expensesAmountBeforeVat => text('expenses.amountBeforeVat');
+
+  /// The word `expenses.amountIncludingVat`.
+  String get expensesAmountIncludingVat => text('expenses.amountIncludingVat');
+
+  /// The word `expenses.bankFees`.
+  String get expensesBankFees => text('expenses.bankFees');
+
+  /// The word `expenses.beforeVat`.
+  String get expensesBeforeVat => text('expenses.beforeVat');
+
+  /// The word `expenses.discount`.
+  String get expensesDiscount => text('expenses.discount');
+
+  /// The word `expenses.duplicateExplain`.
+  String get expensesDuplicateExplain => text('expenses.duplicateExplain');
+
+  /// The word `expenses.duplicateHidden`.
+  String get expensesDuplicateHidden => text('expenses.duplicateHidden');
+
+  /// The word `expenses.duplicateInvoice`.
+  String get expensesDuplicateInvoice => text('expenses.duplicateInvoice');
+
+  /// The word `expenses.duplicateTitle`.
+  String get expensesDuplicateTitle => text('expenses.duplicateTitle');
+
+  /// The word `expenses.entryExists`.
+  String get expensesEntryExists => text('expenses.entryExists');
+
+  /// The word `expenses.generalSubgroup`.
+  String get expensesGeneralSubgroup => text('expenses.generalSubgroup');
+
+  /// The word `expenses.includingVat`.
+  String get expensesIncludingVat => text('expenses.includingVat');
+
+  /// The word `expenses.invalidAmount`.
+  String get expensesInvalidAmount => text('expenses.invalidAmount');
+
+  /// The word `expenses.invalidBankFees`.
+  String get expensesInvalidBankFees => text('expenses.invalidBankFees');
+
+  /// The word `expenses.invalidColumnValue`.
+  String get expensesInvalidColumnValue => text('expenses.invalidColumnValue');
+
+  /// The word `expenses.invalidDiscount`.
+  String get expensesInvalidDiscount => text('expenses.invalidDiscount');
+
+  /// The word `expenses.invalidEntryId`.
+  String get expensesInvalidEntryId => text('expenses.invalidEntryId');
+
+  /// The word `expenses.invalidInvoiceDate`.
+  String get expensesInvalidInvoiceDate => text('expenses.invalidInvoiceDate');
+
+  /// The word `expenses.invalidInvoiceNumber`.
+  String get expensesInvalidInvoiceNumber => text('expenses.invalidInvoiceNumber');
+
+  /// The word `expenses.invalidNotes`.
+  String get expensesInvalidNotes => text('expenses.invalidNotes');
+
+  /// The word `expenses.invalidPaymentAmount`.
+  String get expensesInvalidPaymentAmount => text('expenses.invalidPaymentAmount');
+
+  /// The word `expenses.invalidPaymentDate`.
+  String get expensesInvalidPaymentDate => text('expenses.invalidPaymentDate');
+
+  /// The word `expenses.invalidProduct`.
+  String get expensesInvalidProduct => text('expenses.invalidProduct');
+
+  /// The word `expenses.invalidQuantity`.
+  String get expensesInvalidQuantity => text('expenses.invalidQuantity');
+
+  /// The word `expenses.invalidUnitPrice`.
+  String get expensesInvalidUnitPrice => text('expenses.invalidUnitPrice');
+
+  /// The word `expenses.invoiceAlreadyAttached`.
+  String get expensesInvoiceAlreadyAttached => text('expenses.invoiceAlreadyAttached');
+
+  /// The word `expenses.invoiceDate`.
+  String get expensesInvoiceDate => text('expenses.invoiceDate');
+
+  /// The word `expenses.invoiceNumber`.
+  String get expensesInvoiceNumber => text('expenses.invoiceNumber');
+
+  /// The word `expenses.invoiceRequired`.
+  String get expensesInvoiceRequired => text('expenses.invoiceRequired');
+
+  /// The word `expenses.item`.
+  String get expensesItem => text('expenses.item');
+
+  /// The word `expenses.itemNotOffered`.
+  String get expensesItemNotOffered => text('expenses.itemNotOffered');
+
+  /// The word `expenses.loadFailed`.
+  String get expensesLoadFailed => text('expenses.loadFailed');
+
   /// The word `expenses.new`.
   String get expensesNew => text('expenses.new');
+
+  /// The word `expenses.noAccount`.
+  String get expensesNoAccount => text('expenses.noAccount');
+
+  /// The word `expenses.noConnection`.
+  String get expensesNoConnection => text('expenses.noConnection');
+
+  /// The word `expenses.notTaxable`.
+  String get expensesNotTaxable => text('expenses.notTaxable');
+
+  /// The word `expenses.notes`.
+  String get expensesNotes => text('expenses.notes');
+
+  /// The word `expenses.paymentAmount`.
+  String get expensesPaymentAmount => text('expenses.paymentAmount');
+
+  /// The word `expenses.paymentDate`.
+  String get expensesPaymentDate => text('expenses.paymentDate');
+
+  /// The word `expenses.paymentDiffers`.
+  String get expensesPaymentDiffers => text('expenses.paymentDiffers');
+
+  /// The word `expenses.paymentMethod`.
+  String get expensesPaymentMethod => text('expenses.paymentMethod');
+
+  /// The word `expenses.paymentSource`.
+  String get expensesPaymentSource => text('expenses.paymentSource');
+
+  /// The word `expenses.product`.
+  String get expensesProduct => text('expenses.product');
+
+  /// The word `expenses.projectFinished`.
+  String get expensesProjectFinished => text('expenses.projectFinished');
+
+  /// The word `expenses.qrAddSupplier`.
+  String get expensesQrAddSupplier => text('expenses.qrAddSupplier');
+
+  /// The word `expenses.qrRead`.
+  String get expensesQrRead => text('expenses.qrRead');
+
+  /// The word `expenses.qrSupplierMissing`.
+  String get expensesQrSupplierMissing => text('expenses.qrSupplierMissing');
+
+  /// The word `expenses.qrUnreadable`.
+  String get expensesQrUnreadable => text('expenses.qrUnreadable');
+
+  /// The word `expenses.qrVatDiffers`.
+  String get expensesQrVatDiffers => text('expenses.qrVatDiffers');
+
+  /// The word `expenses.quantity`.
+  String get expensesQuantity => text('expenses.quantity');
+
+  /// The word `expenses.refused`.
+  String get expensesRefused => text('expenses.refused');
+
+  /// The word `expenses.required`.
+  String get expensesRequired => text('expenses.required');
+
+  /// The word `expenses.requiredColumnMissing`.
+  String get expensesRequiredColumnMissing => text('expenses.requiredColumnMissing');
+
+  /// The word `expenses.saveAnyway`.
+  String get expensesSaveAnyway => text('expenses.saveAnyway');
+
+  /// The word `expenses.saveDraft`.
+  String get expensesSaveDraft => text('expenses.saveDraft');
+
+  /// The word `expenses.saved`.
+  String get expensesSaved => text('expenses.saved');
+
+  /// The word `expenses.send`.
+  String get expensesSend => text('expenses.send');
+
+  /// The word `expenses.sent`.
+  String get expensesSent => text('expenses.sent');
+
+  /// The word `expenses.subgroup`.
+  String get expensesSubgroup => text('expenses.subgroup');
+
+  /// The word `expenses.supplier`.
+  String get expensesSupplier => text('expenses.supplier');
+
+  /// The word `expenses.total`.
+  String get expensesTotal => text('expenses.total');
+
+  /// The word `expenses.unit`.
+  String get expensesUnit => text('expenses.unit');
+
+  /// The word `expenses.unitPrice`.
+  String get expensesUnitPrice => text('expenses.unitPrice');
+
+  /// The word `expenses.unknownAttachment`.
+  String get expensesUnknownAttachment => text('expenses.unknownAttachment');
+
+  /// The word `expenses.unknownColumn`.
+  String get expensesUnknownColumn => text('expenses.unknownColumn');
+
+  /// The word `expenses.unknownPaymentMethod`.
+  String get expensesUnknownPaymentMethod => text('expenses.unknownPaymentMethod');
+
+  /// The word `expenses.unknownSubgroup`.
+  String get expensesUnknownSubgroup => text('expenses.unknownSubgroup');
+
+  /// The word `expenses.unknownSupplier`.
+  String get expensesUnknownSupplier => text('expenses.unknownSupplier');
+
+  /// The word `expenses.unknownUnit`.
+  String get expensesUnknownUnit => text('expenses.unknownUnit');
+
+  /// The word `expenses.vat`.
+  String get expensesVat => text('expenses.vat');
 
   /// The word `myAccount.arabic`.
   String get myAccountArabic => text('myAccount.arabic');
@@ -871,6 +1087,9 @@ mixin WordGetters {
 
   /// The word `suppliers.mobile`.
   String get suppliersMobile => text('suppliers.mobile');
+
+  /// The word `suppliers.mostUsed`.
+  String get suppliersMostUsed => text('suppliers.mostUsed');
 
   /// The word `suppliers.name`.
   String get suppliersName => text('suppliers.name');

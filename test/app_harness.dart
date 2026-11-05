@@ -72,6 +72,15 @@ Map<String, String> wordsIn(String language) => {
     'contracts.filterOpenValue', 'contracts.disable', 'contracts.enable', 'contracts.disabled', 'contracts.documents', 'contracts.addDocument', 'contracts.unknownAttachment',
     'attachments.invalidFileType', 'attachments.imageTooLarge', 'attachments.projectFinished', 'attachments.noConnection', 'attachments.refused', 'attachments.cameraFailed', 'attachments.unreadable',
     'attachments.invoicePhoto', 'attachments.retake', 'attachments.takePhoto', 'attachments.pickFile', 'expenses.new',
+    'expenses.item', 'expenses.subgroup', 'expenses.generalSubgroup', 'expenses.unit', 'expenses.supplier', 'expenses.invoiceNumber', 'expenses.invoiceDate', 'expenses.product', 'expenses.unitPrice', 'expenses.quantity',
+    'expenses.includingVat', 'expenses.beforeVat', 'expenses.amountIncludingVat', 'expenses.amountBeforeVat', 'expenses.discount', 'expenses.notTaxable', 'expenses.afterDiscount', 'expenses.vat', 'expenses.total',
+    'expenses.paymentSource', 'expenses.paymentMethod', 'expenses.account', 'expenses.noAccount', 'expenses.paymentDiffers', 'expenses.paymentDate', 'expenses.paymentAmount', 'expenses.bankFees', 'expenses.notes',
+    'expenses.required', 'expenses.send', 'expenses.saveDraft', 'expenses.sent', 'expenses.saved', 'expenses.loadFailed', 'expenses.noConnection', 'expenses.refused', 'expenses.projectFinished', 'expenses.invalidEntryId',
+    'expenses.entryExists', 'expenses.itemNotOffered', 'expenses.unknownSubgroup', 'expenses.unknownUnit', 'expenses.unknownSupplier', 'expenses.unknownPaymentMethod', 'expenses.accountNotOffered', 'expenses.unknownAttachment',
+    'expenses.invalidInvoiceNumber', 'expenses.invalidProduct', 'expenses.invalidNotes', 'expenses.invalidUnitPrice', 'expenses.invalidQuantity', 'expenses.invalidAmount', 'expenses.invalidDiscount', 'expenses.invalidPaymentAmount',
+    'expenses.invalidBankFees', 'expenses.invalidInvoiceDate', 'expenses.invalidPaymentDate', 'expenses.unknownColumn', 'expenses.invalidColumnValue', 'expenses.requiredColumnMissing', 'expenses.invoiceRequired', 'expenses.qrRead',
+    'expenses.qrUnreadable', 'expenses.qrSupplierMissing', 'expenses.qrAddSupplier', 'expenses.qrVatDiffers', 'suppliers.mostUsed',
+    'expenses.duplicateInvoice', 'expenses.duplicateTitle', 'expenses.duplicateExplain', 'expenses.duplicateHidden', 'expenses.saveAnyway', 'expenses.invoiceAlreadyAttached',
     'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
   ])
     key: '$language $key',
@@ -90,10 +99,10 @@ const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "ke
 const admin = ['approveProjects'];
 
 /// What a project manager who also does the finance may do in a project.
-const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier'];
+const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier', 'recordEntries', 'attachFiles', 'chargeAnyAccount'];
 
 /// What someone in the field may do in a project.
-const field = ['readProject', 'addSupplier', 'attachFiles'];
+const field = ['readProject', 'addSupplier', 'recordEntries', 'attachFiles'];
 
 /// A picture of one pixel, which a test can draw.
 const onePixelPng = [
@@ -290,6 +299,12 @@ class FakeApi {
   /// The status and problem code the API answers to a file; 2xx keeps it. An empty code sends none.
   var attachmentAnswer = (status: 201, code: '');
 
+  /// The expenses the app sent, as their bodies.
+  final sentExpenses = <Map<String, dynamic>>[];
+
+  /// The status and answer the API gives an expense; 2xx records it.
+  var expenseAnswer = (status: 201, body: const <String, dynamic>{});
+
   /// The people of every project, as the API answers them.
   final members = <Map<String, String>>[];
 
@@ -470,6 +485,10 @@ class FakeApi {
   http.Response _answerAccounts(http.Request request) {
     final segments = request.url.pathSegments;
     final list = accounts.putIfAbsent(segments[1], () => []);
+    if (segments.last == 'offered') {
+      final chargesAny = (projects.singleWhere((project) => project['id'] == segments[1])['permissions']! as List<String>).contains('chargeAnyAccount');
+      return _json(list.where((row) => (row['isActive']! as bool) && (chargesAny || (row['isMine']! as bool))).toList(), 200);
+    }
     if (request.method == 'GET') {
       return _json(list, 200);
     }
@@ -544,6 +563,7 @@ class FakeApi {
     String defaultItemName = '',
     String status = 'approved',
     bool isActive = true,
+    int timesUsed = 0,
   }) {
     final supplier = <String, Object>{
       'id': 'supplier-${_nextStructureId++}',
@@ -554,6 +574,7 @@ class FakeApi {
       'defaultItemName': defaultItemName,
       'status': status,
       'isActive': isActive,
+      'timesUsed': timesUsed,
     };
     suppliers.putIfAbsent(projectId, () => []).add(supplier);
     return supplier;
@@ -962,6 +983,10 @@ class FakeApi {
     }
     if (segments.length >= 3 && segments[2] == 'contracts') {
       return _answerContracts(request);
+    }
+    if (segments.length >= 3 && segments[2] == 'expenses') {
+      sentExpenses.add(jsonDecode(request.body) as Map<String, dynamic>);
+      return _json(expenseAnswer.body, expenseAnswer.status);
     }
     if (segments.length >= 3 && segments[2] == 'attachments') {
       sentAttachments.add(latin1.decode(request.bodyBytes));

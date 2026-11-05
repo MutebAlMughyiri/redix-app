@@ -208,6 +208,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+      floatingActionButton: ListenableBuilder(
+        listenable: widget.projects,
+        builder: (context, _) {
+          final project = widget.projects.all.where((project) => project.id == widget.projectId && project.mayEnterExpenses).toList();
+          return project.isEmpty
+              ? const SizedBox.shrink()
+              : FloatingActionButton.extended(
+                  key: HomeScreen.addExpenseKey(widget.projectId),
+                  icon: const Icon(Icons.add),
+                  label: Text(words.expensesNew),
+                  onPressed: () => context.push(AddExpenseScreen.pathOf(widget.projectId), extra: project.single),
+                );
+        },
+      ),
       body: ApiListBody(
         list: widget.projects,
         emptyText: '',
@@ -225,7 +239,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPartners: () => context.push(PartnersScreen.pathOf(project.id), extra: project),
                     onSuppliers: () => context.push(SuppliersScreen.pathOf(project.id), extra: project),
                     onContracts: () => context.push(ContractsScreen.pathOf(project.id), extra: project),
-                    onAddExpense: () => context.push(AddExpenseScreen.pathOf(project.id), extra: project),
                     onAddUnit: () => _askForUnit(project),
                     onClose: () => _askToClose(project),
                   ),

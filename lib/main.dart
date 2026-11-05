@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'account/my_account_screen.dart';
 import 'accounts/accounts.dart';
 import 'accounts/accounts_screen.dart';
+import 'accounts/offered_accounts.dart';
 import 'api.dart';
 import 'attachments/attachments.dart';
 import 'attachments/invoice_capture.dart';
@@ -14,6 +15,7 @@ import 'auth/sign_in_screen.dart';
 import 'contracts/contracts.dart';
 import 'contracts/contracts_screen.dart';
 import 'expenses/add_expense_screen.dart';
+import 'expenses/expenses.dart';
 import 'home/home_screen.dart';
 import 'partners/partners.dart';
 import 'partners/partners_screen.dart';
@@ -93,6 +95,8 @@ class _RedixAppState extends State<RedixApp> {
   final _offeredItemLists = <String, OfferedItems>{};
   final _projectContracts = <String, Contracts>{};
   final _projectAttachments = <String, Attachments>{};
+  final _projectExpenses = <String, Expenses>{};
+  final _projectOfferedAccounts = <String, OfferedAccounts>{};
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -161,7 +165,7 @@ class _RedixAppState extends State<RedixApp> {
           capture: widget.capture,
         ),
       ),
-      GoRoute(path: AddExpenseScreen.path, builder: (context, state) => AddExpenseScreen(project: state.extra! as Project, capture: widget.capture)),
+      GoRoute(path: AddExpenseScreen.path, builder: (context, state) => _addExpenseScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project)),
       GoRoute(
         path: SubgroupsScreen.path,
         builder: (context, state) => SubgroupsScreen(
@@ -194,6 +198,18 @@ class _RedixAppState extends State<RedixApp> {
   Contracts _contractsOf(String projectId) => _projectContracts.putIfAbsent(projectId, () => Contracts(widget.session, projectId));
 
   Attachments _attachmentsOf(String projectId) => _projectAttachments.putIfAbsent(projectId, () => Attachments(widget.session, projectId));
+
+  AddExpenseScreen _addExpenseScreen(String projectId, Project project) => AddExpenseScreen(
+    project: project,
+    expenses: _projectExpenses.putIfAbsent(projectId, () => Expenses(widget.session, projectId)),
+    items: _offeredItemsOf(projectId, ItemType.purchases),
+    accounts: _projectOfferedAccounts.putIfAbsent(projectId, () => OfferedAccounts(widget.session, projectId)),
+    paymentMethods: _paymentMethodsOf(projectId),
+    suppliers: _suppliersOf(projectId),
+    columnsOf: (itemId) => _columnsAt(Columns.itemPath(projectId, itemId)),
+    attachments: _attachmentsOf(projectId),
+    capture: widget.capture,
+  );
 
   Columns _columnsAt(String path) => _columnLists.putIfAbsent(path, () => Columns(widget.session, path));
 

@@ -19,7 +19,6 @@ class ProjectCard extends StatelessWidget {
     required this.onPartners,
     required this.onSuppliers,
     required this.onContracts,
-    required this.onAddExpense,
     required this.onAddUnit,
     required this.onClose,
   });
@@ -47,9 +46,6 @@ class ProjectCard extends StatelessWidget {
 
   /// Called when Contracts is tapped.
   final VoidCallback onContracts;
-
-  /// Called when New purchase expense is tapped.
-  final VoidCallback onAddExpense;
 
   /// Called when Add unit is tapped.
   final VoidCallback onAddUnit;
@@ -108,8 +104,6 @@ class ProjectCard extends StatelessWidget {
             child: OverflowBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (project.mayEnterExpenses)
-                  FilledButton.icon(key: HomeScreen.addExpenseKey(project.id), icon: const Icon(Icons.add), label: Text(words.expensesNew), onPressed: onAddExpense),
                 if (mayManageUsers)
                   TextButton.icon(
                     key: HomeScreen.usersKey(project.id),

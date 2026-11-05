@@ -11,16 +11,23 @@ class SupplierSearch extends ApiList<Supplier> {
   /// The project whose register this searches.
   final String projectId;
 
+  var _typed = '';
+
   static String _pathOf(String projectId, String typed) => '/projects/$projectId/suppliers/search?text=${Uri.encodeQueryComponent(westernDigits(typed.trim()))}';
+
+  /// Whether the list leads with what the signed-in user used most (AC-43.1): only while nothing is typed, and only once they have used something.
+  bool get leadsWithMostUsed => _typed.isEmpty && all.isNotEmpty && all.first.timesUsed > 0;
 
   /// Starts over for a picker that is opening, with nothing typed.
   void openAnew() {
+    _typed = '';
     pointAt(_pathOf(projectId, ''));
     loadOnOpen();
   }
 
   /// Finds what [typed] matches.
   Future<void> find(String typed) {
+    _typed = typed.trim();
     pointAt(_pathOf(projectId, typed));
     return load();
   }

@@ -1,3 +1,5 @@
+import '../format/number_format.dart';
+
 /// What a column holds (FR-41), as the API names it, each knowing its word.
 enum ColumnDataType {
   /// Free text.
@@ -32,7 +34,9 @@ class ItemColumn {
   /// The column the API describes in [json].
   ItemColumn.fromJson(Map<String, dynamic> json)
     : id = json['id'] as String,
+      key = json['key'] as String,
       name = json['name'] as String,
+      options = (json['options'] as List<dynamic>).cast<String>(),
       dataType = ColumnDataType.values.byName(json['dataType'] as String),
       isCore = json['isCore'] as bool,
       isCustom = json['isCustom'] as bool,
@@ -42,8 +46,14 @@ class ItemColumn {
   /// The column's id.
   final String id;
 
+  /// What names this column in an entry's values.
+  final String key;
+
   /// The column's name, as it was typed.
   final String name;
+
+  /// The choices of a list; empty otherwise.
+  final List<String> options;
 
   /// What it holds.
   final ColumnDataType dataType;
@@ -59,4 +69,10 @@ class ItemColumn {
 
   /// Whether it prints in the reports.
   final bool showInReports;
+
+  /// What the API is sent for [typed]: a number in Western digits with no separators, anything else as it is.
+  String valueToSend(String typed) {
+    final number = dataType == ColumnDataType.number || dataType == ColumnDataType.amount ? parseNumber(typed) : double.nan;
+    return number.isNaN ? typed : number.toString();
+  }
 }

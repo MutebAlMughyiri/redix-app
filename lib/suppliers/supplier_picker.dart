@@ -34,6 +34,9 @@ class SupplierPicker extends StatefulWidget {
   /// The line that says a new supplier waits for approval, in the quick add.
   static const pendingHintKey = Key('supplierPicker.pendingHint');
 
+  /// The title over the suppliers used most.
+  static const mostUsedKey = Key('supplierPicker.mostUsed');
+
   /// The line that says the list could not be read.
   static const messageKey = ApiListBody.messageKey;
 
@@ -115,6 +118,18 @@ class _SupplierPickerState extends State<SupplierPicker> {
                 onChanged: _search.find,
                 decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: words.suppliersSearchHint, border: const OutlineInputBorder()),
               ),
+            ),
+            ListenableBuilder(
+              listenable: _search,
+              builder: (context, _) => _search.leadsWithMostUsed
+                  ? Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
+                      child: Align(
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(words.suppliersMostUsed, key: SupplierPicker.mostUsedKey, style: Theme.of(context).textTheme.labelMedium),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
             ),
             Expanded(
               child: ApiListBody(
