@@ -439,7 +439,8 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(tilesId))));
       [CategoriesScreen.renameItemKey, CategoriesScreen.subgroupsKey, CategoriesScreen.disableItemKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.subgroupsKey)));
-      [SubgroupsScreen.hintKey, SubgroupsScreen.addKey, SubgroupsScreen.subgroupNameKey((tiles['subgroups']! as List<Map<String, Object>>).last['id'] as String)].forEach(expectFits);
+      final subgroupId = (tiles['subgroups']! as List<Map<String, Object>>).last['id'] as String;
+      [SubgroupsScreen.hintKey, SubgroupsScreen.addKey, SubgroupsScreen.handleKey(subgroupId), SubgroupsScreen.subgroupNameKey(subgroupId), SubgroupsScreen.renameKey(subgroupId), SubgroupsScreen.deleteKey(subgroupId)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 

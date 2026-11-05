@@ -50,7 +50,7 @@ Map<String, String> wordsIn(String language) => {
     'columns.inReports', 'columns.custom', 'columns.core', 'columns.edit', 'columns.delete', 'columns.save', 'columns.deleteExplain', 'columns.applyQuestion', 'columns.applyExplain',
     'columns.applyToAll', 'columns.templateOnly',
     'categories.title', 'categories.hint', 'categories.empty', 'categories.loadFailed', 'categories.noConnection', 'categories.refused', 'categories.projectFinished',
-    'categories.invalidName', 'categories.invalidOrder', 'categories.generalSubgroup', 'categories.new', 'categories.categoryName', 'categories.items', 'categories.noItems',
+    'categories.invalidName', 'categories.invalidOrder', 'categories.generalSubgroup', 'categories.subgroupInUse', 'categories.itemHasEntries', 'categories.changeType', 'subgroups.delete', 'subgroups.deleteQuestion', 'subgroups.deleteExplain', 'categories.new', 'categories.categoryName', 'categories.items', 'categories.noItems',
     'categories.addItem', 'categories.itemName', 'categories.itemType', 'categories.typePurchases', 'categories.typeContractorPayments', 'categories.typeBoth', 'categories.rename',
     'categories.disable', 'categories.enable', 'categories.disabled', 'categories.save', 'categories.subgroups', 'categories.subgroupsHint', 'categories.noSubgroups',
     'subgroups.new', 'categories.subgroupName', 'projects.structureSource', 'projects.defaultTemplate', 'projects.unknownSource',
@@ -790,6 +790,12 @@ class FakeApi {
         row['isActive'] = true;
       case ['items', _, 'subgroups']:
         (row['subgroups']! as List<Map<String, Object>>).add({'id': 'subgroup-${_nextStructureId++}', 'name': body['name'] as String});
+      case ['items', _, 'type']:
+        row['type'] = body['type'] as String;
+      case ['items', _, 'subgroups', 'reorder']:
+        reorderBy(row['subgroups']! as List<Map<String, Object>>);
+      case ['items', _, 'subgroups', final subgroupId, 'delete']:
+        (row['subgroups']! as List<Map<String, Object>>).removeWhere((subgroup) => subgroup['id'] == subgroupId);
       case ['items', _, 'subgroups', final subgroupId]:
         (row['subgroups']! as List<Map<String, Object>>).singleWhere((subgroup) => subgroup['id'] == subgroupId)['name'] = body['name'] as String;
       default:

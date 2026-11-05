@@ -8,6 +8,7 @@ import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/category.dart';
 import 'package:redix/structure/subgroups_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 
 import '../app_harness.dart';
 
@@ -226,6 +227,96 @@ void main() {
     await save(tester, opened.api, 'دفان');
     expect(find.text('دفان'), findsOneWidget);
     expect(find.text('مواد'), findsNothing);
+  });
+
+  /// A project whose item الحفر holds مواد and دفان, opened as far as its subgroups.
+  Future<({FakeApi api, String item, List<String> ids})> openSubgroups(WidgetTester tester, {String status = 'running'}) async {
+    final api = FakeApi()..addProject('غصون 6', status: status);
+    final bone = api.addCategory('project-0', 'العظم');
+    final item = api.addItem(bone, 'الحفر', subgroups: ['مواد', 'دفان']);
+    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey('project-0')));
+    await tester.pumpAndSettle();
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey('project-0'))));
+    await open(tester, api, bone['id'] as String);
+    if (status == 'running') {
+      await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(item['id'] as String))));
+      await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.subgroupsKey)));
+    }
+    return (api: api, item: item['id'] as String, ids: [for (final subgroup in (item['subgroups']! as List<Map<String, Object>>).skip(1)) subgroup['id'] as String]);
+  }
+
+  testWidgets('dragging a subgroup sends the order of the named ones, and it stays', (tester) async {
+    final opened = await openSubgroups(tester);
+
+    await drag(tester, opened.api, SubgroupsScreen.handleKey(opened.ids[0]), 120);
+
+    expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/items/${opened.item}/subgroups/reorder');
+    expect(opened.api.sentStructureChanges.single.$2, {'ids': [opened.ids[1], opened.ids[0]]});
+    expect(tester.getTopLeft(find.byKey(SubgroupsScreen.subgroupNameKey(opened.ids[1]))).dy, lessThan(tester.getTopLeft(find.byKey(SubgroupsScreen.subgroupNameKey(opened.ids[0]))).dy));
+  });
+
+  testWidgets('a refused order of subgroups goes back to what the API holds, and says why', (tester) async {
+    final opened = await openSubgroups(tester);
+    opened.api.structureAnswer = (status: 400, code: 'invalidOrder');
+
+    await drag(tester, opened.api, SubgroupsScreen.handleKey(opened.ids[0]), 120);
+
+    expect(find.text('en categories.invalidOrder'), findsOneWidget);
+    expect(tester.getTopLeft(find.byKey(SubgroupsScreen.subgroupNameKey(opened.ids[0]))).dy, lessThan(tester.getTopLeft(find.byKey(SubgroupsScreen.subgroupNameKey(opened.ids[1]))).dy));
+  });
+
+  testWidgets('a subgroup is removed only after asking, naming it', (tester) async {
+    final opened = await openSubgroups(tester);
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(SubgroupsScreen.deleteKey(opened.ids[0]))));
+    expect(text(tester, ConfirmDialog.subjectKey), 'مواد');
+    expect(text(tester, ConfirmDialog.explanationKey), 'en subgroups.deleteExplain');
+    expect(opened.api.sentStructureChanges, isEmpty);
+    await act(tester, opened.api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
+
+    expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/items/${opened.item}/subgroups/${opened.ids[0]}/delete');
+    expect(find.text('مواد'), findsNothing);
+    expect(find.text('دفان'), findsOneWidget);
+  });
+
+  testWidgets('a subgroup that entries use stays, and the refusal says why', (tester) async {
+    final opened = await openSubgroups(tester);
+    opened.api.structureAnswer = (status: 409, code: 'subgroupInUse');
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(SubgroupsScreen.deleteKey(opened.ids[0]))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
+
+    expect(find.text('en categories.subgroupInUse'), findsOneWidget);
+    expect(find.text('مواد'), findsOneWidget);
+  });
+
+  testWidgets('an item\'s type changes from its menu, starting from the one it has', (tester) async {
+    final opened = await openCategories(tester);
+    await open(tester, opened.api, opened.bone);
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(opened.steel))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.changeTypeKey)));
+    expect(tester.widget<RadioGroup<ItemType>>(find.byType(RadioGroup<ItemType>)).groupValue, ItemType.purchases);
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemTypeKey(ItemType.both))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.saveKey)));
+
+    expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/items/${opened.steel}/type');
+    expect(opened.api.sentStructureChanges.single.$2, {'type': 'both'});
+    expect(text(tester, CategoriesScreen.itemDetailsKey(opened.steel)), 'en categories.typeBoth');
+  });
+
+  testWidgets('an item with entries keeps its type, and the dialog says why', (tester) async {
+    final opened = await openCategories(tester);
+    await open(tester, opened.api, opened.bone);
+    opened.api.structureAnswer = (status: 409, code: 'itemHasEntries');
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(opened.steel))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.changeTypeKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.saveKey)));
+
+    expect(text(tester, CategoriesScreen.dialogMessageKey), 'en categories.itemHasEntries');
   });
 
   testWidgets('a list that cannot be read offers to try again', (tester) async {

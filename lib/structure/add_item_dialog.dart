@@ -4,8 +4,8 @@ import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../words/words.dart';
 import 'categories.dart';
-import 'categories_screen.dart';
 import 'category.dart';
+import 'item_type_choice.dart';
 
 /// Asks for a new item's name and type, which is set once (FR-38).
 class AddItemDialog extends StatefulWidget {
@@ -47,17 +47,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
           decoration: InputDecoration(labelText: words.categoriesItemName, border: const OutlineInputBorder()),
         ),
         const SizedBox(height: 16),
-        Text(words.categoriesItemType, style: Theme.of(context).textTheme.titleSmall),
-        RadioGroup<ItemType>(
-          groupValue: _type,
-          onChanged: (type) => setState(() => _type = type ?? _type),
-          child: Column(
-            children: [
-              for (final type in ItemType.values)
-                RadioListTile<ItemType>(key: CategoriesScreen.itemTypeKey(type), contentPadding: EdgeInsets.zero, value: type, title: Text(words.text(type.wordKey))),
-            ],
-          ),
-        ),
+        ItemTypeChoice(value: _type, onChanged: (type) => setState(() => _type = type)),
       ],
     );
   }

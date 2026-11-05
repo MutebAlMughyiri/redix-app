@@ -51,6 +51,9 @@ class CategoriesScreen extends StatefulWidget {
   /// Rename, in an item's menu.
   static const renameItemKey = Key('categories.renameItem');
 
+  /// Change type, in an item's menu.
+  static const changeTypeKey = Key('categories.changeType');
+
   /// Subgroups, in an item's menu.
   static const subgroupsKey = Key('categories.subgroups');
 

@@ -8,6 +8,7 @@ import '../words/words.dart';
 import 'categories.dart';
 import 'categories_screen.dart';
 import 'category.dart';
+import 'change_item_type_dialog.dart';
 import 'item_columns_screen.dart';
 import 'subgroups_screen.dart';
 
@@ -73,6 +74,14 @@ class ItemRow extends StatelessWidget {
                   key: CategoriesScreen.subgroupsKey,
                   value: () => context.push(SubgroupsScreen.pathOf(project.id, item.id), extra: project),
                   child: Text(words.categoriesSubgroups),
+                ),
+                PopupMenuItem(
+                  key: CategoriesScreen.changeTypeKey,
+                  value: () => showDialog<void>(
+                    context: context,
+                    builder: (_) => ChangeItemTypeDialog(item: item, categories: categories),
+                  ),
+                  child: Text(words.categoriesChangeType),
                 ),
                 if (item.isActive)
                   PopupMenuItem(

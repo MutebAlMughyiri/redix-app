@@ -39,7 +39,7 @@ New project, `NewProjectScreen`, signed in:
 | Its name | `CategoriesScreen.itemNameKey(id)` | |
 | Its type, or Disabled | `CategoriesScreen.itemDetailsKey(id)` | |
 | Columns | `CategoriesScreen.itemColumnsKey(id)` | Opens [its columns](UC-013-item-columns.md) |
-| Its menu | `CategoriesScreen.itemMenuKey(id)` | Rename `renameItemKey`, Subgroups `subgroupsKey`, Disable `disableItemKey` or Enable `enableItemKey` |
+| Its menu | `CategoriesScreen.itemMenuKey(id)` | Rename `renameItemKey`, Change type `changeTypeKey`, Subgroups `subgroupsKey`, Disable `disableItemKey` or Enable `enableItemKey` |
 | The name, in a dialog | `CategoriesScreen.nameKey` | |
 | The type, in Add item | `CategoriesScreen.itemTypeKey(type)` | One choice per type, each in full; Purchases + contractor payments unless changed |
 | Save, in a dialog | `CategoriesScreen.saveKey` | |
@@ -54,7 +54,9 @@ New project, `NewProjectScreen`, signed in:
 | No subgroups | `SubgroupsScreen.emptyKey` | |
 | Add subgroup | `SubgroupsScreen.addKey` | Opens the name dialog |
 | A subgroup | `SubgroupsScreen.subgroupNameKey(id)` | The item's general group is never shown |
+| Handle | `SubgroupsScreen.handleKey(id)` | Drags the subgroup; the order is the report's, and the general group stays first |
 | Rename | `SubgroupsScreen.renameKey(id)` | Opens the name dialog |
+| Remove | `SubgroupsScreen.deleteKey(id)` | Asks first, naming the subgroup, through `ConfirmDialog`; one that entries use stays and the refusal says why |
 
 ## API calls
 
@@ -75,6 +77,9 @@ New project, `NewProjectScreen`, signed in:
 | A new item takes the type chosen | `AddItemDialog` | `categories_test.dart`: a new item is sent |
 | A refused name stays in its dialog, with why | `ChangeDialog` | `categories_test.dart`: a refused name |
 | A subgroup is added and renamed; the general one is not shown | `Item.namedSubgroups`, `SubgroupsScreen` | `categories_test.dart`: subgroups |
+| Dragging a subgroup sends the order of the named ones and stays; a refused order goes back and says why | `Categories.moveSubgroup`, `ApiList.reorder` | `categories_test.dart`: dragging a subgroup; a refused order of subgroups |
+| A subgroup is removed only after asking; one that entries use stays and the refusal says why | `Categories.deleteSubgroup`, `ConfirmDialog`, `showRefusalOf` | `categories_test.dart`: a subgroup is removed; a subgroup that entries use |
+| An item's type changes from its menu, starting from the one it has; one with entries keeps it and the dialog says why | `ChangeItemTypeDialog`, `ItemTypeChoice`, `Categories.changeItemType` | `categories_test.dart`: an item's type changes; an item with entries keeps its type |
 | A finished project shows its structure with nothing to change (AC-04.1) | `Project.mayChangeStructure` | `categories_test.dart`: a finished project |
 | AC-05.2: a new project can copy an approved earlier one, and the sign-in page offers none | `NewProjectScreen` | `categories_test.dart`: a new project |
 | AC-N03: nothing off a screen 360 points wide, in both languages | Each screen | `my_account_test.dart`: AC-N03 |

@@ -55,6 +55,21 @@ class Categories extends ApiList<Category> {
   /// Brings the disabled [item] back into entry.
   Future<String> enableItem(Item item) => change('/projects/$projectId/items/${item.id}/enable', {});
 
+  /// Makes [item] for [type], which the API refuses once it has entries.
+  Future<String> changeItemType(Item item, ItemType type) => change('/projects/$projectId/items/${item.id}/type', {'type': type.name});
+
+  /// Moves the named subgroup of [item] at [from] to [to], which is its place in the report; the general one stays first.
+  Future<String> moveSubgroup(Item item, int from, int to) {
+    final named = moved(item.namedSubgroups, from, to);
+    final reordered = item.withNamedSubgroups(named);
+    return reorder('/projects/$projectId/items/${item.id}/subgroups/reorder', {'ids': [for (final subgroup in named) subgroup.id]}, [
+      for (final each in all) each.withItems([for (final row in each.items) row.id == item.id ? reordered : row]),
+    ]);
+  }
+
+  /// Removes the [subgroup] of [item], which the API refuses while entries use it.
+  Future<String> deleteSubgroup(Item item, Subgroup subgroup) => change('/projects/$projectId/items/${item.id}/subgroups/${subgroup.id}/delete', {});
+
   /// Adds a subgroup named [name] to [item].
   Future<String> addSubgroup(Item item, String name) => change('/projects/$projectId/items/${item.id}/subgroups', {'name': name});
 

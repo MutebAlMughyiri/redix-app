@@ -27,6 +27,7 @@ import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
+import 'package:redix/structure/category.dart';
 import 'package:redix/structure/apply_to_all_dialog.dart';
 import 'package:redix/structure/item_columns_screen.dart';
 import 'package:redix/structure/subgroups_screen.dart';
@@ -261,7 +262,28 @@ void main() {
     await $(SubgroupsScreen.saveKey).tap();
     await $(find.text('مواد')).waitUntilVisible();
     await picture('subgroups');
+    await $(SubgroupsScreen.addKey).tap();
+    await $(SubgroupsScreen.nameKey).enterText('دفان');
+    await $(SubgroupsScreen.saveKey).tap();
+    await $(find.text('دفان')).waitUntilVisible();
+    await $(keyStartingWith('subgroups.delete.')).last.tap();
+    await $(ConfirmDialog.confirmKey).tap();
+    await $.pumpAndSettle();
+    expect($(find.text('دفان')), findsNothing);
     await $(BackButton).tap();
+
+    await $(keyStartingWith('categories.itemMenu.')).tap();
+    await $(CategoriesScreen.changeTypeKey).tap();
+    await $(CategoriesScreen.itemTypeKey(ItemType.purchases)).tap();
+    await $(ChangeDialog.saveKey).tap();
+    await $(keyStartingWith('categories.itemMenu.')).waitUntilVisible();
+    await $.pumpAndSettle();
+    await $(keyStartingWith('categories.itemMenu.')).tap();
+    await $(CategoriesScreen.changeTypeKey).tap();
+    await $(CategoriesScreen.itemTypeKey(ItemType.both)).tap();
+    await $(ChangeDialog.saveKey).tap();
+    await $(keyStartingWith('categories.itemMenu.')).waitUntilVisible();
+    await $.pumpAndSettle();
 
     await $(keyStartingWith('categories.itemColumns.')).tap();
     await $(keyStartingWith('columns.lock.')).first.waitUntilVisible();

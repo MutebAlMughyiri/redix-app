@@ -152,6 +152,9 @@ mixin WordGetters {
   /// The word `categories.categoryName`.
   String get categoriesCategoryName => text('categories.categoryName');
 
+  /// The word `categories.changeType`.
+  String get categoriesChangeType => text('categories.changeType');
+
   /// The word `categories.disable`.
   String get categoriesDisable => text('categories.disable');
 
@@ -175,6 +178,9 @@ mixin WordGetters {
 
   /// The word `categories.invalidOrder`.
   String get categoriesInvalidOrder => text('categories.invalidOrder');
+
+  /// The word `categories.itemHasEntries`.
+  String get categoriesItemHasEntries => text('categories.itemHasEntries');
 
   /// The word `categories.itemName`.
   String get categoriesItemName => text('categories.itemName');
@@ -211,6 +217,9 @@ mixin WordGetters {
 
   /// The word `categories.save`.
   String get categoriesSave => text('categories.save');
+
+  /// The word `categories.subgroupInUse`.
+  String get categoriesSubgroupInUse => text('categories.subgroupInUse');
 
   /// The word `categories.subgroupName`.
   String get categoriesSubgroupName => text('categories.subgroupName');
@@ -1186,6 +1195,15 @@ mixin WordGetters {
 
   /// The word `signIn.username`.
   String get signInUsername => text('signIn.username');
+
+  /// The word `subgroups.delete`.
+  String get subgroupsDelete => text('subgroups.delete');
+
+  /// The word `subgroups.deleteExplain`.
+  String get subgroupsDeleteExplain => text('subgroups.deleteExplain');
+
+  /// The word `subgroups.deleteQuestion`.
+  String get subgroupsDeleteQuestion => text('subgroups.deleteQuestion');
 
   /// The word `subgroups.new`.
   String get subgroupsNew => text('subgroups.new');

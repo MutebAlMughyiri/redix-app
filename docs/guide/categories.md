@@ -21,6 +21,7 @@ Tap a category to open it.
 | Rename a category | Open it and tap **Rename**. |
 | Rename an item | Tap the three dots on its row, then **Rename**. |
 | Change what an item asks for | Tap **Columns** on its row. See [Item columns](item-columns.md). |
+| Change what an item is for | Tap the three dots on its row, then **Change type**. An item with entries keeps its type. |
 | Stop using something | Tap **Disable**: it disappears from entry and stays in the reports, and **Enable** brings it back. Nothing is ever deleted. |
 
 An item's type says what it can be used for: **Purchases**, **Contractor payments**, or both. A purchases item is not offered when entering a contractor payment.

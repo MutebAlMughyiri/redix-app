@@ -104,6 +104,8 @@ lib/
     category_card.dart      one category, opening to its items
     item_row.dart           one item, with its menu
     add_item_dialog.dart    the Add item dialog
+    change_item_type_dialog.dart  the Change type dialog
+    item_type_choice.dart   the choice of what an item is for, in both dialogs
     subgroups_screen.dart   an item's subgroups
     item_column.dart        ItemColumn and ColumnDataType, as the API answers them
     columns.dart            Columns: the ApiList of one item's columns or of a default template, and its changes
