@@ -11,6 +11,7 @@ import 'accounts/offered_accounts.dart';
 import 'api.dart';
 import 'attachments/attachments.dart';
 import 'attachments/invoice_capture.dart';
+import 'attachments/picked_file.dart';
 import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
@@ -43,6 +44,8 @@ import 'projects/project.dart';
 import 'settings/payment_methods.dart';
 import 'settings/payment_methods_screen.dart';
 import 'settings/settings_screen.dart';
+import 'sharing/attachable_entries.dart';
+import 'sharing/share_screen.dart';
 import 'structure/categories.dart';
 import 'structure/categories_screen.dart';
 import 'structure/category.dart';
@@ -95,6 +98,8 @@ class RedixApp extends StatefulWidget {
 
 class _RedixAppState extends State<RedixApp> {
   var _wordsAttempt = 0;
+  var _shared = PickedFile.none();
+  late final StreamSubscription<PickedFile> _sharing;
   late final _projects = Projects(widget.session);
   late final _outbox = Outbox(widget.session, widget.session.store);
   late final _sync = ProjectSync(widget.session);
@@ -117,6 +122,7 @@ class _RedixAppState extends State<RedixApp> {
   final _projectExpenses = <String, Expenses>{};
   final _projectCreditableInvoices = <String, CreditableInvoices>{};
   final _projectOfferedAccounts = <String, OfferedAccounts>{};
+  final _projectAttachable = <String, AttachableEntries>{};
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -125,6 +131,18 @@ class _RedixAppState extends State<RedixApp> {
     routes: [
       GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects, session: widget.session, notifications: _notifications)),
       GoRoute(path: NotificationsScreen.path, builder: (context, state) => NotificationsScreen(notifications: _notifications, projects: _projects)),
+      GoRoute(
+        path: ShareScreen.path,
+        builder: (context, state) => ShareScreen(
+          file: _shared,
+          capture: widget.capture,
+          projects: _projects,
+          itemsOf: _offeredItemsOf,
+          entriesOf: (projectId) => _projectAttachable.putIfAbsent(projectId, () => AttachableEntries(widget.session, projectId)),
+          attachmentsOf: _attachmentsOf,
+          onDone: _letGoOfShared,
+        ),
+      ),
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session)),
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
       GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(language: widget.language, session: widget.session)),
@@ -262,6 +280,7 @@ class _RedixAppState extends State<RedixApp> {
   );
 
   AddExpenseScreen _addExpenseScreen(String projectId, Project project, Map<String, String> query) => AddExpenseScreen(
+    sharedFile: query.containsKey('shared') ? _shared : PickedFile.none(),
     editingId: query['entry'] ?? '',
     rejectionReason: query['reason'] ?? '',
     project: project,
@@ -298,17 +317,34 @@ class _RedixAppState extends State<RedixApp> {
     if (session.mustChangePassword) {
       return location == ChangePasswordScreen.path ? null : ChangePasswordScreen.path;
     }
-    return location == SignInScreen.path ? HomeScreen.landingOf(session) : null;
+    if (location != SignInScreen.path) {
+      return null;
+    }
+    return _shared.isNone ? HomeScreen.landingOf(session) : ShareScreen.path;
+  }
+
+  void _openShared(PickedFile file) {
+    if (!file.isNone) {
+      _shared = file;
+      _router.go(ShareScreen.path);
+    }
+  }
+
+  void _letGoOfShared() {
+    _shared = PickedFile.none();
+    _router.go(HomeScreen.landingOf(widget.session));
   }
 
   @override
   void initState() {
     super.initState();
     unawaited(_outbox.start());
+    _sharing = widget.capture.shared().listen(_openShared);
   }
 
   @override
   void dispose() {
+    unawaited(_sharing.cancel());
     _router.dispose();
     _outbox.dispose();
     _projects.dispose();

@@ -4,6 +4,7 @@ import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
 import 'picked_file.dart';
 import 'picture_compression.dart';
@@ -41,6 +42,32 @@ class InvoiceCapture {
     } finally {
       await controller.dispose();
     }
+  }
+
+  /// What is shared to the app from WhatsApp, the gallery or email (FR-49): first what started it, if anything, then what arrives while it runs. A picture comes under 1 MB.
+  Stream<PickedFile> shared() async* {
+    final sharing = ReceiveSharingIntent.instance;
+    try {
+      for (final file in await sharing.getInitialMedia()) {
+        yield await _fileAt(file.path);
+      }
+      await sharing.reset();
+      await for (final files in sharing.getMediaStream()) {
+        for (final file in files) {
+          yield await _fileAt(file.path);
+        }
+        await sharing.reset();
+      }
+    } on Exception catch (error) {
+      debugPrint('Sharing not available: $error');
+    }
+  }
+
+  Future<PickedFile> _fileAt(String path) async {
+    final file = File(path);
+    final bytes = await file.readAsBytes();
+    final picked = PickedFile(file.uri.pathSegments.last, path, bytes);
+    return picked.isPdf ? picked : PickedFile(picked.name, path, await compute(compressedPicture, bytes));
   }
 
   /// Opens the phone's files for a picture or a PDF; a picture comes back under 1 MB.

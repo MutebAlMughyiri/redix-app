@@ -52,6 +52,7 @@ class AddExpenseScreen extends StatefulWidget {
     super.key,
     this.editingId = '',
     this.rejectionReason = '',
+    required this.sharedFile,
     required this.project,
     required this.expenses,
     required this.items,
@@ -66,6 +67,9 @@ class AddExpenseScreen extends StatefulWidget {
 
   /// The entry being changed; empty for a new one.
   final String editingId;
+
+  /// The file it starts with, shared from another app (UC-046); none otherwise, and then the camera opens.
+  final PickedFile sharedFile;
 
   /// Why it was rejected; empty otherwise.
   final String rejectionReason;
@@ -105,6 +109,9 @@ class AddExpenseScreen extends StatefulWidget {
 
   /// The route of a new expense in the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId/expenses/new';
+
+  /// The route of a new expense in the project [projectId] with the shared file.
+  static String sharedPathOf(String projectId) => '/projects/$projectId/expenses/new?shared=1';
 
   /// The screen's title.
   static const titleKey = Key('addExpense.title');
@@ -317,7 +324,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     widget.items.loadOnOpen();
     widget.accounts.loadOnOpen();
     widget.paymentMethods.loadOnOpen();
-    WidgetsBinding.instance.addPostFrameCallback((_) => widget.editingId.isEmpty ? _takeFrom(widget.capture.fromCamera) : _openEntry());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _start());
   }
 
   @override
@@ -326,6 +333,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       controller.dispose();
     }
     super.dispose();
+  }
+
+  Future<void> _start() {
+    if (widget.editingId.isNotEmpty) {
+      return _openEntry();
+    }
+    return _takeFrom(widget.sharedFile.isNone ? widget.capture.fromCamera : () async => widget.sharedFile);
   }
 
   /// Fills the form from the entry being changed (UC-033). Figures come as they were kept, before VAT, so that the same figures come out.
@@ -631,7 +645,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     }
     if (refusal.isEmpty) {
       messenger.showSnackBar(SnackBar(content: Text(widget.expenses.wasKept ? words.expensesKeptOnPhone : (submit ? words.expensesSent : words.expensesSaved), key: AddExpenseScreen.savedKey)));
-      context.pop();
+      context.pop(true);
       return;
     }
     final isDuplicate = refusal == 'expenses.duplicateInvoice';

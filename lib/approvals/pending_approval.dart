@@ -16,7 +16,10 @@ class PendingApproval {
       withoutInvoiceReason = json['withoutInvoiceReason'] as String,
       attachmentId = json['attachmentId'] as String,
       contentType = json['contentType'] as String,
-      authorName = json['authorName'] as String;
+      authorName = json['authorName'] as String,
+      invoiceTotal = (json['invoiceTotal'] as num).toDouble(),
+      sellerVatNumber = json['sellerVatNumber'] as String,
+      supplierVatNumber = json['supplierVatNumber'] as String;
 
   /// The entry's id.
   final String id;
@@ -62,6 +65,21 @@ class PendingApproval {
 
   /// Who entered it.
   final String authorName;
+
+  /// Its invoice's total, which may differ from what was paid.
+  final double invoiceTotal;
+
+  /// The seller's VAT number on an invoice attached later; empty otherwise.
+  final String sellerVatNumber;
+
+  /// Its supplier's VAT number.
+  final String supplierVatNumber;
+
+  /// True when an invoice was attached that says something other than what was paid (AC-49.3).
+  bool get totalDiffers => invoiceNumber.isNotEmpty && invoiceTotal != amount;
+
+  /// True when an invoice was attached from another seller than the supplier (AC-49.3).
+  bool get sellerDiffers => sellerVatNumber.isNotEmpty && sellerVatNumber != supplierVatNumber;
 
   /// True for a contractor's payment.
   bool get isContractorPayment => kind == 'contractorPayment';

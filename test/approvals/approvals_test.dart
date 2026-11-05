@@ -44,6 +44,19 @@ void main() {
     expect(find.byKey(ApprovalsScreen.fileKey('entry-1')), findsNothing);
   });
 
+  testWidgets('AC-49.3: the inbox shows what an attached invoice says differently', (tester) async {
+    await openInbox(tester, (api) {
+      api
+        ..addPending(amount: 100, invoiceTotal: 150, sellerVatNumber: '300000000000099', supplierVatNumber: '300000000000003')
+        ..addPending();
+    });
+
+    expect(find.byKey(ApprovalsScreen.invoiceTotalKey('entry-0')), findsOneWidget);
+    expect(find.byKey(ApprovalsScreen.sellerDiffersKey('entry-0')), findsOneWidget);
+    expect(find.byKey(ApprovalsScreen.invoiceTotalKey('entry-1')), findsNothing);
+    expect(find.byKey(ApprovalsScreen.sellerDiffersKey('entry-1')), findsNothing);
+  });
+
   testWidgets('nothing waiting says so', (tester) async {
     await openInbox(tester, (_) {});
 

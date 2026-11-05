@@ -119,6 +119,9 @@ mixin WordGetters {
   /// The word `approvals.includingVat`.
   String get approvalsIncludingVat => text('approvals.includingVat');
 
+  /// The word `approvals.invoiceTotal`.
+  String get approvalsInvoiceTotal => text('approvals.invoiceTotal');
+
   /// The word `approvals.loadFailed`.
   String get approvalsLoadFailed => text('approvals.loadFailed');
 
@@ -172,6 +175,9 @@ mixin WordGetters {
 
   /// The word `approvals.selectHint`.
   String get approvalsSelectHint => text('approvals.selectHint');
+
+  /// The word `approvals.sellerDiffers`.
+  String get approvalsSellerDiffers => text('approvals.sellerDiffers');
 
   /// The word `approvals.title`.
   String get approvalsTitle => text('approvals.title');
@@ -1438,6 +1444,81 @@ mixin WordGetters {
 
   /// The word `settings.title`.
   String get settingsTitle => text('settings.title');
+
+  /// The word `share.amountDiffers`.
+  String get shareAmountDiffers => text('share.amountDiffers');
+
+  /// The word `share.attach`.
+  String get shareAttach => text('share.attach');
+
+  /// The word `share.attached`.
+  String get shareAttached => text('share.attached');
+
+  /// The word `share.chooseItem`.
+  String get shareChooseItem => text('share.chooseItem');
+
+  /// The word `share.duplicateInvoice`.
+  String get shareDuplicateInvoice => text('share.duplicateInvoice');
+
+  /// The word `share.empty`.
+  String get shareEmpty => text('share.empty');
+
+  /// The word `share.entryNotAttachable`.
+  String get shareEntryNotAttachable => text('share.entryNotAttachable');
+
+  /// The word `share.expense`.
+  String get shareExpense => text('share.expense');
+
+  /// The word `share.goesBack`.
+  String get shareGoesBack => text('share.goesBack');
+
+  /// The word `share.invalidAmount`.
+  String get shareInvalidAmount => text('share.invalidAmount');
+
+  /// The word `share.invalidInvoiceDate`.
+  String get shareInvalidInvoiceDate => text('share.invalidInvoiceDate');
+
+  /// The word `share.invalidInvoiceNumber`.
+  String get shareInvalidInvoiceNumber => text('share.invalidInvoiceNumber');
+
+  /// The word `share.invalidVatNumber`.
+  String get shareInvalidVatNumber => text('share.invalidVatNumber');
+
+  /// The word `share.invoiceAlreadyAttached`.
+  String get shareInvoiceAlreadyAttached => text('share.invoiceAlreadyAttached');
+
+  /// The word `share.loadFailed`.
+  String get shareLoadFailed => text('share.loadFailed');
+
+  /// The word `share.matching`.
+  String get shareMatching => text('share.matching');
+
+  /// The word `share.newExpense`.
+  String get shareNewExpense => text('share.newExpense');
+
+  /// The word `share.noConnection`.
+  String get shareNoConnection => text('share.noConnection');
+
+  /// The word `share.noProject`.
+  String get shareNoProject => text('share.noProject');
+
+  /// The word `share.notYourEntry`.
+  String get shareNotYourEntry => text('share.notYourEntry');
+
+  /// The word `share.project`.
+  String get shareProject => text('share.project');
+
+  /// The word `share.refused`.
+  String get shareRefused => text('share.refused');
+
+  /// The word `share.supplierDiffers`.
+  String get shareSupplierDiffers => text('share.supplierDiffers');
+
+  /// The word `share.title`.
+  String get shareTitle => text('share.title');
+
+  /// The word `share.unknownAttachment`.
+  String get shareUnknownAttachment => text('share.unknownAttachment');
 
   /// The word `signIn.accountLocked`.
   String get signInAccountLocked => text('signIn.accountLocked');

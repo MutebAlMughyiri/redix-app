@@ -62,6 +62,12 @@ class ApprovalsScreen extends StatefulWidget {
   /// The line saying why the entry [id] could not be approved.
   static Key failedKey(String id) => Key('approvals.failed.$id');
 
+  /// The invoice's total of the entry [id], when it differs from what was paid.
+  static Key invoiceTotalKey(String id) => Key('approvals.invoiceTotal.$id');
+
+  /// The line saying the invoice of the entry [id] is from another seller.
+  static Key sellerDiffersKey(String id) => Key('approvals.sellerDiffers.$id');
+
   /// The quick reason at [index].
   static Key quickReasonKey(int index) => Key('approvals.quickReason.$index');
 
@@ -137,6 +143,8 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
         if (entry.notes.isNotEmpty) Text(entry.notes, style: small),
         Text(formatMoney(entry.amount), style: theme.textTheme.titleMedium),
         if (entry.vat != 0) Text('${words.approvalsIncludingVat} ${formatMoney(entry.vat)}', style: small),
+        if (entry.totalDiffers) Text('${words.approvalsInvoiceTotal}: ${formatMoney(entry.invoiceTotal)}', key: ApprovalsScreen.invoiceTotalKey(entry.id), style: small),
+        if (entry.sellerDiffers) Text(words.approvalsSellerDiffers, key: ApprovalsScreen.sellerDiffersKey(entry.id), style: TextStyle(color: theme.colorScheme.error)),
       ],
     );
   }

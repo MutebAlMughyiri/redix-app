@@ -51,7 +51,7 @@ Map<String, String> wordsIn(String language) => {
     'columns.inReports', 'columns.custom', 'columns.core', 'columns.edit', 'columns.delete', 'columns.save', 'columns.deleteExplain', 'columns.applyQuestion', 'columns.applyExplain',
     'columns.applyToAll', 'columns.templateOnly',
     'entries.title', 'entries.mine', 'entries.all', 'entries.latest', 'entries.seeAll', 'entries.empty', 'entries.loadFailed', 'entries.noConnection', 'entries.refused', 'entries.draft', 'entries.pendingApproval', 'entries.approved', 'entries.rejected', 'entries.reversed', 'entries.reason', 'entries.fix', 'entries.edit', 'entries.send', 'entries.delete', 'entries.deleteQuestion', 'entries.deleteExplain', 'entries.reverse', 'entries.reverseTitle', 'entries.reverseReason', 'entries.reverseExplain', 'entries.entryApproved', 'entries.entryWaitingForDecision', 'entries.notYourEntry', 'entries.entryHasCreditNote', 'entries.reasonRequired', 'entries.entryNotApproved', 'entries.alreadyReversed', 'entries.entryIncomplete', 'entries.entryNotSubmittable', 'expenses.entryApproved', 'expenses.entryWaitingForDecision', 'expenses.notYourEntry', 'expenses.entryHasCreditNote', 'expenses.reasonRequired', 'expenses.entryNotApproved', 'expenses.alreadyReversed',
-    'notifications.title', 'notifications.empty', 'notifications.loadFailed', 'notifications.noConnection', 'notifications.refused', 'notifications.entrySubmitted', 'notifications.entryApproved', 'notifications.entryRejected', 'notifications.projectApproved', 'notifications.projectRejected', 'approvals.title', 'approvals.empty', 'approvals.loadFailed', 'approvals.noConnection', 'approvals.all', 'approvals.purchases', 'approvals.contractorPayments', 'approvals.approve', 'approvals.reject', 'approvals.approveSelected', 'approvals.selectHint', 'approvals.enteredBy', 'approvals.includingVat', 'approvals.withoutInvoice', 'approvals.openFile', 'approvals.fileFailed', 'approvals.rejectTitle', 'approvals.quickReason', 'approvals.reasonUnclear', 'approvals.reasonAmount', 'approvals.reasonItem', 'approvals.reasonDuplicate', 'approvals.reason', 'approvals.reasonHint', 'approvals.rejectSend', 'approvals.reasonRequired', 'approvals.entryNotPending', 'approvals.unknownEntry', 'approvals.originalNotApproved', 'approvals.refused', 'approvals.approvedSome', 'approvals.failedSome',
+    'share.title', 'share.project', 'share.noProject', 'share.chooseItem', 'share.empty', 'share.expense', 'share.matching', 'share.attach', 'share.newExpense', 'share.attached', 'share.goesBack', 'share.amountDiffers', 'share.supplierDiffers', 'share.loadFailed', 'share.noConnection', 'share.refused', 'share.notYourEntry', 'share.entryNotAttachable', 'share.unknownAttachment', 'share.invoiceAlreadyAttached', 'share.duplicateInvoice', 'share.invalidInvoiceNumber', 'share.invalidInvoiceDate', 'share.invalidVatNumber', 'share.invalidAmount', 'approvals.invoiceTotal', 'approvals.sellerDiffers', 'notifications.title', 'notifications.empty', 'notifications.loadFailed', 'notifications.noConnection', 'notifications.refused', 'notifications.entrySubmitted', 'notifications.entryApproved', 'notifications.entryRejected', 'notifications.projectApproved', 'notifications.projectRejected', 'approvals.title', 'approvals.empty', 'approvals.loadFailed', 'approvals.noConnection', 'approvals.all', 'approvals.purchases', 'approvals.contractorPayments', 'approvals.approve', 'approvals.reject', 'approvals.approveSelected', 'approvals.selectHint', 'approvals.enteredBy', 'approvals.includingVat', 'approvals.withoutInvoice', 'approvals.openFile', 'approvals.fileFailed', 'approvals.rejectTitle', 'approvals.quickReason', 'approvals.reasonUnclear', 'approvals.reasonAmount', 'approvals.reasonItem', 'approvals.reasonDuplicate', 'approvals.reason', 'approvals.reasonHint', 'approvals.rejectSend', 'approvals.reasonRequired', 'approvals.entryNotPending', 'approvals.unknownEntry', 'approvals.originalNotApproved', 'approvals.refused', 'approvals.approvedSome', 'approvals.failedSome',
     'expenses.keptOnPhone', 'offline.title', 'offline.empty', 'offline.waiting', 'offline.sendAgain', 'offline.sendAnyway', 'offline.discard', 'offline.discardQuestion', 'offline.discardExplain',
     'categories.title', 'categories.hint', 'categories.empty', 'categories.loadFailed', 'categories.noConnection', 'categories.refused', 'categories.projectFinished',
     'categories.invalidName', 'categories.invalidOrder', 'categories.generalSubgroup', 'categories.subgroupInUse', 'categories.itemHasEntries', 'categories.changeType', 'subgroups.delete', 'subgroups.deleteQuestion', 'subgroups.deleteExplain', 'categories.new', 'categories.categoryName', 'categories.items', 'categories.noItems',
@@ -122,6 +122,14 @@ const onePixelPng = [
 
 /// The phone's camera and files, as the app's tests see them: each answers what the test chose, and nothing until it chooses.
 class FakeCapture extends InvoiceCapture {
+  final _sharedFiles = StreamController<PickedFile>.broadcast();
+
+  /// Shares [file] to the app, as WhatsApp would.
+  void share(PickedFile file) => _sharedFiles.add(file);
+
+  @override
+  Stream<PickedFile> shared() => _sharedFiles.stream;
+
   /// What the camera answers.
   var camera = PickedFile.none();
 
@@ -430,7 +438,7 @@ class FakeApi {
   final sentRejections = <(String, String)>[];
 
   /// Adds an entry waiting for a decision.
-  Map<String, Object> addPending({String kind = 'purchase', double amount = 1150, double vat = 150, String withoutInvoiceReason = '', String attachmentId = 'attachment-1', String contentType = 'image/png'}) {
+  Map<String, Object> addPending({String kind = 'purchase', double amount = 1150, double vat = 150, String withoutInvoiceReason = '', String attachmentId = 'attachment-1', String contentType = 'image/png', double? invoiceTotal, String sellerVatNumber = '', String supplierVatNumber = ''}) {
     final entry = <String, Object>{
       'id': 'entry-${pendingEntries.length}',
       'kind': kind,
@@ -447,9 +455,36 @@ class FakeApi {
       'attachmentId': attachmentId,
       'contentType': contentType,
       'authorName': 'نواف',
+      'invoiceTotal': invoiceTotal ?? amount,
+      'sellerVatNumber': sellerVatNumber,
+      'supplierVatNumber': supplierVatNumber,
     };
     pendingEntries.add(entry);
     return entry;
+  }
+
+  /// What in an item can take a shared invoice.
+  final attachableEntries = <Map<String, Object>>[];
+
+  /// The invoices the app attached: to which entry, and what it sent.
+  final sentInvoices = <(String, Map<String, dynamic>)>[];
+
+  /// What the API answers an invoice attached.
+  var invoiceAnswer = (status: 200, code: '');
+
+  /// Adds an expense that can take an invoice.
+  void addAttachable({required String id, String status = 'pendingApproval', double amount = 1150, String supplierVatNumber = '', bool isMatching = false}) {
+    attachableEntries.add({
+      'id': id,
+      'kind': 'purchase',
+      'status': status,
+      'entryDate': '2026-10-25',
+      'amount': amount,
+      'product': 'مواد لياسة',
+      'supplierName': 'شركة البواني',
+      'supplierVatNumber': supplierVatNumber,
+      'isMatching': isMatching,
+    });
   }
 
   /// What the user was told, newest first.
@@ -1199,6 +1234,13 @@ class FakeApi {
           row['isReversed'] = true;
       }
       return _json(const <String, Object>{}, 200);
+    }
+    if (segments.length == 4 && segments[2] == 'entries' && segments[3] == 'attachable') {
+      return _json(attachableEntries, 200);
+    }
+    if (segments.length == 5 && segments[2] == 'entries' && segments[4] == 'invoice') {
+      sentInvoices.add((segments[3], jsonDecode(request.body) as Map<String, dynamic>));
+      return _json(invoiceAnswer.status < 300 ? const <String, Object>{} : {'code': invoiceAnswer.code}, invoiceAnswer.status);
     }
     if (segments.length == 4 && segments[2] == 'entries' && segments[3] == 'pending') {
       return _json(pendingEntries, 200);
