@@ -19,6 +19,9 @@ class Projects extends ApiList<Project> {
   /// Adds a unit named [name] to [project]. Returns an empty string once added, otherwise the word key of the refusal.
   Future<String> addUnit(Project project, String name) => change('/projects/${project.id}/units', {'name': name});
 
+  /// Sets the VAT rate of the new entries of [project] to [percent]. Returns an empty string once set, otherwise the word key of the refusal.
+  Future<String> setVatPercent(Project project, double percent) => change('/projects/${project.id}/vat-rate', {'vatPercent': percent});
+
   /// Closes [project], which is read-only from then on. Returns an empty string once closed, otherwise the word key of the refusal.
   Future<String> close(Project project) => change('/projects/${project.id}/close', {});
 }

@@ -43,7 +43,8 @@ class Project {
       rejectionReason = json['rejectionReason'] as String,
       units = [for (final unit in json['units'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
       roles = (json['roles'] as List<dynamic>).cast<String>(),
-      _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()};
+      _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()},
+      vatPercent = (json['vatPercent'] as num).toDouble();
 
   /// The project's id.
   final String id;
@@ -68,6 +69,9 @@ class Project {
 
   final Set<String> _permissions;
 
+  /// The VAT rate of its new entries, as a percentage (BR-14).
+  final double vatPercent;
+
   /// Whether the signed-in user holds [permission] in this project.
   bool may(Permission permission) => _permissions.contains(permission.name);
 
@@ -79,4 +83,7 @@ class Project {
 
   /// Whether the signed-in user may change the project's structure now.
   bool get mayChangeStructure => !isFinished && may(Permission.manageStructure);
+
+  /// Whether the signed-in user may change the project's settings now.
+  bool get mayManageSettings => !isFinished && may(Permission.manageSettings);
 }

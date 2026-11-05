@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../ui/change_dialog.dart';
+import '../ui/name_dialog.dart';
 import '../words/words.dart';
 import 'categories.dart';
 import 'categories_screen.dart';
 import 'category.dart';
-import 'name_dialog.dart';
 
 /// Asks for a new item's name and type, which is set once (FR-38).
 class AddItemDialog extends StatefulWidget {

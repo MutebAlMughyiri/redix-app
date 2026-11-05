@@ -11,6 +11,7 @@ import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/apply_to_all_dialog.dart';
 import 'package:redix/structure/item_columns_screen.dart';
@@ -188,6 +189,22 @@ void main() {
     await $(CategoriesScreen.disableItemKey).tap();
     await $(keyStartingWith('categories.itemMenu.')).waitUntilVisible();
     await $.pumpAndSettle();
+    await $(BackButton).tap();
+
+    await $(keyStartingWith('home.paymentMethods.')).scrollTo().tap();
+    await $(find.text('شبكة')).waitUntilVisible();
+    await $(PaymentMethodsScreen.addKey).tap();
+    await $(PaymentMethodsScreen.dialogNameKey).enterText('مدى');
+    await $(PaymentMethodsScreen.saveKey).tap();
+    await $(find.text('مدى')).waitUntilVisible();
+    await $(keyStartingWith('paymentMethods.menu.')).last.tap();
+    await $(PaymentMethodsScreen.disableKey).tap();
+    await $(keyStartingWith('paymentMethods.disabled.')).waitUntilVisible();
+    await $(PaymentMethodsScreen.changeVatRateKey).tap();
+    await $(PaymentMethodsScreen.vatPercentKey).enterText('7.5');
+    await $(PaymentMethodsScreen.saveKey).tap();
+    await $(find.text('7.5%')).waitUntilVisible();
+    await $.takeNativeScreenshot('payment-methods');
     await $(BackButton).tap();
 
     await $(keyStartingWith('home.close.')).tap();

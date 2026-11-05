@@ -8,6 +8,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
+import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/structure/apply_to_all_dialog.dart';
 import 'package:redix/structure/categories_screen.dart';
@@ -419,6 +420,32 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.subgroupsKey)));
       [SubgroupsScreen.hintKey, SubgroupsScreen.addKey, SubgroupsScreen.subgroupNameKey((tiles['subgroups']! as List<Map<String, Object>>).last['id'] as String)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+      final cardMethod = api.addPaymentMethod(runningId, 'شبكة')['id'] as String;
+      final longMethod = api.addPaymentMethod(runningId, 'تحويل بنكي عن طريق الحساب الجاري للمؤسسة', isActive: false)['id'] as String;
+      await tester.ensureVisible(find.byKey(HomeScreen.paymentMethodsKey(runningId)));
+      expectFits(HomeScreen.paymentMethodsKey(runningId));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.paymentMethodsKey(runningId))));
+      [
+        PaymentMethodsScreen.vatRateKey,
+        PaymentMethodsScreen.vatHintKey,
+        PaymentMethodsScreen.changeVatRateKey,
+        PaymentMethodsScreen.addKey,
+        PaymentMethodsScreen.nameKey(cardMethod),
+        PaymentMethodsScreen.menuKey(cardMethod),
+        PaymentMethodsScreen.nameKey(longMethod),
+        PaymentMethodsScreen.disabledKey(longMethod),
+        PaymentMethodsScreen.menuKey(longMethod),
+      ].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(PaymentMethodsScreen.menuKey(cardMethod))));
+      [PaymentMethodsScreen.renameKey, PaymentMethodsScreen.disableKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(PaymentMethodsScreen.renameKey)));
+      [PaymentMethodsScreen.dialogNameKey, PaymentMethodsScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byKey(PaymentMethodsScreen.changeVatRateKey)));
+      [PaymentMethodsScreen.vatPercentKey, PaymentMethodsScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await tester.ensureVisible(find.byKey(HomeScreen.usersKey(runningId)));

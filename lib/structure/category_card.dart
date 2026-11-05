@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
+import '../ui/name_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'add_item_dialog.dart';
@@ -8,7 +9,6 @@ import 'categories.dart';
 import 'categories_screen.dart';
 import 'category.dart';
 import 'item_row.dart';
-import 'name_dialog.dart';
 
 /// One category of the list: its name, how many items it holds or that it is disabled, and a handle to drag it. Opened, it shows what can be done to it, and its items.
 class CategoryCard extends StatelessWidget {

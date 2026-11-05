@@ -8,9 +8,15 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 lib/
   main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
   account/my_account_screen.dart  My account: the language, the way into the password change, and signing out
-  settings/settings_screen.dart   Settings: the way back to the project list, My account and, for the admin, the registered projects
   api_list.dart             ApiList: a list the API owns, and the way to change it; every settings list extends it
-  ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, showRefusalOf
+  ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, NameDialog, showRefusalOf
+  settings/
+    settings_screen.dart    Settings: the way back to the project list, My account and, for the admin, the registered projects
+    payment_method.dart     PaymentMethod, as the API answers it
+    payment_methods.dart    PaymentMethods: the ApiList of one project's methods, and its changes
+    payment_methods_screen.dart  a project's VAT rate and payment methods
+    payment_method_row.dart one method, with its menu
+    vat_rate_dialog.dart    the dialog that asks for the rate
   projects/
     project.dart            Project and Unit, as the API answers them
     projects.dart           Projects: the ApiList of projects, and its changes
@@ -37,7 +43,6 @@ lib/
     categories_screen.dart  a project's categories and items, dragged into order
     category_card.dart      one category, opening to its items
     item_row.dart           one item, with its menu
-    name_dialog.dart        the dialog that asks for one name
     add_item_dialog.dart    the Add item dialog
     subgroups_screen.dart   an item's subgroups
     item_column.dart        ItemColumn and ColumnDataType, as the API answers them
@@ -47,7 +52,9 @@ lib/
     add_column_dialog.dart  the Add column dialog
     edit_column_dialog.dart the Edit column dialog
     apply_to_all_dialog.dart  the question after a change to the template
-  format/date_format.dart   formatDate: the app's one date format, dd.MM.yyyy
+  format/
+    date_format.dart        formatDate: the app's one date format, dd.MM.yyyy
+    number_format.dart      formatPercent, and parseNumber: what a person typed, in Arabic or Western digits
   api.dart                  the API's address and how a reply's JSON is read, shared by every feature
   auth/
     permission.dart         Permission: what the API says a user may do, as its name in the API

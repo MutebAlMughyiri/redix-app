@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
 import '../ui/change_dialog.dart';
+import '../ui/name_dialog.dart';
 import '../words/words.dart';
 import 'categories.dart';
 import 'category.dart';
-import 'name_dialog.dart';
 
 /// An item's subgroups (FR-05), such as مواد and دفان, each printed as its own table in the report. The item's general group is not shown: it needs nothing from anyone.
 class SubgroupsScreen extends StatelessWidget {

@@ -7,6 +7,7 @@ import '../projects/project.dart';
 import '../projects/project_card.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
+import '../settings/payment_methods_screen.dart';
 import '../settings/settings_screen.dart';
 import '../structure/categories_screen.dart';
 import '../ui/api_list_body.dart';
@@ -92,6 +93,9 @@ class HomeScreen extends StatefulWidget {
 
   /// The way into the categories and items of the project [id].
   static Key categoriesKey(String id) => Key('home.categories.$id');
+
+  /// The way into the VAT rate and payment methods of the project [id].
+  static Key paymentMethodsKey(String id) => Key('home.paymentMethods.$id');
 
   /// The button that adds a unit to the running project [id].
   static Key addUnitKey(String id) => Key('home.addUnit.$id');
@@ -180,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 project: project,
                 onUsers: () => _openUsers(project),
                 onCategories: () => context.push(CategoriesScreen.pathOf(project.id), extra: project),
+                onPaymentMethods: () => context.push(PaymentMethodsScreen.pathOf(project.id), extra: project),
                 onAddUnit: () => _askForUnit(project),
                 onClose: () => _askToClose(project),
               )

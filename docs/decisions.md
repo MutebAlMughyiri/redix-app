@@ -6,6 +6,9 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-06 | Payment methods and the VAT rate share one screen, from the project's home | The canvas has none (findings row 7), and both are short. Built from Material's parts. Made without Muteb; findings row 62 |
+| 2026-11-06 | The Add button says "Add" where a screen's title already says what is added, with the full phrase as its tooltip | The full phrase was too wide at 360 points. Made without Muteb |
+| 2026-11-06 | A number is read in Arabic or Western digits, in one place | The app is Arabic first, and an Arabic keyboard types ٧٫٥. Made without Muteb |
 | 2026-11-06 | An item's type is three choices on the dialog, not a dropdown | The emulator showed "Purchases + contractor payments" cut off in a dropdown, and with three choices all of them can simply show. Made without Muteb |
 | 2026-11-06 | Every change to the default template asks one question, in one dialog, as the change is sent | AC-41.3 and the issue ask it of a change, and a drag has no dialog of its own to hold a checkbox. Made without Muteb |
 | 2026-11-06 | The default template opens from an item, for that item's type, with no way in of its own | The canvas draws it as a tab of an item's columns; a type with no item yet has nothing to change until one is added. Made without Muteb |

@@ -12,4 +12,7 @@ enum Permission {
 
   /// Shape a project's expense structure: its categories, items, subgroups and columns.
   manageStructure,
+
+  /// Keep a project's payment methods and VAT rate.
+  manageSettings,
 }

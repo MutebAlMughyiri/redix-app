@@ -52,6 +52,9 @@ Map<String, String> wordsIn(String language) => {
     'categories.addItem', 'categories.itemName', 'categories.itemType', 'categories.typePurchases', 'categories.typeContractorPayments', 'categories.typeBoth', 'categories.rename',
     'categories.disable', 'categories.enable', 'categories.disabled', 'categories.save', 'categories.subgroups', 'categories.subgroupsHint', 'categories.noSubgroups',
     'subgroups.new', 'categories.subgroupName', 'projects.structureSource', 'projects.defaultTemplate', 'projects.unknownSource',
+    'projects.invalidVatRate', 'common.add', 'paymentMethods.title', 'paymentMethods.empty', 'paymentMethods.loadFailed', 'paymentMethods.noConnection', 'paymentMethods.refused', 'paymentMethods.projectFinished',
+    'paymentMethods.invalidName', 'paymentMethods.new', 'paymentMethods.name', 'paymentMethods.rename', 'paymentMethods.save', 'paymentMethods.disable', 'paymentMethods.enable', 'paymentMethods.disabled',
+    'paymentMethods.vatRate', 'paymentMethods.vatHint', 'paymentMethods.changeVatRate', 'paymentMethods.vatPercent',
   ])
     key: '$language $key',
 };
@@ -69,7 +72,7 @@ const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "ke
 const admin = ['approveProjects'];
 
 /// What a project manager who also does the finance may do in a project.
-const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure'];
+const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings'];
 
 /// The phone's own fingerprint or face prompt, as the app's tests see it.
 class FakePrompt extends Fake implements FlutterSecureStorage {
@@ -208,6 +211,15 @@ class FakeApi {
   /// The columns the API holds, by the address they are read at.
   final columns = <String, List<Map<String, Object>>>{};
 
+  /// Each project's payment methods, as the API answers them.
+  final paymentMethods = <String, List<Map<String, Object>>>{};
+
+  /// The status and problem code the API answers to a change of a project's settings; 2xx makes the change. An empty code sends none.
+  var settingsAnswer = (status: 200, code: '');
+
+  /// The changes of a project's settings the app sent, as `path` and body.
+  final sentSettingsChanges = <(String, Map<String, dynamic>)>[];
+
   var _nextStructureId = 0;
 
   /// How many times the app told the API it signed out.
@@ -288,9 +300,41 @@ class FakeApi {
       'units': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}],
       'roles': roles,
       'permissions': permissions,
+      'vatPercent': 15.0,
     };
     projects.add(project);
     return project;
+  }
+
+  /// Adds a payment method to the project [projectId], as the API holds it.
+  Map<String, Object> addPaymentMethod(String projectId, String name, {bool isActive = true}) {
+    final method = <String, Object>{'id': 'method-${_nextStructureId++}', 'name': name, 'isActive': isActive};
+    paymentMethods.putIfAbsent(projectId, () => []).add(method);
+    return method;
+  }
+
+  http.Response _answerPaymentMethods(http.Request request) {
+    final segments = request.url.pathSegments;
+    final list = paymentMethods.putIfAbsent(segments[1], () => []);
+    if (request.method == 'GET') {
+      return _json(list, 200);
+    }
+    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    sentSettingsChanges.add((request.url.path, body));
+    if (settingsAnswer.status >= 300) {
+      return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
+    }
+    switch (segments.sublist(3)) {
+      case []:
+        addPaymentMethod(segments[1], body['name'] as String);
+      case [final id, 'disable']:
+        list.singleWhere((row) => row['id'] == id)['isActive'] = false;
+      case [final id, 'enable']:
+        list.singleWhere((row) => row['id'] == id)['isActive'] = true;
+      case [final id]:
+        list.singleWhere((row) => row['id'] == id)['name'] = body['name'] as String;
+    }
+    return _json({}, 200);
   }
 
   /// Adds a category to the project [projectId], as the API holds it.
@@ -555,6 +599,9 @@ class FakeApi {
     if (segments.length >= 3 && (segments[2] == 'categories' || segments[2] == 'items')) {
       return _answerStructure(request);
     }
+    if (segments.length >= 3 && segments[2] == 'payment-methods') {
+      return _answerPaymentMethods(request);
+    }
     if (request.method == 'GET') {
       return _json(projects, 200);
     }
@@ -570,6 +617,8 @@ class FakeApi {
     final project = projects.singleWhere((project) => project['id'] == request.url.pathSegments[1]);
     if (path.endsWith('/close')) {
       project['status'] = 'finished';
+    } else if (path.endsWith('/vat-rate')) {
+      project['vatPercent'] = body['vatPercent'] as double;
     } else {
       final units = project['units'] as List<Map<String, String>>;
       units.add({'id': '${project['id']}-unit-${units.length}', 'name': body['name'] as String});

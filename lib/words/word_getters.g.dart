@@ -269,6 +269,9 @@ mixin WordGetters {
   /// The word `columns.typeText`.
   String get columnsTypeText => text('columns.typeText');
 
+  /// The word `common.add`.
+  String get commonAdd => text('common.add');
+
   /// The word `common.cancel`.
   String get commonCancel => text('common.cancel');
 
@@ -301,6 +304,60 @@ mixin WordGetters {
 
   /// The word `myAccount.title`.
   String get myAccountTitle => text('myAccount.title');
+
+  /// The word `paymentMethods.changeVatRate`.
+  String get paymentMethodsChangeVatRate => text('paymentMethods.changeVatRate');
+
+  /// The word `paymentMethods.disable`.
+  String get paymentMethodsDisable => text('paymentMethods.disable');
+
+  /// The word `paymentMethods.disabled`.
+  String get paymentMethodsDisabled => text('paymentMethods.disabled');
+
+  /// The word `paymentMethods.empty`.
+  String get paymentMethodsEmpty => text('paymentMethods.empty');
+
+  /// The word `paymentMethods.enable`.
+  String get paymentMethodsEnable => text('paymentMethods.enable');
+
+  /// The word `paymentMethods.invalidName`.
+  String get paymentMethodsInvalidName => text('paymentMethods.invalidName');
+
+  /// The word `paymentMethods.loadFailed`.
+  String get paymentMethodsLoadFailed => text('paymentMethods.loadFailed');
+
+  /// The word `paymentMethods.name`.
+  String get paymentMethodsName => text('paymentMethods.name');
+
+  /// The word `paymentMethods.new`.
+  String get paymentMethodsNew => text('paymentMethods.new');
+
+  /// The word `paymentMethods.noConnection`.
+  String get paymentMethodsNoConnection => text('paymentMethods.noConnection');
+
+  /// The word `paymentMethods.projectFinished`.
+  String get paymentMethodsProjectFinished => text('paymentMethods.projectFinished');
+
+  /// The word `paymentMethods.refused`.
+  String get paymentMethodsRefused => text('paymentMethods.refused');
+
+  /// The word `paymentMethods.rename`.
+  String get paymentMethodsRename => text('paymentMethods.rename');
+
+  /// The word `paymentMethods.save`.
+  String get paymentMethodsSave => text('paymentMethods.save');
+
+  /// The word `paymentMethods.title`.
+  String get paymentMethodsTitle => text('paymentMethods.title');
+
+  /// The word `paymentMethods.vatHint`.
+  String get paymentMethodsVatHint => text('paymentMethods.vatHint');
+
+  /// The word `paymentMethods.vatPercent`.
+  String get paymentMethodsVatPercent => text('paymentMethods.vatPercent');
+
+  /// The word `paymentMethods.vatRate`.
+  String get paymentMethodsVatRate => text('paymentMethods.vatRate');
 
   /// The word `projects.addUnit`.
   String get projectsAddUnit => text('projects.addUnit');
@@ -337,6 +394,9 @@ mixin WordGetters {
 
   /// The word `projects.invalidName`.
   String get projectsInvalidName => text('projects.invalidName');
+
+  /// The word `projects.invalidVatRate`.
+  String get projectsInvalidVatRate => text('projects.invalidVatRate');
 
   /// The word `projects.loadFailed`.
   String get projectsLoadFailed => text('projects.loadFailed');

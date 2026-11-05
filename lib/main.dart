@@ -14,6 +14,8 @@ import 'projects/projects_screen.dart';
 import 'projects/registered_projects.dart';
 import 'projects/registered_projects_screen.dart';
 import 'projects/project.dart';
+import 'settings/payment_methods.dart';
+import 'settings/payment_methods_screen.dart';
 import 'settings/settings_screen.dart';
 import 'structure/categories.dart';
 import 'structure/categories_screen.dart';
@@ -66,6 +68,7 @@ class _RedixAppState extends State<RedixApp> {
   final _projectRoles = <String, Roles>{};
   final _projectCategories = <String, Categories>{};
   final _columnLists = <String, Columns>{};
+  final _projectPaymentMethods = <String, PaymentMethods>{};
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -104,6 +107,10 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(path: ItemColumnsScreen.path, builder: (context, state) => _itemColumnsScreen(state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? '', state.extra! as Project)),
       GoRoute(
+        path: PaymentMethodsScreen.path,
+        builder: (context, state) => PaymentMethodsScreen(project: state.extra! as Project, projects: _projects, paymentMethods: _paymentMethodsOf(state.pathParameters['projectId'] ?? '')),
+      ),
+      GoRoute(
         path: SubgroupsScreen.path,
         builder: (context, state) => SubgroupsScreen(
           itemId: state.pathParameters['itemId'] ?? '',
@@ -119,6 +126,8 @@ class _RedixAppState extends State<RedixApp> {
   Roles _rolesOf(String projectId) => _projectRoles.putIfAbsent(projectId, () => Roles(widget.session, projectId));
 
   Categories _categoriesOf(String projectId) => _projectCategories.putIfAbsent(projectId, () => Categories(widget.session, projectId));
+
+  PaymentMethods _paymentMethodsOf(String projectId) => _projectPaymentMethods.putIfAbsent(projectId, () => PaymentMethods(widget.session, projectId));
 
   Columns _columnsAt(String path) => _columnLists.putIfAbsent(path, () => Columns(widget.session, path));
 

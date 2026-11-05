@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../projects/project.dart';
+import '../ui/name_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'categories.dart';
 import 'categories_screen.dart';
 import 'category.dart';
 import 'item_columns_screen.dart';
-import 'name_dialog.dart';
 import 'subgroups_screen.dart';
 
 /// One item under its category: its name and type, or that it is disabled, a handle to drag it, the way into its columns, and a menu of what can be done to it.

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../ui/change_dialog.dart';
+import 'change_dialog.dart';
 
-/// Asks for one name, for adding or renaming anything in a project's structure.
+/// Asks for one name, for adding or renaming anything in a project.
 class NameDialog extends StatefulWidget {
   /// The dialog [title] with a field labelled [label], starting from [name]. The [saveLabel] button calls [onSave] with what was typed.
   const NameDialog({super.key, required this.title, required this.label, required this.saveLabel, this.name = '', required this.onSave});
