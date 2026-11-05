@@ -20,6 +20,8 @@ class Session extends ChangeNotifier {
   var _refreshToken = '';
   var _mustChangePassword = false;
   var _permissions = <String>{};
+  var _defaultProjectId = '';
+  var _openDefaultProject = false;
   var _notice = '';
 
   /// True from sign-in until the session ends.
@@ -33,6 +35,32 @@ class Session extends ChangeNotifier {
 
   /// Whether the user holds [permission] everywhere; what they hold in a project comes with the project.
   bool may(Permission permission) => _permissions.contains(permission.name);
+
+  /// The project the user chose to land on; empty when none, or when they can no longer read it (AC-37.2).
+  String get defaultProjectId => _defaultProjectId;
+
+  /// True when sign-in skips the list and opens the default project (AC-37.1).
+  bool get opensDefaultProject => _openDefaultProject && _defaultProjectId.isNotEmpty;
+
+  /// Makes [projectId] the default project, and says whether sign-in opens it directly. Returns an empty string once made, otherwise the word key of the refusal.
+  Future<String> setDefaultProject(String projectId, {required bool openDirectly}) => _changeDefault('/projects/$projectId/default', {'openDirectly': openDirectly});
+
+  /// Clears the default project. Returns an empty string once made, otherwise the word key of the refusal.
+  Future<String> removeDefaultProject() => _changeDefault('/projects/default/remove', {});
+
+  Future<String> _changeDefault(String path, Map<String, Object> body) async {
+    try {
+      final response = await post(path, body);
+      if (response.statusCode >= 300) {
+        return 'projects.refused';
+      }
+      await _renew();
+      return '';
+    } on Exception catch (error) {
+      debugPrint('Default project not changed: $error');
+      return 'projects.noConnection';
+    }
+  }
 
   /// The word key of why the last session ended, for the sign-in screen; empty when there is nothing to say.
   String get notice => _notice;
@@ -142,5 +170,7 @@ class Session extends ChangeNotifier {
     _refreshToken = session['refreshToken'] as String? ?? '';
     _mustChangePassword = session['mustChangePassword'] as bool? ?? false;
     _permissions = {...(session['permissions'] as List<dynamic>? ?? []).cast<String>()};
+    _defaultProjectId = session['defaultProjectId'] as String? ?? '';
+    _openDefaultProject = session['openDefaultProject'] as bool? ?? false;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'api.dart';
 import 'auth/session.dart';
@@ -39,6 +40,12 @@ abstract class ApiList<T> extends ChangeNotifier {
   void dispose() {
     _session.removeListener(_forgetAtSignOut);
     super.dispose();
+  }
+
+  /// Reads the list for a screen that is opening. The read waits for the frame in progress, because another screen sharing this list may still be building.
+  void loadOnOpen() {
+    _isLoading = true;
+    SchedulerBinding.instance.addPostFrameCallback((_) => load());
   }
 
   /// Reads the list from the API.

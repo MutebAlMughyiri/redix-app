@@ -10,7 +10,7 @@
 
 | Screen | Elements (`Key`) | Guide |
 | --- | --- | --- |
-| Home | `HomeScreen.titleKey` the app's name, `HomeScreen.subtitleKey` what it is for | [Home](../guide/home.md) |
+| First screen | `ProjectsScreen.titleKey`: since UC-010, the project list | [Projects](../guide/projects.md) |
 | No network | `NoWordsScreen.iconKey` the no-network icon, `NoWordsScreen.retryKey` the retry button | Shown only on a first start without a network |
 
 ## API calls

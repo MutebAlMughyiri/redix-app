@@ -66,7 +66,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       _message = refusal;
     });
     if (refusal.isEmpty) {
-      context.go(HomeScreen.path);
+      context.go(HomeScreen.landingOf(widget.session));
     }
   }
 

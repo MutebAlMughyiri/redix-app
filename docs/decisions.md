@@ -6,6 +6,9 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | The project list is the first screen after sign-in, a card opens the project's home, and a star on the list sets the default | One place for choosing and for the default, as FR-37 asks; the star replaces the canvas's Default chip |
+| 2026-11-05 | Where a person lands is decided at app start and at sign-in, and nowhere else | So Switch project is never sent back to the project they just left |
+| 2026-11-05 | The list and the project's home share one `Projects`, and a screen opening reads it after the frame (`ApiList.loadOnOpen`) | One read of one list; the other screen is still building when this one opens |
 | 2026-11-05 | One form registers a project, from the sign-in page with the manager's details, and from the list without them | One surface: the form differs only by what a signed-in person already has |
 | 2026-11-05 | The app shows a control from the permissions the API sends, and names no role | A change to a role in the database reaches the app with no release. Rows below that name an owner are history |
 | 2026-11-05 | A project's people open from its card, until UC-010 opens the project itself | A project manager's list belongs to the project |

@@ -71,6 +71,9 @@ class Project {
   /// Whether the signed-in user holds [permission] in this project.
   bool may(Permission permission) => _permissions.contains(permission.name);
 
+  /// True once the admin has let it in, so it can be opened (BR-34).
+  bool get isApproved => status == ProjectStatus.running || status == ProjectStatus.finished;
+
   /// True once the project is closed: the app offers no change on it (AC-04.1).
   bool get isFinished => status == ProjectStatus.finished;
 }

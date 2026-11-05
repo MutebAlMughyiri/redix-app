@@ -8,7 +8,7 @@
 
 ## Screens
 
-A project's Users, `UsersScreen` at `/projects/:projectId/users`, opened from the project's card (`ProjectsScreen.usersKey(id)`), and Roles, `UserRolesScreen` at `/projects/:projectId/users/:userId/roles`, opened from a person's menu (`UsersScreen.rolesKey`):
+A project's Users, `UsersScreen` at `/projects/:projectId/users`, opened from the project's card (`HomeScreen.usersKey(id)`), and Roles, `UserRolesScreen` at `/projects/:projectId/users/:userId/roles`, opened from a person's menu (`UsersScreen.rolesKey`):
 
 | Element | `Key` | Does |
 | --- | --- | --- |

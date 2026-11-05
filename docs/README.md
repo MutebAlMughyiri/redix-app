@@ -17,10 +17,10 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | --- | --- |
 | [Sign in](guide/sign-in.md) | Everyone not signed in |
 | [Change password](guide/change-password.md) | Everyone with a temporary password |
-| [Home](guide/home.md) | Everyone signed in |
+| [Projects](guide/projects.md) | Everyone, by their role in each project |
+| [Home](guide/home.md) | Everyone, for the projects they have access to |
 | [Settings](guide/settings.md) | Everyone signed in |
 | [My account](guide/my-account.md) | Everyone signed in |
-| [Projects](guide/projects.md) | Everyone, by their role in each project |
 | [Users](guide/users.md) | Project managers |
 | [Register a project](guide/register-a-project.md) | Everyone; the admin approves |
 
@@ -30,7 +30,7 @@ Numbered in build order; the same number in the API's documentation is the same 
 
 | Use case | What it does | Who |
 | --- | --- | --- |
-| [UC-001](use-cases/UC-001-setup.md) | The base: Arabic and English from the database, the theme, the home screen, the no-network screen | Everyone |
+| [UC-001](use-cases/UC-001-setup.md) | The base: Arabic and English from the database, the theme, the first screen, the no-network screen | Everyone |
 | [UC-002](use-cases/UC-002-sign-in.md) | Sign in with a username and password, and stay signed in | Every user |
 | [UC-003](use-cases/UC-003-change-password.md) | Change the password, forced while it is temporary | Every signed-in user |
 | [UC-004](use-cases/UC-004-language.md) | Switch the app between Arabic and English in My account | Every signed-in user |
@@ -38,5 +38,6 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-007](use-cases/UC-007-users.md) | Correct logins, disable them, and reset a forgotten password | Project managers |
 | [UC-008](use-cases/UC-008-project-roles.md) | Add people to a project and give their roles | Project managers |
 | [UC-009](use-cases/UC-009-follow-permissions.md) | Show each person the controls their role allows in each project | Everyone |
+| [UC-010](use-cases/UC-010-projects-and-default.md) | Choose a project after sign-in, see it by your role in it, and set a default | Everyone |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

@@ -5,9 +5,6 @@ mixin WordGetters {
   /// The word for [key] in the language in use.
   String text(String key);
 
-  /// The word `app.subtitle`.
-  String get appSubtitle => text('app.subtitle');
-
   /// The word `app.title`.
   String get appTitle => text('app.title');
 
@@ -80,6 +77,12 @@ mixin WordGetters {
   /// The word `projects.addUnit`.
   String get projectsAddUnit => text('projects.addUnit');
 
+  /// The word `projects.choose`.
+  String get projectsChoose => text('projects.choose');
+
+  /// The word `projects.chooseHint`.
+  String get projectsChooseHint => text('projects.chooseHint');
+
   /// The word `projects.close`.
   String get projectsClose => text('projects.close');
 
@@ -91,6 +94,9 @@ mixin WordGetters {
 
   /// The word `projects.create`.
   String get projectsCreate => text('projects.create');
+
+  /// The word `projects.defaultProject`.
+  String get projectsDefaultProject => text('projects.defaultProject');
 
   /// The word `projects.empty`.
   String get projectsEmpty => text('projects.empty');
@@ -116,6 +122,12 @@ mixin WordGetters {
   /// The word `projects.noUnits`.
   String get projectsNoUnits => text('projects.noUnits');
 
+  /// The word `projects.openDefault`.
+  String get projectsOpenDefault => text('projects.openDefault');
+
+  /// The word `projects.openDefaultHint`.
+  String get projectsOpenDefaultHint => text('projects.openDefaultHint');
+
   /// The word `projects.pending`.
   String get projectsPending => text('projects.pending');
 
@@ -139,9 +151,6 @@ mixin WordGetters {
 
   /// The word `projects.startDate`.
   String get projectsStartDate => text('projects.startDate');
-
-  /// The word `projects.title`.
-  String get projectsTitle => text('projects.title');
 
   /// The word `projects.unitName`.
   String get projectsUnitName => text('projects.unitName');
@@ -208,6 +217,9 @@ mixin WordGetters {
 
   /// The word `registered.title`.
   String get registeredTitle => text('registered.title');
+
+  /// The word `settings.switchProject`.
+  String get settingsSwitchProject => text('settings.switchProject');
 
   /// The word `settings.title`.
   String get settingsTitle => text('settings.title');

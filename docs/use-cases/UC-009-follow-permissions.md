@@ -27,8 +27,8 @@ A new person starts at the last project role the API lists. The app names no rol
 | Rule | Test |
 | --- | --- |
 | Anyone signed in can register a project | `projects_test.dart` |
-| Users on a card shows only with `manageUsers` | `projects_test.dart` |
-| Add unit and Close show only with `manageProject` | `projects_test.dart` |
+| Users on a project's home shows only with `manageUsers` | `home_test.dart` |
+| Add unit and Close show only with `manageProject` | `home_test.dart` |
 | A project's roles show under its name | `projects_test.dart` |
 | Settings shows Registered projects only with `approveProjects` | `settings_test.dart` |
 | A project's Users lists only its people | `project_users_test.dart` |

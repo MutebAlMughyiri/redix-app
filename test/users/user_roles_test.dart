@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/users/user_roles_screen.dart';
 import 'package:redix/users/users_screen.dart';
 
@@ -17,9 +16,8 @@ void main() {
       ..giveRole(manager, 'project-0', 'role-manager')
       ..giveRole(user, 'project-0', 'role-reader');
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.usersKey('project-0'))));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey('project-0'))));
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-1'))));
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.rolesKey)));
     return api;

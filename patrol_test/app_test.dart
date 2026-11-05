@@ -53,14 +53,13 @@ void main() {
     await $(SignInScreen.usernameKey).enterText('patrol-reem');
     await $(SignInScreen.passwordKey).enterText('Reem-chosen-1');
     await $(SignInScreen.submitKey).scrollTo().tap();
-    await $(HomeScreen.settingsKey).tap();
-    expect($(SettingsScreen.registeredKey), findsNothing);
-    await $(SettingsScreen.projectsKey).tap();
     await $(keyStartingWith('projects.status.')).waitUntilVisible();
-    expect($(keyStartingWith('projects.users.')), findsNothing);
-    expect($(keyStartingWith('projects.addUnit.')), findsNothing);
+    expect($(keyStartingWith('projects.star.')), findsNothing);
     await $.takeNativeScreenshot('project-waiting');
-    await $(BackButton).tap();
+    await $(keyStartingWith('projects.card.')).tap();
+    expect($(ProjectsScreen.titleKey), findsOneWidget);
+    await $(ProjectsScreen.settingsKey).tap();
+    expect($(SettingsScreen.registeredKey), findsNothing);
     await $(SettingsScreen.myAccountKey).tap();
     await $(MyAccountScreen.signOutKey).tap();
     await $(MyAccountScreen.confirmSignOutKey).tap();
@@ -76,12 +75,9 @@ void main() {
     await $(ChangePasswordScreen.newKey).enterText(newPassword);
     await $(ChangePasswordScreen.confirmKey).enterText(newPassword);
     await $(ChangePasswordScreen.submitKey).scrollTo().tap();
-    await $(HomeScreen.titleKey).waitUntilVisible();
+    await $(ProjectsScreen.titleKey).waitUntilVisible();
 
-    expect($(HomeScreen.subtitleKey), findsOneWidget);
-    await $.takeNativeScreenshot('home');
-
-    await $(HomeScreen.settingsKey).tap();
+    await $(ProjectsScreen.settingsKey).tap();
     await $(SettingsScreen.registeredKey).waitUntilVisible();
     await $.takeNativeScreenshot('settings');
     await $(SettingsScreen.registeredKey).tap();
@@ -98,12 +94,13 @@ void main() {
     await $(SignInScreen.usernameKey).enterText('patrol-reem');
     await $(SignInScreen.passwordKey).enterText('Reem-chosen-1');
     await $(SignInScreen.submitKey).scrollTo().tap();
-    await $(HomeScreen.settingsKey).tap();
-    await $(SettingsScreen.projectsKey).tap();
+    await $(keyStartingWith('projects.card.')).waitUntilVisible();
+    expect($(keyStartingWith('home.users.')), findsNothing);
+    await $(keyStartingWith('projects.card.')).tap();
 
-    final projectUsers = $(keyStartingWith('projects.users.'));
+    final projectUsers = $(keyStartingWith('home.users.'));
     await projectUsers.waitUntilVisible();
-    expect($(keyStartingWith('projects.addUnit.')), findsNothing);
+    expect($(keyStartingWith('home.addUnit.')), findsNothing);
     await projectUsers.tap();
     await $(keyStartingWith('users.menu.')).waitUntilVisible();
     await $(keyStartingWith('users.menu.')).tap();
@@ -115,27 +112,27 @@ void main() {
     await $(BackButton).tap();
     await $(BackButton).tap();
 
-    final addUnit = $(keyStartingWith('projects.addUnit.'));
+    final addUnit = $(keyStartingWith('home.addUnit.'));
     await addUnit.waitUntilVisible();
     expect($(find.text('الفلة الشرقية')), findsOneWidget);
     expect($(find.text('الفلة الشمالية')), findsOneWidget);
     await addUnit.tap();
-    await $(ProjectsScreen.unitNameKey).enterText('الفلة الغربية');
-    await $(ProjectsScreen.saveUnitKey).tap();
+    await $(HomeScreen.unitNameKey).enterText('الفلة الغربية');
+    await $(HomeScreen.saveUnitKey).tap();
     await $(find.text('الفلة الغربية')).waitUntilVisible();
-    await $.takeNativeScreenshot('projects');
+    await $.takeNativeScreenshot('home');
 
-    await $(keyStartingWith('projects.close.')).tap();
-    await $(ProjectsScreen.confirmCloseKey).waitUntilVisible();
+    await $(keyStartingWith('home.close.')).tap();
+    await $(HomeScreen.confirmCloseKey).waitUntilVisible();
     await $.takeNativeScreenshot('close-project');
-    await $(ProjectsScreen.cancelCloseKey).tap();
-    expect($(keyStartingWith('projects.close.')), findsOneWidget);
+    await $(HomeScreen.cancelCloseKey).tap();
+    expect($(keyStartingWith('home.close.')), findsOneWidget);
 
-    await $(keyStartingWith('projects.close.')).tap();
-    await $(ProjectsScreen.confirmCloseKey).tap();
+    await $(keyStartingWith('home.close.')).tap();
+    await $(HomeScreen.confirmCloseKey).tap();
     await $.pumpAndSettle();
-    expect($(keyStartingWith('projects.close.')), findsNothing);
-    expect($(keyStartingWith('projects.addUnit.')), findsNothing);
+    expect($(keyStartingWith('home.close.')), findsNothing);
+    expect($(keyStartingWith('home.addUnit.')), findsNothing);
 
     await projectUsers.tap();
     await $(keyStartingWith('users.menu.')).waitUntilVisible();
@@ -182,7 +179,15 @@ void main() {
     await $.pumpAndSettle();
 
     await $(BackButton).tap();
+    await projectUsers.waitUntilVisible();
     await $(BackButton).tap();
+    await $(keyStartingWith('projects.star.')).tap();
+    await $(Icons.star).waitUntilVisible();
+    await $(ProjectsScreen.openDefaultKey).tap();
+    await $(find.byWidgetPredicate((widget) => widget is SwitchListTile && widget.value)).waitUntilVisible();
+    await $.takeNativeScreenshot('projects');
+
+    await $(ProjectsScreen.settingsKey).tap();
     await $(SettingsScreen.myAccountKey).tap();
     await $(MyAccountScreen.arabicKey).waitUntilVisible();
     await $.takeNativeScreenshot('my-account');
@@ -193,15 +198,18 @@ void main() {
     await $.takeNativeScreenshot('my-account-arabic');
 
     await $(BackButton).tap();
-    await $(SettingsScreen.projectsKey).tap();
+    await $(SettingsScreen.switchProjectKey).tap();
     await $(keyStartingWith('projects.status.')).waitUntilVisible();
     expect(Directionality.of($.tester.element(keyStartingWith('projects.status.'))), TextDirection.rtl);
     await $.takeNativeScreenshot('projects-arabic');
+    await $(keyStartingWith('projects.card.')).tap();
     await projectUsers.tap();
     await $(keyStartingWith('users.menu.')).waitUntilVisible();
     await $.takeNativeScreenshot('users-arabic');
     await $(BackButton).tap();
+    await projectUsers.waitUntilVisible();
     await $(BackButton).tap();
+    await $(ProjectsScreen.settingsKey).tap();
     await $(SettingsScreen.myAccountKey).tap();
     await $(MyAccountScreen.englishKey).waitUntilVisible();
 
@@ -215,6 +223,22 @@ void main() {
     await $(MyAccountScreen.signOutKey).tap();
     await $(MyAccountScreen.confirmSignOutKey).tap();
 
+    await $(SignInScreen.usernameKey).waitUntilVisible();
+    await $(SignInScreen.usernameKey).enterText('patrol-reem');
+    await $(SignInScreen.passwordKey).enterText('Reem-chosen-1');
+    await $(SignInScreen.submitKey).scrollTo().tap();
+    await $(HomeScreen.titleKey).waitUntilVisible();
+    await $(find.text('غصون 7')).waitUntilVisible();
+    expect($(BackButton), findsNothing);
+    await $(HomeScreen.settingsKey).tap();
+    await $(SettingsScreen.switchProjectKey).tap();
+    await $(ProjectsScreen.titleKey).waitUntilVisible();
+    await $(ProjectsScreen.settingsKey).tap();
+    await $(SettingsScreen.myAccountKey).tap();
+    await $(MyAccountScreen.signOutKey).tap();
+    await $(MyAccountScreen.confirmSignOutKey).tap();
+
+    await $(SignInScreen.usernameKey).waitUntilVisible();
     await $(SignInScreen.usernameKey).enterText('patrol-nawaf');
     await $(SignInScreen.passwordKey).enterText('Temporary-2');
     await $(SignInScreen.submitKey).scrollTo().tap();
@@ -223,14 +247,16 @@ void main() {
     await $(ChangePasswordScreen.confirmKey).enterText('Nawaf-chosen-1');
     await $(ChangePasswordScreen.submitKey).scrollTo().tap();
 
-    await $(HomeScreen.settingsKey).tap();
+    await $(ProjectsScreen.settingsKey).tap();
     await $(SettingsScreen.myAccountKey).waitUntilVisible();
     expect($(SettingsScreen.registeredKey), findsNothing);
-    await $(SettingsScreen.projectsKey).tap();
+    await $(SettingsScreen.switchProjectKey).tap();
     await $(keyStartingWith('projects.card.')).waitUntilVisible();
     expect($(ProjectsScreen.newProjectKey), findsOneWidget);
-    expect($(keyStartingWith('projects.users.')), findsNothing);
-    expect($(keyStartingWith('projects.addUnit.')), findsNothing);
-    expect($(keyStartingWith('projects.close.')), findsNothing);
+    await $(keyStartingWith('projects.card.')).tap();
+    await $(keyStartingWith('home.roles.')).waitUntilVisible();
+    expect($(keyStartingWith('home.users.')), findsNothing);
+    expect($(keyStartingWith('home.addUnit.')), findsNothing);
+    expect($(keyStartingWith('home.close.')), findsNothing);
   });
 }

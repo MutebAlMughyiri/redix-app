@@ -1,31 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../auth/session.dart';
+import '../home/home_screen.dart';
+import '../settings/settings_screen.dart';
 import '../ui/api_list_body.dart';
-import '../ui/change_dialog.dart';
-import '../ui/confirm_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
-import '../users/users_screen.dart';
 import '../words/words.dart';
-import 'add_unit_dialog.dart';
 import 'new_project_screen.dart';
 import 'project.dart';
-import 'project_card.dart';
+import 'project_choice.dart';
 import 'projects.dart';
 
-/// The projects (UC-006): one card per project, where a running one takes a new unit or is closed. A finished one offers no change (AC-04.1).
+/// The project list, the first screen after sign-in (UC-010, FR-37): the projects the user has access to, one to open, and the default project.
 class ProjectsScreen extends StatefulWidget {
-  /// The screen, showing and changing [projects].
-  const ProjectsScreen({super.key, required this.projects});
+  /// The screen, showing [projects] to the user signed in through [session].
+  const ProjectsScreen({super.key, required this.projects, required this.session});
 
-  /// The projects this screen shows and changes.
+  /// The projects this screen shows.
   final Projects projects;
 
+  /// The session that holds the default project.
+  final Session session;
+
   /// The screen's route.
-  static const path = '/projects';
+  static const path = '/';
+
+  /// The heading.
+  static const titleKey = Key('projects.title');
+
+  /// What the list holds.
+  static const hintKey = Key('projects.hint');
+
+  /// The button that opens Settings.
+  static const settingsKey = Key('projects.settings');
 
   /// The button that opens the form to register a project.
   static const newProjectKey = Key('projects.new');
+
+  /// The switch that opens the default project directly at sign-in.
+  static const openDefaultKey = Key('projects.openDefault');
 
   /// The line shown while there are no projects.
   static const emptyKey = ApiListBody.emptyKey;
@@ -36,59 +50,26 @@ class ProjectsScreen extends StatefulWidget {
   /// The button that reads the list again.
   static const retryKey = ApiListBody.retryKey;
 
-  /// The unit's name, in the Add unit dialog.
-  static const unitNameKey = Key('projects.unitName');
-
-  /// The button that adds the unit, in the Add unit dialog.
-  static const saveUnitKey = ChangeDialog.saveKey;
-
-  /// The line that says why the unit was refused, in the Add unit dialog.
-  static const unitMessageKey = ChangeDialog.messageKey;
-
-  /// The project's name, in the close question.
-  static const closeNameKey = ConfirmDialog.subjectKey;
-
-  /// What closing means, in the close question.
-  static const closeExplainKey = ConfirmDialog.explanationKey;
-
-  /// The button that closes the project, in the close question.
-  static const confirmCloseKey = ConfirmDialog.confirmKey;
-
-  /// The button that keeps the project running, in the close question.
-  static const cancelCloseKey = ConfirmDialog.cancelKey;
-
-  /// The way into the people of the project [id].
-  static Key usersKey(String id) => Key('projects.users.$id');
-
-  /// Why the admin refused the project [id].
-  static Key reasonKey(String id) => Key('projects.reason.$id');
-
-  /// What the signed-in user is in the project [id].
-  static Key rolesKey(String id) => Key('projects.roles.$id');
-
   /// The card of the project [id].
   static Key cardKey(String id) => Key('projects.card.$id');
 
   /// The name of the project [id].
   static Key nameKey(String id) => Key('projects.name.$id');
 
-  /// The start date of the project [id], and whether it is read-only.
+  /// The units of the project [id], or that it is read-only.
   static Key detailsKey(String id) => Key('projects.details.$id');
+
+  /// What the signed-in user is in the project [id].
+  static Key rolesKey(String id) => Key('projects.roles.$id');
 
   /// The status of the project [id].
   static Key statusKey(String id) => Key('projects.status.$id');
 
-  /// The unit [id].
-  static Key unitKey(String id) => Key('projects.unit.$id');
+  /// Why the admin refused the project [id].
+  static Key reasonKey(String id) => Key('projects.reason.$id');
 
-  /// The line of a project [id] with no units.
-  static Key noUnitsKey(String id) => Key('projects.noUnits.$id');
-
-  /// The button that adds a unit to the running project [id].
-  static Key addUnitKey(String id) => Key('projects.addUnit.$id');
-
-  /// The button that closes the running project [id].
-  static Key closeKey(String id) => Key('projects.close.$id');
+  /// The star that marks the project [id] as the default.
+  static Key starKey(String id) => Key('projects.star.$id');
 
   @override
   State<ProjectsScreen> createState() => _ProjectsScreenState();
@@ -98,55 +79,83 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
   @override
   void initState() {
     super.initState();
-    widget.projects.load();
+    widget.projects.loadOnOpen();
   }
 
-  void _askToClose(Project project) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => ConfirmDialog(
-        title: words.projectsCloseQuestion,
-        subject: project.name,
-        explanation: words.projectsCloseExplain,
-        confirmLabel: words.projectsClose,
-        onConfirm: () => showRefusalOf(context, widget.projects.close(project)),
-      ),
-    );
-  }
-
-  Future<void> _openUsers(Project project) async {
-    await context.push(UsersScreen.pathOf(project.id), extra: project.name);
-    await widget.projects.load();
-  }
-
-  void _askForUnit(Project project) {
-    showDialog<void>(
-      context: context,
-      builder: (_) => AddUnitDialog(project: project, projects: widget.projects),
+  void _toggleDefault(Project project) {
+    final session = widget.session;
+    showRefusalOf(
+      context,
+      session.defaultProjectId == project.id ? session.removeDefaultProject() : session.setDefaultProject(project.id, openDirectly: session.opensDefaultProject),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
+    final theme = Theme.of(context);
+    final session = widget.session;
     return Scaffold(
-      appBar: AppBar(title: Text(words.projectsTitle)),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            key: ProjectsScreen.settingsKey,
+            icon: const Icon(Icons.tune),
+            tooltip: words.settingsTitle,
+            onPressed: () => context.push(SettingsScreen.path),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         key: ProjectsScreen.newProjectKey,
         icon: const Icon(Icons.add),
         label: Text(words.projectsNew),
         onPressed: () => context.push(NewProjectScreen.path),
       ),
-      body: ApiListBody(
-        list: widget.projects,
-        emptyText: words.projectsEmpty,
-        itemBuilder: (project) => ProjectCard(
-          project: project,
-          onUsers: () => _openUsers(project),
-          onAddUnit: () => _askForUnit(project),
-          onClose: () => _askToClose(project),
+      bottomNavigationBar: SafeArea(
+        child: ListenableBuilder(
+          listenable: session,
+          builder: (context, _) => SwitchListTile(
+            key: ProjectsScreen.openDefaultKey,
+            title: Text(words.projectsOpenDefault),
+            subtitle: Text(words.projectsOpenDefaultHint),
+            value: session.opensDefaultProject,
+            onChanged: session.defaultProjectId.isEmpty
+                ? null
+                : (on) => showRefusalOf(context, session.setDefaultProject(session.defaultProjectId, openDirectly: on)),
+          ),
         ),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(words.projectsChoose, key: ProjectsScreen.titleKey, style: theme.textTheme.headlineSmall),
+                Text(words.projectsChooseHint, key: ProjectsScreen.hintKey, style: theme.textTheme.bodySmall),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListenableBuilder(
+              listenable: session,
+              builder: (context, _) => ApiListBody(
+                list: widget.projects,
+                emptyText: words.projectsEmpty,
+                itemBuilder: (project) => ProjectChoice(
+                  project: project,
+                  isDefault: session.defaultProjectId == project.id,
+                  onOpen: () => context.push(HomeScreen.pathOf(project.id)),
+                  onStar: () => _toggleDefault(project),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

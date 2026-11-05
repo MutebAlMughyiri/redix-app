@@ -13,7 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// The words the fake API serves: each key's value names its language and key, so a test reads which word is shown.
 Map<String, String> wordsIn(String language) => {
   for (final key in [
-    'app.title', 'app.subtitle',
+    'app.title',
+    'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.openDefault', 'projects.openDefaultHint', 'settings.switchProject',
     'signIn.username', 'signIn.password', 'signIn.hint', 'signIn.submit', 'signIn.forgotPassword',
     'signIn.invalidCredentials', 'signIn.accountLocked', 'signIn.sessionExpired', 'signIn.noConnection',
     'changePassword.title', 'changePassword.hint', 'changePassword.current', 'changePassword.new', 'changePassword.confirm',
@@ -27,7 +28,7 @@ Map<String, String> wordsIn(String language) => {
     'projects.pending', 'projects.rejected', 'registered.title', 'registered.empty', 'registered.loadFailed', 'registered.approve', 'registered.reject',
     'registered.reason', 'registered.invalidReason', 'registered.notPending', 'registered.noConnection', 'registered.refused',
     'myAccount.changePassword', 'myAccount.signOut', 'myAccount.signOutQuestion', 'myAccount.signOutExplain',
-    'settings.title', 'projects.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.running',
+    'settings.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.running',
     'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
     'projects.unitName', 'projects.addUnit', 'projects.removeUnit', 'projects.create', 'common.cancel', 'projects.close',
     'projects.closeQuestion', 'projects.closeExplain', 'projects.invalidName', 'projects.projectFinished', 'projects.noConnection',
@@ -72,6 +73,12 @@ class FakeApi {
 
   /// What the signed-in user holds everywhere: every session says so.
   var permissions = <String>[];
+
+  /// The project the signed-in user chose to land on, as every session says it; empty when none.
+  var defaultProjectId = '';
+
+  /// Whether sign-in opens the default project directly, as every session says it.
+  var openDefaultProject = false;
 
   /// The roles a project can give, in their order.
   final roles = <Map<String, String>>[
@@ -152,7 +159,7 @@ class FakeApi {
       mustChangePassword = false;
     }
     final body = status == 200
-        ? '{"accessToken": "new-access", "refreshToken": "new-refresh", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}}'
+        ? '{"accessToken": "new-access", "refreshToken": "new-refresh", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "openDefaultProject": $openDefaultProject}'
         : '{"code": "$code"}';
     return http.Response(body, status);
   });
@@ -295,8 +302,23 @@ class FakeApi {
     return _json({}, path == '/projects/register' ? 201 : 200);
   }
 
+  http.Response _answerDefault(http.Request request) {
+    final segments = request.url.pathSegments;
+    sentProjectChanges.add((request.url.path, jsonDecode(request.body) as Map<String, dynamic>));
+    if (projectAnswer.status >= 300) {
+      return _json({if (projectAnswer.code.isNotEmpty) 'code': projectAnswer.code}, projectAnswer.status);
+    }
+    final removing = segments.last == 'remove';
+    defaultProjectId = removing ? '' : segments[1];
+    openDefaultProject = !removing && (jsonDecode(request.body) as Map<String, dynamic>)['openDirectly'] as bool;
+    return _json({'defaultProjectId': defaultProjectId, 'openDefaultProject': openDefaultProject}, 200);
+  }
+
   http.Response _answerProjects(http.Request request) {
     final segments = request.url.pathSegments;
+    if (segments.last == 'default' || segments.length == 3 && segments[1] == 'default') {
+      return _answerDefault(request);
+    }
     if (segments.length == 2 && (segments[1] == 'register' || segments[1] == 'registered') || segments.length == 3 && (segments[2] == 'approve' || segments[2] == 'reject')) {
       return _answerRegistration(request);
     }

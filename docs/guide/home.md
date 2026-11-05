@@ -2,12 +2,14 @@
 
 # Home · الرئيسية
 
-<img src="images/home.png" alt="The home screen" width="300">
+<img src="images/home.png" alt="The home of a project" width="300">
 
 ## English
 
-**What it is for:** the screen REDIX opens on. Today it shows the app's name and what it is for; from sign-in on, it leads to your projects.
-**Who sees it:** everyone signed in.
+**What it is for:** one project: your roles in it, its start date, status and units, and what your roles let you do there.
+**Who sees it:** everyone with access to that project. Open it by tapping the project on the [project list](projects.md).
+
+After you sign in, REDIX lists the projects you have access to. Tap one to open it: what you can do there follows your role in that project. To open the same project every time, tap its star and turn on **Open the default project directly**. To change project later, open **Settings**, then **Switch project**.
 
 The app speaks your phone's language: Arabic right to left, English left to right. On a phone in any other language it speaks Arabic.
 
@@ -15,8 +17,10 @@ If the very first start has no network, the app shows a no-network icon and a re
 
 ## العربية
 
-**الغرض:** الشاشة التي يفتح عليها REDIX. تعرض حالياً اسم التطبيق والغرض منه، وبعد تسجيل الدخول تقودك إلى مشاريعك.
-**من يراها:** كل من سجّل الدخول.
+**الغرض:** مشروع واحد: أدوارك فيه، وتاريخ بدئه، وحالته، ووحداته، وما تتيحه لك أدوارك فيه.
+**من يراها:** كل من له وصول إلى ذلك المشروع. افتحها بالضغط على المشروع في [قائمة المشاريع](projects.md).
+
+بعد تسجيل الدخول، يعرض REDIX المشاريع المصرّح لك بها. اضغط أحدها لفتحه: وما يمكنك فعله فيه يتبع دورك في ذلك المشروع. لفتح المشروع نفسه كل مرة، اضغط نجمته وفعّل **فتح المشروع الافتراضي مباشرة**. ولتغيير المشروع لاحقاً، افتح **الإعدادات** ثم **تبديل المشروع**.
 
 يتحدث التطبيق بلغة جوالك: العربية من اليمين لليسار، والإنجليزية من اليسار لليمين. وإذا كان جوالك بلغة أخرى فيتحدث العربية.
 

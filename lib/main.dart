@@ -60,16 +60,20 @@ class _RedixAppState extends State<RedixApp> {
   final _projectRoles = <String, Roles>{};
 
   late final _router = GoRouter(
+    initialLocation: HomeScreen.landingOf(widget.session),
     refreshListenable: widget.session,
     redirect: (context, state) => _redirect(state.matchedLocation),
     routes: [
-      GoRoute(path: HomeScreen.path, builder: (context, state) => const HomeScreen()),
+      GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects, session: widget.session)),
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session)),
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
       GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(language: widget.language, session: widget.session)),
       GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session)),
-      GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects)),
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
+      GoRoute(
+        path: HomeScreen.path,
+        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects),
+      ),
       GoRoute(path: NewProjectScreen.registerPath, builder: (context, state) => NewProjectScreen(projects: _projects, isPublic: true)),
       GoRoute(path: RegisteredProjectsScreen.path, builder: (context, state) => RegisteredProjectsScreen(projects: _registered)),
       GoRoute(
@@ -101,7 +105,7 @@ class _RedixAppState extends State<RedixApp> {
     if (session.mustChangePassword) {
       return location == ChangePasswordScreen.path ? null : ChangePasswordScreen.path;
     }
-    return location == SignInScreen.path ? HomeScreen.path : null;
+    return location == SignInScreen.path ? HomeScreen.landingOf(session) : null;
   }
 
   @override

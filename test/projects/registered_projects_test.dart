@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:redix/home/home_screen.dart';
+import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 
@@ -14,7 +14,7 @@ void main() {
       ..permissions = admin
       ..addRegistered('غصون 8');
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.registeredKey)));
     return api;
   }
@@ -30,7 +30,7 @@ void main() {
   testWidgets('with nothing waiting, the list says so', (tester) async {
     final api = FakeApi()..permissions = admin;
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.registeredKey)));
 
     expect(text(tester, RegisteredProjectsScreen.emptyKey), 'en registered.empty');
@@ -85,7 +85,7 @@ void main() {
       ..permissions = admin
       ..addRegistered('غصون 8');
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
 
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.registeredKey)));

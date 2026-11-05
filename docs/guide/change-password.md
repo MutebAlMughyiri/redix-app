@@ -11,7 +11,7 @@
 
 1. Type your current password, the temporary one.
 2. Type a new password of at least 8 characters, different from the current one, then type it again.
-3. Tap **Save**. You land on the home screen.
+3. Tap **Save**. You land on your [projects](projects.md).
 
 Changing your password signs you out on your other phones; this phone stays signed in.
 
@@ -30,7 +30,7 @@ Changing your password signs you out on your other phones; this phone stays sign
 
 1. اكتب كلمة المرور الحالية، أي المؤقتة.
 2. اكتب كلمة مرور جديدة من 8 أحرف على الأقل، مختلفة عن الحالية، ثم أعد كتابتها.
-3. اضغط **حفظ**، فتنتقل إلى الشاشة الرئيسية.
+3. اضغط **حفظ**، فتنتقل إلى [مشاريعك](projects.md).
 
 تغيير كلمة المرور يسجّل خروجك من جوالاتك الأخرى، ويبقيك مسجّلاً على هذا الجوال.
 

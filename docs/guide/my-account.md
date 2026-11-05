@@ -7,7 +7,7 @@
 ## English
 
 **What it is for:** your own settings: the app's language, changing your password, and signing out.
-**Who sees it:** everyone signed in. Open it from [Settings](settings.md), with the settings button at the top of the home screen.
+**Who sees it:** everyone signed in. Open it from [Settings](settings.md), with the settings button at the top of the project list or a project's home.
 
 1. Under **Language**, tap **العربية** or **English**. Every screen switches at once: Arabic right to left, English left to right.
 2. Tap **Change password** to choose a new password; the back arrow returns here.
@@ -22,7 +22,7 @@ The app remembers your language on this phone. Until you choose one, it follows 
 ## العربية
 
 **الغرض:** إعداداتك الخاصة: لغة التطبيق، وتغيير كلمة المرور، وتسجيل الخروج.
-**من يراها:** كل من سجّل الدخول. افتحها من [الإعدادات](settings.md)، بزر الإعدادات أعلى الشاشة الرئيسية.
+**من يراها:** كل من سجّل الدخول. افتحها من [الإعدادات](settings.md)، بزر الإعدادات أعلى قائمة المشاريع أو الشاشة الرئيسية للمشروع.
 
 1. تحت **اللغة**، اضغط **العربية** أو **English**، فتتحول كل الشاشات فوراً: العربية من اليمين لليسار، والإنجليزية من اليسار لليمين.
 2. اضغط **تغيير كلمة المرور** لاختيار كلمة مرور جديدة؛ وسهم الرجوع يعيدك إلى هنا.

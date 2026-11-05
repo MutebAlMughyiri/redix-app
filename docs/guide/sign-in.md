@@ -10,7 +10,7 @@
 **Who sees it:** everyone who is not signed in.
 
 1. Type your username and your password.
-2. Tap **Sign in**. You land on the home screen.
+2. Tap **Sign in**. You land on your [projects](projects.md), or directly on your default project if you chose that.
 
 You stay signed in on this phone, even without a network, until you are away for 12 hours in a row or the financial supervisor disables your account; then the app asks you to sign in again.
 
@@ -29,7 +29,7 @@ Forgot your password? The financial supervisor sets a new one for you.
 **من يراها:** كل من لم يسجّل الدخول.
 
 1. اكتب اسم المستخدم وكلمة المرور.
-2. اضغط **دخول**، فتنتقل إلى الشاشة الرئيسية.
+2. اضغط **دخول**، فتنتقل إلى [مشاريعك](projects.md)، أو مباشرة إلى مشروعك الافتراضي إن اخترت ذلك.
 
 تبقى مسجّلاً على هذا الجوال حتى دون شبكة، إلا إذا غبت 12 ساعة متصلة أو عطّل المشرف المالي حسابك، فيطلب التطبيق تسجيل الدخول من جديد.
 

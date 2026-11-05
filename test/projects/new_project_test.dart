@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/format/date_format.dart';
-import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
 
 import '../app_harness.dart';
 
 void main() {
   Future<void> openForm(WidgetTester tester, FakeApi api) async {
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.newProjectKey)));
   }
 
@@ -44,7 +40,7 @@ void main() {
     expect(body['units'], ['الفلة الشرقية', 'الفلة الشمالية']);
     expect(find.byKey(NewProjectScreen.submitKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(ProjectsScreen.nameKey('project-0'))).data, 'غصون 7');
-    expect(tester.widget<Text>(find.byKey(ProjectsScreen.unitKey('project-0-unit-1'))).data, 'الفلة الشمالية');
+    expect(tester.widget<Text>(find.byKey(ProjectsScreen.detailsKey('project-0'))).data, 'الفلة الشرقية · الفلة الشمالية');
   });
 
   testWidgets('a unit typed but not yet added goes with the project', (tester) async {
@@ -67,7 +63,7 @@ void main() {
     await submit(tester, api);
 
     expect(api.sentProjectChanges.single.$2['units'], isEmpty);
-    expect(find.byKey(ProjectsScreen.noUnitsKey('project-0')), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(ProjectsScreen.detailsKey('project-0'))).data, 'en projects.noUnits');
   });
 
   testWidgets('a unit can be removed until the project is created', (tester) async {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/sign_in_screen.dart';
-import 'package:redix/home/home_screen.dart';
+import 'package:redix/projects/projects_screen.dart';
 
 import '../app_harness.dart';
 
@@ -19,7 +19,7 @@ void main() {
     await pumpRedix(tester, FakeApi());
 
     expect(find.byKey(SignInScreen.usernameKey), findsOneWidget);
-    expect(find.byKey(HomeScreen.titleKey), findsNothing);
+    expect(find.byKey(ProjectsScreen.titleKey), findsNothing);
   });
 
   testWidgets('the sign-in screen is headed with the logo, drawn from its picture, then the app name', (tester) async {
@@ -40,7 +40,7 @@ void main() {
 
     await signIn(tester, api);
 
-    expect(find.byKey(HomeScreen.titleKey), findsOneWidget);
+    expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
     expect(session.accessToken, 'new-access');
     expect(await const FlutterSecureStorage().read(key: 'session'), contains('new-refresh'));
   });
@@ -52,7 +52,7 @@ void main() {
     await signIn(tester, api);
 
     expect(message(tester), 'en signIn.invalidCredentials');
-    expect(find.byKey(HomeScreen.titleKey), findsNothing);
+    expect(find.byKey(ProjectsScreen.titleKey), findsNothing);
   });
 
   testWidgets('a locked account says to try again later', (tester) async {
@@ -77,13 +77,13 @@ void main() {
   testWidgets('a kept session opens home directly', (tester) async {
     await pumpRedix(tester, FakeApi(), stored: {'session': keptSession});
 
-    expect(find.byKey(HomeScreen.titleKey), findsOneWidget);
+    expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
 
   testWidgets('without a network a kept session stays open, so work goes on offline', (tester) async {
     await pumpRedix(tester, FakeApi()..online = false, stored: {'session': keptSession}, preferences: keptWords('en'));
 
-    expect(find.byKey(HomeScreen.titleKey), findsOneWidget);
+    expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
     expect(await const FlutterSecureStorage().read(key: 'session'), keptSession);
   });
 

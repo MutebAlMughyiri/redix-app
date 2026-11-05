@@ -23,7 +23,7 @@ void main() {
   TextDirection direction(WidgetTester tester, Key key) => Directionality.of(tester.element(find.byKey(key)));
 
   Future<void> openMyAccount(WidgetTester tester, FakeApi api) async {
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
   }
 
@@ -40,8 +40,8 @@ void main() {
     expect(direction(tester, MyAccountScreen.englishKey), TextDirection.ltr);
     await act(tester, api, tester.pageBack);
     await act(tester, api, tester.pageBack);
-    expect(text(tester, HomeScreen.subtitleKey), 'en app.subtitle');
-    expect(direction(tester, HomeScreen.subtitleKey), TextDirection.ltr);
+    expect(text(tester, ProjectsScreen.titleKey), 'en projects.choose');
+    expect(direction(tester, ProjectsScreen.titleKey), TextDirection.ltr);
   });
 
   testWidgets('the chosen language is kept on the phone and used at the next start', (tester) async {
@@ -55,7 +55,7 @@ void main() {
     await tester.pumpWidget(const SizedBox());
     await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession}, preferences: kept);
 
-    expect(text(tester, HomeScreen.subtitleKey), 'en app.subtitle');
+    expect(text(tester, ProjectsScreen.titleKey), 'en projects.choose');
   });
 
   testWidgets('without a network the language stays and the app says switching needs a network', (tester) async {
@@ -144,24 +144,20 @@ void main() {
   testWidgets("the next user on this phone never sees the last user's projects, even for a moment", (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
     expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsOneWidget);
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
     await signOut(tester, api);
+    api.projects.clear();
 
     await act(tester, api, () async {
       await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
       await tester.enterText(find.byKey(SignInScreen.passwordKey), 'secret');
       await tester.tap(find.byKey(SignInScreen.submitKey));
-    });
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
-
-    await act(tester, api, () async {
-      await tester.tap(find.byKey(SettingsScreen.projectsKey));
-      await tester.pump();
-      expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsNothing);
+      for (var frame = 0; frame < 20; frame++) {
+        await tester.pump(const Duration(milliseconds: 16));
+        expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsNothing);
+      }
     });
   });
 
@@ -177,7 +173,7 @@ void main() {
       await tester.enterText(find.byKey(SignInScreen.passwordKey), 'secret');
       await tester.tap(find.byKey(SignInScreen.submitKey));
     });
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
 
     expect(find.byKey(SettingsScreen.registeredKey), findsNothing);
     expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
@@ -224,36 +220,44 @@ void main() {
         await tester.enterText(find.byKey(ChangePasswordScreen.confirmKey), 'chosen-pass');
         await tester.tap(find.byKey(ChangePasswordScreen.submitKey));
       });
-      [HomeScreen.titleKey, HomeScreen.subtitleKey, HomeScreen.settingsKey].forEach(expectFits);
-
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
-      [SettingsScreen.projectsKey, SettingsScreen.myAccountKey].forEach(expectFits);
-
-      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
       final runningId = running['id'] as String;
       final finishedId = finished['id'] as String;
       [
+        ProjectsScreen.titleKey,
+        ProjectsScreen.hintKey,
+        ProjectsScreen.settingsKey,
+        ProjectsScreen.openDefaultKey,
         ProjectsScreen.newProjectKey,
         ProjectsScreen.nameKey(runningId),
-        ProjectsScreen.rolesKey(runningId),
         ProjectsScreen.detailsKey(runningId),
+        ProjectsScreen.rolesKey(runningId),
         ProjectsScreen.statusKey(runningId),
-        ProjectsScreen.usersKey(runningId),
-        ProjectsScreen.addUnitKey(runningId),
-        ProjectsScreen.closeKey(runningId),
+        ProjectsScreen.starKey(runningId),
         ProjectsScreen.statusKey(finishedId),
         ProjectsScreen.detailsKey(finishedId),
       ].forEach(expectFits);
-
-      await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.closeKey(runningId))));
-      [ProjectsScreen.closeExplainKey, ProjectsScreen.confirmCloseKey, ProjectsScreen.cancelCloseKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cancelCloseKey)));
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.newProjectKey)));
       [NewProjectScreen.nameKey, NewProjectScreen.startDateKey, NewProjectScreen.unitNameKey, NewProjectScreen.addUnitKey, NewProjectScreen.submitKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-      await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.usersKey(runningId))));
+      await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey(runningId))));
+      [
+        HomeScreen.titleKey,
+        HomeScreen.settingsKey,
+        HomeScreen.rolesKey(runningId),
+        HomeScreen.detailsKey(runningId),
+        HomeScreen.statusKey(runningId),
+        HomeScreen.usersKey(runningId),
+        HomeScreen.addUnitKey(runningId),
+        HomeScreen.closeKey(runningId),
+      ].forEach(expectFits);
+
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.closeKey(runningId))));
+      [HomeScreen.closeExplainKey, HomeScreen.confirmCloseKey, HomeScreen.cancelCloseKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.cancelCloseKey)));
+
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey(runningId))));
       [
         UsersScreen.newUserKey,
         UsersScreen.addExistingKey,
@@ -295,6 +299,8 @@ void main() {
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
+      await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
+      [SettingsScreen.switchProjectKey, SettingsScreen.registeredKey, SettingsScreen.myAccountKey].forEach(expectFits);
       api.addRegistered('غصون 8');
       await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.registeredKey)));
       [

@@ -8,7 +8,7 @@ import '../projects/projects_screen.dart';
 import '../projects/registered_projects_screen.dart';
 import '../words/words.dart';
 
-/// Settings (الإعدادات): the way into the projects, My account and, for the admin, the registered projects. Each later settings use case adds its own row.
+/// Settings (الإعدادات): the way back to the project list, My account and, for the admin, the registered projects. Each later settings use case adds its own row.
 class SettingsScreen extends StatelessWidget {
   /// The screen, for the user signed in through [session].
   const SettingsScreen({super.key, required this.session});
@@ -19,8 +19,8 @@ class SettingsScreen extends StatelessWidget {
   /// The screen's route.
   static const path = '/settings';
 
-  /// The way into the projects.
-  static const projectsKey = Key('settings.projects');
+  /// The way back to the project list.
+  static const switchProjectKey = Key('settings.switchProject');
 
   /// The way into the registered projects, for whoever approves them.
   static const registeredKey = Key('settings.registered');
@@ -38,11 +38,11 @@ class SettingsScreen extends StatelessWidget {
         builder: (context, _) => ListView(
           children: [
             ListTile(
-              key: projectsKey,
-              leading: const Icon(Icons.home_work_outlined),
-              title: Text(words.projectsTitle),
+              key: switchProjectKey,
+              leading: const Icon(Icons.swap_horiz),
+              title: Text(words.settingsSwitchProject),
               trailing: const Icon(Icons.chevron_right),
-              onTap: () => context.push(ProjectsScreen.path),
+              onTap: () => context.go(ProjectsScreen.path),
             ),
             if (session.may(Permission.approveProjects))
               ListTile(

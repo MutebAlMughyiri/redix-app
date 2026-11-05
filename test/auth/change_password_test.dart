@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/projects/projects_screen.dart';
 
 import '../app_harness.dart';
 
@@ -38,7 +39,7 @@ void main() {
     await act(tester, api, () async => GoRouter.of(tester.element(find.byKey(ChangePasswordScreen.currentKey))).go(HomeScreen.path));
 
     expect(find.byKey(ChangePasswordScreen.currentKey), findsOneWidget);
-    expect(find.byKey(HomeScreen.titleKey), findsNothing);
+    expect(find.byKey(ProjectsScreen.titleKey), findsNothing);
   });
 
   testWidgets('a changed password opens home', (tester) async {
@@ -47,7 +48,7 @@ void main() {
 
     await change(tester, api);
 
-    expect(find.byKey(HomeScreen.titleKey), findsOneWidget);
+    expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
     expect(session.mustChangePassword, isFalse);
   });
 
@@ -85,8 +86,8 @@ void main() {
 
     await change(tester, api);
 
-    expect(api.sentAccessTokens, ['kept-access', 'new-access']);
-    expect(find.byKey(HomeScreen.titleKey), findsOneWidget);
+    expect(api.sentAccessTokens.take(2), ['kept-access', 'new-access']);
+    expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
 
   testWidgets('without a network the change says there is no connection', (tester) async {

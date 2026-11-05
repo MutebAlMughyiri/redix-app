@@ -8,14 +8,15 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 lib/
   main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
   account/my_account_screen.dart  My account: the language, the way into the password change, and signing out
-  settings/settings_screen.dart   Settings: the way into Projects, My account and, for the admin, the registered projects
+  settings/settings_screen.dart   Settings: the way back to the project list, My account and, for the admin, the registered projects
   api_list.dart             ApiList: a list the API owns, and the way to change it; every settings list extends it
   ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, showRefusalOf
   projects/
     project.dart            Project and Unit, as the API answers them
     projects.dart           Projects: the ApiList of projects, and its changes
-    projects_screen.dart    the projects
-    project_card.dart       one project on the list
+    projects_screen.dart    the project list, the first screen after sign-in, and the default project
+    project_choice.dart     one project on the list
+    project_card.dart       the open project, on its home
     add_unit_dialog.dart    the Add unit dialog
     new_project_screen.dart the new project form
   users/
@@ -37,7 +38,7 @@ lib/
     session.dart            Session: the signed-in session, kept in the Keychain or Keystore
     sign_in_screen.dart     the sign-in screen
     change_password_screen.dart  the password change, forced while the password is temporary
-  home/home_screen.dart     the screen a signed-in user lands on
+  home/home_screen.dart     the home of the open project, and where a person lands
   words/
     words.dart              Words: the words of the language in use, from the API
     app_language.dart       AppLanguage: the language the user chose, kept on the phone

@@ -1,41 +1,41 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/account/my_account_screen.dart';
-import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
+import 'package:redix/settings/settings_screen.dart';
 
 import '../app_harness.dart';
 
 void main() {
   Future<void> openSettings(WidgetTester tester, FakeApi api) async {
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
   }
 
-  testWidgets('the admin sees Projects, Registered projects and My account', (tester) async {
+  testWidgets('the admin sees Switch project, Registered projects and My account', (tester) async {
     await openSettings(tester, FakeApi()..permissions = admin);
 
-    expect(find.byKey(SettingsScreen.projectsKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.switchProjectKey), findsOneWidget);
     expect(find.byKey(SettingsScreen.registeredKey), findsOneWidget);
     expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
   });
 
-  testWidgets('anyone else sees Projects and My account, and not the registered projects', (tester) async {
+  testWidgets('anyone else sees Switch project and My account, and not the registered projects', (tester) async {
     await openSettings(tester, FakeApi());
 
-    expect(find.byKey(SettingsScreen.projectsKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.switchProjectKey), findsOneWidget);
     expect(find.byKey(SettingsScreen.registeredKey), findsNothing);
     expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
   });
 
-  testWidgets('Projects opens from Settings', (tester) async {
+  testWidgets('Switch project goes back to the list', (tester) async {
     final api = FakeApi();
     await openSettings(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.switchProjectKey)));
 
-    expect(find.byKey(ProjectsScreen.emptyKey), findsOneWidget);
+    expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.switchProjectKey), findsNothing);
   });
 
   testWidgets('Registered projects opens from Settings', (tester) async {
