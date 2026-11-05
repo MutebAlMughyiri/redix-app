@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
@@ -36,12 +38,17 @@ import 'contract_picker.dart';
 
 /// A payment against a contract (UC-027): what the contract stands at with it shows before saving, and going beyond its value only warns. A negative amount is a deduction, which says why in place of a receipt. The figures only show what the API will compute.
 class ContractorPaymentScreen extends StatefulWidget {
+  /// Why the entry being changed was rejected.
+  static const rejectionKey = Key('contractorPayment.rejection');
+
   /// The choice of the subgroup [id].
   static Key subgroupKey(String id) => Key('contractorPayment.subgroup.$id');
 
   /// The screen entering a payment in [project], recorded through [expenses], picking from [contracts], [accounts] and [paymentMethods], asking what [columnsOf] the contract's item says, and keeping the receipt through [attachments] from what [capture] gives.
   const ContractorPaymentScreen({
     super.key,
+    this.editingId = '',
+    this.rejectionReason = '',
     required this.project,
     required this.expenses,
     required this.contracts,
@@ -52,6 +59,12 @@ class ContractorPaymentScreen extends StatefulWidget {
     required this.attachments,
     required this.capture,
   });
+
+  /// The entry being changed; empty for a new one.
+  final String editingId;
+
+  /// Why it was rejected; empty otherwise.
+  final String rejectionReason;
 
   /// The project the payment belongs to.
   final Project project;
@@ -178,7 +191,7 @@ class ContractorPaymentScreen extends StatefulWidget {
 }
 
 class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
-  final _entryId = const Uuid().v7();
+  late final _entryId = widget.editingId.isEmpty ? const Uuid().v7() : widget.editingId;
   final _amount = TextEditingController();
   final _deductionReason = TextEditingController();
   final _invoiceNumber = TextEditingController();
@@ -208,6 +221,60 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
     widget.items.loadOnOpen();
     widget.accounts.loadOnOpen();
     widget.paymentMethods.loadOnOpen();
+    if (widget.editingId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _openEntry());
+    }
+  }
+
+  /// Fills the form from the entry being changed (UC-033).
+  Future<void> _openEntry() async {
+    final held = await widget.expenses.read(widget.editingId);
+    await Future.wait([widget.contracts.load(), widget.accounts.load(), widget.items.load()]);
+    if (!mounted || held.isEmpty) {
+      return;
+    }
+    final entry = held['entry'] as Map<String, dynamic>;
+    final expense = held['expense'] as Map<String, dynamic>;
+    final payment = held['contractorPayment'] as Map<String, dynamic>;
+    final invoice = held['invoice'] as Map<String, dynamic>;
+    final files = held['attachments'] as List<dynamic>;
+    final contracts = widget.contracts.all.where((contract) => contract.id == payment['contractId']);
+    final accounts = widget.accounts.all.where((account) => account.id == entry['accountId']);
+    final number = invoice['number'] as String? ?? '';
+    setState(() {
+      _amount.text = '${entry['amount']}';
+      _date = DateTime.parse(entry['entryDate'] as String);
+      _isOutside = payment['isOutsideContract'] as bool;
+      _notes.text = entry['notes'] as String;
+      _deductionReason.text = expense['withoutInvoiceReason'] as String;
+      _payment
+        ..accountId = entry['accountId'] as String
+        ..paymentMethodId = expense['paymentMethodId'] as String;
+      if (accounts.isNotEmpty) {
+        _payment.source = accounts.first.type;
+      }
+      if (number.isNotEmpty) {
+        _hasInvoice = true;
+        _invoiceNumber.text = number;
+        _invoiceDate = DateTime.parse(invoice['invoiceDate'] as String);
+        _invoiceAmount.text = '${invoice['amountBeforeDiscount']}';
+      }
+      if (files.isNotEmpty) {
+        _attachmentId = (files.first as Map<String, dynamic>)['attachmentId'] as String;
+      }
+      _customValues.addAll((jsonDecode(expense['customValues'] as String) as Map<String, dynamic>).map((key, value) => MapEntry(key, '$value')));
+    });
+    if (contracts.isNotEmpty) {
+      final keptValues = Map.of(_customValues);
+      final subgroupId = expense['subgroupId'] as String;
+      await _chooseContract(contracts.first);
+      if (mounted) {
+        setState(() {
+          _subgroupId = subgroupId;
+          _customValues.addAll(keptValues);
+        });
+      }
+    }
   }
 
   @override
@@ -321,14 +388,14 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
     if (!_isDeduction && !_receipt.isNone && _attachmentId.isEmpty) {
       final refusal = await widget.attachments.keep(_receipt);
       if (refusal == 'attachments.noConnection') {
-        return widget.expenses.keepContractorPayment(_body(submit, confirmDuplicate), _receipt);
+        return widget.expenses.keepContractorPayment(_body(submit, confirmDuplicate), _receipt, editing: widget.editingId);
       }
       if (refusal.isNotEmpty) {
         return refusal;
       }
       _attachmentId = widget.attachments.kept.id;
     }
-    return widget.expenses.recordContractorPayment(_body(submit, confirmDuplicate));
+    return widget.expenses.recordContractorPayment(_body(submit, confirmDuplicate), editing: widget.editingId);
   }
 
   Future<void> _save(bool submit, {bool confirmDuplicate = false}) async {
@@ -365,6 +432,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
       entryField(key: key, controller: controller, label: label, isNumber: isNumber, isSigned: isSigned, maxLines: maxLines, onChanged: (_) => setState(() {}));
 
   List<Widget> _theContract(Words words) => [
+    if (widget.rejectionReason.isNotEmpty) Text('${words.entriesReason}: ${widget.rejectionReason}', key: ContractorPaymentScreen.rejectionKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
     ContractPicker(key: ContractorPaymentScreen.contractKey, contracts: widget.contracts, chosen: _contract, onChanged: _chooseContract),
     if (_contract.id.isNotEmpty) ContractFigures(contract: _contract, counted: _isOutside ? 0 : _typed(_amount)),
     ListenableBuilder(listenable: widget.items, builder: (_, _) => _subgroupChoice(words)),

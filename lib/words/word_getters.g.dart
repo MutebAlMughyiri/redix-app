@@ -671,14 +671,107 @@ mixin WordGetters {
   /// The word `contracts.value`.
   String get contractsValue => text('contracts.value');
 
+  /// The word `entries.all`.
+  String get entriesAll => text('entries.all');
+
+  /// The word `entries.alreadyReversed`.
+  String get entriesAlreadyReversed => text('entries.alreadyReversed');
+
+  /// The word `entries.approved`.
+  String get entriesApproved => text('entries.approved');
+
+  /// The word `entries.delete`.
+  String get entriesDelete => text('entries.delete');
+
+  /// The word `entries.deleteExplain`.
+  String get entriesDeleteExplain => text('entries.deleteExplain');
+
+  /// The word `entries.deleteQuestion`.
+  String get entriesDeleteQuestion => text('entries.deleteQuestion');
+
+  /// The word `entries.draft`.
+  String get entriesDraft => text('entries.draft');
+
+  /// The word `entries.edit`.
+  String get entriesEdit => text('entries.edit');
+
+  /// The word `entries.empty`.
+  String get entriesEmpty => text('entries.empty');
+
+  /// The word `entries.entryApproved`.
+  String get entriesEntryApproved => text('entries.entryApproved');
+
+  /// The word `entries.entryHasCreditNote`.
+  String get entriesEntryHasCreditNote => text('entries.entryHasCreditNote');
+
   /// The word `entries.entryIncomplete`.
   String get entriesEntryIncomplete => text('entries.entryIncomplete');
+
+  /// The word `entries.entryNotApproved`.
+  String get entriesEntryNotApproved => text('entries.entryNotApproved');
 
   /// The word `entries.entryNotSubmittable`.
   String get entriesEntryNotSubmittable => text('entries.entryNotSubmittable');
 
+  /// The word `entries.entryWaitingForDecision`.
+  String get entriesEntryWaitingForDecision => text('entries.entryWaitingForDecision');
+
+  /// The word `entries.fix`.
+  String get entriesFix => text('entries.fix');
+
+  /// The word `entries.latest`.
+  String get entriesLatest => text('entries.latest');
+
+  /// The word `entries.loadFailed`.
+  String get entriesLoadFailed => text('entries.loadFailed');
+
+  /// The word `entries.mine`.
+  String get entriesMine => text('entries.mine');
+
+  /// The word `entries.noConnection`.
+  String get entriesNoConnection => text('entries.noConnection');
+
   /// The word `entries.notYourEntry`.
   String get entriesNotYourEntry => text('entries.notYourEntry');
+
+  /// The word `entries.pendingApproval`.
+  String get entriesPendingApproval => text('entries.pendingApproval');
+
+  /// The word `entries.reason`.
+  String get entriesReason => text('entries.reason');
+
+  /// The word `entries.reasonRequired`.
+  String get entriesReasonRequired => text('entries.reasonRequired');
+
+  /// The word `entries.refused`.
+  String get entriesRefused => text('entries.refused');
+
+  /// The word `entries.rejected`.
+  String get entriesRejected => text('entries.rejected');
+
+  /// The word `entries.reverse`.
+  String get entriesReverse => text('entries.reverse');
+
+  /// The word `entries.reverseExplain`.
+  String get entriesReverseExplain => text('entries.reverseExplain');
+
+  /// The word `entries.reverseReason`.
+  String get entriesReverseReason => text('entries.reverseReason');
+
+  /// The word `entries.reverseTitle`.
+  String get entriesReverseTitle => text('entries.reverseTitle');
+
+  /// The word `entries.reversed`.
+  String get entriesReversed => text('entries.reversed');
+
+  /// The word `entries.seeAll`.
+  String get entriesSeeAll => text('entries.seeAll');
+
+  /// The word `entries.send`.
+  String get entriesSend => text('entries.send');
+
+  /// The word `entries.title`.
+  String get entriesTitle => text('entries.title');
 
   /// The word `expenses.account`.
   String get expensesAccount => text('expenses.account');
@@ -688,6 +781,9 @@ mixin WordGetters {
 
   /// The word `expenses.afterDiscount`.
   String get expensesAfterDiscount => text('expenses.afterDiscount');
+
+  /// The word `expenses.alreadyReversed`.
+  String get expensesAlreadyReversed => text('expenses.alreadyReversed');
 
   /// The word `expenses.amount`.
   String get expensesAmount => text('expenses.amount');
@@ -731,8 +827,20 @@ mixin WordGetters {
   /// The word `expenses.duplicateTitle`.
   String get expensesDuplicateTitle => text('expenses.duplicateTitle');
 
+  /// The word `expenses.entryApproved`.
+  String get expensesEntryApproved => text('expenses.entryApproved');
+
   /// The word `expenses.entryExists`.
   String get expensesEntryExists => text('expenses.entryExists');
+
+  /// The word `expenses.entryHasCreditNote`.
+  String get expensesEntryHasCreditNote => text('expenses.entryHasCreditNote');
+
+  /// The word `expenses.entryNotApproved`.
+  String get expensesEntryNotApproved => text('expenses.entryNotApproved');
+
+  /// The word `expenses.entryWaitingForDecision`.
+  String get expensesEntryWaitingForDecision => text('expenses.entryWaitingForDecision');
 
   /// The word `expenses.generalSubgroup`.
   String get expensesGeneralSubgroup => text('expenses.generalSubgroup');
@@ -830,6 +938,9 @@ mixin WordGetters {
   /// The word `expenses.notTaxable`.
   String get expensesNotTaxable => text('expenses.notTaxable');
 
+  /// The word `expenses.notYourEntry`.
+  String get expensesNotYourEntry => text('expenses.notYourEntry');
+
   /// The word `expenses.notes`.
   String get expensesNotes => text('expenses.notes');
 
@@ -874,6 +985,9 @@ mixin WordGetters {
 
   /// The word `expenses.quantity`.
   String get expensesQuantity => text('expenses.quantity');
+
+  /// The word `expenses.reasonRequired`.
+  String get expensesReasonRequired => text('expenses.reasonRequired');
 
   /// The word `expenses.receiptRequired`.
   String get expensesReceiptRequired => text('expenses.receiptRequired');

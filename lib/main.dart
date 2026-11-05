@@ -26,6 +26,8 @@ import 'partners/partners_screen.dart';
 import 'approvals/approvals.dart';
 import 'approvals/approvals_screen.dart';
 import 'attachments/attachment_screen.dart';
+import 'entries/entries_screen.dart';
+import 'entries/project_entries.dart';
 import 'offline/outbox.dart';
 import 'offline/project_sync.dart';
 import 'offline/waiting_screen.dart';
@@ -102,6 +104,7 @@ class _RedixAppState extends State<RedixApp> {
   final _projectPaymentMethods = <String, PaymentMethods>{};
   final _projectAccounts = <String, Accounts>{};
   final _projectApprovals = <String, Approvals>{};
+  final _projectEntries = <String, ProjectEntries>{};
   final _projectMembers = <String, Members>{};
   final _projectPartners = <String, Partners>{};
   final _projectSuppliers = <String, Suppliers>{};
@@ -125,7 +128,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync),
+        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync, entries: _entriesOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(
         path: ApprovalsScreen.path,
@@ -193,8 +196,12 @@ class _RedixAppState extends State<RedixApp> {
           capture: widget.capture,
         ),
       ),
-      GoRoute(path: AddExpenseScreen.path, builder: (context, state) => _addExpenseScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project)),
-      GoRoute(path: ContractorPaymentScreen.path, builder: (context, state) => _contractorPaymentScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project)),
+      GoRoute(path: AddExpenseScreen.path, builder: (context, state) => _addExpenseScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project, state.uri.queryParameters)),
+      GoRoute(path: ContractorPaymentScreen.path, builder: (context, state) => _contractorPaymentScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project, state.uri.queryParameters)),
+      GoRoute(
+        path: EntriesScreen.path,
+        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.pathParameters['projectId'] ?? '')),
+      ),
       GoRoute(
         path: SubgroupsScreen.path,
         builder: (context, state) => SubgroupsScreen(
@@ -228,13 +235,17 @@ class _RedixAppState extends State<RedixApp> {
 
   Attachments _attachmentsOf(String projectId) => _projectAttachments.putIfAbsent(projectId, () => Attachments(widget.session, projectId));
 
-  Expenses _expensesOf(String projectId) => _projectExpenses.putIfAbsent(projectId, () => Expenses(widget.session, projectId, _outbox));
+  Expenses _expensesOf(String projectId) => _projectExpenses.putIfAbsent(projectId, () => Expenses(widget.session, projectId, _outbox, _entriesOf(projectId)));
+
+  ProjectEntries _entriesOf(String projectId) => _projectEntries.putIfAbsent(projectId, () => ProjectEntries(widget.session, projectId));
 
   Approvals _approvalsOf(String projectId) => _projectApprovals.putIfAbsent(projectId, () => Approvals(widget.session, projectId));
 
   OfferedAccounts _offeredAccountsOf(String projectId) => _projectOfferedAccounts.putIfAbsent(projectId, () => OfferedAccounts(widget.session, projectId));
 
-  ContractorPaymentScreen _contractorPaymentScreen(String projectId, Project project) => ContractorPaymentScreen(
+  ContractorPaymentScreen _contractorPaymentScreen(String projectId, Project project, Map<String, String> query) => ContractorPaymentScreen(
+    editingId: query['entry'] ?? '',
+    rejectionReason: query['reason'] ?? '',
     items: _offeredItemsOf(projectId, ItemType.contractorPayments),
     project: project,
     expenses: _expensesOf(projectId),
@@ -246,7 +257,9 @@ class _RedixAppState extends State<RedixApp> {
     capture: widget.capture,
   );
 
-  AddExpenseScreen _addExpenseScreen(String projectId, Project project) => AddExpenseScreen(
+  AddExpenseScreen _addExpenseScreen(String projectId, Project project, Map<String, String> query) => AddExpenseScreen(
+    editingId: query['entry'] ?? '',
+    rejectionReason: query['reason'] ?? '',
     project: project,
     expenses: _expensesOf(projectId),
     items: _offeredItemsOf(projectId, ItemType.purchases),

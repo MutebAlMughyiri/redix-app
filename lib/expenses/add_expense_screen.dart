@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -49,6 +50,8 @@ class AddExpenseScreen extends StatefulWidget {
   /// The screen entering an expense in [project], recorded through [expenses], picking from [items], [accounts], [paymentMethods], [suppliers] and, for a credit note, [creditableInvoices], asking what [columnsOf] an item says, and keeping the invoice through [attachments] from what [capture] gives.
   const AddExpenseScreen({
     super.key,
+    this.editingId = '',
+    this.rejectionReason = '',
     required this.project,
     required this.expenses,
     required this.items,
@@ -60,6 +63,12 @@ class AddExpenseScreen extends StatefulWidget {
     required this.attachments,
     required this.capture,
   });
+
+  /// The entry being changed; empty for a new one.
+  final String editingId;
+
+  /// Why it was rejected; empty otherwise.
+  final String rejectionReason;
 
   /// The project the expense belongs to.
   final Project project;
@@ -105,6 +114,9 @@ class AddExpenseScreen extends StatefulWidget {
 
   /// The button that opens the camera.
   static const cameraKey = Key('addExpense.camera');
+
+  /// Why the entry being changed was rejected.
+  static const rejectionKey = Key('addExpense.rejection');
 
   /// The button that opens the phone's files.
   static const filesKey = Key('addExpense.files');
@@ -261,7 +273,8 @@ class AddExpenseScreen extends StatefulWidget {
 }
 
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
-  final _entryId = const Uuid().v7();
+  late final _entryId = widget.editingId.isEmpty ? const Uuid().v7() : widget.editingId;
+  var _keptOriginalId = '';
   final _invoiceNumber = TextEditingController();
   final _product = TextEditingController();
   final _unitPrice = TextEditingController();
@@ -304,7 +317,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     widget.items.loadOnOpen();
     widget.accounts.loadOnOpen();
     widget.paymentMethods.loadOnOpen();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _takeFrom(widget.capture.fromCamera));
+    WidgetsBinding.instance.addPostFrameCallback((_) => widget.editingId.isEmpty ? _takeFrom(widget.capture.fromCamera) : _openEntry());
   }
 
   @override
@@ -313,6 +326,76 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       controller.dispose();
     }
     super.dispose();
+  }
+
+  /// Fills the form from the entry being changed (UC-033). Figures come as they were kept, before VAT, so that the same figures come out.
+  Future<void> _openEntry() async {
+    final held = await widget.expenses.read(widget.editingId);
+    await Future.wait([widget.items.load(), widget.accounts.load(), widget.suppliers.load()]);
+    if (!mounted || held.isEmpty) {
+      return;
+    }
+    final entry = held['entry'] as Map<String, dynamic>;
+    final expense = held['expense'] as Map<String, dynamic>;
+    final purchase = held['purchase'] as Map<String, dynamic>;
+    final invoice = held['invoice'] as Map<String, dynamic>;
+    final files = held['attachments'] as List<dynamic>;
+    final links = held['links'] as List<dynamic>;
+    final items = widget.items.all.expand((category) => category.items).where((item) => item.id == expense['itemId']);
+    final accounts = widget.accounts.all.where((account) => account.id == entry['accountId']);
+    final number = invoice['number'] as String? ?? '';
+    final paid = (entry['amount'] as num).abs();
+    setState(() {
+      _supplier = widget.suppliers.all.where((supplier) => supplier.id == purchase['supplierId']).firstOrNull ?? Supplier.none();
+      _subgroupId = expense['subgroupId'] as String;
+      _unitId = expense['unitId'] as String;
+      _withoutInvoice = number.isEmpty;
+      _withoutInvoiceReason.text = expense['withoutInvoiceReason'] as String;
+      _invoiceNumber.text = number;
+      _product.text = purchase['product'] as String;
+      _notes.text = entry['notes'] as String;
+      _payment
+        ..accountId = entry['accountId'] as String
+        ..paymentMethodId = expense['paymentMethodId'] as String;
+      if (accounts.isNotEmpty) {
+        _payment.source = accounts.first.type;
+      }
+      if ((purchase['unitPrice'] as num) != 0) {
+        _unitPrice.text = '${purchase['unitPrice']}';
+        _quantity.text = '${purchase['quantity']}';
+      }
+      if (_withoutInvoice) {
+        _amount.text = '$paid';
+        _paymentDate = DateTime.parse(entry['entryDate'] as String);
+      } else {
+        _invoiceDate = DateTime.parse(invoice['invoiceDate'] as String);
+        _amountIncludesVat = false;
+        _amount.text = '${(invoice['amountBeforeDiscount'] as num).abs()}';
+        if ((invoice['discount'] as num) != 0) {
+          _discount.text = '${(invoice['discount'] as num).abs()}';
+        }
+        _isNotTaxable = (invoice['vat'] as num) == 0;
+        _isCreditNote = invoice['isCreditNote'] as bool;
+      }
+      if (files.isNotEmpty) {
+        _attachmentId = (files.first as Map<String, dynamic>)['attachmentId'] as String;
+      }
+      for (final link in links.cast<Map<String, dynamic>>()) {
+        _keptOriginalId = link['linkedEntryId'] as String;
+      }
+      _customValues.addAll((jsonDecode(expense['customValues'] as String) as Map<String, dynamic>).map((key, value) => MapEntry(key, '$value')));
+    });
+    if (items.isNotEmpty) {
+      final keptValues = Map.of(_customValues);
+      final subgroupId = _subgroupId;
+      await _chooseItem(items.first);
+      if (mounted) {
+        setState(() {
+          _subgroupId = subgroupId;
+          _customValues.addAll(keptValues);
+        });
+      }
+    }
   }
 
   Future<void> _takeFrom(Future<PickedFile> Function() source) async {
@@ -485,7 +568,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       if (_attachmentId.isNotEmpty) 'attachmentId': _attachmentId,
     },
     if (_isCreditNote) 'isCreditNote': true,
-    if (!_original.isNone) 'originalEntryId': _original.entryId,
+    if (!_original.isNone) 'originalEntryId': _original.entryId else if (_keptOriginalId.isNotEmpty) 'originalEntryId': _keptOriginalId,
     'product': _product.text,
     'amountIncludesVat': _amountIncludesVat,
     'isNotTaxable': _isNotTaxable,
@@ -520,14 +603,14 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     if (!_withoutInvoice && !_invoice.isNone && _attachmentId.isEmpty) {
       final refusal = await widget.attachments.keep(_invoice);
       if (refusal == 'attachments.noConnection') {
-        return widget.expenses.keepPurchase(_body(submit, confirmDuplicate), _invoice);
+        return widget.expenses.keepPurchase(_body(submit, confirmDuplicate), _invoice, editing: widget.editingId);
       }
       if (refusal.isNotEmpty) {
         return refusal;
       }
       _attachmentId = widget.attachments.kept.id;
     }
-    return widget.expenses.record(_body(submit, confirmDuplicate));
+    return widget.expenses.record(_body(submit, confirmDuplicate), editing: widget.editingId);
   }
 
   void _askAboutDuplicate(bool submit) {
@@ -583,6 +666,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   List<Widget> _whatItWasFor(Words words) => [
+    if (widget.rejectionReason.isNotEmpty) Text('${words.entriesReason}: ${widget.rejectionReason}', key: AddExpenseScreen.rejectionKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
     ItemPicker(key: AddExpenseScreen.itemKey, items: widget.items, label: words.expensesItem, itemName: _item.name, onChanged: _chooseItem),
     if (_item.namedSubgroups.isNotEmpty)
       LabelledChips(

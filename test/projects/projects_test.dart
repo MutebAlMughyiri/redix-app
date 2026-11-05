@@ -55,8 +55,8 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
 
-    expect(api.sentAccessTokens, ['kept-access', 'kept-access', 'kept-access', 'new-access', 'new-access', 'new-access']);
-    expect(api.refreshes, 3);
+    expect(api.sentAccessTokens, ['kept-access', 'kept-access', 'kept-access', 'kept-access', 'new-access', 'new-access', 'new-access', 'new-access']);
+    expect(api.refreshes, 4);
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsOneWidget);
   });
 

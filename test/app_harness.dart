@@ -50,6 +50,7 @@ Map<String, String> wordsIn(String language) => {
     'columns.typeNumber', 'columns.typeAmount', 'columns.typeDate', 'columns.typeList', 'columns.typeFile', 'columns.choices', 'columns.newChoices', 'columns.required', 'columns.optional', 'columns.showInReports',
     'columns.inReports', 'columns.custom', 'columns.core', 'columns.edit', 'columns.delete', 'columns.save', 'columns.deleteExplain', 'columns.applyQuestion', 'columns.applyExplain',
     'columns.applyToAll', 'columns.templateOnly',
+    'entries.title', 'entries.mine', 'entries.all', 'entries.latest', 'entries.seeAll', 'entries.empty', 'entries.loadFailed', 'entries.noConnection', 'entries.refused', 'entries.draft', 'entries.pendingApproval', 'entries.approved', 'entries.rejected', 'entries.reversed', 'entries.reason', 'entries.fix', 'entries.edit', 'entries.send', 'entries.delete', 'entries.deleteQuestion', 'entries.deleteExplain', 'entries.reverse', 'entries.reverseTitle', 'entries.reverseReason', 'entries.reverseExplain', 'entries.entryApproved', 'entries.entryWaitingForDecision', 'entries.notYourEntry', 'entries.entryHasCreditNote', 'entries.reasonRequired', 'entries.entryNotApproved', 'entries.alreadyReversed', 'entries.entryIncomplete', 'entries.entryNotSubmittable', 'expenses.entryApproved', 'expenses.entryWaitingForDecision', 'expenses.notYourEntry', 'expenses.entryHasCreditNote', 'expenses.reasonRequired', 'expenses.entryNotApproved', 'expenses.alreadyReversed',
     'approvals.title', 'approvals.empty', 'approvals.loadFailed', 'approvals.noConnection', 'approvals.all', 'approvals.purchases', 'approvals.contractorPayments', 'approvals.approve', 'approvals.reject', 'approvals.approveSelected', 'approvals.selectHint', 'approvals.enteredBy', 'approvals.includingVat', 'approvals.withoutInvoice', 'approvals.openFile', 'approvals.fileFailed', 'approvals.rejectTitle', 'approvals.quickReason', 'approvals.reasonUnclear', 'approvals.reasonAmount', 'approvals.reasonItem', 'approvals.reasonDuplicate', 'approvals.reason', 'approvals.reasonHint', 'approvals.rejectSend', 'approvals.reasonRequired', 'approvals.entryNotPending', 'approvals.unknownEntry', 'approvals.originalNotApproved', 'approvals.refused', 'approvals.approvedSome', 'approvals.failedSome',
     'expenses.keptOnPhone', 'offline.title', 'offline.empty', 'offline.waiting', 'offline.sendAgain', 'offline.sendAnyway', 'offline.discard', 'offline.discardQuestion', 'offline.discardExplain',
     'categories.title', 'categories.hint', 'categories.empty', 'categories.loadFailed', 'categories.noConnection', 'categories.refused', 'categories.projectFinished',
@@ -84,8 +85,7 @@ Map<String, String> wordsIn(String language) => {
     'expenses.invalidBankFees', 'expenses.invalidInvoiceDate', 'expenses.invalidPaymentDate', 'expenses.unknownColumn', 'expenses.invalidColumnValue', 'expenses.requiredColumnMissing', 'expenses.invoiceRequired', 'expenses.qrRead',
     'expenses.qrUnreadable', 'expenses.qrSupplierMissing', 'expenses.qrAddSupplier', 'expenses.qrVatDiffers', 'suppliers.mostUsed',
     'expenses.duplicateInvoice', 'expenses.duplicateTitle', 'expenses.duplicateExplain', 'expenses.saveAnyway', 'expenses.invoiceAlreadyAttached',
-    'expenses.withoutInvoice', 'expenses.withoutInvoiceReason', 'expenses.invalidWithoutInvoiceReason', 'expenses.invoiceAndReason', 'expenses.amount', 'entries.notYourEntry', 'entries.entryNotSubmittable', 'entries.entryIncomplete',
-    'expenses.unknownContract', 'expenses.receiptRequired', 'expenses.invalidInvoiceAmount', 'contracts.pending', 'contractorPayments.new', 'contractorPayments.contract', 'contractorPayments.remainingAfter',
+    'expenses.withoutInvoice', 'expenses.withoutInvoiceReason', 'expenses.invalidWithoutInvoiceReason', 'expenses.invoiceAndReason', 'expenses.amount',     'expenses.unknownContract', 'expenses.receiptRequired', 'expenses.invalidInvoiceAmount', 'contracts.pending', 'contractorPayments.new', 'contractorPayments.contract', 'contractorPayments.remainingAfter',
     'contractorPayments.overrun', 'contractorPayments.savedOverrun', 'contractorPayments.kind', 'contractorPayments.inside', 'contractorPayments.outside', 'contractorPayments.outsideExplain',
     'contractorPayments.date', 'contractorPayments.receipt', 'contractorPayments.deductionReason', 'contractorPayments.deductionNeedsReason', 'contractorPayments.hasInvoice', 'contractorPayments.invoiceExplain',
     'expenses.creditNote', 'expenses.creditNoteExplain', 'expenses.originalInvoice', 'expenses.noOriginalInvoice', 'expenses.noCreditableInvoice', 'expenses.returnable', 'expenses.loadFailed',
@@ -108,7 +108,7 @@ const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "ke
 const admin = ['approveProjects'];
 
 /// What a project manager who also does the finance may do in a project.
-const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier', 'recordEntries', 'attachFiles', 'chargeAnyAccount', 'approveEntries'];
+const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier', 'recordEntries', 'attachFiles', 'chargeAnyAccount', 'approveEntries', 'manageAnyEntry'];
 
 /// What someone in the field may do in a project.
 const field = ['readProject', 'addSupplier', 'recordEntries', 'attachFiles'];
@@ -381,6 +381,41 @@ class FakeApi {
 
   /// How many sessions the API has issued, so that each gets a refresh token of its own.
   var _issued = 0;
+
+  /// The entries the project holds, newest first.
+  final entryRows = <Map<String, Object>>[];
+
+  /// What each entry holds, read to change it.
+  final entryDetails = <String, Map<String, Object>>{};
+
+  /// What was asked of an entry: its id, the action and the body.
+  final sentEntryChanges = <(String, String, Map<String, dynamic>)>[];
+
+  /// What a change to an entry answers.
+  var entryChangeAnswer = (status: 200, code: '');
+
+  /// The addresses expenses and payments were sent to, in order.
+  final sentExpensePaths = <String>[];
+
+  /// Adds an entry to the project.
+  Map<String, Object> addEntry({String kind = 'purchase', String status = 'pendingApproval', String rejectionReason = '', double amount = 1150, bool isMine = true, bool isReversed = false}) {
+    final row = <String, Object>{
+      'id': 'entry-${entryRows.length}',
+      'kind': kind,
+      'status': status,
+      'rejectionReason': rejectionReason,
+      'entryDate': '2026-11-05',
+      'amount': amount,
+      'itemName': 'بند اللياسة',
+      'supplierName': 'شركة البواني',
+      'invoiceNumber': '2617',
+      'authorName': 'نواف',
+      'isMine': isMine,
+      'isReversed': isReversed,
+    };
+    entryRows.insert(0, row);
+    return row;
+  }
 
   /// What waits for a decision.
   final pendingEntries = <Map<String, Object>>[];
@@ -1120,6 +1155,28 @@ class FakeApi {
     if (segments.length >= 3 && segments[2] == 'contracts') {
       return _answerContracts(request);
     }
+    if (segments.length == 3 && segments[2] == 'entries') {
+      return _json(entryRows, 200);
+    }
+    if (segments.length == 4 && segments[2] == 'entries' && request.method == 'GET' && entryDetails.containsKey(segments[3])) {
+      return _json(entryDetails[segments[3]]!, 200);
+    }
+    if (segments.length == 5 && segments[2] == 'entries' && const ['submit', 'delete', 'reverse'].contains(segments[4])) {
+      sentEntryChanges.add((segments[3], segments[4], request.body.isEmpty ? const <String, dynamic>{} : jsonDecode(request.body) as Map<String, dynamic>));
+      if (entryChangeAnswer.status >= 300) {
+        return _json({'code': entryChangeAnswer.code}, entryChangeAnswer.status);
+      }
+      final row = entryRows.singleWhere((row) => row['id'] == segments[3]);
+      switch (segments[4]) {
+        case 'submit':
+          row['status'] = 'pendingApproval';
+        case 'delete':
+          entryRows.remove(row);
+        case 'reverse':
+          row['isReversed'] = true;
+      }
+      return _json(const <String, Object>{}, 200);
+    }
     if (segments.length == 4 && segments[2] == 'entries' && segments[3] == 'pending') {
       return _json(pendingEntries, 200);
     }
@@ -1140,6 +1197,7 @@ class FakeApi {
       return _json(const <String, Object>{}, 200);
     }
     if (segments.length >= 3 && segments[2] == 'contractor-payments') {
+      sentExpensePaths.add(request.url.path);
       sentContractorPayments.add(jsonDecode(request.body) as Map<String, dynamic>);
       return _json(expenseAnswer.body, expenseAnswer.status);
     }
@@ -1147,6 +1205,7 @@ class FakeApi {
       return _json(creditableInvoices, 200);
     }
     if (segments.length >= 3 && segments[2] == 'expenses') {
+      sentExpensePaths.add(request.url.path);
       sentExpenses.add(jsonDecode(request.body) as Map<String, dynamic>);
       return _json(expenseAnswer.body, expenseAnswer.status);
     }

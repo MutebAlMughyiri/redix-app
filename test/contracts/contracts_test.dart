@@ -31,6 +31,7 @@ void main() {
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
     await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
     return (api: api, running: running['id'] as String, overrun: overrun['id'] as String, open: open['id'] as String, contractor: contractor['id'] as String, item: item['id'] as String);
   }
@@ -64,6 +65,7 @@ void main() {
     await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
     await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
     await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.menuKey(contract['id']! as String))));
     await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
@@ -161,6 +163,7 @@ void main() {
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
     await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
 
     expect(find.descendant(of: find.byKey(ContractsScreen.standingKey(contract)), matching: find.text('en contracts.notStarted')), findsOneWidget);
@@ -378,6 +381,7 @@ void main() {
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
     await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
 
     expect(text(tester, ContractsScreen.emptyKey), 'en contracts.empty');
@@ -403,6 +407,7 @@ void main() {
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
     await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await tester.pumpAndSettle();
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
 

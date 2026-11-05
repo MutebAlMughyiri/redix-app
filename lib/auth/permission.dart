@@ -30,4 +30,7 @@ enum Permission {
 
   /// See the entries waiting in a project, and approve or reject them.
   approveEntries,
+
+  /// Change or send an entry someone else entered, before it is approved.
+  manageAnyEntry,
 }
