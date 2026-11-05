@@ -9,7 +9,7 @@
 **What it is for:** the list of this project's suppliers. A purchase names a supplier from this list, never a name typed by hand.
 **Who sees it:** everyone in the project, from **Suppliers** on the project's home. Only whoever does the finance can change it. It needs a network.
 
-The list starts with مورد نقدي عام, the general cash supplier, for expenses with no supplier.
+The list starts with مورد نقدي عام, the general cash supplier, for expenses with no supplier. It can be renamed, and not disabled.
 
 | To | Do this |
 | --- | --- |
@@ -33,7 +33,7 @@ A supplier marked **Pending approval** was added from the field, and is approved
 **الغرض:** قائمة موردي هذا المشروع. يختار مصروف الشراء مورداً من هذه القائمة، ولا يُكتب اسم المورد يدوياً.
 **من يراها:** كل من في المشروع، من **الموردون** في رئيسية المشروع. ولا يغيّرها إلا من يتولى المالية. تحتاج إلى اتصال بالشبكة.
 
-تبدأ القائمة بالمورد النقدي العام «مورد نقدي عام»، للمصروفات التي لا مورد لها.
+تبدأ القائمة بالمورد النقدي العام «مورد نقدي عام»، للمصروفات التي لا مورد لها. ويمكن تغيير اسمه ولا يمكن تعطيله.
 
 | لكي | افعل هذا |
 | --- | --- |

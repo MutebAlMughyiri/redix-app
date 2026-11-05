@@ -16,19 +16,19 @@ Tap a category to open it.
 | To | Do this |
 | --- | --- |
 | Add a category | Tap **New category** and type its name. |
-| Add an item | Open the category, tap **Add item**, type its name and choose its type. The type cannot change later. |
+| Add an item | Open the category, tap **Add item**, type its name and choose its type. |
 | Change the order | Drag the handle beside a category or an item. It is saved as you drop it, and it is the order of the periodic report. |
 | Rename a category | Open it and tap **Rename**. |
 | Rename an item | Tap the three dots on its row, then **Rename**. |
 | Change what an item asks for | Tap **Columns** on its row. See [Item columns](item-columns.md). |
 | Change what an item is for | Tap the three dots on its row, then **Change type**. An item with entries keeps its type. |
-| Stop using something | Tap **Disable**: it disappears from entry and stays in the reports, and **Enable** brings it back. Nothing is ever deleted. |
+| Stop using something | Tap **Disable**: it disappears from entry and stays in the reports, and **Enable** brings it back. No category or item is ever deleted. |
 
 An item's type says what it can be used for: **Purchases**, **Contractor payments**, or both. A purchases item is not offered when entering a contractor payment.
 
 ### Subgroups
 
-A subgroup splits an item, as البلاط splits into مواد and دفان, and prints as its own table in the item's report. Tap the three dots on the item, then **Subgroups**. An entry with no subgroup goes to the item's general group, which needs nothing from you.
+A subgroup splits an item, as البلاط splits into مواد and دفان, and prints as its own table in the item's report. Tap the three dots on the item, then **Subgroups**. An entry with no subgroup goes to the item's general group, which needs nothing from you. Drag a subgroup by its handle to change its place in the report, and tap the bin to remove one that no entry uses.
 
 | Message | Meaning |
 | --- | --- |
@@ -48,18 +48,19 @@ A subgroup splits an item, as البلاط splits into مواد and دفان, an
 | لكي | افعل هذا |
 | --- | --- |
 | تضيف تصنيفاً | اضغط **تصنيف رئيسي جديد** واكتب اسمه. |
-| تضيف بنداً | افتح التصنيف، واضغط **إضافة بند**، واكتب اسمه واختر نوعه. لا يتغير النوع لاحقاً. |
+| تضيف بنداً | افتح التصنيف، واضغط **إضافة بند**، واكتب اسمه واختر نوعه. |
+| تغيّر نوع بند | اضغط النقاط الثلاث في صفه، ثم **تغيير النوع**. ولا يتغير نوع بند عليه قيود. |
 | تغيّر الترتيب | اسحب المقبض بجانب التصنيف أو البند. يُحفظ عند الإفلات، وهو ترتيب التقرير الدوري. |
 | تعيد تسمية تصنيف | افتحه واضغط **إعادة تسمية**. |
 | تعيد تسمية بند | اضغط النقاط الثلاث في صفه، ثم **إعادة تسمية**. |
 | تغيّر ما يطلبه البند | اضغط **الأعمدة** في صفه. انظر [أعمدة البند](item-columns.md). |
-| توقف استخدام شيء | اضغط **تعطيل**: يختفي من الإدخال ويبقى في التقارير، و**تفعيل** يعيده. لا يُحذف شيء أبداً. |
+| توقف استخدام شيء | اضغط **تعطيل**: يختفي من الإدخال ويبقى في التقارير، و**تفعيل** يعيده. ولا يُحذف تصنيف أو بند أبداً. |
 
 نوع البند يحدد ما يُستخدم له: **مشتريات**، أو **دفعات مقاولين**، أو الاثنان. بند المشتريات لا يظهر عند إدخال دفعة مقاول.
 
 ### المجموعات الفرعية
 
-المجموعة الفرعية تقسم البند، كما ينقسم البلاط إلى مواد ودفان، وتُطبع جدولاً مستقلاً في تقرير البند. اضغط النقاط الثلاث في البند، ثم **المجموعات الفرعية**. والقيد بلا مجموعة يدخل في المجموعة العامة للبند، ولا تحتاج منك إلى شيء.
+المجموعة الفرعية تقسم البند، كما ينقسم البلاط إلى مواد ودفان، وتُطبع جدولاً مستقلاً في تقرير البند. اضغط النقاط الثلاث في البند، ثم **المجموعات الفرعية**. والقيد بلا مجموعة يدخل في المجموعة العامة للبند، ولا تحتاج منك إلى شيء. واسحب المجموعة من مقبضها لتغيير مكانها في التقرير، واضغط سلة المهملات لحذف مجموعة لا قيود عليها.
 
 | الرسالة | معناها |
 | --- | --- |

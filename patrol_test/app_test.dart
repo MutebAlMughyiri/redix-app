@@ -29,6 +29,7 @@ import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/category.dart';
 import 'package:redix/structure/apply_to_all_dialog.dart';
+import 'package:redix/structure/item_column.dart';
 import 'package:redix/structure/item_columns_screen.dart';
 import 'package:redix/structure/subgroups_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
@@ -298,6 +299,23 @@ void main() {
     await $(ItemColumnsScreen.confirmDeleteKey).tap();
     await $.pumpAndSettle();
     expect($(find.text('المساحة م²')), findsNothing);
+
+    await $(ItemColumnsScreen.addKey).tap();
+    await $(ItemColumnsScreen.columnNameKey).enterText('الجهة');
+    await $(ItemColumnsScreen.dataTypeKey).tap();
+    await $(find.byWidgetPredicate((widget) => widget is DropdownMenuItem<ColumnDataType> && widget.value == ColumnDataType.list)).last.tap();
+    await $.pumpAndSettle();
+    await $(ItemColumnsScreen.choicesKey).enterText('شرق');
+    await $(ItemColumnsScreen.saveKey).tap();
+    await $(find.text('الجهة')).scrollTo();
+    await $(keyStartingWith('columns.edit.')).last.scrollTo().tap();
+    await $(ItemColumnsScreen.newChoicesKey).enterText('غرب');
+    await $(ItemColumnsScreen.saveKey).tap();
+    await $(find.text('الجهة')).scrollTo();
+    await $(keyStartingWith('columns.delete.')).last.scrollTo().tap();
+    await $(ItemColumnsScreen.confirmDeleteKey).tap();
+    await $.pumpAndSettle();
+    expect($(find.text('الجهة')), findsNothing);
 
     await $(ItemColumnsScreen.templateKey).tap();
     await $(keyStartingWith('columns.lock.')).first.waitUntilVisible();

@@ -20,7 +20,7 @@ What was paid counts only once approved. What waits shows under the figures as *
 | Keep the contract's document | In the dialog, tap **Add a document** and pick a picture or a PDF. It is kept when you save, and stays once attached. It cannot be opened from the app yet. |
 | Stop using a contract | Open the menu on its card and tap **Disable**. It stays on the list, and nothing is ever deleted. |
 
-The contractor, item and unit never change. If one is wrong, disable the contract and add it again.
+The contractor, item and unit can change from **Edit** while the contract has no payments. Once one exists they stay, so if one is wrong, disable the contract and add it again.
 
 A contractor comes from the project's suppliers. If yours is missing, tap **New supplier** while choosing. An item shows here only if it takes contractor payments. **مشترك** is the unit shared by the whole project.
 
@@ -48,7 +48,7 @@ A remaining in red and brackets, such as (1,000.00), means more was paid than wa
 | تحفظ مستند العقد | في النافذة، اضغط **إضافة مستند** واختر صورة أو ملف PDF. يُحفظ عند الحفظ، ويبقى بعد إرفاقه. لا يمكن فتحه من التطبيق حالياً. |
 | توقف استخدام عقد | افتح القائمة في بطاقته واضغط **تعطيل**. يبقى في القائمة، ولا يُحذف شيء أبداً. |
 
-المقاول والبند والوحدة لا تتغير. فإن أخطأت في أحدها فعطّل العقد وأضفه من جديد.
+يمكن تغيير المقاول والبند والوحدة من **تعديل** ما دام العقد بلا دفعات. فإذا وُجدت دفعة بقيت كما هي، فإن كان أحدها خطأً فعطّل العقد وأضفه من جديد.
 
 يأتي المقاول من موردي المشروع. فإن لم تجده فاضغط **مورد جديد** أثناء الاختيار. ولا يظهر هنا من البنود إلا ما يقبل دفعات المقاولين. و**مشترك** هي الوحدة المشتركة بين المشروع كله.
 
