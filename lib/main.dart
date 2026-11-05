@@ -29,6 +29,8 @@ import 'home/home_screen.dart';
 import 'partners/capital.dart';
 import 'partners/capital_move_screen.dart';
 import 'partners/liquidation.dart';
+import 'projects/blueprints.dart';
+import 'projects/blueprints_screen.dart';
 import 'partners/liquidation_screen.dart';
 import 'partners/capital_movements.dart';
 import 'partners/movements_screen.dart';
@@ -310,6 +312,15 @@ class _RedixAppState extends State<RedixApp> {
           partnerName: state.uri.queryParameters['name'] ?? '',
           movements: CapitalMovements(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['partnerId'] ?? ''),
           capital: _capitalOf(state.pathParameters['projectId'] ?? ''),
+        ),
+      ),
+      GoRoute(
+        path: BlueprintsScreen.path,
+        builder: (context, state) => BlueprintsScreen(
+          project: state.extra! as Project,
+          blueprints: Blueprints(widget.session, state.pathParameters['projectId'] ?? ''),
+          attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
+          capture: widget.capture,
         ),
       ),
       GoRoute(

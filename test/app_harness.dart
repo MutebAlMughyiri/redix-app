@@ -89,6 +89,8 @@ Map<String, String> wordsIn(String language) => {
     'contractorPayments.overrun', 'contractorPayments.savedOverrun', 'contractorPayments.kind', 'contractorPayments.inside', 'contractorPayments.outside', 'contractorPayments.outsideExplain',
     'contractorPayments.date', 'contractorPayments.receipt', 'contractorPayments.deductionReason', 'contractorPayments.deductionNeedsReason', 'contractorPayments.hasInvoice', 'contractorPayments.invoiceExplain',
     'expenses.split', 'expenses.splitEqual', 'expenses.splitPercent', 'expenses.splitTotal', 'expenses.splitNeedsSharedUnit', 'expenses.invalidSplit',
+    'blueprints.title', 'blueprints.project', 'blueprints.none', 'blueprints.add', 'blueprints.titleField', 'blueprints.for', 'blueprints.file', 'blueprints.fileHint', 'blueprints.save', 'blueprints.saved',
+    'blueprints.remove', 'blueprints.removeQuestion', 'blueprints.removeExplain', 'blueprints.removed', 'blueprints.unknownAttachment', 'blueprints.invalidTitle', 'blueprints.loadFailed',
     'liquidation.title', 'liquidation.surplus', 'liquidation.deficit', 'liquidation.explain', 'liquidation.deficitExplain', 'liquidation.pending', 'liquidation.payOut', 'liquidation.carry', 'liquidation.date',
     'liquidation.confirm', 'liquidation.question', 'liquidation.questionExplain', 'liquidation.done', 'liquidation.distributed', 'liquidation.nothing', 'capital.pendingEntries', 'capital.incompleteLiquidation',
     'reports.units', 'reports.unitDirect', 'reports.unitFromShared', 'reports.unsplit', 'reports.surplus',
@@ -497,6 +499,12 @@ class FakeApi {
 
   /// What an item's report answers.
   var itemReportAnswer = <String, Object>{'itemName': 'البلاط', 'categoryName': 'التشطيب', 'total': 0, 'columns': <String>[], 'subgroups': <Map<String, Object>>[], 'contracts': <Map<String, Object>>[]};
+
+  /// The project's blueprints, as the API holds them.
+  final blueprintRows = <Map<String, Object>>[];
+
+  /// The blueprint changes sent: the path and what was sent.
+  final sentBlueprints = <(String, Map<String, dynamic>)>[];
 
   /// What the project's liquidation answers.
   var liquidationAnswer = <String, Object>{'surplus': 0, 'pendingCount': 0, 'parts': <Map<String, Object>>[], 'distributed': <Map<String, Object>>[]};
@@ -1446,6 +1454,19 @@ class FakeApi {
       sentExpensePaths.add(request.url.path);
       sentExpenses.add(jsonDecode(request.body) as Map<String, dynamic>);
       return _json(expenseAnswer.body, expenseAnswer.status);
+    }
+    if (segments.length >= 3 && segments[2] == 'blueprints') {
+      if (request.method == 'GET') {
+        return _json(blueprintRows, 200);
+      }
+      final body = jsonDecode(request.body) as Map<String, dynamic>;
+      sentBlueprints.add((request.url.path, body));
+      if (segments.length == 5) {
+        blueprintRows.removeWhere((row) => row['id'] == segments[3]);
+      } else {
+        blueprintRows.add({'id': 'blueprint-${_nextStructureId++}', 'title': body['title'] as String, 'unitId': body['unitId'] as String? ?? '', 'unitName': '', 'attachmentId': body['attachmentId'] as String, 'fileName': 'plan.pdf', 'contentType': 'application/pdf', 'sizeBytes': 4, 'uploadedAt': '2026-11-05T20:00:00Z'});
+      }
+      return _json(const <String, Object>{}, 200);
     }
     if (segments.length == 4 && segments[2] == 'attachments' && request.method == 'GET') {
       return segments[3] == 'attachment-gone' ? http.Response('', 404) : http.Response.bytes(onePixelPng, 200, headers: {'content-type': 'image/png'});
