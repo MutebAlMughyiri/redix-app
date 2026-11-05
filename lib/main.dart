@@ -43,6 +43,13 @@ import 'offline/outbox.dart';
 import 'offline/project_sync.dart';
 import 'offline/waiting_screen.dart';
 import 'projects/members.dart';
+import 'reports/reports_screen.dart';
+import 'reports/vat_statement.dart';
+import 'reports/vat_statement_screen.dart';
+import 'revenue/revenue_form_screen.dart';
+import 'revenue/revenue_screen.dart';
+import 'revenue/revenues.dart';
+import 'revenue/sales_invoice_screen.dart';
 import 'projects/new_project_screen.dart';
 import 'projects/projects.dart';
 import 'projects/projects_screen.dart';
@@ -134,6 +141,8 @@ class _RedixAppState extends State<RedixApp> {
   final _projectTransfers = <String, Transfers>{};
   final _projectReconciliations = <String, Reconciliations>{};
   final _projectCapital = <String, Capital>{};
+  final _projectRevenues = <String, Revenues>{};
+  final _projectVat = <String, VatStatement>{};
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -222,6 +231,29 @@ class _RedixAppState extends State<RedixApp> {
           capture: widget.capture,
         ),
       ),
+      GoRoute(path: RevenueScreen.path, builder: (context, state) => RevenueScreen(project: state.extra! as Project, revenues: _revenuesOf(state.pathParameters['projectId'] ?? ''))),
+      GoRoute(
+        path: RevenueFormScreen.path,
+        builder: (context, state) => RevenueFormScreen(
+          project: state.extra! as Project,
+          revenues: _revenuesOf(state.pathParameters['projectId'] ?? ''),
+          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
+          attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
+          capture: widget.capture,
+        ),
+      ),
+      GoRoute(
+        path: SalesInvoiceScreen.path,
+        builder: (context, state) => SalesInvoiceScreen(project: state.extra! as Project, revenues: _revenuesOf(state.pathParameters['projectId'] ?? ''), accounts: _accountsOf(state.pathParameters['projectId'] ?? '')),
+      ),
+      GoRoute(path: ReportsScreen.path, builder: (context, state) => ReportsScreen(project: state.extra! as Project)),
+      GoRoute(
+        path: VatStatementScreen.path,
+        builder: (context, state) => VatStatementScreen(
+          project: state.extra! as Project,
+          statement: _projectVat.putIfAbsent(state.pathParameters['projectId'] ?? '', () => VatStatement(widget.session, state.pathParameters['projectId'] ?? '')),
+        ),
+      ),
       GoRoute(
         path: ReconcileScreen.path,
         builder: (context, state) => ReconcileScreen(project: state.extra! as Project, reconciliations: _reconciliationsOf(state.pathParameters['projectId'] ?? '')),
@@ -303,6 +335,8 @@ class _RedixAppState extends State<RedixApp> {
   Transfers _transfersOf(String projectId) => _projectTransfers.putIfAbsent(projectId, () => Transfers(widget.session, projectId));
 
   Reconciliations _reconciliationsOf(String projectId) => _projectReconciliations.putIfAbsent(projectId, () => Reconciliations(widget.session, projectId));
+
+  Revenues _revenuesOf(String projectId) => _projectRevenues.putIfAbsent(projectId, () => Revenues(widget.session, projectId));
 
   Capital _capitalOf(String projectId) => _projectCapital.putIfAbsent(projectId, () => Capital(widget.session, projectId));
 

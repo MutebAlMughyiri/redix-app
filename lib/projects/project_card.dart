@@ -21,6 +21,8 @@ class ProjectCard extends StatelessWidget {
     required this.onSuppliers,
     required this.onContracts,
     required this.onApprovals,
+    required this.onRevenue,
+    required this.onReports,
     required this.onAddUnit,
     required this.onRename,
     required this.onRenameUnit,
@@ -54,6 +56,12 @@ class ProjectCard extends StatelessWidget {
 
   /// Called when Waiting for approval is tapped.
   final VoidCallback onApprovals;
+
+  /// Called when Revenue is tapped.
+  final VoidCallback onRevenue;
+
+  /// Called when Reports is tapped.
+  final VoidCallback onReports;
 
   /// Called when Add unit is tapped.
   final VoidCallback onAddUnit;
@@ -165,6 +173,18 @@ class ProjectCard extends StatelessWidget {
                   icon: const Icon(Icons.description_outlined),
                   label: Text(words.contractsTitle),
                   onPressed: onContracts,
+                ),
+                TextButton.icon(
+                  key: HomeScreen.revenueKey(project.id),
+                  icon: const Icon(Icons.trending_up),
+                  label: Text(words.revenueTitle),
+                  onPressed: onRevenue,
+                ),
+                TextButton.icon(
+                  key: HomeScreen.reportsKey(project.id),
+                  icon: const Icon(Icons.summarize_outlined),
+                  label: Text(words.reportsTitle),
+                  onPressed: onReports,
                 ),
                 if (project.may(Permission.approveEntries))
                   TextButton.icon(

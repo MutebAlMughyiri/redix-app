@@ -39,6 +39,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Notifications](guide/notifications.md) | Everyone |
 | [Sharing an invoice](guide/share-invoice.md) | Whoever enters expenses |
 | [Transfers, reconciliation and capital](guide/money.md) | Everyone reads; finance enters |
+| [Revenue and the VAT statement](guide/revenue-and-vat.md) | Everyone reads; finance records |
 
 ## Use cases
 
@@ -76,6 +77,7 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-033, UC-034, UC-035, UC-037](use-cases/UC-033-entries.md) | See entries, fix them, and reverse them | Everyone in the project |
 | [UC-036](use-cases/UC-036-notifications.md) | See what you were told, and open it | Everyone |
 | [UC-038, UC-039, UC-046](use-cases/UC-038-share.md) | Share a file to the app, and attach it or start an expense with it | Whoever enters expenses |
+| [UC-047, UC-048, UC-056](use-cases/UC-047-revenue-and-vat.md) | Record revenue and sales invoices, see the VAT statement | Everyone reads; finance records |
 | [UC-040 to UC-044](use-cases/UC-040-money.md) | See balances, transfer, reconcile, record capital, see shares | Everyone reads; finance enters |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

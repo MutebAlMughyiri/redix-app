@@ -1694,6 +1694,141 @@ mixin WordGetters {
   /// The word `registered.title`.
   String get registeredTitle => text('registered.title');
 
+  /// The word `reports.title`.
+  String get reportsTitle => text('reports.title');
+
+  /// The word `revenue.account`.
+  String get revenueAccount => text('revenue.account');
+
+  /// The word `revenue.amount`.
+  String get revenueAmount => text('revenue.amount');
+
+  /// The word `revenue.amountBeforeTax`.
+  String get revenueAmountBeforeTax => text('revenue.amountBeforeTax');
+
+  /// The word `revenue.buyer`.
+  String get revenueBuyer => text('revenue.buyer');
+
+  /// The word `revenue.buyerVatNumber`.
+  String get revenueBuyerVatNumber => text('revenue.buyerVatNumber');
+
+  /// The word `revenue.date`.
+  String get revenueDate => text('revenue.date');
+
+  /// The word `revenue.description`.
+  String get revenueDescription => text('revenue.description');
+
+  /// The word `revenue.discount`.
+  String get revenueDiscount => text('revenue.discount');
+
+  /// The word `revenue.duplicateInvoice`.
+  String get revenueDuplicateInvoice => text('revenue.duplicateInvoice');
+
+  /// The word `revenue.empty`.
+  String get revenueEmpty => text('revenue.empty');
+
+  /// The word `revenue.file`.
+  String get revenueFile => text('revenue.file');
+
+  /// The word `revenue.invalidAmount`.
+  String get revenueInvalidAmount => text('revenue.invalidAmount');
+
+  /// The word `revenue.invalidBuyerName`.
+  String get revenueInvalidBuyerName => text('revenue.invalidBuyerName');
+
+  /// The word `revenue.invalidDate`.
+  String get revenueInvalidDate => text('revenue.invalidDate');
+
+  /// The word `revenue.invalidDiscount`.
+  String get revenueInvalidDiscount => text('revenue.invalidDiscount');
+
+  /// The word `revenue.invalidInvoiceDate`.
+  String get revenueInvalidInvoiceDate => text('revenue.invalidInvoiceDate');
+
+  /// The word `revenue.invalidInvoiceNumber`.
+  String get revenueInvalidInvoiceNumber => text('revenue.invalidInvoiceNumber');
+
+  /// The word `revenue.invalidNotes`.
+  String get revenueInvalidNotes => text('revenue.invalidNotes');
+
+  /// The word `revenue.invalidPeriod`.
+  String get revenueInvalidPeriod => text('revenue.invalidPeriod');
+
+  /// The word `revenue.invalidVatNumber`.
+  String get revenueInvalidVatNumber => text('revenue.invalidVatNumber');
+
+  /// The word `revenue.invoiceAlreadyAttached`.
+  String get revenueInvoiceAlreadyAttached => text('revenue.invoiceAlreadyAttached');
+
+  /// The word `revenue.invoiceDate`.
+  String get revenueInvoiceDate => text('revenue.invoiceDate');
+
+  /// The word `revenue.invoiceNumber`.
+  String get revenueInvoiceNumber => text('revenue.invoiceNumber');
+
+  /// The word `revenue.loadFailed`.
+  String get revenueLoadFailed => text('revenue.loadFailed');
+
+  /// The word `revenue.new`.
+  String get revenueNew => text('revenue.new');
+
+  /// The word `revenue.newSale`.
+  String get revenueNewSale => text('revenue.newSale');
+
+  /// The word `revenue.noConnection`.
+  String get revenueNoConnection => text('revenue.noConnection');
+
+  /// The word `revenue.other`.
+  String get revenueOther => text('revenue.other');
+
+  /// The word `revenue.quarter`.
+  String get revenueQuarter => text('revenue.quarter');
+
+  /// The word `revenue.refundDifference`.
+  String get revenueRefundDifference => text('revenue.refundDifference');
+
+  /// The word `revenue.refused`.
+  String get revenueRefused => text('revenue.refused');
+
+  /// The word `revenue.sale`.
+  String get revenueSale => text('revenue.sale');
+
+  /// The word `revenue.save`.
+  String get revenueSave => text('revenue.save');
+
+  /// The word `revenue.saved`.
+  String get revenueSaved => text('revenue.saved');
+
+  /// The word `revenue.statementRefund`.
+  String get revenueStatementRefund => text('revenue.statementRefund');
+
+  /// The word `revenue.taxRealEstateTransaction`.
+  String get revenueTaxRealEstateTransaction => text('revenue.taxRealEstateTransaction');
+
+  /// The word `revenue.taxType`.
+  String get revenueTaxType => text('revenue.taxType');
+
+  /// The word `revenue.taxVat`.
+  String get revenueTaxVat => text('revenue.taxVat');
+
+  /// The word `revenue.title`.
+  String get revenueTitle => text('revenue.title');
+
+  /// The word `revenue.type`.
+  String get revenueType => text('revenue.type');
+
+  /// The word `revenue.unknownAccount`.
+  String get revenueUnknownAccount => text('revenue.unknownAccount');
+
+  /// The word `revenue.unknownAttachment`.
+  String get revenueUnknownAttachment => text('revenue.unknownAttachment');
+
+  /// The word `revenue.unknownSale`.
+  String get revenueUnknownSale => text('revenue.unknownSale');
+
+  /// The word `revenue.vatRefund`.
+  String get revenueVatRefund => text('revenue.vatRefund');
+
   /// The word `settings.switchProject`.
   String get settingsSwitchProject => text('settings.switchProject');
 
@@ -2095,4 +2230,109 @@ mixin WordGetters {
 
   /// The word `users.weakPassword`.
   String get usersWeakPassword => text('users.weakPassword');
+
+  /// The word `vat.afterDiscount`.
+  String get vatAfterDiscount => text('vat.afterDiscount');
+
+  /// The word `vat.creditNotes`.
+  String get vatCreditNotes => text('vat.creditNotes');
+
+  /// The word `vat.custom`.
+  String get vatCustom => text('vat.custom');
+
+  /// The word `vat.declareLater`.
+  String get vatDeclareLater => text('vat.declareLater');
+
+  /// The word `vat.declaredLater`.
+  String get vatDeclaredLater => text('vat.declaredLater');
+
+  /// The word `vat.exceptions`.
+  String get vatExceptions => text('vat.exceptions');
+
+  /// The word `vat.from`.
+  String get vatFrom => text('vat.from');
+
+  /// The word `vat.h1`.
+  String get vatH1 => text('vat.h1');
+
+  /// The word `vat.h2`.
+  String get vatH2 => text('vat.h2');
+
+  /// The word `vat.halfYear`.
+  String get vatHalfYear => text('vat.halfYear');
+
+  /// The word `vat.invalidPeriod`.
+  String get vatInvalidPeriod => text('vat.invalidPeriod');
+
+  /// The word `vat.invalidVatNumber`.
+  String get vatInvalidVatNumber => text('vat.invalidVatNumber');
+
+  /// The word `vat.loadFailed`.
+  String get vatLoadFailed => text('vat.loadFailed');
+
+  /// The word `vat.netDue`.
+  String get vatNetDue => text('vat.netDue');
+
+  /// The word `vat.netRefund`.
+  String get vatNetRefund => text('vat.netRefund');
+
+  /// The word `vat.noConnection`.
+  String get vatNoConnection => text('vat.noConnection');
+
+  /// The word `vat.noExceptions`.
+  String get vatNoExceptions => text('vat.noExceptions');
+
+  /// The word `vat.noFile`.
+  String get vatNoFile => text('vat.noFile');
+
+  /// The word `vat.noVatNumber`.
+  String get vatNoVatNumber => text('vat.noVatNumber');
+
+  /// The word `vat.notTaxable`.
+  String get vatNotTaxable => text('vat.notTaxable');
+
+  /// The word `vat.pending`.
+  String get vatPending => text('vat.pending');
+
+  /// The word `vat.purchaseInvoices`.
+  String get vatPurchaseInvoices => text('vat.purchaseInvoices');
+
+  /// The word `vat.purchasesVat`.
+  String get vatPurchasesVat => text('vat.purchasesVat');
+
+  /// The word `vat.q1`.
+  String get vatQ1 => text('vat.q1');
+
+  /// The word `vat.q2`.
+  String get vatQ2 => text('vat.q2');
+
+  /// The word `vat.q3`.
+  String get vatQ3 => text('vat.q3');
+
+  /// The word `vat.q4`.
+  String get vatQ4 => text('vat.q4');
+
+  /// The word `vat.quarter`.
+  String get vatQuarter => text('vat.quarter');
+
+  /// The word `vat.realEstateTax`.
+  String get vatRealEstateTax => text('vat.realEstateTax');
+
+  /// The word `vat.refused`.
+  String get vatRefused => text('vat.refused');
+
+  /// The word `vat.salesVat`.
+  String get vatSalesVat => text('vat.salesVat');
+
+  /// The word `vat.title`.
+  String get vatTitle => text('vat.title');
+
+  /// The word `vat.to`.
+  String get vatTo => text('vat.to');
+
+  /// The word `vat.total`.
+  String get vatTotal => text('vat.total');
+
+  /// The word `vat.withoutInvoice`.
+  String get vatWithoutInvoice => text('vat.withoutInvoice');
 }

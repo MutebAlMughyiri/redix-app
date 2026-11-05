@@ -11,6 +11,8 @@ import '../contractor_payments/contractor_payment_screen.dart';
 import '../contracts/contracts_screen.dart';
 import '../expenses/add_expense_screen.dart';
 import '../partners/partners_screen.dart';
+import '../reports/reports_screen.dart';
+import '../revenue/revenue_screen.dart';
 import '../approvals/approvals_screen.dart';
 import '../entries/my_entries_summary.dart';
 import '../entries/project_entries.dart';
@@ -151,6 +153,12 @@ class HomeScreen extends StatefulWidget {
 
   /// How many of the user's entries were rejected in the project [id].
   static Key rejectedCountKey(String id) => Key('home.rejectedCount.$id');
+
+  /// The way to the revenue of the project [id].
+  static Key revenueKey(String id) => Key('home.revenue.$id');
+
+  /// The way to the reports of the project [id].
+  static Key reportsKey(String id) => Key('home.reports.$id');
 
   /// The way to what waits for a decision in the project [id].
   static Key approvalsKey(String id) => Key('home.approvals.$id');
@@ -376,6 +384,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     onSuppliers: () => context.push(SuppliersScreen.pathOf(project.id), extra: project),
                     onContracts: () => context.push(ContractsScreen.pathOf(project.id), extra: project),
                     onApprovals: () => context.push(ApprovalsScreen.pathOf(project.id), extra: project),
+                    onRevenue: () => context.push(RevenueScreen.pathOf(project.id), extra: project),
+                    onReports: () => context.push(ReportsScreen.pathOf(project.id), extra: project),
                     onAddUnit: () => _askForUnit(project),
                     onRename: () => _askToRename(project),
                     onRenameUnit: (unit) => _askToRenameUnit(project, unit),
