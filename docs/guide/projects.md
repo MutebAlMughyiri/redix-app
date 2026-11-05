@@ -17,7 +17,8 @@ After you sign in, REDIX lists the projects you have access to. Tap one to open 
 1. Tap **Register new project**.
 2. Type the project's name. The start date is today; tap it to choose another.
 3. For each unit, type its name and tap **Add unit**. Tap the cross beside a unit to take it off.
-4. Tap **Send for approval**. You return to the list, where it waits for approval.
+4. Choose where its [categories and items](categories.md) come from: the default template, or a project you already have. They are copied when the project is approved.
+5. Tap **Send for approval**. You return to the list, where it waits for approval.
 
 **Add a unit later:** on a running project's home, tap **Add unit**, type its name, and tap **Add unit**.
 

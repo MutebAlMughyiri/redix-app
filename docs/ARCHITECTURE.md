@@ -31,6 +31,15 @@ lib/
     edit_user_dialog.dart   the Edit dialog
     reset_password_dialog.dart  the Reset password dialog
     new_user_screen.dart    the new user form
+  structure/
+    category.dart           Category, Item, Subgroup and ItemType, as the API answers them
+    categories.dart         Categories: the ApiList of one project's structure, and its changes
+    categories_screen.dart  a project's categories and items, dragged into order
+    category_card.dart      one category, opening to its items
+    item_row.dart           one item, with its menu
+    name_dialog.dart        the dialog that asks for one name
+    add_item_dialog.dart    the Add item dialog
+    subgroups_screen.dart   an item's subgroups
   format/date_format.dart   formatDate: the app's one date format, dd.MM.yyyy
   api.dart                  the API's address and how a reply's JSON is read, shared by every feature
   auth/
@@ -72,7 +81,7 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 
 ## Data the API owns
 
-Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `ApiList` reads the list again after every answer, so its order and each status have one source. `Projects` and `Users` extend it, and hold only their own calls; `ApiListBody` draws its states on every such screen.
+Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `ApiList` reads the list again after every answer, so its order and each status have one source. `Projects` and `Users` extend it, and hold only their own calls; `ApiListBody` draws its states on every such screen. A dragged row is the one thing shown before the API answers: `ApiList.reorder` keeps it where it was dropped, and a refused or lost order goes back to what the API holds.
 
 ## Rules every part follows
 

@@ -6,6 +6,11 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-06 | Reordering is Flutter's own `ReorderableListView`, with `onReorderItem`, and a handle on each row | AC-39.1 asks for dragging, and a handle leaves tapping and scrolling alone. Made without Muteb |
+| 2026-11-06 | A dragged row stays where it was dropped before the API answers, through `ApiList.reorder` | Everywhere else the app draws only what the API answered, but a row jumping back and forth under the finger reads as a failure. A refused or lost order goes back. Made without Muteb |
+| 2026-11-06 | A category is a tile that opens to its items, not an open card | The canvas already folds long lists after four rows; closed, five categories fit one phone screen and drag easily. Made without Muteb |
+| 2026-11-06 | Categories and items open from the project's home, not from Settings | The canvas draws them in Settings, but Settings is not about one project; the home is where a project's own actions already are. Made without Muteb |
+| 2026-11-06 | Disabling asks nothing | It changes no money and Enable undoes it at once. Made without Muteb |
 | 2026-11-05 | What sits behind the fingerprint or face is one fixed word, never the tokens | Tokens change at every renewal, and an iPhone asks again at every write to a guarded item |
 | 2026-11-05 | The check is `flutter_secure_storage`'s biometric option, with strong biometrics only, and no new package | `local_auth` cannot tell that a new fingerprint was added, which AC-35.2 needs; a PIN is often known to others |
 | 2026-11-05 | The app asks only when it starts, not on every return from the background | FR-35 is about signing in; locking on return needs a listener and a timer, and would ask again after every camera or file picker |

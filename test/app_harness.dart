@@ -42,6 +42,11 @@ Map<String, String> wordsIn(String language) => {
     'users.temporaryPasswordHint', 'users.add', 'users.save', 'users.disableQuestion', 'users.disableExplain', 'users.resetExplain',
     'users.invalidName', 'users.invalidUsername', 'users.invalidMobile', 'users.usernameTaken', 'users.weakPassword',
     'users.noConnection', 'users.refused',
+    'categories.title', 'categories.hint', 'categories.empty', 'categories.loadFailed', 'categories.noConnection', 'categories.refused', 'categories.projectFinished',
+    'categories.invalidName', 'categories.invalidOrder', 'categories.generalSubgroup', 'categories.new', 'categories.categoryName', 'categories.items', 'categories.noItems',
+    'categories.addItem', 'categories.itemName', 'categories.itemType', 'categories.typePurchases', 'categories.typeContractorPayments', 'categories.typeBoth', 'categories.rename',
+    'categories.disable', 'categories.enable', 'categories.disabled', 'categories.save', 'categories.subgroups', 'categories.subgroupsHint', 'categories.noSubgroups',
+    'subgroups.new', 'categories.subgroupName', 'projects.structureSource', 'projects.defaultTemplate', 'projects.unknownSource',
   ])
     key: '$language $key',
 };
@@ -59,7 +64,7 @@ const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "ke
 const admin = ['approveProjects'];
 
 /// What a project manager who also does the finance may do in a project.
-const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject'];
+const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure'];
 
 /// The phone's own fingerprint or face prompt, as the app's tests see it.
 class FakePrompt extends Fake implements FlutterSecureStorage {
@@ -186,6 +191,17 @@ class FakeApi {
   /// The changes of a user the app sent, as `path` and body.
   final sentUserChanges = <(String, Map<String, dynamic>)>[];
 
+  /// Each project's categories, as the API answers them.
+  final categories = <String, List<Map<String, Object>>>{};
+
+  /// The status and problem code the API answers to a change of the structure; 2xx makes the change. An empty code sends none.
+  var structureAnswer = (status: 200, code: '');
+
+  /// The changes of the structure the app sent, as `path` and body.
+  final sentStructureChanges = <(String, Map<String, dynamic>)>[];
+
+  var _nextStructureId = 0;
+
   /// How many times the app told the API it signed out.
   var signOuts = 0;
 
@@ -267,6 +283,70 @@ class FakeApi {
     };
     projects.add(project);
     return project;
+  }
+
+  /// Adds a category to the project [projectId], as the API holds it.
+  Map<String, Object> addCategory(String projectId, String name, {bool isActive = true}) {
+    final category = <String, Object>{'id': 'category-${_nextStructureId++}', 'name': name, 'isActive': isActive, 'items': <Map<String, Object>>[]};
+    categories.putIfAbsent(projectId, () => []).add(category);
+    return category;
+  }
+
+  /// Adds an item to [category], as the API holds it, with its general group and any [subgroups].
+  Map<String, Object> addItem(Map<String, Object> category, String name, {String type = 'both', bool isActive = true, List<String> subgroups = const []}) {
+    final item = <String, Object>{
+      'id': 'item-${_nextStructureId++}',
+      'name': name,
+      'type': type,
+      'isActive': isActive,
+      'subgroups': <Map<String, Object>>[
+        for (final subgroup in ['', ...subgroups]) {'id': 'subgroup-${_nextStructureId++}', 'name': subgroup},
+      ],
+    };
+    (category['items']! as List<Map<String, Object>>).add(item);
+    return item;
+  }
+
+  http.Response _answerStructure(http.Request request) {
+    final segments = request.url.pathSegments;
+    final list = categories.putIfAbsent(segments[1], () => []);
+    if (request.method == 'GET') {
+      return _json(list, 200);
+    }
+    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    sentStructureChanges.add((request.url.path, body));
+    if (structureAnswer.status >= 300) {
+      return _json({if (structureAnswer.code.isNotEmpty) 'code': structureAnswer.code}, structureAnswer.status);
+    }
+    final items = [for (final category in list) ...category['items']! as List<Map<String, Object>>];
+    final rows = segments[2] == 'categories' ? list : items;
+    final row = segments.length > 3 ? rows.where((row) => row['id'] == segments[3]).firstOrNull ?? const <String, Object>{} : const <String, Object>{};
+    void reorderBy(List<Map<String, Object>> rows) {
+      final order = body['ids'] as List<dynamic>;
+      rows.sort((first, second) => order.indexOf(first['id']).compareTo(order.indexOf(second['id'])));
+    }
+
+    switch (segments.sublist(2)) {
+      case ['categories']:
+        addCategory(segments[1], body['name'] as String);
+      case ['categories', 'reorder']:
+        reorderBy(list);
+      case ['categories', _, 'items']:
+        addItem(row, body['name'] as String, type: body['type'] as String);
+      case ['categories', _, 'items', 'reorder']:
+        reorderBy(row['items']! as List<Map<String, Object>>);
+      case [_, _, 'disable']:
+        row['isActive'] = false;
+      case [_, _, 'enable']:
+        row['isActive'] = true;
+      case ['items', _, 'subgroups']:
+        (row['subgroups']! as List<Map<String, Object>>).add({'id': 'subgroup-${_nextStructureId++}', 'name': body['name'] as String});
+      case ['items', _, 'subgroups', final subgroupId]:
+        (row['subgroups']! as List<Map<String, Object>>).singleWhere((subgroup) => subgroup['id'] == subgroupId)['name'] = body['name'] as String;
+      default:
+        row['name'] = body['name'] as String;
+    }
+    return _json({}, 200);
   }
 
   /// Adds a user to what the API holds.
@@ -407,6 +487,9 @@ class FakeApi {
     }
     if (segments.length >= 3 && segments[2] == 'users') {
       return _answerProjectUsers(request, segments[1]);
+    }
+    if (segments.length >= 3 && (segments[2] == 'categories' || segments[2] == 'items')) {
+      return _answerStructure(request);
     }
     if (request.method == 'GET') {
       return _json(projects, 200);

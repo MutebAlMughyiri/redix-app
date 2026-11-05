@@ -46,6 +46,9 @@ class NewProjectScreen extends StatefulWidget {
   /// The start date, which opens the date picker.
   static const startDateKey = Key('newProject.startDate');
 
+  /// Where the categories and items are copied from, on the form of someone signed in.
+  static const structureSourceKey = Key('newProject.structureSource');
+
   /// The next unit's name.
   static const unitNameKey = Key('newProject.unitName');
 
@@ -76,6 +79,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   final _mobile = TextEditingController();
   final _password = TextEditingController();
   final _units = <String>[];
+  var _structureSourceId = '';
   var _startDate = DateUtils.dateOnly(DateTime.now());
   var _message = '';
   var _saving = false;
@@ -107,7 +111,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
 
   Future<String> _send(List<String> units) => widget.isPublic
       ? registerProject(_name.text, _startDate, units, displayName: _managerName.text, username: _username.text, mobile: _mobile.text, password: _password.text)
-      : widget.projects.create(_name.text, _startDate, units);
+      : widget.projects.create(_name.text, _startDate, units, structureSourceId: _structureSourceId);
 
   void _leave() {
     if (!widget.isPublic) {
@@ -199,6 +203,20 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                 ),
               ),
             ),
+            if (!widget.isPublic) ...[
+              const SizedBox(height: 24),
+              DropdownButtonFormField<String>(
+                key: NewProjectScreen.structureSourceKey,
+                initialValue: _structureSourceId,
+                isExpanded: true,
+                decoration: InputDecoration(labelText: words.projectsStructureSource, border: const OutlineInputBorder()),
+                items: [
+                  DropdownMenuItem(value: '', child: Text(words.projectsDefaultTemplate)),
+                  for (final project in widget.projects.all.where((project) => project.isApproved)) DropdownMenuItem(value: project.id, child: Text(project.name)),
+                ],
+                onChanged: (id) => setState(() => _structureSourceId = id ?? ''),
+              ),
+            ],
             if (widget.isPublic) ...[
               const SizedBox(height: 24),
               Text(words.usersRoleManager, style: theme.textTheme.titleSmall),

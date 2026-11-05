@@ -4,6 +4,13 @@ import 'package:flutter/scheduler.dart';
 import 'api.dart';
 import 'auth/session.dart';
 
+/// A copy of [list] with the row at [from] moved to [to], as a drag ends.
+List<E> moved<E>(List<E> list, int from, int to) {
+  final order = [...list];
+  order.insert(to, order.removeAt(from));
+  return order;
+}
+
 /// A list the API owns, as it last answered, and the way to change it. Nothing about it is kept on the phone.
 abstract class ApiList<T> extends ChangeNotifier {
   /// The list at the API [_path], made from JSON by [_fromJson], whose word keys start with [_wordPrefix].
@@ -83,5 +90,18 @@ abstract class ApiList<T> extends ChangeNotifier {
       debugPrint('$path not changed: $error');
       return '$_wordPrefix.noConnection';
     }
+  }
+
+  /// Shows [order] at once, so what was dragged stays where it was dropped, and sends the change to the API [path]. Whatever is refused, or never arrives, goes back to what the API holds.
+  /// Returns an empty string once changed, otherwise the word key of the refusal.
+  @protected
+  Future<String> reorder(String path, Map<String, Object> body, List<T> order) async {
+    _all = order;
+    notifyListeners();
+    final refusal = await change(path, body);
+    if (refusal.isNotEmpty) {
+      await load();
+    }
+    return refusal;
   }
 }

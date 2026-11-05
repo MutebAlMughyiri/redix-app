@@ -35,6 +35,93 @@ mixin WordGetters {
   /// The word `biometrics.usePassword`.
   String get biometricsUsePassword => text('biometrics.usePassword');
 
+  /// The word `categories.addItem`.
+  String get categoriesAddItem => text('categories.addItem');
+
+  /// The word `categories.categoryName`.
+  String get categoriesCategoryName => text('categories.categoryName');
+
+  /// The word `categories.disable`.
+  String get categoriesDisable => text('categories.disable');
+
+  /// The word `categories.disabled`.
+  String get categoriesDisabled => text('categories.disabled');
+
+  /// The word `categories.empty`.
+  String get categoriesEmpty => text('categories.empty');
+
+  /// The word `categories.enable`.
+  String get categoriesEnable => text('categories.enable');
+
+  /// The word `categories.generalSubgroup`.
+  String get categoriesGeneralSubgroup => text('categories.generalSubgroup');
+
+  /// The word `categories.hint`.
+  String get categoriesHint => text('categories.hint');
+
+  /// The word `categories.invalidName`.
+  String get categoriesInvalidName => text('categories.invalidName');
+
+  /// The word `categories.invalidOrder`.
+  String get categoriesInvalidOrder => text('categories.invalidOrder');
+
+  /// The word `categories.itemName`.
+  String get categoriesItemName => text('categories.itemName');
+
+  /// The word `categories.itemType`.
+  String get categoriesItemType => text('categories.itemType');
+
+  /// The word `categories.items`.
+  String get categoriesItems => text('categories.items');
+
+  /// The word `categories.loadFailed`.
+  String get categoriesLoadFailed => text('categories.loadFailed');
+
+  /// The word `categories.new`.
+  String get categoriesNew => text('categories.new');
+
+  /// The word `categories.noConnection`.
+  String get categoriesNoConnection => text('categories.noConnection');
+
+  /// The word `categories.noItems`.
+  String get categoriesNoItems => text('categories.noItems');
+
+  /// The word `categories.noSubgroups`.
+  String get categoriesNoSubgroups => text('categories.noSubgroups');
+
+  /// The word `categories.projectFinished`.
+  String get categoriesProjectFinished => text('categories.projectFinished');
+
+  /// The word `categories.refused`.
+  String get categoriesRefused => text('categories.refused');
+
+  /// The word `categories.rename`.
+  String get categoriesRename => text('categories.rename');
+
+  /// The word `categories.save`.
+  String get categoriesSave => text('categories.save');
+
+  /// The word `categories.subgroupName`.
+  String get categoriesSubgroupName => text('categories.subgroupName');
+
+  /// The word `categories.subgroups`.
+  String get categoriesSubgroups => text('categories.subgroups');
+
+  /// The word `categories.subgroupsHint`.
+  String get categoriesSubgroupsHint => text('categories.subgroupsHint');
+
+  /// The word `categories.title`.
+  String get categoriesTitle => text('categories.title');
+
+  /// The word `categories.typeBoth`.
+  String get categoriesTypeBoth => text('categories.typeBoth');
+
+  /// The word `categories.typeContractorPayments`.
+  String get categoriesTypeContractorPayments => text('categories.typeContractorPayments');
+
+  /// The word `categories.typePurchases`.
+  String get categoriesTypePurchases => text('categories.typePurchases');
+
   /// The word `changePassword.accountLocked`.
   String get changePasswordAccountLocked => text('changePassword.accountLocked');
 
@@ -125,6 +212,9 @@ mixin WordGetters {
   /// The word `projects.defaultProject`.
   String get projectsDefaultProject => text('projects.defaultProject');
 
+  /// The word `projects.defaultTemplate`.
+  String get projectsDefaultTemplate => text('projects.defaultTemplate');
+
   /// The word `projects.empty`.
   String get projectsEmpty => text('projects.empty');
 
@@ -179,11 +269,17 @@ mixin WordGetters {
   /// The word `projects.startDate`.
   String get projectsStartDate => text('projects.startDate');
 
+  /// The word `projects.structureSource`.
+  String get projectsStructureSource => text('projects.structureSource');
+
   /// The word `projects.unitName`.
   String get projectsUnitName => text('projects.unitName');
 
   /// The word `projects.units`.
   String get projectsUnits => text('projects.units');
+
+  /// The word `projects.unknownSource`.
+  String get projectsUnknownSource => text('projects.unknownSource');
 
   /// The word `register.hint`.
   String get registerHint => text('register.hint');
@@ -280,6 +376,9 @@ mixin WordGetters {
 
   /// The word `signIn.username`.
   String get signInUsername => text('signIn.username');
+
+  /// The word `subgroups.new`.
+  String get subgroupsNew => text('subgroups.new');
 
   /// The word `users.add`.
   String get usersAdd => text('users.add');

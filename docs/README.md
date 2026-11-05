@@ -23,6 +23,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [My account](guide/my-account.md) | Everyone signed in |
 | [Users](guide/users.md) | Project managers |
 | [Register a project](guide/register-a-project.md) | Everyone; the admin approves |
+| [Categories and items](guide/categories.md) | Whoever does a project's finance |
 
 ## Use cases
 
@@ -40,5 +41,6 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-009](use-cases/UC-009-follow-permissions.md) | Show each person the controls their role allows in each project | Everyone |
 | [UC-010](use-cases/UC-010-projects-and-default.md) | Choose a project after sign-in, see it by your role in it, and set a default | Everyone |
 | [UC-011](use-cases/UC-011-biometrics.md) | Sign in with a fingerprint or face instead of the password | Everyone, for this phone |
+| [UC-012](use-cases/UC-012-categories-and-items.md) | Shape a project's categories, items and subgroups, and choose what a new project copies | Whoever does a project's finance |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

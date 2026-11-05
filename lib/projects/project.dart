@@ -76,4 +76,7 @@ class Project {
 
   /// True once the project is closed: the app offers no change on it (AC-04.1).
   bool get isFinished => status == ProjectStatus.finished;
+
+  /// Whether the signed-in user may change the project's structure now.
+  bool get mayChangeStructure => !isFinished && may(Permission.manageStructure);
 }

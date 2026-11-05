@@ -9,6 +9,8 @@ import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/structure/categories_screen.dart';
+import 'package:redix/structure/subgroups_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/user_roles_screen.dart';
@@ -337,6 +339,42 @@ void main() {
       [HomeScreen.closeExplainKey, HomeScreen.confirmCloseKey, HomeScreen.cancelCloseKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.cancelCloseKey)));
 
+      final bone = api.addCategory(runningId, 'العظم');
+      final tiles = api.addItem(bone, 'بند الدرابزين والألمنيوم مع التركيب الكامل', subgroups: ['مواد']);
+      final disabledItem = api.addItem(bone, 'بند الحديد', isActive: false);
+      final boneId = bone['id'] as String;
+      final tilesId = tiles['id'] as String;
+      await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey(runningId)));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey(runningId))));
+      await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.categoryTileKey(boneId))));
+      [
+        CategoriesScreen.hintKey,
+        CategoriesScreen.addCategoryKey,
+        CategoriesScreen.categoryHandleKey(boneId),
+        CategoriesScreen.categoryNameKey(boneId),
+        CategoriesScreen.categoryDetailsKey(boneId),
+        CategoriesScreen.addItemKey(boneId),
+        CategoriesScreen.renameCategoryKey(boneId),
+        CategoriesScreen.disableCategoryKey(boneId),
+        CategoriesScreen.itemHandleKey(tilesId),
+        CategoriesScreen.itemNameKey(tilesId),
+        CategoriesScreen.itemDetailsKey(tilesId),
+        CategoriesScreen.itemMenuKey(tilesId),
+        CategoriesScreen.itemDetailsKey(disabledItem['id'] as String),
+      ].forEach(expectFits);
+
+      await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.addItemKey(boneId))));
+      [CategoriesScreen.nameKey, CategoriesScreen.itemTypeKey, CategoriesScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+
+      await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(tilesId))));
+      [CategoriesScreen.renameItemKey, CategoriesScreen.subgroupsKey, CategoriesScreen.disableItemKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.subgroupsKey)));
+      [SubgroupsScreen.hintKey, SubgroupsScreen.addKey, SubgroupsScreen.subgroupNameKey((tiles['subgroups']! as List<Map<String, Object>>).last['id'] as String)].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+      await tester.ensureVisible(find.byKey(HomeScreen.usersKey(runningId)));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey(runningId))));
       [
         UsersScreen.newUserKey,

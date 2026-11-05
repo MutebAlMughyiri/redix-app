@@ -11,6 +11,8 @@ import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/structure/categories_screen.dart';
+import 'package:redix/structure/subgroups_screen.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:redix/words/app_language.dart';
@@ -121,6 +123,41 @@ void main() {
     await $(HomeScreen.saveUnitKey).tap();
     await $(find.text('الفلة الغربية')).waitUntilVisible();
     await $.takeNativeScreenshot('home');
+
+    await $(keyStartingWith('home.categories.')).scrollTo().tap();
+    await $(keyStartingWith('categories.tile.')).at(4).waitUntilVisible();
+    String firstCategory() => $.tester.widget<Text>(keyStartingWith('categories.name.').first).data!;
+    expect(firstCategory(), 'تكلفة الأراضي');
+    await $.tester.timedDrag(keyStartingWith('categories.handle.').first, const Offset(0, 160), const Duration(milliseconds: 600));
+    await $.pumpAndSettle();
+    expect(firstCategory(), isNot('تكلفة الأراضي'));
+
+    await $(CategoriesScreen.addCategoryKey).tap();
+    await $(CategoriesScreen.nameKey).enterText('الملاحق');
+    await $(CategoriesScreen.saveKey).tap();
+    await $(find.text('الملاحق')).scrollTo();
+
+    await $(keyStartingWith('categories.tile.')).at(5).tap();
+    await $(keyStartingWith('categories.addItem.')).scrollTo().tap();
+    await $(CategoriesScreen.nameKey).enterText('المظلة');
+    await $(CategoriesScreen.saveKey).tap();
+    await $(find.text('المظلة')).scrollTo();
+    await $.takeNativeScreenshot('categories');
+
+    await $(keyStartingWith('categories.itemMenu.')).tap();
+    await $(CategoriesScreen.subgroupsKey).tap();
+    await $(SubgroupsScreen.addKey).tap();
+    await $(SubgroupsScreen.nameKey).enterText('مواد');
+    await $(SubgroupsScreen.saveKey).tap();
+    await $(find.text('مواد')).waitUntilVisible();
+    await $.takeNativeScreenshot('subgroups');
+    await $(BackButton).tap();
+
+    await $(keyStartingWith('categories.itemMenu.')).tap();
+    await $(CategoriesScreen.disableItemKey).tap();
+    await $(keyStartingWith('categories.itemMenu.')).waitUntilVisible();
+    await $.pumpAndSettle();
+    await $(BackButton).tap();
 
     await $(keyStartingWith('home.close.')).tap();
     await $(HomeScreen.confirmCloseKey).waitUntilVisible();

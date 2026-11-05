@@ -45,6 +45,7 @@ New project, `NewProjectScreen` at `/projects/new`:
 | --- | --- | --- |
 | Project name | `NewProjectScreen.nameKey` | Any name of 1 to 100 characters |
 | Start date | `NewProjectScreen.startDateKey` | Today until changed; opens the date picker |
+| Copy categories and items from | `NewProjectScreen.structureSourceKey` | The default template unless changed, or an approved earlier project (UC-012) |
 | Unit name | `NewProjectScreen.unitNameKey` | The next unit to add |
 | Add unit | `NewProjectScreen.addUnitKey` | Adds it to the list below; disabled while the name is empty |
 | A unit | `NewProjectScreen.unitKey(index)` | A unit to be created with the project |
@@ -89,6 +90,5 @@ All go through `Session`, which renews an expired access token once and sends ag
 
 | What | Use case |
 | --- | --- |
-| Copying the structure from the template or an earlier project (AC-05.2) | UC-012, the first with categories and items to copy |
 | Refusing new entries and approvals in a finished project | Each entry use case |
 | Settings' other rows | Their own use cases, from UC-007 |

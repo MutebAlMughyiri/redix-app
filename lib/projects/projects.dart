@@ -7,9 +7,14 @@ class Projects extends ApiList<Project> {
   /// The projects of the user signed in through [session].
   Projects(Session session) : super(session, '/projects', 'projects', Project.fromJson);
 
-  /// Creates a project with its [units], all or nothing. Returns an empty string once created, otherwise the word key of the refusal.
-  Future<String> create(String name, DateTime startDate, List<String> units) =>
-      change('/projects', {'name': name, 'startDate': startDate.toIso8601String().substring(0, 10), 'units': units});
+  /// Creates a project with its [units], all or nothing, copying its structure when approved from the earlier project [structureSourceId], or from the default template when that is empty.
+  /// Returns an empty string once created, otherwise the word key of the refusal.
+  Future<String> create(String name, DateTime startDate, List<String> units, {String structureSourceId = ''}) => change('/projects', {
+    'name': name,
+    'startDate': startDate.toIso8601String().substring(0, 10),
+    'units': units,
+    if (structureSourceId.isNotEmpty) 'structureSourceId': structureSourceId,
+  });
 
   /// Adds a unit named [name] to [project]. Returns an empty string once added, otherwise the word key of the refusal.
   Future<String> addUnit(Project project, String name) => change('/projects/${project.id}/units', {'name': name});

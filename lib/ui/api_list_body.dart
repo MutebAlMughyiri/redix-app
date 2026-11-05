@@ -5,8 +5,8 @@ import '../words/words.dart';
 
 /// The body of a screen that shows an [ApiList]: why it could not load with a way to try again, loading, empty, or its items.
 class ApiListBody<T> extends StatelessWidget {
-  /// The body of a screen showing [list], with [itemBuilder] drawing each item and [emptyText] said while it has none.
-  const ApiListBody({super.key, required this.list, required this.emptyText, required this.itemBuilder});
+  /// The body of a screen showing [list], with [itemBuilder] drawing each item and [emptyText] said while it has none. A screen whose rows are dragged gives [listOf].
+  const ApiListBody({super.key, required this.list, required this.emptyText, required this.itemBuilder, this.listOf = plainList});
 
   /// The list this body shows.
   final ApiList<T> list;
@@ -16,6 +16,15 @@ class ApiListBody<T> extends StatelessWidget {
 
   /// Draws one item.
   final Widget Function(T item) itemBuilder;
+
+  /// What scrolls the drawn items.
+  final Widget Function(List<Widget> items) listOf;
+
+  /// The space around the items, leaving room for a floating button.
+  static const padding = EdgeInsets.fromLTRB(16, 8, 16, 96);
+
+  /// A list that only scrolls.
+  static Widget plainList(List<Widget> items) => ListView(padding: padding, children: items);
 
   /// The line that says the list could not be read.
   static const messageKey = Key('apiList.message');
@@ -53,7 +62,7 @@ class ApiListBody<T> extends StatelessWidget {
               ),
       );
     }
-    return ListView(padding: const EdgeInsets.fromLTRB(16, 8, 16, 96), children: [for (final item in list.all) itemBuilder(item)]);
+    return listOf([for (final item in list.all) itemBuilder(item)]);
   }
 
   @override
