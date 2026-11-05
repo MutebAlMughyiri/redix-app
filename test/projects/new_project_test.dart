@@ -108,6 +108,19 @@ void main() {
     expect(find.byKey(NewProjectScreen.unitKey(0)), findsOneWidget);
   });
 
+  testWidgets('a unit name the project already has is refused with its own word (BR-37)', (tester) async {
+    final api = FakeApi();
+    await openForm(tester, api);
+    await addUnit(tester, api, 'الفلة الشرقية');
+    await tester.enterText(find.byKey(NewProjectScreen.unitNameKey), 'الفلة الشرقية');
+
+    api.projectAnswer = (status: 400, code: 'unitNameTaken');
+    await submit(tester, api);
+
+    expect(tester.widget<Text>(find.byKey(NewProjectScreen.messageKey)).data, 'en projects.unitNameTaken');
+    expect(find.byKey(NewProjectScreen.unitKey(0)), findsOneWidget);
+  });
+
   testWidgets('without a network the form says so, and nothing typed is lost', (tester) async {
     final api = FakeApi();
     await openForm(tester, api);

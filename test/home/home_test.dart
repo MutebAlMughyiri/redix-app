@@ -189,6 +189,21 @@ void main() {
     expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
   });
 
+  testWidgets('a unit name the project already has stays in the dialog with its reason (BR-37)', (tester) async {
+    final api = FakeApi();
+    api.addProject('غصون 6', units: ['الفلة الغربية']);
+    await openHome(tester, api);
+    await tester.ensureVisible(find.byKey(HomeScreen.addUnitKey('project-0')));
+    await tester.pumpAndSettle();
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addUnitKey('project-0'))));
+
+    api.projectAnswer = (status: 409, code: 'unitNameTaken');
+    await tester.enterText(find.byKey(HomeScreen.unitNameKey), 'الفلة الغربية');
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.saveUnitKey)));
+
+    expect(text(tester, HomeScreen.unitMessageKey), 'en projects.unitNameTaken');
+  });
+
   testWidgets('a project with entries waiting for approval stays open and says why (BR-35)', (tester) async {
     final api = FakeApi();
     api.addProject('غصون 6');

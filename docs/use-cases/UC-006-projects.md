@@ -83,6 +83,7 @@ All go through `Session`, which renews an expired access token once and sends ag
 | A finished project is read-only and stays listed (AC-04.1) | `Project.isFinished`, `ProjectCard`; `Project.IsReadOnly` in the API | `home_test.dart`: a finished project stays listed; Patrol |
 | The list says when it is empty, and when it cannot load | `ApiList.load`, `ApiListBody` | `projects_test.dart`: with no projects yet; without a network |
 | The list is read again after every answer, so someone else's change shows | `ApiList.change` | `home_test.dart`: a project someone else closed |
+| A unit's name that repeats is refused with its own word, on the form and in Add unit (BR-37) | The API; the words `projects.unitNameTaken`, `register.unitNameTaken` | `new_project_test.dart`: a unit name the project already has; `home_test.dart`: a unit name the project already has |
 | A project with entries waiting for approval stays open, and the refusal says why (BR-35) | `showRefusalOf`, the word `projects.pendingEntries` | `home_test.dart`: a project with entries waiting for approval |
 | Arabic names show as typed | `jsonOf` | `projects_test.dart`: Arabic names |
 | AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `my_account_test.dart`: AC-N03, once per language |

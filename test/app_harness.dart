@@ -30,7 +30,7 @@ Map<String, String> wordsIn(String language) => {
     'users.roles', 'users.rolesHint', 'users.roleManager', 'users.roleFinance', 'users.roleField', 'users.roleReader',
     'users.addExisting', 'users.unknownUser', 'users.invalidRole', 'users.lastManager', 'users.otherProject',
     'signIn.registerProject', 'register.hint', 'register.sent', 'register.tooManyTries', 'register.invalidName', 'register.invalidUsername',
-    'register.invalidMobile', 'register.weakPassword', 'register.usernameTaken', 'register.noConnection', 'register.refused',
+    'register.invalidMobile', 'register.unitNameTaken', 'projects.unitNameTaken', 'register.weakPassword', 'register.usernameTaken', 'register.noConnection', 'register.refused',
     'projects.pending', 'projects.rejected', 'registered.title', 'registered.empty', 'registered.loadFailed', 'registered.approve', 'registered.reject',
     'registered.reason', 'registered.invalidReason', 'registered.notPending', 'registered.noConnection', 'registered.refused',
     'myAccount.changePassword', 'myAccount.signOut', 'myAccount.signOutQuestion', 'myAccount.signOutExplain',

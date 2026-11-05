@@ -1058,6 +1058,9 @@ mixin WordGetters {
   /// The word `projects.unitName`.
   String get projectsUnitName => text('projects.unitName');
 
+  /// The word `projects.unitNameTaken`.
+  String get projectsUnitNameTaken => text('projects.unitNameTaken');
+
   /// The word `projects.units`.
   String get projectsUnits => text('projects.units');
 
@@ -1087,6 +1090,9 @@ mixin WordGetters {
 
   /// The word `register.tooManyTries`.
   String get registerTooManyTries => text('register.tooManyTries');
+
+  /// The word `register.unitNameTaken`.
+  String get registerUnitNameTaken => text('register.unitNameTaken');
 
   /// The word `register.usernameTaken`.
   String get registerUsernameTaken => text('register.usernameTaken');
