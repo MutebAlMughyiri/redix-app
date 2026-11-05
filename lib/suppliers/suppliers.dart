@@ -18,6 +18,9 @@ class Suppliers extends ApiList<Supplier> {
   /// What an entry may pick from this register.
   final SupplierSearch search;
 
+  /// The supplier the last add made; none when it made none.
+  Supplier get added => lastAnswer.containsKey('id') ? Supplier.fromJson(lastAnswer) : Supplier.none();
+
   /// The supplier holding the VAT number the last change was refused for; none otherwise.
   Supplier get holder => lastAnswer.containsKey('existing') ? Supplier.fromJson(lastAnswer['existing'] as Map<String, dynamic>) : Supplier.none();
 

@@ -38,6 +38,7 @@ lib/
     vat_number_field.dart   the VAT number, or that there is none, and who already holds it
     supplier_search.dart    SupplierSearch: the ApiList of what the API finds for what was typed
     supplier_picker.dart    the sheet that picks a supplier by name or VAT number
+    quick_add_supplier_dialog.dart  the dialog that adds a missing supplier, or offers the one already holding its number
   projects/
     project.dart            Project and Unit, as the API answers them
     projects.dart           Projects: the ApiList of projects, and its changes

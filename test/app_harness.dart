@@ -62,7 +62,7 @@ Map<String, String> wordsIn(String language) => {
     'suppliers.title', 'suppliers.empty', 'suppliers.loadFailed', 'suppliers.noConnection', 'suppliers.refused', 'suppliers.projectFinished', 'suppliers.invalidName', 'suppliers.invalidVatNumber',
     'suppliers.invalidMobile', 'suppliers.vatNumberTaken', 'suppliers.holder', 'suppliers.unknownItem', 'suppliers.new', 'suppliers.edit', 'suppliers.save', 'suppliers.name', 'suppliers.vatNumber',
     'suppliers.notVatRegistered', 'suppliers.mobile', 'suppliers.defaultItem', 'suppliers.noDefaultItem', 'suppliers.pendingApproval', 'suppliers.disable', 'suppliers.enable', 'suppliers.disabled',
-    'suppliers.pick', 'suppliers.searchHint', 'suppliers.noMatch',
+    'suppliers.pick', 'suppliers.searchHint', 'suppliers.noMatch', 'suppliers.quickAdd', 'suppliers.addAndPick', 'suppliers.pendingHint', 'suppliers.useExisting',
     'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
   ])
     key: '$language $key',
@@ -81,7 +81,10 @@ const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "ke
 const admin = ['approveProjects'];
 
 /// What a project manager who also does the finance may do in a project.
-const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings'];
+const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier'];
+
+/// What someone in the field may do in a project.
+const field = ['readProject', 'addSupplier'];
 
 /// The phone's own fingerprint or face prompt, as the app's tests see it.
 class FakePrompt extends Fake implements FlutterSecureStorage {
@@ -539,7 +542,8 @@ class FakeApi {
     final itemName = [for (final category in categories[segments[1]] ?? const <Map<String, Object>>[]) ...category['items']! as List<Map<String, Object>>].where((item) => item['id'] == defaultItemId).map((item) => item['name']! as String).join();
     switch (segments.sublist(3)) {
       case []:
-        return _json(addSupplier(segments[1], body['name'] as String, vatNumber: vatNumber, mobile: mobile, defaultItemId: defaultItemId, defaultItemName: itemName), 201);
+        final keepsSettings = (projects.singleWhere((project) => project['id'] == segments[1])['permissions']! as List<String>).contains('manageSettings');
+        return _json(addSupplier(segments[1], body['name'] as String, vatNumber: vatNumber, mobile: mobile, defaultItemId: defaultItemId, defaultItemName: itemName, status: keepsSettings ? 'approved' : 'pendingApproval'), 201);
       case [final id, 'disable']:
         list.singleWhere((row) => row['id'] == id)['isActive'] = false;
       case [final id, 'enable']:

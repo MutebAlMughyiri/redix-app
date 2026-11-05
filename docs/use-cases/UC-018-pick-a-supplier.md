@@ -18,7 +18,7 @@
 | That it is pending approval, its VAT number or that it has none, and its default item | `SupplierPicker.detailsKey(id)` | |
 | The list's states | `SupplierPicker.messageKey`, `emptyKey` | Could not read; nothing matches |
 
-The canvas (`SupplierPicker.dc.html`) heads the list "most used"; the API cannot say that until the ledger exists, so the sheet does not claim it. The canvas's new-supplier form is UC-019.
+The canvas (`SupplierPicker.dc.html`) heads the list "most used"; the API cannot say that until the ledger exists, so the sheet does not claim it. The canvas's new-supplier form is UC-019's quick add.
 
 Nothing opens the sheet in this use case: UC-020 opens it from the contract's dialog, and UC-022 from the expense.
 
@@ -46,6 +46,5 @@ Nothing opens the sheet in this use case: UC-020 opens it from the contract's di
 
 | What | Use case |
 | --- | --- |
-| A quick add when the supplier is not found | UC-019 "Quick-add a supplier without leaving the expense" |
 | The caller's most used suppliers first, and the title that says so | UC-022 "Record a purchase expense", once entries name suppliers |
 | Filling the VAT number from a QR code | UC-024 "Fill the expense from the e-invoice QR" |

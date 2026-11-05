@@ -84,6 +84,9 @@ class Project {
   /// Whether the signed-in user may change the project's structure now.
   bool get mayChangeStructure => !isFinished && may(Permission.manageStructure);
 
+  /// Whether the signed-in user may add a supplier to the project's register now.
+  bool get mayAddSupplier => !isFinished && may(Permission.addSupplier);
+
   /// Whether the signed-in user may change the project's settings now.
   bool get mayManageSettings => !isFinished && may(Permission.manageSettings);
 }

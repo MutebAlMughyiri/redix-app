@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -12,6 +13,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/member_picker.dart';
 import 'package:redix/projects/new_project_screen.dart';
+import 'package:redix/projects/project.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
@@ -525,8 +527,12 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(SuppliersScreen.addKey)));
       [SuppliersScreen.supplierNameKey, SuppliersScreen.notVatRegisteredKey, SuppliersScreen.vatNumberKey, SuppliersScreen.mobileKey, SuppliersScreen.defaultItemKey, SuppliersScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
-      await act(tester, api, () async => unawaited(SupplierPicker.show(tester.element(find.byType(SuppliersScreen)), Suppliers(session, runningId))));
-      [SupplierPicker.searchKey, SupplierPicker.closeKey, SupplierPicker.rowKey(supplier), SupplierPicker.detailsKey(supplier)].forEach(expectFits);
+      final project = Project.fromJson(jsonDecode(jsonEncode(running)) as Map<String, dynamic>);
+      await act(tester, api, () async => unawaited(SupplierPicker.show(tester.element(find.byType(SuppliersScreen)), project, Suppliers(session, runningId))));
+      [SupplierPicker.searchKey, SupplierPicker.closeKey, SupplierPicker.rowKey(supplier), SupplierPicker.detailsKey(supplier), SupplierPicker.quickAddKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(SupplierPicker.quickAddKey)));
+      [SuppliersScreen.supplierNameKey, SuppliersScreen.notVatRegisteredKey, SuppliersScreen.vatNumberKey, SuppliersScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byKey(SupplierPicker.closeKey)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 

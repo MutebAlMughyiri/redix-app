@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 
+import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../words/words.dart';
+import 'quick_add_supplier_dialog.dart';
 import 'supplier.dart';
 import 'supplier_search.dart';
 import 'suppliers.dart';
 
-/// Picks a supplier from a project's register (UC-018): a sheet that searches by name or VAT number, so free text never names a supplier (BR-19).
+/// Picks a supplier from a project's register (UC-018): a sheet that searches by name or VAT number, so free text never names a supplier (BR-19), and adds a missing one without leaving what is being entered (UC-019).
 class SupplierPicker extends StatefulWidget {
-  /// The sheet picking from [suppliers].
-  const SupplierPicker({super.key, required this.suppliers});
+  /// The sheet picking from the [suppliers] of [project].
+  const SupplierPicker({super.key, required this.project, required this.suppliers});
+
+  /// The project the register belongs to.
+  final Project project;
 
   /// The register it picks from.
   final Suppliers suppliers;
@@ -19,6 +24,15 @@ class SupplierPicker extends StatefulWidget {
 
   /// The button that closes the sheet without picking.
   static const closeKey = Key('supplierPicker.close');
+
+  /// The button that adds a missing supplier.
+  static const quickAddKey = Key('supplierPicker.quickAdd');
+
+  /// The button that goes on with the supplier already holding the number, in the quick add.
+  static const useExistingKey = Key('supplierPicker.useExisting');
+
+  /// The line that says a new supplier waits for approval, in the quick add.
+  static const pendingHintKey = Key('supplierPicker.pendingHint');
 
   /// The line that says the list could not be read.
   static const messageKey = ApiListBody.messageKey;
@@ -32,14 +46,14 @@ class SupplierPicker extends StatefulWidget {
   /// What the sheet says about the supplier [id].
   static Key detailsKey(String id) => Key('supplierPicker.details.$id');
 
-  /// Opens the sheet over [context], picking from [suppliers]. Answers the supplier picked, with its VAT number, or no supplier when closed without picking.
-  static Future<Supplier> show(BuildContext context, Suppliers suppliers) async =>
+  /// Opens the sheet over [context], picking from the [suppliers] of [project]. Answers the supplier picked, with its VAT number, or no supplier when closed without picking.
+  static Future<Supplier> show(BuildContext context, Project project, Suppliers suppliers) async =>
       await showModalBottomSheet<Supplier>(
         context: context,
         isScrollControlled: true,
         useSafeArea: true,
         showDragHandle: true,
-        builder: (_) => SupplierPicker(suppliers: suppliers),
+        builder: (_) => SupplierPicker(project: project, suppliers: suppliers),
       ) ??
       Supplier.none();
 
@@ -48,12 +62,31 @@ class SupplierPicker extends StatefulWidget {
 }
 
 class _SupplierPickerState extends State<SupplierPicker> {
+  final _typed = TextEditingController();
+
   SupplierSearch get _search => widget.suppliers.search;
 
   @override
   void initState() {
     super.initState();
     _search.openAnew();
+  }
+
+  @override
+  void dispose() {
+    _typed.dispose();
+    super.dispose();
+  }
+
+  Future<void> _quickAdd() async {
+    var picked = Supplier.none();
+    await showDialog<void>(
+      context: context,
+      builder: (_) => QuickAddSupplierDialog(project: widget.project, suppliers: widget.suppliers, typed: _typed.text, onPicked: (supplier) => picked = supplier),
+    );
+    if (picked.id.isNotEmpty && mounted) {
+      Navigator.of(context).pop(picked);
+    }
   }
 
   @override
@@ -78,6 +111,7 @@ class _SupplierPickerState extends State<SupplierPicker> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
                 key: SupplierPicker.searchKey,
+                controller: _typed,
                 onChanged: _search.find,
                 decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: words.suppliersSearchHint, border: const OutlineInputBorder()),
               ),
@@ -95,6 +129,14 @@ class _SupplierPickerState extends State<SupplierPicker> {
                 ),
               ),
             ),
+            if (widget.project.mayAddSupplier)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(key: SupplierPicker.quickAddKey, icon: const Icon(Icons.add), label: Text(words.suppliersQuickAdd), onPressed: _quickAdd),
+                ),
+              ),
           ],
         ),
       ),

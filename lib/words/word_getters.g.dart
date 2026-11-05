@@ -677,6 +677,9 @@ mixin WordGetters {
   /// The word `subgroups.new`.
   String get subgroupsNew => text('subgroups.new');
 
+  /// The word `suppliers.addAndPick`.
+  String get suppliersAddAndPick => text('suppliers.addAndPick');
+
   /// The word `suppliers.defaultItem`.
   String get suppliersDefaultItem => text('suppliers.defaultItem');
 
@@ -734,11 +737,17 @@ mixin WordGetters {
   /// The word `suppliers.pendingApproval`.
   String get suppliersPendingApproval => text('suppliers.pendingApproval');
 
+  /// The word `suppliers.pendingHint`.
+  String get suppliersPendingHint => text('suppliers.pendingHint');
+
   /// The word `suppliers.pick`.
   String get suppliersPick => text('suppliers.pick');
 
   /// The word `suppliers.projectFinished`.
   String get suppliersProjectFinished => text('suppliers.projectFinished');
+
+  /// The word `suppliers.quickAdd`.
+  String get suppliersQuickAdd => text('suppliers.quickAdd');
 
   /// The word `suppliers.refused`.
   String get suppliersRefused => text('suppliers.refused');
@@ -754,6 +763,9 @@ mixin WordGetters {
 
   /// The word `suppliers.unknownItem`.
   String get suppliersUnknownItem => text('suppliers.unknownItem');
+
+  /// The word `suppliers.useExisting`.
+  String get suppliersUseExisting => text('suppliers.useExisting');
 
   /// The word `suppliers.vatNumber`.
   String get suppliersVatNumber => text('suppliers.vatNumber');

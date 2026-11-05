@@ -6,6 +6,10 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | Quick add is a button always at the foot of the sheet, opening a dialog, not a form always open as on the canvas | The canvas's form would leave little of the list at 360 points with the keyboard up, and the issue asks for a button. The button shows whether or not the search found something, as the canvas's form does. Made without Muteb |
+| 2026-11-05 | The quick add also has the Not VAT-registered switch | The issue says it is validated as for any supplier, and a small shop has no number. Made without Muteb; see the findings |
+| 2026-11-05 | A number held by a disabled supplier names it and offers nothing | BR-15 takes a disabled supplier out of entry. Made without Muteb |
+| 2026-11-05 | Field has no way to the sheet yet | Its place is the expense, which is UC-022. No stand-in was built on another screen. Made without Muteb; see the findings |
 | 2026-11-05 | The picker's list has no "most used" title | The canvas heads it الأكثر استخداماً, and the API cannot say so until the ledger exists, so the title would be false. Made without Muteb; see the findings |
 | 2026-11-05 | The picker sends every change of the search field, and the API alone decides what it matches | A second copy of "three letters" in the app could only drift; a stale answer is dropped by `ApiList`. Made without Muteb |
 | 2026-11-05 | `ApiList.pointAt` moves a list to another address, and `load` drops what comes back from the old one | A search is the first list whose address changes, and answers can come back out of order. Made without Muteb |

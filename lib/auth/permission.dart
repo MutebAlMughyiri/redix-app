@@ -16,6 +16,9 @@ enum Permission {
   /// Keep a project's payment methods, VAT rate, accounts and partners.
   manageSettings,
 
+  /// Add a supplier to a project's register; without [manageSettings] it waits for approval.
+  addSupplier,
+
   /// See every partner in a project and their capital, not only their own.
   seeAllCapital,
 }
