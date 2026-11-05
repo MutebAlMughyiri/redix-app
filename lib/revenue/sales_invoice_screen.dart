@@ -182,7 +182,7 @@ class _SalesInvoiceScreenState extends State<SalesInvoiceScreen> {
                 if (_saleId.isEmpty)
                   LabelledChips<Account>(
                     label: words.revenueAccount,
-                    choices: widget.accounts.all.where((account) => account.isActive && account.type != AccountType.partnerPocket),
+                    choices: widget.accounts.bankAndCash,
                     keyOf: (account) => SalesInvoiceScreen.accountKey(account.id),
                     nameOf: (account) => account.name,
                     isChosen: (account) => account.id == _accountId,

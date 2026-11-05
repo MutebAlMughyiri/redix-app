@@ -89,6 +89,8 @@ Map<String, String> wordsIn(String language) => {
     'contractorPayments.overrun', 'contractorPayments.savedOverrun', 'contractorPayments.kind', 'contractorPayments.inside', 'contractorPayments.outside', 'contractorPayments.outsideExplain',
     'contractorPayments.date', 'contractorPayments.receipt', 'contractorPayments.deductionReason', 'contractorPayments.deductionNeedsReason', 'contractorPayments.hasInvoice', 'contractorPayments.invoiceExplain',
     'expenses.split', 'expenses.splitEqual', 'expenses.splitPercent', 'expenses.splitTotal', 'expenses.splitNeedsSharedUnit', 'expenses.invalidSplit',
+    'liquidation.title', 'liquidation.surplus', 'liquidation.deficit', 'liquidation.explain', 'liquidation.deficitExplain', 'liquidation.pending', 'liquidation.payOut', 'liquidation.carry', 'liquidation.date',
+    'liquidation.confirm', 'liquidation.question', 'liquidation.questionExplain', 'liquidation.done', 'liquidation.distributed', 'liquidation.nothing', 'capital.pendingEntries', 'capital.incompleteLiquidation',
     'reports.units', 'reports.unitDirect', 'reports.unitFromShared', 'reports.unsplit', 'reports.surplus',
     'expenses.creditNote', 'expenses.creditNoteExplain', 'expenses.originalInvoice', 'expenses.noOriginalInvoice', 'expenses.noCreditableInvoice', 'expenses.returnable', 'expenses.loadFailed',
     'expenses.creditNoteAboveOriginal', 'expenses.unknownOriginalInvoice', 'expenses.creditNoteNeedsInvoice', 'expenses.deductionNeedsReason',
@@ -495,6 +497,9 @@ class FakeApi {
 
   /// What an item's report answers.
   var itemReportAnswer = <String, Object>{'itemName': 'البلاط', 'categoryName': 'التشطيب', 'total': 0, 'columns': <String>[], 'subgroups': <Map<String, Object>>[], 'contracts': <Map<String, Object>>[]};
+
+  /// What the project's liquidation answers.
+  var liquidationAnswer = <String, Object>{'surplus': 0, 'pendingCount': 0, 'parts': <Map<String, Object>>[], 'distributed': <Map<String, Object>>[]};
 
   /// What each unit has cost, as the units report answers it.
   var unitTotalsAnswer = <Map<String, Object>>[];
@@ -1396,7 +1401,10 @@ class FakeApi {
     if (segments.length == 4 && segments[2] == 'reconciliations' && segments[3] == 'latest') {
       return _json(reconciliationAnswer, 200);
     }
-    if (segments.length >= 3 && const ['transfers', 'reconciliations', 'capital-movements', 'revenue', 'sales-invoices', 'completion'].contains(segments[2]) || (segments.length == 5 && const ['partner-treatment', 'vat-period'].contains(segments[4]))) {
+    if (segments.length == 3 && segments[2] == 'liquidation' && request.method == 'GET') {
+      return _json(liquidationAnswer, 200);
+    }
+    if (segments.length >= 3 && const ['transfers', 'reconciliations', 'capital-movements', 'revenue', 'sales-invoices', 'completion', 'liquidation'].contains(segments[2]) || (segments.length == 5 && const ['partner-treatment', 'vat-period'].contains(segments[4]))) {
       sentMoney.add((request.url.path, jsonDecode(request.body) as Map<String, dynamic>));
       return _json(moneyAnswer.status < 300 ? const <String, Object>{} : {'code': moneyAnswer.code}, moneyAnswer.status);
     }

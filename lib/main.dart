@@ -28,6 +28,8 @@ import 'expenses/expenses.dart';
 import 'home/home_screen.dart';
 import 'partners/capital.dart';
 import 'partners/capital_move_screen.dart';
+import 'partners/liquidation.dart';
+import 'partners/liquidation_screen.dart';
 import 'partners/capital_movements.dart';
 import 'partners/movements_screen.dart';
 import 'partners/partners.dart';
@@ -308,6 +310,17 @@ class _RedixAppState extends State<RedixApp> {
           partnerName: state.uri.queryParameters['name'] ?? '',
           movements: CapitalMovements(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['partnerId'] ?? ''),
           capital: _capitalOf(state.pathParameters['projectId'] ?? ''),
+        ),
+      ),
+      GoRoute(
+        path: LiquidationScreen.path,
+        builder: (context, state) => LiquidationScreen(
+          project: state.extra! as Project,
+          liquidation: Liquidation(widget.session, state.pathParameters['projectId'] ?? ''),
+          projects: _projects,
+          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
+          partnersOf: _partnersOf,
+          accountsOf: _accountsOf,
         ),
       ),
       GoRoute(

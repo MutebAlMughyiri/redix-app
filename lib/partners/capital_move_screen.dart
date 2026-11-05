@@ -187,8 +187,6 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
 
   List<Project> get _otherProjects => widget.projects.all.where((project) => project.id != widget.project.id && project.mayMoveMoney).toList();
 
-  List<Account> _realAccounts(Accounts accounts) => accounts.all.where((account) => account.isActive && account.type != AccountType.partnerPocket).toList();
-
   void _chooseType(MoveType type) {
     setState(() {
       _type = type;
@@ -340,7 +338,7 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
               ),
               LabelledChips<Account>(
                 label: words.capitalTargetAccount,
-                choices: _realAccounts(widget.accountsOf(_targetProjectId)),
+                choices: widget.accountsOf(_targetProjectId).bankAndCash,
                 keyOf: (account) => CapitalMoveScreen.targetAccountKey(account.id),
                 nameOf: (account) => account.name,
                 isChosen: (account) => account.id == _targetAccountId,
@@ -401,7 +399,7 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
               PickerField(key: CapitalMoveScreen.dateKey, label: words.capitalDate, value: formatDate(_date), onTap: _chooseDate),
               LabelledChips<Account>(
                 label: words.capitalAccount,
-                choices: _realAccounts(widget.accounts),
+                choices: widget.accounts.bankAndCash,
                 keyOf: (account) => CapitalMoveScreen.accountKey(account.id),
                 nameOf: (account) => account.name,
                 isChosen: (account) => account.id == _accountId,

@@ -11,6 +11,7 @@ import '../contractor_payments/contractor_payment_screen.dart';
 import '../contracts/contracts_screen.dart';
 import '../expenses/add_expense_screen.dart';
 import '../partners/partners_screen.dart';
+import '../partners/liquidation_screen.dart';
 import '../reports/reports_screen.dart';
 import '../revenue/revenue_screen.dart';
 import '../approvals/approvals_screen.dart';
@@ -201,6 +202,9 @@ class HomeScreen extends StatefulWidget {
 
   /// The button that closes the running project [id].
   static Key closeKey(String id) => Key('home.close.$id');
+
+  /// The way into the liquidation of the project [id].
+  static Key liquidateKey(String id) => Key('home.liquidate.$id');
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -404,6 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
                     onRevenue: () => _open(RevenueScreen.pathOf(project.id), project),
                     onReports: () => _open(ReportsScreen.pathOf(project.id), project),
+                    onLiquidate: () => _open(LiquidationScreen.pathOf(project.id), project),
                     onAddUnit: () => _askForUnit(project),
                     onRename: () => _askToRename(project),
                     onRenameUnit: (unit) => _askToRenameUnit(project, unit),

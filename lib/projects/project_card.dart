@@ -9,7 +9,7 @@ import 'unit_row.dart';
 
 /// The open project: the signed-in user's roles in it, its start date, status and units, with what those roles allow: Users, Categories and items, Payment methods, Accounts, Partners, Suppliers, Contracts, and Add unit and Close project while it runs.
 class ProjectCard extends StatelessWidget {
-  /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAccounts], [onPartners], [onSuppliers], [onContracts], [onAddUnit], [onRename], [onRenameUnit], [onDeleteUnit] and [onClose] when those are tapped.
+  /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAccounts], [onPartners], [onSuppliers], [onContracts], [onLiquidate], [onAddUnit], [onRename], [onRenameUnit], [onDeleteUnit] and [onClose] when those are tapped.
   const ProjectCard({
     super.key,
     required this.project,
@@ -23,6 +23,7 @@ class ProjectCard extends StatelessWidget {
     required this.onApprovals,
     required this.onRevenue,
     required this.onReports,
+    required this.onLiquidate,
     required this.onAddUnit,
     required this.onRename,
     required this.onRenameUnit,
@@ -62,6 +63,9 @@ class ProjectCard extends StatelessWidget {
 
   /// Called when Reports is tapped.
   final VoidCallback onReports;
+
+  /// Called when Liquidate and close is tapped.
+  final VoidCallback onLiquidate;
 
   /// Called when Add unit is tapped.
   final VoidCallback onAddUnit;
@@ -192,6 +196,13 @@ class ProjectCard extends StatelessWidget {
                     icon: const Icon(Icons.fact_check_outlined),
                     label: Text(words.approvalsTitle),
                     onPressed: onApprovals,
+                  ),
+                if (project.may(Permission.moveMoney))
+                  TextButton.icon(
+                    key: HomeScreen.liquidateKey(project.id),
+                    icon: const Icon(Icons.request_quote_outlined),
+                    label: Text(words.liquidationTitle),
+                    onPressed: onLiquidate,
                   ),
                 if (mayChange) ...[
                   TextButton.icon(

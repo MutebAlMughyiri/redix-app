@@ -182,7 +182,7 @@ class _RevenueFormScreenState extends State<RevenueFormScreen> {
               PickerField(label: words.revenueDate, value: formatDate(_date), onTap: _chooseDate),
               LabelledChips<Account>(
                 label: words.revenueAccount,
-                choices: widget.accounts.all.where((account) => account.isActive && account.type != AccountType.partnerPocket),
+                choices: widget.accounts.bankAndCash,
                 keyOf: (account) => RevenueFormScreen.accountKey(account.id),
                 nameOf: (account) => account.name,
                 isChosen: (account) => account.id == _accountId,
