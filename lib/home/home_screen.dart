@@ -21,6 +21,7 @@ import '../suppliers/suppliers_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
+import '../ui/name_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../users/users_screen.dart';
 import '../words/words.dart';
@@ -135,6 +136,18 @@ class HomeScreen extends StatefulWidget {
   /// The button that adds a unit to the running project [id].
   static Key addUnitKey(String id) => Key('home.addUnit.$id');
 
+  /// The button that renames the running project [id].
+  static Key renameKey(String id) => Key('home.rename.$id');
+
+  /// The menu of the unit [id].
+  static Key unitMenuKey(String id) => Key('home.unitMenu.$id');
+
+  /// The way to rename a unit, in its menu.
+  static const renameUnitKey = Key('home.renameUnit');
+
+  /// The way to delete a unit, in its menu.
+  static const deleteUnitKey = Key('home.deleteUnit');
+
   /// The button that closes the running project [id].
   static Key closeKey(String id) => Key('home.close.$id');
 
@@ -188,6 +201,48 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog<void>(
       context: context,
       builder: (_) => AddUnitDialog(project: project, projects: widget.projects),
+    );
+  }
+
+  void _askToRename(Project project) {
+    final words = Words.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (_) => NameDialog(
+        title: words.projectsRename,
+        label: words.projectsName,
+        saveLabel: words.projectsSave,
+        name: project.name,
+        onSave: (name) => widget.projects.rename(project, name),
+      ),
+    );
+  }
+
+  void _askToRenameUnit(Project project, Unit unit) {
+    final words = Words.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (_) => NameDialog(
+        title: words.projectsRenameUnit,
+        label: words.projectsUnitName,
+        saveLabel: words.projectsSave,
+        name: unit.name,
+        onSave: (name) => widget.projects.renameUnit(project, unit, name),
+      ),
+    );
+  }
+
+  void _askToDeleteUnit(Project project, Unit unit) {
+    final words = Words.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (_) => ConfirmDialog(
+        title: words.projectsRemoveUnitQuestion,
+        subject: unit.name,
+        explanation: words.projectsRemoveUnitExplain,
+        confirmLabel: words.projectsRemoveUnit,
+        onConfirm: () => showRefusalOf(context, widget.projects.deleteUnit(project, unit)),
+      ),
     );
   }
 
@@ -264,6 +319,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     onSuppliers: () => context.push(SuppliersScreen.pathOf(project.id), extra: project),
                     onContracts: () => context.push(ContractsScreen.pathOf(project.id), extra: project),
                     onAddUnit: () => _askForUnit(project),
+                    onRename: () => _askToRename(project),
+                    onRenameUnit: (unit) => _askToRenameUnit(project, unit),
+                    onDeleteUnit: (unit) => _askToDeleteUnit(project, unit),
                     onClose: () => _askToClose(project),
                   ),
                 ],

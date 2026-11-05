@@ -5,10 +5,11 @@ import '../format/date_format.dart';
 import '../home/home_screen.dart';
 import '../words/words.dart';
 import 'project.dart';
+import 'unit_row.dart';
 
 /// The open project: the signed-in user's roles in it, its start date, status and units, with what those roles allow: Users, Categories and items, Payment methods, Accounts, Partners, Suppliers, Contracts, and Add unit and Close project while it runs.
 class ProjectCard extends StatelessWidget {
-  /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAccounts], [onPartners], [onSuppliers], [onContracts], [onAddUnit] and [onClose] when those are tapped.
+  /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAccounts], [onPartners], [onSuppliers], [onContracts], [onAddUnit], [onRename], [onRenameUnit], [onDeleteUnit] and [onClose] when those are tapped.
   const ProjectCard({
     super.key,
     required this.project,
@@ -20,6 +21,9 @@ class ProjectCard extends StatelessWidget {
     required this.onSuppliers,
     required this.onContracts,
     required this.onAddUnit,
+    required this.onRename,
+    required this.onRenameUnit,
+    required this.onDeleteUnit,
     required this.onClose,
   });
 
@@ -49,6 +53,15 @@ class ProjectCard extends StatelessWidget {
 
   /// Called when Add unit is tapped.
   final VoidCallback onAddUnit;
+
+  /// Called when Rename project is tapped.
+  final VoidCallback onRename;
+
+  /// Called when a unit's Rename is chosen.
+  final void Function(Unit unit) onRenameUnit;
+
+  /// Called when a unit's Delete is chosen.
+  final void Function(Unit unit) onDeleteUnit;
 
   /// Called when Close project is tapped.
   final VoidCallback onClose;
@@ -97,7 +110,7 @@ class ProjectCard extends StatelessWidget {
           ),
           const Divider(height: 1),
           if (project.units.isEmpty) ListTile(dense: true, title: Text(words.projectsNoUnits, key: HomeScreen.noUnitsKey(project.id))),
-          for (final unit in project.units) ListTile(dense: true, title: Text(unit.name, key: HomeScreen.unitKey(unit.id))),
+          for (final unit in project.units) UnitRow(unit: unit, mayChange: mayChange, onRename: () => onRenameUnit(unit), onDelete: () => onDeleteUnit(unit)),
           const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -156,6 +169,12 @@ class ProjectCard extends StatelessWidget {
                     icon: const Icon(Icons.add),
                     label: Text(words.projectsAddUnit),
                     onPressed: onAddUnit,
+                  ),
+                  TextButton.icon(
+                    key: HomeScreen.renameKey(project.id),
+                    icon: const Icon(Icons.edit_outlined),
+                    label: Text(words.projectsRename),
+                    onPressed: onRename,
                   ),
                   TextButton(
                     key: HomeScreen.closeKey(project.id),

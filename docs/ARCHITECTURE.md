@@ -80,6 +80,7 @@ lib/
     project_choice.dart     one project on the list
     project_card.dart       the open project, on its home
     add_unit_dialog.dart    the Add unit dialog
+    unit_row.dart           one unit on the project's home, with its menu
     member.dart             Member: someone in a project, as a person choosing among them sees them
     members.dart            Members: the ApiList of one project's active people
     member_picker.dart      the field that chooses someone in a project, or nobody

@@ -30,6 +30,14 @@
 | Unit name | `HomeScreen.unitNameKey` | In the Add unit dialog |
 | Add unit, in the dialog | `HomeScreen.saveUnitKey` | Sends the unit; disabled while waiting |
 | Message, in the dialog | `HomeScreen.unitMessageKey` | One line saying why the unit was refused |
+| Rename project | `HomeScreen.renameKey(id)` | Running projects, with `manageProject`: asks for the name, starting from the current one (BR-38) |
+| A unit's menu | `HomeScreen.unitMenuKey(id)` | Running projects, with `manageProject`; the shared unit is not on the list |
+| Rename unit, in the menu | `HomeScreen.renameUnitKey` | Asks for the name, starting from the current one |
+| Delete unit, in the menu | `HomeScreen.deleteUnitKey` | Asks first, naming the unit; a unit in use stays and the refusal says why |
+| The name, in the rename dialogs | `NameDialog.nameKey` | |
+| Save, in the rename dialogs | `ChangeDialog.saveKey` | Sends the name; a refusal stays in the dialog (`ChangeDialog.messageKey`) |
+| The unit's name, in the delete question | `ConfirmDialog.subjectKey` | Which unit is being deleted |
+| Delete unit, in the question | `ConfirmDialog.confirmKey` | Deletes the unit |
 | Close project | `HomeScreen.closeKey(id)` | Running projects only: asks first |
 | The project's name, in the question | `HomeScreen.closeNameKey` | Which project is being closed |
 | What closing means, in the question | `HomeScreen.closeExplainKey` | It becomes read-only, and this cannot be undone |
@@ -60,6 +68,9 @@ New project, `NewProjectScreen` at `/projects/new`:
 | `GET /projects` | Opening Projects, Try again, and after every answer to a change |
 | `POST /projects` | Create project: the name, the start date and the units, at once |
 | `POST /projects/{projectId}/units` | Add unit |
+| `POST /projects/{projectId}` | Rename project |
+| `POST /projects/{projectId}/units/{unitId}` | Rename unit |
+| `POST /projects/{projectId}/units/{unitId}/delete` | Delete unit, once confirmed |
 | `POST /projects/{projectId}/close` | Close project, once confirmed |
 
 All go through `Session`, which renews an expired access token once and sends again. Nothing about projects is kept on the phone, so these screens need a network.
@@ -84,6 +95,10 @@ All go through `Session`, which renews an expired access token once and sends ag
 | The list says when it is empty, and when it cannot load | `ApiList.load`, `ApiListBody` | `projects_test.dart`: with no projects yet; without a network |
 | The list is read again after every answer, so someone else's change shows | `ApiList.change` | `home_test.dart`: a project someone else closed |
 | A unit's name that repeats is refused with its own word, on the form and in Add unit (BR-37) | The API; the words `projects.unitNameTaken`, `register.unitNameTaken` | `new_project_test.dart`: a unit name the project already has; `home_test.dart`: a unit name the project already has |
+| Whoever holds `manageProject` renames the open project and its units, each starting from the current name (BR-38) | `Projects.rename`, `Projects.renameUnit`, `NameDialog` | `home_test.dart`: whoever manages the project renames it; a unit is renamed from its menu |
+| A name another unit holds stays in the dialog with its reason (BR-37) | `ChangeDialog` | `home_test.dart`: a name another unit holds |
+| A unit is deleted only after asking, naming it; one in use stays and the refusal says why (BR-38) | `Projects.deleteUnit`, `ConfirmDialog`, `showRefusalOf` | `home_test.dart`: a unit is deleted from its menu; a unit that entries or contracts use |
+| The shared unit is not on the list, and nothing offers a change without `manageProject` or in a finished project | `Project.units`, `ProjectCard` | `home_test.dart`: the shared unit is not on the list; without manageProject |
 | A project with entries waiting for approval stays open, and the refusal says why (BR-35) | `showRefusalOf`, the word `projects.pendingEntries` | `home_test.dart`: a project with entries waiting for approval |
 | Arabic names show as typed | `jsonOf` | `projects_test.dart`: Arabic names |
 | AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `my_account_test.dart`: AC-N03, once per language |

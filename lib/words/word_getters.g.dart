@@ -1046,14 +1046,35 @@ mixin WordGetters {
   /// The word `projects.removeUnit`.
   String get projectsRemoveUnit => text('projects.removeUnit');
 
+  /// The word `projects.removeUnitExplain`.
+  String get projectsRemoveUnitExplain => text('projects.removeUnitExplain');
+
+  /// The word `projects.removeUnitQuestion`.
+  String get projectsRemoveUnitQuestion => text('projects.removeUnitQuestion');
+
+  /// The word `projects.rename`.
+  String get projectsRename => text('projects.rename');
+
+  /// The word `projects.renameUnit`.
+  String get projectsRenameUnit => text('projects.renameUnit');
+
   /// The word `projects.running`.
   String get projectsRunning => text('projects.running');
+
+  /// The word `projects.save`.
+  String get projectsSave => text('projects.save');
+
+  /// The word `projects.sharedUnit`.
+  String get projectsSharedUnit => text('projects.sharedUnit');
 
   /// The word `projects.startDate`.
   String get projectsStartDate => text('projects.startDate');
 
   /// The word `projects.structureSource`.
   String get projectsStructureSource => text('projects.structureSource');
+
+  /// The word `projects.unitInUse`.
+  String get projectsUnitInUse => text('projects.unitInUse');
 
   /// The word `projects.unitName`.
   String get projectsUnitName => text('projects.unitName');

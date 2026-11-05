@@ -353,6 +353,8 @@ void main() {
         HomeScreen.statusKey(runningId),
         HomeScreen.usersKey(runningId),
         HomeScreen.addUnitKey(runningId),
+        HomeScreen.renameKey(runningId),
+        HomeScreen.unitMenuKey('$runningId-unit-0'),
         HomeScreen.closeKey(runningId),
       ].forEach(expectFits);
 
@@ -368,6 +370,7 @@ void main() {
       final boneId = bone['id'] as String;
       final tilesId = tiles['id'] as String;
       await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey(runningId)));
+      await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey(runningId))));
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.categoryTileKey(boneId))));
       [

@@ -16,6 +16,15 @@ class Projects extends ApiList<Project> {
     if (structureSourceId.isNotEmpty) 'structureSourceId': structureSourceId,
   });
 
+  /// Names [project] [name]. Returns an empty string once named, otherwise the word key of the refusal.
+  Future<String> rename(Project project, String name) => change('/projects/${project.id}', {'name': name});
+
+  /// Names the [unit] of [project] [name]. Returns an empty string once named, otherwise the word key of the refusal.
+  Future<String> renameUnit(Project project, Unit unit, String name) => change('/projects/${project.id}/units/${unit.id}', {'name': name});
+
+  /// Deletes the [unit] of [project], which nothing may use. Returns an empty string once deleted, otherwise the word key of the refusal.
+  Future<String> deleteUnit(Project project, Unit unit) => change('/projects/${project.id}/units/${unit.id}/delete', {});
+
   /// Adds a unit named [name] to [project]. Returns an empty string once added, otherwise the word key of the refusal.
   Future<String> addUnit(Project project, String name) => change('/projects/${project.id}/units', {'name': name});
 

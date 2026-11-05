@@ -3,6 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/ui/name_dialog.dart';
 
 import '../app_harness.dart';
 
@@ -202,6 +205,115 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.saveUnitKey)));
 
     expect(text(tester, HomeScreen.unitMessageKey), 'en projects.unitNameTaken');
+  });
+
+  Future<void> tapInHome(WidgetTester tester, FakeApi api, Key key) async {
+    await tester.ensureVisible(find.byKey(key));
+    await tester.pumpAndSettle();
+    await act(tester, api, () => tester.tap(find.byKey(key)));
+  }
+
+  Future<void> chooseInUnitMenu(WidgetTester tester, FakeApi api, String unitId, Key item) async {
+    await tapInHome(tester, api, HomeScreen.unitMenuKey(unitId));
+    await act(tester, api, () => tester.tap(find.byKey(item)));
+  }
+
+  testWidgets('whoever manages the project renames it, starting from its name, and the title follows (BR-38)', (tester) async {
+    final api = FakeApi();
+    api.addProject('غصون 6');
+    await openHome(tester, api);
+
+    await tapInHome(tester, api, HomeScreen.renameKey('project-0'));
+    expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).controller!.text, 'غصون 6');
+    await tester.enterText(find.byKey(NameDialog.nameKey), 'غصون السادس');
+    await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
+
+    expect(api.sentProjectChanges.single.$1, '/projects/project-0');
+    expect(api.sentProjectChanges.single.$2['name'], 'غصون السادس');
+    expect(text(tester, HomeScreen.titleKey), 'غصون السادس');
+  });
+
+  testWidgets('a unit is renamed from its menu, starting from its name (BR-38)', (tester) async {
+    final api = FakeApi();
+    api.addProject('غصون 6', units: ['الفلة الغربية']);
+    await openHome(tester, api);
+
+    await chooseInUnitMenu(tester, api, 'project-0-unit-0', HomeScreen.renameUnitKey);
+    expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).controller!.text, 'الفلة الغربية');
+    await tester.enterText(find.byKey(NameDialog.nameKey), 'الفلة الجنوبية');
+    await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
+
+    expect(api.sentProjectChanges.single.$1, '/projects/project-0/units/project-0-unit-0');
+    expect(api.sentProjectChanges.single.$2['name'], 'الفلة الجنوبية');
+    expect(text(tester, HomeScreen.unitKey('project-0-unit-0')), 'الفلة الجنوبية');
+  });
+
+  testWidgets('a name another unit holds stays in the rename dialog with its reason (BR-37)', (tester) async {
+    final api = FakeApi();
+    api.addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الشرقية']);
+    await openHome(tester, api);
+    await chooseInUnitMenu(tester, api, 'project-0-unit-0', HomeScreen.renameUnitKey);
+
+    api.projectAnswer = (status: 409, code: 'unitNameTaken');
+    await tester.enterText(find.byKey(NameDialog.nameKey), 'الفلة الشرقية');
+    await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
+
+    expect(text(tester, ChangeDialog.messageKey), 'en projects.unitNameTaken');
+  });
+
+  testWidgets('a unit is deleted from its menu only after asking, naming it (BR-38)', (tester) async {
+    final api = FakeApi();
+    api.addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الشرقية']);
+    await openHome(tester, api);
+
+    await chooseInUnitMenu(tester, api, 'project-0-unit-0', HomeScreen.deleteUnitKey);
+    expect(text(tester, ConfirmDialog.subjectKey), 'الفلة الغربية');
+    expect(text(tester, ConfirmDialog.explanationKey), 'en projects.removeUnitExplain');
+    expect(api.sentProjectChanges, isEmpty);
+    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
+
+    expect(api.sentProjectChanges.single.$1, '/projects/project-0/units/project-0-unit-0/delete');
+    expect(find.byKey(HomeScreen.unitKey('project-0-unit-0')), findsNothing);
+    expect(find.byKey(HomeScreen.unitKey('project-0-unit-1')), findsOneWidget);
+  });
+
+  testWidgets('a unit that entries or contracts use stays, and the refusal says why (BR-38)', (tester) async {
+    final api = FakeApi();
+    api.addProject('غصون 6', units: ['الفلة الغربية']);
+    await openHome(tester, api);
+    await chooseInUnitMenu(tester, api, 'project-0-unit-0', HomeScreen.deleteUnitKey);
+
+    api.projectAnswer = (status: 409, code: 'unitInUse');
+    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
+
+    expect(find.text('en projects.unitInUse'), findsOneWidget);
+    expect(find.byKey(HomeScreen.unitKey('project-0-unit-0')), findsOneWidget);
+  });
+
+  testWidgets('the shared unit is not on the list, so nothing offers to change it (BR-38)', (tester) async {
+    final api = FakeApi();
+    api.addProject('غصون 6', units: ['الفلة الغربية']);
+    await openHome(tester, api);
+
+    expect(find.text('مشترك'), findsNothing);
+    expect(find.byKey(HomeScreen.unitMenuKey('project-0-unit-shared')), findsNothing);
+  });
+
+  testWidgets('without manageProject, or in a finished project, nothing offers a rename or a deletion (BR-38)', (tester) async {
+    final api = FakeApi();
+    api.addProject('غصون 6', units: ['الفلة الغربية'], permissions: field);
+    api.addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
+    await openHome(tester, api);
+
+    expect(find.byKey(HomeScreen.renameKey('project-0')), findsNothing);
+    expect(find.byKey(HomeScreen.unitMenuKey('project-0-unit-0')), findsNothing);
+
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await tester.ensureVisible(find.byKey(ProjectsScreen.cardKey('project-1')));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
+
+    expect(find.byKey(HomeScreen.renameKey('project-1')), findsNothing);
+    expect(find.byKey(HomeScreen.unitMenuKey('project-1-unit-0')), findsNothing);
   });
 
   testWidgets('a project with entries waiting for approval stays open and says why (BR-35)', (tester) async {

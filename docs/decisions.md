@@ -6,6 +6,7 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | A project and a unit are renamed through `NameDialog` on the project's home, and a unit is deleted from a menu on its row, asking first | Row 30 asks for the project's own screen, for whoever holds `manageProject`. `NameDialog` is already the one dialog for a name. Findings row 30. |
 | 2026-11-05 | A change dialog's content starts 8 points down | Its first field's floating label was cut off by the scrolling edge whenever the field held a value. Findings row 102 thought only the picture had this; with the keyboard closed it still showed, so a person met it too. Fixed in `ChangeDialog`, for every dialog built on it |
 | 2026-11-05 | What remains after a payment counts what waits for approval; the contract's card shows only what was approved, with what waits beside it | The API's rule. A person paying has to see money already promised. Made without Muteb |
 | 2026-11-05 | The screen does not open the camera by itself | The canvas draws two buttons, and a deduction has no receipt. A purchase's invoice comes first; here the contract does. Made without Muteb |

@@ -37,7 +37,7 @@ Map<String, String> wordsIn(String language) => {
     'settings.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.running',
     'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
     'projects.unitName', 'projects.addUnit', 'projects.removeUnit', 'projects.create', 'common.cancel', 'projects.close',
-    'projects.closeQuestion', 'projects.closeExplain', 'projects.pendingEntries', 'projects.invalidName', 'projects.projectFinished', 'projects.noConnection',
+    'projects.closeQuestion', 'projects.closeExplain', 'projects.pendingEntries', 'projects.unitInUse', 'projects.sharedUnit', 'projects.rename', 'projects.renameUnit', 'projects.removeUnitQuestion', 'projects.removeUnitExplain', 'projects.save', 'projects.invalidName', 'projects.projectFinished', 'projects.noConnection',
     'projects.refused',
     'users.title', 'users.new', 'users.loadFailed', 'users.disabled', 'users.edit', 'users.resetPassword', 'users.disable',
     'users.enable', 'users.name', 'users.nameHint', 'users.username', 'users.mobile', 'users.temporaryPassword',
@@ -1048,15 +1048,23 @@ class FakeApi {
       return _json(addProject(body['name'] as String, startDate: body['startDate'] as String, units: (body['units'] as List<dynamic>).cast<String>()), 201);
     }
     final project = projects.singleWhere((project) => project['id'] == request.url.pathSegments[1]);
+    final units = project['units'] as List<Map<String, String>>;
+    final entryUnits = project['entryUnits']! as List<Map<String, String>>;
     if (path.endsWith('/close')) {
       project['status'] = 'finished';
     } else if (path.endsWith('/vat-rate')) {
       project['vatPercent'] = body['vatPercent'] as double;
+    } else if (segments.length == 2) {
+      project['name'] = body['name'] as String;
+    } else if (path.endsWith('/delete')) {
+      units.removeWhere((unit) => unit['id'] == segments[3]);
+      entryUnits.removeWhere((unit) => unit['id'] == segments[3]);
+    } else if (segments.length == 4) {
+      units.singleWhere((unit) => unit['id'] == segments[3])['name'] = body['name'] as String;
     } else {
-      final units = project['units'] as List<Map<String, String>>;
       final unit = {'id': '${project['id']}-unit-${units.length}', 'name': body['name'] as String};
       units.add(unit);
-      (project['entryUnits']! as List<Map<String, String>>).insert(units.length - 1, unit);
+      entryUnits.insert(units.length - 1, unit);
     }
     return _json(project, 200);
   }
