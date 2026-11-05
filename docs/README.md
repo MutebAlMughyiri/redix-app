@@ -61,5 +61,6 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-021](use-cases/UC-021-capture-invoice.md) | Photograph an invoice, cropped and under 1 MB, and keep a contract's document | Whoever may enter an expense; Finance for a contract |
 | [UC-022](use-cases/UC-022-expense-details.md) | Enter a purchase expense, and send it or save it as a draft | Finance and Field |
 | [UC-024](use-cases/UC-024-invoice-qr.md) | Fill an expense from the e-invoice's QR code in its picture | Whoever enters an expense |
+| [UC-025](use-cases/UC-025-expense-without-invoice.md) | Send an expense that has no invoice, with the reason | Whoever enters an expense |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

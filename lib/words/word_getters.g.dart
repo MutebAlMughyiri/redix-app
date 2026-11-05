@@ -515,6 +515,9 @@ mixin WordGetters {
   /// The word `expenses.afterDiscount`.
   String get expensesAfterDiscount => text('expenses.afterDiscount');
 
+  /// The word `expenses.amount`.
+  String get expensesAmount => text('expenses.amount');
+
   /// The word `expenses.amountBeforeVat`.
   String get expensesAmountBeforeVat => text('expenses.amountBeforeVat');
 
@@ -590,8 +593,14 @@ mixin WordGetters {
   /// The word `expenses.invalidUnitPrice`.
   String get expensesInvalidUnitPrice => text('expenses.invalidUnitPrice');
 
+  /// The word `expenses.invalidWithoutInvoiceReason`.
+  String get expensesInvalidWithoutInvoiceReason => text('expenses.invalidWithoutInvoiceReason');
+
   /// The word `expenses.invoiceAlreadyAttached`.
   String get expensesInvoiceAlreadyAttached => text('expenses.invoiceAlreadyAttached');
+
+  /// The word `expenses.invoiceAndReason`.
+  String get expensesInvoiceAndReason => text('expenses.invoiceAndReason');
 
   /// The word `expenses.invoiceDate`.
   String get expensesInvoiceDate => text('expenses.invoiceDate');
@@ -718,6 +727,12 @@ mixin WordGetters {
 
   /// The word `expenses.vat`.
   String get expensesVat => text('expenses.vat');
+
+  /// The word `expenses.withoutInvoice`.
+  String get expensesWithoutInvoice => text('expenses.withoutInvoice');
+
+  /// The word `expenses.withoutInvoiceReason`.
+  String get expensesWithoutInvoiceReason => text('expenses.withoutInvoiceReason');
 
   /// The word `myAccount.arabic`.
   String get myAccountArabic => text('myAccount.arabic');

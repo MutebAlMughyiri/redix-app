@@ -603,6 +603,10 @@ void main() {
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.paymentDiffersKey)));
       [AddExpenseScreen.paymentDateKey, AddExpenseScreen.paymentAmountKey, AddExpenseScreen.bankFeesKey].forEach(expectFits);
+      await tester.ensureVisible(find.byKey(AddExpenseScreen.withoutInvoiceKey));
+      await tester.pumpAndSettle();
+      await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.withoutInvoiceKey)));
+      [AddExpenseScreen.withoutInvoiceKey, AddExpenseScreen.withoutInvoiceReasonKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await tester.ensureVisible(find.byKey(HomeScreen.usersKey(runningId)));

@@ -14,6 +14,7 @@
 | Photograph the invoice | The camera opens by itself. Line up the invoice and take it; it is cropped and made smaller for you. **Take again** replaces it. |
 | Use a file instead | Tap **Pick from files** for a picture or a PDF. |
 | Fill from the QR code | If the picture holds the e-invoice's QR code, the seller, VAT number, date and amount fill in, and the supplier with that number is chosen. Check them. |
+| Record an expense with no invoice | Turn on **Without an invoice** and say why. The invoice's fields leave the form; enter the amount and the payment date. It has no VAT, and Finance sees it among the exceptions. |
 | Enter the amount | Choose **Including VAT** or **Before VAT** and type the amount, or leave it empty and type the unit price and quantity. A unit price always includes VAT. The amounts below follow as you type. |
 | Say the invoice has no VAT | Turn on **This invoice is not taxable**. A supplier not VAT-registered has no VAT by itself. |
 | Choose how it was paid | Choose the source, the account and the payment method. You see only the accounts you may pay from. |
@@ -28,7 +29,8 @@ If the same supplier and invoice number were already entered, you see the earlie
 | Message | Meaning |
 | --- | --- |
 | This invoice looks entered already | The same supplier and number exist; see above. |
-| Add the invoice's picture or PDF before sending. | Sending needs the invoice. |
+| Add the invoice's picture or PDF before sending. | Sending needs the invoice, or **Without an invoice** with the reason. |
+| Say why there is no invoice, in up to 500 characters. | **Without an invoice** is on and the reason is empty. |
 | Fill the required field. | A field marked with * is empty, and is marked in red. |
 | Choose an account you may pay from. | No account was chosen, or you do not hold it. |
 | You hold no account to pay from. Ask Finance to hand you one. | You hold no account in this project. |
@@ -46,6 +48,7 @@ If the same supplier and invoice number were already entered, you see the earlie
 | تصوّر الفاتورة | تفتح الكاميرا من تلقاء نفسها. وجّهها إلى الفاتورة والتقطها، فتُقص وتُصغَّر تلقائياً. **إعادة التصوير** تستبدلها. |
 | تستخدم ملفاً بدلاً منها | اضغط **اختيار من الملفات** لصورة أو ملف PDF. |
 | تعبّئ من رمز QR | إن كانت الصورة تحوي رمز QR للفاتورة الإلكترونية، تُعبَّأ بيانات البائع والرقم الضريبي والتاريخ والمبلغ، ويُختار المورد صاحب الرقم. راجعها. |
+| تسجّل مصروفاً بلا فاتورة | فعّل **بدون فاتورة** واذكر السبب. تختفي حقول الفاتورة؛ أدخل المبلغ وتاريخ الدفع. لا ضريبة عليه، ويراه المالي ضمن الاستثناءات. |
 | تُدخل المبلغ | اختر **شامل الضريبة** أو **قبل الضريبة** واكتب المبلغ، أو اتركه فارغاً واكتب سعر الوحدة والعدد. سعر الوحدة شامل الضريبة دائماً. تتبعك المبالغ أسفله وأنت تكتب. |
 | تذكر أن الفاتورة بلا ضريبة | فعّل **هذه الفاتورة غير خاضعة للضريبة**. أما المورد غير المسجل بالضريبة فلا ضريبة عليه تلقائياً. |
 | تحدد طريقة الدفع | اختر المصدر والحساب وطريقة الدفع. لا ترى إلا الحسابات التي يحق لك الدفع منها. |
@@ -60,7 +63,8 @@ If the same supplier and invoice number were already entered, you see the earlie
 | الرسالة | معناها |
 | --- | --- |
 | يبدو أن هذه الفاتورة مُدخلة مسبقاً | نفس المورد والرقم موجودان؛ انظر أعلاه. |
-| أضف صورة الفاتورة أو ملف PDF قبل الإرسال. | الإرسال يحتاج إلى الفاتورة. |
+| أضف صورة الفاتورة أو ملف PDF قبل الإرسال. | الإرسال يحتاج إلى الفاتورة، أو إلى **بدون فاتورة** مع السبب. |
+| اذكر سبب عدم وجود فاتورة، حتى 500 حرف. | خيار **بدون فاتورة** مفعّل والسبب فارغ. |
 | عبّئ الحقل الإلزامي. | حقل عليه علامة * فارغ، ويظهر بالأحمر. |
 | اختر حساباً يحق لك الدفع منه. | لم تختر حساباً، أو أنه ليس بعهدتك. |
 | لا تملك حساباً تدفع منه. اطلب من المالي تسليمك حساباً. | لا تملك أي حساب في هذا المشروع. |

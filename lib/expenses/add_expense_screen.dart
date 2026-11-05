@@ -129,6 +129,12 @@ class AddExpenseScreen extends StatefulWidget {
   /// The warning that the QR code's VAT differs from the computed VAT.
   static const qrVatDiffersKey = Key('addExpense.qrVatDiffers');
 
+  /// The switch that says the expense has no invoice.
+  static const withoutInvoiceKey = Key('addExpense.withoutInvoice');
+
+  /// Why it has none.
+  static const withoutInvoiceReasonKey = Key('addExpense.withoutInvoiceReason');
+
   /// The item.
   static const itemKey = Key('addExpense.item');
 
@@ -252,6 +258,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _paymentAmount = TextEditingController();
   final _bankFees = TextEditingController();
   final _notes = TextEditingController();
+  final _withoutInvoiceReason = TextEditingController();
   final _customValues = <String, String>{};
   var _invoice = PickedFile.none();
   var _invoiceMessage = '';
@@ -270,6 +277,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   var _amountIncludesVat = true;
   var _isNotTaxable = false;
   var _paymentDiffers = false;
+  var _withoutInvoice = false;
   var _source = AccountType.cashCustody;
   var _accountId = '';
   var _paymentMethodId = '';
@@ -288,7 +296,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   @override
   void dispose() {
-    for (final controller in [_invoiceNumber, _product, _unitPrice, _quantity, _amount, _discount, _paymentAmount, _bankFees, _notes]) {
+    for (final controller in [_invoiceNumber, _product, _unitPrice, _quantity, _amount, _discount, _paymentAmount, _bankFees, _notes, _withoutInvoiceReason]) {
       controller.dispose();
     }
     super.dispose();
@@ -404,7 +412,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     return number.isNaN ? 0 : number;
   }
 
-  bool get _hasNoVat => _isNotTaxable || (_supplier.id.isNotEmpty && _supplier.vatNumber.isEmpty);
+  bool get _hasNoVat => _isNotTaxable || _withoutInvoice || (_supplier.id.isNotEmpty && _supplier.vatNumber.isEmpty);
 
   double get _vatPercent => _hasNoVat ? 0 : widget.project.vatPercent;
 
@@ -430,14 +438,16 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   String _isoOf(DateTime date) => date.toIso8601String().substring(0, 10);
 
+  bool get _paysOtherThanInvoiced => _paymentDiffers && !_withoutInvoice;
+
   /// Each number field's API name, field and the word key of what can be wrong with it.
   List<(String, TextEditingController, String)> get _numbers => [
     ('unitPrice', _unitPrice, 'expenses.invalidUnitPrice'),
     ('quantity', _quantity, 'expenses.invalidQuantity'),
     ('amount', _amount, 'expenses.invalidAmount'),
     ('discount', _discount, 'expenses.invalidDiscount'),
-    if (_paymentDiffers) ('paymentAmount', _paymentAmount, 'expenses.invalidPaymentAmount'),
-    if (_paymentDiffers) ('bankFees', _bankFees, 'expenses.invalidBankFees'),
+    if (_paysOtherThanInvoiced) ('paymentAmount', _paymentAmount, 'expenses.invalidPaymentAmount'),
+    if (_paysOtherThanInvoiced) ('bankFees', _bankFees, 'expenses.invalidBankFees'),
   ];
 
   Map<String, Object> _body(bool submit, bool confirmDuplicate) => {
@@ -446,19 +456,23 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     if (_subgroupId.isNotEmpty) 'subgroupId': _subgroupId,
     if (_unitId.isNotEmpty) 'unitId': _unitId,
     if (_supplier.id.isNotEmpty) 'supplierId': _supplier.id,
-    'invoiceNumber': westernDigits(_invoiceNumber.text),
-    'invoiceDate': _isoOf(_invoiceDate),
+    if (_withoutInvoice)
+      'withoutInvoiceReason': _withoutInvoiceReason.text
+    else ...{
+      'invoiceNumber': westernDigits(_invoiceNumber.text),
+      'invoiceDate': _isoOf(_invoiceDate),
+      if (_attachmentId.isNotEmpty) 'attachmentId': _attachmentId,
+    },
     'product': _product.text,
     'amountIncludesVat': _amountIncludesVat,
     'isNotTaxable': _isNotTaxable,
     if (_chosenAccountId.isNotEmpty) 'accountId': _chosenAccountId,
     if (_paymentMethodId.isNotEmpty) 'paymentMethodId': _paymentMethodId,
-    if (_paymentDiffers) 'paymentDate': _isoOf(_paymentDate),
+    if (_paymentDiffers || _withoutInvoice) 'paymentDate': _isoOf(_paymentDate),
     'notes': _notes.text,
     'customValues': {
       for (final MapEntry(:key, :value) in _customValues.entries) key: _columns.where((column) => column.key == key).map((column) => column.valueToSend(value)).firstOrNull ?? value,
     },
-    if (_attachmentId.isNotEmpty) 'attachmentId': _attachmentId,
     'submit': submit,
     if (confirmDuplicate) 'confirmDuplicate': true,
     for (final (name, field, _) in _numbers)
@@ -479,7 +493,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     if (_notANumber.isNotEmpty) {
       return _notANumber;
     }
-    if (!_invoice.isNone && _attachmentId.isEmpty) {
+    if (_withoutInvoice && _withoutInvoiceReason.text.trim().isEmpty) {
+      return 'expenses.invalidWithoutInvoiceReason';
+    }
+    if (!_withoutInvoice && !_invoice.isNone && _attachmentId.isEmpty) {
       final refusal = await widget.attachments.keep(_invoice);
       if (refusal.isNotEmpty) {
         return refusal;
@@ -582,6 +599,13 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     ],
   );
 
+  String _amountLabel(Words words) {
+    if (_withoutInvoice) {
+      return words.expensesAmount;
+    }
+    return _amountIncludesVat ? words.expensesAmountIncludingVat : words.expensesAmountBeforeVat;
+  }
+
   List<Widget> _whatItWasFor(Words words) => [
     ItemPicker(key: AddExpenseScreen.itemKey, items: widget.items, label: words.expensesItem, itemName: _item.name, onChanged: _chooseItem),
     if (_item.namedSubgroups.isNotEmpty)
@@ -608,36 +632,39 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         if (_supplier.id.isNotEmpty) Text(_supplier.detailsIn(words), key: AddExpenseScreen.supplierDetailsKey, style: Theme.of(context).textTheme.bodySmall),
       ],
     ),
-    _twoFields(
-      _textField(AddExpenseScreen.invoiceNumberKey, _invoiceNumber, words.expensesInvoiceNumber),
-      PickerField(key: AddExpenseScreen.invoiceDateKey, label: words.expensesInvoiceDate, value: formatDate(_invoiceDate), onTap: () => _chooseDate(_invoiceDate, (date) => _invoiceDate = date)),
-    ),
+    if (!_withoutInvoice)
+      _twoFields(
+        _textField(AddExpenseScreen.invoiceNumberKey, _invoiceNumber, words.expensesInvoiceNumber),
+        PickerField(key: AddExpenseScreen.invoiceDateKey, label: words.expensesInvoiceDate, value: formatDate(_invoiceDate), onTap: () => _chooseDate(_invoiceDate, (date) => _invoiceDate = date)),
+      ),
     if (_asks('product')) _textField(AddExpenseScreen.productKey, _product, _labelOf('product', words.expensesProduct), errorText: _errorOf('product', words)),
     if (_asks('unitPrice') || _asks('quantity'))
       _twoFields(
         _textField(AddExpenseScreen.unitPriceKey, _unitPrice, _labelOf('unitPrice', words.expensesUnitPrice), isNumber: true, errorText: _errorOf('unitPrice', words)),
         _textField(AddExpenseScreen.quantityKey, _quantity, _labelOf('quantity', words.expensesQuantity), isNumber: true, errorText: _errorOf('quantity', words)),
       ),
-    SegmentedButton<bool>(
-      showSelectedIcon: false,
-      segments: [
-        ButtonSegment(value: true, label: Text(words.expensesIncludingVat, key: AddExpenseScreen.includingVatKey)),
-        ButtonSegment(value: false, label: Text(words.expensesBeforeVat, key: AddExpenseScreen.beforeVatKey)),
-      ],
-      selected: {_amountIncludesVat},
-      onSelectionChanged: (selected) => setState(() => _amountIncludesVat = selected.single),
-    ),
+    if (!_withoutInvoice)
+      SegmentedButton<bool>(
+        showSelectedIcon: false,
+        segments: [
+          ButtonSegment(value: true, label: Text(words.expensesIncludingVat, key: AddExpenseScreen.includingVatKey)),
+          ButtonSegment(value: false, label: Text(words.expensesBeforeVat, key: AddExpenseScreen.beforeVatKey)),
+        ],
+        selected: {_amountIncludesVat},
+        onSelectionChanged: (selected) => setState(() => _amountIncludesVat = selected.single),
+      ),
     _twoFields(
-      _textField(AddExpenseScreen.amountKey, _amount, _amountIncludesVat ? words.expensesAmountIncludingVat : words.expensesAmountBeforeVat, isNumber: true),
+      _textField(AddExpenseScreen.amountKey, _amount, _amountLabel(words), isNumber: true),
       _textField(AddExpenseScreen.discountKey, _discount, words.expensesDiscount, isNumber: true),
     ),
-    SwitchListTile(
-      key: AddExpenseScreen.notTaxableKey,
-      contentPadding: EdgeInsets.zero,
-      title: Text(words.expensesNotTaxable),
-      value: _isNotTaxable,
-      onChanged: (isNotTaxable) => setState(() => _isNotTaxable = isNotTaxable),
-    ),
+    if (!_withoutInvoice)
+      SwitchListTile(
+        key: AddExpenseScreen.notTaxableKey,
+        contentPadding: EdgeInsets.zero,
+        title: Text(words.expensesNotTaxable),
+        value: _isNotTaxable,
+        onChanged: (isNotTaxable) => setState(() => _isNotTaxable = isNotTaxable),
+      ),
     FiguresBox(figures: _figures, vatPercent: _vatPercent),
     if (!_qr.isNone && (_figures.vat - _qr.vat).abs() > InvoiceQr.vatTolerance)
       Text(words.expensesQrVatDiffers, key: AddExpenseScreen.qrVatDiffersKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
@@ -703,20 +730,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           isChosen: (method) => _paymentMethodId == method.id,
           onChosen: (method) => _paymentMethodId = method.id,
         ),
-        SwitchListTile(
-          key: AddExpenseScreen.paymentDiffersKey,
-          contentPadding: EdgeInsets.zero,
-          title: Text(words.expensesPaymentDiffers),
-          value: _paymentDiffers,
-          onChanged: (paymentDiffers) => setState(() => _paymentDiffers = paymentDiffers),
-        ),
-        if (_paymentDiffers) ...[
+        if (!_withoutInvoice)
+          SwitchListTile(
+            key: AddExpenseScreen.paymentDiffersKey,
+            contentPadding: EdgeInsets.zero,
+            title: Text(words.expensesPaymentDiffers),
+            value: _paymentDiffers,
+            onChanged: (paymentDiffers) => setState(() => _paymentDiffers = paymentDiffers),
+          ),
+        if (_paymentDiffers || _withoutInvoice)
           PickerField(key: AddExpenseScreen.paymentDateKey, label: words.expensesPaymentDate, value: formatDate(_paymentDate), onTap: () => _chooseDate(_paymentDate, (date) => _paymentDate = date)),
+        if (_paysOtherThanInvoiced)
           _twoFields(
             _textField(AddExpenseScreen.paymentAmountKey, _paymentAmount, words.expensesPaymentAmount, isNumber: true),
             _textField(AddExpenseScreen.bankFeesKey, _bankFees, words.expensesBankFees, isNumber: true),
           ),
-        ],
         if (_asks('notes')) _textField(AddExpenseScreen.notesKey, _notes, _labelOf('notes', words.expensesNotes), maxLines: 2, errorText: _errorOf('notes', words)),
       ]);
     },
@@ -741,13 +769,24 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-          InvoiceSection(file: _invoice, message: _invoiceMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
-          if (_qrMessage.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 8),
-              child: Text(words.text(_qrMessage), key: AddExpenseScreen.qrMessageKey),
-            ),
-          if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: _qrSupplierMissing && widget.project.mayAddSupplier, onAddSupplier: _addSupplierFromQr),
+          if (_withoutInvoice)
+            _textField(AddExpenseScreen.withoutInvoiceReasonKey, _withoutInvoiceReason, words.expensesWithoutInvoiceReason, maxLines: 2)
+          else ...[
+            InvoiceSection(file: _invoice, message: _invoiceMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
+            if (_qrMessage.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(words.text(_qrMessage), key: AddExpenseScreen.qrMessageKey),
+              ),
+            if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: _qrSupplierMissing && widget.project.mayAddSupplier, onAddSupplier: _addSupplierFromQr),
+          ],
+          SwitchListTile(
+            key: AddExpenseScreen.withoutInvoiceKey,
+            contentPadding: EdgeInsets.zero,
+            title: Text(words.expensesWithoutInvoice),
+            value: _withoutInvoice,
+            onChanged: (withoutInvoice) => setState(() => _withoutInvoice = withoutInvoice),
+          ),
           _section(_whatItWasFor(words)),
           if (ownFields.isNotEmpty) _section(ownFields),
           _payment(words),

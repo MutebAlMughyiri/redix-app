@@ -522,6 +522,64 @@ void main() {
     expect(shown(tester, ConfirmDialog.explanationKey), 'en expenses.duplicateHidden');
   });
 
+  testWidgets('AC-09.1: without an invoice, the reason takes the place of the invoice, and the expense is sent with no file', (tester) async {
+    final opened = await openExpense(tester);
+    await pickItem(tester, opened.api, opened.item);
+    await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-0'));
+    await pickSupplier(tester, opened.api, opened.supplier);
+    await type(tester, AddExpenseScreen.amountKey, '200');
+    await tapVisible(tester, opened.api, AddExpenseScreen.paymentMethodKey(opened.method));
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.withoutInvoiceKey);
+
+    for (final gone in [AddExpenseScreen.cameraKey, AddExpenseScreen.invoiceNumberKey, AddExpenseScreen.invoiceDateKey, AddExpenseScreen.includingVatKey, AddExpenseScreen.notTaxableKey, AddExpenseScreen.paymentDiffersKey]) {
+      expect(find.byKey(gone), findsNothing);
+    }
+    expect(find.byKey(AddExpenseScreen.paymentDateKey), findsOneWidget);
+    expect(shown(tester, AddExpenseScreen.vatKey), '0.00');
+    expect(shown(tester, AddExpenseScreen.totalKey), '200.00');
+
+    await type(tester, AddExpenseScreen.withoutInvoiceReasonKey, 'شراء نقدي من السوق');
+    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+
+    final sent = opened.api.sentExpenses.single;
+    expect(sent['withoutInvoiceReason'], 'شراء نقدي من السوق');
+    expect(sent['paymentDate'], isNotNull);
+    expect(sent['submit'], isTrue);
+    for (final absent in ['invoiceNumber', 'invoiceDate', 'attachmentId']) {
+      expect(sent.containsKey(absent), isFalse);
+    }
+  });
+
+  testWidgets('AC-09.1: with the reason empty nothing is sent', (tester) async {
+    final opened = await openExpense(tester);
+    await fill(tester, opened);
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.withoutInvoiceKey);
+    await type(tester, AddExpenseScreen.withoutInvoiceReasonKey, '   ');
+    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+
+    expect(opened.api.sentExpenses, isEmpty);
+    expect(shown(tester, AddExpenseScreen.messageKey), 'en expenses.invalidWithoutInvoiceReason');
+  });
+
+  testWidgets('a picture taken before turning it on is not sent, and turning it off brings it back', (tester) async {
+    final opened = await openExpense(tester, camera: PickedFile('invoice.png', '/phone/invoice.png', Uint8List.fromList(onePixelPng)));
+    await fill(tester, opened);
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.withoutInvoiceKey);
+    expect(find.byKey(AddExpenseScreen.invoicePictureKey), findsNothing);
+    await tapVisible(tester, opened.api, AddExpenseScreen.withoutInvoiceKey);
+    expect(find.byKey(AddExpenseScreen.invoicePictureKey), findsOneWidget);
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.withoutInvoiceKey);
+    await type(tester, AddExpenseScreen.withoutInvoiceReasonKey, 'ضاعت الفاتورة');
+    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+
+    expect(opened.api.sentAttachments, isEmpty);
+    expect(opened.api.sentExpenses.single.containsKey('attachmentId'), isFalse);
+  });
+
   testWidgets('who holds no recordEntries has no way in', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject'], units: ['الفلة الغربية']);
     await pumpRedix(tester, api, stored: {'session': keptSession});

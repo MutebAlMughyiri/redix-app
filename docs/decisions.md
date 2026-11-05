@@ -6,6 +6,8 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | "Without an invoice" is a switch, as the issue says, not the canvas's button with a dialog | The issue says "turn on", the form already has switches of this kind, and a dialog would add a second place to see the reason. Made without Muteb |
+| 2026-11-05 | A reason empty blocks saving a draft too | A draft still has to say whether it has an invoice, because the API has no row without one or the other. Made without Muteb |
 | 2026-11-05 | The QR code is read from the invoice's picture, with no live scanning screen | The canvas draws it that way, one photo gives both the invoice and its code, and `mobile_scanner` reads a file with the phone's own reader. Made without Muteb; see the findings |
 | 2026-11-05 | A picture with no readable code shows one message, "No QR code could be read from this invoice", whether it has none or a bad one | The reader cannot tell them apart, and the fields stay open either way, as AC-11.2 asks. Made without Muteb |
 | 2026-11-05 | The date stays as the code wrote it, with no conversion from UTC | Codes commonly end in `Z` whatever their time means, and the day a person checks is the one printed. Made without Muteb |
