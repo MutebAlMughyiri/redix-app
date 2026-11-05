@@ -254,7 +254,7 @@ void main() {
   testWidgets('AC-17.1: the same tax invoice again shows the earlier entry, and saves only once confirmed', (tester) async {
     final opened = await openPayment(tester, arrange: (api) => api.expenseAnswer = (
       status: 409,
-      body: const {'code': 'duplicateInvoice', 'earlier': {'isVisible': true, 'projectName': 'غصون 6', 'invoiceDate': '2026-11-01', 'total': 1150.0}},
+      body: const {'code': 'duplicateInvoice', 'earlier': {'projectName': 'غصون 6', 'invoiceDate': '2026-11-01', 'total': 1150.0}},
     ));
     await pickContract(tester, opened.api, opened.running);
     await type(tester, ContractorPaymentScreen.amountKey, '1150');

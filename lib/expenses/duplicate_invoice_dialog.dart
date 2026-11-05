@@ -6,7 +6,7 @@ import '../ui/confirm_dialog.dart';
 import '../words/words.dart';
 import 'earlier_entry.dart';
 
-/// The question when a supplier's invoice number is entered again (FR-17): it shows the [earlier] entry, or only that one exists where the user cannot read it.
+/// The question when a supplier's invoice number is entered again (AC-17.1): it shows the [earlier] entry.
 class DuplicateInvoiceDialog extends StatelessWidget {
   /// The question about [earlier], calling [onConfirm] to save it anyway.
   const DuplicateInvoiceDialog({super.key, required this.earlier, required this.onConfirm});
@@ -22,8 +22,8 @@ class DuplicateInvoiceDialog extends StatelessWidget {
     final words = Words.of(context);
     return ConfirmDialog(
       title: words.expensesDuplicateTitle,
-      subject: earlier.isVisible ? '${earlier.projectName} · ${formatDate(earlier.invoiceDate)} · ${formatMoney(earlier.total)}' : '',
-      explanation: earlier.isVisible ? words.expensesDuplicateExplain : words.expensesDuplicateHidden,
+      subject: '${earlier.projectName} · ${formatDate(earlier.invoiceDate)} · ${formatMoney(earlier.total)}',
+      explanation: words.expensesDuplicateExplain,
       confirmLabel: words.expensesSaveAnyway,
       onConfirm: onConfirm,
     );

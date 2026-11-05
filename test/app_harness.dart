@@ -80,7 +80,7 @@ Map<String, String> wordsIn(String language) => {
     'expenses.invalidInvoiceNumber', 'expenses.invalidProduct', 'expenses.invalidNotes', 'expenses.invalidUnitPrice', 'expenses.invalidQuantity', 'expenses.invalidAmount', 'expenses.invalidDiscount', 'expenses.invalidPaymentAmount',
     'expenses.invalidBankFees', 'expenses.invalidInvoiceDate', 'expenses.invalidPaymentDate', 'expenses.unknownColumn', 'expenses.invalidColumnValue', 'expenses.requiredColumnMissing', 'expenses.invoiceRequired', 'expenses.qrRead',
     'expenses.qrUnreadable', 'expenses.qrSupplierMissing', 'expenses.qrAddSupplier', 'expenses.qrVatDiffers', 'suppliers.mostUsed',
-    'expenses.duplicateInvoice', 'expenses.duplicateTitle', 'expenses.duplicateExplain', 'expenses.duplicateHidden', 'expenses.saveAnyway', 'expenses.invoiceAlreadyAttached',
+    'expenses.duplicateInvoice', 'expenses.duplicateTitle', 'expenses.duplicateExplain', 'expenses.saveAnyway', 'expenses.invoiceAlreadyAttached',
     'expenses.withoutInvoice', 'expenses.withoutInvoiceReason', 'expenses.invalidWithoutInvoiceReason', 'expenses.invoiceAndReason', 'expenses.amount', 'entries.notYourEntry', 'entries.entryNotSubmittable', 'entries.entryIncomplete',
     'expenses.unknownContract', 'expenses.receiptRequired', 'expenses.invalidInvoiceAmount', 'contracts.pending', 'contractorPayments.new', 'contractorPayments.contract', 'contractorPayments.remainingAfter',
     'contractorPayments.overrun', 'contractorPayments.savedOverrun', 'contractorPayments.kind', 'contractorPayments.inside', 'contractorPayments.outside', 'contractorPayments.outsideExplain',

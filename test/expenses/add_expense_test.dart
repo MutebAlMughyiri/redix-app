@@ -470,7 +470,7 @@ void main() {
       status: 409,
       body: const {
         'code': 'duplicateInvoice',
-        'earlier': {'isVisible': true, 'projectName': 'غصون 5', 'invoiceDate': '2026-10-26', 'total': 2955.385},
+        'earlier': {'projectName': 'غصون 5', 'invoiceDate': '2026-10-26', 'total': 2955.385},
       },
     );
 
@@ -496,7 +496,7 @@ void main() {
       status: 409,
       body: const {
         'code': 'duplicateInvoice',
-        'earlier': {'isVisible': true, 'projectName': 'غصون 5', 'invoiceDate': '2026-10-26', 'total': 100},
+        'earlier': {'projectName': 'غصون 5', 'invoiceDate': '2026-10-26', 'total': 100},
       },
     );
     await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
@@ -505,23 +505,6 @@ void main() {
 
     expect(opened.api.sentExpenses, hasLength(1));
     expect(find.byKey(AddExpenseScreen.draftKey), findsOneWidget);
-  });
-
-  testWidgets('BR-33: an earlier entry in a project the user cannot read names nothing of it', (tester) async {
-    final opened = await openExpense(tester);
-    await fill(tester, opened);
-    opened.api.expenseAnswer = (
-      status: 409,
-      body: const {
-        'code': 'duplicateInvoice',
-        'earlier': {'isVisible': false, 'projectName': '', 'invoiceDate': '0001-01-01', 'total': 0},
-      },
-    );
-
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
-
-    expect(find.byKey(AddExpenseScreen.earlierKey), findsNothing);
-    expect(shown(tester, ConfirmDialog.explanationKey), 'en expenses.duplicateHidden');
   });
 
   testWidgets('AC-09.1: without an invoice, the reason takes the place of the invoice, and the expense is sent with no file', (tester) async {

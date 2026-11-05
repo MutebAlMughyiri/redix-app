@@ -71,7 +71,7 @@ Tests are in `test/expenses/add_expense_test.dart` and `invoice_figures_test.dar
 | AC-40.1: a disabled method is not offered | `_payment` | a disabled payment method |
 | BR-24: a payment that differs | `_numbers`, `_body` | BR-24; a payment that does not differ |
 | FR-44: Field reaches the sheet and its quick add from the expense (findings row 79) | `_pickSupplier` | findings row 79; Patrol |
-| AC-17.1: a repeat shows the earlier entry, and saves only once confirmed | `_askAboutDuplicate` | AC-17.1; BR-33 |
+| AC-17.1: a repeat in this project or another the user can read shows the earlier entry, and saves only once confirmed | `_askAboutDuplicate`, `DuplicateInvoiceDialog` | AC-17.1 |
 | AC-43.1: the title over what was used most | `SupplierSearch.leadsWithMostUsed` | `supplier_picker_test`: AC-43.1 |
 | AC-N03: it fits 360 points wide, in both languages | The screen | `my_account_test`: AC-N03 |
 

@@ -449,6 +449,9 @@ mixin WordGetters {
   /// The word `contracts.addDocument`.
   String get contractsAddDocument => text('contracts.addDocument');
 
+  /// The word `contracts.contractHasPayments`.
+  String get contractsContractHasPayments => text('contracts.contractHasPayments');
+
   /// The word `contracts.contractValue`.
   String get contractsContractValue => text('contracts.contractValue');
 
@@ -622,9 +625,6 @@ mixin WordGetters {
 
   /// The word `expenses.duplicateExplain`.
   String get expensesDuplicateExplain => text('expenses.duplicateExplain');
-
-  /// The word `expenses.duplicateHidden`.
-  String get expensesDuplicateHidden => text('expenses.duplicateHidden');
 
   /// The word `expenses.duplicateInvoice`.
   String get expensesDuplicateInvoice => text('expenses.duplicateInvoice');
