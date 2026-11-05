@@ -87,6 +87,7 @@ All go through `Session`, which renews an expired access token once and sends ag
 | A refused name shows its own line, and nothing typed is lost | `ApiList.change`, `NewProjectScreen` | `new_project_test.dart`: a refused name |
 | Without a network the form and the close say so, and nothing changes | `ApiList.change` | `new_project_test.dart`: without a network; `home_test.dart`: closing without a network |
 | A refusal with no code shows the general word | `ApiList.change` | `home_test.dart`: a refusal with no code |
+| A read waits for the changes sent before it, so going back while a role is being saved still shows the new role on the home | `Session.get`, `Session._remember` | `user_roles_test.dart`: going back while a role is being saved |
 | An expired access token is renewed once for each read, one renewal after another, so reads at once keep the session open | `Session._send`, `Session._renew` | `projects_test.dart`: an expired access token |
 | A unit can be removed until the project is created | `NewProjectScreen` | `new_project_test.dart`: a unit can be removed |
 | The start date is today until changed, and shows as dd.MM.yyyy (NFR-04) | `NewProjectScreen`, `formatDate` | `new_project_test.dart`: the start date; `date_format_test.dart` |

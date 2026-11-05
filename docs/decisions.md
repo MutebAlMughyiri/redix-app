@@ -6,6 +6,7 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | A read waits for the changes already sent, in `Session` | The Huawei showed it: ticking a role and going back at once read the home before the save finished, and the home kept the old role. One owner closes it for every list, instead of each screen holding its reload until a save ends |
 | 2026-11-05 | The duplicate question always names the earlier entry; it has no wording for a project the user cannot read | AC-17.1 as it now reads: the API never mentions such a project, so the app has nothing to say about one. Findings row 98. |
 | 2026-11-05 | Subgroups are dragged and removed on their own screen, removal asking first as a column's does; an item's type is a menu entry opening a dialog that shares its choice with Add item | Rows 49 and 51. `ItemTypeChoice` has one owner so the two dialogs cannot drift. |
 | 2026-11-05 | A project and a unit are renamed through `NameDialog` on the project's home, and a unit is deleted from a menu on its row, asking first | Row 30 asks for the project's own screen, for whoever holds `manageProject`. `NameDialog` is already the one dialog for a name. Findings row 30. |

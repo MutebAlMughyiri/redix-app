@@ -25,6 +25,7 @@ class Session extends ChangeNotifier {
   var _accessToken = '';
   var _refreshToken = '';
   var _renewal = Future<void>.value();
+  var _sending = Future<void>.value();
   var _mustChangePassword = false;
   var _permissions = <String>{};
   var _defaultProjectId = '';
@@ -175,16 +176,19 @@ class Session extends ChangeNotifier {
     }
   }
 
-  /// Reads the API [path] as the signed-in user, renewing an expired access token like [post].
-  Future<http.Response> get(String path) => _send(() => http.get(apiUri(path), headers: _authorized));
+  /// Reads the API [path] as the signed-in user, renewing an expired access token like [post]. It waits for what was sent before it, so its answer already holds those changes.
+  Future<http.Response> get(String path) async {
+    await _sending;
+    return _send(() => http.get(apiUri(path), headers: _authorized));
+  }
 
   /// Sends [body] as JSON to the API [path] as the signed-in user. An expired access token is renewed once and the request sent again;
   /// a session the API refuses to renew ends.
   Future<http.Response> post(String path, Map<String, Object> body) =>
-      _send(() => http.post(apiUri(path), headers: {...jsonHeaders, ..._authorized}, body: jsonEncode(body)));
+      _remember(_send(() => http.post(apiUri(path), headers: {...jsonHeaders, ..._authorized}, body: jsonEncode(body))));
 
   /// Sends the file [bytes], named [fileName], to the API [path] as the signed-in user, renewing an expired access token like [post].
-  Future<http.Response> postFile(String path, String fileName, List<int> bytes) => _send(() async {
+  Future<http.Response> postFile(String path, String fileName, List<int> bytes) => _remember(_send(() async {
     final request = http.MultipartRequest('POST', apiUri(path))
       ..headers.addAll(_authorized)
       ..files.add(http.MultipartFile.fromBytes('file', bytes, filename: fileName));
@@ -194,7 +198,13 @@ class Session extends ChangeNotifier {
     } finally {
       client.close();
     }
-  });
+  }));
+
+  /// Keeps [sent] until it is answered, whatever the answer, for [get] to wait on.
+  Future<http.Response> _remember(Future<http.Response> sent) {
+    _sending = Future.wait<void>([_sending, sent.then<void>((_) {}, onError: (Object _) {})]);
+    return sent;
+  }
 
   Map<String, String> get _authorized => {'Authorization': 'Bearer $_accessToken'};
 

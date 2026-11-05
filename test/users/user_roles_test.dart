@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
@@ -24,6 +26,23 @@ void main() {
   }
 
   bool isTicked(WidgetTester tester, String roleId) => tester.widget<CheckboxListTile>(find.byKey(UserRolesScreen.roleKey(roleId))).value!;
+
+  testWidgets('going back while a role is being saved, the home reads only after it is saved, so it never shows the old role', (tester) async {
+    final api = await openScreen(tester);
+    final saved = Completer<void>();
+    api.holdWrites = saved.future;
+
+    await act(tester, api, () => tester.tap(find.byKey(UserRolesScreen.roleKey('role-finance'))));
+    api.sentReads.clear();
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    expect(api.sentReads, isNot(contains('/projects')));
+
+    saved.complete();
+    await act(tester, api, () async {});
+
+    expect(api.sentReads, contains('/projects'));
+  });
 
   testWidgets('the screen says whose roles these are, and ticks what they hold', (tester) async {
     await openScreen(tester);

@@ -352,6 +352,12 @@ class FakeApi {
   /// How many sessions the API has issued, so that each gets a refresh token of its own.
   var _issued = 0;
 
+  /// What a change waits on before it is answered, to hold one on its way.
+  var holdWrites = Future<void>.value();
+
+  /// The paths the app read, in order.
+  final sentReads = <String>[];
+
   /// Access tokens the API treats as expired, answering 401 with no body.
   final expiredAccessTokens = <String>{};
 
@@ -364,6 +370,11 @@ class FakeApi {
       throw http.ClientException('offline');
     }
     final path = request.url.path;
+    if (request.method == 'GET') {
+      sentReads.add(path);
+    } else if (!path.startsWith('/auth')) {
+      await holdWrites;
+    }
     if (path.startsWith('/translations/')) {
       return http.Response.bytes(utf8.encode(jsonEncode(wordsIn(request.url.pathSegments.last))), 200, headers: {'etag': '"1"'});
     }

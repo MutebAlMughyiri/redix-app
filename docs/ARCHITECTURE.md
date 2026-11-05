@@ -154,7 +154,7 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 
 1. `main` reads the kept session (`Session.restore`) before the first frame, then renews it in the background with `POST /auth/refresh`.
 2. `go_router` sends every route to `/sign-in` while the session is closed, to `/change-password` while the password is temporary, and away from sign-in once open; it listens to `Session`, so a sign-in, a password change or an ended session moves the screen at once.
-3. Every request made as the user goes through `Session.post`: it sends the access token, and on a `401` renews the session once and sends again. Renewals run one after another, because each replaces the refresh token the next one needs.
+3. Every request made as the user goes through `Session.post`: it sends the access token, and on a `401` renews the session once and sends again. Renewals run one after another, because each replaces the refresh token the next one needs. A read waits for what was sent before it, so leaving a screen while a change is on its way cannot show the old value.
 4. Each screen declares its `path` and its element `Key`s.
 
 ## Data the API owns
