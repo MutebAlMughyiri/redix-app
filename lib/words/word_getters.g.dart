@@ -86,6 +86,102 @@ mixin WordGetters {
   /// The word `app.title`.
   String get appTitle => text('app.title');
 
+  /// The word `approvals.all`.
+  String get approvalsAll => text('approvals.all');
+
+  /// The word `approvals.approve`.
+  String get approvalsApprove => text('approvals.approve');
+
+  /// The word `approvals.approveSelected`.
+  String get approvalsApproveSelected => text('approvals.approveSelected');
+
+  /// The word `approvals.approvedSome`.
+  String get approvalsApprovedSome => text('approvals.approvedSome');
+
+  /// The word `approvals.contractorPayments`.
+  String get approvalsContractorPayments => text('approvals.contractorPayments');
+
+  /// The word `approvals.empty`.
+  String get approvalsEmpty => text('approvals.empty');
+
+  /// The word `approvals.enteredBy`.
+  String get approvalsEnteredBy => text('approvals.enteredBy');
+
+  /// The word `approvals.entryNotPending`.
+  String get approvalsEntryNotPending => text('approvals.entryNotPending');
+
+  /// The word `approvals.failedSome`.
+  String get approvalsFailedSome => text('approvals.failedSome');
+
+  /// The word `approvals.fileFailed`.
+  String get approvalsFileFailed => text('approvals.fileFailed');
+
+  /// The word `approvals.includingVat`.
+  String get approvalsIncludingVat => text('approvals.includingVat');
+
+  /// The word `approvals.loadFailed`.
+  String get approvalsLoadFailed => text('approvals.loadFailed');
+
+  /// The word `approvals.noConnection`.
+  String get approvalsNoConnection => text('approvals.noConnection');
+
+  /// The word `approvals.openFile`.
+  String get approvalsOpenFile => text('approvals.openFile');
+
+  /// The word `approvals.originalNotApproved`.
+  String get approvalsOriginalNotApproved => text('approvals.originalNotApproved');
+
+  /// The word `approvals.purchases`.
+  String get approvalsPurchases => text('approvals.purchases');
+
+  /// The word `approvals.quickReason`.
+  String get approvalsQuickReason => text('approvals.quickReason');
+
+  /// The word `approvals.reason`.
+  String get approvalsReason => text('approvals.reason');
+
+  /// The word `approvals.reasonAmount`.
+  String get approvalsReasonAmount => text('approvals.reasonAmount');
+
+  /// The word `approvals.reasonDuplicate`.
+  String get approvalsReasonDuplicate => text('approvals.reasonDuplicate');
+
+  /// The word `approvals.reasonHint`.
+  String get approvalsReasonHint => text('approvals.reasonHint');
+
+  /// The word `approvals.reasonItem`.
+  String get approvalsReasonItem => text('approvals.reasonItem');
+
+  /// The word `approvals.reasonRequired`.
+  String get approvalsReasonRequired => text('approvals.reasonRequired');
+
+  /// The word `approvals.reasonUnclear`.
+  String get approvalsReasonUnclear => text('approvals.reasonUnclear');
+
+  /// The word `approvals.refused`.
+  String get approvalsRefused => text('approvals.refused');
+
+  /// The word `approvals.reject`.
+  String get approvalsReject => text('approvals.reject');
+
+  /// The word `approvals.rejectSend`.
+  String get approvalsRejectSend => text('approvals.rejectSend');
+
+  /// The word `approvals.rejectTitle`.
+  String get approvalsRejectTitle => text('approvals.rejectTitle');
+
+  /// The word `approvals.selectHint`.
+  String get approvalsSelectHint => text('approvals.selectHint');
+
+  /// The word `approvals.title`.
+  String get approvalsTitle => text('approvals.title');
+
+  /// The word `approvals.unknownEntry`.
+  String get approvalsUnknownEntry => text('approvals.unknownEntry');
+
+  /// The word `approvals.withoutInvoice`.
+  String get approvalsWithoutInvoice => text('approvals.withoutInvoice');
+
   /// The word `attachments.cameraFailed`.
   String get attachmentsCameraFailed => text('attachments.cameraFailed');
 

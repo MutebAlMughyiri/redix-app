@@ -49,7 +49,7 @@ const newPassword = String.fromEnvironment('TEST_NEW_PASSWORD');
 Uint8List pictureOfQr(String text) {
   const cell = 8;
   const border = 4;
-  final code = QrImage(QrCode(payload: QrPayload.fromString(text)));
+  final code = QrImage(QrCode.fromData(data: text, errorCorrectLevel: QrErrorCorrectLevel.L));
   final size = (code.moduleCount + border * 2) * cell;
   final picture = img.fill(
     img.Image(width: size, height: size),

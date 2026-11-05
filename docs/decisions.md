@@ -6,6 +6,9 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | A PDF opens through the phone's own viewer, with the `printing` package's share sheet | UC-059 needs that package anyway, and drawing a PDF inside the app would add a renderer for what the phone already does |
+| 2026-11-05 | Every card in the inbox shows its full details and its buttons; the canvas shows one open and the rest compact | A card that opens adds state for what fits anyway, and Finance decides from the card |
+| 2026-11-05 | The test package `qr` moved back to 3.x | `printing` needs it through `pdf`; only the journey uses it |
 | 2026-11-05 | A phone keeps its copies and its waiting entries as files in the app's private folder, not in a database | Nothing queries them: a list is read whole by its address, and entries are tried in turn. A database would add a package, a schema and migrations on the phone for no question it answers. This replaces the note on UC-029 that it adds a local database |
 | 2026-11-05 | One owner keeps lists for offline: `Session.get` answers from a copy when the network fails | Every list works offline without a screen knowing, and the sync only has to fill the same copies |
 | 2026-11-05 | Android's backup of the app's data is off | Copies hold a project's money. Tokens were already out of it, in the Keystore |

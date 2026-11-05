@@ -23,6 +23,9 @@ import 'expenses/expenses.dart';
 import 'home/home_screen.dart';
 import 'partners/partners.dart';
 import 'partners/partners_screen.dart';
+import 'approvals/approvals.dart';
+import 'approvals/approvals_screen.dart';
+import 'attachments/attachment_screen.dart';
 import 'offline/outbox.dart';
 import 'offline/project_sync.dart';
 import 'offline/waiting_screen.dart';
@@ -98,6 +101,7 @@ class _RedixAppState extends State<RedixApp> {
   final _columnLists = <String, Columns>{};
   final _projectPaymentMethods = <String, PaymentMethods>{};
   final _projectAccounts = <String, Accounts>{};
+  final _projectApprovals = <String, Approvals>{};
   final _projectMembers = <String, Members>{};
   final _projectPartners = <String, Partners>{};
   final _projectSuppliers = <String, Suppliers>{};
@@ -122,6 +126,19 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(
         path: HomeScreen.path,
         builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync),
+      ),
+      GoRoute(
+        path: ApprovalsScreen.path,
+        builder: (context, state) => ApprovalsScreen(project: state.extra! as Project, approvals: _approvalsOf(state.pathParameters['projectId'] ?? '')),
+      ),
+      GoRoute(
+        path: AttachmentScreen.path,
+        builder: (context, state) => AttachmentScreen(
+          projectId: state.pathParameters['projectId'] ?? '',
+          attachmentId: state.pathParameters['attachmentId'] ?? '',
+          contentType: state.extra as String? ?? '',
+          session: widget.session,
+        ),
       ),
       GoRoute(path: WaitingScreen.path, builder: (context, state) => WaitingScreen(projectId: state.pathParameters['projectId'] ?? '', outbox: _outbox)),
       GoRoute(path: NewProjectScreen.registerPath, builder: (context, state) => NewProjectScreen(projects: _projects, isPublic: true)),
@@ -212,6 +229,8 @@ class _RedixAppState extends State<RedixApp> {
   Attachments _attachmentsOf(String projectId) => _projectAttachments.putIfAbsent(projectId, () => Attachments(widget.session, projectId));
 
   Expenses _expensesOf(String projectId) => _projectExpenses.putIfAbsent(projectId, () => Expenses(widget.session, projectId, _outbox));
+
+  Approvals _approvalsOf(String projectId) => _projectApprovals.putIfAbsent(projectId, () => Approvals(widget.session, projectId));
 
   OfferedAccounts _offeredAccountsOf(String projectId) => _projectOfferedAccounts.putIfAbsent(projectId, () => OfferedAccounts(widget.session, projectId));
 

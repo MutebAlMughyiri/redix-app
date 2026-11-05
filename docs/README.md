@@ -34,6 +34,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Contracts](guide/contracts.md) | Everyone in the project; whoever does its finance changes them |
 | [Contractor payment](guide/contractor-payment.md) | Whoever enters expenses in the project |
 | [Waiting to sync](guide/waiting-to-sync.md) | Whoever enters expenses in the project |
+| [Waiting for approval](guide/approvals.md) | Whoever does the project's finance |
 
 ## Use cases
 
@@ -67,5 +68,6 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-026](use-cases/UC-026-credit-note.md) | Record money coming back: a credit note, or a deduction | Whoever enters an expense |
 | [UC-027](use-cases/UC-027-contractor-payment.md) | Pay a contractor and see the effect before saving | Whoever enters an expense |
 | [UC-029](use-cases/UC-029-offline.md) | Record entries without a network, and send them when it returns | Whoever enters expenses in the project |
+| [UC-031, UC-032](use-cases/UC-031-approvals.md) | Review what waits, and approve or reject it | Whoever does the project's finance |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

@@ -11,6 +11,7 @@ import '../contractor_payments/contractor_payment_screen.dart';
 import '../contracts/contracts_screen.dart';
 import '../expenses/add_expense_screen.dart';
 import '../partners/partners_screen.dart';
+import '../approvals/approvals_screen.dart';
 import '../offline/outbox.dart';
 import '../offline/project_sync.dart';
 import '../offline/waiting_screen.dart';
@@ -131,6 +132,9 @@ class HomeScreen extends StatefulWidget {
 
   /// The button that enters a new purchase expense in the running project [id].
   static Key addExpenseKey(String id) => Key('home.addExpense.$id');
+
+  /// The way to what waits for a decision in the project [id].
+  static Key approvalsKey(String id) => Key('home.approvals.$id');
 
   /// The line saying how many entries of the project [id] wait on this phone.
   static Key waitingKey(String id) => Key('home.waiting.$id');
@@ -349,6 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onPartners: () => context.push(PartnersScreen.pathOf(project.id), extra: project),
                     onSuppliers: () => context.push(SuppliersScreen.pathOf(project.id), extra: project),
                     onContracts: () => context.push(ContractsScreen.pathOf(project.id), extra: project),
+                    onApprovals: () => context.push(ApprovalsScreen.pathOf(project.id), extra: project),
                     onAddUnit: () => _askForUnit(project),
                     onRename: () => _askToRename(project),
                     onRenameUnit: (unit) => _askToRenameUnit(project, unit),

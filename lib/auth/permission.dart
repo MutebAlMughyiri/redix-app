@@ -27,4 +27,7 @@ enum Permission {
 
   /// See every partner in a project and their capital, not only their own.
   seeAllCapital,
+
+  /// See the entries waiting in a project, and approve or reject them.
+  approveEntries,
 }

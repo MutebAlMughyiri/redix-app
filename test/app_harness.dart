@@ -50,6 +50,7 @@ Map<String, String> wordsIn(String language) => {
     'columns.typeNumber', 'columns.typeAmount', 'columns.typeDate', 'columns.typeList', 'columns.typeFile', 'columns.choices', 'columns.newChoices', 'columns.required', 'columns.optional', 'columns.showInReports',
     'columns.inReports', 'columns.custom', 'columns.core', 'columns.edit', 'columns.delete', 'columns.save', 'columns.deleteExplain', 'columns.applyQuestion', 'columns.applyExplain',
     'columns.applyToAll', 'columns.templateOnly',
+    'approvals.title', 'approvals.empty', 'approvals.loadFailed', 'approvals.noConnection', 'approvals.all', 'approvals.purchases', 'approvals.contractorPayments', 'approvals.approve', 'approvals.reject', 'approvals.approveSelected', 'approvals.selectHint', 'approvals.enteredBy', 'approvals.includingVat', 'approvals.withoutInvoice', 'approvals.openFile', 'approvals.fileFailed', 'approvals.rejectTitle', 'approvals.quickReason', 'approvals.reasonUnclear', 'approvals.reasonAmount', 'approvals.reasonItem', 'approvals.reasonDuplicate', 'approvals.reason', 'approvals.reasonHint', 'approvals.rejectSend', 'approvals.reasonRequired', 'approvals.entryNotPending', 'approvals.unknownEntry', 'approvals.originalNotApproved', 'approvals.refused', 'approvals.approvedSome', 'approvals.failedSome',
     'expenses.keptOnPhone', 'offline.title', 'offline.empty', 'offline.waiting', 'offline.sendAgain', 'offline.sendAnyway', 'offline.discard', 'offline.discardQuestion', 'offline.discardExplain',
     'categories.title', 'categories.hint', 'categories.empty', 'categories.loadFailed', 'categories.noConnection', 'categories.refused', 'categories.projectFinished',
     'categories.invalidName', 'categories.invalidOrder', 'categories.generalSubgroup', 'categories.subgroupInUse', 'categories.itemHasEntries', 'categories.changeType', 'subgroups.delete', 'subgroups.deleteQuestion', 'subgroups.deleteExplain', 'categories.new', 'categories.categoryName', 'categories.items', 'categories.noItems',
@@ -107,7 +108,7 @@ const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "ke
 const admin = ['approveProjects'];
 
 /// What a project manager who also does the finance may do in a project.
-const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier', 'recordEntries', 'attachFiles', 'chargeAnyAccount'];
+const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier', 'recordEntries', 'attachFiles', 'chargeAnyAccount', 'approveEntries'];
 
 /// What someone in the field may do in a project.
 const field = ['readProject', 'addSupplier', 'recordEntries', 'attachFiles'];
@@ -380,6 +381,41 @@ class FakeApi {
 
   /// How many sessions the API has issued, so that each gets a refresh token of its own.
   var _issued = 0;
+
+  /// What waits for a decision.
+  final pendingEntries = <Map<String, Object>>[];
+
+  /// The entries the app asked to approve, by request.
+  final sentApprovals = <List<String>>[];
+
+  /// What the API refuses to approve, by entry, with the code.
+  final approvalFailures = <String, String>{};
+
+  /// The rejections the app sent.
+  final sentRejections = <(String, String)>[];
+
+  /// Adds an entry waiting for a decision.
+  Map<String, Object> addPending({String kind = 'purchase', double amount = 1150, double vat = 150, String withoutInvoiceReason = '', String attachmentId = 'attachment-1', String contentType = 'image/png'}) {
+    final entry = <String, Object>{
+      'id': 'entry-${pendingEntries.length}',
+      'kind': kind,
+      'entryDate': '2026-11-05',
+      'amount': amount,
+      'itemName': 'بند اللياسة',
+      'unitName': 'الغربية',
+      'supplierName': 'شركة البواني',
+      'invoiceNumber': '2617',
+      'vat': vat,
+      'accountName': 'حساب المؤسسة',
+      'notes': '',
+      'withoutInvoiceReason': withoutInvoiceReason,
+      'attachmentId': attachmentId,
+      'contentType': contentType,
+      'authorName': 'نواف',
+    };
+    pendingEntries.add(entry);
+    return entry;
+  }
 
   /// How many times the phone asked what changed.
   var syncs = 0;
@@ -1084,6 +1120,25 @@ class FakeApi {
     if (segments.length >= 3 && segments[2] == 'contracts') {
       return _answerContracts(request);
     }
+    if (segments.length == 4 && segments[2] == 'entries' && segments[3] == 'pending') {
+      return _json(pendingEntries, 200);
+    }
+    if (segments.length == 4 && segments[2] == 'entries' && segments[3] == 'approve') {
+      final named = ((jsonDecode(request.body) as Map<String, dynamic>)['entryIds'] as List<dynamic>).cast<String>();
+      sentApprovals.add(named);
+      final failed = [for (final id in named) if (approvalFailures.containsKey(id)) {'entryId': id, 'code': approvalFailures[id]}];
+      pendingEntries.removeWhere((entry) => named.contains(entry['id']) && !approvalFailures.containsKey(entry['id']));
+      return _json({'approved': [for (final id in named) if (!approvalFailures.containsKey(id)) id], 'failed': failed}, 200);
+    }
+    if (segments.length == 5 && segments[2] == 'entries' && segments[4] == 'reject') {
+      final reason = (jsonDecode(request.body) as Map<String, dynamic>)['reason'] as String;
+      sentRejections.add((segments[3], reason));
+      if (reason.trim().isEmpty) {
+        return _json({'code': 'reasonRequired'}, 400);
+      }
+      pendingEntries.removeWhere((entry) => entry['id'] == segments[3]);
+      return _json(const <String, Object>{}, 200);
+    }
     if (segments.length >= 3 && segments[2] == 'contractor-payments') {
       sentContractorPayments.add(jsonDecode(request.body) as Map<String, dynamic>);
       return _json(expenseAnswer.body, expenseAnswer.status);
@@ -1094,6 +1149,9 @@ class FakeApi {
     if (segments.length >= 3 && segments[2] == 'expenses') {
       sentExpenses.add(jsonDecode(request.body) as Map<String, dynamic>);
       return _json(expenseAnswer.body, expenseAnswer.status);
+    }
+    if (segments.length == 4 && segments[2] == 'attachments' && request.method == 'GET') {
+      return segments[3] == 'attachment-gone' ? http.Response('', 404) : http.Response.bytes(onePixelPng, 200, headers: {'content-type': 'image/png'});
     }
     if (segments.length >= 3 && segments[2] == 'attachments') {
       sentAttachments.add(latin1.decode(request.bodyBytes));

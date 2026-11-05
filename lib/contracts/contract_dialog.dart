@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../attachments/attachment_screen.dart';
 import '../attachments/attachment.dart';
 import '../attachments/attachments.dart';
 import '../attachments/invoice_capture.dart';
@@ -108,9 +110,12 @@ class _ContractDialogState extends State<ContractDialog> {
     const SizedBox(height: 16),
     Text(words.contractsDocuments, style: Theme.of(context).textTheme.titleSmall),
     for (final document in [...widget.contract.documents, ..._addedDocuments])
-      Padding(
-        padding: const EdgeInsets.only(top: 4),
-        child: Text(document.fileName, key: ContractsScreen.documentKey(document.id)),
+      Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: TextButton(
+          onPressed: () => context.push(AttachmentScreen.pathOf(widget.project.id, document.id), extra: document.contentType),
+          child: Text(document.fileName, key: ContractsScreen.documentKey(document.id)),
+        ),
       ),
     const SizedBox(height: 8),
     OutlinedButton.icon(key: ContractsScreen.addDocumentKey, icon: const Icon(Icons.attach_file), label: Text(words.contractsAddDocument), onPressed: _addDocument),

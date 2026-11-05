@@ -1,0 +1,71 @@
+/// An entry waiting for Finance's decision (UC-031).
+class PendingApproval {
+  /// An entry as the API answers it.
+  PendingApproval.fromJson(Map<String, dynamic> json)
+    : id = json['id'] as String,
+      kind = json['kind'] as String,
+      date = DateTime.parse(json['entryDate'] as String),
+      amount = (json['amount'] as num).toDouble(),
+      itemName = json['itemName'] as String,
+      unitName = json['unitName'] as String,
+      supplierName = json['supplierName'] as String,
+      invoiceNumber = json['invoiceNumber'] as String,
+      vat = (json['vat'] as num).toDouble(),
+      accountName = json['accountName'] as String,
+      notes = json['notes'] as String,
+      withoutInvoiceReason = json['withoutInvoiceReason'] as String,
+      attachmentId = json['attachmentId'] as String,
+      contentType = json['contentType'] as String,
+      authorName = json['authorName'] as String;
+
+  /// The entry's id.
+  final String id;
+
+  /// `purchase` or `contractorPayment`.
+  final String kind;
+
+  /// Its date.
+  final DateTime date;
+
+  /// What was paid.
+  final double amount;
+
+  /// Its item.
+  final String itemName;
+
+  /// Its unit.
+  final String unitName;
+
+  /// Its supplier, or the contract's contractor.
+  final String supplierName;
+
+  /// Its invoice's number; empty when it has none.
+  final String invoiceNumber;
+
+  /// Its invoice's VAT.
+  final double vat;
+
+  /// What paid it.
+  final String accountName;
+
+  /// What was noted.
+  final String notes;
+
+  /// Why it has no invoice; empty when it has one.
+  final String withoutInvoiceReason;
+
+  /// Its file; empty when it has none.
+  final String attachmentId;
+
+  /// What the file is; empty when it has none.
+  final String contentType;
+
+  /// Who entered it.
+  final String authorName;
+
+  /// True for a contractor's payment.
+  bool get isContractorPayment => kind == 'contractorPayment';
+
+  /// True when it has a file to open.
+  bool get hasFile => attachmentId.isNotEmpty;
+}
