@@ -7,7 +7,6 @@ import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../structure/item_picker.dart';
 import '../structure/offered_items.dart';
-import '../suppliers/supplier.dart';
 import '../suppliers/supplier_picker.dart';
 import '../suppliers/suppliers.dart';
 import '../ui/change_dialog.dart';
@@ -17,7 +16,7 @@ import 'contract.dart';
 import 'contracts.dart';
 import 'contracts_screen.dart';
 
-/// Asks for a contract's terms, and for a new contract its contractor, item and unit, which are set once.
+/// Asks for a contract's terms, and its contractor, item and unit while no payment names it.
 class ContractDialog extends StatefulWidget {
   /// The dialog amending [contract], or adding one when it is [Contract.none], through [contracts] of [project], picking from [suppliers] and [items], and keeping its documents through [attachments] from what [capture] picks.
   const ContractDialog({super.key, required this.contract, required this.project, required this.contracts, required this.suppliers, required this.items, required this.attachments, required this.capture});
@@ -53,10 +52,11 @@ class _ContractDialogState extends State<ContractDialog> {
   late final _quantity = TextEditingController(text: widget.contract.quantity == 0 ? '' : formatPlain(widget.contract.quantity));
   late final _notes = TextEditingController(text: widget.contract.notes);
   late var _isOpenValue = widget.contract.isOpenValue;
-  var _contractor = Supplier.none();
-  var _itemId = '';
-  var _itemName = '';
-  var _unitId = '';
+  late var _contractorId = widget.contract.supplierId;
+  late var _contractorName = widget.contract.supplierName;
+  late var _itemId = widget.contract.itemId;
+  late var _itemName = widget.contract.itemName;
+  late var _unitId = widget.contract.unitId;
   final _addedDocuments = <Attachment>[];
   var _documentMessage = '';
 
@@ -87,7 +87,7 @@ class _ContractDialogState extends State<ContractDialog> {
       return 'contracts.invalidQuantity';
     }
     final terms = (value: value, isOpenValue: _isOpenValue, unitPrice: unitPrice, quantity: quantity, notes: _notes.text, attachmentIds: [for (final document in _addedDocuments) document.id]);
-    return _isNew ? widget.contracts.add(_contractor.id, _itemId, _unitId, terms) : widget.contracts.amend(widget.contract, terms);
+    return _isNew ? widget.contracts.add(_contractorId, _itemId, _unitId, terms) : widget.contracts.amend(widget.contract, terms, _contractorId, _itemId, _unitId);
   }
 
   Future<void> _addDocument() async {
@@ -120,12 +120,15 @@ class _ContractDialogState extends State<ContractDialog> {
   Future<void> _pickContractor() async {
     final picked = await SupplierPicker.show(context, widget.project, widget.suppliers);
     if (picked.id.isNotEmpty) {
-      setState(() => _contractor = picked);
+      setState(() {
+        _contractorId = picked.id;
+        _contractorName = picked.name;
+      });
     }
   }
 
   List<Widget> _parties(Words words) => [
-    PickerField(key: ContractsScreen.contractorKey, label: words.contractsContractor, value: _contractor.name, onTap: _pickContractor),
+    PickerField(key: ContractsScreen.contractorKey, label: words.contractsContractor, value: _contractorName, onTap: _pickContractor),
     const SizedBox(height: 16),
     ItemPicker(
       key: ContractsScreen.itemKey,
@@ -166,7 +169,7 @@ class _ContractDialogState extends State<ContractDialog> {
       saveLabel: _isNew ? words.contractsNew : words.contractsSave,
       onSave: _save,
       children: [
-        if (_isNew) ..._parties(words) else Text([contract.supplierName, contract.itemName, contract.unitName].join(' · '), key: ContractsScreen.partiesKey),
+        if (contract.hasPayments) Text([contract.supplierName, contract.itemName, contract.unitName].join(' · '), key: ContractsScreen.partiesKey) else ..._parties(words),
         SwitchListTile(
           key: ContractsScreen.openValueKey,
           contentPadding: EdgeInsets.zero,

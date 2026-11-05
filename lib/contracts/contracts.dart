@@ -30,8 +30,11 @@ class Contracts extends ApiList<Contract> {
     ..._bodyOf(terms),
   });
 
-  /// Amends [contract] to [terms]; its contractor, item and unit never change.
-  Future<String> amend(Contract contract, ContractTerms terms) => change('/projects/$projectId/contracts/${contract.id}', _bodyOf(terms));
+  /// Amends [contract] to [terms], with the contractor [supplierId], for [itemId] and [unitId] while no payment names it.
+  Future<String> amend(Contract contract, ContractTerms terms, String supplierId, String itemId, String unitId) => change('/projects/$projectId/contracts/${contract.id}', {
+    if (!contract.hasPayments) ...{'supplierId': supplierId, 'itemId': itemId, 'unitId': unitId},
+    ..._bodyOf(terms),
+  });
 
   /// Disables [contract]; it stays in the reports.
   Future<String> disable(Contract contract) => change('/projects/$projectId/contracts/${contract.id}/disable', {});

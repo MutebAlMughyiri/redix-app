@@ -8,6 +8,9 @@ class Contract {
   Contract.fromJson(Map<String, dynamic> json)
     : id = json['id'] as String,
       itemId = json['itemId'] as String,
+      supplierId = json['supplierId'] as String,
+      unitId = json['unitId'] as String,
+      hasPayments = json['hasPayments'] as bool,
       supplierName = json['supplierName'] as String,
       supplierVatNumber = json['supplierVatNumber'] as String,
       itemName = json['itemName'] as String,
@@ -25,13 +28,22 @@ class Contract {
       documents = [for (final document in json['documents'] as List<dynamic>) Attachment.fromJson(document as Map<String, dynamic>)];
 
   /// No contract, for the dialog that adds one.
-  Contract.none() : documents = [], id = '', itemId = '', supplierName = '', supplierVatNumber = '', itemName = '', unitName = '', value = 0, isOpenValue = false, unitPrice = 0, quantity = 0, notes = '', paid = 0, pending = 0, remaining = 0, isOverrun = false, isActive = true;
+  Contract.none() : documents = [], id = '', itemId = '', supplierId = '', unitId = '', hasPayments = false, supplierName = '', supplierVatNumber = '', itemName = '', unitName = '', value = 0, isOpenValue = false, unitPrice = 0, quantity = 0, notes = '', paid = 0, pending = 0, remaining = 0, isOverrun = false, isActive = true;
 
   /// The contract's id; empty for a contract not added yet.
   final String id;
 
   /// The item it is for.
   final String itemId;
+
+  /// The contractor.
+  final String supplierId;
+
+  /// The unit it is for.
+  final String unitId;
+
+  /// Whether any payment names it: its contractor, item and unit then stay as they are.
+  final bool hasPayments;
 
   /// The contractor's name.
   final String supplierName;

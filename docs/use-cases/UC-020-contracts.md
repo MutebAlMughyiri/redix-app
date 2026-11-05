@@ -33,7 +33,7 @@ The project's home, `HomeScreen`:
 | The contractor, in the dialog that adds | `ContractsScreen.contractorKey` | Opens `SupplierPicker` (UC-018), with its quick add (UC-019) |
 | The item, in the dialog that adds | `ContractsScreen.itemKey` | An `ItemPicker` of what takes contractor payments |
 | A unit, in the dialog that adds | `ContractsScreen.unitKey(id)` | The project's units, and the shared one last |
-| The contractor, item and unit, in the dialog that amends | `ContractsScreen.partiesKey` | They never change |
+| The contractor, item and unit, in the dialog that amends | `ContractsScreen.contractorKey`, `itemKey`, `unitKey(id)` while no payment names the contract, starting from what it has; `partiesKey`, read only, once one does | |
 | Open-value contract, in the dialog | `ContractsScreen.openValueKey` | Hides the value |
 | The value, unit price, quantity and notes, in the dialog | `ContractsScreen.valueKey`, `unitPriceKey`, `quantityKey`, `notesKey` | |
 | Save, in the dialog | `ContractsScreen.saveKey` | |
@@ -65,7 +65,8 @@ The project's home, `HomeScreen`:
 | Nothing chosen is left for the API to refuse | `Contracts.add` | `nothing chosen is left for the API to refuse, and stays in the dialog` |
 | An open-value contract asks no value | `ContractDialog` | `an open-value contract asks no value and sends the mark` |
 | Figures that are not numbers are refused before sending | `ContractDialog` | `figures that are not numbers are refused before anything is sent` |
-| Amending starts from the contract, whose parties stay | `ContractDialog`, `Contracts.amend` | `amending starts from the contract, whose contractor, item and unit stay` |
+| A contract with no payments offers its contractor, item and unit, starting from what it has, and sends them; a refusal stays in the dialog | `ContractDialog`, `Contracts.amend`, `Contract.hasPayments` | `a contract with no payments offers its contractor, item and unit, starting from what it has, and sends them`, `another unit chosen is what is sent`, `a refused change of contractor stays in the dialog and says why` |
+| Amending a contract with payments starts from it, whose contractor, item and unit stay and are not sent | `ContractDialog`, `Contracts.amend` | `amending a contract with payments starts from it, whose contractor, item and unit stay` |
 | Saving with the keyboard up closes it with the dialog | `ChangeDialog` | `saving with the keyboard up closes it with the dialog` |
 | Disabled, it stays on the list, marked, and can be enabled | `ContractCard` | `a disabled contract stays on the list, marked, and can be enabled` |
 | A project with no contracts says so | `ApiListBody` | `a project with no contracts says so` |

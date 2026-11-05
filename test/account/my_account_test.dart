@@ -545,7 +545,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(SupplierPicker.closeKey)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-      final overrun = api.addContract(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', itemName: 'البلاط والرخام للواجهات الداخلية', unitName: 'الفلة الغربية الكبرى', value: 999999999.99, paid: 1099999999.99, unitPrice: 380, quantity: 50, notes: 'زيادة بملحق')['id'] as String;
+      final overrun = api.addContract(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', itemName: 'البلاط والرخام للواجهات الداخلية', unitName: 'الفلة الغربية الكبرى', value: 999999999.99, paid: 1099999999.99, unitPrice: 380, quantity: 50, notes: 'زيادة بملحق', hasPayments: true)['id'] as String;
       final open = api.addContract(runningId, 'دهان داخلي', isOpenValue: true, paid: 12000)['id'] as String;
       await tester.ensureVisible(find.byKey(HomeScreen.contractsKey(runningId)));
       expectFits(HomeScreen.contractsKey(runningId));

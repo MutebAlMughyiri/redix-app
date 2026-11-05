@@ -420,6 +420,14 @@ void main() {
     await $(find.text('34,000.00')).waitUntilVisible();
     await $.pumpAndSettle();
     await picture('contracts');
+    await $(keyStartingWith('contracts.menu.')).tap();
+    await $(ContractsScreen.editKey).tap();
+    await showInDialog(keyStartingWith('contracts.unit.').last);
+    await $(keyStartingWith('contracts.unit.')).last.tap();
+    await $.pumpAndSettle();
+    await $(ContractsScreen.saveKey).tap();
+    await $(find.text('34,000.00')).waitUntilVisible();
+    await $.pumpAndSettle();
     await $(BackButton).tap();
 
     await projectUsers.scrollTo().tap();

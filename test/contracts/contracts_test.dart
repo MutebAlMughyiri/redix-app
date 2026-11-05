@@ -10,6 +10,8 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/item_picker.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/picker_field.dart';
 
 import '../app_harness.dart';
 
@@ -19,11 +21,11 @@ void main() {
   late FakeApi apiOfDocuments;
 
   /// A project with a contract running, one overrun and one of open value, opened as far as its contracts.
-  Future<({FakeApi api, String running, String overrun, String open, String contractor, String item})> openContracts(WidgetTester tester, {String status = 'running', List<String> permissions = managerAndFinance}) async {
+  Future<({FakeApi api, String running, String overrun, String open, String contractor, String item})> openContracts(WidgetTester tester, {bool hasPayments = false, String status = 'running', List<String> permissions = managerAndFinance}) async {
     final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions, units: ['الفلة الغربية']);
     final contractor = api.addSupplier('project-0', 'شركة النخيل', vatNumber: '300000000000003');
     final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'البلاط');
-    final running = api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000);
+    final running = api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000, hasPayments: hasPayments);
     final overrun = api.addContract('project-0', 'مبلط الجنوبية', value: 34000, paid: 35000);
     final open = api.addContract('project-0', 'دهان داخلي', isOpenValue: true, paid: 12000);
     await pumpRedix(tester, api, stored: {'session': keptSession});
@@ -285,8 +287,46 @@ void main() {
     expect(opened.api.sentSettingsChanges, isEmpty);
   });
 
-  testWidgets('amending starts from the contract, whose contractor, item and unit stay', (tester) async {
+  testWidgets('a contract with no payments offers its contractor, item and unit, starting from what it has, and sends them', (tester) async {
     final opened = await openContracts(tester);
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
+
+    expect(find.byKey(ContractsScreen.partiesKey), findsNothing);
+    expect(tester.widget<PickerField>(find.byKey(ContractsScreen.contractorKey)).value, 'مبلط الغربية');
+    expect(tester.widget<ItemPicker>(find.byKey(ContractsScreen.itemKey)).itemName, 'البلاط');
+    await save(tester, opened.api);
+
+    expect(opened.api.sentSettingsChanges.single.$2, containsPair('supplierId', 'supplier-of-contract'));
+    expect(opened.api.sentSettingsChanges.single.$2, containsPair('itemId', 'item-of-contract'));
+    expect(opened.api.sentSettingsChanges.single.$2, containsPair('unitId', 'unit-of-contract'));
+  });
+
+  testWidgets('another unit chosen is what is sent', (tester) async {
+    final opened = await openContracts(tester);
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
+    await tapVisible(tester, opened.api, ContractsScreen.unitKey('project-0-unit-shared'));
+    await save(tester, opened.api);
+
+    expect(opened.api.sentSettingsChanges.single.$2, containsPair('unitId', 'project-0-unit-shared'));
+  });
+
+  testWidgets('a refused change of contractor stays in the dialog and says why', (tester) async {
+    final opened = await openContracts(tester);
+    opened.api.settingsAnswer = (status: 409, code: 'contractHasPayments');
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
+    await save(tester, opened.api);
+
+    expect(text(tester, ChangeDialog.messageKey), 'en contracts.contractHasPayments');
+  });
+
+  testWidgets('amending a contract with payments starts from it, whose contractor, item and unit stay', (tester) async {
+    final opened = await openContracts(tester, hasPayments: true);
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
