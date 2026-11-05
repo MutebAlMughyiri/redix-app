@@ -5,7 +5,7 @@ import '../projects/new_project_screen.dart';
 import '../words/words.dart';
 import 'session.dart';
 
-/// The sign-in screen (UC-002, تسجيل الدخول): username and password. A refusal shows as one line that never says which field was wrong (AC-01.2).
+/// The sign-in screen (UC-002, تسجيل الدخول): username and password, or a fingerprint or face on a phone that uses them (UC-011). A refusal shows as one line that never says which field was wrong (AC-01.2).
 class SignInScreen extends StatefulWidget {
   /// The screen, signing in to [session].
   const SignInScreen({super.key, required this.session});
@@ -31,6 +31,12 @@ class SignInScreen extends StatefulWidget {
   /// The sign-in button.
   static const submitKey = Key('signIn.submit');
 
+  /// The line between the password and the fingerprint or face.
+  static const orKey = Key('signIn.or');
+
+  /// The button that asks for the fingerprint or face.
+  static const unlockKey = Key('signIn.unlock');
+
   /// The link to register a new project.
   static const registerKey = Key('signIn.register');
 
@@ -44,14 +50,30 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _username = TextEditingController();
   final _password = TextEditingController();
-  late var _message = widget.session.notice;
+  var _message = '';
   var _signingIn = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.session.canUnlock) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _unlock());
+    }
+  }
 
   @override
   void dispose() {
     _username.dispose();
     _password.dispose();
     super.dispose();
+  }
+
+  /// Nothing waits on the prompt, so the password form works whatever it does.
+  Future<void> _unlock() async {
+    final passed = await widget.session.unlock(Words.of(context));
+    if (!passed && mounted) {
+      setState(() => _message = widget.session.canUnlock ? 'biometrics.failed' : 'biometrics.usePassword');
+    }
   }
 
   Future<void> _signIn() async {
@@ -109,10 +131,49 @@ class _SignInScreenState extends State<SignInScreen> {
               style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
               child: Text(words.signInSubmit),
             ),
-            if (_message.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Text(words.text(_message), key: SignInScreen.messageKey, style: TextStyle(color: theme.colorScheme.error)),
-            ],
+            ListenableBuilder(
+              listenable: widget.session,
+              builder: (context, _) {
+                final message = _message.isEmpty ? widget.session.notice : _message;
+                return message.isEmpty
+                    ? const SizedBox.shrink()
+                    : Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Text(words.text(message), key: SignInScreen.messageKey, style: TextStyle(color: theme.colorScheme.error)),
+                      );
+              },
+            ),
+            ListenableBuilder(
+              listenable: widget.session,
+              builder: (context, _) => widget.session.canUnlock
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              const Expanded(child: Divider()),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 12),
+                                child: Text(words.biometricsOr, key: SignInScreen.orKey, style: theme.textTheme.bodySmall),
+                              ),
+                              const Expanded(child: Divider()),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          OutlinedButton.icon(
+                            key: SignInScreen.unlockKey,
+                            onPressed: _unlock,
+                            style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                            icon: const Icon(Icons.fingerprint),
+                            label: Text(words.biometricsSignIn),
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
             const SizedBox(height: 16),
             TextButton(key: SignInScreen.registerKey, onPressed: () => context.push(NewProjectScreen.registerPath), child: Text(words.signInRegisterProject)),
             const SizedBox(height: 16),

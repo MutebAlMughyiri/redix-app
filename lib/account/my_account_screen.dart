@@ -7,8 +7,8 @@ import '../ui/confirm_dialog.dart';
 import '../words/app_language.dart';
 import '../words/words.dart';
 
-/// My account (حسابي): the user's own settings. Today the language (UC-004), the way to change the password (UC-003), and signing out
-/// (UC-062); the default project and face ID join it with UC-010 and UC-011.
+/// My account (حسابي): the user's own settings: the language (UC-004), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out
+/// (UC-062).
 class MyAccountScreen extends StatefulWidget {
   /// The screen, switching [language] and signing out of [session].
   const MyAccountScreen({super.key, required this.language, required this.session});
@@ -30,6 +30,12 @@ class MyAccountScreen extends StatefulWidget {
 
   /// The line that says why the language could not be switched.
   static const messageKey = Key('myAccount.message');
+
+  /// The switch that turns fingerprint or face on and off for this phone.
+  static const biometricsKey = Key('myAccount.biometrics');
+
+  /// The line that says why fingerprint or face did not change.
+  static const biometricsMessageKey = Key('myAccount.biometricsMessage');
 
   /// The way into the password change.
   static const changePasswordKey = Key('myAccount.changePassword');
@@ -53,6 +59,7 @@ class MyAccountScreen extends StatefulWidget {
 class _MyAccountScreenState extends State<MyAccountScreen> {
   var _message = '';
   var _switching = false;
+  var _biometricsMessage = '';
 
   Future<void> _choose(String language) async {
     setState(() => _switching = true);
@@ -62,6 +69,14 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
         _switching = false;
         _message = refusal;
       });
+    }
+  }
+
+  /// Nothing waits on the prompt, because a cancelled one may never answer: the switch can always be tapped again.
+  Future<void> _setBiometrics(bool on) async {
+    final refusal = await widget.session.setBiometrics(on: on, words: Words.of(context));
+    if (mounted) {
+      setState(() => _biometricsMessage = refusal);
     }
   }
 
@@ -102,6 +117,20 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             Text(words.text(_message), key: MyAccountScreen.messageKey, style: TextStyle(color: theme.colorScheme.error)),
           ],
           const SizedBox(height: 32),
+          ListenableBuilder(
+            listenable: widget.session,
+            builder: (context, _) => SwitchListTile(
+              key: MyAccountScreen.biometricsKey,
+              contentPadding: EdgeInsets.zero,
+              secondary: const Icon(Icons.fingerprint),
+              title: Text(words.biometricsSignIn),
+              subtitle: Text(words.biometricsHint),
+              value: widget.session.usesBiometrics,
+              onChanged: _setBiometrics,
+            ),
+          ),
+          if (_biometricsMessage.isNotEmpty)
+            Text(words.text(_biometricsMessage), key: MyAccountScreen.biometricsMessageKey, style: TextStyle(color: theme.colorScheme.error)),
           ListTile(
             key: MyAccountScreen.changePasswordKey,
             contentPadding: EdgeInsets.zero,

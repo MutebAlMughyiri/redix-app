@@ -36,4 +36,4 @@
 
 ## Left to later use cases
 
-My account gets the default project with UC-010 and face ID with UC-011.
+Nothing: UC-011 added fingerprint or face to My account, and the default project stayed on the project list (UC-010).

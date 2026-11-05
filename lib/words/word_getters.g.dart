@@ -8,6 +8,33 @@ mixin WordGetters {
   /// The word `app.title`.
   String get appTitle => text('app.title');
 
+  /// The word `biometrics.failed`.
+  String get biometricsFailed => text('biometrics.failed');
+
+  /// The word `biometrics.hint`.
+  String get biometricsHint => text('biometrics.hint');
+
+  /// The word `biometrics.notAvailable`.
+  String get biometricsNotAvailable => text('biometrics.notAvailable');
+
+  /// The word `biometrics.notChanged`.
+  String get biometricsNotChanged => text('biometrics.notChanged');
+
+  /// The word `biometrics.or`.
+  String get biometricsOr => text('biometrics.or');
+
+  /// The word `biometrics.promptCancel`.
+  String get biometricsPromptCancel => text('biometrics.promptCancel');
+
+  /// The word `biometrics.promptTitle`.
+  String get biometricsPromptTitle => text('biometrics.promptTitle');
+
+  /// The word `biometrics.signIn`.
+  String get biometricsSignIn => text('biometrics.signIn');
+
+  /// The word `biometrics.usePassword`.
+  String get biometricsUsePassword => text('biometrics.usePassword');
+
   /// The word `changePassword.accountLocked`.
   String get changePasswordAccountLocked => text('changePassword.accountLocked');
 

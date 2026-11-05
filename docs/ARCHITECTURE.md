@@ -36,6 +36,7 @@ lib/
   auth/
     permission.dart         Permission: what the API says a user may do, as its name in the API
     session.dart            Session: the signed-in session, kept in the Keychain or Keystore
+    biometrics.dart         Biometrics: the fingerprint or face check, one fixed word behind the phone's prompt
     sign_in_screen.dart     the sign-in screen
     change_password_screen.dart  the password change, forced while the password is temporary
   home/home_screen.dart     the home of the open project, and where a person lands

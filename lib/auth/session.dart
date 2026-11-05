@@ -6,14 +6,20 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../api.dart';
+import '../words/words.dart';
+import 'biometrics.dart';
 import 'permission.dart';
 
 /// The signed-in session (UC-002): the tokens the API issued, kept only in the Keychain or Keystore (NFR-09), and the one way to call the API as the user.
 class Session extends ChangeNotifier {
-  /// A session kept in the device's secure storage, the Keychain or Keystore.
-  Session([this._storage = const FlutterSecureStorage()]);
+  /// A session kept in the device's secure storage, the Keychain or Keystore, and opened through [_biometrics] on a phone that uses them.
+  Session([this._storage = const FlutterSecureStorage(), this._biometrics = const Biometrics()]);
+
+  /// The tries at the fingerprint or face before only the password works (AC-35.2).
+  static const maxUnlockAttempts = 3;
 
   final FlutterSecureStorage _storage;
+  final Biometrics _biometrics;
   static const _storageKey = 'session';
 
   var _accessToken = '';
@@ -22,6 +28,8 @@ class Session extends ChangeNotifier {
   var _permissions = <String>{};
   var _defaultProjectId = '';
   var _openDefaultProject = false;
+  var _usesBiometrics = false;
+  var _unlockAttempts = 0;
   var _notice = '';
 
   /// True from sign-in until the session ends.
@@ -41,6 +49,12 @@ class Session extends ChangeNotifier {
 
   /// True when sign-in skips the list and opens the default project (AC-37.1).
   bool get opensDefaultProject => _openDefaultProject && _defaultProjectId.isNotEmpty;
+
+  /// True when opening the app on this phone asks for a fingerprint or face (UC-011).
+  bool get usesBiometrics => _usesBiometrics;
+
+  /// True while the kept session waits for the fingerprint or face: 3 tries, then only the password works (AC-35.2).
+  bool get canUnlock => _usesBiometrics && !isOpen && _unlockAttempts < maxUnlockAttempts;
 
   /// Makes [projectId] the default project, and says whether sign-in opens it directly. Returns an empty string once made, otherwise the word key of the refusal.
   Future<String> setDefaultProject(String projectId, {required bool openDirectly}) => _changeDefault('/projects/$projectId/default', {'openDirectly': openDirectly});
@@ -66,10 +80,50 @@ class Session extends ChangeNotifier {
   String get notice => _notice;
 
   /// Reads the session kept from an earlier sign-in, then renews it in the background. A session the API refuses ends, with a notice;
-  /// without a network the kept session stays open, so the app works offline (FR-16).
+  /// without a network the kept session stays open, so the app works offline (FR-16). On a phone that uses biometrics it waits for [unlock].
   Future<void> restore() async {
-    _apply(jsonDecode(await _storage.read(key: _storageKey) ?? '{}') as Map<String, dynamic>);
+    final kept = await _kept();
+    _usesBiometrics = kept['usesBiometrics'] as bool? ?? false;
+    if (!_usesBiometrics) {
+      _open(kept);
+    }
     notifyListeners();
+  }
+
+  /// Asks for the fingerprint or face, and opens the kept session on a pass (AC-35.1). The try counts before the prompt opens, because a cancelled prompt may never answer.
+  Future<bool> unlock(Words words) async {
+    _unlockAttempts++;
+    notifyListeners();
+    final passed = await _biometrics.passes(words);
+    if (passed) {
+      _open(await _kept());
+      notifyListeners();
+    }
+    return passed;
+  }
+
+  /// Turns fingerprint or face on or off for this phone. Turning on asks for it first. Returns an empty string once changed, otherwise the word key of why not.
+  Future<String> setBiometrics({required bool on, required Words words}) async {
+    if (on && !await _biometrics.turnOn(words)) {
+      return 'biometrics.notAvailable';
+    }
+    try {
+      final response = await post('/auth/biometrics', {'on': on});
+      if (response.statusCode != 200) {
+        return 'biometrics.notChanged';
+      }
+      await _keep(response);
+      return '';
+    } on Exception catch (error) {
+      debugPrint('Biometrics not changed: $error');
+      return 'biometrics.notChanged';
+    }
+  }
+
+  Future<Map<String, dynamic>> _kept() async => jsonDecode(await _storage.read(key: _storageKey) ?? '{}') as Map<String, dynamic>;
+
+  void _open(Map<String, dynamic> session) {
+    _apply(session);
     if (isOpen) {
       unawaited(_renew());
     }
@@ -172,5 +226,6 @@ class Session extends ChangeNotifier {
     _permissions = {...(session['permissions'] as List<dynamic>? ?? []).cast<String>()};
     _defaultProjectId = session['defaultProjectId'] as String? ?? '';
     _openDefaultProject = session['openDefaultProject'] as bool? ?? false;
+    _usesBiometrics = session['usesBiometrics'] as bool? ?? false;
   }
 }

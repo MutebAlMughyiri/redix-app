@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:redix/auth/biometrics.dart';
 import 'package:redix/auth/session.dart';
 import 'package:redix/main.dart';
 import 'package:redix/words/app_language.dart';
@@ -14,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 Map<String, String> wordsIn(String language) => {
   for (final key in [
     'app.title',
+    'biometrics.signIn', 'biometrics.hint', 'biometrics.or', 'biometrics.failed', 'biometrics.usePassword', 'biometrics.promptTitle', 'biometrics.promptCancel', 'biometrics.notAvailable', 'biometrics.notChanged',
     'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.openDefault', 'projects.openDefaultHint', 'settings.switchProject',
     'signIn.username', 'signIn.password', 'signIn.hint', 'signIn.submit', 'signIn.forgotPassword',
     'signIn.invalidCredentials', 'signIn.accountLocked', 'signIn.sessionExpired', 'signIn.noConnection',
@@ -45,6 +49,9 @@ Map<String, String> wordsIn(String language) => {
 /// A kept session, as the secure storage holds it after a sign-in.
 const keptSession = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": false}';
 
+/// A kept session on a phone that uses a fingerprint or face.
+const keptBiometricSession = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": false, "usesBiometrics": true}';
+
 /// A kept session whose password is temporary.
 const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": true}';
 
@@ -53,6 +60,61 @@ const admin = ['approveProjects'];
 
 /// What a project manager who also does the finance may do in a project.
 const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject'];
+
+/// The phone's own fingerprint or face prompt, as the app's tests see it.
+class FakePrompt extends Fake implements FlutterSecureStorage {
+  /// What a read answers once the prompt passes: the fixed word, or nothing once a new fingerprint was added to the phone.
+  String? answer = 'on';
+
+  /// Whether the prompt fails, like a wrong finger, a locked sensor or a phone with no fingerprint.
+  var fails = false;
+
+  /// Whether the prompt never answers, like Cancel on Android.
+  var neverAnswers = false;
+
+  /// How many times the prompt has shown.
+  var shown = 0;
+
+  /// What the prompt was last told to show on Android.
+  var options = <String, String>{};
+
+  @override
+  Future<String?> read({
+    required String key,
+    AppleOptions? iOptions,
+    AndroidOptions? aOptions,
+    LinuxOptions? lOptions,
+    WebOptions? webOptions,
+    AppleOptions? mOptions,
+    WindowsOptions? wOptions,
+  }) {
+    shown++;
+    options = aOptions?.toMap() ?? {};
+    if (neverAnswers) {
+      return Completer<String?>().future;
+    }
+    if (fails) {
+      throw PlatformException(code: 'Exception encountered', message: 'Biometric authentication error');
+    }
+    return Future.value(answer);
+  }
+
+  @override
+  Future<void> write({
+    required String key,
+    required String? value,
+    AppleOptions? iOptions,
+    AndroidOptions? aOptions,
+    LinuxOptions? lOptions,
+    WebOptions? webOptions,
+    AppleOptions? mOptions,
+    WindowsOptions? wOptions,
+  }) async {
+    if (fails) {
+      throw PlatformException(code: 'Exception encountered', message: 'BIOMETRIC_UNAVAILABLE');
+    }
+  }
+}
 
 /// The API as the app's tests see it: words for any language, and the answers of sign-in, refresh and password change each test chooses.
 class FakeApi {
@@ -79,6 +141,15 @@ class FakeApi {
 
   /// Whether sign-in opens the default project directly, as every session says it.
   var openDefaultProject = false;
+
+  /// Whether this phone uses a fingerprint or face, as every session says it.
+  var usesBiometrics = false;
+
+  /// What turning a fingerprint or face on or off answers.
+  var biometricsStatus = 200;
+
+  /// What was last sent to turn a fingerprint or face on or off.
+  final sentBiometrics = <bool>[];
 
   /// The roles a project can give, in their order.
   final roles = <Map<String, String>>[
@@ -150,8 +221,17 @@ class FakeApi {
     if (path.startsWith('/users')) {
       return _answerUsers(request);
     }
+    if (path == '/auth/sign-in') {
+      usesBiometrics = false;
+    }
+    if (path == '/auth/biometrics') {
+      final on = (jsonDecode(request.body) as Map<String, dynamic>)['on'] as bool;
+      sentBiometrics.add(on);
+      usesBiometrics = biometricsStatus == 200 ? on : usesBiometrics;
+    }
     final (status, code) = switch (path) {
       '/auth/sign-in' => (signInAnswer.status, signInAnswer.code),
+      '/auth/biometrics' => (biometricsStatus, 'refused'),
       '/auth/refresh' => (refreshStatus, 'sessionExpired'),
       _ => (changePasswordAnswer.status, changePasswordAnswer.code),
     };
@@ -159,7 +239,7 @@ class FakeApi {
       mustChangePassword = false;
     }
     final body = status == 200
-        ? '{"accessToken": "new-access", "refreshToken": "new-refresh", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "openDefaultProject": $openDefaultProject}'
+        ? '{"accessToken": "new-access", "refreshToken": "new-refresh", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "openDefaultProject": $openDefaultProject, "usesBiometrics": $usesBiometrics}'
         : '{"code": "$code"}';
     return http.Response(body, status);
   });
@@ -361,12 +441,13 @@ Future<Session> pumpRedix(
   Locale locale = const Locale('en'),
   Map<String, String> stored = const {},
   Map<String, Object> preferences = const {},
+  FakePrompt? prompt,
 }) async {
   SharedPreferences.setMockInitialValues(preferences);
   FlutterSecureStorage.setMockInitialValues(Map.of(stored));
   tester.platformDispatcher.localesTestValue = [locale];
   addTearDown(tester.platformDispatcher.clearLocalesTestValue);
-  final session = Session();
+  final session = Session(const FlutterSecureStorage(), Biometrics(prompt ?? FakePrompt()));
   final language = AppLanguage();
   await http.runWithClient(() async {
     await session.restore();

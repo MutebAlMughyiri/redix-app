@@ -39,5 +39,6 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-008](use-cases/UC-008-project-roles.md) | Add people to a project and give their roles | Project managers |
 | [UC-009](use-cases/UC-009-follow-permissions.md) | Show each person the controls their role allows in each project | Everyone |
 | [UC-010](use-cases/UC-010-projects-and-default.md) | Choose a project after sign-in, see it by your role in it, and set a default | Everyone |
+| [UC-011](use-cases/UC-011-biometrics.md) | Sign in with a fingerprint or face instead of the password | Everyone, for this phone |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

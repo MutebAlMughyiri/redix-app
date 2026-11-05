@@ -41,4 +41,4 @@
 
 ## Left to later use cases
 
-Face ID unlock (UC-011, the button on the screens canvas), the forced change of a temporary password (UC-003), and the user's projects after sign-in (UC-010).
+The forced change of a temporary password (UC-003), and the user's projects after sign-in (UC-010).

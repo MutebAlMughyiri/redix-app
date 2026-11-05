@@ -6,6 +6,9 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | What sits behind the fingerprint or face is one fixed word, never the tokens | Tokens change at every renewal, and an iPhone asks again at every write to a guarded item |
+| 2026-11-05 | The check is `flutter_secure_storage`'s biometric option, with strong biometrics only, and no new package | `local_auth` cannot tell that a new fingerprint was added, which AC-35.2 needs; a PIN is often known to others |
+| 2026-11-05 | The app asks only when it starts, not on every return from the background | FR-35 is about signing in; locking on return needs a listener and a timer, and would ask again after every camera or file picker |
 | 2026-11-05 | The project list is the first screen after sign-in, a card opens the project's home, and a star on the list sets the default | One place for choosing and for the default, as FR-37 asks; the star replaces the canvas's Default chip |
 | 2026-11-05 | Where a person lands is decided at app start and at sign-in, and nowhere else | So Switch project is never sent back to the project they just left |
 | 2026-11-05 | The list and the project's home share one `Projects`, and a screen opening reads it after the frame (`ApiList.loadOnOpen`) | One read of one list; the other screen is still building when this one opens |

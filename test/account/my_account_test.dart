@@ -27,6 +27,86 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
   }
 
+  SwitchListTile biometricsSwitch(WidgetTester tester) => tester.widget<SwitchListTile>(find.byKey(MyAccountScreen.biometricsKey));
+
+  testWidgets('turning on fingerprint or face asks first, then tells the server', (tester) async {
+    final api = FakeApi();
+    final prompt = FakePrompt();
+    await pumpRedix(tester, api, stored: {'session': keptSession}, prompt: prompt);
+    await openMyAccount(tester, api);
+    expect(biometricsSwitch(tester).value, isFalse);
+
+    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+
+    expect(prompt.shown, 1);
+    expect(api.sentBiometrics, [true]);
+    expect(biometricsSwitch(tester).value, isTrue);
+    expect(find.byKey(MyAccountScreen.biometricsMessageKey), findsNothing);
+  });
+
+  testWidgets('a phone with no fingerprint or face stays off, tells the server nothing, and says what to do', (tester) async {
+    final api = FakeApi();
+    await pumpRedix(tester, api, stored: {'session': keptSession}, prompt: FakePrompt()..fails = true);
+    await openMyAccount(tester, api);
+
+    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+
+    expect(api.sentBiometrics, isEmpty);
+    expect(biometricsSwitch(tester).value, isFalse);
+    expect(text(tester, MyAccountScreen.biometricsMessageKey), 'en biometrics.notAvailable');
+  });
+
+  testWidgets('a prompt with no answer leaves the switch off, and it can be tapped again', (tester) async {
+    final api = FakeApi();
+    final prompt = FakePrompt()..neverAnswers = true;
+    await pumpRedix(tester, api, stored: {'session': keptSession}, prompt: prompt);
+    await openMyAccount(tester, api);
+
+    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+    expect(biometricsSwitch(tester).value, isFalse);
+
+    prompt.neverAnswers = false;
+    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+    expect(biometricsSwitch(tester).value, isTrue);
+  });
+
+  testWidgets('without a network it stays off and says so', (tester) async {
+    final api = FakeApi();
+    await pumpRedix(tester, api, stored: {'session': keptSession}, prompt: FakePrompt());
+    await openMyAccount(tester, api);
+
+    api.online = false;
+    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+
+    expect(biometricsSwitch(tester).value, isFalse);
+    expect(text(tester, MyAccountScreen.biometricsMessageKey), 'en biometrics.notChanged');
+  });
+
+  testWidgets('a refused change stays as it was and says so', (tester) async {
+    final api = FakeApi()..biometricsStatus = 403;
+    await pumpRedix(tester, api, stored: {'session': keptSession}, prompt: FakePrompt());
+    await openMyAccount(tester, api);
+
+    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+
+    expect(biometricsSwitch(tester).value, isFalse);
+    expect(text(tester, MyAccountScreen.biometricsMessageKey), 'en biometrics.notChanged');
+  });
+
+  testWidgets('turning it off asks nothing', (tester) async {
+    final api = FakeApi()..usesBiometrics = true;
+    final prompt = FakePrompt();
+    await pumpRedix(tester, api, stored: {'session': keptBiometricSession}, prompt: prompt);
+    expect(prompt.shown, 1);
+    await openMyAccount(tester, api);
+
+    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+
+    expect(prompt.shown, 1);
+    expect(api.sentBiometrics, [false]);
+    expect(biometricsSwitch(tester).value, isFalse);
+  });
+
   Future<void> choose(WidgetTester tester, FakeApi api, Key language) => act(tester, api, () => tester.tap(find.byKey(language)));
 
   testWidgets('choosing English on an Arabic phone switches every screen to English, left to right', (tester) async {

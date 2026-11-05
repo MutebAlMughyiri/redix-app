@@ -217,6 +217,10 @@ void main() {
     await $.pumpAndSettle();
     expect(Directionality.of($.tester.element(find.byKey(MyAccountScreen.englishKey))), TextDirection.ltr);
 
+    await $(MyAccountScreen.biometricsKey).scrollTo().tap();
+    await $(MyAccountScreen.biometricsMessageKey).waitUntilVisible();
+    expect($.tester.widget<SwitchListTile>(find.byKey(MyAccountScreen.biometricsKey)).value, isFalse);
+
     await $(MyAccountScreen.signOutKey).tap();
     await $(MyAccountScreen.cancelSignOutKey).tap();
     expect($(MyAccountScreen.signOutKey), findsOneWidget);
