@@ -30,6 +30,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Partners](guide/partners.md) | The project's manager and whoever does its finance |
 | [Suppliers](guide/suppliers.md) | Everyone in the project; whoever does its finance changes them |
 | [Choosing a supplier](guide/supplier-picker.md) | Whoever enters an expense or a contract |
+| [Contracts](guide/contracts.md) | Everyone in the project; whoever does its finance changes them |
 
 ## Use cases
 
@@ -55,5 +56,6 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-017](use-cases/UC-017-suppliers.md) | Keep a project's supplier register clean | Whoever does a project's finance changes; everyone with access reads |
 | [UC-018](use-cases/UC-018-pick-a-supplier.md) | Find a supplier by name or VAT number, and pick it | Whoever enters an expense or a contract |
 | [UC-019](use-cases/UC-019-quick-add-supplier.md) | Add a missing supplier without leaving what is being entered | Finance and Field |
+| [UC-020](use-cases/UC-020-contracts.md) | Record and follow what each contractor was promised | Whoever does a project's finance changes; everyone with access reads |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

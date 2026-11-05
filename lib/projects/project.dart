@@ -42,6 +42,7 @@ class Project {
       status = ProjectStatus.values.byName(json['status'] as String),
       rejectionReason = json['rejectionReason'] as String,
       units = [for (final unit in json['units'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
+      entryUnits = [for (final unit in json['entryUnits'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
       roles = (json['roles'] as List<dynamic>).cast<String>(),
       _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()},
       vatPercent = (json['vatPercent'] as num).toDouble();
@@ -63,6 +64,9 @@ class Project {
 
   /// The project's units, in order.
   final List<Unit> units;
+
+  /// What an entry or a contract may name: its units, and the shared one last.
+  final List<Unit> entryUnits;
 
   /// The keys of the words naming what the signed-in user is in this project.
   final List<String> roles;

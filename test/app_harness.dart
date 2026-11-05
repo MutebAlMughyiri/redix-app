@@ -63,6 +63,11 @@ Map<String, String> wordsIn(String language) => {
     'suppliers.invalidMobile', 'suppliers.vatNumberTaken', 'suppliers.holder', 'suppliers.unknownItem', 'suppliers.new', 'suppliers.edit', 'suppliers.save', 'suppliers.name', 'suppliers.vatNumber',
     'suppliers.notVatRegistered', 'suppliers.mobile', 'suppliers.defaultItem', 'suppliers.noDefaultItem', 'suppliers.pendingApproval', 'suppliers.disable', 'suppliers.enable', 'suppliers.disabled',
     'suppliers.pick', 'suppliers.searchHint', 'suppliers.noMatch', 'suppliers.quickAdd', 'suppliers.addAndPick', 'suppliers.pendingHint', 'suppliers.useExisting',
+    'contracts.title', 'contracts.empty', 'contracts.loadFailed', 'contracts.noConnection', 'contracts.refused', 'contracts.projectFinished', 'contracts.unknownSupplier', 'contracts.itemNotOffered',
+    'contracts.unknownUnit', 'contracts.invalidValue', 'contracts.invalidUnitPrice', 'contracts.invalidQuantity', 'contracts.invalidNotes', 'contracts.new', 'contracts.edit', 'contracts.save',
+    'contracts.contractor', 'contracts.item', 'contracts.unit', 'contracts.openValue', 'contracts.contractValue', 'contracts.unitPrice', 'contracts.quantity', 'contracts.notes', 'contracts.value',
+    'contracts.paid', 'contracts.remaining', 'contracts.open', 'contracts.overrun', 'contracts.notStarted', 'contracts.running', 'contracts.filterAll', 'contracts.filterOverrun',
+    'contracts.filterOpenValue', 'contracts.disable', 'contracts.enable', 'contracts.disabled',
     'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
   ])
     key: '$language $key',
@@ -244,6 +249,9 @@ class FakeApi {
   /// While a search for one of these is asked, its answer waits for the completer.
   final heldSupplierSearches = <String, Completer<void>>{};
 
+  /// Each project's contracts, as the API answers them.
+  final contracts = <String, List<Map<String, Object>>>{};
+
   /// The people of every project, as the API answers them.
   final members = <Map<String, String>>[];
 
@@ -350,6 +358,7 @@ class FakeApi {
       'status': status,
       'rejectionReason': rejectionReason,
       'units': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}],
+      'entryUnits': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}, {'id': '$id-unit-shared', 'name': 'مشترك'}],
       'roles': roles,
       'permissions': permissions,
       'vatPercent': 15.0,
@@ -555,6 +564,82 @@ class FakeApi {
           ..['mobile'] = mobile
           ..['defaultItemId'] = defaultItemId
           ..['defaultItemName'] = itemName;
+    }
+    return _json({}, 200);
+  }
+
+  /// Adds a contract to the project [projectId], as the API holds it: its remaining reckoned as the API reckons it.
+  Map<String, Object> addContract(
+    String projectId,
+    String supplierName, {
+    String itemName = 'البلاط',
+    String unitName = 'الفلة الغربية',
+    double value = 0,
+    bool isOpenValue = false,
+    double unitPrice = 0,
+    double quantity = 0,
+    String notes = '',
+    double paid = 0,
+    bool isActive = true,
+  }) {
+    final contract = <String, Object>{
+      'id': 'contract-${_nextStructureId++}',
+      'supplierName': supplierName,
+      'itemName': itemName,
+      'unitName': unitName,
+      'value': value,
+      'isOpenValue': isOpenValue,
+      'unitPrice': unitPrice,
+      'quantity': quantity,
+      'notes': notes,
+      'paid': paid,
+      'remaining': isOpenValue ? 0.0 : value - paid,
+      'isOverrun': !isOpenValue && paid > value,
+      'isActive': isActive,
+    };
+    contracts.putIfAbsent(projectId, () => []).add(contract);
+    return contract;
+  }
+
+  http.Response _answerContracts(http.Request request) {
+    final segments = request.url.pathSegments;
+    final list = contracts.putIfAbsent(segments[1], () => []);
+    if (request.method == 'GET') {
+      return _json(list, 200);
+    }
+    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    sentSettingsChanges.add((request.url.path, body));
+    if (settingsAnswer.status >= 300) {
+      return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
+    }
+    switch (segments.sublist(3)) {
+      case []:
+        addContract(
+          segments[1],
+          suppliers[segments[1]]!.singleWhere((row) => row['id'] == body['supplierId'])['name']! as String,
+          value: body['value'] as double,
+          isOpenValue: body['isOpenValue'] as bool,
+          unitPrice: body['unitPrice'] as double,
+          quantity: body['quantity'] as double,
+          notes: body['notes'] as String,
+        );
+      case [final id, 'disable']:
+        list.singleWhere((row) => row['id'] == id)['isActive'] = false;
+      case [final id, 'enable']:
+        list.singleWhere((row) => row['id'] == id)['isActive'] = true;
+      case [final id]:
+        final contract = list.singleWhere((row) => row['id'] == id);
+        final value = body['value'] as double;
+        final isOpenValue = body['isOpenValue'] as bool;
+        final paid = contract['paid']! as double;
+        contract
+          ..['value'] = value
+          ..['isOpenValue'] = isOpenValue
+          ..['remaining'] = isOpenValue ? 0.0 : value - paid
+          ..['isOverrun'] = !isOpenValue && paid > value
+          ..['unitPrice'] = body['unitPrice'] as double
+          ..['quantity'] = body['quantity'] as double
+          ..['notes'] = body['notes'] as String;
     }
     return _json({}, 200);
   }
@@ -836,6 +921,9 @@ class FakeApi {
     if (segments.length >= 3 && segments[2] == 'suppliers') {
       return _answerSuppliers(request);
     }
+    if (segments.length >= 3 && segments[2] == 'contracts') {
+      return _answerContracts(request);
+    }
     if (segments.length >= 3 && segments[2] == 'members') {
       return _json(members, 200);
     }
@@ -858,7 +946,9 @@ class FakeApi {
       project['vatPercent'] = body['vatPercent'] as double;
     } else {
       final units = project['units'] as List<Map<String, String>>;
-      units.add({'id': '${project['id']}-unit-${units.length}', 'name': body['name'] as String});
+      final unit = {'id': '${project['id']}-unit-${units.length}', 'name': body['name'] as String};
+      units.add(unit);
+      (project['entryUnits']! as List<Map<String, String>>).insert(units.length - 1, unit);
     }
     return _json(project, 200);
   }

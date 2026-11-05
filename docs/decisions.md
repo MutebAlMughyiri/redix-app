@@ -6,6 +6,9 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | The Contracts screen follows the canvas: filters with counts, and each card's value, paid, remaining and bar | They need nothing the app lacks, though the overrun filter stays at 0 until payments exist. Made without Muteb |
+| 2026-11-05 | A disabled contract is one more standing on its card, in place of the others | Whether it is overrun no longer asks anything of anyone. Made without Muteb |
+| 2026-11-05 | The contract's contractor comes from `SupplierPicker`, and a missing one is added from there | A contractor is a supplier (the database design), and this is the sheet's first real place. Made without Muteb |
 | 2026-11-05 | Quick add is a button always at the foot of the sheet, opening a dialog, not a form always open as on the canvas | The canvas's form would leave little of the list at 360 points with the keyboard up, and the issue asks for a button. The button shows whether or not the search found something, as the canvas's form does. Made without Muteb |
 | 2026-11-05 | The quick add also has the Not VAT-registered switch | The issue says it is validated as for any supplier, and a small shop has no number. Made without Muteb; see the findings |
 | 2026-11-05 | A number held by a disabled supplier names it and offers nothing | BR-15 takes a disabled supplier out of entry. Made without Muteb |

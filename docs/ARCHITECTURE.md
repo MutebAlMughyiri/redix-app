@@ -39,6 +39,12 @@ lib/
     supplier_search.dart    SupplierSearch: the ApiList of what the API finds for what was typed
     supplier_picker.dart    the sheet that picks a supplier by name or VAT number
     quick_add_supplier_dialog.dart  the dialog that adds a missing supplier, or offers the one already holding its number
+  contracts/
+    contract.dart           Contract and ContractFilter, as the API answers them
+    contracts.dart          Contracts: the ApiList of one project's contracts, and its changes
+    contracts_screen.dart   a project's contracts, with their filters
+    contract_card.dart      one contract: value, paid, remaining and a bar, with its menu
+    contract_dialog.dart    the dialog that adds or amends a contract
   projects/
     project.dart            Project and Unit, as the API answers them
     projects.dart           Projects: the ApiList of projects, and its changes

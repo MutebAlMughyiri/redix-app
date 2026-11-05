@@ -5,6 +5,7 @@ import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/session.dart';
 import 'package:redix/auth/sign_in_screen.dart';
+import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/home/home_screen.dart';
@@ -19,6 +20,7 @@ import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/apply_to_all_dialog.dart';
 import 'package:redix/structure/item_columns_screen.dart';
 import 'package:redix/structure/subgroups_screen.dart';
+import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
@@ -44,6 +46,13 @@ void main() {
     await $.takeNativeScreenshot('sign-in');
 
     Finder keyStartingWith(String start) => find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith(start));
+
+    Future<void> showInDialog(Finder finder) async {
+      await $.tester.ensureVisible(finder);
+      await $.pumpAndSettle();
+    }
+
+    Finder rowShowing(String name) => find.descendant(of: find.byType(ListTile), matching: find.text(name));
 
     await $(SignInScreen.registerKey).scrollTo().tap();
     await $(NewProjectScreen.nameKey).enterText('غصون 7');
@@ -110,7 +119,7 @@ void main() {
     final projectUsers = $(keyStartingWith('home.users.'));
     await projectUsers.waitUntilVisible();
     expect($(keyStartingWith('home.addUnit.')), findsNothing);
-    await projectUsers.tap();
+    await projectUsers.scrollTo().tap();
     await $(keyStartingWith('users.menu.')).waitUntilVisible();
     await $(keyStartingWith('users.menu.')).tap();
     await $(UsersScreen.rolesKey).tap();
@@ -248,7 +257,8 @@ void main() {
     await $.pumpAndSettle();
     await $.takeNativeScreenshot('partner-dialog');
     await $(PartnersScreen.saveKey).tap();
-    await $(find.text('مدير المشروع')).waitUntilVisible();
+    await $(rowShowing('مدير المشروع')).waitUntilVisible();
+    await $.pumpAndSettle();
     await $.takeNativeScreenshot('partners');
     await $(BackButton).tap();
 
@@ -257,13 +267,44 @@ void main() {
     await $(SuppliersScreen.addKey).tap();
     await $(SuppliersScreen.supplierNameKey).enterText('شركة النخيل');
     await $(SuppliersScreen.vatNumberKey).enterText('300000000000003');
-    await $(SuppliersScreen.defaultItemKey).scrollTo().tap();
+    await showInDialog(find.byKey(SuppliersScreen.defaultItemKey));
+    await $(SuppliersScreen.defaultItemKey).tap();
     await $(keyStartingWith('itemPicker.option.')).at(1).tap();
     await $.pumpAndSettle();
     await $.takeNativeScreenshot('supplier-dialog');
     await $(SuppliersScreen.saveKey).tap();
-    await $(find.text('شركة النخيل')).waitUntilVisible();
+    await $(rowShowing('شركة النخيل')).waitUntilVisible();
+    await $.pumpAndSettle();
     await $.takeNativeScreenshot('suppliers');
+    await $(BackButton).tap();
+
+    await $(keyStartingWith('home.contracts.')).scrollTo().tap();
+    await $(ContractsScreen.addKey).waitUntilVisible();
+    await $(ContractsScreen.addKey).tap();
+    await $(ContractsScreen.contractorKey).tap();
+    await $(keyStartingWith('supplierPicker.row.')).waitUntilVisible();
+    await $.takeNativeScreenshot('supplier-picker');
+    await $(SupplierPicker.searchKey).enterText('مبلط الغربية');
+    await $(SupplierPicker.quickAddKey).tap();
+    await $(SuppliersScreen.vatNumberKey).enterText('311111111111113');
+    await $.pumpAndSettle();
+    await $.takeNativeScreenshot('quick-add-supplier');
+    await $(SuppliersScreen.saveKey).last.tap();
+    await $(find.text('مبلط الغربية')).waitUntilVisible();
+    await $(ContractsScreen.itemKey).tap();
+    await $(keyStartingWith('itemPicker.option.')).first.tap();
+    await $.pumpAndSettle();
+    await showInDialog(keyStartingWith('contracts.unit.').first);
+    await $(keyStartingWith('contracts.unit.')).first.tap();
+    await $.pumpAndSettle();
+    await showInDialog(find.byKey(ContractsScreen.valueKey));
+    await $(ContractsScreen.valueKey).enterText('34000');
+    await showInDialog(find.byKey(ContractsScreen.contractorKey));
+    await $.takeNativeScreenshot('contract-dialog');
+    await $(ContractsScreen.saveKey).tap();
+    await $(find.text('34,000.00')).waitUntilVisible();
+    await $.pumpAndSettle();
+    await $.takeNativeScreenshot('contracts');
     await $(BackButton).tap();
 
     await $(keyStartingWith('home.close.')).scrollTo().tap();
@@ -278,7 +319,7 @@ void main() {
     expect($(keyStartingWith('home.close.')), findsNothing);
     expect($(keyStartingWith('home.addUnit.')), findsNothing);
 
-    await projectUsers.tap();
+    await projectUsers.scrollTo().tap();
     await $(keyStartingWith('users.menu.')).waitUntilVisible();
 
     await $(UsersScreen.newUserKey).tap();
@@ -347,7 +388,7 @@ void main() {
     expect(Directionality.of($.tester.element(keyStartingWith('projects.status.'))), TextDirection.rtl);
     await $.takeNativeScreenshot('projects-arabic');
     await $(keyStartingWith('projects.card.')).tap();
-    await projectUsers.tap();
+    await projectUsers.scrollTo().tap();
     await $(keyStartingWith('users.menu.')).waitUntilVisible();
     await $.takeNativeScreenshot('users-arabic');
     await $(BackButton).tap();

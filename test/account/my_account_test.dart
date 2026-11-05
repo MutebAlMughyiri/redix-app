@@ -9,6 +9,8 @@ import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/sign_in_screen.dart';
+import 'package:redix/contracts/contract.dart';
+import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/member_picker.dart';
@@ -534,6 +536,35 @@ void main() {
       [SuppliersScreen.supplierNameKey, SuppliersScreen.notVatRegisteredKey, SuppliersScreen.vatNumberKey, SuppliersScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byKey(SupplierPicker.closeKey)));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+      final overrun = api.addContract(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', itemName: 'البلاط والرخام للواجهات الداخلية', unitName: 'الفلة الغربية الكبرى', value: 999999999.99, paid: 1099999999.99, unitPrice: 380, quantity: 50, notes: 'زيادة بملحق')['id'] as String;
+      final open = api.addContract(runningId, 'دهان داخلي', isOpenValue: true, paid: 12000)['id'] as String;
+      await tester.ensureVisible(find.byKey(HomeScreen.contractsKey(runningId)));
+      expectFits(HomeScreen.contractsKey(runningId));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey(runningId))));
+      [
+        ContractsScreen.addKey,
+        for (final filter in ContractFilter.values) ContractsScreen.filterKey(filter),
+        for (final id in [overrun, open]) ...[
+          ContractsScreen.nameKey(id),
+          ContractsScreen.termsKey(id),
+          ContractsScreen.standingKey(id),
+          ContractsScreen.valueOfKey(id),
+          ContractsScreen.paidKey(id),
+          ContractsScreen.remainingKey(id),
+          ContractsScreen.progressKey(id),
+          ContractsScreen.menuKey(id),
+        ],
+      ].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
+      [ContractsScreen.contractorKey, ContractsScreen.itemKey, ContractsScreen.unitKey('$runningId-unit-0'), ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.unitPriceKey, ContractsScreen.quantityKey, ContractsScreen.notesKey, ContractsScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.menuKey(overrun))));
+      [ContractsScreen.editKey, ContractsScreen.disableKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
+      [ContractsScreen.partiesKey, ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await tester.ensureVisible(find.byKey(HomeScreen.usersKey(runningId)));

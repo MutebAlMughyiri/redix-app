@@ -9,6 +9,8 @@ import 'api.dart';
 import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
+import 'contracts/contracts.dart';
+import 'contracts/contracts_screen.dart';
 import 'home/home_screen.dart';
 import 'partners/partners.dart';
 import 'partners/partners_screen.dart';
@@ -83,6 +85,7 @@ class _RedixAppState extends State<RedixApp> {
   final _projectPartners = <String, Partners>{};
   final _projectSuppliers = <String, Suppliers>{};
   final _offeredItemLists = <String, OfferedItems>{};
+  final _projectContracts = <String, Contracts>{};
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -141,6 +144,15 @@ class _RedixAppState extends State<RedixApp> {
         ),
       ),
       GoRoute(
+        path: ContractsScreen.path,
+        builder: (context, state) => ContractsScreen(
+          project: state.extra! as Project,
+          contracts: _contractsOf(state.pathParameters['projectId'] ?? ''),
+          suppliers: _suppliersOf(state.pathParameters['projectId'] ?? ''),
+          items: _offeredItemsOf(state.pathParameters['projectId'] ?? '', ItemType.contractorPayments),
+        ),
+      ),
+      GoRoute(
         path: SubgroupsScreen.path,
         builder: (context, state) => SubgroupsScreen(
           itemId: state.pathParameters['itemId'] ?? '',
@@ -168,6 +180,8 @@ class _RedixAppState extends State<RedixApp> {
   Suppliers _suppliersOf(String projectId) => _projectSuppliers.putIfAbsent(projectId, () => Suppliers(widget.session, projectId));
 
   OfferedItems _offeredItemsOf(String projectId, ItemType type) => _offeredItemLists.putIfAbsent('$projectId/${type.name}', () => OfferedItems(widget.session, projectId, type));
+
+  Contracts _contractsOf(String projectId) => _projectContracts.putIfAbsent(projectId, () => Contracts(widget.session, projectId));
 
   Columns _columnsAt(String path) => _columnLists.putIfAbsent(path, () => Columns(widget.session, path));
 

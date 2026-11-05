@@ -34,6 +34,7 @@ class ItemPicker extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
+      showDragHandle: true,
       builder: (sheet) => FractionallySizedBox(
         heightFactor: 0.9,
         child: Column(

@@ -353,6 +353,117 @@ mixin WordGetters {
   /// The word `common.retry`.
   String get commonRetry => text('common.retry');
 
+  /// The word `contracts.contractValue`.
+  String get contractsContractValue => text('contracts.contractValue');
+
+  /// The word `contracts.contractor`.
+  String get contractsContractor => text('contracts.contractor');
+
+  /// The word `contracts.disable`.
+  String get contractsDisable => text('contracts.disable');
+
+  /// The word `contracts.disabled`.
+  String get contractsDisabled => text('contracts.disabled');
+
+  /// The word `contracts.edit`.
+  String get contractsEdit => text('contracts.edit');
+
+  /// The word `contracts.empty`.
+  String get contractsEmpty => text('contracts.empty');
+
+  /// The word `contracts.enable`.
+  String get contractsEnable => text('contracts.enable');
+
+  /// The word `contracts.filterAll`.
+  String get contractsFilterAll => text('contracts.filterAll');
+
+  /// The word `contracts.filterOpenValue`.
+  String get contractsFilterOpenValue => text('contracts.filterOpenValue');
+
+  /// The word `contracts.filterOverrun`.
+  String get contractsFilterOverrun => text('contracts.filterOverrun');
+
+  /// The word `contracts.invalidNotes`.
+  String get contractsInvalidNotes => text('contracts.invalidNotes');
+
+  /// The word `contracts.invalidQuantity`.
+  String get contractsInvalidQuantity => text('contracts.invalidQuantity');
+
+  /// The word `contracts.invalidUnitPrice`.
+  String get contractsInvalidUnitPrice => text('contracts.invalidUnitPrice');
+
+  /// The word `contracts.invalidValue`.
+  String get contractsInvalidValue => text('contracts.invalidValue');
+
+  /// The word `contracts.item`.
+  String get contractsItem => text('contracts.item');
+
+  /// The word `contracts.itemNotOffered`.
+  String get contractsItemNotOffered => text('contracts.itemNotOffered');
+
+  /// The word `contracts.loadFailed`.
+  String get contractsLoadFailed => text('contracts.loadFailed');
+
+  /// The word `contracts.new`.
+  String get contractsNew => text('contracts.new');
+
+  /// The word `contracts.noConnection`.
+  String get contractsNoConnection => text('contracts.noConnection');
+
+  /// The word `contracts.notStarted`.
+  String get contractsNotStarted => text('contracts.notStarted');
+
+  /// The word `contracts.notes`.
+  String get contractsNotes => text('contracts.notes');
+
+  /// The word `contracts.open`.
+  String get contractsOpen => text('contracts.open');
+
+  /// The word `contracts.openValue`.
+  String get contractsOpenValue => text('contracts.openValue');
+
+  /// The word `contracts.overrun`.
+  String get contractsOverrun => text('contracts.overrun');
+
+  /// The word `contracts.paid`.
+  String get contractsPaid => text('contracts.paid');
+
+  /// The word `contracts.projectFinished`.
+  String get contractsProjectFinished => text('contracts.projectFinished');
+
+  /// The word `contracts.quantity`.
+  String get contractsQuantity => text('contracts.quantity');
+
+  /// The word `contracts.refused`.
+  String get contractsRefused => text('contracts.refused');
+
+  /// The word `contracts.remaining`.
+  String get contractsRemaining => text('contracts.remaining');
+
+  /// The word `contracts.running`.
+  String get contractsRunning => text('contracts.running');
+
+  /// The word `contracts.save`.
+  String get contractsSave => text('contracts.save');
+
+  /// The word `contracts.title`.
+  String get contractsTitle => text('contracts.title');
+
+  /// The word `contracts.unit`.
+  String get contractsUnit => text('contracts.unit');
+
+  /// The word `contracts.unitPrice`.
+  String get contractsUnitPrice => text('contracts.unitPrice');
+
+  /// The word `contracts.unknownSupplier`.
+  String get contractsUnknownSupplier => text('contracts.unknownSupplier');
+
+  /// The word `contracts.unknownUnit`.
+  String get contractsUnknownUnit => text('contracts.unknownUnit');
+
+  /// The word `contracts.value`.
+  String get contractsValue => text('contracts.value');
+
   /// The word `myAccount.arabic`.
   String get myAccountArabic => text('myAccount.arabic');
 

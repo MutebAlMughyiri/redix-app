@@ -13,6 +13,12 @@ void main() {
       tester.widget<Text>(find.descendant(of: find.byKey(HomeScreen.statusKey(id)), matching: find.byType(Text))).data!;
 
   /// Signs in with the kept session, and opens the first project from the list.
+  Future<void> tapClose(WidgetTester tester, FakeApi api) async {
+    await tester.ensureVisible(find.byKey(HomeScreen.closeKey('project-0')));
+    await tester.pumpAndSettle();
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.closeKey('project-0'))));
+  }
+
   Future<void> openHome(WidgetTester tester, FakeApi api) async {
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
@@ -134,7 +140,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6');
     await openHome(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.closeKey('project-0'))));
+    await tapClose(tester, api);
     expect(text(tester, HomeScreen.closeNameKey), 'غصون 6');
     expect(text(tester, HomeScreen.closeExplainKey), 'en projects.closeExplain');
     expect(api.sentProjectChanges, isEmpty);
@@ -148,7 +154,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6');
     await openHome(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.closeKey('project-0'))));
+    await tapClose(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.confirmCloseKey)));
 
     expect(api.sentProjectChanges.single.$1, '/projects/project-0/close');
@@ -159,7 +165,7 @@ void main() {
   testWidgets('closing without a network says so, and the project stays as it was', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openHome(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.closeKey('project-0'))));
+    await tapClose(tester, api);
 
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.confirmCloseKey)));
@@ -172,7 +178,7 @@ void main() {
     final api = FakeApi();
     final project = api.addProject('غصون 6');
     await openHome(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.closeKey('project-0'))));
+    await tapClose(tester, api);
 
     project['status'] = 'finished';
     api.projectAnswer = (status: 409, code: 'projectFinished');
@@ -186,7 +192,7 @@ void main() {
   testWidgets('a refusal with no code shows the general word, never a raw key', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openHome(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.closeKey('project-0'))));
+    await tapClose(tester, api);
 
     api.projectAnswer = (status: 403, code: '');
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.confirmCloseKey)));

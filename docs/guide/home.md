@@ -9,7 +9,7 @@
 **What it is for:** one project: your roles in it, its start date, status and units, and what your roles let you do there.
 **Who sees it:** everyone with access to that project. Open it by tapping the project on the [project list](projects.md).
 
-Everyone sees **[Accounts](accounts.md)** there. Whoever does the project's finance also sees **[Categories and items](categories.md)** and **[Payment methods and VAT](payment-methods.md)**, and the project's manager and whoever does its finance see **[Partners](partners.md)**.
+Everyone sees **[Accounts](accounts.md)**, **[Suppliers](suppliers.md)** and **[Contracts](contracts.md)** there. Whoever does the project's finance also sees **[Categories and items](categories.md)** and **[Payment methods and VAT](payment-methods.md)**, and the project's manager and whoever does its finance see **[Partners](partners.md)**.
 
 After you sign in, REDIX lists the projects you have access to. Tap one to open it: what you can do there follows your role in that project. To open the same project every time, tap its star and turn on **Open the default project directly**. To change project later, open **Settings**, then **Switch project**.
 
@@ -24,7 +24,7 @@ If you hold a custody, its balance shows at the top. See [Accounts](accounts.md)
 **الغرض:** مشروع واحد: أدوارك فيه، وتاريخ بدئه، وحالته، ووحداته، وما تتيحه لك أدوارك فيه.
 **من يراها:** كل من له وصول إلى ذلك المشروع. افتحها بالضغط على المشروع في [قائمة المشاريع](projects.md).
 
-ويرى فيها الجميع **[الحسابات](accounts.md)**. ويرى من يتولى مالية المشروع أيضاً **[التصنيفات والبنود](categories.md)** و**[طرق الدفع والضريبة](payment-methods.md)**، ويرى مدير المشروع ومن يتولى ماليته **[الشركاء](partners.md)**.
+ويرى فيها الجميع **[الحسابات](accounts.md)** و**[الموردين](suppliers.md)** و**[العقود](contracts.md)**. ويرى من يتولى مالية المشروع أيضاً **[التصنيفات والبنود](categories.md)** و**[طرق الدفع والضريبة](payment-methods.md)**، ويرى مدير المشروع ومن يتولى ماليته **[الشركاء](partners.md)**.
 
 بعد تسجيل الدخول، يعرض REDIX المشاريع المصرّح لك بها. اضغط أحدها لفتحه: وما يمكنك فعله فيه يتبع دورك في ذلك المشروع. لفتح المشروع نفسه كل مرة، اضغط نجمته وفعّل **فتح المشروع الافتراضي مباشرة**. ولتغيير المشروع لاحقاً، افتح **الإعدادات** ثم **تبديل المشروع**.
 
