@@ -6,6 +6,7 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
+import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'approvals.dart';
@@ -67,6 +68,15 @@ class ApprovalsScreen extends StatefulWidget {
 
   /// The line saying the invoice of the entry [id] is from another seller.
   static Key sellerDiffersKey(String id) => Key('approvals.sellerDiffers.$id');
+
+  /// Who paid the entry [id] from their pocket.
+  static Key paidByKey(String id) => Key('approvals.paidBy.$id');
+
+  /// The choice that what a partner paid on the entry [id] adds to their capital.
+  static Key capitalKey(String id) => Key('approvals.capital.$id');
+
+  /// The choice that what a partner paid on the entry [id] is owed back.
+  static Key owedKey(String id) => Key('approvals.owed.$id');
 
   /// The quick reason at [index].
   static Key quickReasonKey(int index) => Key('approvals.quickReason.$index');
@@ -145,6 +155,16 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
         if (entry.vat != 0) Text('${words.approvalsIncludingVat} ${formatMoney(entry.vat)}', style: small),
         if (entry.totalDiffers) Text('${words.approvalsInvoiceTotal}: ${formatMoney(entry.invoiceTotal)}', key: ApprovalsScreen.invoiceTotalKey(entry.id), style: small),
         if (entry.sellerDiffers) Text(words.approvalsSellerDiffers, key: ApprovalsScreen.sellerDiffersKey(entry.id), style: TextStyle(color: theme.colorScheme.error)),
+        if (entry.partnerName.isNotEmpty) ...[
+          Text('${words.approvalsPaidBy}: ${entry.partnerName}', key: ApprovalsScreen.paidByKey(entry.id), style: small),
+          Wrap(
+            spacing: 8,
+            children: [
+              ChoiceChip(key: ApprovalsScreen.capitalKey(entry.id), label: Text(words.approvalsAddToCapital), selected: entry.partnerTreatment == 'capital', onSelected: (_) => showRefusalOf(context, widget.approvals.setPartnerTreatment(entry.id, 'capital'))),
+              ChoiceChip(key: ApprovalsScreen.owedKey(entry.id), label: Text(words.approvalsOwedBack), selected: entry.partnerTreatment == 'amountDue', onSelected: (_) => showRefusalOf(context, widget.approvals.setPartnerTreatment(entry.id, 'amountDue'))),
+            ],
+          ),
+        ],
       ],
     );
   }

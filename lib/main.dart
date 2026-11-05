@@ -8,6 +8,10 @@ import 'account/my_account_screen.dart';
 import 'accounts/accounts.dart';
 import 'accounts/accounts_screen.dart';
 import 'accounts/offered_accounts.dart';
+import 'accounts/reconcile_screen.dart';
+import 'accounts/reconciliation.dart';
+import 'accounts/transfer_screen.dart';
+import 'accounts/transfers.dart';
 import 'api.dart';
 import 'attachments/attachments.dart';
 import 'attachments/invoice_capture.dart';
@@ -22,6 +26,10 @@ import 'expenses/add_expense_screen.dart';
 import 'expenses/creditable_invoices.dart';
 import 'expenses/expenses.dart';
 import 'home/home_screen.dart';
+import 'partners/capital.dart';
+import 'partners/capital_move_screen.dart';
+import 'partners/capital_movements.dart';
+import 'partners/movements_screen.dart';
 import 'partners/partners.dart';
 import 'partners/partners_screen.dart';
 import 'approvals/approvals.dart';
@@ -123,6 +131,9 @@ class _RedixAppState extends State<RedixApp> {
   final _projectCreditableInvoices = <String, CreditableInvoices>{};
   final _projectOfferedAccounts = <String, OfferedAccounts>{};
   final _projectAttachable = <String, AttachableEntries>{};
+  final _projectTransfers = <String, Transfers>{};
+  final _projectReconciliations = <String, Reconciliations>{};
+  final _projectCapital = <String, Capital>{};
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -193,11 +204,55 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(
         path: AccountsScreen.path,
-        builder: (context, state) => AccountsScreen(project: state.extra! as Project, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), members: _membersOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => AccountsScreen(
+          project: state.extra! as Project,
+          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
+          members: _membersOf(state.pathParameters['projectId'] ?? ''),
+          transfers: _transfersOf(state.pathParameters['projectId'] ?? ''),
+          reconciliations: _reconciliationsOf(state.pathParameters['projectId'] ?? ''),
+        ),
+      ),
+      GoRoute(
+        path: TransferScreen.path,
+        builder: (context, state) => TransferScreen(
+          project: state.extra! as Project,
+          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
+          transfers: _transfersOf(state.pathParameters['projectId'] ?? ''),
+          attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
+          capture: widget.capture,
+        ),
+      ),
+      GoRoute(
+        path: ReconcileScreen.path,
+        builder: (context, state) => ReconcileScreen(project: state.extra! as Project, reconciliations: _reconciliationsOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(
         path: PartnersScreen.path,
-        builder: (context, state) => PartnersScreen(project: state.extra! as Project, partners: _partnersOf(state.pathParameters['projectId'] ?? ''), members: _membersOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => PartnersScreen(project: state.extra! as Project, partners: _partnersOf(state.pathParameters['projectId'] ?? ''), members: _membersOf(state.pathParameters['projectId'] ?? ''), capital: _capitalOf(state.pathParameters['projectId'] ?? '')),
+      ),
+      GoRoute(
+        path: MovementsScreen.path,
+        builder: (context, state) => MovementsScreen(
+          project: state.extra! as Project,
+          partnerName: state.uri.queryParameters['name'] ?? '',
+          movements: CapitalMovements(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['partnerId'] ?? ''),
+          capital: _capitalOf(state.pathParameters['projectId'] ?? ''),
+        ),
+      ),
+      GoRoute(
+        path: CapitalMoveScreen.path,
+        builder: (context, state) => CapitalMoveScreen(
+          project: state.extra! as Project,
+          projects: _projects,
+          capital: _capitalOf(state.pathParameters['projectId'] ?? ''),
+          partners: _partnersOf(state.pathParameters['projectId'] ?? ''),
+          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
+          partnersOf: _partnersOf,
+          accountsOf: _accountsOf,
+          attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
+          capture: widget.capture,
+          sharedFile: state.uri.queryParameters.containsKey('shared') ? _shared : PickedFile.none(),
+        ),
       ),
       GoRoute(
         path: SuppliersScreen.path,
@@ -244,6 +299,12 @@ class _RedixAppState extends State<RedixApp> {
   PaymentMethods _paymentMethodsOf(String projectId) => _projectPaymentMethods.putIfAbsent(projectId, () => PaymentMethods(widget.session, projectId));
 
   Accounts _accountsOf(String projectId) => _projectAccounts.putIfAbsent(projectId, () => Accounts(widget.session, projectId));
+
+  Transfers _transfersOf(String projectId) => _projectTransfers.putIfAbsent(projectId, () => Transfers(widget.session, projectId));
+
+  Reconciliations _reconciliationsOf(String projectId) => _projectReconciliations.putIfAbsent(projectId, () => Reconciliations(widget.session, projectId));
+
+  Capital _capitalOf(String projectId) => _projectCapital.putIfAbsent(projectId, () => Capital(widget.session, projectId));
 
   Members _membersOf(String projectId) => _projectMembers.putIfAbsent(projectId, () => Members(widget.session, projectId));
 

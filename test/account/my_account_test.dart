@@ -490,7 +490,7 @@ void main() {
       }
       await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.addKey)));
       [
-        for (final type in AccountType.values) AccountsScreen.typeKey(type),
+        for (final type in AccountType.values.where((type) => type != AccountType.partnerPocket)) AccountsScreen.typeKey(type),
         AccountsScreen.accountNameKey,
         AccountsScreen.custodianKey,
         AccountsScreen.openingBalanceKey,

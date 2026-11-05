@@ -11,6 +11,7 @@ import '../expenses/invoice_qr.dart';
 import '../expenses/qr_summary.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
+import '../partners/capital_move_screen.dart';
 import '../projects/project.dart';
 import '../projects/projects.dart';
 import '../structure/category.dart';
@@ -63,6 +64,9 @@ class ShareScreen extends StatefulWidget {
 
   /// The button starting a new expense with it.
   static const newExpenseKey = Key('share.newExpense');
+
+  /// The button using it as a capital movement's bank receipt.
+  static const capitalReceiptKey = Key('share.capitalReceipt');
 
   /// The line saying why it was refused.
   static const messageKey = Key('share.message');
@@ -199,6 +203,13 @@ class _ShareScreenState extends State<ShareScreen> {
     }
   }
 
+  Future<void> _capitalReceipt() async {
+    final saved = await context.push<bool>(CapitalMoveScreen.sharedPathOf(_project.id), extra: _project);
+    if (saved ?? false) {
+      widget.onDone();
+    }
+  }
+
   Widget _entryRow(AttachableEntry entry) {
     final words = Words.of(context);
     final title = entry.product.isEmpty ? entry.supplierName : entry.product;
@@ -299,6 +310,7 @@ class _ShareScreenState extends State<ShareScreen> {
             if (_item.id.isEmpty) Text(words.shareChooseItem) else _expenses(),
           ]),
           OutlinedButton(key: ShareScreen.newExpenseKey, onPressed: _newExpense, child: Text(words.shareNewExpense)),
+          if (project.mayMoveMoney) OutlinedButton(key: ShareScreen.capitalReceiptKey, onPressed: _capitalReceipt, child: Text(words.shareCapitalReceipt)),
         ],
       ),
     );

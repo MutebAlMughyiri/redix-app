@@ -12,6 +12,9 @@ String formatMoney(double amount) {
   return amount < 0 ? '($money)' : money;
 }
 
+/// A partner's share as a percentage, with the ten decimals the current statement prints (BR-28).
+String formatShare(double percent) => percent.toStringAsFixed(10);
+
 /// What a person [typed], with any Arabic digits as Western ones, which is how the API keeps a number.
 String westernDigits(String typed) => typed.replaceAllMapped(RegExp('[$_easternDigits]'), (digit) => _easternDigits.indexOf(digit[0]!).toString());
 

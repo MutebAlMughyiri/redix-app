@@ -19,6 +19,9 @@ class Approvals extends ApiList<PendingApproval> {
   /// Approves the entries [ids]. Returns an empty string once asked, otherwise the word key of the refusal; [failed] says what could not go.
   Future<String> approve(Iterable<String> ids) => change('/projects/$projectId/entries/approve', {'entryIds': ids.toList()});
 
+  /// Says what becomes of what a partner paid on the entry [id]: `capital` or `amountDue`. Returns an empty string once said, otherwise the word key of the refusal.
+  Future<String> setPartnerTreatment(String id, String treatment) => change('/projects/$projectId/entries/$id/partner-treatment', {'treatment': treatment});
+
   /// Rejects the entry [id], saying [reason]. Returns an empty string once rejected, otherwise the word key of the refusal.
   Future<String> reject(String id, String reason) => change('/projects/$projectId/entries/$id/reject', {'reason': reason});
 }

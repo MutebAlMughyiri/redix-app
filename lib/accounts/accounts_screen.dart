@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../auth/permission.dart';
+import '../entries/reverse_sheet.dart';
+import '../format/date_format.dart';
+import '../format/number_format.dart';
 import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
@@ -10,11 +15,23 @@ import 'account.dart';
 import 'account_dialog.dart';
 import 'account_row.dart';
 import 'accounts.dart';
+import 'reconcile_screen.dart';
+import 'reconciliation.dart';
+import 'reconciliation_card.dart';
+import 'transfer.dart';
+import 'transfer_screen.dart';
+import 'transfers.dart';
 
 /// A project's bank accounts and cash custodies (UC-015): everyone with access sees them, and whoever keeps the settings adds, changes and disables them (AC-22.1). Nothing is deleted (BR-15).
 class AccountsScreen extends StatefulWidget {
   /// The screen, showing and changing the [accounts] of [project], choosing a custodian among [members].
-  const AccountsScreen({super.key, required this.project, required this.accounts, required this.members});
+  const AccountsScreen({super.key, required this.project, required this.accounts, required this.members, required this.transfers, required this.reconciliations});
+
+  /// Its latest transfers.
+  final Transfers transfers;
+
+  /// Its accounts against its books.
+  final Reconciliations reconciliations;
 
   /// The project they belong to.
   final Project project;
@@ -24,6 +41,18 @@ class AccountsScreen extends StatefulWidget {
 
   /// The people who can hold an account.
   final Members members;
+
+  /// The button entering the actual balances.
+  static const reconcileKey = Key('accounts.reconcile');
+
+  /// The button moving money between accounts.
+  static const transferKey = Key('accounts.transfer');
+
+  /// The row of the transfer [id].
+  static Key transferRowKey(String id) => Key('accounts.transferRow.$id');
+
+  /// The button reversing the transfer [id].
+  static Key reverseTransferKey(String id) => Key('accounts.reverseTransfer.$id');
 
   /// The screen's route.
   static const path = '/projects/:projectId/accounts';
@@ -88,10 +117,73 @@ class _AccountsScreenState extends State<AccountsScreen> {
   void initState() {
     super.initState();
     widget.accounts.loadOnOpen();
+    widget.transfers.loadOnOpen();
+    widget.reconciliations.loadOnOpen();
     if (widget.project.mayManageSettings) {
       widget.members.loadOnOpen();
     }
   }
+
+  Future<String> _reverse(Transfer transfer, String reason) async {
+    final refusal = await widget.transfers.reverse(transfer, reason);
+    if (refusal.isEmpty) {
+      await widget.accounts.load();
+    }
+    return refusal;
+  }
+
+  Widget _transferRow(Transfer transfer) {
+    final project = widget.project;
+    return ListTile(
+      key: AccountsScreen.transferRowKey(transfer.id),
+      contentPadding: EdgeInsets.zero,
+      title: Text('${transfer.fromAccountName} ← ${transfer.toAccountName}'),
+      subtitle: Text([if (transfer.description.isNotEmpty) transfer.description, formatDate(transfer.date)].join(' · ')),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(formatMoney(transfer.amount)),
+          if (!project.isFinished && project.may(Permission.approveEntries))
+            IconButton(
+              key: AccountsScreen.reverseTransferKey(transfer.id),
+              icon: const Icon(Icons.undo),
+              tooltip: Words.of(context).capitalReverse,
+              onPressed: () => ReverseSheet.show(context, (reason) => _reverse(transfer, reason)),
+            ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _above(Words words) => [
+    ReconciliationCard(reconciliations: widget.reconciliations),
+    if (widget.project.mayMoveMoney)
+      Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Row(
+          spacing: 8,
+          children: [
+            Expanded(
+              child: FilledButton(key: AccountsScreen.reconcileKey, onPressed: () => context.push(ReconcileScreen.pathOf(widget.project.id), extra: widget.project), child: Text(words.accountsReconcile)),
+            ),
+            Expanded(
+              child: OutlinedButton(key: AccountsScreen.transferKey, onPressed: () => context.push(TransferScreen.pathOf(widget.project.id), extra: widget.project), child: Text(words.accountsTransfer)),
+            ),
+          ],
+        ),
+      ),
+  ];
+
+  Widget _below(Words words) => ListenableBuilder(
+    listenable: widget.transfers,
+    builder: (context, _) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.transfers.all.isNotEmpty) Text(words.transfersLatest, style: Theme.of(context).textTheme.titleMedium),
+        for (final transfer in widget.transfers.all) _transferRow(transfer),
+      ],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -114,6 +206,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
       body: ApiListBody(
         list: accounts,
         emptyText: words.accountsEmpty,
+        listOf: (items) => ListView(padding: ApiListBody.padding, children: [..._above(words), ...items, _below(words)]),
         itemBuilder: (account) => AccountRow(account: account, accounts: accounts, members: widget.members, mayChange: project.mayManageSettings),
       ),
     );

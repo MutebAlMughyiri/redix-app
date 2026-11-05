@@ -26,6 +26,8 @@ class AccountRow extends StatelessWidget {
   /// Whether the signed-in user may change it now.
   final bool mayChange;
 
+  bool get _showsMenu => mayChange && account.type != AccountType.partnerPocket;
+
   String _details(Words words) => account.isActive ? [words.text(account.type.wordKey), if (account.custodianName.isNotEmpty) account.custodianName].join(' · ') : words.accountsDisabled;
 
   @override
@@ -34,7 +36,7 @@ class AccountRow extends StatelessWidget {
     return Card.outlined(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        contentPadding: EdgeInsetsDirectional.fromSTEB(16, 0, mayChange ? 4 : 16, 0),
+        contentPadding: EdgeInsetsDirectional.fromSTEB(16, 0, _showsMenu ? 4 : 16, 0),
         leading: Icon(account.type == AccountType.bank ? Icons.account_balance_outlined : Icons.payments_outlined),
         title: Text(
           account.name,
@@ -46,7 +48,7 @@ class AccountRow extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(formatMoney(account.balance), key: AccountsScreen.balanceKey(account.id), style: Theme.of(context).textTheme.titleSmall),
-            if (mayChange)
+            if (_showsMenu)
               PopupMenuButton<VoidCallback>(
                 key: AccountsScreen.menuKey(account.id),
                 onSelected: (action) => action(),

@@ -148,13 +148,12 @@ class ProjectCard extends StatelessWidget {
                   label: Text(words.accountsTitle),
                   onPressed: onAccounts,
                 ),
-                if (project.may(Permission.seeAllCapital))
-                  TextButton.icon(
-                    key: HomeScreen.partnersKey(project.id),
-                    icon: const Icon(Icons.handshake_outlined),
-                    label: Text(words.partnersTitle),
-                    onPressed: onPartners,
-                  ),
+                TextButton.icon(
+                  key: HomeScreen.partnersKey(project.id),
+                  icon: const Icon(Icons.handshake_outlined),
+                  label: Text(words.partnersTitle),
+                  onPressed: onPartners,
+                ),
                 TextButton.icon(
                   key: HomeScreen.suppliersKey(project.id),
                   icon: const Icon(Icons.storefront_outlined),

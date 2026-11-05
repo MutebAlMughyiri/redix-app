@@ -132,13 +132,13 @@ void main() {
     expect(find.byKey(PartnersScreen.editKey(opened.mutab)), findsNothing);
   });
 
-  testWidgets('without seeAllCapital there is no way in', (tester) async {
+  testWidgets('everyone in the project has a way in, since each sees their own line (BR-31)', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
     await pumpRedix(tester, api, stored: {'session': keptSession});
 
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
 
-    expect(find.byKey(HomeScreen.partnersKey('project-0')), findsNothing);
+    expect(find.byKey(HomeScreen.partnersKey('project-0')), findsOneWidget);
   });
 
   testWidgets('with no network the list shows what was kept, and no failure', (tester) async {

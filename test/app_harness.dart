@@ -51,7 +51,7 @@ Map<String, String> wordsIn(String language) => {
     'columns.inReports', 'columns.custom', 'columns.core', 'columns.edit', 'columns.delete', 'columns.save', 'columns.deleteExplain', 'columns.applyQuestion', 'columns.applyExplain',
     'columns.applyToAll', 'columns.templateOnly',
     'entries.title', 'entries.mine', 'entries.all', 'entries.latest', 'entries.seeAll', 'entries.empty', 'entries.loadFailed', 'entries.noConnection', 'entries.refused', 'entries.draft', 'entries.pendingApproval', 'entries.approved', 'entries.rejected', 'entries.reversed', 'entries.reason', 'entries.fix', 'entries.edit', 'entries.send', 'entries.delete', 'entries.deleteQuestion', 'entries.deleteExplain', 'entries.reverse', 'entries.reverseTitle', 'entries.reverseReason', 'entries.reverseExplain', 'entries.entryApproved', 'entries.entryWaitingForDecision', 'entries.notYourEntry', 'entries.entryHasCreditNote', 'entries.reasonRequired', 'entries.entryNotApproved', 'entries.alreadyReversed', 'entries.entryIncomplete', 'entries.entryNotSubmittable', 'expenses.entryApproved', 'expenses.entryWaitingForDecision', 'expenses.notYourEntry', 'expenses.entryHasCreditNote', 'expenses.reasonRequired', 'expenses.entryNotApproved', 'expenses.alreadyReversed',
-    'share.title', 'share.project', 'share.noProject', 'share.chooseItem', 'share.empty', 'share.expense', 'share.matching', 'share.attach', 'share.newExpense', 'share.attached', 'share.goesBack', 'share.amountDiffers', 'share.supplierDiffers', 'share.loadFailed', 'share.noConnection', 'share.refused', 'share.notYourEntry', 'share.entryNotAttachable', 'share.unknownAttachment', 'share.invoiceAlreadyAttached', 'share.duplicateInvoice', 'share.invalidInvoiceNumber', 'share.invalidInvoiceDate', 'share.invalidVatNumber', 'share.invalidAmount', 'approvals.invoiceTotal', 'approvals.sellerDiffers', 'notifications.title', 'notifications.empty', 'notifications.loadFailed', 'notifications.noConnection', 'notifications.refused', 'notifications.entrySubmitted', 'notifications.entryApproved', 'notifications.entryRejected', 'notifications.projectApproved', 'notifications.projectRejected', 'approvals.title', 'approvals.empty', 'approvals.loadFailed', 'approvals.noConnection', 'approvals.all', 'approvals.purchases', 'approvals.contractorPayments', 'approvals.approve', 'approvals.reject', 'approvals.approveSelected', 'approvals.selectHint', 'approvals.enteredBy', 'approvals.includingVat', 'approvals.withoutInvoice', 'approvals.openFile', 'approvals.fileFailed', 'approvals.rejectTitle', 'approvals.quickReason', 'approvals.reasonUnclear', 'approvals.reasonAmount', 'approvals.reasonItem', 'approvals.reasonDuplicate', 'approvals.reason', 'approvals.reasonHint', 'approvals.rejectSend', 'approvals.reasonRequired', 'approvals.entryNotPending', 'approvals.unknownEntry', 'approvals.originalNotApproved', 'approvals.refused', 'approvals.approvedSome', 'approvals.failedSome',
+    'accounts.typePartnerPocket', 'accounts.invalidType', 'accounts.pocketFollowsPartner', 'accounts.transfer', 'accounts.reconcile', 'transfers.title', 'transfers.latest', 'transfers.from', 'transfers.to', 'transfers.amount', 'transfers.date', 'transfers.description', 'transfers.receipt', 'transfers.save', 'transfers.done', 'transfers.loadFailed', 'transfers.noConnection', 'transfers.refused', 'transfers.sameAccount', 'transfers.invalidDate', 'transfers.invalidAmount', 'transfers.invalidNotes', 'transfers.unknownAccount', 'transfers.unknownAttachment', 'transfers.invoiceAlreadyAttached', 'reconciliations.title', 'reconciliations.surplus', 'reconciliations.actualTotal', 'reconciliations.difference', 'reconciliations.differenceExplain', 'reconciliations.owed', 'reconciliations.lastUpdated', 'reconciliations.never', 'reconciliations.enterTitle', 'reconciliations.books', 'reconciliations.save', 'reconciliations.loadFailed', 'reconciliations.noConnection', 'reconciliations.refused', 'reconciliations.unknownAccount', 'reconciliations.invalidAmount', 'reconciliations.accountMissing', 'capital.total', 'capital.balance', 'capital.share', 'capital.active', 'capital.left', 'capital.movement', 'capital.movements', 'capital.noMovements', 'capital.moveTitle', 'capital.partner', 'capital.type', 'capital.contribution', 'capital.withdrawal', 'capital.settlementAndExit', 'capital.carryIn', 'capital.carryOut', 'capital.inKind', 'capital.refundableAdvance', 'capital.amount', 'capital.date', 'capital.account', 'capital.description', 'capital.receipt', 'capital.receiptRequiredWord', 'capital.receiptHint', 'capital.receiptAmount', 'capital.receiptDiffers', 'capital.paidInCash', 'capital.cashReason', 'capital.targetProject', 'capital.targetPartner', 'capital.targetAccount', 'capital.noTargetProject', 'capital.save', 'capital.saved', 'capital.cash', 'capital.receiptAttached', 'capital.reversed', 'capital.reverse', 'capital.loadFailed', 'capital.noConnection', 'capital.refused', 'capital.receiptRequired', 'capital.invalidReason', 'capital.useCarry', 'capital.settlementNotFull', 'capital.unknownPartner', 'capital.partnerLeft', 'capital.invalidDate', 'capital.invalidAmount', 'capital.invalidNotes', 'capital.unknownAccount', 'capital.unknownAttachment', 'capital.invoiceAlreadyAttached', 'capital.sameProject', 'capital.targetProjectRefused', 'capital.targetProjectFinished', 'approvals.paidBy', 'approvals.addToCapital', 'approvals.owedBack', 'approvals.invalidTreatment', 'approvals.notPaidByPartner', 'entries.tiedProjectRefused', 'share.capitalReceipt', 'share.title', 'share.project', 'share.noProject', 'share.chooseItem', 'share.empty', 'share.expense', 'share.matching', 'share.attach', 'share.newExpense', 'share.attached', 'share.goesBack', 'share.amountDiffers', 'share.supplierDiffers', 'share.loadFailed', 'share.noConnection', 'share.refused', 'share.notYourEntry', 'share.entryNotAttachable', 'share.unknownAttachment', 'share.invoiceAlreadyAttached', 'share.duplicateInvoice', 'share.invalidInvoiceNumber', 'share.invalidInvoiceDate', 'share.invalidVatNumber', 'share.invalidAmount', 'approvals.invoiceTotal', 'approvals.sellerDiffers', 'notifications.title', 'notifications.empty', 'notifications.loadFailed', 'notifications.noConnection', 'notifications.refused', 'notifications.entrySubmitted', 'notifications.entryApproved', 'notifications.entryRejected', 'notifications.projectApproved', 'notifications.projectRejected', 'approvals.title', 'approvals.empty', 'approvals.loadFailed', 'approvals.noConnection', 'approvals.all', 'approvals.purchases', 'approvals.contractorPayments', 'approvals.approve', 'approvals.reject', 'approvals.approveSelected', 'approvals.selectHint', 'approvals.enteredBy', 'approvals.includingVat', 'approvals.withoutInvoice', 'approvals.openFile', 'approvals.fileFailed', 'approvals.rejectTitle', 'approvals.quickReason', 'approvals.reasonUnclear', 'approvals.reasonAmount', 'approvals.reasonItem', 'approvals.reasonDuplicate', 'approvals.reason', 'approvals.reasonHint', 'approvals.rejectSend', 'approvals.reasonRequired', 'approvals.entryNotPending', 'approvals.unknownEntry', 'approvals.originalNotApproved', 'approvals.refused', 'approvals.approvedSome', 'approvals.failedSome',
     'expenses.keptOnPhone', 'offline.title', 'offline.empty', 'offline.waiting', 'offline.sendAgain', 'offline.sendAnyway', 'offline.discard', 'offline.discardQuestion', 'offline.discardExplain',
     'categories.title', 'categories.hint', 'categories.empty', 'categories.loadFailed', 'categories.noConnection', 'categories.refused', 'categories.projectFinished',
     'categories.invalidName', 'categories.invalidOrder', 'categories.generalSubgroup', 'categories.subgroupInUse', 'categories.itemHasEntries', 'categories.changeType', 'subgroups.delete', 'subgroups.deleteQuestion', 'subgroups.deleteExplain', 'categories.new', 'categories.categoryName', 'categories.items', 'categories.noItems',
@@ -108,7 +108,7 @@ const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "ke
 const admin = ['approveProjects'];
 
 /// What a project manager who also does the finance may do in a project.
-const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier', 'recordEntries', 'attachFiles', 'chargeAnyAccount', 'approveEntries', 'manageAnyEntry'];
+const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier', 'recordEntries', 'attachFiles', 'chargeAnyAccount', 'approveEntries', 'manageAnyEntry', 'moveMoney'];
 
 /// What someone in the field may do in a project.
 const field = ['readProject', 'addSupplier', 'recordEntries', 'attachFiles'];
@@ -438,7 +438,7 @@ class FakeApi {
   final sentRejections = <(String, String)>[];
 
   /// Adds an entry waiting for a decision.
-  Map<String, Object> addPending({String kind = 'purchase', double amount = 1150, double vat = 150, String withoutInvoiceReason = '', String attachmentId = 'attachment-1', String contentType = 'image/png', double? invoiceTotal, String sellerVatNumber = '', String supplierVatNumber = ''}) {
+  Map<String, Object> addPending({String kind = 'purchase', double amount = 1150, double vat = 150, String withoutInvoiceReason = '', String attachmentId = 'attachment-1', String contentType = 'image/png', double? invoiceTotal, String sellerVatNumber = '', String supplierVatNumber = '', String partnerName = ''}) {
     final entry = <String, Object>{
       'id': 'entry-${pendingEntries.length}',
       'kind': kind,
@@ -458,9 +458,53 @@ class FakeApi {
       'invoiceTotal': invoiceTotal ?? amount,
       'sellerVatNumber': sellerVatNumber,
       'supplierVatNumber': supplierVatNumber,
+      'partnerName': partnerName,
+      'partnerTreatment': 'capital',
     };
     pendingEntries.add(entry);
     return entry;
+  }
+
+  /// The latest transfers.
+  final transferRows = <Map<String, Object>>[];
+
+  /// What the app sent to the money routes, by path.
+  final sentMoney = <(String, Map<String, dynamic>)>[];
+
+  /// What the API answers a money route.
+  var moneyAnswer = (status: 200, code: '');
+
+  /// What the accounts hold against the books.
+  var reconciliationAnswer = <String, Object>{'at': '0001-01-01T00:00:00', 'surplus': 0, 'actualTotal': 0, 'difference': 0, 'owedToPartners': 0, 'balances': <Map<String, Object>>[]};
+
+  /// The total capital.
+  var capitalTotal = 0.0;
+
+  /// Each partner's capital.
+  final capitalLines = <Map<String, Object>>[];
+
+  /// Each partner's movements, newest first.
+  final movementRows = <Map<String, Object>>[];
+
+  /// Adds a line to the capital.
+  void addCapitalLine(String id, double balance, double sharePercent, {bool isActive = true}) {
+    capitalLines.add({'id': id, 'name': id, 'isActive': isActive, 'isMine': false, 'balance': balance, 'sharePercent': sharePercent});
+  }
+
+  /// Adds a movement.
+  void addMovement({String type = 'contribution', double amount = 100, String attachmentId = '', String cashReason = '', bool isReversed = false}) {
+    movementRows.add({
+      'id': 'movement-${movementRows.length}',
+      'type': type,
+      'date': '2026-11-05',
+      'amount': amount,
+      'description': 'زاد رصيده',
+      'cashReason': cashReason,
+      'accountName': 'حساب المؤسسة',
+      'attachmentId': attachmentId,
+      'contentType': attachmentId.isEmpty ? '' : 'image/png',
+      'isReversed': isReversed,
+    });
   }
 
   /// What in an item can take a shared invoice.
@@ -1201,7 +1245,7 @@ class FakeApi {
     if (segments.length >= 3 && segments[2] == 'accounts') {
       return _answerAccounts(request);
     }
-    if (segments.length >= 3 && segments[2] == 'partners') {
+    if (segments.length >= 3 && segments[2] == 'partners' && segments.last != 'movements') {
       return _answerPartners(request);
     }
     if (segments.length == 4 && segments[2] == 'suppliers' && segments[3] == 'search') {
@@ -1234,6 +1278,22 @@ class FakeApi {
           row['isReversed'] = true;
       }
       return _json(const <String, Object>{}, 200);
+    }
+    if (segments.length == 3 && segments[2] == 'transfers' && request.method == 'GET') {
+      return _json(transferRows, 200);
+    }
+    if (segments.length == 3 && segments[2] == 'capital') {
+      return _json({'total': capitalTotal, 'partners': capitalLines}, 200);
+    }
+    if (segments.length == 5 && segments[2] == 'partners' && segments[4] == 'movements') {
+      return _json(movementRows, 200);
+    }
+    if (segments.length == 4 && segments[2] == 'reconciliations' && segments[3] == 'latest') {
+      return _json(reconciliationAnswer, 200);
+    }
+    if (segments.length >= 3 && const ['transfers', 'reconciliations', 'capital-movements'].contains(segments[2]) || (segments.length == 5 && segments[4] == 'partner-treatment')) {
+      sentMoney.add((request.url.path, jsonDecode(request.body) as Map<String, dynamic>));
+      return _json(moneyAnswer.status < 300 ? const <String, Object>{} : {'code': moneyAnswer.code}, moneyAnswer.status);
     }
     if (segments.length == 4 && segments[2] == 'entries' && segments[3] == 'attachable') {
       return _json(attachableEntries, 200);

@@ -13,6 +13,7 @@ import '../words/words.dart';
 import 'entry_row.dart';
 import 'entry_tile.dart';
 import 'project_entries.dart';
+import 'reverse_sheet.dart';
 
 /// A project's entries (UC-037): each person's own, or all of them, and what can be done to one (UC-028, UC-033, UC-035).
 class EntriesScreen extends StatefulWidget {
@@ -38,10 +39,10 @@ class EntriesScreen extends StatefulWidget {
   static const allKey = Key('entries.all');
 
   /// The field holding why an entry is reversed.
-  static const reverseReasonKey = Key('entries.reverseReason');
+  static const reverseReasonKey = ReverseSheet.reasonKey;
 
   /// The button reversing it.
-  static const reverseSendKey = Key('entries.reverseSend');
+  static const reverseSendKey = ReverseSheet.sendKey;
 
   /// The row of the entry [id].
   static Key rowKey(String id) => Key('entries.row.$id');
@@ -177,7 +178,7 @@ class _EntryActions extends StatelessWidget {
 
   void _askToReverse(BuildContext context) {
     Navigator.of(context).pop();
-    showModalBottomSheet<void>(context: context, isScrollControlled: true, useSafeArea: true, showDragHandle: true, builder: (_) => _ReverseSheet(entries: entries, entry: entry));
+    ReverseSheet.show(context, (reason) => entries.reverse(entry, reason));
   }
 
   @override
@@ -214,67 +215,6 @@ class _EntryActions extends StatelessWidget {
           ],
           if (mayReverse) OutlinedButton(key: EntriesScreen.reverseKey, onPressed: () => _askToReverse(context), child: Text(words.entriesReverse)),
         ],
-      ),
-    );
-  }
-}
-
-class _ReverseSheet extends StatefulWidget {
-  const _ReverseSheet({required this.entries, required this.entry});
-
-  final ProjectEntries entries;
-  final EntryRow entry;
-
-  @override
-  State<_ReverseSheet> createState() => _ReverseSheetState();
-}
-
-class _ReverseSheetState extends State<_ReverseSheet> {
-  final _reason = TextEditingController();
-  var _message = '';
-
-  @override
-  void dispose() {
-    _reason.dispose();
-    super.dispose();
-  }
-
-  Future<void> _reverse() async {
-    final refusal = await widget.entries.reverse(widget.entry, _reason.text);
-    if (!mounted) {
-      return;
-    }
-    if (refusal.isEmpty) {
-      Navigator.of(context).pop();
-      return;
-    }
-    setState(() => _message = refusal);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final words = Words.of(context);
-    final theme = Theme.of(context);
-    return Padding(
-      padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.viewInsetsOf(context).bottom),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 12,
-          children: [
-            Text(words.entriesReverseTitle, style: theme.textTheme.titleLarge),
-            Text(words.entriesReverseExplain),
-            TextField(
-              key: EntriesScreen.reverseReasonKey,
-              controller: _reason,
-              maxLines: 2,
-              decoration: InputDecoration(labelText: words.entriesReverseReason, border: const OutlineInputBorder()),
-            ),
-            if (_message.isNotEmpty) Text(words.text(_message), style: TextStyle(color: theme.colorScheme.error)),
-            FilledButton(key: EntriesScreen.reverseSendKey, onPressed: _reverse, child: Text(words.entriesReverse)),
-          ],
-        ),
       ),
     );
   }

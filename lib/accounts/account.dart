@@ -4,7 +4,10 @@ enum AccountType {
   bank('accounts.typeBank'),
 
   /// Cash held by one person.
-  cashCustody('accounts.typeCashCustody');
+  cashCustody('accounts.typeCashCustody'),
+
+  /// What a partner paid from their own pocket; it comes with the partner.
+  partnerPocket('accounts.typePartnerPocket');
 
   const AccountType(this.wordKey);
 

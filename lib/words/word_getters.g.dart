@@ -35,6 +35,9 @@ mixin WordGetters {
   /// The word `accounts.invalidOpeningBalance`.
   String get accountsInvalidOpeningBalance => text('accounts.invalidOpeningBalance');
 
+  /// The word `accounts.invalidType`.
+  String get accountsInvalidType => text('accounts.invalidType');
+
   /// The word `accounts.loadFailed`.
   String get accountsLoadFailed => text('accounts.loadFailed');
 
@@ -56,8 +59,14 @@ mixin WordGetters {
   /// The word `accounts.openingBalance`.
   String get accountsOpeningBalance => text('accounts.openingBalance');
 
+  /// The word `accounts.pocketFollowsPartner`.
+  String get accountsPocketFollowsPartner => text('accounts.pocketFollowsPartner');
+
   /// The word `accounts.projectFinished`.
   String get accountsProjectFinished => text('accounts.projectFinished');
+
+  /// The word `accounts.reconcile`.
+  String get accountsReconcile => text('accounts.reconcile');
 
   /// The word `accounts.refused`.
   String get accountsRefused => text('accounts.refused');
@@ -71,6 +80,9 @@ mixin WordGetters {
   /// The word `accounts.title`.
   String get accountsTitle => text('accounts.title');
 
+  /// The word `accounts.transfer`.
+  String get accountsTransfer => text('accounts.transfer');
+
   /// The word `accounts.type`.
   String get accountsType => text('accounts.type');
 
@@ -80,11 +92,17 @@ mixin WordGetters {
   /// The word `accounts.typeCashCustody`.
   String get accountsTypeCashCustody => text('accounts.typeCashCustody');
 
+  /// The word `accounts.typePartnerPocket`.
+  String get accountsTypePartnerPocket => text('accounts.typePartnerPocket');
+
   /// The word `accounts.unknownCustodian`.
   String get accountsUnknownCustodian => text('accounts.unknownCustodian');
 
   /// The word `app.title`.
   String get appTitle => text('app.title');
+
+  /// The word `approvals.addToCapital`.
+  String get approvalsAddToCapital => text('approvals.addToCapital');
 
   /// The word `approvals.all`.
   String get approvalsAll => text('approvals.all');
@@ -119,6 +137,9 @@ mixin WordGetters {
   /// The word `approvals.includingVat`.
   String get approvalsIncludingVat => text('approvals.includingVat');
 
+  /// The word `approvals.invalidTreatment`.
+  String get approvalsInvalidTreatment => text('approvals.invalidTreatment');
+
   /// The word `approvals.invoiceTotal`.
   String get approvalsInvoiceTotal => text('approvals.invoiceTotal');
 
@@ -128,11 +149,20 @@ mixin WordGetters {
   /// The word `approvals.noConnection`.
   String get approvalsNoConnection => text('approvals.noConnection');
 
+  /// The word `approvals.notPaidByPartner`.
+  String get approvalsNotPaidByPartner => text('approvals.notPaidByPartner');
+
   /// The word `approvals.openFile`.
   String get approvalsOpenFile => text('approvals.openFile');
 
   /// The word `approvals.originalNotApproved`.
   String get approvalsOriginalNotApproved => text('approvals.originalNotApproved');
+
+  /// The word `approvals.owedBack`.
+  String get approvalsOwedBack => text('approvals.owedBack');
+
+  /// The word `approvals.paidBy`.
+  String get approvalsPaidBy => text('approvals.paidBy');
 
   /// The word `approvals.purchases`.
   String get approvalsPurchases => text('approvals.purchases');
@@ -247,6 +277,177 @@ mixin WordGetters {
 
   /// The word `biometrics.usePassword`.
   String get biometricsUsePassword => text('biometrics.usePassword');
+
+  /// The word `capital.account`.
+  String get capitalAccount => text('capital.account');
+
+  /// The word `capital.active`.
+  String get capitalActive => text('capital.active');
+
+  /// The word `capital.amount`.
+  String get capitalAmount => text('capital.amount');
+
+  /// The word `capital.balance`.
+  String get capitalBalance => text('capital.balance');
+
+  /// The word `capital.carryIn`.
+  String get capitalCarryIn => text('capital.carryIn');
+
+  /// The word `capital.carryOut`.
+  String get capitalCarryOut => text('capital.carryOut');
+
+  /// The word `capital.cash`.
+  String get capitalCash => text('capital.cash');
+
+  /// The word `capital.cashReason`.
+  String get capitalCashReason => text('capital.cashReason');
+
+  /// The word `capital.contribution`.
+  String get capitalContribution => text('capital.contribution');
+
+  /// The word `capital.date`.
+  String get capitalDate => text('capital.date');
+
+  /// The word `capital.description`.
+  String get capitalDescription => text('capital.description');
+
+  /// The word `capital.inKind`.
+  String get capitalInKind => text('capital.inKind');
+
+  /// The word `capital.invalidAmount`.
+  String get capitalInvalidAmount => text('capital.invalidAmount');
+
+  /// The word `capital.invalidDate`.
+  String get capitalInvalidDate => text('capital.invalidDate');
+
+  /// The word `capital.invalidNotes`.
+  String get capitalInvalidNotes => text('capital.invalidNotes');
+
+  /// The word `capital.invalidReason`.
+  String get capitalInvalidReason => text('capital.invalidReason');
+
+  /// The word `capital.invoiceAlreadyAttached`.
+  String get capitalInvoiceAlreadyAttached => text('capital.invoiceAlreadyAttached');
+
+  /// The word `capital.left`.
+  String get capitalLeft => text('capital.left');
+
+  /// The word `capital.loadFailed`.
+  String get capitalLoadFailed => text('capital.loadFailed');
+
+  /// The word `capital.moveTitle`.
+  String get capitalMoveTitle => text('capital.moveTitle');
+
+  /// The word `capital.movement`.
+  String get capitalMovement => text('capital.movement');
+
+  /// The word `capital.movements`.
+  String get capitalMovements => text('capital.movements');
+
+  /// The word `capital.noConnection`.
+  String get capitalNoConnection => text('capital.noConnection');
+
+  /// The word `capital.noMovements`.
+  String get capitalNoMovements => text('capital.noMovements');
+
+  /// The word `capital.noTargetProject`.
+  String get capitalNoTargetProject => text('capital.noTargetProject');
+
+  /// The word `capital.paidInCash`.
+  String get capitalPaidInCash => text('capital.paidInCash');
+
+  /// The word `capital.partner`.
+  String get capitalPartner => text('capital.partner');
+
+  /// The word `capital.partnerLeft`.
+  String get capitalPartnerLeft => text('capital.partnerLeft');
+
+  /// The word `capital.receipt`.
+  String get capitalReceipt => text('capital.receipt');
+
+  /// The word `capital.receiptAmount`.
+  String get capitalReceiptAmount => text('capital.receiptAmount');
+
+  /// The word `capital.receiptAttached`.
+  String get capitalReceiptAttached => text('capital.receiptAttached');
+
+  /// The word `capital.receiptDiffers`.
+  String get capitalReceiptDiffers => text('capital.receiptDiffers');
+
+  /// The word `capital.receiptHint`.
+  String get capitalReceiptHint => text('capital.receiptHint');
+
+  /// The word `capital.receiptRequired`.
+  String get capitalReceiptRequired => text('capital.receiptRequired');
+
+  /// The word `capital.receiptRequiredWord`.
+  String get capitalReceiptRequiredWord => text('capital.receiptRequiredWord');
+
+  /// The word `capital.refundableAdvance`.
+  String get capitalRefundableAdvance => text('capital.refundableAdvance');
+
+  /// The word `capital.refused`.
+  String get capitalRefused => text('capital.refused');
+
+  /// The word `capital.reverse`.
+  String get capitalReverse => text('capital.reverse');
+
+  /// The word `capital.reversed`.
+  String get capitalReversed => text('capital.reversed');
+
+  /// The word `capital.sameProject`.
+  String get capitalSameProject => text('capital.sameProject');
+
+  /// The word `capital.save`.
+  String get capitalSave => text('capital.save');
+
+  /// The word `capital.saved`.
+  String get capitalSaved => text('capital.saved');
+
+  /// The word `capital.settlementAndExit`.
+  String get capitalSettlementAndExit => text('capital.settlementAndExit');
+
+  /// The word `capital.settlementNotFull`.
+  String get capitalSettlementNotFull => text('capital.settlementNotFull');
+
+  /// The word `capital.share`.
+  String get capitalShare => text('capital.share');
+
+  /// The word `capital.targetAccount`.
+  String get capitalTargetAccount => text('capital.targetAccount');
+
+  /// The word `capital.targetPartner`.
+  String get capitalTargetPartner => text('capital.targetPartner');
+
+  /// The word `capital.targetProject`.
+  String get capitalTargetProject => text('capital.targetProject');
+
+  /// The word `capital.targetProjectFinished`.
+  String get capitalTargetProjectFinished => text('capital.targetProjectFinished');
+
+  /// The word `capital.targetProjectRefused`.
+  String get capitalTargetProjectRefused => text('capital.targetProjectRefused');
+
+  /// The word `capital.total`.
+  String get capitalTotal => text('capital.total');
+
+  /// The word `capital.type`.
+  String get capitalType => text('capital.type');
+
+  /// The word `capital.unknownAccount`.
+  String get capitalUnknownAccount => text('capital.unknownAccount');
+
+  /// The word `capital.unknownAttachment`.
+  String get capitalUnknownAttachment => text('capital.unknownAttachment');
+
+  /// The word `capital.unknownPartner`.
+  String get capitalUnknownPartner => text('capital.unknownPartner');
+
+  /// The word `capital.useCarry`.
+  String get capitalUseCarry => text('capital.useCarry');
+
+  /// The word `capital.withdrawal`.
+  String get capitalWithdrawal => text('capital.withdrawal');
 
   /// The word `categories.addItem`.
   String get categoriesAddItem => text('categories.addItem');
@@ -775,6 +976,9 @@ mixin WordGetters {
 
   /// The word `entries.send`.
   String get entriesSend => text('entries.send');
+
+  /// The word `entries.tiedProjectRefused`.
+  String get entriesTiedProjectRefused => text('entries.tiedProjectRefused');
 
   /// The word `entries.title`.
   String get entriesTitle => text('entries.title');
@@ -1376,6 +1580,57 @@ mixin WordGetters {
   /// The word `projects.unknownSource`.
   String get projectsUnknownSource => text('projects.unknownSource');
 
+  /// The word `reconciliations.accountMissing`.
+  String get reconciliationsAccountMissing => text('reconciliations.accountMissing');
+
+  /// The word `reconciliations.actualTotal`.
+  String get reconciliationsActualTotal => text('reconciliations.actualTotal');
+
+  /// The word `reconciliations.books`.
+  String get reconciliationsBooks => text('reconciliations.books');
+
+  /// The word `reconciliations.difference`.
+  String get reconciliationsDifference => text('reconciliations.difference');
+
+  /// The word `reconciliations.differenceExplain`.
+  String get reconciliationsDifferenceExplain => text('reconciliations.differenceExplain');
+
+  /// The word `reconciliations.enterTitle`.
+  String get reconciliationsEnterTitle => text('reconciliations.enterTitle');
+
+  /// The word `reconciliations.invalidAmount`.
+  String get reconciliationsInvalidAmount => text('reconciliations.invalidAmount');
+
+  /// The word `reconciliations.lastUpdated`.
+  String get reconciliationsLastUpdated => text('reconciliations.lastUpdated');
+
+  /// The word `reconciliations.loadFailed`.
+  String get reconciliationsLoadFailed => text('reconciliations.loadFailed');
+
+  /// The word `reconciliations.never`.
+  String get reconciliationsNever => text('reconciliations.never');
+
+  /// The word `reconciliations.noConnection`.
+  String get reconciliationsNoConnection => text('reconciliations.noConnection');
+
+  /// The word `reconciliations.owed`.
+  String get reconciliationsOwed => text('reconciliations.owed');
+
+  /// The word `reconciliations.refused`.
+  String get reconciliationsRefused => text('reconciliations.refused');
+
+  /// The word `reconciliations.save`.
+  String get reconciliationsSave => text('reconciliations.save');
+
+  /// The word `reconciliations.surplus`.
+  String get reconciliationsSurplus => text('reconciliations.surplus');
+
+  /// The word `reconciliations.title`.
+  String get reconciliationsTitle => text('reconciliations.title');
+
+  /// The word `reconciliations.unknownAccount`.
+  String get reconciliationsUnknownAccount => text('reconciliations.unknownAccount');
+
   /// The word `register.hint`.
   String get registerHint => text('register.hint');
 
@@ -1453,6 +1708,9 @@ mixin WordGetters {
 
   /// The word `share.attached`.
   String get shareAttached => text('share.attached');
+
+  /// The word `share.capitalReceipt`.
+  String get shareCapitalReceipt => text('share.capitalReceipt');
 
   /// The word `share.chooseItem`.
   String get shareChooseItem => text('share.chooseItem');
@@ -1663,6 +1921,66 @@ mixin WordGetters {
 
   /// The word `suppliers.vatNumberTaken`.
   String get suppliersVatNumberTaken => text('suppliers.vatNumberTaken');
+
+  /// The word `transfers.amount`.
+  String get transfersAmount => text('transfers.amount');
+
+  /// The word `transfers.date`.
+  String get transfersDate => text('transfers.date');
+
+  /// The word `transfers.description`.
+  String get transfersDescription => text('transfers.description');
+
+  /// The word `transfers.done`.
+  String get transfersDone => text('transfers.done');
+
+  /// The word `transfers.from`.
+  String get transfersFrom => text('transfers.from');
+
+  /// The word `transfers.invalidAmount`.
+  String get transfersInvalidAmount => text('transfers.invalidAmount');
+
+  /// The word `transfers.invalidDate`.
+  String get transfersInvalidDate => text('transfers.invalidDate');
+
+  /// The word `transfers.invalidNotes`.
+  String get transfersInvalidNotes => text('transfers.invalidNotes');
+
+  /// The word `transfers.invoiceAlreadyAttached`.
+  String get transfersInvoiceAlreadyAttached => text('transfers.invoiceAlreadyAttached');
+
+  /// The word `transfers.latest`.
+  String get transfersLatest => text('transfers.latest');
+
+  /// The word `transfers.loadFailed`.
+  String get transfersLoadFailed => text('transfers.loadFailed');
+
+  /// The word `transfers.noConnection`.
+  String get transfersNoConnection => text('transfers.noConnection');
+
+  /// The word `transfers.receipt`.
+  String get transfersReceipt => text('transfers.receipt');
+
+  /// The word `transfers.refused`.
+  String get transfersRefused => text('transfers.refused');
+
+  /// The word `transfers.sameAccount`.
+  String get transfersSameAccount => text('transfers.sameAccount');
+
+  /// The word `transfers.save`.
+  String get transfersSave => text('transfers.save');
+
+  /// The word `transfers.title`.
+  String get transfersTitle => text('transfers.title');
+
+  /// The word `transfers.to`.
+  String get transfersTo => text('transfers.to');
+
+  /// The word `transfers.unknownAccount`.
+  String get transfersUnknownAccount => text('transfers.unknownAccount');
+
+  /// The word `transfers.unknownAttachment`.
+  String get transfersUnknownAttachment => text('transfers.unknownAttachment');
 
   /// The word `users.add`.
   String get usersAdd => text('users.add');

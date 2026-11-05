@@ -6,6 +6,8 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | The partners list opens for everyone in the project | Row 70: someone who is a partner needs to see their own line; the API gives them only that line and the total |
+| 2026-11-05 | `ApiList` became a kind of `ApiObject` | The capital and the reconciliation are single objects, and two copies of reading and changing would drift |
 | 2026-11-05 | The activity is `singleTask`, as `receive_sharing_intent` asks | Under `singleTop` a share from another app could start a second copy inside that app's task. The cost: tapping the launcher icon returns to the app's first screen, not to a screen left open |
 | 2026-11-05 | A shared file is read when the screen opens, and an item is chosen under Purchases or Contractor payments | The two types are separate lists on the API, and the person knows which they are looking for |
 | 2026-11-05 | Tapping an entry that waits opens the inbox, and a decision opens the entries with that one's actions open | There is no screen for one entry, and these two already say what can be done with it |

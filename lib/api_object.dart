@@ -1,0 +1,112 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
+
+import 'api.dart';
+import 'auth/session.dart';
+
+/// Something the API owns, as it last answered, and the way to change it. Nothing about it is kept on the phone.
+abstract class ApiObject<T> extends ChangeNotifier {
+  /// What the API at [_path] answers, made from JSON by [_fromJson], whose word keys start with [_wordPrefix]; [_empty] until it answers.
+  ApiObject(this._session, this._path, this._wordPrefix, this._fromJson, this._empty) : _value = _empty {
+    _session.addListener(_forgetAtSignOut);
+  }
+
+  final Session _session;
+  String _path;
+  final String _wordPrefix;
+  final T Function(Object? json) _fromJson;
+  final T _empty;
+
+  T _value;
+  var _message = '';
+  var _isLoading = false;
+  var _lastAnswer = const <String, dynamic>{};
+
+  /// What the API last answered.
+  T get value => _value;
+
+  /// The word key of why it could not be read; empty when it could.
+  String get message => _message;
+
+  /// True while it is being read.
+  bool get isLoading => _isLoading;
+
+  /// Points at the API [path], for something whose address follows what is asked. What is still on its way from the old address never shows.
+  @protected
+  void pointAt(String path) => _path = path;
+
+  /// Shows [value], found some other way than by reading the API.
+  @protected
+  void show(T value) {
+    _value = value;
+    _message = '';
+    notifyListeners();
+  }
+
+  /// What the API answered the last change, when that was a JSON object: for a change whose answer says more than a code.
+  @protected
+  Map<String, dynamic> get lastAnswer => _lastAnswer;
+
+  /// What one user read never shows to the next on this phone, even for the moment the next one takes to load (BR-33).
+  void _forgetAtSignOut() {
+    if (!_session.isOpen) {
+      _value = _empty;
+    }
+  }
+
+  @override
+  void dispose() {
+    _session.removeListener(_forgetAtSignOut);
+    super.dispose();
+  }
+
+  /// Reads it for a screen that is opening. The read waits for the frame in progress, because another screen sharing this may still be building.
+  void loadOnOpen() {
+    _isLoading = true;
+    SchedulerBinding.instance.addPostFrameCallback((_) => load());
+  }
+
+  /// Reads it from the API.
+  Future<void> load() async {
+    final path = _path;
+    _isLoading = true;
+    _message = '';
+    notifyListeners();
+    var value = _value;
+    var message = '';
+    try {
+      final response = await _session.get(path);
+      if (response.statusCode == 200) {
+        value = _fromJson(jsonOf(response));
+      } else {
+        message = '$_wordPrefix.loadFailed';
+      }
+    } on Exception catch (error) {
+      debugPrint('$path not read: $error');
+      message = '$_wordPrefix.loadFailed';
+    }
+    if (path == _path) {
+      _value = value;
+      _message = message;
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Sends a change to the API [path] and, once it has answered, reads this again, so what someone else changed shows as it is now.
+  /// Returns an empty string once changed, otherwise the word key of the refusal, under [wordPrefix] when that is not empty, for a change other screens also make.
+  @protected
+  Future<String> change(String path, Map<String, Object> body, {String wordPrefix = ''}) async {
+    final prefix = wordPrefix.isEmpty ? _wordPrefix : wordPrefix;
+    try {
+      final response = await _session.post(path, body);
+      await load();
+      final answer = response.body.isEmpty ? null : jsonOf(response);
+      _lastAnswer = answer is Map<String, dynamic> ? answer : const {};
+      return response.statusCode < 300 ? '' : '$prefix.${_lastAnswer['code'] as String? ?? 'refused'}';
+    } on Exception catch (error) {
+      debugPrint('$path not changed: $error');
+      return '$prefix.noConnection';
+    }
+  }
+}

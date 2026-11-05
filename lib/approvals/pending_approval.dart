@@ -19,7 +19,9 @@ class PendingApproval {
       authorName = json['authorName'] as String,
       invoiceTotal = (json['invoiceTotal'] as num).toDouble(),
       sellerVatNumber = json['sellerVatNumber'] as String,
-      supplierVatNumber = json['supplierVatNumber'] as String;
+      supplierVatNumber = json['supplierVatNumber'] as String,
+      partnerName = json['partnerName'] as String,
+      partnerTreatment = json['partnerTreatment'] as String;
 
   /// The entry's id.
   final String id;
@@ -74,6 +76,12 @@ class PendingApproval {
 
   /// Its supplier's VAT number.
   final String supplierVatNumber;
+
+  /// The partner who paid it from their pocket; empty when none did.
+  final String partnerName;
+
+  /// `capital` or `amountDue`: what becomes of what they paid (BR-25).
+  final String partnerTreatment;
 
   /// True when an invoice was attached that says something other than what was paid (AC-49.3).
   bool get totalDiffers => invoiceNumber.isNotEmpty && invoiceTotal != amount;

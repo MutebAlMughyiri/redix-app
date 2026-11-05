@@ -94,6 +94,9 @@ class Project {
   /// Whether the signed-in user may enter an expense in the project now.
   bool get mayEnterExpenses => !isFinished && may(Permission.recordEntries);
 
+  /// Whether the signed-in user may enter what counts at once in the project now.
+  bool get mayMoveMoney => !isFinished && may(Permission.moveMoney);
+
   /// Whether the signed-in user may change the project's settings now.
   bool get mayManageSettings => !isFinished && may(Permission.manageSettings);
 }

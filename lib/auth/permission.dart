@@ -33,4 +33,7 @@ enum Permission {
 
   /// Change or send an entry someone else entered, before it is approved.
   manageAnyEntry,
+
+  /// Enter what counts at once in a project: transfers, capital movements and revenue, and reconcile its accounts.
+  moveMoney,
 }
