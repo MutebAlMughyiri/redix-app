@@ -9,6 +9,8 @@
 **What it is for:** what each contractor was promised, what was paid inside the contract, and what remains.
 **Who sees it:** everyone in the project, from **Contracts** on the project's home. Only whoever does the finance can change it. It needs a network.
 
+What was paid counts only once approved. What waits shows under the figures as **Waiting for approval**. Payments are entered on the [Contractor payment](contractor-payment.md) screen.
+
 | To | Do this |
 | --- | --- |
 | Add a contract | Tap **Add contract**, choose the contractor, the item and the unit, and type the value. Unit price, quantity and notes are optional. |

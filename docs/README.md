@@ -32,6 +32,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Choosing a supplier](guide/supplier-picker.md) | Whoever enters an expense or a contract |
 | [New purchase expense](guide/add-expense.md) | Whoever enters expenses in the project |
 | [Contracts](guide/contracts.md) | Everyone in the project; whoever does its finance changes them |
+| [Contractor payment](guide/contractor-payment.md) | Whoever enters expenses in the project |
 
 ## Use cases
 
@@ -63,5 +64,6 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-024](use-cases/UC-024-invoice-qr.md) | Fill an expense from the e-invoice's QR code in its picture | Whoever enters an expense |
 | [UC-025](use-cases/UC-025-expense-without-invoice.md) | Send an expense that has no invoice, with the reason | Whoever enters an expense |
 | [UC-026](use-cases/UC-026-credit-note.md) | Record money coming back: a credit note, or a deduction | Whoever enters an expense |
+| [UC-027](use-cases/UC-027-contractor-payment.md) | Pay a contractor and see the effect before saving | Whoever enters an expense |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

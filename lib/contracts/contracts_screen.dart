@@ -126,6 +126,9 @@ class ContractsScreen extends StatefulWidget {
   /// What remains of the contract [id].
   static Key remainingKey(String id) => Key('contracts.remaining.$id');
 
+  /// What waits for approval on the contract [id], when anything does.
+  static Key pendingKey(String id) => Key('contracts.pending.$id');
+
   /// The bar of how much of the contract [id] is paid.
   static Key progressKey(String id) => Key('contracts.progress.$id');
 

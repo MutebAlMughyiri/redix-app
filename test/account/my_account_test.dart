@@ -6,6 +6,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/accounts/account.dart';
+import 'package:redix/contractor_payments/contract_picker.dart';
+import 'package:redix/contractor_payments/contractor_payment_screen.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
@@ -615,8 +617,40 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.creditNoteKey)));
       expectFits(AddExpenseScreen.creditNoteKey);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractorPaymentKey(runningId))));
+      await act(tester, api, () => tester.tap(find.byKey(ContractorPaymentScreen.contractKey)));
+      await act(tester, api, () => tester.tap(find.byKey(ContractPicker.optionKey(api.contracts[runningId]!.first['id']! as String))));
+      await tester.enterText(find.byKey(ContractorPaymentScreen.amountKey), '5000');
+      await tester.pumpAndSettle();
+      [
+        ContractorPaymentScreen.titleKey,
+        ContractorPaymentScreen.projectNameKey,
+        ContractorPaymentScreen.contractKey,
+        ContractorPaymentScreen.valueKey,
+        ContractorPaymentScreen.paidKey,
+        ContractorPaymentScreen.remainingKey,
+        ContractorPaymentScreen.overrunKey,
+        ContractorPaymentScreen.amountKey,
+        ContractorPaymentScreen.dateKey,
+        ContractorPaymentScreen.insideKey,
+        ContractorPaymentScreen.outsideKey,
+        ContractorPaymentScreen.outsideExplainKey,
+        ContractorPaymentScreen.receiptKey,
+        ContractorPaymentScreen.cameraKey,
+        ContractorPaymentScreen.filesKey,
+        ContractorPaymentScreen.hasInvoiceKey,
+        ContractorPaymentScreen.notesKey,
+        ContractorPaymentScreen.sendKey,
+        ContractorPaymentScreen.draftKey,
+      ].forEach(expectFits);
+      await tester.ensureVisible(find.byKey(ContractorPaymentScreen.hasInvoiceKey));
+      await tester.pumpAndSettle();
+      await act(tester, api, () => tester.tap(find.byKey(ContractorPaymentScreen.hasInvoiceKey)));
+      [ContractorPaymentScreen.invoiceNumberKey, ContractorPaymentScreen.invoiceDateKey, ContractorPaymentScreen.invoiceAmountKey, ContractorPaymentScreen.invoiceVatKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await tester.ensureVisible(find.byKey(HomeScreen.usersKey(runningId)));
+      await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey(runningId))));
       [
         UsersScreen.newUserKey,

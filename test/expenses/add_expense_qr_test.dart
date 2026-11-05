@@ -114,6 +114,17 @@ void main() {
     expect(opened.api.sentExpenses, hasLength(1));
   });
 
+  testWidgets('AC-09.1: without an invoice there is no VAT to compare, so a code read before says nothing', (tester) async {
+    final opened = await openExpense(tester, madeUpQr(vat: '700.00'));
+    await tester.ensureVisible(find.byKey(AddExpenseScreen.withoutInvoiceKey));
+    await tester.pumpAndSettle();
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddExpenseScreen.withoutInvoiceKey)));
+
+    expect(find.byKey(AddExpenseScreen.qrVatDiffersKey), findsNothing);
+    expect(find.byKey(AddExpenseScreen.qrReadKey), findsNothing);
+  });
+
   testWidgets('AC-11.3: a QR code\'s VAT within 0.01 of the computed VAT does not warn', (tester) async {
     await openExpense(tester, madeUpQr(vat: '782.61'));
 

@@ -12,6 +12,7 @@ import 'attachments/invoice_capture.dart';
 import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
+import 'contractor_payments/contractor_payment_screen.dart';
 import 'contracts/contracts.dart';
 import 'contracts/contracts_screen.dart';
 import 'expenses/add_expense_screen.dart';
@@ -168,6 +169,7 @@ class _RedixAppState extends State<RedixApp> {
         ),
       ),
       GoRoute(path: AddExpenseScreen.path, builder: (context, state) => _addExpenseScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project)),
+      GoRoute(path: ContractorPaymentScreen.path, builder: (context, state) => _contractorPaymentScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project)),
       GoRoute(
         path: SubgroupsScreen.path,
         builder: (context, state) => SubgroupsScreen(
@@ -201,11 +203,26 @@ class _RedixAppState extends State<RedixApp> {
 
   Attachments _attachmentsOf(String projectId) => _projectAttachments.putIfAbsent(projectId, () => Attachments(widget.session, projectId));
 
+  Expenses _expensesOf(String projectId) => _projectExpenses.putIfAbsent(projectId, () => Expenses(widget.session, projectId));
+
+  OfferedAccounts _offeredAccountsOf(String projectId) => _projectOfferedAccounts.putIfAbsent(projectId, () => OfferedAccounts(widget.session, projectId));
+
+  ContractorPaymentScreen _contractorPaymentScreen(String projectId, Project project) => ContractorPaymentScreen(
+    project: project,
+    expenses: _expensesOf(projectId),
+    contracts: _contractsOf(projectId),
+    accounts: _offeredAccountsOf(projectId),
+    paymentMethods: _paymentMethodsOf(projectId),
+    columnsOf: (itemId) => _columnsAt(Columns.itemPath(projectId, itemId)),
+    attachments: _attachmentsOf(projectId),
+    capture: widget.capture,
+  );
+
   AddExpenseScreen _addExpenseScreen(String projectId, Project project) => AddExpenseScreen(
     project: project,
-    expenses: _projectExpenses.putIfAbsent(projectId, () => Expenses(widget.session, projectId)),
+    expenses: _expensesOf(projectId),
     items: _offeredItemsOf(projectId, ItemType.purchases),
-    accounts: _projectOfferedAccounts.putIfAbsent(projectId, () => OfferedAccounts(widget.session, projectId)),
+    accounts: _offeredAccountsOf(projectId),
     paymentMethods: _paymentMethodsOf(projectId),
     suppliers: _suppliersOf(projectId),
     creditableInvoices: _projectCreditableInvoices.putIfAbsent(projectId, () => CreditableInvoices(widget.session, projectId)),

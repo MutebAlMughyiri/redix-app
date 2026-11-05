@@ -16,6 +16,7 @@ import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/attachments/invoice_capture.dart';
 import 'package:redix/attachments/picked_file.dart';
+import 'package:redix/contractor_payments/contractor_payment_screen.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
@@ -66,11 +67,15 @@ class CameraWithAPicture extends InvoiceCapture {
 
   @override
   Future<PickedFile> fromCamera() async {
+    picturesTaken++;
     final bytes = pictureOfQr(madeUpInvoiceQr);
     final file = await File('${Directory.systemTemp.path}/made-up-invoice.png').writeAsBytes(bytes);
     return PickedFile('made-up-invoice.png', file.path, bytes);
   }
 }
+
+/// How many photos were taken: each is of another invoice, because the same file is refused on a second entry (BR-22).
+var picturesTaken = 0;
 
 /// The QR code of a made-up invoice from شركة النخيل, whose VAT is what 7.5% makes.
 String get madeUpInvoiceQr {
@@ -78,7 +83,7 @@ String get madeUpInvoiceQr {
   return base64.encode([
     ...field(1, 'شركة النخيل'),
     ...field(2, '300000000000003'),
-    ...field(3, '${DateTime.now().toIso8601String().substring(0, 10)}T10:30:00Z'),
+    ...field(3, '${DateTime.now().toIso8601String().substring(0, 10)}T10:${picturesTaken.toString().padLeft(2, '0')}:00Z'),
     ...field(4, '1075.00'),
     ...field(5, '75.00'),
   ]);
@@ -86,6 +91,14 @@ String get madeUpInvoiceQr {
 
 void main() {
   patrolTest('a project is registered, approved and managed; a new user sees it by role', ($) async {
+    /// Takes a guide's picture with the keyboard closed, because under Patrol it stays up once a field was typed in, even after the field loses focus.
+    Future<void> picture(String name) async {
+      await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+      await Future<void>.delayed(const Duration(milliseconds: 600));
+      await $.pumpAndSettle();
+      await $.takeNativeScreenshot(name);
+    }
+
     final session = Session();
     final language = AppLanguage();
     await session.restore();
@@ -96,7 +109,7 @@ void main() {
     await precacheImage($.tester.widget<Image>(logo).image, $.tester.element(logo));
     await $.pumpAndSettle();
     expect($.tester.widget<RawImage>(find.descendant(of: logo, matching: find.byType(RawImage))).image, isNotNull);
-    await $.takeNativeScreenshot('sign-in');
+    await picture('sign-in');
 
     Finder keyStartingWith(String start) => find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith(start));
 
@@ -117,7 +130,7 @@ void main() {
     await $(NewProjectScreen.usernameKey).scrollTo().enterText('patrol-reem');
     await $(NewProjectScreen.mobileKey).scrollTo().enterText('0511111111');
     await $(NewProjectScreen.passwordKey).scrollTo().enterText('Reem-chosen-1');
-    await $.takeNativeScreenshot('register-project');
+    await picture('register-project');
     await $(NewProjectScreen.submitKey).scrollTo().tap();
 
     await $(SignInScreen.usernameKey).waitUntilVisible();
@@ -126,7 +139,7 @@ void main() {
     await $(SignInScreen.submitKey).scrollTo().tap();
     await $(keyStartingWith('projects.status.')).waitUntilVisible();
     expect($(keyStartingWith('projects.star.')), findsNothing);
-    await $.takeNativeScreenshot('project-waiting');
+    await picture('project-waiting');
     await $(keyStartingWith('projects.card.')).tap();
     expect($(ProjectsScreen.titleKey), findsOneWidget);
     await $(ProjectsScreen.settingsKey).tap();
@@ -140,7 +153,7 @@ void main() {
     await $(SignInScreen.passwordKey).enterText(temporaryPassword);
     await $(SignInScreen.submitKey).scrollTo().tap();
     await $(ChangePasswordScreen.currentKey).waitUntilVisible();
-    await $.takeNativeScreenshot('change-password');
+    await picture('change-password');
 
     await $(ChangePasswordScreen.currentKey).enterText(temporaryPassword);
     await $(ChangePasswordScreen.newKey).enterText(newPassword);
@@ -150,10 +163,10 @@ void main() {
 
     await $(ProjectsScreen.settingsKey).tap();
     await $(SettingsScreen.registeredKey).waitUntilVisible();
-    await $.takeNativeScreenshot('settings');
+    await picture('settings');
     await $(SettingsScreen.registeredKey).tap();
     await $(keyStartingWith('registered.approve.')).waitUntilVisible();
-    await $.takeNativeScreenshot('registered-projects');
+    await picture('registered-projects');
     await $(keyStartingWith('registered.approve.')).tap();
     await $(RegisteredProjectsScreen.emptyKey).waitUntilVisible();
     await $(BackButton).tap();
@@ -179,7 +192,7 @@ void main() {
     await $(keyStartingWith('userRoles.role.')).at(1).waitUntilVisible();
     await $(keyStartingWith('userRoles.role.')).at(1).tap();
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('user-roles');
+    await picture('user-roles');
     await $(BackButton).tap();
     await $(BackButton).tap();
 
@@ -191,7 +204,7 @@ void main() {
     await $(HomeScreen.unitNameKey).enterText('الفلة الغربية');
     await $(HomeScreen.saveUnitKey).tap();
     await $(keyStartingWith('home.unit.')).at(2).waitUntilVisible();
-    await $.takeNativeScreenshot('home');
+    await picture('home');
 
     await $(keyStartingWith('home.categories.')).scrollTo().tap();
     await $(keyStartingWith('categories.tile.')).at(4).waitUntilVisible();
@@ -213,7 +226,7 @@ void main() {
     await $(CategoriesScreen.saveKey).tap();
     await $(keyStartingWith('categories.itemMenu.')).waitUntilVisible();
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('categories');
+    await picture('categories');
 
     await $(keyStartingWith('categories.itemMenu.')).tap();
     await $(CategoriesScreen.subgroupsKey).tap();
@@ -221,7 +234,7 @@ void main() {
     await $(SubgroupsScreen.nameKey).enterText('مواد');
     await $(SubgroupsScreen.saveKey).tap();
     await $(find.text('مواد')).waitUntilVisible();
-    await $.takeNativeScreenshot('subgroups');
+    await picture('subgroups');
     await $(BackButton).tap();
 
     await $(keyStartingWith('categories.itemColumns.')).tap();
@@ -232,7 +245,7 @@ void main() {
     await $(ItemColumnsScreen.saveKey).tap();
     await $(ItemColumnsScreen.addKey).waitUntilVisible();
     await $(find.text('المساحة م²')).scrollTo();
-    await $.takeNativeScreenshot('item-columns');
+    await picture('item-columns');
     await $(keyStartingWith('columns.delete.')).last.scrollTo().tap();
     await $(ItemColumnsScreen.confirmDeleteKey).tap();
     await $.pumpAndSettle();
@@ -244,7 +257,7 @@ void main() {
     await $(ItemColumnsScreen.columnNameKey).enterText('رقم أمر الشراء');
     await $(ItemColumnsScreen.saveKey).tap();
     await $(ApplyToAllDialog.applyKey).waitUntilVisible();
-    await $.takeNativeScreenshot('apply-to-all');
+    await picture('apply-to-all');
     await $(ApplyToAllDialog.applyKey).tap();
     await $(find.text('رقم أمر الشراء')).scrollTo();
     await $(ItemColumnsScreen.thisItemKey).tap();
@@ -270,7 +283,7 @@ void main() {
     await $(PaymentMethodsScreen.vatPercentKey).enterText('7.5');
     await $(PaymentMethodsScreen.saveKey).tap();
     await $(find.text('7.5%')).waitUntilVisible();
-    await $.takeNativeScreenshot('payment-methods');
+    await picture('payment-methods');
     await $(BackButton).tap();
 
     await $(keyStartingWith('home.accounts.')).scrollTo().tap();
@@ -288,13 +301,13 @@ void main() {
     await $.pumpAndSettle();
     await $(keyStartingWith('memberPicker.option.')).last.tap();
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('account-dialog');
+    await picture('account-dialog');
     await $(AccountsScreen.saveKey).tap();
     await $(find.text('2,750.00')).waitUntilVisible();
-    await $.takeNativeScreenshot('accounts');
+    await picture('accounts');
     await $(BackButton).tap();
     await $(keyStartingWith('home.custody.')).waitUntilVisible();
-    await $.takeNativeScreenshot('my-custody');
+    await picture('my-custody');
 
     await $(keyStartingWith('home.partners.')).scrollTo().tap();
     await $(PartnersScreen.addKey).waitUntilVisible();
@@ -308,11 +321,11 @@ void main() {
     await $.pumpAndSettle();
     await $(keyStartingWith('memberPicker.option.')).last.tap();
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('partner-dialog');
+    await picture('partner-dialog');
     await $(PartnersScreen.saveKey).tap();
     await $(rowShowing('مدير المشروع')).waitUntilVisible();
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('partners');
+    await picture('partners');
     await $(BackButton).tap();
 
     await $(keyStartingWith('home.suppliers.')).scrollTo().tap();
@@ -324,11 +337,11 @@ void main() {
     await $(SuppliersScreen.defaultItemKey).tap();
     await $(keyStartingWith('itemPicker.option.')).at(1).tap();
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('supplier-dialog');
+    await picture('supplier-dialog');
     await $(SuppliersScreen.saveKey).tap();
     await $(rowShowing('شركة النخيل')).waitUntilVisible();
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('suppliers');
+    await picture('suppliers');
     await $(BackButton).tap();
 
     await $(keyStartingWith('home.contracts.')).scrollTo().tap();
@@ -336,12 +349,12 @@ void main() {
     await $(ContractsScreen.addKey).tap();
     await $(ContractsScreen.contractorKey).tap();
     await $(keyStartingWith('supplierPicker.row.')).waitUntilVisible();
-    await $.takeNativeScreenshot('supplier-picker');
+    await picture('supplier-picker');
     await $(SupplierPicker.searchKey).enterText('مبلط الغربية');
     await $(SupplierPicker.quickAddKey).tap();
     await $(SuppliersScreen.vatNumberKey).enterText('311111111111113');
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('quick-add-supplier');
+    await picture('quick-add-supplier');
     await $(SuppliersScreen.saveKey).last.tap();
     await $(find.text('مبلط الغربية')).waitUntilVisible();
     await $(ContractsScreen.itemKey).tap();
@@ -353,11 +366,12 @@ void main() {
     await showInDialog(find.byKey(ContractsScreen.valueKey));
     await $(ContractsScreen.valueKey).enterText('34000');
     await showInDialog(find.byKey(ContractsScreen.contractorKey));
-    await $.takeNativeScreenshot('contract-dialog');
+    await $.tester.drag(find.byKey(ContractsScreen.contractorKey), const Offset(0, 200));
+    await picture('contract-dialog');
     await $(ContractsScreen.saveKey).tap();
     await $(find.text('34,000.00')).waitUntilVisible();
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('contracts');
+    await picture('contracts');
     await $(BackButton).tap();
 
     await projectUsers.scrollTo().tap();
@@ -368,10 +382,10 @@ void main() {
     await $(NewUserScreen.usernameKey).enterText('patrol-nawaf');
     await $(NewUserScreen.mobileKey).enterText('0500000000');
     await $(NewUserScreen.passwordKey).enterText('Temporary-1');
-    await $.takeNativeScreenshot('new-user');
+    await picture('new-user');
     await $(NewUserScreen.submitKey).scrollTo().tap();
     await $(find.text('نواف')).waitUntilVisible();
-    await $.takeNativeScreenshot('users');
+    await picture('users');
 
     final newUserMenu = $(keyStartingWith('users.menu.')).last;
     await newUserMenu.tap();
@@ -411,27 +425,27 @@ void main() {
     await $(Icons.star).waitUntilVisible();
     await $(ProjectsScreen.openDefaultKey).tap();
     await $(find.byWidgetPredicate((widget) => widget is SwitchListTile && widget.value)).waitUntilVisible();
-    await $.takeNativeScreenshot('projects');
+    await picture('projects');
 
     await $(ProjectsScreen.settingsKey).tap();
     await $(SettingsScreen.myAccountKey).tap();
     await $(MyAccountScreen.arabicKey).waitUntilVisible();
-    await $.takeNativeScreenshot('my-account');
+    await picture('my-account');
 
     await $(MyAccountScreen.arabicKey).tap();
     await $.pumpAndSettle();
     expect(Directionality.of($.tester.element(find.byKey(MyAccountScreen.arabicKey))), TextDirection.rtl);
-    await $.takeNativeScreenshot('my-account-arabic');
+    await picture('my-account-arabic');
 
     await $(BackButton).tap();
     await $(SettingsScreen.switchProjectKey).tap();
     await $(keyStartingWith('projects.status.')).waitUntilVisible();
     expect(Directionality.of($.tester.element(keyStartingWith('projects.status.'))), TextDirection.rtl);
-    await $.takeNativeScreenshot('projects-arabic');
+    await picture('projects-arabic');
     await $(keyStartingWith('projects.card.')).tap();
     await projectUsers.scrollTo().tap();
     await $(keyStartingWith('users.menu.')).waitUntilVisible();
-    await $.takeNativeScreenshot('users-arabic');
+    await picture('users-arabic');
     await $(BackButton).tap();
     await projectUsers.waitUntilVisible();
 
@@ -513,20 +527,80 @@ void main() {
     await $.pumpAndSettle();
     await $.tester.ensureVisible(find.byKey(AddExpenseScreen.cameraKey));
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('add-expense');
+    await picture('add-expense');
 
-    await $(keyStartingWith('addExpense.paymentMethod.')).first.scrollTo().tap();
+    await $(keyStartingWith('payment.method.')).first.scrollTo().tap();
     await $(AddExpenseScreen.paymentDiffersKey).scrollTo().tap();
     await $.pumpAndSettle();
-    await $.takeNativeScreenshot('add-expense-payment');
+    await picture('add-expense-payment');
     await $(AddExpenseScreen.paymentDiffersKey).scrollTo().tap();
     await $.pumpAndSettle();
 
     await $(AddExpenseScreen.sendKey).scrollTo();
-    await $.takeNativeScreenshot('add-expense-send');
+    await picture('add-expense-send');
     await $(AddExpenseScreen.sendKey).tap();
     await $(AddExpenseScreen.savedKey).waitUntilVisible();
     await $(keyStartingWith('home.addExpense.')).waitUntilVisible();
+
+    await $(keyStartingWith('home.addExpense.')).tap();
+    await $(AddExpenseScreen.qrReadKey).waitUntilVisible();
+    await $(AddExpenseScreen.supplierDetailsKey).waitUntilVisible();
+    await $(AddExpenseScreen.withoutInvoiceKey).scrollTo().tap();
+    await $.pumpAndSettle();
+    await showInDialog(find.byKey(AddExpenseScreen.withoutInvoiceReasonKey));
+    await $(AddExpenseScreen.withoutInvoiceReasonKey).enterText('شراء نقدي من السوق');
+    await $(AddExpenseScreen.itemKey).scrollTo().tap();
+    await $(keyStartingWith('itemPicker.option.')).first.tap();
+    await $.pumpAndSettle();
+    await $(keyStartingWith('addExpense.unit.')).first.scrollTo().tap();
+    await $(AddExpenseScreen.amountKey).scrollTo().enterText('200');
+    await $(keyStartingWith('payment.method.')).first.scrollTo().tap();
+    await showInDialog(find.byKey(AddExpenseScreen.withoutInvoiceReasonKey));
+    await picture('add-expense-without-invoice');
+    await $(AddExpenseScreen.sendKey).scrollTo().tap();
+    await $(AddExpenseScreen.savedKey).waitUntilVisible();
+    await $(keyStartingWith('home.addExpense.')).waitUntilVisible();
+
+    await $(keyStartingWith('home.addExpense.')).tap();
+    await $(AddExpenseScreen.qrReadKey).waitUntilVisible();
+    await $(AddExpenseScreen.supplierDetailsKey).waitUntilVisible();
+    await $(AddExpenseScreen.itemKey).scrollTo().tap();
+    await $(keyStartingWith('itemPicker.option.')).first.tap();
+    await $.pumpAndSettle();
+    await $(keyStartingWith('addExpense.unit.')).first.scrollTo().tap();
+    await $(AddExpenseScreen.supplierKey).scrollTo().tap();
+    await $(SupplierPicker.searchKey).enterText('مورد الميدان');
+    await $(find.descendant(of: keyStartingWith('supplierPicker.row.'), matching: find.text('مورد الميدان'))).tap();
+    await $.pumpAndSettle();
+    await $(AddExpenseScreen.invoiceNumberKey).scrollTo().enterText('CN-1');
+    await $(AddExpenseScreen.creditNoteKey).scrollTo().tap();
+    await $.pumpAndSettle();
+    await $(AddExpenseScreen.originalInvoiceKey).scrollTo().tap();
+    await $(keyStartingWith('originalInvoice.option.')).at(1).tap();
+    await $.pumpAndSettle();
+    await $(AddExpenseScreen.amountKey).scrollTo().enterText('100');
+    await $(keyStartingWith('payment.method.')).first.scrollTo().tap();
+    await showInDialog(find.byKey(AddExpenseScreen.originalInvoiceKey));
+    await picture('add-expense-credit-note');
+    await $(AddExpenseScreen.sendKey).scrollTo().tap();
+    await $(AddExpenseScreen.savedKey).waitUntilVisible();
+    await $(keyStartingWith('home.contractorPayment.')).waitUntilVisible();
+
+    await $(keyStartingWith('home.contractorPayment.')).tap();
+    await $(ContractorPaymentScreen.contractKey).tap();
+    await $(keyStartingWith('contractPicker.option.')).first.tap();
+    await $.pumpAndSettle();
+    await $(ContractorPaymentScreen.amountKey).enterText('35000');
+    await $(ContractorPaymentScreen.overrunKey).waitUntilVisible();
+    await picture('contractor-payment');
+    await $(keyStartingWith('payment.method.')).first.scrollTo().tap();
+    await $(ContractorPaymentScreen.cameraKey).scrollTo().tap();
+    await $.pumpAndSettle();
+    await $(ContractorPaymentScreen.sendKey).scrollTo();
+    await picture('contractor-payment-send');
+    await $(ContractorPaymentScreen.sendKey).tap();
+    await $(ContractorPaymentScreen.savedKey).waitUntilVisible();
+    await $(keyStartingWith('home.contractorPayment.')).waitUntilVisible();
 
     await $(HomeScreen.settingsKey).tap();
     await $(SettingsScreen.myAccountKey).tap();
@@ -543,7 +617,7 @@ void main() {
 
     await $(keyStartingWith('home.close.')).scrollTo().tap();
     await $(HomeScreen.confirmCloseKey).waitUntilVisible();
-    await $.takeNativeScreenshot('close-project');
+    await picture('close-project');
     await $(HomeScreen.cancelCloseKey).tap();
     expect($(keyStartingWith('home.close.')), findsOneWidget);
 

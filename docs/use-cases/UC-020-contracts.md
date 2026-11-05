@@ -8,7 +8,7 @@
 
 ## Screens
 
-Built from the canvas (`Contracts.dc.html`): the filters with their counts, and each contract's card. What was paid stays 0 until UC-027 "Record a contractor payment", so the overrun filter stays at 0 until then.
+Built from the canvas (`Contracts.dc.html`): the filters with their counts, and each contract's card. What was paid comes from the API, since UC-027 "Record a contractor payment".
 
 The project's home, `HomeScreen`:
 
@@ -81,5 +81,4 @@ The real app is run on an emulator by the journey in `patrol_test/app_test.dart`
 | What | Use case |
 | --- | --- |
 | The contract's document | UC-021 "Store an invoice or receipt attachment" |
-| What was paid inside the contract, and with it the overrun | UC-027 "Record a contractor payment" |
 | The contracts report | UC-051 "Contracts report" |

@@ -70,6 +70,21 @@ void main() {
 
   final pdf = PickedFile('ملحق.pdf', '/phone/ملحق.pdf', Uint8List.fromList([0x25, 0x50, 0x44, 0x46]));
 
+  testWidgets('BR-10: what waits for approval shows beside what was paid, and leaves the remaining alone', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة الغربية']);
+    final contract = api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000, pending: 2000);
+    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await tester.pumpAndSettle();
+
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+
+    final id = contract['id']! as String;
+    expect(text(tester, ContractsScreen.pendingKey(id)), 'en contracts.pending 2,000.00');
+    expect(text(tester, ContractsScreen.remainingKey(id)), '4,000.00');
+  });
+
   testWidgets("the dialog shows a contract's documents, and a document picked is kept and named on save", (tester) async {
     await openAmendWithFiles(tester, pdf);
     final api = apiOfDocuments;

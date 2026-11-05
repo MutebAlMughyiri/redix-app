@@ -28,10 +28,10 @@ The app sends what was typed and never a figure. `InvoiceFigures` only shows wha
 | Not taxable | `AddExpenseScreen.notTaxableKey` | VAT is zero |
 | Before VAT after discount, VAT, total | `AddExpenseScreen.afterDiscountKey`, `vatKey`, `totalKey` | Read-only, to two decimals |
 | A custom column | `AddExpenseScreen.columnKey(key)` | `ColumnValueField`, by what it holds; marked `*` when required, and in red when refused |
-| A source | `AddExpenseScreen.sourceKey(type)` | The kinds of account on offer |
-| An account | `AddExpenseScreen.accountKey(id)` | The offered accounts of that source; the only one is already chosen |
+| A source | `PaymentChoices.sourceKey(type)` | The kinds of account on offer |
+| An account | `PaymentChoices.accountKey(id)` | The offered accounts of that source; the only one is already chosen |
 | Holds nothing | `AddExpenseScreen.noAccountKey` | |
-| A payment method | `AddExpenseScreen.paymentMethodKey(id)` | The active ones |
+| A payment method | `PaymentChoices.paymentMethodKey(id)` | The active ones |
 | Payment differs, its date, amount and bank fees | `AddExpenseScreen.paymentDiffersKey`, `paymentDateKey`, `paymentAmountKey`, `bankFeesKey` | |
 | Notes | `AddExpenseScreen.notesKey` | Follows its column |
 | Send for approval, Save draft | `AddExpenseScreen.sendKey`, `draftKey` | |

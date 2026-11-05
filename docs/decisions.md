@@ -6,6 +6,13 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | A change dialog's content starts 8 points down | Its first field's floating label was cut off by the scrolling edge whenever the field held a value. Findings row 102 thought only the picture had this; with the keyboard closed it still showed, so a person met it too. Fixed in `ChangeDialog`, for every dialog built on it |
+| 2026-11-05 | What remains after a payment counts what waits for approval; the contract's card shows only what was approved, with what waits beside it | The API's rule. A person paying has to see money already promised. Made without Muteb |
+| 2026-11-05 | The screen does not open the camera by itself | The canvas draws two buttons, and a deduction has no receipt. A purchase's invoice comes first; here the contract does. Made without Muteb |
+| 2026-11-05 | The tax invoice asks its number, date and amount before VAT, and shows the VAT | The API computes VAT, so nothing typed could differ from it. The contractor is the contract's. Made without Muteb |
+| 2026-11-05 | The two ways in, a purchase and a contractor payment, sit side by side in a bar under the home, in place of the floating button | The canvas draws two side by side, and two floating buttons would cover the end of the list, such as Close the project. Made without Muteb |
+| 2026-11-05 | `PaymentChoices`, `InvoiceSection`, `entryField`, `FormSection`, `TwoFields` and `LabelledChips` are shared with the purchase | The second screen needs the same look and the same rules, and a copy would drift |
+| 2026-11-05 | The journey closes the keyboard before every picture of the guide | Findings rows 87 and 102: under Patrol it stays up once a field was typed in |
 | 2026-11-05 | A deduction has no switch of its own: it is a negative amount, under Without an invoice | The issue says "enter a negative amount", and a second switch could disagree with the sign. Made without Muteb |
 | 2026-11-05 | A credit note's amount is typed as a plain amount, and shown negative in the figures | The canvas says it is recorded as negative, and a person reads an invoice's figures as printed. Made without Muteb |
 | 2026-11-05 | "Without an invoice" is a switch, as the issue says, not the canvas's button with a dialog | The issue says "turn on", the form already has switches of this kind, and a dialog would add a second place to see the reason. Made without Muteb |

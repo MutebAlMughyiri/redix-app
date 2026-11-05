@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
-import '../accounts/account.dart';
 import '../accounts/offered_accounts.dart';
-import '../api_list.dart';
 import '../attachments/attachments.dart';
 import '../attachments/invoice_capture.dart';
 import '../attachments/picked_file.dart';
@@ -22,17 +20,25 @@ import '../suppliers/quick_add_supplier_dialog.dart';
 import '../suppliers/supplier_picker.dart';
 import '../suppliers/suppliers.dart';
 import '../ui/confirm_dialog.dart';
+import '../ui/entry_field.dart';
+import '../ui/form_section.dart';
+import '../ui/labelled_chips.dart';
 import '../ui/picker_field.dart';
+import '../ui/two_fields.dart';
 import '../words/words.dart';
 import 'column_value_field.dart';
 import 'creditable_invoice.dart';
 import 'creditable_invoices.dart';
+import 'duplicate_invoice_dialog.dart';
+import 'entry_date.dart';
 import 'expenses.dart';
 import 'figures_box.dart';
 import 'invoice_figures.dart';
 import 'invoice_qr.dart';
 import 'invoice_section.dart';
 import 'original_invoice_picker.dart';
+import 'payment_choice.dart';
+import 'payment_choices.dart';
 import 'qr_summary.dart';
 
 /// A new purchase expense (UC-021, UC-022): the invoice first, then what it was for and how it was paid. The amounts below the fields only show what the API will compute. A draft can wait for the invoice and the required columns; sending cannot.
@@ -197,7 +203,7 @@ class AddExpenseScreen extends StatefulWidget {
   static const totalKey = Key('addExpense.total');
 
   /// The line that says the user holds nothing to pay from.
-  static const noAccountKey = Key('addExpense.noAccount');
+  static const noAccountKey = PaymentChoices.noAccountKey;
 
   /// The switch that says the payment differs from the invoice.
   static const paymentDiffersKey = Key('addExpense.paymentDiffers');
@@ -227,10 +233,10 @@ class AddExpenseScreen extends StatefulWidget {
   static const savedKey = Key('addExpense.saved');
 
   /// The line that says a list could not be read.
-  static const listMessageKey = Key('addExpense.listMessage');
+  static const listMessageKey = PaymentChoices.listMessageKey;
 
   /// The button that reads that list again.
-  static const retryKey = Key('addExpense.retry');
+  static const retryKey = PaymentChoices.retryKey;
 
   /// The earlier entry, in the question about a repeated invoice.
   static const earlierKey = ConfirmDialog.subjectKey;
@@ -243,15 +249,6 @@ class AddExpenseScreen extends StatefulWidget {
 
   /// The choice of the subgroup [id].
   static Key subgroupKey(String id) => Key('addExpense.subgroup.$id');
-
-  /// The choice of paying from an account of [type].
-  static Key sourceKey(AccountType type) => Key('addExpense.source.${type.name}');
-
-  /// The choice of the payment method [id].
-  static Key paymentMethodKey(String id) => Key('addExpense.paymentMethod.$id');
-
-  /// The choice of the account [id].
-  static Key accountKey(String id) => Key('addExpense.account.$id');
 
   /// The field of the column [key].
   static Key columnKey(String key) => Key('addExpense.column.$key');
@@ -293,9 +290,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   var _withoutInvoice = false;
   var _isCreditNote = false;
   var _original = CreditableInvoice.none();
-  var _source = AccountType.cashCustody;
-  var _accountId = '';
-  var _paymentMethodId = '';
+  final _payment = PaymentChoice();
   var _message = '';
   var _refusedColumn = '';
   var _saving = false;
@@ -418,12 +413,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   Future<void> _chooseDate(DateTime current, ValueChanged<DateTime> onChosen) async {
-    final today = DateTime.now();
-    final start = widget.project.startDate;
-    final first = start.isBefore(today) ? start : today;
-    final initial = current.isBefore(first) || current.isAfter(today) ? today : current;
-    final chosen = await showDatePicker(context: context, initialDate: initial, firstDate: first, lastDate: today);
-    if (chosen != null) {
+    final chosen = await pickEntryDate(context, widget.project, current);
+    if (mounted) {
       setState(() => onChosen(chosen));
     }
   }
@@ -459,16 +450,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     return _isCreditNote ? figures.negated : figures;
   }
 
-  List<Account> get _accountsInSource => widget.accounts.all.where((account) => account.type == _source).toList();
-
-  String get _chosenAccountId {
-    final accounts = _accountsInSource;
-    if (accounts.any((account) => account.id == _accountId)) {
-      return _accountId;
-    }
-    return accounts.length == 1 ? accounts.single.id : '';
-  }
-
   String _isoOf(DateTime date) => date.toIso8601String().substring(0, 10);
 
   bool get _paysOtherThanInvoiced => _paymentDiffers && !_withoutInvoice;
@@ -501,13 +482,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     'product': _product.text,
     'amountIncludesVat': _amountIncludesVat,
     'isNotTaxable': _isNotTaxable,
-    if (_chosenAccountId.isNotEmpty) 'accountId': _chosenAccountId,
-    if (_paymentMethodId.isNotEmpty) 'paymentMethodId': _paymentMethodId,
+    if (_payment.chosenAccountIn(widget.accounts.all).isNotEmpty) 'accountId': _payment.chosenAccountIn(widget.accounts.all),
+    if (_payment.paymentMethodId.isNotEmpty) 'paymentMethodId': _payment.paymentMethodId,
     if (_paymentDiffers || _withoutInvoice) 'paymentDate': _isoOf(_paymentDate),
     'notes': _notes.text,
-    'customValues': {
-      for (final MapEntry(:key, :value) in _customValues.entries) key: _columns.where((column) => column.key == key).map((column) => column.valueToSend(value)).firstOrNull ?? value,
-    },
+    'customValues': ItemColumn.valuesToSend(_columns, _customValues),
     'submit': submit,
     if (confirmDuplicate) 'confirmDuplicate': true,
     for (final (name, field, _) in _numbers)
@@ -542,17 +521,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   void _askAboutDuplicate(bool submit) {
-    final words = Words.of(context);
     final earlier = widget.expenses.earlier;
     showDialog<void>(
       context: context,
-      builder: (_) => ConfirmDialog(
-        title: words.expensesDuplicateTitle,
-        subject: earlier.isVisible ? '${earlier.projectName} · ${formatDate(earlier.invoiceDate)} · ${formatMoney(earlier.total)}' : '',
-        explanation: earlier.isVisible ? words.expensesDuplicateExplain : words.expensesDuplicateHidden,
-        confirmLabel: words.expensesSaveAnyway,
-        onConfirm: () => _save(submit, confirmDuplicate: true),
-      ),
+      builder: (_) => DuplicateInvoiceDialog(earlier: earlier, onConfirm: () => _save(submit, confirmDuplicate: true)),
     );
   }
 
@@ -588,51 +560,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   String? _errorOf(String key, Words words) => _refusedColumn == key ? words.text(_message) : null;
 
-  Widget _textField(Key key, TextEditingController controller, String label, {bool isNumber = false, bool isSigned = false, int maxLines = 1, String? errorText}) => TextField(
-    key: key,
-    controller: controller,
-    maxLines: maxLines,
-    keyboardType: isNumber ? TextInputType.numberWithOptions(decimal: true, signed: isSigned) : null,
-    decoration: InputDecoration(labelText: label, border: const OutlineInputBorder(), errorText: errorText),
-    onChanged: (_) => setState(() {}),
-  );
-
-  Widget _twoFields(Widget first, Widget second) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Expanded(child: first),
-      const SizedBox(width: 8),
-      Expanded(child: second),
-    ],
-  );
-
-  Widget _section(List<Widget> children) => Card.outlined(
-    margin: const EdgeInsets.only(top: 16),
-    child: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          for (final (index, child) in children.indexed) ...[if (index > 0) const SizedBox(height: 12), child],
-        ],
-      ),
-    ),
-  );
-
-  Widget _chips<T>(String label, Iterable<T> choices, {required Key Function(T) keyOf, required String Function(T) nameOf, required bool Function(T) isChosen, required ValueChanged<T> onChosen}) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(label, style: Theme.of(context).textTheme.titleSmall),
-      const SizedBox(height: 4),
-      Wrap(
-        spacing: 8,
-        children: [
-          for (final choice in choices)
-            ChoiceChip(key: keyOf(choice), label: Text(nameOf(choice)), selected: isChosen(choice), onSelected: (_) => setState(() => onChosen(choice))),
-        ],
-      ),
-    ],
-  );
+  Widget _textField(Key key, TextEditingController controller, String label, {bool isNumber = false, bool isSigned = false, int maxLines = 1, String? errorText}) =>
+      entryField(key: key, controller: controller, label: label, isNumber: isNumber, isSigned: isSigned, maxLines: maxLines, errorText: errorText, onChanged: (_) => setState(() {}));
 
   String _amountLabel(Words words) {
     if (_withoutInvoice) {
@@ -644,21 +573,21 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   List<Widget> _whatItWasFor(Words words) => [
     ItemPicker(key: AddExpenseScreen.itemKey, items: widget.items, label: words.expensesItem, itemName: _item.name, onChanged: _chooseItem),
     if (_item.namedSubgroups.isNotEmpty)
-      _chips(
-        words.expensesSubgroup,
-        _item.subgroups,
+      LabelledChips(
+        label: words.expensesSubgroup,
+        choices: _item.subgroups,
         keyOf: (subgroup) => AddExpenseScreen.subgroupKey(subgroup.id),
         nameOf: (subgroup) => subgroup.name.isEmpty ? words.expensesGeneralSubgroup : subgroup.name,
         isChosen: (subgroup) => _subgroupId == subgroup.id || (_subgroupId.isEmpty && subgroup.name.isEmpty),
-        onChosen: (subgroup) => _subgroupId = subgroup.id,
+        onChosen: (subgroup) => setState(() => _subgroupId = subgroup.id),
       ),
-    _chips(
-      words.expensesUnit,
-      widget.project.entryUnits,
+    LabelledChips(
+      label: words.expensesUnit,
+      choices: widget.project.entryUnits,
       keyOf: (unit) => AddExpenseScreen.unitKey(unit.id),
       nameOf: (unit) => unit.name,
       isChosen: (unit) => _unitId == unit.id,
-      onChosen: (unit) => _unitId = unit.id,
+      onChosen: (unit) => setState(() => _unitId = unit.id),
     ),
     Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -668,7 +597,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       ],
     ),
     if (!_withoutInvoice)
-      _twoFields(
+      TwoFields(
         _textField(AddExpenseScreen.invoiceNumberKey, _invoiceNumber, words.expensesInvoiceNumber),
         PickerField(key: AddExpenseScreen.invoiceDateKey, label: words.expensesInvoiceDate, value: formatDate(_invoiceDate), onTap: () => _chooseDate(_invoiceDate, (date) => _invoiceDate = date)),
       ),
@@ -691,7 +620,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       ),
     if (_asks('product')) _textField(AddExpenseScreen.productKey, _product, _labelOf('product', words.expensesProduct), errorText: _errorOf('product', words)),
     if (_asks('unitPrice') || _asks('quantity'))
-      _twoFields(
+      TwoFields(
         _textField(AddExpenseScreen.unitPriceKey, _unitPrice, _labelOf('unitPrice', words.expensesUnitPrice), isNumber: true, errorText: _errorOf('unitPrice', words)),
         _textField(AddExpenseScreen.quantityKey, _quantity, _labelOf('quantity', words.expensesQuantity), isNumber: true, errorText: _errorOf('quantity', words)),
       ),
@@ -705,7 +634,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         selected: {_amountIncludesVat},
         onSelectionChanged: (selected) => setState(() => _amountIncludesVat = selected.single),
       ),
-    _twoFields(
+    TwoFields(
       _textField(AddExpenseScreen.amountKey, _amount, _amountLabel(words), isNumber: true, isSigned: true),
       _textField(AddExpenseScreen.discountKey, _discount, words.expensesDiscount, isNumber: true),
     ),
@@ -718,7 +647,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         onChanged: (isNotTaxable) => setState(() => _isNotTaxable = isNotTaxable),
       ),
     FiguresBox(figures: _figures, vatPercent: _vatPercent),
-    if (!_qr.isNone && (_figures.vat.abs() - _qr.vat).abs() > InvoiceQr.vatTolerance)
+    if (!_withoutInvoice && !_qr.isNone && (_figures.vat.abs() - _qr.vat).abs() > InvoiceQr.vatTolerance)
       Text(words.expensesQrVatDiffers, key: AddExpenseScreen.qrVatDiffersKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
   ];
 
@@ -734,73 +663,25 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       ),
   ];
 
-  Widget _payment(Words words) => ListenableBuilder(
-    listenable: Listenable.merge([widget.accounts, widget.paymentMethods]),
-    builder: (context, _) {
-      final failed = <ApiList<Object?>>[widget.accounts, widget.paymentMethods].where((list) => list.message.isNotEmpty).firstOrNull;
-      final sources = AccountType.values.where((type) => widget.accounts.all.any((account) => account.type == type)).toList();
-      if (sources.isNotEmpty && !sources.contains(_source)) {
-        _source = sources.first;
-      }
-      return _section([
-        if (failed != null) ...[
-          Text(words.text(failed.message), key: AddExpenseScreen.listMessageKey),
-          OutlinedButton(key: AddExpenseScreen.retryKey, onPressed: _readListsAgain, child: Text(words.commonRetry)),
-        ],
-        if (failed == null && !widget.accounts.isLoading && sources.isEmpty) Text(words.expensesNoAccount, key: AddExpenseScreen.noAccountKey),
-        if (sources.isNotEmpty)
-          _chips(
-            words.expensesPaymentSource,
-            sources,
-            keyOf: AddExpenseScreen.sourceKey,
-            nameOf: (type) => words.text(type.wordKey),
-            isChosen: (type) => _source == type,
-            onChosen: (type) => _source = type,
-          ),
-        if (_accountsInSource.isNotEmpty)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(words.expensesAccount, style: Theme.of(context).textTheme.titleSmall),
-              RadioGroup<String>(
-                groupValue: _chosenAccountId,
-                onChanged: (accountId) => setState(() => _accountId = accountId ?? _accountId),
-                child: Column(
-                  children: [
-                    for (final account in _accountsInSource)
-                      RadioListTile<String>(key: AddExpenseScreen.accountKey(account.id), contentPadding: EdgeInsets.zero, dense: true, value: account.id, title: Text(account.name)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        _chips(
-          words.expensesPaymentMethod,
-          widget.paymentMethods.all.where((method) => method.isActive),
-          keyOf: (method) => AddExpenseScreen.paymentMethodKey(method.id),
-          nameOf: (method) => method.name,
-          isChosen: (method) => _paymentMethodId == method.id,
-          onChosen: (method) => _paymentMethodId = method.id,
-        ),
-        if (!_withoutInvoice)
-          SwitchListTile(
-            key: AddExpenseScreen.paymentDiffersKey,
-            contentPadding: EdgeInsets.zero,
-            title: Text(words.expensesPaymentDiffers),
-            value: _paymentDiffers,
-            onChanged: (paymentDiffers) => setState(() => _paymentDiffers = paymentDiffers),
-          ),
-        if (_paymentDiffers || _withoutInvoice)
-          PickerField(key: AddExpenseScreen.paymentDateKey, label: words.expensesPaymentDate, value: formatDate(_paymentDate), onTap: () => _chooseDate(_paymentDate, (date) => _paymentDate = date)),
-        if (_paysOtherThanInvoiced)
-          _twoFields(
-            _textField(AddExpenseScreen.paymentAmountKey, _paymentAmount, words.expensesPaymentAmount, isNumber: true),
-            _textField(AddExpenseScreen.bankFeesKey, _bankFees, words.expensesBankFees, isNumber: true),
-          ),
-        if (_asks('notes')) _textField(AddExpenseScreen.notesKey, _notes, _labelOf('notes', words.expensesNotes), maxLines: 2, errorText: _errorOf('notes', words)),
-      ]);
-    },
-  );
+  Widget _paymentSection(Words words) => FormSection([
+    PaymentChoices(choice: _payment, accounts: widget.accounts, paymentMethods: widget.paymentMethods, onChanged: () => setState(() {}), onRetry: _readListsAgain),
+    if (!_withoutInvoice)
+      SwitchListTile(
+        key: AddExpenseScreen.paymentDiffersKey,
+        contentPadding: EdgeInsets.zero,
+        title: Text(words.expensesPaymentDiffers),
+        value: _paymentDiffers,
+        onChanged: (paymentDiffers) => setState(() => _paymentDiffers = paymentDiffers),
+      ),
+    if (_paymentDiffers || _withoutInvoice)
+      PickerField(key: AddExpenseScreen.paymentDateKey, label: words.expensesPaymentDate, value: formatDate(_paymentDate), onTap: () => _chooseDate(_paymentDate, (date) => _paymentDate = date)),
+    if (_paysOtherThanInvoiced)
+      TwoFields(
+        _textField(AddExpenseScreen.paymentAmountKey, _paymentAmount, words.expensesPaymentAmount, isNumber: true),
+        _textField(AddExpenseScreen.bankFeesKey, _bankFees, words.expensesBankFees, isNumber: true),
+      ),
+    if (_asks('notes')) _textField(AddExpenseScreen.notesKey, _notes, _labelOf('notes', words.expensesNotes), maxLines: 2, errorText: _errorOf('notes', words)),
+  ]);
 
   @override
   Widget build(BuildContext context) {
@@ -824,7 +705,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           if (_withoutInvoice)
             _textField(AddExpenseScreen.withoutInvoiceReasonKey, _withoutInvoiceReason, words.expensesWithoutInvoiceReason, maxLines: 2)
           else ...[
-            InvoiceSection(file: _invoice, message: _invoiceMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
+            InvoiceSection(file: _invoice, emptyLabel: words.attachmentsInvoicePhoto, message: _invoiceMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
             if (_qrMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -842,9 +723,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               _setCreditNote(false);
             }),
           ),
-          _section(_whatItWasFor(words)),
-          if (ownFields.isNotEmpty) _section(ownFields),
-          _payment(words),
+          FormSection(_whatItWasFor(words)),
+          if (ownFields.isNotEmpty) FormSection(ownFields),
+          _paymentSection(words),
           const SizedBox(height: 16),
           if (_message.isNotEmpty) ...[
             Text(words.text(_message), key: AddExpenseScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),

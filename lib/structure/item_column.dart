@@ -43,6 +43,11 @@ class ItemColumn {
       isRequired = json['isRequired'] as bool,
       showInReports = json['showInReports'] as bool;
 
+  /// The [values] typed, by column key, as the API takes them from an entry's [columns].
+  static Map<String, String> valuesToSend(List<ItemColumn> columns, Map<String, String> values) => {
+    for (final MapEntry(:key, :value) in values.entries) key: columns.where((column) => column.key == key).map((column) => column.valueToSend(value)).firstOrNull ?? value,
+  };
+
   /// The column's id.
   final String id;
 

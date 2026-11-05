@@ -106,6 +106,7 @@ class ContractCard extends StatelessWidget {
                       _figure(theme, words.contractsRemaining, contract.isOpenValue ? '—' : formatMoney(contract.remaining), ContractsScreen.remainingKey(contract.id), contract.isOverrun ? colors.error : colors.onSurface),
                     ],
                   ),
+                  if (contract.pending != 0) Text('${words.contractsPending} ${formatMoney(contract.pending)}', key: ContractsScreen.pendingKey(contract.id), style: theme.textTheme.bodySmall),
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     key: ContractsScreen.progressKey(contract.id),

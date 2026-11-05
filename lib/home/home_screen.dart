@@ -5,6 +5,7 @@ import '../accounts/accounts.dart';
 import '../accounts/accounts_screen.dart';
 import '../accounts/my_custody.dart';
 import '../auth/session.dart';
+import '../contractor_payments/contractor_payment_screen.dart';
 import '../contracts/contracts_screen.dart';
 import '../expenses/add_expense_screen.dart';
 import '../partners/partners_screen.dart';
@@ -119,6 +120,9 @@ class HomeScreen extends StatefulWidget {
   /// The button that enters a new purchase expense in the running project [id].
   static Key addExpenseKey(String id) => Key('home.addExpense.$id');
 
+  /// The way into a new contractor payment in the project [id].
+  static Key contractorPaymentKey(String id) => Key('home.contractorPayment.$id');
+
   /// The way into the contracts of the project [id].
   static Key contractsKey(String id) => Key('home.contracts.$id');
 
@@ -208,17 +212,37 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      floatingActionButton: ListenableBuilder(
+      bottomNavigationBar: ListenableBuilder(
         listenable: widget.projects,
         builder: (context, _) {
           final project = widget.projects.all.where((project) => project.id == widget.projectId && project.mayEnterExpenses).toList();
           return project.isEmpty
               ? const SizedBox.shrink()
-              : FloatingActionButton.extended(
-                  key: HomeScreen.addExpenseKey(widget.projectId),
-                  icon: const Icon(Icons.add),
-                  label: Text(words.expensesNew),
-                  onPressed: () => context.push(AddExpenseScreen.pathOf(widget.projectId), extra: project.single),
+              : SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Row(
+                      spacing: 8,
+                      children: [
+                        Expanded(
+                          child: FilledButton.icon(
+                            key: HomeScreen.addExpenseKey(widget.projectId),
+                            icon: const Icon(Icons.add),
+                            label: Text(words.expensesNew),
+                            onPressed: () => context.push(AddExpenseScreen.pathOf(widget.projectId), extra: project.single),
+                          ),
+                        ),
+                        Expanded(
+                          child: FilledButton.tonalIcon(
+                            key: HomeScreen.contractorPaymentKey(widget.projectId),
+                            icon: const Icon(Icons.handshake_outlined),
+                            label: Text(words.contractorPaymentsNew),
+                            onPressed: () => context.push(ContractorPaymentScreen.pathOf(widget.projectId), extra: project.single),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
         },
       ),

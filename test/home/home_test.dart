@@ -204,6 +204,8 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
     await openHome(tester, api);
 
+    await tester.ensureVisible(find.byKey(HomeScreen.addUnitKey('project-0')));
+    await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addUnitKey('project-0'))));
     await act(tester, api, () async {
       await tester.enterText(find.byKey(HomeScreen.unitNameKey), 'الفلة الجنوبية');
@@ -218,6 +220,8 @@ void main() {
   testWidgets('a refused unit stays in the dialog with what was typed', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openHome(tester, api);
+    await tester.ensureVisible(find.byKey(HomeScreen.addUnitKey('project-0')));
+    await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addUnitKey('project-0'))));
 
     api.projectAnswer = (status: 400, code: 'invalidName');

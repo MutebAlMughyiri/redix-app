@@ -55,6 +55,7 @@ class _ChangeDialogState extends State<ChangeDialog> {
     return AlertDialog(
       title: Text(widget.title),
       content: SingleChildScrollView(
+        padding: const EdgeInsets.only(top: 8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

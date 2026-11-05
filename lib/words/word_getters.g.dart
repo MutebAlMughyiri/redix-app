@@ -386,6 +386,51 @@ mixin WordGetters {
   /// The word `common.retry`.
   String get commonRetry => text('common.retry');
 
+  /// The word `contractorPayments.contract`.
+  String get contractorPaymentsContract => text('contractorPayments.contract');
+
+  /// The word `contractorPayments.date`.
+  String get contractorPaymentsDate => text('contractorPayments.date');
+
+  /// The word `contractorPayments.deductionNeedsReason`.
+  String get contractorPaymentsDeductionNeedsReason => text('contractorPayments.deductionNeedsReason');
+
+  /// The word `contractorPayments.deductionReason`.
+  String get contractorPaymentsDeductionReason => text('contractorPayments.deductionReason');
+
+  /// The word `contractorPayments.hasInvoice`.
+  String get contractorPaymentsHasInvoice => text('contractorPayments.hasInvoice');
+
+  /// The word `contractorPayments.inside`.
+  String get contractorPaymentsInside => text('contractorPayments.inside');
+
+  /// The word `contractorPayments.invoiceExplain`.
+  String get contractorPaymentsInvoiceExplain => text('contractorPayments.invoiceExplain');
+
+  /// The word `contractorPayments.kind`.
+  String get contractorPaymentsKind => text('contractorPayments.kind');
+
+  /// The word `contractorPayments.new`.
+  String get contractorPaymentsNew => text('contractorPayments.new');
+
+  /// The word `contractorPayments.outside`.
+  String get contractorPaymentsOutside => text('contractorPayments.outside');
+
+  /// The word `contractorPayments.outsideExplain`.
+  String get contractorPaymentsOutsideExplain => text('contractorPayments.outsideExplain');
+
+  /// The word `contractorPayments.overrun`.
+  String get contractorPaymentsOverrun => text('contractorPayments.overrun');
+
+  /// The word `contractorPayments.receipt`.
+  String get contractorPaymentsReceipt => text('contractorPayments.receipt');
+
+  /// The word `contractorPayments.remainingAfter`.
+  String get contractorPaymentsRemainingAfter => text('contractorPayments.remainingAfter');
+
+  /// The word `contractorPayments.savedOverrun`.
+  String get contractorPaymentsSavedOverrun => text('contractorPayments.savedOverrun');
+
   /// The word `contracts.addDocument`.
   String get contractsAddDocument => text('contracts.addDocument');
 
@@ -467,6 +512,9 @@ mixin WordGetters {
   /// The word `contracts.paid`.
   String get contractsPaid => text('contracts.paid');
 
+  /// The word `contracts.pending`.
+  String get contractsPending => text('contracts.pending');
+
   /// The word `contracts.projectFinished`.
   String get contractsProjectFinished => text('contracts.projectFinished');
 
@@ -505,6 +553,15 @@ mixin WordGetters {
 
   /// The word `contracts.value`.
   String get contractsValue => text('contracts.value');
+
+  /// The word `entries.entryIncomplete`.
+  String get entriesEntryIncomplete => text('entries.entryIncomplete');
+
+  /// The word `entries.entryNotSubmittable`.
+  String get entriesEntryNotSubmittable => text('entries.entryNotSubmittable');
+
+  /// The word `entries.notYourEntry`.
+  String get entriesNotYourEntry => text('entries.notYourEntry');
 
   /// The word `expenses.account`.
   String get expensesAccount => text('expenses.account');
@@ -583,6 +640,9 @@ mixin WordGetters {
 
   /// The word `expenses.invalidEntryId`.
   String get expensesInvalidEntryId => text('expenses.invalidEntryId');
+
+  /// The word `expenses.invalidInvoiceAmount`.
+  String get expensesInvalidInvoiceAmount => text('expenses.invalidInvoiceAmount');
 
   /// The word `expenses.invalidInvoiceDate`.
   String get expensesInvalidInvoiceDate => text('expenses.invalidInvoiceDate');
@@ -698,6 +758,9 @@ mixin WordGetters {
   /// The word `expenses.quantity`.
   String get expensesQuantity => text('expenses.quantity');
 
+  /// The word `expenses.receiptRequired`.
+  String get expensesReceiptRequired => text('expenses.receiptRequired');
+
   /// The word `expenses.refused`.
   String get expensesRefused => text('expenses.refused');
 
@@ -742,6 +805,9 @@ mixin WordGetters {
 
   /// The word `expenses.unknownColumn`.
   String get expensesUnknownColumn => text('expenses.unknownColumn');
+
+  /// The word `expenses.unknownContract`.
+  String get expensesUnknownContract => text('expenses.unknownContract');
 
   /// The word `expenses.unknownOriginalInvoice`.
   String get expensesUnknownOriginalInvoice => text('expenses.unknownOriginalInvoice');

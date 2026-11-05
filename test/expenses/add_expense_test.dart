@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/accounts/account.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
+import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/expenses/original_invoice_picker.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
@@ -90,7 +91,7 @@ void main() {
     await pickSupplier(tester, opened.api, opened.supplier);
     await type(tester, AddExpenseScreen.invoiceNumberKey, '2617');
     await type(tester, AddExpenseScreen.amountKey, '6000');
-    await tapVisible(tester, opened.api, AddExpenseScreen.paymentMethodKey(opened.method));
+    await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
   }
 
   testWidgets('AC-08.1: an amount including VAT shows its figures rounded to two decimals', (tester) async {
@@ -370,9 +371,9 @@ void main() {
   testWidgets('open question 4: Field is offered only what they hold, and one account is already chosen', (tester) async {
     final opened = await openExpense(tester);
 
-    expect(find.byKey(AddExpenseScreen.accountKey(opened.custody)), findsOneWidget);
-    expect(find.byKey(AddExpenseScreen.accountKey(opened.bank)), findsNothing);
-    expect(find.byKey(AddExpenseScreen.sourceKey(AccountType.bank)), findsNothing);
+    expect(find.byKey(PaymentChoices.accountKey(opened.custody)), findsOneWidget);
+    expect(find.byKey(PaymentChoices.accountKey(opened.bank)), findsNothing);
+    expect(find.byKey(PaymentChoices.sourceKey(AccountType.bank)), findsNothing);
     expect(tester.widget<RadioGroup<String>>(find.byType(RadioGroup<String>)).groupValue, opened.custody);
   });
 
@@ -380,9 +381,9 @@ void main() {
     final opened = await openExpense(tester, permissions: managerAndFinance);
     await fill(tester, opened);
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.sourceKey(AccountType.bank));
-    expect(find.byKey(AddExpenseScreen.accountKey(opened.custody)), findsNothing);
-    await tapVisible(tester, opened.api, AddExpenseScreen.accountKey(opened.bank));
+    await tapVisible(tester, opened.api, PaymentChoices.sourceKey(AccountType.bank));
+    expect(find.byKey(PaymentChoices.accountKey(opened.custody)), findsNothing);
+    await tapVisible(tester, opened.api, PaymentChoices.accountKey(opened.bank));
     await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
 
     expect(opened.api.sentExpenses.single['accountId'], opened.bank);
@@ -529,7 +530,7 @@ void main() {
     await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-0'));
     await pickSupplier(tester, opened.api, opened.supplier);
     await type(tester, AddExpenseScreen.amountKey, '200');
-    await tapVisible(tester, opened.api, AddExpenseScreen.paymentMethodKey(opened.method));
+    await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
 
     await tapVisible(tester, opened.api, AddExpenseScreen.withoutInvoiceKey);
 

@@ -81,7 +81,10 @@ Map<String, String> wordsIn(String language) => {
     'expenses.invalidBankFees', 'expenses.invalidInvoiceDate', 'expenses.invalidPaymentDate', 'expenses.unknownColumn', 'expenses.invalidColumnValue', 'expenses.requiredColumnMissing', 'expenses.invoiceRequired', 'expenses.qrRead',
     'expenses.qrUnreadable', 'expenses.qrSupplierMissing', 'expenses.qrAddSupplier', 'expenses.qrVatDiffers', 'suppliers.mostUsed',
     'expenses.duplicateInvoice', 'expenses.duplicateTitle', 'expenses.duplicateExplain', 'expenses.duplicateHidden', 'expenses.saveAnyway', 'expenses.invoiceAlreadyAttached',
-    'expenses.withoutInvoice', 'expenses.withoutInvoiceReason', 'expenses.invalidWithoutInvoiceReason', 'expenses.invoiceAndReason', 'expenses.amount',
+    'expenses.withoutInvoice', 'expenses.withoutInvoiceReason', 'expenses.invalidWithoutInvoiceReason', 'expenses.invoiceAndReason', 'expenses.amount', 'entries.notYourEntry', 'entries.entryNotSubmittable', 'entries.entryIncomplete',
+    'expenses.unknownContract', 'expenses.receiptRequired', 'expenses.invalidInvoiceAmount', 'contracts.pending', 'contractorPayments.new', 'contractorPayments.contract', 'contractorPayments.remainingAfter',
+    'contractorPayments.overrun', 'contractorPayments.savedOverrun', 'contractorPayments.kind', 'contractorPayments.inside', 'contractorPayments.outside', 'contractorPayments.outsideExplain',
+    'contractorPayments.date', 'contractorPayments.receipt', 'contractorPayments.deductionReason', 'contractorPayments.deductionNeedsReason', 'contractorPayments.hasInvoice', 'contractorPayments.invoiceExplain',
     'expenses.creditNote', 'expenses.creditNoteExplain', 'expenses.originalInvoice', 'expenses.noOriginalInvoice', 'expenses.noCreditableInvoice', 'expenses.returnable', 'expenses.loadFailed',
     'expenses.creditNoteAboveOriginal', 'expenses.unknownOriginalInvoice', 'expenses.creditNoteNeedsInvoice', 'expenses.deductionNeedsReason',
     'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
@@ -316,6 +319,9 @@ class FakeApi {
 
   /// The expenses the app sent, as their bodies.
   final sentExpenses = <Map<String, dynamic>>[];
+
+  /// The contractor payments the app sent.
+  final sentContractorPayments = <Map<String, dynamic>>[];
 
   /// What the fake API offers a credit note to return, whichever supplier is asked about.
   final creditableInvoices = <Map<String, Object>>[];
@@ -657,11 +663,17 @@ class FakeApi {
     double quantity = 0,
     String notes = '',
     double paid = 0,
+    double pending = 0,
     bool isActive = true,
+    String itemId = 'item-of-contract',
+    String supplierVatNumber = '300000000000003',
   }) {
     final contract = <String, Object>{
       'id': 'contract-${_nextStructureId++}',
+      'itemId': itemId,
       'supplierName': supplierName,
+      'supplierVatNumber': supplierVatNumber,
+      'pending': pending,
       'itemName': itemName,
       'unitName': unitName,
       'value': value,
@@ -1001,6 +1013,10 @@ class FakeApi {
     }
     if (segments.length >= 3 && segments[2] == 'contracts') {
       return _answerContracts(request);
+    }
+    if (segments.length >= 3 && segments[2] == 'contractor-payments') {
+      sentContractorPayments.add(jsonDecode(request.body) as Map<String, dynamic>);
+      return _json(expenseAnswer.body, expenseAnswer.status);
     }
     if (segments.length == 4 && segments[2] == 'expenses' && segments[3] == 'creditable') {
       return _json(creditableInvoices, 200);

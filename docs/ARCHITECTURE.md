@@ -9,7 +9,7 @@ lib/
   main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
   account/my_account_screen.dart  My account: the language, the way into the password change, and signing out
   api_list.dart             ApiList: a list the API owns, and the way to change it; every settings list extends it
-  ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, NameDialog, PickerField, showRefusalOf
+  ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, NameDialog, PickerField, entryField, FormSection, LabelledChips, TwoFields, showRefusalOf
   settings/
     settings_screen.dart    Settings: the way back to the project list, My account and, for the admin, the registered projects
     payment_method.dart     PaymentMethod, as the API answers it
@@ -52,13 +52,21 @@ lib/
     invoice_figures.dart    InvoiceFigures: the amounts shown while typing; the API computes the ones kept
     figures_box.dart        those amounts, read-only and to two decimals
     column_value_field.dart the field of one custom column, by what it holds
-    expenses.dart           Expenses: the way to record an expense, and what it was refused over
+    expenses.dart           Expenses: the way to record a purchase or a contractor payment, and what it was refused over
+    payment_choice.dart     PaymentChoice: where an entry is paid from and how, as chosen
+    payment_choices.dart    the choices of it, for any kind of expense
+    entry_date.dart         pickEntryDate: an entry's date, within the project's period
+    duplicate_invoice_dialog.dart  the question when a supplier's invoice number is entered again
     creditable_invoice.dart CreditableInvoice: an invoice a credit note can return, as the API answers it
     creditable_invoices.dart  CreditableInvoices: the ApiList of one supplier's invoices to return
     original_invoice_picker.dart  the field that links a credit note to its invoice
     earlier_entry.dart      EarlierEntry: the entry an invoice number repeats, as the API answers it
     invoice_qr.dart         InvoiceQr: what a Saudi e-invoice's QR code carries, read from its text
     qr_summary.dart         what was read from the code, and the offer to add its seller
+  contractor_payments/
+    contractor_payment_screen.dart  a payment against a contract
+    contract_picker.dart    the field that chooses the contract, from a sheet of the active ones
+    contract_figures.dart   what the contract stands at with this payment, and the alert of an overrun
   contracts/
     contract.dart           Contract and ContractFilter, as the API answers them
     contracts.dart          Contracts: the ApiList of one project's contracts, and its changes

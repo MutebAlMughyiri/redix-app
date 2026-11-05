@@ -4,13 +4,16 @@ import '../attachments/picked_file.dart';
 import '../words/words.dart';
 import 'add_expense_screen.dart';
 
-/// The invoice of a new expense: its picture, and the ways to take it again or pick it from the phone's files.
+/// The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files.
 class InvoiceSection extends StatelessWidget {
-  /// The section showing [file], with [message] saying why the last try gave none, calling [onCamera] and [onFiles].
-  const InvoiceSection({super.key, required this.file, required this.message, required this.onCamera, required this.onFiles});
+  /// The section showing [file], or [emptyLabel] until there is one, with [message] saying why the last try gave none, calling [onCamera] and [onFiles].
+  const InvoiceSection({super.key, required this.file, required this.emptyLabel, required this.message, required this.onCamera, required this.onFiles});
 
   /// The invoice chosen; none yet when empty.
   final PickedFile file;
+
+  /// What the file is for, said until there is one.
+  final String emptyLabel;
 
   /// The word key of why the last try gave no file; empty otherwise.
   final String message;
@@ -35,7 +38,7 @@ class InvoiceSection extends StatelessWidget {
           const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(file.isNone ? words.attachmentsInvoicePhoto : file.name, key: AddExpenseScreen.invoiceNameKey, style: theme.textTheme.bodySmall, textAlign: TextAlign.center, maxLines: 3, overflow: TextOverflow.ellipsis),
+            child: Text(file.isNone ? emptyLabel : file.name, key: AddExpenseScreen.invoiceNameKey, style: theme.textTheme.bodySmall, textAlign: TextAlign.center, maxLines: 3, overflow: TextOverflow.ellipsis),
           ),
         ],
       ),
