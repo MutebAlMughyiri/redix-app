@@ -158,6 +158,17 @@ void main() {
     expect(opened.api.sentSettingsChanges.last.$2.containsKey('defaultItemId'), isFalse);
   });
 
+  testWidgets('the general cash supplier stays active, and the refusal says why', (tester) async {
+    final opened = await openSuppliers(tester);
+    opened.api.settingsAnswer = (status: 409, code: 'generalCashSupplier');
+
+    await openMenu(tester, opened.api, opened.approved);
+    await act(tester, opened.api, () => tester.tap(find.byKey(SuppliersScreen.disableKey)));
+
+    expect(find.text('en suppliers.generalCashSupplier'), findsOneWidget);
+    expect(text(tester, SuppliersScreen.detailsKey(opened.approved)), isNot(contains('en suppliers.disabled')));
+  });
+
   testWidgets('a disabled supplier stays on the list, marked, and can be enabled', (tester) async {
     final opened = await openSuppliers(tester);
 

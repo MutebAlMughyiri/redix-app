@@ -1232,6 +1232,9 @@ mixin WordGetters {
   /// The word `suppliers.enable`.
   String get suppliersEnable => text('suppliers.enable');
 
+  /// The word `suppliers.generalCashSupplier`.
+  String get suppliersGeneralCashSupplier => text('suppliers.generalCashSupplier');
+
   /// The word `suppliers.holder`.
   String get suppliersHolder => text('suppliers.holder');
 

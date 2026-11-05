@@ -58,6 +58,7 @@ The project's home, `HomeScreen`:
 | Editing a supplier with no number starts marked | `SupplierDialog` | `editing a supplier with no number starts marked not VAT-registered` |
 | A default item is chosen among what a purchase is offered, and can be taken away | `ItemPicker`, `OfferedItems` | `a default item is chosen among what a purchase is offered, and can be taken away` |
 | Disabled, it stays on the list, marked, and can be enabled (BR-15) | `SupplierRow` | `a disabled supplier stays on the list, marked, and can be enabled` |
+| The general cash supplier stays active, and the refusal says why; no menu in the app has a disabled entry with a reason, so the refusal is what shows | `showRefusalOf`, the word `suppliers.generalCashSupplier` | `the general cash supplier stays active, and the refusal says why` |
 | A project with no suppliers says so | `ApiListBody` | `a project with no suppliers says so` |
 | Without keeping the settings there is nothing to change | `Project.mayManageSettings` | `without keeping the settings the register shows with nothing to change` |
 | A finished project shows it with nothing to change (AC-04.1) | `Project.mayManageSettings` | `a finished project shows its register with nothing to change` |
