@@ -878,6 +878,60 @@ mixin WordGetters {
   /// The word `contracts.value`.
   String get contractsValue => text('contracts.value');
 
+  /// The word `dashboard.byCategory`.
+  String get dashboardByCategory => text('dashboard.byCategory');
+
+  /// The word `dashboard.completion`.
+  String get dashboardCompletion => text('dashboard.completion');
+
+  /// The word `dashboard.cost`.
+  String get dashboardCost => text('dashboard.cost');
+
+  /// The word `dashboard.difference`.
+  String get dashboardDifference => text('dashboard.difference');
+
+  /// The word `dashboard.expenses`.
+  String get dashboardExpenses => text('dashboard.expenses');
+
+  /// The word `dashboard.invalidCompletion`.
+  String get dashboardInvalidCompletion => text('dashboard.invalidCompletion');
+
+  /// The word `dashboard.loadFailed`.
+  String get dashboardLoadFailed => text('dashboard.loadFailed');
+
+  /// The word `dashboard.noConnection`.
+  String get dashboardNoConnection => text('dashboard.noConnection');
+
+  /// The word `dashboard.pending`.
+  String get dashboardPending => text('dashboard.pending');
+
+  /// The word `dashboard.pendingHint`.
+  String get dashboardPendingHint => text('dashboard.pendingHint');
+
+  /// The word `dashboard.percent`.
+  String get dashboardPercent => text('dashboard.percent');
+
+  /// The word `dashboard.projectFinished`.
+  String get dashboardProjectFinished => text('dashboard.projectFinished');
+
+  /// The word `dashboard.refused`.
+  String get dashboardRefused => text('dashboard.refused');
+
+  /// The word `dashboard.revenue`.
+  String get dashboardRevenue => text('dashboard.revenue');
+
+  /// The word `dashboard.save`.
+  String get dashboardSave => text('dashboard.save');
+
+  /// The word `dashboard.setCompletion`.
+  String get dashboardSetCompletion => text('dashboard.setCompletion');
+
+  /// The word `dashboard.surplus`.
+  String get dashboardSurplus => text('dashboard.surplus');
+
+  /// The word `dashboard.surplusWithoutSales`.
+  String get dashboardSurplusWithoutSales => text('dashboard.surplusWithoutSales');
+
   /// The word `entries.all`.
   String get entriesAll => text('entries.all');
 
@@ -1694,8 +1748,137 @@ mixin WordGetters {
   /// The word `registered.title`.
   String get registeredTitle => text('registered.title');
 
+  /// The word `reports.chooseItem`.
+  String get reportsChooseItem => text('reports.chooseItem');
+
+  /// The word `reports.contractValue`.
+  String get reportsContractValue => text('reports.contractValue');
+
+  /// The word `reports.contracts`.
+  String get reportsContracts => text('reports.contracts');
+
+  /// The word `reports.cost`.
+  String get reportsCost => text('reports.cost');
+
+  /// The word `reports.current`.
+  String get reportsCurrent => text('reports.current');
+
+  /// The word `reports.date`.
+  String get reportsDate => text('reports.date');
+
+  /// The word `reports.description`.
+  String get reportsDescription => text('reports.description');
+
+  /// The word `reports.difference`.
+  String get reportsDifference => text('reports.difference');
+
+  /// The word `reports.earlier`.
+  String get reportsEarlier => text('reports.earlier');
+
+  /// The word `reports.excel`.
+  String get reportsExcel => text('reports.excel');
+
+  /// The word `reports.fileFailed`.
+  String get reportsFileFailed => text('reports.fileFailed');
+
+  /// The word `reports.generalSubgroup`.
+  String get reportsGeneralSubgroup => text('reports.generalSubgroup');
+
+  /// The word `reports.grandTotal`.
+  String get reportsGrandTotal => text('reports.grandTotal');
+
+  /// The word `reports.invoiceImages`.
+  String get reportsInvoiceImages => text('reports.invoiceImages');
+
+  /// The word `reports.invoiceNumber`.
+  String get reportsInvoiceNumber => text('reports.invoiceNumber');
+
+  /// The word `reports.issue`.
+  String get reportsIssue => text('reports.issue');
+
+  /// The word `reports.issueExplain`.
+  String get reportsIssueExplain => text('reports.issueExplain');
+
+  /// The word `reports.issueQuestion`.
+  String get reportsIssueQuestion => text('reports.issueQuestion');
+
+  /// The word `reports.issued`.
+  String get reportsIssued => text('reports.issued');
+
+  /// The word `reports.item`.
+  String get reportsItem => text('reports.item');
+
+  /// The word `reports.itemTotal`.
+  String get reportsItemTotal => text('reports.itemTotal');
+
+  /// The word `reports.lastIssued`.
+  String get reportsLastIssued => text('reports.lastIssued');
+
+  /// The word `reports.liquidation`.
+  String get reportsLiquidation => text('reports.liquidation');
+
+  /// The word `reports.loadFailed`.
+  String get reportsLoadFailed => text('reports.loadFailed');
+
+  /// The word `reports.noConnection`.
+  String get reportsNoConnection => text('reports.noConnection');
+
+  /// The word `reports.noContracts`.
+  String get reportsNoContracts => text('reports.noContracts');
+
+  /// The word `reports.noneIssued`.
+  String get reportsNoneIssued => text('reports.noneIssued');
+
+  /// The word `reports.number`.
+  String get reportsNumber => text('reports.number');
+
+  /// The word `reports.openValue`.
+  String get reportsOpenValue => text('reports.openValue');
+
+  /// The word `reports.outsideContract`.
+  String get reportsOutsideContract => text('reports.outsideContract');
+
+  /// The word `reports.overrun`.
+  String get reportsOverrun => text('reports.overrun');
+
+  /// The word `reports.paid`.
+  String get reportsPaid => text('reports.paid');
+
+  /// The word `reports.partners`.
+  String get reportsPartners => text('reports.partners');
+
+  /// The word `reports.pdf`.
+  String get reportsPdf => text('reports.pdf');
+
+  /// The word `reports.periodic`.
+  String get reportsPeriodic => text('reports.periodic');
+
+  /// The word `reports.previous`.
+  String get reportsPrevious => text('reports.previous');
+
+  /// The word `reports.print`.
+  String get reportsPrint => text('reports.print');
+
+  /// The word `reports.quantity`.
+  String get reportsQuantity => text('reports.quantity');
+
+  /// The word `reports.refused`.
+  String get reportsRefused => text('reports.refused');
+
+  /// The word `reports.remaining`.
+  String get reportsRemaining => text('reports.remaining');
+
+  /// The word `reports.reportNumber`.
+  String get reportsReportNumber => text('reports.reportNumber');
+
+  /// The word `reports.share`.
+  String get reportsShare => text('reports.share');
+
   /// The word `reports.title`.
   String get reportsTitle => text('reports.title');
+
+  /// The word `reports.unitPrice`.
+  String get reportsUnitPrice => text('reports.unitPrice');
 
   /// The word `revenue.account`.
   String get revenueAccount => text('revenue.account');

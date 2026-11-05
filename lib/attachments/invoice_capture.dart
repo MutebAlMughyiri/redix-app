@@ -4,12 +4,14 @@ import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
+import 'package:printing/printing.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
+import 'package:share_plus/share_plus.dart';
 
 import 'picked_file.dart';
 import 'picture_compression.dart';
 
-/// The phone's camera and files, as the app reaches them: the one place that touches them, so a test can stand in for hardware it does not have.
+/// The phone's camera, files, printer and share sheet, as the app reaches them: the one place that touches them, so a test can stand in for hardware it does not have.
 class InvoiceCapture {
   /// The phone's own camera and files.
   const InvoiceCapture();
@@ -68,6 +70,14 @@ class InvoiceCapture {
     final bytes = await file.readAsBytes();
     final picked = PickedFile(file.uri.pathSegments.last, path, bytes);
     return picked.isPdf ? picked : PickedFile(picked.name, path, await compute(compressedPicture, bytes));
+  }
+
+  /// Hands the PDF [bytes], named [name], to the phone's print dialog: AirPrint on iPhone, the print service on Android and Huawei, with a preview (FR-48).
+  Future<void> printPdf(Uint8List bytes, String name) => Printing.layoutPdf(onLayout: (_) async => bytes, name: name);
+
+  /// Hands [bytes], named [name], to the phone's share sheet, for WhatsApp or email with the file attached (FR-48).
+  Future<void> shareFile(Uint8List bytes, String name, String mimeType) async {
+    await SharePlus.instance.share(ShareParams(files: [XFile.fromData(bytes, mimeType: mimeType)], fileNameOverrides: [name]));
   }
 
   /// Opens the phone's files for a picture or a PDF; a picture comes back under 1 MB.

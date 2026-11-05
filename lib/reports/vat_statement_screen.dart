@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../auth/permission.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
@@ -9,6 +10,7 @@ import '../ui/picker_field.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
+import 'report_files.dart';
 import 'vat_statement.dart';
 
 /// How a period is chosen.
@@ -17,7 +19,10 @@ enum _Mode { quarter, halfYear, custom }
 /// The VAT statement for a quarter, a half-year or a custom period (UC-056), with what it left out.
 class VatStatementScreen extends StatefulWidget {
   /// The statement of [project], read through [statement].
-  const VatStatementScreen({super.key, required this.project, required this.statement});
+  const VatStatementScreen({super.key, required this.project, required this.statement, required this.files});
+
+  /// The way to its files.
+  final ReportFiles files;
 
   /// The address of the screen.
   static const path = '/projects/:projectId/reports/vat';
@@ -243,6 +248,18 @@ class _VatStatementScreenState extends State<VatStatementScreen> {
             ),
           },
           const SizedBox(height: 12),
+          if (widget.project.may(Permission.seeAllCapital))
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Builder(
+                builder: (context) {
+                  final (first, last) = _period;
+                  final from = first.toIso8601String().substring(0, 10);
+                  final to = last.toIso8601String().substring(0, 10);
+                  return ReportFileButtons(files: widget.files, address: '/projects/${widget.project.id}/vat-statement?from=$from&to=$to', name: 'vat-$from-$to', kinds: const [ReportFileKind.excel, ReportFileKind.pdf, ReportFileKind.zip]);
+                },
+              ),
+            ),
           ApiObjectBody(
             object: widget.statement,
             builder: (figures) => Column(

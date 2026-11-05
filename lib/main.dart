@@ -43,6 +43,12 @@ import 'offline/outbox.dart';
 import 'offline/project_sync.dart';
 import 'offline/waiting_screen.dart';
 import 'projects/members.dart';
+import 'reports/dashboard.dart';
+import 'reports/item_report.dart';
+import 'reports/item_report_screen.dart';
+import 'reports/periodic_report_screen.dart';
+import 'reports/periodic_reports.dart';
+import 'reports/report_files.dart';
 import 'reports/reports_screen.dart';
 import 'reports/vat_statement.dart';
 import 'reports/vat_statement_screen.dart';
@@ -143,6 +149,9 @@ class _RedixAppState extends State<RedixApp> {
   final _projectCapital = <String, Capital>{};
   final _projectRevenues = <String, Revenues>{};
   final _projectVat = <String, VatStatement>{};
+  final _projectDashboards = <String, Dashboard>{};
+  final _projectPeriodicReports = <String, PeriodicReports>{};
+  late final _reportFiles = ReportFiles(widget.session, widget.capture);
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -170,7 +179,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), notifications: _notifications),
+        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), notifications: _notifications, dashboard: _dashboardOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(
         path: ApprovalsScreen.path,
@@ -246,12 +255,40 @@ class _RedixAppState extends State<RedixApp> {
         path: SalesInvoiceScreen.path,
         builder: (context, state) => SalesInvoiceScreen(project: state.extra! as Project, revenues: _revenuesOf(state.pathParameters['projectId'] ?? ''), accounts: _accountsOf(state.pathParameters['projectId'] ?? '')),
       ),
-      GoRoute(path: ReportsScreen.path, builder: (context, state) => ReportsScreen(project: state.extra! as Project)),
+      GoRoute(
+        path: ReportsScreen.path,
+        builder: (context, state) => ReportsScreen(
+          project: state.extra! as Project,
+          dashboard: _dashboardOf(state.pathParameters['projectId'] ?? ''),
+          periodicReports: _projectPeriodicReports.putIfAbsent(state.pathParameters['projectId'] ?? '', () => PeriodicReports(widget.session, state.pathParameters['projectId'] ?? '')),
+          nextReport: NextReport(widget.session, state.pathParameters['projectId'] ?? ''),
+          files: _reportFiles,
+        ),
+      ),
+      GoRoute(
+        path: PeriodicReportScreen.path,
+        builder: (context, state) => PeriodicReportScreen(
+          project: state.extra! as Project,
+          number: int.parse(state.pathParameters['number'] ?? '0'),
+          report: PeriodicReport(widget.session, state.pathParameters['projectId'] ?? '', int.parse(state.pathParameters['number'] ?? '0')),
+          files: _reportFiles,
+        ),
+      ),
+      GoRoute(
+        path: ItemReportScreen.path,
+        builder: (context, state) => ItemReportScreen(
+          project: state.extra! as Project,
+          itemId: state.pathParameters['itemId'] ?? '',
+          report: ItemReport(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? ''),
+          files: _reportFiles,
+        ),
+      ),
       GoRoute(
         path: VatStatementScreen.path,
         builder: (context, state) => VatStatementScreen(
           project: state.extra! as Project,
           statement: _projectVat.putIfAbsent(state.pathParameters['projectId'] ?? '', () => VatStatement(widget.session, state.pathParameters['projectId'] ?? '')),
+          files: _reportFiles,
         ),
       ),
       GoRoute(
@@ -335,6 +372,8 @@ class _RedixAppState extends State<RedixApp> {
   Transfers _transfersOf(String projectId) => _projectTransfers.putIfAbsent(projectId, () => Transfers(widget.session, projectId));
 
   Reconciliations _reconciliationsOf(String projectId) => _projectReconciliations.putIfAbsent(projectId, () => Reconciliations(widget.session, projectId));
+
+  Dashboard _dashboardOf(String projectId) => _projectDashboards.putIfAbsent(projectId, () => Dashboard(widget.session, projectId));
 
   Revenues _revenuesOf(String projectId) => _projectRevenues.putIfAbsent(projectId, () => Revenues(widget.session, projectId));
 

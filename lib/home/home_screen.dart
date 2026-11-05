@@ -22,6 +22,9 @@ import '../offline/outbox.dart';
 import '../offline/project_sync.dart';
 import '../offline/waiting_screen.dart';
 import '../projects/add_unit_dialog.dart';
+import '../reports/dashboard.dart';
+import '../reports/item_report_screen.dart';
+import 'dashboard_card.dart';
 import '../projects/project.dart';
 import '../projects/project_card.dart';
 import '../projects/projects.dart';
@@ -41,7 +44,10 @@ import '../words/words.dart';
 /// The home of the open project (UC-010): the project, with what the user's roles allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
   /// The home of the project [projectId], one of [projects], with [accounts], its accounts.
-  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications});
+  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.dashboard});
+
+  /// Its figures at a glance.
+  final Dashboard dashboard;
 
   /// What the user was told.
   final Notifications notifications;
@@ -225,6 +231,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  /// Opens [path] for [project], and reads the figures again on the way back, since what was done there may have changed them (AC-34.1).
+  Future<void> _open(String path, Project project) async {
+    await context.push(path, extra: project);
+    await widget.dashboard.load();
+  }
+
   void _askToClose(Project project) {
     final words = Words.of(context);
     showDialog<void>(
@@ -332,7 +344,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             key: HomeScreen.addExpenseKey(widget.projectId),
                             icon: const Icon(Icons.add),
                             label: Text(words.expensesNew),
-                            onPressed: () => context.push(AddExpenseScreen.pathOf(widget.projectId), extra: project.single),
+                            onPressed: () => _open(AddExpenseScreen.pathOf(widget.projectId), project.single),
                           ),
                         ),
                         Expanded(
@@ -340,7 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             key: HomeScreen.contractorPaymentKey(widget.projectId),
                             icon: const Icon(Icons.handshake_outlined),
                             label: Text(words.contractorPaymentsNew),
-                            onPressed: () => context.push(ContractorPaymentScreen.pathOf(widget.projectId), extra: project.single),
+                            onPressed: () => _open(ContractorPaymentScreen.pathOf(widget.projectId), project.single),
                           ),
                         ),
                       ],
@@ -372,20 +384,26 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                     },
                   ),
+                  DashboardCard(
+                    project: project,
+                    dashboard: widget.dashboard,
+                    onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
+                    onItem: (item) => _open(ItemReportScreen.pathOf(project.id, item.id), project),
+                  ),
                   MyCustody(accounts: widget.accounts),
                   MyEntriesSummary(project: project, entries: widget.entries),
                   ProjectCard(
                     project: project,
                     onUsers: () => _openUsers(project),
-                    onCategories: () => context.push(CategoriesScreen.pathOf(project.id), extra: project),
-                    onPaymentMethods: () => context.push(PaymentMethodsScreen.pathOf(project.id), extra: project),
-                    onAccounts: () => context.push(AccountsScreen.pathOf(project.id), extra: project),
-                    onPartners: () => context.push(PartnersScreen.pathOf(project.id), extra: project),
-                    onSuppliers: () => context.push(SuppliersScreen.pathOf(project.id), extra: project),
-                    onContracts: () => context.push(ContractsScreen.pathOf(project.id), extra: project),
-                    onApprovals: () => context.push(ApprovalsScreen.pathOf(project.id), extra: project),
-                    onRevenue: () => context.push(RevenueScreen.pathOf(project.id), extra: project),
-                    onReports: () => context.push(ReportsScreen.pathOf(project.id), extra: project),
+                    onCategories: () => _open(CategoriesScreen.pathOf(project.id), project),
+                    onPaymentMethods: () => _open(PaymentMethodsScreen.pathOf(project.id), project),
+                    onAccounts: () => _open(AccountsScreen.pathOf(project.id), project),
+                    onPartners: () => _open(PartnersScreen.pathOf(project.id), project),
+                    onSuppliers: () => _open(SuppliersScreen.pathOf(project.id), project),
+                    onContracts: () => _open(ContractsScreen.pathOf(project.id), project),
+                    onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
+                    onRevenue: () => _open(RevenueScreen.pathOf(project.id), project),
+                    onReports: () => _open(ReportsScreen.pathOf(project.id), project),
                     onAddUnit: () => _askForUnit(project),
                     onRename: () => _askToRename(project),
                     onRenameUnit: (unit) => _askToRenameUnit(project, unit),
