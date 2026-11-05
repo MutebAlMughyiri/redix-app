@@ -93,6 +93,7 @@ Map<String, String> wordsIn(String language) => {
     'blueprints.remove', 'blueprints.removeQuestion', 'blueprints.removeExplain', 'blueprints.removed', 'blueprints.unknownAttachment', 'blueprints.invalidTitle', 'blueprints.loadFailed',
     'liquidation.title', 'liquidation.surplus', 'liquidation.deficit', 'liquidation.explain', 'liquidation.deficitExplain', 'liquidation.pending', 'liquidation.payOut', 'liquidation.carry', 'liquidation.date',
     'liquidation.confirm', 'liquidation.question', 'liquidation.questionExplain', 'liquidation.done', 'liquidation.distributed', 'liquidation.nothing', 'capital.pendingEntries', 'capital.incompleteLiquidation',
+    'reports.save', 'reports.downloaded',
     'reports.units', 'reports.unitDirect', 'reports.unitFromShared', 'reports.unsplit', 'reports.surplus',
     'expenses.creditNote', 'expenses.creditNoteExplain', 'expenses.originalInvoice', 'expenses.noOriginalInvoice', 'expenses.noCreditableInvoice', 'expenses.returnable', 'expenses.loadFailed',
     'expenses.creditNoteAboveOriginal', 'expenses.unknownOriginalInvoice', 'expenses.creditNoteNeedsInvoice', 'expenses.deductionNeedsReason',
@@ -144,6 +145,12 @@ class FakeCapture extends InvoiceCapture {
 
   @override
   Future<void> shareFile(Uint8List bytes, String name, String mimeType) async => sharedOut.add((name, mimeType));
+
+  /// The files the app saved on the phone: their name and type.
+  final savedOut = <(String, String)>[];
+
+  @override
+  Future<void> saveFile(Uint8List bytes, String name, String mimeType) async => savedOut.add((name, mimeType));
 
   @override
   Stream<PickedFile> shared() => _sharedFiles.stream;

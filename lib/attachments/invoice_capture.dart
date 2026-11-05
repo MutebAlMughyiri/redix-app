@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:file_saver/file_saver.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:printing/printing.dart';
@@ -79,6 +80,10 @@ class InvoiceCapture {
   Future<void> shareFile(Uint8List bytes, String name, String mimeType) async {
     await SharePlus.instance.share(ShareParams(files: [XFile.fromData(bytes, mimeType: mimeType)], fileNameOverrides: [name]));
   }
+
+  /// Keeps [bytes], named [name], in the phone's Download folder through Android's downloads store, which writes a new file every time: one of the same name already there is left whole, and the new one is numbered (FR-48).
+  Future<void> saveFile(Uint8List bytes, String name, String mimeType) =>
+      FileSaver.instance.saveToDownloads(name: name, bytes: bytes, includeExtension: false, mimeType: MimeType.custom, customMimeType: mimeType);
 
   /// Opens the phone's files for a picture or a PDF; a picture comes back under 1 MB.
   Future<PickedFile> fromFiles() async {
