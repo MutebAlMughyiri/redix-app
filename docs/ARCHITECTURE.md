@@ -17,6 +17,13 @@ lib/
     payment_methods_screen.dart  a project's VAT rate and payment methods
     payment_method_row.dart one method, with its menu
     vat_rate_dialog.dart    the dialog that asks for the rate
+  accounts/
+    account.dart            Account and AccountType, as the API answers them
+    accounts.dart           Accounts: the ApiList of one project's accounts, and its changes
+    accounts_screen.dart    a project's bank accounts and cash custodies
+    account_row.dart        one account, with its menu
+    account_dialog.dart     the dialog that adds or edits an account
+    my_custody.dart         what the signed-in user holds, on the project's home
   projects/
     project.dart            Project and Unit, as the API answers them
     projects.dart           Projects: the ApiList of projects, and its changes
@@ -24,6 +31,9 @@ lib/
     project_choice.dart     one project on the list
     project_card.dart       the open project, on its home
     add_unit_dialog.dart    the Add unit dialog
+    member.dart             Member: someone in a project, as a person choosing among them sees them
+    members.dart            Members: the ApiList of one project's active people
+    member_picker.dart      the field that chooses someone in a project, or nobody
     new_project_screen.dart the new project form
   users/
     user.dart               User, as the API answers it
@@ -54,7 +64,7 @@ lib/
     apply_to_all_dialog.dart  the question after a change to the template
   format/
     date_format.dart        formatDate: the app's one date format, dd.MM.yyyy
-    number_format.dart      formatPercent, and parseNumber: what a person typed, in Arabic or Western digits
+    number_format.dart      formatMoney (NFR-04), formatPlain, and parseNumber: what a person typed, in Arabic or Western digits
   api.dart                  the API's address and how a reply's JSON is read, shared by every feature
   auth/
     permission.dart         Permission: what the API says a user may do, as its name in the API
@@ -95,7 +105,7 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 
 ## Data the API owns
 
-Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `ApiList` reads the list again after every answer, so its order and each status have one source. `Projects` and `Users` extend it, and hold only their own calls; `ApiListBody` draws its states on every such screen. A dragged row is the one thing shown before the API answers: `ApiList.reorder` keeps it where it was dropped, and a refused or lost order goes back to what the API holds.
+Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `ApiList` reads the list again after every answer, so its order and each status have one source. A screen with two lists reads them one after the other (findings row 64). `Projects` and `Users` extend it, and hold only their own calls; `ApiListBody` draws its states on every such screen. A dragged row is the one thing shown before the API answers: `ApiList.reorder` keeps it where it was dropped, and a refused or lost order goes back to what the API holds.
 
 ## Rules every part follows
 

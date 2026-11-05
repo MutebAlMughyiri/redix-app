@@ -5,6 +5,8 @@ import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/session.dart';
 import 'package:redix/auth/sign_in_screen.dart';
+import 'package:redix/accounts/account.dart';
+import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
 import 'package:redix/projects/new_project_screen.dart';
@@ -206,6 +208,29 @@ void main() {
     await $(find.text('7.5%')).waitUntilVisible();
     await $.takeNativeScreenshot('payment-methods');
     await $(BackButton).tap();
+
+    await $(keyStartingWith('home.accounts.')).scrollTo().tap();
+    await $(AccountsScreen.addKey).waitUntilVisible();
+    await $(AccountsScreen.addKey).tap();
+    await $(AccountsScreen.accountNameKey).enterText('حساب المؤسسة');
+    await $(AccountsScreen.openingBalanceKey).enterText('64250.75');
+    await $(AccountsScreen.saveKey).tap();
+    await $(find.text('64,250.75')).waitUntilVisible();
+    await $(AccountsScreen.addKey).tap();
+    await $(AccountsScreen.typeKey(AccountType.cashCustody)).tap();
+    await $(AccountsScreen.accountNameKey).enterText('كاش مع مدير المشروع');
+    await $(AccountsScreen.openingBalanceKey).enterText('2750');
+    await $.tester.ensureVisible(keyStartingWith('memberPicker.option.').last);
+    await $.pumpAndSettle();
+    await $(keyStartingWith('memberPicker.option.')).last.tap();
+    await $.pumpAndSettle();
+    await $.takeNativeScreenshot('account-dialog');
+    await $(AccountsScreen.saveKey).tap();
+    await $(find.text('2,750.00')).waitUntilVisible();
+    await $.takeNativeScreenshot('accounts');
+    await $(BackButton).tap();
+    await $(keyStartingWith('home.custody.')).waitUntilVisible();
+    await $.takeNativeScreenshot('my-custody');
 
     await $(keyStartingWith('home.close.')).tap();
     await $(HomeScreen.confirmCloseKey).waitUntilVisible();

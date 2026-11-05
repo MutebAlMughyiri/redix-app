@@ -5,6 +5,81 @@ mixin WordGetters {
   /// The word for [key] in the language in use.
   String text(String key);
 
+  /// The word `accounts.custodian`.
+  String get accountsCustodian => text('accounts.custodian');
+
+  /// The word `accounts.custodianRequired`.
+  String get accountsCustodianRequired => text('accounts.custodianRequired');
+
+  /// The word `accounts.disable`.
+  String get accountsDisable => text('accounts.disable');
+
+  /// The word `accounts.disabled`.
+  String get accountsDisabled => text('accounts.disabled');
+
+  /// The word `accounts.edit`.
+  String get accountsEdit => text('accounts.edit');
+
+  /// The word `accounts.empty`.
+  String get accountsEmpty => text('accounts.empty');
+
+  /// The word `accounts.enable`.
+  String get accountsEnable => text('accounts.enable');
+
+  /// The word `accounts.invalidName`.
+  String get accountsInvalidName => text('accounts.invalidName');
+
+  /// The word `accounts.invalidOpeningBalance`.
+  String get accountsInvalidOpeningBalance => text('accounts.invalidOpeningBalance');
+
+  /// The word `accounts.loadFailed`.
+  String get accountsLoadFailed => text('accounts.loadFailed');
+
+  /// The word `accounts.myCustody`.
+  String get accountsMyCustody => text('accounts.myCustody');
+
+  /// The word `accounts.name`.
+  String get accountsName => text('accounts.name');
+
+  /// The word `accounts.new`.
+  String get accountsNew => text('accounts.new');
+
+  /// The word `accounts.noConnection`.
+  String get accountsNoConnection => text('accounts.noConnection');
+
+  /// The word `accounts.noCustodian`.
+  String get accountsNoCustodian => text('accounts.noCustodian');
+
+  /// The word `accounts.openingBalance`.
+  String get accountsOpeningBalance => text('accounts.openingBalance');
+
+  /// The word `accounts.projectFinished`.
+  String get accountsProjectFinished => text('accounts.projectFinished');
+
+  /// The word `accounts.refused`.
+  String get accountsRefused => text('accounts.refused');
+
+  /// The word `accounts.riyal`.
+  String get accountsRiyal => text('accounts.riyal');
+
+  /// The word `accounts.save`.
+  String get accountsSave => text('accounts.save');
+
+  /// The word `accounts.title`.
+  String get accountsTitle => text('accounts.title');
+
+  /// The word `accounts.type`.
+  String get accountsType => text('accounts.type');
+
+  /// The word `accounts.typeBank`.
+  String get accountsTypeBank => text('accounts.typeBank');
+
+  /// The word `accounts.typeCashCustody`.
+  String get accountsTypeCashCustody => text('accounts.typeCashCustody');
+
+  /// The word `accounts.unknownCustodian`.
+  String get accountsUnknownCustodian => text('accounts.unknownCustodian');
+
   /// The word `app.title`.
   String get appTitle => text('app.title');
 

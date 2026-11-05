@@ -6,10 +6,19 @@ import '../home/home_screen.dart';
 import '../words/words.dart';
 import 'project.dart';
 
-/// The open project: the signed-in user's roles in it, its start date, status and units, with what those roles allow: Users, Categories and items, Payment methods, and Add unit and Close project while it runs.
+/// The open project: the signed-in user's roles in it, its start date, status and units, with what those roles allow: Users, Categories and items, Payment methods, Accounts, and Add unit and Close project while it runs.
 class ProjectCard extends StatelessWidget {
-  /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAddUnit] and [onClose] when those are tapped.
-  const ProjectCard({super.key, required this.project, required this.onUsers, required this.onCategories, required this.onPaymentMethods, required this.onAddUnit, required this.onClose});
+  /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAccounts], [onAddUnit] and [onClose] when those are tapped.
+  const ProjectCard({
+    super.key,
+    required this.project,
+    required this.onUsers,
+    required this.onCategories,
+    required this.onPaymentMethods,
+    required this.onAccounts,
+    required this.onAddUnit,
+    required this.onClose,
+  });
 
   /// The project this card shows.
   final Project project;
@@ -22,6 +31,9 @@ class ProjectCard extends StatelessWidget {
 
   /// Called when Payment methods and VAT is tapped.
   final VoidCallback onPaymentMethods;
+
+  /// Called when Accounts is tapped.
+  final VoidCallback onAccounts;
 
   /// Called when Add unit is tapped.
   final VoidCallback onAddUnit;
@@ -74,52 +86,56 @@ class ProjectCard extends StatelessWidget {
           const Divider(height: 1),
           if (project.units.isEmpty) ListTile(dense: true, title: Text(words.projectsNoUnits, key: HomeScreen.noUnitsKey(project.id))),
           for (final unit in project.units) ListTile(dense: true, title: Text(unit.name, key: HomeScreen.unitKey(unit.id))),
-          if (mayManageUsers || mayShapeStructure || mayKeepSettings || mayChange) ...[
-            const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: OverflowBar(
-                alignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (mayManageUsers)
-                    TextButton.icon(
-                      key: HomeScreen.usersKey(project.id),
-                      icon: const Icon(Icons.group_outlined),
-                      label: Text(words.usersTitle),
-                      onPressed: onUsers,
-                    ),
-                  if (mayShapeStructure)
-                    TextButton.icon(
-                      key: HomeScreen.categoriesKey(project.id),
-                      icon: const Icon(Icons.category_outlined),
-                      label: Text(words.categoriesTitle),
-                      onPressed: onCategories,
-                    ),
-                  if (mayKeepSettings)
-                    TextButton.icon(
-                      key: HomeScreen.paymentMethodsKey(project.id),
-                      icon: const Icon(Icons.credit_card_outlined),
-                      label: Text(words.paymentMethodsTitle),
-                      onPressed: onPaymentMethods,
-                    ),
-                  if (mayChange) ...[
-                    TextButton.icon(
-                      key: HomeScreen.addUnitKey(project.id),
-                      icon: const Icon(Icons.add),
-                      label: Text(words.projectsAddUnit),
-                      onPressed: onAddUnit,
-                    ),
-                    TextButton(
-                      key: HomeScreen.closeKey(project.id),
-                      style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
-                      onPressed: onClose,
-                      child: Text(words.projectsClose),
-                    ),
-                  ],
+          const Divider(height: 1),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: OverflowBar(
+              alignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (mayManageUsers)
+                  TextButton.icon(
+                    key: HomeScreen.usersKey(project.id),
+                    icon: const Icon(Icons.group_outlined),
+                    label: Text(words.usersTitle),
+                    onPressed: onUsers,
+                  ),
+                if (mayShapeStructure)
+                  TextButton.icon(
+                    key: HomeScreen.categoriesKey(project.id),
+                    icon: const Icon(Icons.category_outlined),
+                    label: Text(words.categoriesTitle),
+                    onPressed: onCategories,
+                  ),
+                if (mayKeepSettings)
+                  TextButton.icon(
+                    key: HomeScreen.paymentMethodsKey(project.id),
+                    icon: const Icon(Icons.credit_card_outlined),
+                    label: Text(words.paymentMethodsTitle),
+                    onPressed: onPaymentMethods,
+                  ),
+                TextButton.icon(
+                  key: HomeScreen.accountsKey(project.id),
+                  icon: const Icon(Icons.account_balance_wallet_outlined),
+                  label: Text(words.accountsTitle),
+                  onPressed: onAccounts,
+                ),
+                if (mayChange) ...[
+                  TextButton.icon(
+                    key: HomeScreen.addUnitKey(project.id),
+                    icon: const Icon(Icons.add),
+                    label: Text(words.projectsAddUnit),
+                    onPressed: onAddUnit,
+                  ),
+                  TextButton(
+                    key: HomeScreen.closeKey(project.id),
+                    style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
+                    onPressed: onClose,
+                    child: Text(words.projectsClose),
+                  ),
                 ],
-              ),
+              ],
             ),
-          ],
+          ),
         ],
       ),
     );

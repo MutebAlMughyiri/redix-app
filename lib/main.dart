@@ -3,11 +3,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 import 'account/my_account_screen.dart';
+import 'accounts/accounts.dart';
+import 'accounts/accounts_screen.dart';
 import 'api.dart';
 import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
 import 'home/home_screen.dart';
+import 'projects/members.dart';
 import 'projects/new_project_screen.dart';
 import 'projects/projects.dart';
 import 'projects/projects_screen.dart';
@@ -69,6 +72,8 @@ class _RedixAppState extends State<RedixApp> {
   final _projectCategories = <String, Categories>{};
   final _columnLists = <String, Columns>{};
   final _projectPaymentMethods = <String, PaymentMethods>{};
+  final _projectAccounts = <String, Accounts>{};
+  final _projectMembers = <String, Members>{};
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -83,7 +88,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects),
+        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(path: NewProjectScreen.registerPath, builder: (context, state) => NewProjectScreen(projects: _projects, isPublic: true)),
       GoRoute(path: RegisteredProjectsScreen.path, builder: (context, state) => RegisteredProjectsScreen(projects: _registered)),
@@ -111,6 +116,10 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => PaymentMethodsScreen(project: state.extra! as Project, projects: _projects, paymentMethods: _paymentMethodsOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(
+        path: AccountsScreen.path,
+        builder: (context, state) => AccountsScreen(project: state.extra! as Project, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), members: _membersOf(state.pathParameters['projectId'] ?? '')),
+      ),
+      GoRoute(
         path: SubgroupsScreen.path,
         builder: (context, state) => SubgroupsScreen(
           itemId: state.pathParameters['itemId'] ?? '',
@@ -128,6 +137,10 @@ class _RedixAppState extends State<RedixApp> {
   Categories _categoriesOf(String projectId) => _projectCategories.putIfAbsent(projectId, () => Categories(widget.session, projectId));
 
   PaymentMethods _paymentMethodsOf(String projectId) => _projectPaymentMethods.putIfAbsent(projectId, () => PaymentMethods(widget.session, projectId));
+
+  Accounts _accountsOf(String projectId) => _projectAccounts.putIfAbsent(projectId, () => Accounts(widget.session, projectId));
+
+  Members _membersOf(String projectId) => _projectMembers.putIfAbsent(projectId, () => Members(widget.session, projectId));
 
   Columns _columnsAt(String path) => _columnLists.putIfAbsent(path, () => Columns(widget.session, path));
 

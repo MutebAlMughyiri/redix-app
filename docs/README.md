@@ -26,6 +26,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Categories and items](guide/categories.md) | Whoever does a project's finance |
 | [Item columns](guide/item-columns.md) | Whoever does a project's finance |
 | [Payment methods and VAT](guide/payment-methods.md) | Whoever does a project's finance |
+| [Accounts](guide/accounts.md) | Everyone in the project; whoever does its finance changes them |
 
 ## Use cases
 
@@ -46,5 +47,6 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-012](use-cases/UC-012-categories-and-items.md) | Shape a project's categories, items and subgroups, and choose what a new project copies | Whoever does a project's finance |
 | [UC-013](use-cases/UC-013-item-columns.md) | Change the fields an item asks for, on one item or on the default template | Whoever does a project's finance |
 | [UC-014](use-cases/UC-014-payment-methods-and-vat.md) | Keep a project's payment methods and its VAT rate | Whoever does a project's finance |
+| [UC-015](use-cases/UC-015-accounts-and-custodies.md) | Define a project's accounts and custodies, and show each custodian what they hold | Whoever does a project's finance changes; everyone sees |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

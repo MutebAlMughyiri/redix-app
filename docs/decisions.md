@@ -6,6 +6,10 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-06 | The Accounts screen holds the list of accounts only, under the title Accounts | The canvas draws reconciliation and transfers on it too, which need the ledger and have their own use cases. Made without Muteb |
+| 2026-11-06 | What a custodian holds is a card above the project on the home, for anyone who holds something | AC-22.1 asks it of the home, and the app names no role; UC-037 adds the counts and the shortcuts around it. Made without Muteb |
+| 2026-11-06 | A screen with two lists reads them one after the other | Two requests with an expired token at once each renew it, and the second renewal ends the session. The session code stays as it is tonight; findings row 64 proposes the fix there |
+| 2026-11-06 | Choosing someone in a project is one `MemberPicker`, a list of choices rather than a dropdown, which keeps whoever holds the thing on offer even after they leave | Accounts and partners both need it. On the emulator a dropdown opened and closed again while the keyboard was up, because hiding the keyboard resizes the window and Flutter closes the menu then; a project has few people, and each name shows in full. Made without Muteb |
 | 2026-11-06 | Payment methods and the VAT rate share one screen, from the project's home | The canvas has none (findings row 7), and both are short. Built from Material's parts. Made without Muteb; findings row 62 |
 | 2026-11-06 | The Add button says "Add" where a screen's title already says what is added, with the full phrase as its tooltip | The full phrase was too wide at 360 points. Made without Muteb |
 | 2026-11-06 | A number is read in Arabic or Western digits, in one place | The app is Arabic first, and an Arabic keyboard types ٧٫٥. Made without Muteb |

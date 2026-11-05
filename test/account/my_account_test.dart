@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/account/my_account_screen.dart';
+import 'package:redix/accounts/account.dart';
+import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/projects/member_picker.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
@@ -447,6 +450,45 @@ void main() {
       [PaymentMethodsScreen.vatPercentKey, PaymentMethodsScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+      api.addMember('user-nawaf', 'نواف بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني بالمشروع');
+      final bankAccount = api.addAccount(runningId, 'حساب جارٍ باسم طويل جداً في بنك من البنوك المحلية', openingBalance: 64250.75)['id'] as String;
+      final custody = api.addAccount(runningId, 'كاش مع نواف', type: 'cashCustody', openingBalance: 2750.5, custodianId: 'user-nawaf', custodianName: 'نواف بن عبدالله', isMine: true)['id'] as String;
+      final oldAccount = api.addAccount(runningId, 'حساب قديم', openingBalance: -120.40, isActive: false)['id'] as String;
+      await tester.ensureVisible(find.byKey(HomeScreen.accountsKey(runningId)));
+      expectFits(HomeScreen.accountsKey(runningId));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.accountsKey(runningId))));
+      [
+        AccountsScreen.addKey,
+        AccountsScreen.nameKey(bankAccount),
+        AccountsScreen.detailsKey(bankAccount),
+        AccountsScreen.balanceKey(bankAccount),
+        AccountsScreen.menuKey(bankAccount),
+      ].forEach(expectFits);
+      for (final id in [custody, oldAccount]) {
+        await tester.scrollUntilVisible(find.byKey(AccountsScreen.balanceKey(id)), 100);
+        [AccountsScreen.detailsKey(id), AccountsScreen.balanceKey(id)].forEach(expectFits);
+      }
+      await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.addKey)));
+      [
+        for (final type in AccountType.values) AccountsScreen.typeKey(type),
+        AccountsScreen.accountNameKey,
+        AccountsScreen.custodianKey,
+        AccountsScreen.openingBalanceKey,
+        AccountsScreen.saveKey,
+      ].forEach(expectFits);
+      [MemberPicker.optionKey(''), MemberPicker.optionKey('user-nawaf')].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await tester.ensureVisible(find.byKey(AccountsScreen.menuKey(custody)));
+      await tester.pumpAndSettle();
+      await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.menuKey(custody))));
+      [AccountsScreen.editKey, AccountsScreen.disableKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.editKey)));
+      [AccountsScreen.accountNameKey, AccountsScreen.custodianKey, AccountsScreen.openingBalanceKey, AccountsScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      expectFits(HomeScreen.custodyKey(custody));
+      expectFits(HomeScreen.custodyBalanceKey(custody));
 
       await tester.ensureVisible(find.byKey(HomeScreen.usersKey(runningId)));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey(runningId))));

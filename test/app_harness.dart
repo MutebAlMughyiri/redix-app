@@ -55,6 +55,9 @@ Map<String, String> wordsIn(String language) => {
     'projects.invalidVatRate', 'common.add', 'paymentMethods.title', 'paymentMethods.empty', 'paymentMethods.loadFailed', 'paymentMethods.noConnection', 'paymentMethods.refused', 'paymentMethods.projectFinished',
     'paymentMethods.invalidName', 'paymentMethods.new', 'paymentMethods.name', 'paymentMethods.rename', 'paymentMethods.save', 'paymentMethods.disable', 'paymentMethods.enable', 'paymentMethods.disabled',
     'paymentMethods.vatRate', 'paymentMethods.vatHint', 'paymentMethods.changeVatRate', 'paymentMethods.vatPercent',
+    'accounts.title', 'accounts.empty', 'accounts.loadFailed', 'accounts.noConnection', 'accounts.refused', 'accounts.projectFinished', 'accounts.invalidName', 'accounts.invalidOpeningBalance',
+    'accounts.custodianRequired', 'accounts.unknownCustodian', 'accounts.new', 'accounts.edit', 'accounts.save', 'accounts.type', 'accounts.typeBank', 'accounts.typeCashCustody', 'accounts.name',
+    'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
   ])
     key: '$language $key',
 };
@@ -214,6 +217,12 @@ class FakeApi {
   /// Each project's payment methods, as the API answers them.
   final paymentMethods = <String, List<Map<String, Object>>>{};
 
+  /// Each project's accounts, as the API answers them.
+  final accounts = <String, List<Map<String, Object>>>{};
+
+  /// The people of every project, as the API answers them.
+  final members = <Map<String, String>>[];
+
   /// The status and problem code the API answers to a change of a project's settings; 2xx makes the change. An empty code sends none.
   var settingsAnswer = (status: 200, code: '');
 
@@ -221,6 +230,9 @@ class FakeApi {
   final sentSettingsChanges = <(String, Map<String, dynamic>)>[];
 
   var _nextStructureId = 0;
+
+  /// How many times the app renewed its session.
+  var refreshes = 0;
 
   /// How many times the app told the API it signed out.
   var signOuts = 0;
@@ -259,6 +271,9 @@ class FakeApi {
     }
     if (path == '/auth/sign-in') {
       usesBiometrics = false;
+    }
+    if (path == '/auth/refresh') {
+      refreshes++;
     }
     if (path == '/auth/biometrics') {
       final on = (jsonDecode(request.body) as Map<String, dynamic>)['on'] as bool;
@@ -333,6 +348,74 @@ class FakeApi {
         list.singleWhere((row) => row['id'] == id)['isActive'] = true;
       case [final id]:
         list.singleWhere((row) => row['id'] == id)['name'] = body['name'] as String;
+    }
+    return _json({}, 200);
+  }
+
+  /// Adds someone to the people every project can choose among.
+  void addMember(String id, String displayName) => members.add({'id': id, 'displayName': displayName});
+
+  /// Adds an account to the project [projectId], as the API holds it.
+  Map<String, Object> addAccount(
+    String projectId,
+    String name, {
+    String type = 'bank',
+    double openingBalance = 0,
+    String custodianId = '',
+    String custodianName = '',
+    bool isMine = false,
+    bool isActive = true,
+  }) {
+    final account = <String, Object>{
+      'id': 'account-${_nextStructureId++}',
+      'type': type,
+      'name': name,
+      'openingBalance': openingBalance,
+      'balance': openingBalance,
+      'custodianId': custodianId,
+      'custodianName': custodianName,
+      'isMine': isMine,
+      'isActive': isActive,
+    };
+    accounts.putIfAbsent(projectId, () => []).add(account);
+    return account;
+  }
+
+  String _memberName(String id) => members.where((member) => member['id'] == id).map((member) => member['displayName']!).join();
+
+  http.Response _answerAccounts(http.Request request) {
+    final segments = request.url.pathSegments;
+    final list = accounts.putIfAbsent(segments[1], () => []);
+    if (request.method == 'GET') {
+      return _json(list, 200);
+    }
+    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    sentSettingsChanges.add((request.url.path, body));
+    if (settingsAnswer.status >= 300) {
+      return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
+    }
+    final custodianId = body['custodianId'] as String? ?? '';
+    switch (segments.sublist(3)) {
+      case []:
+        addAccount(
+          segments[1],
+          body['name'] as String,
+          type: body['type'] as String,
+          openingBalance: body['openingBalance'] as double,
+          custodianId: custodianId,
+          custodianName: _memberName(custodianId),
+        );
+      case [final id, 'disable']:
+        list.singleWhere((row) => row['id'] == id)['isActive'] = false;
+      case [final id, 'enable']:
+        list.singleWhere((row) => row['id'] == id)['isActive'] = true;
+      case [final id]:
+        list.singleWhere((row) => row['id'] == id)
+          ..['name'] = body['name'] as String
+          ..['openingBalance'] = body['openingBalance'] as double
+          ..['balance'] = body['openingBalance'] as double
+          ..['custodianId'] = custodianId
+          ..['custodianName'] = _memberName(custodianId);
     }
     return _json({}, 200);
   }
@@ -601,6 +684,12 @@ class FakeApi {
     }
     if (segments.length >= 3 && segments[2] == 'payment-methods') {
       return _answerPaymentMethods(request);
+    }
+    if (segments.length >= 3 && segments[2] == 'accounts') {
+      return _answerAccounts(request);
+    }
+    if (segments.length >= 3 && segments[2] == 'members') {
+      return _json(members, 200);
     }
     if (request.method == 'GET') {
       return _json(projects, 200);

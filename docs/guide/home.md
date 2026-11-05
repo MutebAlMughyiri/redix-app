@@ -17,6 +17,8 @@ The app speaks your phone's language: Arabic right to left, English left to righ
 
 If the very first start has no network, the app shows a no-network icon and a retry button. Connect, then tap retry.
 
+If you hold a custody, its balance shows at the top. See [Accounts](accounts.md).
+
 ## العربية
 
 **الغرض:** مشروع واحد: أدوارك فيه، وتاريخ بدئه، وحالته، ووحداته، وما تتيحه لك أدوارك فيه.
@@ -29,3 +31,5 @@ If the very first start has no network, the app shows a no-network icon and a re
 يتحدث التطبيق بلغة جوالك: العربية من اليمين لليسار، والإنجليزية من اليسار لليمين. وإذا كان جوالك بلغة أخرى فيتحدث العربية.
 
 إذا لم تتوفر شبكة عند أول تشغيل، تظهر أيقونة انقطاع الشبكة وزر إعادة المحاولة. اتصل بالشبكة ثم اضغط إعادة المحاولة.
+
+إن كانت لديك عهدة، يظهر رصيدها في الأعلى. انظر [الحسابات](accounts.md).

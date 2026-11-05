@@ -185,12 +185,12 @@ void main() {
     expect(text(tester, PaymentMethodsScreen.messageKey), 'en paymentMethods.loadFailed');
   });
 
-  test('a percentage shows as few decimals as it needs', () {
-    expect(formatPercent(15), '15');
-    expect(formatPercent(100), '100');
-    expect(formatPercent(7.5), '7.5');
-    expect(formatPercent(7.25), '7.25');
-    expect(formatPercent(0), '0');
+  test('a plain number shows as few decimals as it needs', () {
+    expect(formatPlain(15), '15');
+    expect(formatPlain(100), '100');
+    expect(formatPlain(7.5), '7.5');
+    expect(formatPlain(7.25), '7.25');
+    expect(formatPlain(0), '0');
   });
 
   test('a typed number reads Western and Arabic digits and thousands separators', () {

@@ -51,7 +51,7 @@ The project's home, `HomeScreen`:
 | Renaming starts from the name | `PaymentMethodRow`, `NameDialog` | `renaming starts from the name and sends the new one` |
 | A disabled method stays on the list, and Enable brings it back (AC-40.1) | `PaymentMethods.disable`, `enable` | `disabling keeps the method on the list, and enable brings it back` |
 | A refused change says why | `showRefusalOf` | `a refused disable says why` |
-| The rate shows as a percentage | `formatPercent` | `the rate shows as a percentage, with what it applies to`, `a percentage shows as few decimals as it needs` |
+| The rate shows as a percentage | `formatPlain` | `the rate shows as a percentage, with what it applies to`, `a plain number shows as few decimals as it needs` |
 | Changing the rate sends the percentage and shows the new one | `Projects.setVatPercent`, `VatRateDialog` | `changing the rate starts from it, sends the percentage and shows the new one` |
 | A number may be typed in Arabic digits, since the app is Arabic first | `parseNumber` | `a rate in Arabic digits is understood`, `a typed number reads Western and Arabic digits and thousands separators` |
 | What is not a number is refused without asking the API | `VatRateDialog` | `what is not a number is refused without asking the API` |

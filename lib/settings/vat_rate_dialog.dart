@@ -23,7 +23,7 @@ class VatRateDialog extends StatefulWidget {
 }
 
 class _VatRateDialogState extends State<VatRateDialog> {
-  late final _percent = TextEditingController(text: formatPercent(widget.project.vatPercent));
+  late final _percent = TextEditingController(text: formatPlain(widget.project.vatPercent));
 
   @override
   void dispose() {

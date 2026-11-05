@@ -50,11 +50,13 @@ void main() {
     api
       ..expiredAccessTokens.add('kept-access')
       ..refreshStatus = 200
+      ..refreshes = 0
       ..sentAccessTokens.clear();
 
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
 
-    expect(api.sentAccessTokens, ['kept-access', 'new-access']);
+    expect(api.sentAccessTokens, ['kept-access', 'new-access', 'new-access']);
+    expect(api.refreshes, 1);
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsOneWidget);
   });
 

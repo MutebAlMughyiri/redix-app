@@ -1,6 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../accounts/accounts.dart';
+import '../accounts/accounts_screen.dart';
+import '../accounts/my_custody.dart';
 import '../auth/session.dart';
 import '../projects/add_unit_dialog.dart';
 import '../projects/project.dart';
@@ -19,14 +24,17 @@ import '../words/words.dart';
 
 /// The home of the open project (UC-010): the project, with what the user's roles allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
-  /// The home of the project [projectId], one of [projects].
-  const HomeScreen({super.key, required this.projectId, required this.projects});
+  /// The home of the project [projectId], one of [projects], with [accounts], its accounts.
+  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts});
 
   /// The open project.
   final String projectId;
 
   /// The projects, among them this one.
   final Projects projects;
+
+  /// Its accounts, among them what the signed-in user holds.
+  final Accounts accounts;
 
   /// The screen's route.
   static const path = '/projects/:projectId';
@@ -97,6 +105,15 @@ class HomeScreen extends StatefulWidget {
   /// The way into the VAT rate and payment methods of the project [id].
   static Key paymentMethodsKey(String id) => Key('home.paymentMethods.$id');
 
+  /// The way into the accounts of the project [id].
+  static Key accountsKey(String id) => Key('home.accounts.$id');
+
+  /// The card of the account [id], which the signed-in user holds.
+  static Key custodyKey(String id) => Key('home.custody.$id');
+
+  /// What the account [id] holds, on that card.
+  static Key custodyBalanceKey(String id) => Key('home.custodyBalance.$id');
+
   /// The button that adds a unit to the running project [id].
   static Key addUnitKey(String id) => Key('home.addUnit.$id');
 
@@ -111,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    widget.projects.loadOnOpen();
+    unawaited(widget.projects.loadOnOpen().then((_) => widget.accounts.load()));
     widget.projects.addListener(_leaveIfGone);
   }
 
@@ -180,13 +197,20 @@ class _HomeScreenState extends State<HomeScreen> {
         list: widget.projects,
         emptyText: '',
         itemBuilder: (project) => project.id == widget.projectId
-            ? ProjectCard(
-                project: project,
-                onUsers: () => _openUsers(project),
-                onCategories: () => context.push(CategoriesScreen.pathOf(project.id), extra: project),
-                onPaymentMethods: () => context.push(PaymentMethodsScreen.pathOf(project.id), extra: project),
-                onAddUnit: () => _askForUnit(project),
-                onClose: () => _askToClose(project),
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  MyCustody(accounts: widget.accounts),
+                  ProjectCard(
+                    project: project,
+                    onUsers: () => _openUsers(project),
+                    onCategories: () => context.push(CategoriesScreen.pathOf(project.id), extra: project),
+                    onPaymentMethods: () => context.push(PaymentMethodsScreen.pathOf(project.id), extra: project),
+                    onAccounts: () => context.push(AccountsScreen.pathOf(project.id), extra: project),
+                    onAddUnit: () => _askForUnit(project),
+                    onClose: () => _askToClose(project),
+                  ),
+                ],
               )
             : const SizedBox.shrink(),
       ),

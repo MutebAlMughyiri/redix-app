@@ -104,7 +104,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('${formatPercent(project.vatPercent)}%', key: PaymentMethodsScreen.vatRateKey, style: Theme.of(context).textTheme.titleMedium),
+              Text('${formatPlain(project.vatPercent)}%', key: PaymentMethodsScreen.vatRateKey, style: Theme.of(context).textTheme.titleMedium),
               if (project.mayManageSettings)
                 IconButton(
                   key: PaymentMethodsScreen.changeVatRateKey,
