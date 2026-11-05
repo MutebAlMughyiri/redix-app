@@ -9,6 +9,9 @@ class InvoiceFigures {
 
   InvoiceFigures._(this.afterDiscount, this.vat, this.total);
 
+  /// These figures as a credit note holds them, each one negative (BR-18).
+  InvoiceFigures get negated => InvoiceFigures._(-afterDiscount, -vat, -total);
+
   /// The amount before VAT, after the discount.
   final double afterDiscount;
 

@@ -3,6 +3,14 @@ import 'package:redix/expenses/invoice_figures.dart';
 import 'package:redix/format/number_format.dart';
 
 void main() {
+  test('BR-18: a credit note shows every figure negative, in brackets', () {
+    final figures = InvoiceFigures.of(amount: 1035, includesVat: true, discount: 0, vatRate: 0.15).negated;
+
+    expect(formatMoney(figures.afterDiscount), '(900.00)');
+    expect(formatMoney(figures.vat), '(135.00)');
+    expect(formatMoney(figures.total), '(1,035.00)');
+  });
+
   test('AC-08.1: 6,000.00 including VAT shows 5,217.39, 782.61 and 6,000.00', () {
     final figures = InvoiceFigures.of(amount: 6000, includesVat: true, discount: 0, vatRate: 0.15);
 

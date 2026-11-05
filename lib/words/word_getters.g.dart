@@ -530,6 +530,21 @@ mixin WordGetters {
   /// The word `expenses.beforeVat`.
   String get expensesBeforeVat => text('expenses.beforeVat');
 
+  /// The word `expenses.creditNote`.
+  String get expensesCreditNote => text('expenses.creditNote');
+
+  /// The word `expenses.creditNoteAboveOriginal`.
+  String get expensesCreditNoteAboveOriginal => text('expenses.creditNoteAboveOriginal');
+
+  /// The word `expenses.creditNoteExplain`.
+  String get expensesCreditNoteExplain => text('expenses.creditNoteExplain');
+
+  /// The word `expenses.creditNoteNeedsInvoice`.
+  String get expensesCreditNoteNeedsInvoice => text('expenses.creditNoteNeedsInvoice');
+
+  /// The word `expenses.deductionNeedsReason`.
+  String get expensesDeductionNeedsReason => text('expenses.deductionNeedsReason');
+
   /// The word `expenses.discount`.
   String get expensesDiscount => text('expenses.discount');
 
@@ -617,6 +632,9 @@ mixin WordGetters {
   /// The word `expenses.itemNotOffered`.
   String get expensesItemNotOffered => text('expenses.itemNotOffered');
 
+  /// The word `expenses.loadFailed`.
+  String get expensesLoadFailed => text('expenses.loadFailed');
+
   /// The word `expenses.new`.
   String get expensesNew => text('expenses.new');
 
@@ -626,11 +644,20 @@ mixin WordGetters {
   /// The word `expenses.noConnection`.
   String get expensesNoConnection => text('expenses.noConnection');
 
+  /// The word `expenses.noCreditableInvoice`.
+  String get expensesNoCreditableInvoice => text('expenses.noCreditableInvoice');
+
+  /// The word `expenses.noOriginalInvoice`.
+  String get expensesNoOriginalInvoice => text('expenses.noOriginalInvoice');
+
   /// The word `expenses.notTaxable`.
   String get expensesNotTaxable => text('expenses.notTaxable');
 
   /// The word `expenses.notes`.
   String get expensesNotes => text('expenses.notes');
+
+  /// The word `expenses.originalInvoice`.
+  String get expensesOriginalInvoice => text('expenses.originalInvoice');
 
   /// The word `expenses.paymentAmount`.
   String get expensesPaymentAmount => text('expenses.paymentAmount');
@@ -677,6 +704,9 @@ mixin WordGetters {
   /// The word `expenses.requiredColumnMissing`.
   String get expensesRequiredColumnMissing => text('expenses.requiredColumnMissing');
 
+  /// The word `expenses.returnable`.
+  String get expensesReturnable => text('expenses.returnable');
+
   /// The word `expenses.saveAnyway`.
   String get expensesSaveAnyway => text('expenses.saveAnyway');
 
@@ -712,6 +742,9 @@ mixin WordGetters {
 
   /// The word `expenses.unknownColumn`.
   String get expensesUnknownColumn => text('expenses.unknownColumn');
+
+  /// The word `expenses.unknownOriginalInvoice`.
+  String get expensesUnknownOriginalInvoice => text('expenses.unknownOriginalInvoice');
 
   /// The word `expenses.unknownPaymentMethod`.
   String get expensesUnknownPaymentMethod => text('expenses.unknownPaymentMethod');

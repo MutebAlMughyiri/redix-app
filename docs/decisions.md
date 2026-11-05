@@ -6,6 +6,8 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | A deduction has no switch of its own: it is a negative amount, under Without an invoice | The issue says "enter a negative amount", and a second switch could disagree with the sign. Made without Muteb |
+| 2026-11-05 | A credit note's amount is typed as a plain amount, and shown negative in the figures | The canvas says it is recorded as negative, and a person reads an invoice's figures as printed. Made without Muteb |
 | 2026-11-05 | "Without an invoice" is a switch, as the issue says, not the canvas's button with a dialog | The issue says "turn on", the form already has switches of this kind, and a dialog would add a second place to see the reason. Made without Muteb |
 | 2026-11-05 | A reason empty blocks saving a draft too | A draft still has to say whether it has an invoice, because the API has no row without one or the other. Made without Muteb |
 | 2026-11-05 | The QR code is read from the invoice's picture, with no live scanning screen | The canvas draws it that way, one photo gives both the invoice and its code, and `mobile_scanner` reads a file with the phone's own reader. Made without Muteb; see the findings |

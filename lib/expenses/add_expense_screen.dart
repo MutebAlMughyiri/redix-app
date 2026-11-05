@@ -25,16 +25,19 @@ import '../ui/confirm_dialog.dart';
 import '../ui/picker_field.dart';
 import '../words/words.dart';
 import 'column_value_field.dart';
+import 'creditable_invoice.dart';
+import 'creditable_invoices.dart';
 import 'expenses.dart';
 import 'figures_box.dart';
 import 'invoice_figures.dart';
 import 'invoice_qr.dart';
 import 'invoice_section.dart';
+import 'original_invoice_picker.dart';
 import 'qr_summary.dart';
 
 /// A new purchase expense (UC-021, UC-022): the invoice first, then what it was for and how it was paid. The amounts below the fields only show what the API will compute. A draft can wait for the invoice and the required columns; sending cannot.
 class AddExpenseScreen extends StatefulWidget {
-  /// The screen entering an expense in [project], recorded through [expenses], picking from [items], [accounts], [paymentMethods] and [suppliers], asking what [columnsOf] an item says, and keeping the invoice through [attachments] from what [capture] gives.
+  /// The screen entering an expense in [project], recorded through [expenses], picking from [items], [accounts], [paymentMethods], [suppliers] and, for a credit note, [creditableInvoices], asking what [columnsOf] an item says, and keeping the invoice through [attachments] from what [capture] gives.
   const AddExpenseScreen({
     super.key,
     required this.project,
@@ -43,6 +46,7 @@ class AddExpenseScreen extends StatefulWidget {
     required this.accounts,
     required this.paymentMethods,
     required this.suppliers,
+    required this.creditableInvoices,
     required this.columnsOf,
     required this.attachments,
     required this.capture,
@@ -65,6 +69,9 @@ class AddExpenseScreen extends StatefulWidget {
 
   /// The register its supplier comes from.
   final Suppliers suppliers;
+
+  /// What a credit note may return.
+  final CreditableInvoices creditableInvoices;
 
   /// The columns of an item.
   final Columns Function(String itemId) columnsOf;
@@ -149,6 +156,12 @@ class AddExpenseScreen extends StatefulWidget {
 
   /// The invoice's date.
   static const invoiceDateKey = Key('addExpense.invoiceDate');
+
+  /// The switch that says this is a credit note.
+  static const creditNoteKey = Key('addExpense.creditNote');
+
+  /// The invoice a credit note returns.
+  static const originalInvoiceKey = Key('addExpense.originalInvoice');
 
   /// The product.
   static const productKey = Key('addExpense.product');
@@ -278,6 +291,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   var _isNotTaxable = false;
   var _paymentDiffers = false;
   var _withoutInvoice = false;
+  var _isCreditNote = false;
+  var _original = CreditableInvoice.none();
   var _source = AccountType.cashCustody;
   var _accountId = '';
   var _paymentMethodId = '';
@@ -344,7 +359,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     }
     final holders = search.all.where((supplier) => supplier.vatNumber == qr.vatNumber).toList();
     setState(() {
-      _supplier = holders.isEmpty ? _supplier : holders.first;
+      _useSupplier(holders.isEmpty ? _supplier : holders.first);
       _qrSupplierMissing = holders.isEmpty;
     });
   }
@@ -358,7 +373,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         typed: _qr.vatNumber,
         name: _qr.sellerName,
         onPicked: (supplier) => setState(() {
-          _supplier = supplier;
+          _useSupplier(supplier);
           _qrSupplierMissing = false;
         }),
       ),
@@ -383,10 +398,22 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     }
   }
 
+  void _useSupplier(Supplier supplier) {
+    if (supplier.id != _supplier.id) {
+      _original = CreditableInvoice.none();
+    }
+    _supplier = supplier;
+  }
+
+  void _setCreditNote(bool isCreditNote) {
+    _isCreditNote = isCreditNote;
+    _original = CreditableInvoice.none();
+  }
+
   Future<void> _pickSupplier() async {
     final picked = await SupplierPicker.show(context, widget.project, widget.suppliers);
     if (picked.id.isNotEmpty) {
-      setState(() => _supplier = picked);
+      setState(() => _useSupplier(picked));
     }
   }
 
@@ -412,18 +439,24 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     return number.isNaN ? 0 : number;
   }
 
-  bool get _hasNoVat => _isNotTaxable || _withoutInvoice || (_supplier.id.isNotEmpty && _supplier.vatNumber.isEmpty);
+  bool get _hasNoVat => _isNotTaxable || _withoutInvoice || _typed(_amount) < 0 || (_supplier.id.isNotEmpty && _supplier.vatNumber.isEmpty);
 
-  double get _vatPercent => _hasNoVat ? 0 : widget.project.vatPercent;
+  double get _vatPercent {
+    if (!_original.isNone) {
+      return _original.vatRate * 100;
+    }
+    return _hasNoVat ? 0 : widget.project.vatPercent;
+  }
 
   InvoiceFigures get _figures {
     final typed = _typed(_amount);
-    return InvoiceFigures.of(
-      amount: typed > 0 ? typed : _typed(_unitPrice) * _typed(_quantity),
-      includesVat: typed <= 0 || _amountIncludesVat,
+    final figures = InvoiceFigures.of(
+      amount: typed != 0 ? typed : _typed(_unitPrice) * _typed(_quantity),
+      includesVat: typed == 0 || _amountIncludesVat,
       discount: _typed(_discount),
       vatRate: _vatPercent / 100,
     );
+    return _isCreditNote ? figures.negated : figures;
   }
 
   List<Account> get _accountsInSource => widget.accounts.all.where((account) => account.type == _source).toList();
@@ -463,6 +496,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       'invoiceDate': _isoOf(_invoiceDate),
       if (_attachmentId.isNotEmpty) 'attachmentId': _attachmentId,
     },
+    if (_isCreditNote) 'isCreditNote': true,
+    if (!_original.isNone) 'originalEntryId': _original.entryId,
     'product': _product.text,
     'amountIncludesVat': _amountIncludesVat,
     'isNotTaxable': _isNotTaxable,
@@ -553,11 +588,11 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   String? _errorOf(String key, Words words) => _refusedColumn == key ? words.text(_message) : null;
 
-  Widget _textField(Key key, TextEditingController controller, String label, {bool isNumber = false, int maxLines = 1, String? errorText}) => TextField(
+  Widget _textField(Key key, TextEditingController controller, String label, {bool isNumber = false, bool isSigned = false, int maxLines = 1, String? errorText}) => TextField(
     key: key,
     controller: controller,
     maxLines: maxLines,
-    keyboardType: isNumber ? const TextInputType.numberWithOptions(decimal: true) : null,
+    keyboardType: isNumber ? TextInputType.numberWithOptions(decimal: true, signed: isSigned) : null,
     decoration: InputDecoration(labelText: label, border: const OutlineInputBorder(), errorText: errorText),
     onChanged: (_) => setState(() {}),
   );
@@ -637,6 +672,23 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         _textField(AddExpenseScreen.invoiceNumberKey, _invoiceNumber, words.expensesInvoiceNumber),
         PickerField(key: AddExpenseScreen.invoiceDateKey, label: words.expensesInvoiceDate, value: formatDate(_invoiceDate), onTap: () => _chooseDate(_invoiceDate, (date) => _invoiceDate = date)),
       ),
+    if (!_withoutInvoice)
+      SwitchListTile(
+        key: AddExpenseScreen.creditNoteKey,
+        contentPadding: EdgeInsets.zero,
+        title: Text(words.expensesCreditNote),
+        subtitle: Text(words.expensesCreditNoteExplain),
+        value: _isCreditNote,
+        onChanged: (isCreditNote) => setState(() => _setCreditNote(isCreditNote)),
+      ),
+    if (_isCreditNote && _supplier.id.isNotEmpty)
+      OriginalInvoicePicker(
+        key: AddExpenseScreen.originalInvoiceKey,
+        invoices: widget.creditableInvoices,
+        supplierId: _supplier.id,
+        chosen: _original,
+        onChanged: (invoice) => setState(() => _original = invoice),
+      ),
     if (_asks('product')) _textField(AddExpenseScreen.productKey, _product, _labelOf('product', words.expensesProduct), errorText: _errorOf('product', words)),
     if (_asks('unitPrice') || _asks('quantity'))
       _twoFields(
@@ -654,7 +706,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         onSelectionChanged: (selected) => setState(() => _amountIncludesVat = selected.single),
       ),
     _twoFields(
-      _textField(AddExpenseScreen.amountKey, _amount, _amountLabel(words), isNumber: true),
+      _textField(AddExpenseScreen.amountKey, _amount, _amountLabel(words), isNumber: true, isSigned: true),
       _textField(AddExpenseScreen.discountKey, _discount, words.expensesDiscount, isNumber: true),
     ),
     if (!_withoutInvoice)
@@ -666,7 +718,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         onChanged: (isNotTaxable) => setState(() => _isNotTaxable = isNotTaxable),
       ),
     FiguresBox(figures: _figures, vatPercent: _vatPercent),
-    if (!_qr.isNone && (_figures.vat - _qr.vat).abs() > InvoiceQr.vatTolerance)
+    if (!_qr.isNone && (_figures.vat.abs() - _qr.vat).abs() > InvoiceQr.vatTolerance)
       Text(words.expensesQrVatDiffers, key: AddExpenseScreen.qrVatDiffersKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
   ];
 
@@ -785,7 +837,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
             contentPadding: EdgeInsets.zero,
             title: Text(words.expensesWithoutInvoice),
             value: _withoutInvoice,
-            onChanged: (withoutInvoice) => setState(() => _withoutInvoice = withoutInvoice),
+            onChanged: (withoutInvoice) => setState(() {
+              _withoutInvoice = withoutInvoice;
+              _setCreditNote(false);
+            }),
           ),
           _section(_whatItWasFor(words)),
           if (ownFields.isNotEmpty) _section(ownFields),

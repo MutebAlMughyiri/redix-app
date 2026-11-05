@@ -15,6 +15,7 @@ import 'auth/sign_in_screen.dart';
 import 'contracts/contracts.dart';
 import 'contracts/contracts_screen.dart';
 import 'expenses/add_expense_screen.dart';
+import 'expenses/creditable_invoices.dart';
 import 'expenses/expenses.dart';
 import 'home/home_screen.dart';
 import 'partners/partners.dart';
@@ -96,6 +97,7 @@ class _RedixAppState extends State<RedixApp> {
   final _projectContracts = <String, Contracts>{};
   final _projectAttachments = <String, Attachments>{};
   final _projectExpenses = <String, Expenses>{};
+  final _projectCreditableInvoices = <String, CreditableInvoices>{};
   final _projectOfferedAccounts = <String, OfferedAccounts>{};
 
   late final _router = GoRouter(
@@ -206,6 +208,7 @@ class _RedixAppState extends State<RedixApp> {
     accounts: _projectOfferedAccounts.putIfAbsent(projectId, () => OfferedAccounts(widget.session, projectId)),
     paymentMethods: _paymentMethodsOf(projectId),
     suppliers: _suppliersOf(projectId),
+    creditableInvoices: _projectCreditableInvoices.putIfAbsent(projectId, () => CreditableInvoices(widget.session, projectId)),
     columnsOf: (itemId) => _columnsAt(Columns.itemPath(projectId, itemId)),
     attachments: _attachmentsOf(projectId),
     capture: widget.capture,

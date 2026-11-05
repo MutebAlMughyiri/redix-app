@@ -82,6 +82,8 @@ Map<String, String> wordsIn(String language) => {
     'expenses.qrUnreadable', 'expenses.qrSupplierMissing', 'expenses.qrAddSupplier', 'expenses.qrVatDiffers', 'suppliers.mostUsed',
     'expenses.duplicateInvoice', 'expenses.duplicateTitle', 'expenses.duplicateExplain', 'expenses.duplicateHidden', 'expenses.saveAnyway', 'expenses.invoiceAlreadyAttached',
     'expenses.withoutInvoice', 'expenses.withoutInvoiceReason', 'expenses.invalidWithoutInvoiceReason', 'expenses.invoiceAndReason', 'expenses.amount',
+    'expenses.creditNote', 'expenses.creditNoteExplain', 'expenses.originalInvoice', 'expenses.noOriginalInvoice', 'expenses.noCreditableInvoice', 'expenses.returnable', 'expenses.loadFailed',
+    'expenses.creditNoteAboveOriginal', 'expenses.unknownOriginalInvoice', 'expenses.creditNoteNeedsInvoice', 'expenses.deductionNeedsReason',
     'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
   ])
     key: '$language $key',
@@ -314,6 +316,9 @@ class FakeApi {
 
   /// The expenses the app sent, as their bodies.
   final sentExpenses = <Map<String, dynamic>>[];
+
+  /// What the fake API offers a credit note to return, whichever supplier is asked about.
+  final creditableInvoices = <Map<String, Object>>[];
 
   /// The status and answer the API gives an expense; 2xx records it.
   var expenseAnswer = (status: 201, body: const <String, dynamic>{});
@@ -996,6 +1001,9 @@ class FakeApi {
     }
     if (segments.length >= 3 && segments[2] == 'contracts') {
       return _answerContracts(request);
+    }
+    if (segments.length == 4 && segments[2] == 'expenses' && segments[3] == 'creditable') {
+      return _json(creditableInvoices, 200);
     }
     if (segments.length >= 3 && segments[2] == 'expenses') {
       sentExpenses.add(jsonDecode(request.body) as Map<String, dynamic>);

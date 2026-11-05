@@ -53,6 +53,9 @@ lib/
     figures_box.dart        those amounts, read-only and to two decimals
     column_value_field.dart the field of one custom column, by what it holds
     expenses.dart           Expenses: the way to record an expense, and what it was refused over
+    creditable_invoice.dart CreditableInvoice: an invoice a credit note can return, as the API answers it
+    creditable_invoices.dart  CreditableInvoices: the ApiList of one supplier's invoices to return
+    original_invoice_picker.dart  the field that links a credit note to its invoice
     earlier_entry.dart      EarlierEntry: the entry an invoice number repeats, as the API answers it
     invoice_qr.dart         InvoiceQr: what a Saudi e-invoice's QR code carries, read from its text
     qr_summary.dart         what was read from the code, and the offer to add its seller

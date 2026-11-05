@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/accounts/account.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
+import 'package:redix/expenses/original_invoice_picker.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/item_picker.dart';
@@ -578,6 +579,116 @@ void main() {
 
     expect(opened.api.sentAttachments, isEmpty);
     expect(opened.api.sentExpenses.single.containsKey('attachmentId'), isFalse);
+  });
+
+  Map<String, Object> creditable(String entryId, {double returnable = 1035, double vatRate = 0.15}) => {'entryId': entryId, 'number': 'F-$entryId', 'invoiceDate': '2026-10-01', 'returnable': returnable, 'vatRate': vatRate};
+
+  testWidgets('AC-14.2: a credit note has its own number and date, shows its figures negative and sends a plain amount', (tester) async {
+    final opened = await openExpense(tester);
+    await fill(tester, opened);
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.creditNoteKey);
+    await type(tester, AddExpenseScreen.amountKey, '320');
+
+    expect(shown(tester, AddExpenseScreen.totalKey), '(320.00)');
+    expect(shown(tester, AddExpenseScreen.vatKey), '(41.74)');
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    final sent = opened.api.sentExpenses.single;
+    expect(sent['isCreditNote'], isTrue);
+    expect(sent['amount'], 320);
+    expect(sent['invoiceNumber'], '2617');
+    expect(sent.containsKey('originalEntryId'), isFalse);
+  });
+
+  testWidgets('BR-18: linking is optional; the invoice chosen says what is left, and its rate is the one shown and its id sent', (tester) async {
+    final opened = await openExpense(tester, arrange: (api) => api.creditableInvoices.add(creditable('e1', returnable: 700, vatRate: 0.05)));
+    await fill(tester, opened);
+    await tapVisible(tester, opened.api, AddExpenseScreen.creditNoteKey);
+    await type(tester, AddExpenseScreen.amountKey, '105');
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.originalInvoiceKey);
+    expect(find.textContaining('700.00'), findsOneWidget);
+    await act(tester, opened.api, () => tester.tap(find.byKey(OriginalInvoicePicker.optionKey('e1'))));
+
+    expect(shown(tester, AddExpenseScreen.vatKey), '(5.00)');
+    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    expect(opened.api.sentExpenses.single['originalEntryId'], 'e1');
+  });
+
+  testWidgets('BR-18: choosing no invoice takes the link away, and a supplier with none says so', (tester) async {
+    final opened = await openExpense(tester);
+    await fill(tester, opened);
+    await tapVisible(tester, opened.api, AddExpenseScreen.creditNoteKey);
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.originalInvoiceKey);
+    expect(find.text('en expenses.noCreditableInvoice'), findsOneWidget);
+    await act(tester, opened.api, () => tester.tap(find.byKey(OriginalInvoicePicker.optionKey(''))));
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    expect(opened.api.sentExpenses.single.containsKey('originalEntryId'), isFalse);
+  });
+
+  testWidgets('another supplier takes the link away, because the invoice was the first one\'s', (tester) async {
+    final opened = await openExpense(tester, arrange: (api) => api.creditableInvoices.add(creditable('e1')));
+    await fill(tester, opened);
+    await tapVisible(tester, opened.api, AddExpenseScreen.creditNoteKey);
+    await tapVisible(tester, opened.api, AddExpenseScreen.originalInvoiceKey);
+    await act(tester, opened.api, () => tester.tap(find.byKey(OriginalInvoicePicker.optionKey('e1'))));
+
+    await pickSupplier(tester, opened.api, opened.cash);
+    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+
+    expect(opened.api.sentExpenses.single.containsKey('originalEntryId'), isFalse);
+  });
+
+  testWidgets('BR-18: a credit note above what is left of its invoice is blocked with a message', (tester) async {
+    final opened = await openExpense(tester, arrange: (api) => api.expenseAnswer = (status: 400, body: const {'code': 'creditNoteAboveOriginal'}));
+    await fill(tester, opened);
+    await tapVisible(tester, opened.api, AddExpenseScreen.creditNoteKey);
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+
+    expect(shown(tester, AddExpenseScreen.messageKey), 'en expenses.creditNoteAboveOriginal');
+  });
+
+  testWidgets('turning on Without an invoice ends the credit note', (tester) async {
+    final opened = await openExpense(tester, arrange: (api) => api.creditableInvoices.add(creditable('e1')));
+    await fill(tester, opened);
+    await tapVisible(tester, opened.api, AddExpenseScreen.creditNoteKey);
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.withoutInvoiceKey);
+
+    expect(find.byKey(AddExpenseScreen.creditNoteKey), findsNothing);
+    expect(find.byKey(AddExpenseScreen.originalInvoiceKey), findsNothing);
+    await type(tester, AddExpenseScreen.withoutInvoiceReasonKey, 'ضاعت الفاتورة');
+    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    expect(opened.api.sentExpenses.single.containsKey('isCreditNote'), isFalse);
+  });
+
+  testWidgets('AC-14.1: a deduction is a negative amount, typed in either digits, with no VAT, sent as it is', (tester) async {
+    final opened = await openExpense(tester);
+    await fill(tester, opened);
+    await tapVisible(tester, opened.api, AddExpenseScreen.withoutInvoiceKey);
+    await type(tester, AddExpenseScreen.withoutInvoiceReasonKey, 'خصم من المورد');
+
+    await type(tester, AddExpenseScreen.amountKey, '-١٣٦');
+
+    expect(shown(tester, AddExpenseScreen.vatKey), '0.00');
+    expect(shown(tester, AddExpenseScreen.totalKey), '(136.00)');
+    expect(tester.widget<TextField>(find.byKey(AddExpenseScreen.amountKey)).keyboardType, const TextInputType.numberWithOptions(decimal: true, signed: true));
+    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+    expect(opened.api.sentExpenses.single['amount'], -136);
+  });
+
+  testWidgets('FR-14: a negative amount with an invoice number is refused, saying what to do', (tester) async {
+    final opened = await openExpense(tester, arrange: (api) => api.expenseAnswer = (status: 400, body: const {'code': 'deductionNeedsReason'}));
+    await fill(tester, opened);
+    await type(tester, AddExpenseScreen.amountKey, '-136');
+
+    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+
+    expect(shown(tester, AddExpenseScreen.messageKey), 'en expenses.deductionNeedsReason');
   });
 
   testWidgets('who holds no recordEntries has no way in', (tester) async {
