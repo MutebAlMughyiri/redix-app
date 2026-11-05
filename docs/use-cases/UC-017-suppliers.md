@@ -70,5 +70,4 @@ The real app is run on an emulator by the journey in `patrol_test/app_test.dart`
 
 | What | Use case |
 | --- | --- |
-| Finding and picking a supplier | UC-018 "Search and pick a supplier" |
 | Adding one from the field, pending approval | UC-019 "Quick-add a supplier without leaving the expense" |

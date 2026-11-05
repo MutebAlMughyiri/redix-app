@@ -725,11 +725,17 @@ mixin WordGetters {
   /// The word `suppliers.noDefaultItem`.
   String get suppliersNoDefaultItem => text('suppliers.noDefaultItem');
 
+  /// The word `suppliers.noMatch`.
+  String get suppliersNoMatch => text('suppliers.noMatch');
+
   /// The word `suppliers.notVatRegistered`.
   String get suppliersNotVatRegistered => text('suppliers.notVatRegistered');
 
   /// The word `suppliers.pendingApproval`.
   String get suppliersPendingApproval => text('suppliers.pendingApproval');
+
+  /// The word `suppliers.pick`.
+  String get suppliersPick => text('suppliers.pick');
 
   /// The word `suppliers.projectFinished`.
   String get suppliersProjectFinished => text('suppliers.projectFinished');
@@ -739,6 +745,9 @@ mixin WordGetters {
 
   /// The word `suppliers.save`.
   String get suppliersSave => text('suppliers.save');
+
+  /// The word `suppliers.searchHint`.
+  String get suppliersSearchHint => text('suppliers.searchHint');
 
   /// The word `suppliers.title`.
   String get suppliersTitle => text('suppliers.title');

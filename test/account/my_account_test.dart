@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,6 +22,8 @@ import 'package:redix/structure/category.dart';
 import 'package:redix/structure/columns.dart';
 import 'package:redix/structure/item_columns_screen.dart';
 import 'package:redix/structure/subgroups_screen.dart';
+import 'package:redix/suppliers/supplier_picker.dart';
+import 'package:redix/suppliers/suppliers.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/users/new_user_screen.dart';
@@ -294,7 +298,7 @@ void main() {
       for (final (user, role) in [(manager, 'role-manager'), (field, 'role-field'), (disabled, 'role-reader')]) {
         api.giveRole(user, running['id'] as String, role);
       }
-      await pumpRedix(tester, api, locale: Locale(language));
+      final session = await pumpRedix(tester, api, locale: Locale(language));
       [SignInScreen.logoKey, SignInScreen.titleKey, SignInScreen.usernameKey, SignInScreen.passwordKey, SignInScreen.submitKey, SignInScreen.registerKey].forEach(expectFits);
 
       await act(tester, api, () async {
@@ -521,6 +525,9 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(SuppliersScreen.addKey)));
       [SuppliersScreen.supplierNameKey, SuppliersScreen.notVatRegisteredKey, SuppliersScreen.vatNumberKey, SuppliersScreen.mobileKey, SuppliersScreen.defaultItemKey, SuppliersScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () async => unawaited(SupplierPicker.show(tester.element(find.byType(SuppliersScreen)), Suppliers(session, runningId))));
+      [SupplierPicker.searchKey, SupplierPicker.closeKey, SupplierPicker.rowKey(supplier), SupplierPicker.detailsKey(supplier)].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(SupplierPicker.closeKey)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await tester.ensureVisible(find.byKey(HomeScreen.usersKey(runningId)));

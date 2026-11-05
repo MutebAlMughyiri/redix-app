@@ -36,6 +36,8 @@ lib/
     supplier_row.dart       one supplier, with its menu
     supplier_dialog.dart    the dialog that adds or edits a supplier
     vat_number_field.dart   the VAT number, or that there is none, and who already holds it
+    supplier_search.dart    SupplierSearch: the ApiList of what the API finds for what was typed
+    supplier_picker.dart    the sheet that picks a supplier by name or VAT number
   projects/
     project.dart            Project and Unit, as the API answers them
     projects.dart           Projects: the ApiList of projects, and its changes
@@ -119,7 +121,7 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 
 ## Data the API owns
 
-Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `ApiList` reads the list again after every answer, so its order and each status have one source. A screen with two lists reads them at once. `Projects` and `Users` extend it, and hold only their own calls; `ApiListBody` draws its states on every such screen. A dragged row is the one thing shown before the API answers: `ApiList.reorder` keeps it where it was dropped, and a refused or lost order goes back to what the API holds. A change whose answer says more than a code reads `ApiList.lastAnswer`.
+Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `ApiList` reads the list again after every answer, so its order and each status have one source. A screen with two lists reads them at once. `Projects` and `Users` extend it, and hold only their own calls; `ApiListBody` draws its states on every such screen. A dragged row is the one thing shown before the API answers: `ApiList.reorder` keeps it where it was dropped, and a refused or lost order goes back to what the API holds. A change whose answer says more than a code reads `ApiList.lastAnswer`. A list whose address follows what is asked, like a search, moves with `ApiList.pointAt`, and an answer from the old address never shows.
 
 ## Rules every part follows
 

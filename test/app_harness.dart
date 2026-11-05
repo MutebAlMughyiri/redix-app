@@ -62,6 +62,7 @@ Map<String, String> wordsIn(String language) => {
     'suppliers.title', 'suppliers.empty', 'suppliers.loadFailed', 'suppliers.noConnection', 'suppliers.refused', 'suppliers.projectFinished', 'suppliers.invalidName', 'suppliers.invalidVatNumber',
     'suppliers.invalidMobile', 'suppliers.vatNumberTaken', 'suppliers.holder', 'suppliers.unknownItem', 'suppliers.new', 'suppliers.edit', 'suppliers.save', 'suppliers.name', 'suppliers.vatNumber',
     'suppliers.notVatRegistered', 'suppliers.mobile', 'suppliers.defaultItem', 'suppliers.noDefaultItem', 'suppliers.pendingApproval', 'suppliers.disable', 'suppliers.enable', 'suppliers.disabled',
+    'suppliers.pick', 'suppliers.searchHint', 'suppliers.noMatch',
     'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
   ])
     key: '$language $key',
@@ -233,6 +234,12 @@ class FakeApi {
 
   /// The supplier the API names in a refused change of a supplier; empty names none.
   var supplierHolder = const <String, Object>{};
+
+  /// What the app asked the supplier search, in order.
+  final supplierSearches = <String>[];
+
+  /// While a search for one of these is asked, its answer waits for the completer.
+  final heldSupplierSearches = <String, Completer<void>>{};
 
   /// The people of every project, as the API answers them.
   final members = <Map<String, String>>[];
@@ -508,6 +515,19 @@ class FakeApi {
     if (request.method == 'GET') {
       return _json(list, 200);
     }
+    return _changeSuppliers(request, list);
+  }
+
+  Future<http.Response> _searchSuppliers(http.Request request) async {
+    final text = request.url.queryParameters['text']!;
+    supplierSearches.add(text);
+    await heldSupplierSearches[text]?.future;
+    bool matches(Map<String, Object> row) => (row['isActive']! as bool) && (text.length < 3 || (row['name']! as String).contains(text) || (row['vatNumber']! as String).contains(text));
+    return _json(suppliers.putIfAbsent(request.url.pathSegments[1], () => []).where(matches).toList(), 200);
+  }
+
+  http.Response _changeSuppliers(http.Request request, List<Map<String, Object>> list) {
+    final segments = request.url.pathSegments;
     final body = jsonDecode(request.body) as Map<String, dynamic>;
     sentSettingsChanges.add((request.url.path, body));
     if (settingsAnswer.status >= 300) {
@@ -777,7 +797,7 @@ class FakeApi {
     return _json({'defaultProjectId': defaultProjectId, 'openDefaultProject': openDefaultProject}, 200);
   }
 
-  http.Response _answerProjects(http.Request request) {
+  FutureOr<http.Response> _answerProjects(http.Request request) {
     final segments = request.url.pathSegments;
     if (segments.last == 'default' || segments.length == 3 && segments[1] == 'default') {
       return _answerDefault(request);
@@ -805,6 +825,9 @@ class FakeApi {
     }
     if (segments.length >= 3 && segments[2] == 'partners') {
       return _answerPartners(request);
+    }
+    if (segments.length == 4 && segments[2] == 'suppliers' && segments[3] == 'search') {
+      return _searchSuppliers(request);
     }
     if (segments.length >= 3 && segments[2] == 'suppliers') {
       return _answerSuppliers(request);

@@ -19,7 +19,7 @@ abstract class ApiList<T> extends ChangeNotifier {
   }
 
   final Session _session;
-  final String _path;
+  String _path;
   final String _wordPrefix;
   final T Function(Map<String, dynamic>) _fromJson;
 
@@ -36,6 +36,10 @@ abstract class ApiList<T> extends ChangeNotifier {
 
   /// True while the list is being read.
   bool get isLoading => _isLoading;
+
+  /// Points the list at the API [path], for a list whose address follows what is asked. What is still on its way from the old address never shows.
+  @protected
+  void pointAt(String path) => _path = path;
 
   /// What the API answered the last change, when that was a JSON object: for a change whose answer says more than a code.
   @protected
@@ -62,22 +66,29 @@ abstract class ApiList<T> extends ChangeNotifier {
 
   /// Reads the list from the API.
   Future<void> load() async {
+    final path = _path;
     _isLoading = true;
     _message = '';
     notifyListeners();
+    var all = _all;
+    var message = '';
     try {
-      final response = await _session.get(_path);
+      final response = await _session.get(path);
       if (response.statusCode == 200) {
-        _all = [for (final item in jsonOf(response) as List<dynamic>) _fromJson(item as Map<String, dynamic>)];
+        all = [for (final item in jsonOf(response) as List<dynamic>) _fromJson(item as Map<String, dynamic>)];
       } else {
-        _message = '$_wordPrefix.loadFailed';
+        message = '$_wordPrefix.loadFailed';
       }
     } on Exception catch (error) {
-      debugPrint('$_path not read: $error');
-      _message = '$_wordPrefix.loadFailed';
+      debugPrint('$path not read: $error');
+      message = '$_wordPrefix.loadFailed';
     }
-    _isLoading = false;
-    notifyListeners();
+    if (path == _path) {
+      _all = all;
+      _message = message;
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 
   /// Sends a change to the API [path] and, once it has answered, reads the list again, so what someone else changed shows as it is now.

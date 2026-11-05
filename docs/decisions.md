@@ -6,6 +6,9 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | The picker's list has no "most used" title | The canvas heads it الأكثر استخداماً, and the API cannot say so until the ledger exists, so the title would be false. Made without Muteb; see the findings |
+| 2026-11-05 | The picker sends every change of the search field, and the API alone decides what it matches | A second copy of "three letters" in the app could only drift; a stale answer is dropped by `ApiList`. Made without Muteb |
+| 2026-11-05 | `ApiList.pointAt` moves a list to another address, and `load` drops what comes back from the old one | A search is the first list whose address changes, and answers can come back out of order. Made without Muteb |
 | 2026-11-05 | The register is a screen of its own, from the project's home, for everyone with access | The canvas draws only the picker, and a supplier "pending approval" must be seen somewhere. Built from the same parts as Accounts. Made without Muteb |
 | 2026-11-05 | Not VAT-registered is a switch that hides the number | The issue calls it a flag, and a hidden field cannot send a stale number. Made without Muteb |
 | 2026-11-05 | A default item is chosen in a sheet of what a purchase is offered, from `categories/offered` | A project has dozens of items, so all of them cannot sit in a dialog, and an earlier decision found a dropdown closing again while the keyboard is up. The API owns what is on offer. Made without Muteb |
