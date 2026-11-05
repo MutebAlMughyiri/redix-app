@@ -5,6 +5,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
+import 'package:redix/structure/category.dart';
 import 'package:redix/structure/subgroups_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 
@@ -99,8 +100,7 @@ void main() {
     expect(opened.api.sentStructureChanges.last.$2, {'name': 'بند الدرج', 'type': 'both'});
 
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.addItemKey(opened.bone))));
-    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemTypeKey)));
-    await act(tester, opened.api, () => tester.tap(find.text('en categories.typeContractorPayments').last));
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemTypeKey(ItemType.contractorPayments))));
     await save(tester, opened.api, 'دفعات العظم');
 
     expect(opened.api.sentStructureChanges.last.$1, '/projects/project-0/categories/${opened.bone}/items');

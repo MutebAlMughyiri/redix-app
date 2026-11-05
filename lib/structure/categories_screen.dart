@@ -6,6 +6,7 @@ import '../ui/change_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'categories.dart';
+import 'category.dart';
 import 'category_card.dart';
 import 'name_dialog.dart';
 
@@ -35,9 +36,6 @@ class CategoriesScreen extends StatefulWidget {
   /// The name, in the dialogs that add and rename.
   static const nameKey = NameDialog.nameKey;
 
-  /// The item's type, in the Add item dialog.
-  static const itemTypeKey = Key('categories.itemType');
-
   /// The button that saves, in the dialogs that add and rename.
   static const saveKey = ChangeDialog.saveKey;
 
@@ -61,6 +59,9 @@ class CategoriesScreen extends StatefulWidget {
 
   /// Enable, in an item's menu.
   static const enableItemKey = Key('categories.enableItem');
+
+  /// The choice of [type], in the Add item dialog.
+  static Key itemTypeKey(ItemType type) => Key('categories.itemType.${type.name}');
 
   /// The card of the category [id].
   static Key cardKey(String id) => Key('categories.card.$id');

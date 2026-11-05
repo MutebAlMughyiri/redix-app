@@ -47,13 +47,16 @@ class _AddItemDialogState extends State<AddItemDialog> {
           decoration: InputDecoration(labelText: words.categoriesItemName, border: const OutlineInputBorder()),
         ),
         const SizedBox(height: 16),
-        DropdownButtonFormField<ItemType>(
-          key: CategoriesScreen.itemTypeKey,
-          initialValue: _type,
-          isExpanded: true,
-          decoration: InputDecoration(labelText: words.categoriesItemType, border: const OutlineInputBorder()),
-          items: [for (final type in ItemType.values) DropdownMenuItem(value: type, child: Text(words.text(type.wordKey)))],
+        Text(words.categoriesItemType, style: Theme.of(context).textTheme.titleSmall),
+        RadioGroup<ItemType>(
+          groupValue: _type,
           onChanged: (type) => setState(() => _type = type ?? _type),
+          child: Column(
+            children: [
+              for (final type in ItemType.values)
+                RadioListTile<ItemType>(key: CategoriesScreen.itemTypeKey(type), contentPadding: EdgeInsets.zero, value: type, title: Text(words.text(type.wordKey))),
+            ],
+          ),
         ),
       ],
     );

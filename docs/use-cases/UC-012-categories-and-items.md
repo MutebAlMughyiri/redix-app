@@ -41,7 +41,7 @@ New project, `NewProjectScreen`, signed in:
 | Columns | `CategoriesScreen.itemColumnsKey(id)` | Opens [its columns](UC-013-item-columns.md) |
 | Its menu | `CategoriesScreen.itemMenuKey(id)` | Rename `renameItemKey`, Subgroups `subgroupsKey`, Disable `disableItemKey` or Enable `enableItemKey` |
 | The name, in a dialog | `CategoriesScreen.nameKey` | |
-| The type, in Add item | `CategoriesScreen.itemTypeKey` | Purchases + contractor payments unless changed |
+| The type, in Add item | `CategoriesScreen.itemTypeKey(type)` | One choice per type, each in full; Purchases + contractor payments unless changed |
 | Save, in a dialog | `CategoriesScreen.saveKey` | |
 | Why refused, in a dialog | `CategoriesScreen.dialogMessageKey` | |
 | The list's states | `CategoriesScreen.messageKey`, `emptyKey` | Could not read; no categories |

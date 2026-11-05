@@ -368,7 +368,7 @@ void main() {
       ].forEach(expectFits);
 
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.addItemKey(boneId))));
-      [CategoriesScreen.nameKey, CategoriesScreen.itemTypeKey, CategoriesScreen.saveKey].forEach(expectFits);
+      [CategoriesScreen.nameKey, for (final type in ItemType.values) CategoriesScreen.itemTypeKey(type), CategoriesScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
 
       final columnsPath = Columns.itemPath(runningId, tilesId);

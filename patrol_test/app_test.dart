@@ -137,13 +137,15 @@ void main() {
     await $(CategoriesScreen.addCategoryKey).tap();
     await $(CategoriesScreen.nameKey).enterText('الملاحق');
     await $(CategoriesScreen.saveKey).tap();
+    await $(CategoriesScreen.addCategoryKey).waitUntilVisible();
     await $(find.text('الملاحق')).scrollTo();
 
     await $(keyStartingWith('categories.tile.')).at(5).tap();
     await $(keyStartingWith('categories.addItem.')).scrollTo().tap();
     await $(CategoriesScreen.nameKey).enterText('المظلة');
     await $(CategoriesScreen.saveKey).tap();
-    await $(find.text('المظلة')).scrollTo();
+    await $(keyStartingWith('categories.itemMenu.')).waitUntilVisible();
+    await $.pumpAndSettle();
     await $.takeNativeScreenshot('categories');
 
     await $(keyStartingWith('categories.itemMenu.')).tap();
@@ -161,6 +163,7 @@ void main() {
     await $(ItemColumnsScreen.columnNameKey).enterText('المساحة م²');
     await $(ItemColumnsScreen.requiredKey).tap();
     await $(ItemColumnsScreen.saveKey).tap();
+    await $(ItemColumnsScreen.addKey).waitUntilVisible();
     await $(find.text('المساحة م²')).scrollTo();
     await $.takeNativeScreenshot('item-columns');
     await $(keyStartingWith('columns.delete.')).last.scrollTo().tap();

@@ -6,6 +6,7 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-06 | An item's type is three choices on the dialog, not a dropdown | The emulator showed "Purchases + contractor payments" cut off in a dropdown, and with three choices all of them can simply show. Made without Muteb |
 | 2026-11-06 | Every change to the default template asks one question, in one dialog, as the change is sent | AC-41.3 and the issue ask it of a change, and a drag has no dialog of its own to hold a checkbox. Made without Muteb |
 | 2026-11-06 | The default template opens from an item, for that item's type, with no way in of its own | The canvas draws it as a tab of an item's columns; a type with no item yet has nothing to change until one is added. Made without Muteb |
 | 2026-11-06 | Adding a column is a dialog from a floating button, not a form under the list as the canvas draws | The list scrolls to 18 rows, so the form would sit far below the fold; every other screen adds this way. Made without Muteb |
