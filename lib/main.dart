@@ -17,6 +17,8 @@ import 'projects/project.dart';
 import 'settings/settings_screen.dart';
 import 'structure/categories.dart';
 import 'structure/categories_screen.dart';
+import 'structure/columns.dart';
+import 'structure/item_columns_screen.dart';
 import 'structure/subgroups_screen.dart';
 import 'users/new_user_screen.dart';
 import 'users/roles.dart';
@@ -63,6 +65,7 @@ class _RedixAppState extends State<RedixApp> {
   final _projectUsers = <String, Users>{};
   final _projectRoles = <String, Roles>{};
   final _projectCategories = <String, Categories>{};
+  final _columnLists = <String, Columns>{};
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -99,6 +102,7 @@ class _RedixAppState extends State<RedixApp> {
         path: CategoriesScreen.path,
         builder: (context, state) => CategoriesScreen(categories: _categoriesOf(state.pathParameters['projectId'] ?? ''), project: state.extra! as Project),
       ),
+      GoRoute(path: ItemColumnsScreen.path, builder: (context, state) => _itemColumnsScreen(state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? '', state.extra! as Project)),
       GoRoute(
         path: SubgroupsScreen.path,
         builder: (context, state) => SubgroupsScreen(
@@ -115,6 +119,20 @@ class _RedixAppState extends State<RedixApp> {
   Roles _rolesOf(String projectId) => _projectRoles.putIfAbsent(projectId, () => Roles(widget.session, projectId));
 
   Categories _categoriesOf(String projectId) => _projectCategories.putIfAbsent(projectId, () => Categories(widget.session, projectId));
+
+  Columns _columnsAt(String path) => _columnLists.putIfAbsent(path, () => Columns(widget.session, path));
+
+  ItemColumnsScreen _itemColumnsScreen(String projectId, String itemId, Project project) {
+    final categories = _categoriesOf(projectId);
+    final item = categories.itemOf(itemId);
+    return ItemColumnsScreen(
+      item: item,
+      categoryName: categories.categoryNameOf(itemId),
+      project: project,
+      itemColumns: _columnsAt(Columns.itemPath(projectId, itemId)),
+      defaultColumns: _columnsAt(Columns.templatePath(projectId, item.type)),
+    );
+  }
 
   String? _redirect(String location) {
     final session = widget.session;

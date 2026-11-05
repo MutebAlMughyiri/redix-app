@@ -155,6 +155,120 @@ mixin WordGetters {
   /// The word `changePassword.weakPassword`.
   String get changePasswordWeakPassword => text('changePassword.weakPassword');
 
+  /// The word `columns.applyExplain`.
+  String get columnsApplyExplain => text('columns.applyExplain');
+
+  /// The word `columns.applyQuestion`.
+  String get columnsApplyQuestion => text('columns.applyQuestion');
+
+  /// The word `columns.applyToAll`.
+  String get columnsApplyToAll => text('columns.applyToAll');
+
+  /// The word `columns.choices`.
+  String get columnsChoices => text('columns.choices');
+
+  /// The word `columns.core`.
+  String get columnsCore => text('columns.core');
+
+  /// The word `columns.coreColumn`.
+  String get columnsCoreColumn => text('columns.coreColumn');
+
+  /// The word `columns.custom`.
+  String get columnsCustom => text('columns.custom');
+
+  /// The word `columns.delete`.
+  String get columnsDelete => text('columns.delete');
+
+  /// The word `columns.deleteExplain`.
+  String get columnsDeleteExplain => text('columns.deleteExplain');
+
+  /// The word `columns.edit`.
+  String get columnsEdit => text('columns.edit');
+
+  /// The word `columns.empty`.
+  String get columnsEmpty => text('columns.empty');
+
+  /// The word `columns.hint`.
+  String get columnsHint => text('columns.hint');
+
+  /// The word `columns.inReports`.
+  String get columnsInReports => text('columns.inReports');
+
+  /// The word `columns.invalidDataType`.
+  String get columnsInvalidDataType => text('columns.invalidDataType');
+
+  /// The word `columns.invalidName`.
+  String get columnsInvalidName => text('columns.invalidName');
+
+  /// The word `columns.invalidOptions`.
+  String get columnsInvalidOptions => text('columns.invalidOptions');
+
+  /// The word `columns.invalidOrder`.
+  String get columnsInvalidOrder => text('columns.invalidOrder');
+
+  /// The word `columns.loadFailed`.
+  String get columnsLoadFailed => text('columns.loadFailed');
+
+  /// The word `columns.name`.
+  String get columnsName => text('columns.name');
+
+  /// The word `columns.new`.
+  String get columnsNew => text('columns.new');
+
+  /// The word `columns.noConnection`.
+  String get columnsNoConnection => text('columns.noConnection');
+
+  /// The word `columns.optional`.
+  String get columnsOptional => text('columns.optional');
+
+  /// The word `columns.projectFinished`.
+  String get columnsProjectFinished => text('columns.projectFinished');
+
+  /// The word `columns.refused`.
+  String get columnsRefused => text('columns.refused');
+
+  /// The word `columns.required`.
+  String get columnsRequired => text('columns.required');
+
+  /// The word `columns.save`.
+  String get columnsSave => text('columns.save');
+
+  /// The word `columns.showInReports`.
+  String get columnsShowInReports => text('columns.showInReports');
+
+  /// The word `columns.template`.
+  String get columnsTemplate => text('columns.template');
+
+  /// The word `columns.templateOnly`.
+  String get columnsTemplateOnly => text('columns.templateOnly');
+
+  /// The word `columns.thisItem`.
+  String get columnsThisItem => text('columns.thisItem');
+
+  /// The word `columns.title`.
+  String get columnsTitle => text('columns.title');
+
+  /// The word `columns.type`.
+  String get columnsType => text('columns.type');
+
+  /// The word `columns.typeAmount`.
+  String get columnsTypeAmount => text('columns.typeAmount');
+
+  /// The word `columns.typeDate`.
+  String get columnsTypeDate => text('columns.typeDate');
+
+  /// The word `columns.typeFile`.
+  String get columnsTypeFile => text('columns.typeFile');
+
+  /// The word `columns.typeList`.
+  String get columnsTypeList => text('columns.typeList');
+
+  /// The word `columns.typeNumber`.
+  String get columnsTypeNumber => text('columns.typeNumber');
+
+  /// The word `columns.typeText`.
+  String get columnsTypeText => text('columns.typeText');
+
   /// The word `common.cancel`.
   String get commonCancel => text('common.cancel');
 

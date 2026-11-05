@@ -7,10 +7,11 @@ import '../words/words.dart';
 import 'categories.dart';
 import 'categories_screen.dart';
 import 'category.dart';
+import 'item_columns_screen.dart';
 import 'name_dialog.dart';
 import 'subgroups_screen.dart';
 
-/// One item under its category: its name and type, or that it is disabled, a handle to drag it, and a menu of what can be done to it.
+/// One item under its category: its name and type, or that it is disabled, a handle to drag it, the way into its columns, and a menu of what can be done to it.
 class ItemRow extends StatelessWidget {
   /// The row of [item], at [index] of its category, in [project], changed through [categories].
   const ItemRow({super.key, required this.item, required this.index, required this.project, required this.categories});
@@ -54,8 +55,16 @@ class ItemRow extends StatelessWidget {
         style: item.isActive ? null : TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
       subtitle: Text(item.isActive ? words.text(item.type.wordKey) : words.categoriesDisabled, key: CategoriesScreen.itemDetailsKey(item.id)),
-      trailing: mayChange
-          ? PopupMenuButton<VoidCallback>(
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextButton(
+            key: CategoriesScreen.itemColumnsKey(item.id),
+            onPressed: () => context.push(ItemColumnsScreen.pathOf(project.id, item.id), extra: project),
+            child: Text(words.columnsTitle),
+          ),
+          if (mayChange)
+            PopupMenuButton<VoidCallback>(
               key: CategoriesScreen.itemMenuKey(item.id),
               onSelected: (action) => action(),
               itemBuilder: (_) => [
@@ -78,8 +87,9 @@ class ItemRow extends StatelessWidget {
                     child: Text(words.categoriesEnable),
                   ),
               ],
-            )
-          : null,
+            ),
+        ],
+      ),
     );
   }
 }

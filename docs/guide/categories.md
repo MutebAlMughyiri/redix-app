@@ -20,6 +20,7 @@ Tap a category to open it.
 | Change the order | Drag the handle beside a category or an item. It is saved as you drop it, and it is the order of the periodic report. |
 | Rename a category | Open it and tap **Rename**. |
 | Rename an item | Tap the three dots on its row, then **Rename**. |
+| Change what an item asks for | Tap **Columns** on its row. See [Item columns](item-columns.md). |
 | Stop using something | Tap **Disable**: it disappears from entry and stays in the reports, and **Enable** brings it back. Nothing is ever deleted. |
 
 An item's type says what it can be used for: **Purchases**, **Contractor payments**, or both. A purchases item is not offered when entering a contractor payment.
@@ -50,6 +51,7 @@ A subgroup splits an item, as البلاط splits into مواد and دفان, an
 | تغيّر الترتيب | اسحب المقبض بجانب التصنيف أو البند. يُحفظ عند الإفلات، وهو ترتيب التقرير الدوري. |
 | تعيد تسمية تصنيف | افتحه واضغط **إعادة تسمية**. |
 | تعيد تسمية بند | اضغط النقاط الثلاث في صفه، ثم **إعادة تسمية**. |
+| تغيّر ما يطلبه البند | اضغط **الأعمدة** في صفه. انظر [أعمدة البند](item-columns.md). |
 | توقف استخدام شيء | اضغط **تعطيل**: يختفي من الإدخال ويبقى في التقارير، و**تفعيل** يعيده. لا يُحذف شيء أبداً. |
 
 نوع البند يحدد ما يُستخدم له: **مشتريات**، أو **دفعات مقاولين**، أو الاثنان. بند المشتريات لا يظهر عند إدخال دفعة مقاول.

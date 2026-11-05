@@ -38,6 +38,7 @@ New project, `NewProjectScreen`, signed in:
 | Its handle | `CategoriesScreen.itemHandleKey(id)` | Drags it inside its category |
 | Its name | `CategoriesScreen.itemNameKey(id)` | |
 | Its type, or Disabled | `CategoriesScreen.itemDetailsKey(id)` | |
+| Columns | `CategoriesScreen.itemColumnsKey(id)` | Opens [its columns](UC-013-item-columns.md) |
 | Its menu | `CategoriesScreen.itemMenuKey(id)` | Rename `renameItemKey`, Subgroups `subgroupsKey`, Disable `disableItemKey` or Enable `enableItemKey` |
 | The name, in a dialog | `CategoriesScreen.nameKey` | |
 | The type, in Add item | `CategoriesScreen.itemTypeKey` | Purchases + contractor payments unless changed |
@@ -84,5 +85,4 @@ The real app and API run it together in `patrol_test/app_test.dart`, which takes
 
 | What | Use case |
 | --- | --- |
-| The Columns link on each item, as the canvas draws it | UC-013 |
 | AC-05.1 and AC-38.1 on the phone: the item picker at entry | The entry use cases; the API's rule and test are in now |

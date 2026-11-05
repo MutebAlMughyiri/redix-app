@@ -9,7 +9,11 @@ import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/structure/apply_to_all_dialog.dart';
 import 'package:redix/structure/categories_screen.dart';
+import 'package:redix/structure/category.dart';
+import 'package:redix/structure/columns.dart';
+import 'package:redix/structure/item_columns_screen.dart';
 import 'package:redix/structure/subgroups_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/users/new_user_screen.dart';
@@ -367,6 +371,49 @@ void main() {
       [CategoriesScreen.nameKey, CategoriesScreen.itemTypeKey, CategoriesScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
 
+      final columnsPath = Columns.itemPath(runningId, tilesId);
+      final dateColumn = api.addColumn(columnsPath, 'التاريخ', dataType: 'date', isCore: true, isRequired: true, showInReports: true)['id'] as String;
+      final areaColumn = api.addColumn(columnsPath, 'المساحة بالمتر المربع في الطابق الأرضي', dataType: 'number', isCustom: true, isRequired: true, showInReports: true)['id'] as String;
+      final templateDate = api.addColumn(Columns.templatePath(runningId, ItemType.both), 'التاريخ', dataType: 'date', isCore: true)['id'] as String;
+      expectFits(CategoriesScreen.itemColumnsKey(tilesId));
+      await tester.ensureVisible(find.byKey(CategoriesScreen.itemColumnsKey(tilesId)));
+      await tester.pumpAndSettle();
+      await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemColumnsKey(tilesId))));
+      [
+        ItemColumnsScreen.itemDetailsKey,
+        ItemColumnsScreen.templateKey,
+        ItemColumnsScreen.thisItemKey,
+        ItemColumnsScreen.hintKey,
+        ItemColumnsScreen.addKey,
+        ItemColumnsScreen.handleKey(dateColumn),
+        ItemColumnsScreen.nameKey(dateColumn),
+        ItemColumnsScreen.detailsKey(dateColumn),
+        ItemColumnsScreen.editKey(dateColumn),
+        ItemColumnsScreen.lockKey(dateColumn),
+        ItemColumnsScreen.nameKey(areaColumn),
+        ItemColumnsScreen.detailsKey(areaColumn),
+        ItemColumnsScreen.editKey(areaColumn),
+        ItemColumnsScreen.deleteKey(areaColumn),
+      ].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.addKey)));
+      [ItemColumnsScreen.columnNameKey, ItemColumnsScreen.dataTypeKey, ItemColumnsScreen.requiredKey, ItemColumnsScreen.showInReportsKey, ItemColumnsScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await tester.ensureVisible(find.byKey(ItemColumnsScreen.deleteKey(areaColumn)));
+      await tester.pumpAndSettle();
+      await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.deleteKey(areaColumn))));
+      [ItemColumnsScreen.deleteExplainKey, ItemColumnsScreen.confirmDeleteKey, ItemColumnsScreen.cancelDeleteKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.cancelDeleteKey)));
+      await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.templateKey)));
+      await tester.ensureVisible(find.byKey(ItemColumnsScreen.editKey(templateDate)));
+      await tester.pumpAndSettle();
+      await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.editKey(templateDate))));
+      await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.saveKey)));
+      [ApplyToAllDialog.explainKey, ApplyToAllDialog.applyKey, ApplyToAllDialog.templateOnlyKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(ApplyToAllDialog.templateOnlyKey)));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+      await tester.ensureVisible(find.byKey(CategoriesScreen.itemMenuKey(tilesId)));
+      await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(tilesId))));
       [CategoriesScreen.renameItemKey, CategoriesScreen.subgroupsKey, CategoriesScreen.disableItemKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.subgroupsKey)));

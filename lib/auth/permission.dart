@@ -10,6 +10,6 @@ enum Permission {
   /// Add units to a project and close it.
   manageProject,
 
-  /// Shape a project's expense structure: its categories, items and subgroups.
+  /// Shape a project's expense structure: its categories, items, subgroups and columns.
   manageStructure,
 }

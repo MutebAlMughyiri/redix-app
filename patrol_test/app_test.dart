@@ -12,6 +12,8 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
+import 'package:redix/structure/apply_to_all_dialog.dart';
+import 'package:redix/structure/item_columns_screen.dart';
 import 'package:redix/structure/subgroups_screen.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
@@ -151,6 +153,32 @@ void main() {
     await $(SubgroupsScreen.saveKey).tap();
     await $(find.text('مواد')).waitUntilVisible();
     await $.takeNativeScreenshot('subgroups');
+    await $(BackButton).tap();
+
+    await $(keyStartingWith('categories.itemColumns.')).tap();
+    await $(keyStartingWith('columns.lock.')).first.waitUntilVisible();
+    await $(ItemColumnsScreen.addKey).tap();
+    await $(ItemColumnsScreen.columnNameKey).enterText('المساحة م²');
+    await $(ItemColumnsScreen.requiredKey).tap();
+    await $(ItemColumnsScreen.saveKey).tap();
+    await $(find.text('المساحة م²')).scrollTo();
+    await $.takeNativeScreenshot('item-columns');
+    await $(keyStartingWith('columns.delete.')).last.scrollTo().tap();
+    await $(ItemColumnsScreen.confirmDeleteKey).tap();
+    await $.pumpAndSettle();
+    expect($(find.text('المساحة م²')), findsNothing);
+
+    await $(ItemColumnsScreen.templateKey).tap();
+    await $(keyStartingWith('columns.lock.')).first.waitUntilVisible();
+    await $(ItemColumnsScreen.addKey).tap();
+    await $(ItemColumnsScreen.columnNameKey).enterText('رقم أمر الشراء');
+    await $(ItemColumnsScreen.saveKey).tap();
+    await $(ApplyToAllDialog.applyKey).waitUntilVisible();
+    await $.takeNativeScreenshot('apply-to-all');
+    await $(ApplyToAllDialog.applyKey).tap();
+    await $(find.text('رقم أمر الشراء')).scrollTo();
+    await $(ItemColumnsScreen.thisItemKey).tap();
+    await $(find.text('رقم أمر الشراء')).scrollTo();
     await $(BackButton).tap();
 
     await $(keyStartingWith('categories.itemMenu.')).tap();

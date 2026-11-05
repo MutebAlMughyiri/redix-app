@@ -40,6 +40,13 @@ lib/
     name_dialog.dart        the dialog that asks for one name
     add_item_dialog.dart    the Add item dialog
     subgroups_screen.dart   an item's subgroups
+    item_column.dart        ItemColumn and ColumnDataType, as the API answers them
+    columns.dart            Columns: the ApiList of one item's columns or of a default template, and its changes
+    item_columns_screen.dart  an item's columns, or the default template for its type
+    column_row.dart         one column, with its handle and its lock or delete
+    add_column_dialog.dart  the Add column dialog
+    edit_column_dialog.dart the Edit column dialog
+    apply_to_all_dialog.dart  the question after a change to the template
   format/date_format.dart   formatDate: the app's one date format, dd.MM.yyyy
   api.dart                  the API's address and how a reply's JSON is read, shared by every feature
   auth/

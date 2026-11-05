@@ -104,6 +104,9 @@ class CategoriesScreen extends StatefulWidget {
   /// The type of the item [id], or that it is disabled.
   static Key itemDetailsKey(String id) => Key('categories.itemDetails.$id');
 
+  /// The way into the columns of the item [id].
+  static Key itemColumnsKey(String id) => Key('categories.itemColumns.$id');
+
   /// The menu of the item [id].
   static Key itemMenuKey(String id) => Key('categories.itemMenu.$id');
 

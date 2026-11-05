@@ -13,6 +13,9 @@ class Categories extends ApiList<Category> {
   /// The item [id]; none while the list is not read yet.
   Item itemOf(String id) => all.expand((category) => category.items).firstWhere((item) => item.id == id, orElse: Item.none);
 
+  /// The name of the category holding the item [id]; empty while the list is not read yet.
+  String categoryNameOf(String id) => all.where((category) => category.items.any((item) => item.id == id)).map((category) => category.name).join();
+
   /// Adds a category named [name] at the end of the list.
   Future<String> addCategory(String name) => change('/projects/$projectId/categories', {'name': name});
 

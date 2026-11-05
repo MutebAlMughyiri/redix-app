@@ -42,6 +42,11 @@ Map<String, String> wordsIn(String language) => {
     'users.temporaryPasswordHint', 'users.add', 'users.save', 'users.disableQuestion', 'users.disableExplain', 'users.resetExplain',
     'users.invalidName', 'users.invalidUsername', 'users.invalidMobile', 'users.usernameTaken', 'users.weakPassword',
     'users.noConnection', 'users.refused',
+    'columns.title', 'columns.template', 'columns.thisItem', 'columns.hint', 'columns.empty', 'columns.loadFailed', 'columns.noConnection', 'columns.refused', 'columns.projectFinished',
+    'columns.invalidName', 'columns.invalidOrder', 'columns.invalidDataType', 'columns.invalidOptions', 'columns.coreColumn', 'columns.new', 'columns.name', 'columns.type', 'columns.typeText',
+    'columns.typeNumber', 'columns.typeAmount', 'columns.typeDate', 'columns.typeList', 'columns.typeFile', 'columns.choices', 'columns.required', 'columns.optional', 'columns.showInReports',
+    'columns.inReports', 'columns.custom', 'columns.core', 'columns.edit', 'columns.delete', 'columns.save', 'columns.deleteExplain', 'columns.applyQuestion', 'columns.applyExplain',
+    'columns.applyToAll', 'columns.templateOnly',
     'categories.title', 'categories.hint', 'categories.empty', 'categories.loadFailed', 'categories.noConnection', 'categories.refused', 'categories.projectFinished',
     'categories.invalidName', 'categories.invalidOrder', 'categories.generalSubgroup', 'categories.new', 'categories.categoryName', 'categories.items', 'categories.noItems',
     'categories.addItem', 'categories.itemName', 'categories.itemType', 'categories.typePurchases', 'categories.typeContractorPayments', 'categories.typeBoth', 'categories.rename',
@@ -200,6 +205,9 @@ class FakeApi {
   /// The changes of the structure the app sent, as `path` and body.
   final sentStructureChanges = <(String, Map<String, dynamic>)>[];
 
+  /// The columns the API holds, by the address they are read at.
+  final columns = <String, List<Map<String, Object>>>{};
+
   var _nextStructureId = 0;
 
   /// How many times the app told the API it signed out.
@@ -349,6 +357,59 @@ class FakeApi {
     return _json({}, 200);
   }
 
+  /// Adds a column at the address [path], as the API holds it.
+  Map<String, Object> addColumn(String path, String name, {String dataType = 'text', bool isCore = false, bool isCustom = false, bool isRequired = false, bool showInReports = false}) {
+    final column = <String, Object>{
+      'id': 'column-${_nextStructureId++}',
+      'key': name,
+      'name': name,
+      'dataType': dataType,
+      'isCore': isCore,
+      'isCustom': isCustom,
+      'isRequired': isRequired,
+      'showInReports': showInReports,
+      'options': <String>[],
+    };
+    columns.putIfAbsent(path, () => []).add(column);
+    return column;
+  }
+
+  http.Response _answerColumns(http.Request request) {
+    final path = request.url.path;
+    final segments = request.url.pathSegments;
+    final columnsEnd = segments[2] == 'default-columns' ? 4 : 5;
+    final list = columns.putIfAbsent(segments.take(columnsEnd).map((segment) => '/$segment').join(), () => []);
+    if (request.method == 'GET') {
+      return _json(list, 200);
+    }
+    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    sentStructureChanges.add((path, body));
+    if (structureAnswer.status >= 300) {
+      return _json({if (structureAnswer.code.isNotEmpty) 'code': structureAnswer.code}, structureAnswer.status);
+    }
+    if (path.endsWith('/reorder')) {
+      final order = body['ids'] as List<dynamic>;
+      list.sort((first, second) => order.indexOf(first['id']).compareTo(order.indexOf(second['id'])));
+    } else if (path.endsWith('/delete')) {
+      list.removeWhere((column) => column['id'] == segments[columnsEnd]);
+    } else if (segments.length == columnsEnd) {
+      addColumn(
+        segments.take(columnsEnd).map((segment) => '/$segment').join(),
+        body['name'] as String,
+        dataType: body['dataType'] as String,
+        isCustom: true,
+        isRequired: body['isRequired'] as bool,
+        showInReports: body['showInReports'] as bool,
+      );
+    } else {
+      list.singleWhere((column) => column['id'] == segments[columnsEnd])
+        ..['name'] = body['name'] as String
+        ..['isRequired'] = body['isRequired'] as bool
+        ..['showInReports'] = body['showInReports'] as bool;
+    }
+    return _json({}, 200);
+  }
+
   /// Adds a user to what the API holds.
   Map<String, Object> addUser(String displayName, {required String username, String mobile = '', bool isActive = true}) {
     final user = <String, Object>{
@@ -487,6 +548,9 @@ class FakeApi {
     }
     if (segments.length >= 3 && segments[2] == 'users') {
       return _answerProjectUsers(request, segments[1]);
+    }
+    if (segments.length >= 3 && (segments[2] == 'default-columns' || segments.length >= 5 && segments[4] == 'columns')) {
+      return _answerColumns(request);
     }
     if (segments.length >= 3 && (segments[2] == 'categories' || segments[2] == 'items')) {
       return _answerStructure(request);
