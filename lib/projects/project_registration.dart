@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../api.dart';
+import '../format/number_format.dart';
 
 /// Registers a project from the sign-in page, with no session, and a new login as its manager (UC-066). Returns an empty string once sent, otherwise the word key of
 /// the refusal.
@@ -26,7 +27,7 @@ Future<String> registerProject(
         'units': units,
         'displayName': displayName,
         'username': username,
-        'mobile': mobile,
+        'mobile': westernDigits(mobile),
         'password': password,
       }),
     );

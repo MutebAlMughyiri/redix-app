@@ -1,5 +1,6 @@
 import '../api_list.dart';
 import '../auth/session.dart';
+import '../format/number_format.dart';
 import 'role.dart';
 import 'user.dart';
 
@@ -13,13 +14,13 @@ class Users extends ApiList<User> {
 
   /// Creates a login in this project, who must change [temporaryPassword] at first sign-in.
   Future<String> create(String displayName, String username, String mobile, String temporaryPassword) =>
-      change('/projects/$projectId/users', {'displayName': displayName, 'username': username, 'mobile': mobile, 'temporaryPassword': temporaryPassword});
+      change('/projects/$projectId/users', {'displayName': displayName, 'username': username, 'mobile': westernDigits(mobile), 'temporaryPassword': temporaryPassword});
 
   /// Adds someone who already has a login to this project, by their exact [username].
   Future<String> addExisting(String username) => change('/projects/$projectId/users/existing', {'username': username});
 
   /// Changes the name and mobile of [user].
-  Future<String> edit(User user, String displayName, String mobile) => change('/users/${user.id}', {'displayName': displayName, 'mobile': mobile});
+  Future<String> edit(User user, String displayName, String mobile) => change('/users/${user.id}', {'displayName': displayName, 'mobile': westernDigits(mobile)});
 
   /// Sets a new temporary password for [user], who is signed out everywhere.
   Future<String> resetPassword(User user, String temporaryPassword) =>

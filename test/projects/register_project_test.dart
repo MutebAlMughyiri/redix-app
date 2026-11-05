@@ -16,18 +16,26 @@ void main() {
     return api;
   }
 
-  Future<void> fillAndSend(WidgetTester tester, FakeApi api) => act(tester, api, () async {
+  Future<void> fillAndSend(WidgetTester tester, FakeApi api, {String mobile = '0500000000'}) => act(tester, api, () async {
     await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 8');
     await tester.enterText(find.byKey(NewProjectScreen.unitNameKey), 'الفلة الغربية');
     await tester.enterText(find.byKey(NewProjectScreen.managerNameKey), 'ريم');
     await tester.enterText(find.byKey(NewProjectScreen.usernameKey), 'reem');
-    await tester.enterText(find.byKey(NewProjectScreen.mobileKey), '0500000000');
+    await tester.enterText(find.byKey(NewProjectScreen.mobileKey), mobile);
     await tester.enterText(find.byKey(NewProjectScreen.passwordKey), 'Chosen-pass-1');
     await tester.ensureVisible(find.byKey(NewProjectScreen.submitKey));
     await tester.tap(find.byKey(NewProjectScreen.submitKey));
   });
 
   String typed(WidgetTester tester, Key key) => tester.widget<TextField>(find.byKey(key)).controller!.text;
+
+  testWidgets('a mobile typed in Arabic digits is sent in Western digits', (tester) async {
+    final api = await openForm(tester);
+
+    await fillAndSend(tester, api, mobile: '٠٥٠٠٠٠٠٠٠٠');
+
+    expect(api.sentRegistrations.single.$2['mobile'], '0500000000');
+  });
 
   testWidgets('the sign-in page leads to the form, with no session', (tester) async {
     await openForm(tester);

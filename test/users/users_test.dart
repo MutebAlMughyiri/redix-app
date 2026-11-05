@@ -110,6 +110,18 @@ void main() {
     expect(find.text('en users.otherProject'), findsOneWidget);
   });
 
+  testWidgets('Edit sends a mobile typed in Arabic digits in Western digits', (tester) async {
+    final api = await openProjectUsers(tester);
+
+    await choose(tester, api, 'user-1', UsersScreen.editKey);
+    await act(tester, api, () async {
+      await tester.enterText(find.byKey(UsersScreen.editMobileKey), '٠٥٠٠٠٠٠٠٠١');
+      await tester.tap(find.byKey(UsersScreen.saveKey));
+    });
+
+    expect(api.sentUserChanges.single.$2['mobile'], '0500000001');
+  });
+
   testWidgets('Edit starts from the current name and mobile, and the row shows the change', (tester) async {
     final api = await openProjectUsers(tester);
 

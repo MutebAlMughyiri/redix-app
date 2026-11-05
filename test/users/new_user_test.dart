@@ -41,6 +41,21 @@ void main() {
     expect(tester.widget<Text>(find.byKey(UsersScreen.nameKey('user-1'))).data, 'نواف');
   });
 
+  testWidgets('a mobile typed in Arabic digits is sent in Western digits', (tester) async {
+    final api = await openForm(tester);
+
+    await act(tester, api, () async {
+      await tester.enterText(find.byKey(NewUserScreen.nameKey), 'نواف');
+      await tester.enterText(find.byKey(NewUserScreen.usernameKey), 'nawaf');
+      await tester.enterText(find.byKey(NewUserScreen.mobileKey), '٠٥٠٠٠٠٠٠٠٠');
+      await tester.enterText(find.byKey(NewUserScreen.passwordKey), 'Temporary-1');
+      await tester.ensureVisible(find.byKey(NewUserScreen.submitKey));
+      await tester.tap(find.byKey(NewUserScreen.submitKey));
+    });
+
+    expect(api.sentUserChanges.single.$2['mobile'], '0500000000');
+  });
+
   testWidgets('the temporary password shows as typed, so the project manager can pass it on', (tester) async {
     await openForm(tester);
 
