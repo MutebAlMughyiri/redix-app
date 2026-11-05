@@ -12,11 +12,11 @@
 | Where | Shows | When |
 | --- | --- | --- |
 | Projects | Only the projects with access, each with the person's roles | Always |
-| Projects | New project | The session says `startProject` |
+| Projects | Register new project | Always |
 | A project's card | Users | The project says `manageUsers` |
 | A project's card | Add unit, Close project | The project says `manageProject` |
 | Settings | Projects, My account | Always |
-| Settings | Users, every login | The session says `manageLogins` |
+| Settings | Registered projects | The session says `approveProjects` |
 | A project's Users | New user, Add an existing user; a menu on each row | Always, on this screen |
 | Roles | A tick for each project role, as the API lists them | Always, on this screen |
 
@@ -26,11 +26,11 @@ A new person starts at the last project role the API lists. The app names no rol
 
 | Rule | Test |
 | --- | --- |
-| New project shows only with `startProject` | `projects_test.dart` |
+| Anyone signed in can register a project | `projects_test.dart` |
 | Users on a card shows only with `manageUsers` | `projects_test.dart` |
 | Add unit and Close show only with `manageProject` | `projects_test.dart` |
 | A project's roles show under its name | `projects_test.dart` |
-| Settings shows every login only with `manageLogins` | `settings_test.dart` |
+| Settings shows Registered projects only with `approveProjects` | `settings_test.dart` |
 | A project's Users lists only its people | `project_users_test.dart` |
 | An existing user is added by username, and an unknown one says so | `project_users_test.dart` |
 | Roles come from the API, a new one included | `user_roles_test.dart` |

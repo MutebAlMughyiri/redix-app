@@ -3,12 +3,12 @@
 # Projects · المشاريع
 
 <img src="images/projects.png" alt="The projects" width="300"> <img src="images/projects-arabic.png" alt="المشاريع بالعربية" width="300">
-<img src="images/new-project.png" alt="A new project" width="300"> <img src="images/close-project.png" alt="The question before closing" width="300">
+<img src="images/register-project.png" alt="Registering a project" width="300"> <img src="images/close-project.png" alt="The question before closing" width="300">
 
 ## English
 
 **What it is for:** starting a project with its units, and closing it when it is finished.
-**Who sees it:** everyone, with the projects they have a role in. Open it from **Settings**, then **Projects**. It needs a network. Under each name are your roles in that project, and its buttons follow them: the system admin starts a project and becomes its project manager; a financial supervisor adds units and closes it; a project manager opens its **Users**.
+**Who sees it:** everyone, with the projects they have a role in. Open it from **Settings**, then **Projects**. It needs a network. Under each name are your roles in that project, and its buttons follow them: whoever registers a project becomes its project manager; a financial supervisor adds units and closes it; a project manager opens its **Users**. A project [waits for approval](register-a-project.md) before any of this works.
 
 **Create a project**
 
@@ -38,7 +38,7 @@ A closed project shows **Finished** and **Read-only**, stays in the list, and ca
 ## العربية
 
 **الغرض:** بدء مشروع بوحداته، وإغلاقه عند انتهائه.
-**من يراها:** الجميع، كلٌّ بالمشاريع التي له دور فيها. افتحها من **الإعدادات** ثم **المشاريع**. تحتاج إلى شبكة. تحت كل اسم أدوارك في المشروع، وأزراره تتبعها: مسؤول النظام ينشئ المشروع ويصبح مديره، والمشرف المالي يضيف الوحدات ويغلقه، ومدير المشروع يفتح **المستخدمون**.
+**من يراها:** الجميع، كلٌّ بالمشاريع التي له دور فيها. افتحها من **الإعدادات** ثم **المشاريع**. تحتاج إلى شبكة. تحت كل اسم أدوارك في المشروع، وأزراره تتبعها: من يسجّل المشروع يصبح مديره، والمشرف المالي يضيف الوحدات ويغلقه، ومدير المشروع يفتح **المستخدمون**. ولا يعمل ذلك قبل [اعتماد المشروع](register-a-project.md).
 
 **إنشاء مشروع**
 

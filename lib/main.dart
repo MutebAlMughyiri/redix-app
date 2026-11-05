@@ -11,6 +11,8 @@ import 'home/home_screen.dart';
 import 'projects/new_project_screen.dart';
 import 'projects/projects.dart';
 import 'projects/projects_screen.dart';
+import 'projects/registered_projects.dart';
+import 'projects/registered_projects_screen.dart';
 import 'settings/settings_screen.dart';
 import 'users/new_user_screen.dart';
 import 'users/roles.dart';
@@ -53,7 +55,7 @@ class RedixApp extends StatefulWidget {
 class _RedixAppState extends State<RedixApp> {
   var _wordsAttempt = 0;
   late final _projects = Projects(widget.session);
-  late final _users = Users(widget.session);
+  late final _registered = RegisteredProjects(widget.session);
   final _projectUsers = <String, Users>{};
   final _projectRoles = <String, Roles>{};
 
@@ -66,11 +68,12 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
       GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(language: widget.language, session: widget.session)),
       GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session)),
-      GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects, session: widget.session)),
+      GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects)),
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
-      GoRoute(path: UsersScreen.path, builder: (context, state) => UsersScreen(users: _users)),
+      GoRoute(path: NewProjectScreen.registerPath, builder: (context, state) => NewProjectScreen(projects: _projects, isPublic: true)),
+      GoRoute(path: RegisteredProjectsScreen.path, builder: (context, state) => RegisteredProjectsScreen(projects: _registered)),
       GoRoute(
-        path: UsersScreen.projectPath,
+        path: UsersScreen.path,
         builder: (context, state) => UsersScreen(users: _usersOf(state.pathParameters['projectId'] ?? ''), projectName: state.extra as String? ?? ''),
       ),
       GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _usersOf(state.pathParameters['projectId'] ?? ''))),
@@ -86,14 +89,14 @@ class _RedixAppState extends State<RedixApp> {
     ],
   );
 
-  Users _usersOf(String projectId) => _projectUsers.putIfAbsent(projectId, () => Users(widget.session, projectId: projectId));
+  Users _usersOf(String projectId) => _projectUsers.putIfAbsent(projectId, () => Users(widget.session, projectId));
 
   Roles _rolesOf(String projectId) => _projectRoles.putIfAbsent(projectId, () => Roles(widget.session, projectId));
 
   String? _redirect(String location) {
     final session = widget.session;
     if (!session.isOpen) {
-      return location == SignInScreen.path ? null : SignInScreen.path;
+      return location == SignInScreen.path || location == NewProjectScreen.registerPath ? null : SignInScreen.path;
     }
     if (session.mustChangePassword) {
       return location == ChangePasswordScreen.path ? null : ChangePasswordScreen.path;
@@ -105,7 +108,7 @@ class _RedixAppState extends State<RedixApp> {
   void dispose() {
     _router.dispose();
     _projects.dispose();
-    _users.dispose();
+    _registered.dispose();
     super.dispose();
   }
 

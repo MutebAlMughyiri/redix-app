@@ -13,7 +13,6 @@ void main() {
       tester.widget<Text>(find.descendant(of: find.byKey(ProjectsScreen.statusKey(id)), matching: find.byType(Text))).data!;
 
   Future<void> openProjects(WidgetTester tester, FakeApi api) async {
-    api.permissions = systemAdmin;
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
@@ -197,10 +196,29 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
   }
 
-  testWidgets('New project shows only with startProject', (tester) async {
-    await openAsAnyone(tester, FakeApi()..addProject('غصون 6'));
+  testWidgets('anyone signed in can register a project', (tester) async {
+    await openAsAnyone(tester, FakeApi());
 
-    expect(find.byKey(ProjectsScreen.newProjectKey), findsNothing);
+    expect(find.byKey(ProjectsScreen.newProjectKey), findsOneWidget);
+  });
+
+  testWidgets('a project waiting for approval says so, and offers nothing', (tester) async {
+    final api = FakeApi()..addProject('غصون 8', status: 'pendingApproval', roles: ['users.roleManager'], permissions: []);
+    await openAsAnyone(tester, api);
+
+    expect(status(tester, 'project-0'), 'en projects.pending');
+    expect(find.byKey(ProjectsScreen.usersKey('project-0')), findsNothing);
+    expect(find.byKey(ProjectsScreen.addUnitKey('project-0')), findsNothing);
+    expect(find.byKey(ProjectsScreen.closeKey('project-0')), findsNothing);
+  });
+
+  testWidgets('a rejected project says why, and offers nothing', (tester) async {
+    final api = FakeApi()..addProject('غصون 9', status: 'rejected', rejectionReason: 'الاسم مكرر', roles: ['users.roleManager'], permissions: []);
+    await openAsAnyone(tester, api);
+
+    expect(status(tester, 'project-0'), 'en projects.rejected');
+    expect(text(tester, ProjectsScreen.reasonKey('project-0')), 'الاسم مكرر');
+    expect(find.byKey(ProjectsScreen.usersKey('project-0')), findsNothing);
   });
 
   testWidgets('each project says what the user is in it', (tester) async {

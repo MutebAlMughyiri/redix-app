@@ -3,7 +3,7 @@
 # UC-006: Manage projects and units
 
 **What it is for:** creating a project with its units, adding a unit later, and closing a finished project (FR-04).
-**Who uses it:** the system admin starts a project; its financial supervisors add units and close it; everyone with a role in it reads it (UC-009).
+**Who uses it:** whoever registers a project becomes its manager (UC-066); its financial supervisors add units and close it; everyone with a role in it reads it (UC-009).
 **Issue:** redix-app #26; the API side is redix-api #24.
 
 ## Screens

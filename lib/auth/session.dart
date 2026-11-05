@@ -31,7 +31,7 @@ class Session extends ChangeNotifier {
   /// True while the password is a temporary one that must be changed before anything else (UC-003).
   bool get mustChangePassword => _mustChangePassword;
 
-/// Whether the user holds [permission] everywhere; what they hold in a project comes with the project.
+  /// Whether the user holds [permission] everywhere; what they hold in a project comes with the project.
   bool may(Permission permission) => _permissions.contains(permission.name);
 
   /// The word key of why the last session ended, for the sign-in screen; empty when there is nothing to say.

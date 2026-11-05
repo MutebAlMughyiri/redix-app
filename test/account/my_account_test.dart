@@ -7,6 +7,7 @@ import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
+import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/users/new_user_screen.dart';
@@ -165,7 +166,7 @@ void main() {
   });
 
   testWidgets('the next user signs in as themselves', (tester) async {
-    final api = FakeApi()..permissions = systemAdmin;
+    final api = FakeApi()..permissions = admin;
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await openMyAccount(tester, api);
     await signOut(tester, api);
@@ -178,7 +179,7 @@ void main() {
     });
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
 
-    expect(find.byKey(SettingsScreen.usersKey), findsNothing);
+    expect(find.byKey(SettingsScreen.registeredKey), findsNothing);
     expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
   });
 
@@ -196,7 +197,7 @@ void main() {
 
       final api = FakeApi()
         ..mustChangePassword = true
-        ..permissions = systemAdmin;
+        ..permissions = admin;
       final running = api.addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الجنوبية']);
       final finished = api.addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
       final manager = api.addUser('متعب', username: 'muteb');
@@ -206,7 +207,7 @@ void main() {
         api.giveRole(user, running['id'] as String, role);
       }
       await pumpRedix(tester, api, locale: Locale(language));
-      [SignInScreen.logoKey, SignInScreen.titleKey, SignInScreen.usernameKey, SignInScreen.passwordKey, SignInScreen.submitKey].forEach(expectFits);
+      [SignInScreen.logoKey, SignInScreen.titleKey, SignInScreen.usernameKey, SignInScreen.passwordKey, SignInScreen.submitKey, SignInScreen.registerKey].forEach(expectFits);
 
       await act(tester, api, () async {
         await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
@@ -259,7 +260,7 @@ void main() {
         UsersScreen.nameKey('user-0'),
         UsersScreen.menuKey('user-0'),
         UsersScreen.detailsKey('user-1'),
-        UsersScreen.projectsLineKey('user-1'),
+        UsersScreen.rolesLineKey('user-1'),
         UsersScreen.menuKey('user-1'),
         UsersScreen.statusKey('user-2'),
       ].forEach(expectFits);
@@ -294,8 +295,17 @@ void main() {
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
-      [UsersScreen.nameKey('user-0'), UsersScreen.menuKey('user-0'), UsersScreen.projectsLineKey('user-1'), UsersScreen.statusKey('user-2')].forEach(expectFits);
+      api.addRegistered('غصون 8');
+      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.registeredKey)));
+      [
+        RegisteredProjectsScreen.detailsKey('registered-0'),
+        RegisteredProjectsScreen.managerKey('registered-0'),
+        RegisteredProjectsScreen.approveKey('registered-0'),
+        RegisteredProjectsScreen.rejectKey('registered-0'),
+      ].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(RegisteredProjectsScreen.rejectKey('registered-0'))));
+      [RegisteredProjectsScreen.reasonKey, RegisteredProjectsScreen.saveKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));

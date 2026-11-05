@@ -3,14 +3,14 @@
 # Users · المستخدمون
 
 <img src="images/users.png" alt="The users" width="300"> <img src="images/users-arabic.png" alt="المستخدمون بالعربية" width="300">
-<img src="images/new-user.png" alt="A new user" width="300"> <img src="images/user-roles.png" alt="A person's roles in a project" width="300"> <img src="images/all-users.png" alt="Every login" width="300">
+<img src="images/new-user.png" alt="A new user" width="300"> <img src="images/user-roles.png" alt="A person's roles in a project" width="300">
 
 ## English
 
 **What it is for:** adding the people of a project, giving their roles, and looking after their accounts.
-**Who sees it:** each project's project manager, from **Users** on the project's card; the system admin sees every login from **Settings**, then **Users**. It needs a network.
+**Who sees it:** each project's project manager, from **Users** on the project's card. It needs a network.
 
-Each project has its own project manager, who manages its users and roles. Open **Users** on the project's card. Add a new user, or add someone who already has a login by their exact username. To change what someone does, open their menu, choose **Roles** and tick what applies; someone can hold more than one. A project needs at least one project manager, and a manager changes the project itself only if also given Finance. If a person also works in another project, the system admin resets their password or disables them.
+Each project has its own project manager, who manages its users and roles. Open **Users** on the project's card. Add a new user, or add someone who already has a login by their exact username. To change what someone does, open their menu, choose **Roles** and tick what applies; someone can hold more than one. A project needs at least one project manager, and a manager changes the project itself only if also given Finance. If a person also works in a project you do not manage, you cannot reset their password or disable them, but you can take their roles here. If a project's only manager forgets their password, nobody in the app can reset it, so keep a second manager.
 
 **Add a user**
 
@@ -39,7 +39,7 @@ Each project has its own project manager, who manages its users and roles. Open 
 | Enter a mobile of up to 20 characters. | The mobile is too long. |
 | Use at least 8 characters. | The temporary password is too short. |
 | A project needs at least one project manager. | Make someone else a manager first. |
-| This person also works in another project, so the system admin does this. | Only the system admin can change a login shared with a project you do not manage. |
+| This person also works in another project, so this cannot be changed here. | A login shared with a project you do not manage cannot be changed from yours. |
 | No user has this username. | Check the exact username with them. |
 | Could not load the users. Check the network and try again. | The phone cannot reach REDIX; tap **Try again**. |
 | No connection to the server. Try again. | The phone cannot reach REDIX; nothing was changed. |
@@ -48,9 +48,9 @@ Each project has its own project manager, who manages its users and roles. Open 
 ## العربية
 
 **الغرض:** إنشاء حسابات مستخدمي REDIX والعناية بها.
-**من يراها:** مدير كل مشروع، من **المستخدمون** في بطاقة المشروع؛ ويرى مسؤول النظام كل الحسابات من **الإعدادات** ثم **المستخدمون**. تحتاج إلى شبكة.
+**من يراها:** مدير كل مشروع، من **المستخدمون** في بطاقة المشروع. تحتاج إلى شبكة.
 
-لكل مشروع مدير مشروع خاص به يدير مستخدميه وأدوارهم. افتح **المستخدمون** من بطاقة المشروع. أضف مستخدماً جديداً، أو من له حساب باسم مستخدمه بالضبط. لتغيير ما يقوم به شخص، افتح قائمته واختر **الأدوار** وحدد ما ينطبق؛ ويمكن أن يجمع أكثر من دور. يحتاج المشروع إلى مدير مشروع واحد على الأقل، ولا يغيّر المدير المشروع نفسه إلا إذا أُسند إليه دور «مالي». وإذا كان الشخص يعمل في مشروع آخر أيضاً، فمسؤول النظام هو من يعيد تعيين كلمة مروره أو يعطّله.
+لكل مشروع مدير مشروع خاص به يدير مستخدميه وأدوارهم. افتح **المستخدمون** من بطاقة المشروع. أضف مستخدماً جديداً، أو من له حساب باسم مستخدمه بالضبط. لتغيير ما يقوم به شخص، افتح قائمته واختر **الأدوار** وحدد ما ينطبق؛ ويمكن أن يجمع أكثر من دور. يحتاج المشروع إلى مدير مشروع واحد على الأقل، ولا يغيّر المدير المشروع نفسه إلا إذا أُسند إليه دور «مالي». وإذا كان الشخص يعمل في مشروع لا تديره، فلا يمكنك إعادة تعيين كلمة مروره أو تعطيله، لكن يمكنك إلغاء أدواره هنا. وإذا نسي مدير المشروع الوحيد كلمة مروره فلا أحد في التطبيق يستطيع إعادة تعيينها، فاحرص على مدير ثانٍ.
 
 **إضافة مستخدم**
 
@@ -79,7 +79,7 @@ Each project has its own project manager, who manages its users and roles. Open 
 | اكتب رقم جوال من 20 حرفاً على الأكثر. | رقم الجوال طويل. |
 | استخدم 8 أحرف على الأقل. | كلمة المرور المؤقتة قصيرة. |
 | يحتاج المشروع إلى مدير مشروع واحد على الأقل. | اجعل شخصاً آخر مديراً أولاً. |
-| يعمل هذا الشخص في مشروع آخر أيضاً، لذا يتولى ذلك مسؤول النظام. | وحده مسؤول النظام يغيّر حساباً مشتركاً مع مشروع لا تديره. |
+| يعمل هذا الشخص في مشروع آخر أيضاً، لذا لا يمكن تغيير ذلك من هنا. | لا يمكن تغيير حساب مشترك مع مشروع لا تديره من مشروعك. |
 | لا يوجد مستخدم بهذا الاسم. | تأكد منه من اسم المستخدم بالضبط. |
 | تعذّر تحميل المستخدمين. تحقق من الشبكة وحاول مرة أخرى. | لا يصل الجوال إلى REDIX؛ اضغط **حاول مرة أخرى**. |
 | لا يوجد اتصال بالخادم. حاول مرة أخرى. | لا يصل الجوال إلى REDIX؛ لم يتغير شيء. |

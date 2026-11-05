@@ -44,8 +44,8 @@ void main() {
     await openProjectUsers(tester);
 
     expect(find.text('en users.title · غصون 6'), findsOneWidget);
-    expect(text(tester, UsersScreen.projectsLineKey('user-0')), 'en users.roleManager · en users.roleFinance');
-    expect(text(tester, UsersScreen.projectsLineKey('user-1')), 'en users.roleField');
+    expect(text(tester, UsersScreen.rolesLineKey('user-0')), 'en users.roleManager · en users.roleFinance');
+    expect(text(tester, UsersScreen.rolesLineKey('user-1')), 'en users.roleField');
   });
 
   testWidgets('every row has the whole menu, a manager included', (tester) async {
@@ -174,7 +174,7 @@ void main() {
     expect(api.sentUserChanges.single.$1, '/projects/project-0/users/existing');
     expect(api.sentUserChanges.single.$2, {'username': 'reem'});
     expect(find.byKey(UsersScreen.saveKey), findsNothing);
-    expect(text(tester, UsersScreen.projectsLineKey('user-3')), 'en users.roleReader');
+    expect(text(tester, UsersScreen.rolesLineKey('user-3')), 'en users.roleReader');
   });
 
   testWidgets('an unknown username stays in the dialog and says so', (tester) async {
@@ -190,35 +190,15 @@ void main() {
     expect(text(tester, UsersScreen.dialogMessageKey), 'en users.unknownUser');
   });
 
-  testWidgets('every login, for the system admin, says each person\'s projects and roles and offers no Roles', (tester) async {
-    final api = FakeApi()
-      ..permissions = systemAdmin
-      ..addProject('غصون 6');
-    final user = api.addUser('نواف', username: 'nawaf');
-    api
-      ..addUser('سالم', username: 'salem')
-      ..giveRole(user, 'project-0', 'role-field');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
-
-    expect(text(tester, UsersScreen.projectsLineKey('user-0')), 'en users.roleField · غصون 6');
-    expect(text(tester, UsersScreen.projectsLineKey('user-1')), 'en users.noProjects');
-
-    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-0'))));
-    expect(find.byKey(UsersScreen.rolesKey), findsNothing);
-    expect(find.byKey(UsersScreen.resetPasswordKey), findsOneWidget);
-  });
-
   testWidgets('without a network the list says so, and Try again reads it', (tester) async {
-    final api = FakeApi()
-      ..permissions = systemAdmin
-      ..addUser('متعب', username: 'muteb');
+    final api = FakeApi()..addProject('غصون 6');
+    api.giveRole(api.addUser('متعب', username: 'muteb'), 'project-0', 'role-manager');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectsKey)));
 
     api.online = false;
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.usersKey('project-0'))));
     expect(text(tester, UsersScreen.messageKey), 'en users.loadFailed');
 
     api.online = true;

@@ -2,16 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../format/date_format.dart';
+import '../auth/sign_in_screen.dart';
 import '../words/words.dart';
+import 'project_registration.dart';
 import 'projects.dart';
 
-/// The new project form (UC-006): its name, its start date and its units, sent to the API at once.
+/// The form that registers a project (UC-006, UC-066): its name, its start date and its units. From the sign-in page it also takes the details of the manager, who has
+/// no login yet. Either way the project waits for the admin.
 class NewProjectScreen extends StatefulWidget {
-  /// The form, adding to [projects].
-  const NewProjectScreen({super.key, required this.projects});
+  /// The form, adding to [projects]; [isPublic] when the sign-in page opens it.
+  const NewProjectScreen({super.key, required this.projects, this.isPublic = false});
 
   /// The projects the new one joins.
   final Projects projects;
+
+  /// True on the sign-in page's form, which also takes the manager's details.
+  final bool isPublic;
+
+  /// The route of the sign-in page's form, open with no session.
+  static const registerPath = '/register';
+
+  /// What happens next.
+  static const hintKey = Key('newProject.hint');
+
+  /// The manager's name, on the sign-in page's form.
+  static const managerNameKey = Key('newProject.managerName');
+
+  /// The manager's username, on the sign-in page's form.
+  static const usernameKey = Key('newProject.username');
+
+  /// The manager's mobile, on the sign-in page's form.
+  static const mobileKey = Key('newProject.mobile');
+
+  /// The manager's password, on the sign-in page's form.
+  static const passwordKey = Key('newProject.password');
 
   /// The screen's route.
   static const path = '/projects/new';
@@ -28,7 +52,7 @@ class NewProjectScreen extends StatefulWidget {
   /// The button that adds the unit to the list.
   static const addUnitKey = Key('newProject.addUnit');
 
-  /// The button that creates the project.
+  /// The button that sends the project for approval.
   static const submitKey = Key('newProject.submit');
 
   /// The line that says why the project was refused.
@@ -47,6 +71,10 @@ class NewProjectScreen extends StatefulWidget {
 class _NewProjectScreenState extends State<NewProjectScreen> {
   final _name = TextEditingController();
   final _unitName = TextEditingController();
+  final _managerName = TextEditingController();
+  final _username = TextEditingController();
+  final _mobile = TextEditingController();
+  final _password = TextEditingController();
   final _units = <String>[];
   var _startDate = DateUtils.dateOnly(DateTime.now());
   var _message = '';
@@ -56,6 +84,10 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   void dispose() {
     _name.dispose();
     _unitName.dispose();
+    _managerName.dispose();
+    _username.dispose();
+    _mobile.dispose();
+    _password.dispose();
     super.dispose();
   }
 
@@ -73,17 +105,30 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
     });
   }
 
+  Future<String> _send(List<String> units) => widget.isPublic
+      ? registerProject(_name.text, _startDate, units, displayName: _managerName.text, username: _username.text, mobile: _mobile.text, password: _password.text)
+      : widget.projects.create(_name.text, _startDate, units);
+
+  void _leave() {
+    if (!widget.isPublic) {
+      context.pop();
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(Words.of(context).registerSent)));
+    context.go(SignInScreen.path);
+  }
+
   Future<void> _create() async {
     setState(() {
       _saving = true;
       _message = '';
     });
-    final refusal = await widget.projects.create(_name.text, _startDate, [..._units, if (_unitName.text.trim().isNotEmpty) _unitName.text]);
+    final refusal = await _send([..._units, if (_unitName.text.trim().isNotEmpty) _unitName.text]);
     if (!mounted) {
       return;
     }
     if (refusal.isEmpty) {
-      context.pop();
+      _leave();
       return;
     }
     setState(() {
@@ -102,6 +147,8 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            Text(words.registerHint, key: NewProjectScreen.hintKey, style: theme.textTheme.bodyMedium),
+            const SizedBox(height: 16),
             TextField(
               key: NewProjectScreen.nameKey,
               controller: _name,
@@ -152,6 +199,37 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                 ),
               ),
             ),
+            if (widget.isPublic) ...[
+              const SizedBox(height: 24),
+              Text(words.usersRoleManager, style: theme.textTheme.titleSmall),
+              const SizedBox(height: 12),
+              TextField(
+                key: NewProjectScreen.managerNameKey,
+                controller: _managerName,
+                decoration: InputDecoration(labelText: words.usersName, helperText: words.usersNameHint, border: const OutlineInputBorder()),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                key: NewProjectScreen.usernameKey,
+                controller: _username,
+                autocorrect: false,
+                decoration: InputDecoration(labelText: words.usersUsername, border: const OutlineInputBorder()),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                key: NewProjectScreen.mobileKey,
+                controller: _mobile,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(labelText: words.usersMobile, border: const OutlineInputBorder()),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                key: NewProjectScreen.passwordKey,
+                controller: _password,
+                obscureText: true,
+                decoration: InputDecoration(labelText: words.signInPassword, border: const OutlineInputBorder()),
+              ),
+            ],
             const SizedBox(height: 24),
             FilledButton(
               key: NewProjectScreen.submitKey,

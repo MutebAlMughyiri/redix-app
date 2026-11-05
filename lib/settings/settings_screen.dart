@@ -5,10 +5,10 @@ import '../account/my_account_screen.dart';
 import '../auth/permission.dart';
 import '../auth/session.dart';
 import '../projects/projects_screen.dart';
-import '../users/users_screen.dart';
+import '../projects/registered_projects_screen.dart';
 import '../words/words.dart';
 
-/// Settings (الإعدادات): the way into the projects, My account and, for whoever manages logins, every user. Each later settings use case adds its own row.
+/// Settings (الإعدادات): the way into the projects, My account and, for the admin, the registered projects. Each later settings use case adds its own row.
 class SettingsScreen extends StatelessWidget {
   /// The screen, for the user signed in through [session].
   const SettingsScreen({super.key, required this.session});
@@ -22,8 +22,8 @@ class SettingsScreen extends StatelessWidget {
   /// The way into the projects.
   static const projectsKey = Key('settings.projects');
 
-  /// The way into every login, for whoever manages them.
-  static const usersKey = Key('settings.users');
+  /// The way into the registered projects, for whoever approves them.
+  static const registeredKey = Key('settings.registered');
 
   /// The way into My account.
   static const myAccountKey = Key('settings.myAccount');
@@ -44,13 +44,13 @@ class SettingsScreen extends StatelessWidget {
               trailing: const Icon(Icons.chevron_right),
               onTap: () => context.push(ProjectsScreen.path),
             ),
-            if (session.may(Permission.manageLogins))
+            if (session.may(Permission.approveProjects))
               ListTile(
-                key: usersKey,
-                leading: const Icon(Icons.group_outlined),
-                title: Text(words.usersTitle),
+                key: registeredKey,
+                leading: const Icon(Icons.approval_outlined),
+                title: Text(words.registeredTitle),
                 trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.push(UsersScreen.path),
+                onTap: () => context.push(RegisteredProjectsScreen.path),
               ),
             ListTile(
               key: myAccountKey,

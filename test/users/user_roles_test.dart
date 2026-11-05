@@ -92,6 +92,6 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-    expect(tester.widget<Text>(find.byKey(UsersScreen.projectsLineKey('user-1'))).data, 'en users.roleReader · en users.roleField');
+    expect(tester.widget<Text>(find.byKey(UsersScreen.rolesLineKey('user-1'))).data, 'en users.roleReader · en users.roleField');
   });
 }

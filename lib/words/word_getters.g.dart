@@ -116,6 +116,9 @@ mixin WordGetters {
   /// The word `projects.noUnits`.
   String get projectsNoUnits => text('projects.noUnits');
 
+  /// The word `projects.pending`.
+  String get projectsPending => text('projects.pending');
+
   /// The word `projects.projectFinished`.
   String get projectsProjectFinished => text('projects.projectFinished');
 
@@ -124,6 +127,9 @@ mixin WordGetters {
 
   /// The word `projects.refused`.
   String get projectsRefused => text('projects.refused');
+
+  /// The word `projects.rejected`.
+  String get projectsRejected => text('projects.rejected');
 
   /// The word `projects.removeUnit`.
   String get projectsRemoveUnit => text('projects.removeUnit');
@@ -142,6 +148,66 @@ mixin WordGetters {
 
   /// The word `projects.units`.
   String get projectsUnits => text('projects.units');
+
+  /// The word `register.hint`.
+  String get registerHint => text('register.hint');
+
+  /// The word `register.invalidMobile`.
+  String get registerInvalidMobile => text('register.invalidMobile');
+
+  /// The word `register.invalidName`.
+  String get registerInvalidName => text('register.invalidName');
+
+  /// The word `register.invalidUsername`.
+  String get registerInvalidUsername => text('register.invalidUsername');
+
+  /// The word `register.noConnection`.
+  String get registerNoConnection => text('register.noConnection');
+
+  /// The word `register.refused`.
+  String get registerRefused => text('register.refused');
+
+  /// The word `register.sent`.
+  String get registerSent => text('register.sent');
+
+  /// The word `register.tooManyTries`.
+  String get registerTooManyTries => text('register.tooManyTries');
+
+  /// The word `register.usernameTaken`.
+  String get registerUsernameTaken => text('register.usernameTaken');
+
+  /// The word `register.weakPassword`.
+  String get registerWeakPassword => text('register.weakPassword');
+
+  /// The word `registered.approve`.
+  String get registeredApprove => text('registered.approve');
+
+  /// The word `registered.empty`.
+  String get registeredEmpty => text('registered.empty');
+
+  /// The word `registered.invalidReason`.
+  String get registeredInvalidReason => text('registered.invalidReason');
+
+  /// The word `registered.loadFailed`.
+  String get registeredLoadFailed => text('registered.loadFailed');
+
+  /// The word `registered.noConnection`.
+  String get registeredNoConnection => text('registered.noConnection');
+
+  /// The word `registered.notPending`.
+  String get registeredNotPending => text('registered.notPending');
+
+  /// The word `registered.reason`.
+  String get registeredReason => text('registered.reason');
+
+  /// The word `registered.refused`.
+  String get registeredRefused => text('registered.refused');
+
+  /// The word `registered.reject`.
+  String get registeredReject => text('registered.reject');
+
+  /// The word `registered.title`.
+  String get registeredTitle => text('registered.title');
 
   /// The word `settings.title`.
   String get settingsTitle => text('settings.title');
@@ -163,6 +229,9 @@ mixin WordGetters {
 
   /// The word `signIn.password`.
   String get signInPassword => text('signIn.password');
+
+  /// The word `signIn.registerProject`.
+  String get signInRegisterProject => text('signIn.registerProject');
 
   /// The word `signIn.sessionExpired`.
   String get signInSessionExpired => text('signIn.sessionExpired');
@@ -230,9 +299,6 @@ mixin WordGetters {
   /// The word `users.noConnection`.
   String get usersNoConnection => text('users.noConnection');
 
-  /// The word `users.noProjects`.
-  String get usersNoProjects => text('users.noProjects');
-
   /// The word `users.otherProject`.
   String get usersOtherProject => text('users.otherProject');
 
@@ -245,6 +311,9 @@ mixin WordGetters {
   /// The word `users.resetPassword`.
   String get usersResetPassword => text('users.resetPassword');
 
+  /// The word `users.roleAdmin`.
+  String get usersRoleAdmin => text('users.roleAdmin');
+
   /// The word `users.roleField`.
   String get usersRoleField => text('users.roleField');
 
@@ -256,9 +325,6 @@ mixin WordGetters {
 
   /// The word `users.roleReader`.
   String get usersRoleReader => text('users.roleReader');
-
-  /// The word `users.roleSystem`.
-  String get usersRoleSystem => text('users.roleSystem');
 
   /// The word `users.roles`.
   String get usersRoles => text('users.roles');

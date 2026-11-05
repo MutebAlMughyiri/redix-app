@@ -3,7 +3,7 @@
 # UC-007: Manage users
 
 **What it is for:** creating the accounts of the people who use the app, correcting them, disabling them, and resetting a forgotten password (FR-02).
-**Who uses it:** project managers, from a project's card; the system admin, for every login, from Settings (BR-29).
+**Who uses it:** project managers, from a project's card (BR-29).
 **Issue:** redix-app #27; the API side is redix-api #25.
 
 ## Screens
@@ -52,7 +52,6 @@ New user, `NewUserScreen` at `/users/new`:
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Only whoever manages logins sees every login | `SettingsScreen`, `Session.may` | `settings_test.dart`: anyone else sees Projects and My account |
 | A new user can sign in and must change the temporary password (AC-02.1) | The API; `RedixApp`'s redirect | `ProjectUsersTests.AManagerCreatesALoginInTheProjectWhoStartsAsTheLastRoleAndMustChangeThePassword`, in the API |
 | A refusal shows its own line, and nothing typed is lost | `Users`, `NewUserScreen` | `new_user_test.dart`: a taken username |
 | A row shows the username alone when there is no mobile | `UserRow` | `users_test.dart`: a row shows |

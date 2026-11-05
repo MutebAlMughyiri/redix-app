@@ -20,8 +20,12 @@ Map<String, String> wordsIn(String language) => {
     'changePassword.submit', 'changePassword.mismatch', 'changePassword.invalidCredentials', 'changePassword.accountLocked',
     'changePassword.weakPassword', 'changePassword.noConnection',
     'myAccount.title', 'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
-    'users.roles', 'users.rolesHint', 'users.roleManager', 'users.roleFinance', 'users.roleField', 'users.roleReader', 'users.noProjects',
+    'users.roles', 'users.rolesHint', 'users.roleManager', 'users.roleFinance', 'users.roleField', 'users.roleReader',
     'users.addExisting', 'users.unknownUser', 'users.invalidRole', 'users.lastManager', 'users.otherProject',
+    'signIn.registerProject', 'register.hint', 'register.sent', 'register.tooManyTries', 'register.invalidName', 'register.invalidUsername',
+    'register.invalidMobile', 'register.weakPassword', 'register.usernameTaken', 'register.noConnection', 'register.refused',
+    'projects.pending', 'projects.rejected', 'registered.title', 'registered.empty', 'registered.loadFailed', 'registered.approve', 'registered.reject',
+    'registered.reason', 'registered.invalidReason', 'registered.notPending', 'registered.noConnection', 'registered.refused',
     'myAccount.changePassword', 'myAccount.signOut', 'myAccount.signOutQuestion', 'myAccount.signOutExplain',
     'settings.title', 'projects.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.running',
     'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
@@ -43,8 +47,8 @@ const keptSession = '{"accessToken": "kept-access", "refreshToken": "kept-refres
 /// A kept session whose password is temporary.
 const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": true}';
 
-/// What a system admin holds everywhere.
-const systemAdmin = ['startProject', 'manageLogins'];
+/// What the admin holds everywhere.
+const admin = ['approveProjects'];
 
 /// What a project manager who also does the finance may do in a project.
 const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject'];
@@ -82,6 +86,15 @@ class FakeApi {
 
   /// The status and problem code the API answers to a change of a project; 2xx makes the change. An empty code sends none.
   var projectAnswer = (status: 200, code: '');
+
+  /// The projects waiting for the admin, as the API answers them.
+  final registered = <Map<String, Object>>[];
+
+  /// The status and problem code the API answers to a registration or a decision; 2xx makes it. An empty code sends none.
+  var registrationAnswer = (status: 200, code: '');
+
+  /// The registrations and decisions the app sent, as `path` and body.
+  final sentRegistrations = <(String, Map<String, dynamic>)>[];
 
   /// The changes of a project the app sent, as `path` and body.
   final sentProjectChanges = <(String, Map<String, dynamic>)>[];
@@ -150,6 +163,7 @@ class FakeApi {
     String status = 'running',
     String startDate = '2026-03-01',
     List<String> units = const [],
+    String rejectionReason = '',
     List<String> roles = const ['users.roleManager', 'users.roleFinance'],
     List<String> permissions = managerAndFinance,
   }) {
@@ -159,6 +173,7 @@ class FakeApi {
       'name': name,
       'startDate': startDate,
       'status': status,
+      'rejectionReason': rejectionReason,
       'units': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}],
       'roles': roles,
       'permissions': permissions,
@@ -251,8 +266,40 @@ class FakeApi {
   /// Answers as bytes with no character set, as a JSON reply may arrive, so reading Arabic takes UTF-8 on the app's side.
   http.Response _json(Object body, int status) => http.Response.bytes(utf8.encode(jsonEncode(body)), status);
 
+  /// Adds a project waiting for the admin.
+  void addRegistered(String name, {String managerName = 'ريم', String managerUsername = 'reem', String managerMobile = '0500000000', List<String> units = const ['الفلة الغربية']}) {
+    registered.add({
+      'id': 'registered-${registered.length}',
+      'name': name,
+      'startDate': '2026-11-05',
+      'units': units,
+      'managerName': managerName,
+      'managerUsername': managerUsername,
+      'managerMobile': managerMobile,
+    });
+  }
+
+  http.Response _answerRegistration(http.Request request) {
+    final path = request.url.path;
+    if (request.method == 'GET') {
+      return _json(registered, 200);
+    }
+    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    sentRegistrations.add((path, body));
+    if (registrationAnswer.status >= 300) {
+      return _json({if (registrationAnswer.code.isNotEmpty) 'code': registrationAnswer.code}, registrationAnswer.status);
+    }
+    if (path != '/projects/register') {
+      registered.removeWhere((project) => project['id'] == request.url.pathSegments[1]);
+    }
+    return _json({}, path == '/projects/register' ? 201 : 200);
+  }
+
   http.Response _answerProjects(http.Request request) {
     final segments = request.url.pathSegments;
+    if (segments.length == 2 && (segments[1] == 'register' || segments[1] == 'registered') || segments.length == 3 && (segments[2] == 'approve' || segments[2] == 'reject')) {
+      return _answerRegistration(request);
+    }
     if (segments.length >= 3 && segments[2] == 'roles') {
       return _json(roles, 200);
     }

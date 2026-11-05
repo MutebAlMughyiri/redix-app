@@ -8,7 +8,7 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 lib/
   main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
   account/my_account_screen.dart  My account: the language, the way into the password change, and signing out
-  settings/settings_screen.dart   Settings: the way into Projects, My account and, for the system admin, every login
+  settings/settings_screen.dart   Settings: the way into Projects, My account and, for the admin, the registered projects
   api_list.dart             ApiList: a list the API owns, and the way to change it; every settings list extends it
   ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, showRefusalOf
   projects/
@@ -20,12 +20,11 @@ lib/
     new_project_screen.dart the new project form
   users/
     user.dart               User, as the API answers it
-    users.dart              Users: the ApiList of one project's people or of every login, and its changes
-    users_screen.dart       a project's people, or every login
+    users.dart              Users: the ApiList of one project's people, and its changes
+    users_screen.dart       a project's people
     user_row.dart           one user on the list, with its menu
     role.dart               Role, as the API answers it; the app names no role
     roles.dart              Roles: the ApiList of what a project can give
-    user_project.dart       one role a user holds in one project
     user_roles_screen.dart  a person's roles in a project
     add_existing_user_dialog.dart  the Add an existing user dialog
     edit_user_dialog.dart   the Edit dialog

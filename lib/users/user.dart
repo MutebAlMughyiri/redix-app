@@ -1,7 +1,6 @@
 import 'role.dart';
-import 'user_project.dart';
 
-/// A user as the API answers them. The rules live in the API; the app only draws what it is told.
+/// A person in a project, as the API answers them. The rules live in the API; the app only draws what it is told.
 class User {
   /// The user the API describes in [json].
   User.fromJson(Map<String, dynamic> json)
@@ -10,7 +9,9 @@ class User {
       displayName = json['displayName'] as String,
       mobile = json['mobile'] as String,
       isActive = json['isActive'] as bool,
-      projects = [for (final project in json['projects'] as List<dynamic>) UserProject.fromJson(project as Map<String, dynamic>)];
+      roles = [
+        for (final line in (json['projects'] as List<dynamic>).cast<Map<String, dynamic>>()) Role.fromJson(line['role'] as Map<String, dynamic>),
+      ];
 
   /// The user's id.
   final String id;
@@ -27,9 +28,9 @@ class User {
   /// False once disabled.
   final bool isActive;
 
-  /// Their roles, one line per role, in the projects the signed-in user may see.
-  final List<UserProject> projects;
+  /// Their roles in this project.
+  final List<Role> roles;
 
-  /// Whether the user holds [role]; asked on a project's list, where only that project's lines come.
-  bool holds(Role role) => projects.any((project) => project.role.id == role.id);
+  /// Whether the user holds [role] in this project.
+  bool holds(Role role) => roles.any((held) => held.id == role.id);
 }

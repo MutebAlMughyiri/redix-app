@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
+import '../projects/new_project_screen.dart';
 import '../words/words.dart';
 import 'session.dart';
 
@@ -28,6 +30,9 @@ class SignInScreen extends StatefulWidget {
 
   /// The sign-in button.
   static const submitKey = Key('signIn.submit');
+
+  /// The link to register a new project.
+  static const registerKey = Key('signIn.register');
 
   /// The line that says why sign-in was refused, or why the last session ended.
   static const messageKey = Key('signIn.message');
@@ -108,7 +113,9 @@ class _SignInScreenState extends State<SignInScreen> {
               const SizedBox(height: 16),
               Text(words.text(_message), key: SignInScreen.messageKey, style: TextStyle(color: theme.colorScheme.error)),
             ],
-            const SizedBox(height: 32),
+            const SizedBox(height: 16),
+            TextButton(key: SignInScreen.registerKey, onPressed: () => context.push(NewProjectScreen.registerPath), child: Text(words.signInRegisterProject)),
+            const SizedBox(height: 16),
             Text(words.signInForgotPassword, style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
           ],
         ),

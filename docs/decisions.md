@@ -6,8 +6,8 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | One form registers a project, from the sign-in page with the manager's details, and from the list without them | One surface: the form differs only by what a signed-in person already has |
 | 2026-11-05 | The app shows a control from the permissions the API sends, and names no role | A change to a role in the database reaches the app with no release. Rows below that name an owner are history |
-| 2026-11-05 | One Users screen for a project's people and for every login | One surface: a project's list also adds people and gives roles, and the list of every login does not |
 | 2026-11-05 | A project's people open from its card, until UC-010 opens the project itself | A project manager's list belongs to the project |
 | 2026-11-05 | Roles are ticks, not chips | Someone can hold more than one role in a project |
 | 2026-11-05 | Projects and roles is its own screen, saved at each tick, not a section of the new user form | One way to assign, for new and existing users; it differs from the canvas, and a new user takes two steps |

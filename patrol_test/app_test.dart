@@ -9,18 +9,19 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
+import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:redix/words/app_language.dart';
 
-/// The test's system admin, created by the API with a temporary password.
+/// The test's admin, created by the API with a temporary password.
 const username = String.fromEnvironment('TEST_USERNAME');
 const temporaryPassword = String.fromEnvironment('TEST_PASSWORD');
 const newPassword = String.fromEnvironment('TEST_NEW_PASSWORD');
 
 void main() {
-  patrolTest('a system admin starts a project and manages it; a new user sees it by their role', ($) async {
+  patrolTest('a project is registered, approved and managed; a new user sees it by role', ($) async {
     final session = Session();
     final language = AppLanguage();
     await session.restore();
@@ -33,6 +34,38 @@ void main() {
     expect($.tester.widget<RawImage>(find.descendant(of: logo, matching: find.byType(RawImage))).image, isNotNull);
     await $.takeNativeScreenshot('sign-in');
 
+    Finder keyStartingWith(String start) => find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith(start));
+
+    await $(SignInScreen.registerKey).scrollTo().tap();
+    await $(NewProjectScreen.nameKey).enterText('غصون 7');
+    await $(NewProjectScreen.unitNameKey).enterText('الفلة الشرقية');
+    await $(NewProjectScreen.addUnitKey).tap();
+    await $(NewProjectScreen.unitNameKey).enterText('الفلة الشمالية');
+    await $(NewProjectScreen.addUnitKey).tap();
+    await $(NewProjectScreen.managerNameKey).scrollTo().enterText('ريم');
+    await $(NewProjectScreen.usernameKey).scrollTo().enterText('patrol-reem');
+    await $(NewProjectScreen.mobileKey).scrollTo().enterText('0511111111');
+    await $(NewProjectScreen.passwordKey).scrollTo().enterText('Reem-chosen-1');
+    await $.takeNativeScreenshot('register-project');
+    await $(NewProjectScreen.submitKey).scrollTo().tap();
+
+    await $(SignInScreen.usernameKey).waitUntilVisible();
+    await $(SignInScreen.usernameKey).enterText('patrol-reem');
+    await $(SignInScreen.passwordKey).enterText('Reem-chosen-1');
+    await $(SignInScreen.submitKey).scrollTo().tap();
+    await $(HomeScreen.settingsKey).tap();
+    expect($(SettingsScreen.registeredKey), findsNothing);
+    await $(SettingsScreen.projectsKey).tap();
+    await $(keyStartingWith('projects.status.')).waitUntilVisible();
+    expect($(keyStartingWith('projects.users.')), findsNothing);
+    expect($(keyStartingWith('projects.addUnit.')), findsNothing);
+    await $.takeNativeScreenshot('project-waiting');
+    await $(BackButton).tap();
+    await $(SettingsScreen.myAccountKey).tap();
+    await $(MyAccountScreen.signOutKey).tap();
+    await $(MyAccountScreen.confirmSignOutKey).tap();
+
+    await $(SignInScreen.usernameKey).waitUntilVisible();
     await $(SignInScreen.usernameKey).enterText(username);
     await $(SignInScreen.passwordKey).enterText(temporaryPassword);
     await $(SignInScreen.submitKey).scrollTo().tap();
@@ -48,23 +81,25 @@ void main() {
     expect($(HomeScreen.subtitleKey), findsOneWidget);
     await $.takeNativeScreenshot('home');
 
-    Finder keyStartingWith(String start) => find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith(start));
-
     await $(HomeScreen.settingsKey).tap();
-    await $(SettingsScreen.projectsKey).waitUntilVisible();
+    await $(SettingsScreen.registeredKey).waitUntilVisible();
     await $.takeNativeScreenshot('settings');
+    await $(SettingsScreen.registeredKey).tap();
+    await $(keyStartingWith('registered.approve.')).waitUntilVisible();
+    await $.takeNativeScreenshot('registered-projects');
+    await $(keyStartingWith('registered.approve.')).tap();
+    await $(RegisteredProjectsScreen.emptyKey).waitUntilVisible();
+    await $(BackButton).tap();
+    await $(SettingsScreen.myAccountKey).tap();
+    await $(MyAccountScreen.signOutKey).tap();
+    await $(MyAccountScreen.confirmSignOutKey).tap();
 
+    await $(SignInScreen.usernameKey).waitUntilVisible();
+    await $(SignInScreen.usernameKey).enterText('patrol-reem');
+    await $(SignInScreen.passwordKey).enterText('Reem-chosen-1');
+    await $(SignInScreen.submitKey).scrollTo().tap();
+    await $(HomeScreen.settingsKey).tap();
     await $(SettingsScreen.projectsKey).tap();
-    await $(ProjectsScreen.emptyKey).waitUntilVisible();
-
-    await $(ProjectsScreen.newProjectKey).tap();
-    await $(NewProjectScreen.nameKey).enterText('غصون 7');
-    await $(NewProjectScreen.unitNameKey).enterText('الفلة الشرقية');
-    await $(NewProjectScreen.addUnitKey).tap();
-    await $(NewProjectScreen.unitNameKey).enterText('الفلة الشمالية');
-    await $(NewProjectScreen.addUnitKey).tap();
-    await $.takeNativeScreenshot('new-project');
-    await $(NewProjectScreen.submitKey).scrollTo().tap();
 
     final projectUsers = $(keyStartingWith('projects.users.'));
     await projectUsers.waitUntilVisible();
@@ -148,10 +183,6 @@ void main() {
 
     await $(BackButton).tap();
     await $(BackButton).tap();
-    await $(SettingsScreen.usersKey).tap();
-    await $(keyStartingWith('users.menu.')).waitUntilVisible();
-    await $.takeNativeScreenshot('all-users');
-    await $(BackButton).tap();
     await $(SettingsScreen.myAccountKey).tap();
     await $(MyAccountScreen.arabicKey).waitUntilVisible();
     await $.takeNativeScreenshot('my-account');
@@ -194,10 +225,10 @@ void main() {
 
     await $(HomeScreen.settingsKey).tap();
     await $(SettingsScreen.myAccountKey).waitUntilVisible();
-    expect($(SettingsScreen.usersKey), findsNothing);
+    expect($(SettingsScreen.registeredKey), findsNothing);
     await $(SettingsScreen.projectsKey).tap();
     await $(keyStartingWith('projects.card.')).waitUntilVisible();
-    expect($(ProjectsScreen.newProjectKey), findsNothing);
+    expect($(ProjectsScreen.newProjectKey), findsOneWidget);
     expect($(keyStartingWith('projects.users.')), findsNothing);
     expect($(keyStartingWith('projects.addUnit.')), findsNothing);
     expect($(keyStartingWith('projects.close.')), findsNothing);

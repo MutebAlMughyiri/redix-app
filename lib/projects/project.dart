@@ -1,12 +1,23 @@
 import '../auth/permission.dart';
 
-/// Where a project stands, as the API says it (FR-04).
+/// Where a project stands, as the API says it (FR-04), each knowing its word so no reader needs to tell them apart.
 enum ProjectStatus {
   /// Entries are recorded and approved.
-  running,
+  running('projects.running'),
 
   /// Closed: read-only, with its reports still available (AC-04.1).
-  finished,
+  finished('projects.finished'),
+
+  /// Registered, and waiting for the admin; nothing can be done in it yet (BR-34).
+  pendingApproval('projects.pending'),
+
+  /// Refused by the admin, saying why; nothing can be done in it (BR-34).
+  rejected('projects.rejected');
+
+  const ProjectStatus(this.wordKey);
+
+  /// The key of the word that names this status.
+  final String wordKey;
 }
 
 /// A unit of a project, such as الفلة الغربية.
@@ -29,6 +40,7 @@ class Project {
       name = json['name'] as String,
       startDate = DateTime.parse(json['startDate'] as String),
       status = ProjectStatus.values.byName(json['status'] as String),
+      rejectionReason = json['rejectionReason'] as String,
       units = [for (final unit in json['units'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
       roles = (json['roles'] as List<dynamic>).cast<String>(),
       _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()};
@@ -42,8 +54,11 @@ class Project {
   /// The day the project started.
   final DateTime startDate;
 
-  /// Running, or finished once closed.
+  /// Where it stands.
   final ProjectStatus status;
+
+  /// Why the admin refused it; empty otherwise.
+  final String rejectionReason;
 
   /// The project's units, in order.
   final List<Unit> units;

@@ -36,8 +36,8 @@ jobs:
           --health-retries 12
     env:
       ConnectionStrings__Redix: Server=localhost;Database=Redix;User Id=sa;Password=Ci-only-Passw0rd;TrustServerCertificate=True
-      REDIX_SystemAdmin__Username: ci-admin
-      REDIX_SystemAdmin__Password: Ci-admin-passw0rd
+      REDIX_Admin__Username: ci-admin
+      REDIX_Admin__Password: Ci-admin-passw0rd
     steps:
       - uses: actions/checkout@v4
         with:
@@ -93,4 +93,4 @@ jobs:
           arch: x86_64
           target: google_apis
           working-directory: redix-app
-          script: adb reverse tcp:5010 tcp:5010 && patrol test --device emulator-5554 --dart-define-from-file=config/local.json --dart-define=TEST_USERNAME=${{ env.REDIX_SystemAdmin__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_SystemAdmin__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd
+          script: adb reverse tcp:5010 tcp:5010 && patrol test --device emulator-5554 --dart-define-from-file=config/local.json --dart-define=TEST_USERNAME=${{ env.REDIX_Admin__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Admin__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd

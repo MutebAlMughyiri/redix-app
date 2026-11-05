@@ -1,0 +1,44 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+import '../api.dart';
+
+/// Registers a project from the sign-in page, with no session, and a new login as its manager (UC-066). Returns an empty string once sent, otherwise the word key of
+/// the refusal.
+Future<String> registerProject(
+  String name,
+  DateTime startDate,
+  List<String> units, {
+  required String displayName,
+  required String username,
+  required String mobile,
+  required String password,
+}) async {
+  try {
+    final response = await http.post(
+      apiUri('/projects/register'),
+      headers: jsonHeaders,
+      body: jsonEncode({
+        'name': name,
+        'startDate': startDate.toIso8601String().substring(0, 10),
+        'units': units,
+        'displayName': displayName,
+        'username': username,
+        'mobile': mobile,
+        'password': password,
+      }),
+    );
+    if (response.statusCode < 300) {
+      return '';
+    }
+    if (response.statusCode == 429) {
+      return 'register.tooManyTries';
+    }
+    return 'register.${(jsonOf(response) as Map<String, dynamic>)['code'] as String? ?? 'refused'}';
+  } on Exception catch (error) {
+    debugPrint('Project not registered: $error');
+    return 'register.noConnection';
+  }
+}

@@ -53,12 +53,14 @@ class ProjectCard extends StatelessWidget {
                       key: ProjectsScreen.detailsKey(project.id),
                       style: theme.textTheme.bodySmall,
                     ),
+                    if (project.rejectionReason.isNotEmpty)
+                      Text(project.rejectionReason, key: ProjectsScreen.reasonKey(project.id), style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error)),
                   ],
                 ),
                 Chip(
                   key: ProjectsScreen.statusKey(project.id),
-                  label: Text(project.isFinished ? words.projectsFinished : words.projectsRunning),
-                  backgroundColor: project.isFinished ? theme.colorScheme.surfaceContainerHighest : theme.colorScheme.primaryContainer,
+                  label: Text(words.text(project.status.wordKey)),
+                  backgroundColor: project.status == ProjectStatus.running ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest,
                   side: BorderSide.none,
                   visualDensity: VisualDensity.compact,
                 ),

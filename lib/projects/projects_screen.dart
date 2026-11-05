@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../auth/permission.dart';
-import '../auth/session.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
@@ -17,19 +15,16 @@ import 'projects.dart';
 
 /// The projects (UC-006): one card per project, where a running one takes a new unit or is closed. A finished one offers no change (AC-04.1).
 class ProjectsScreen extends StatefulWidget {
-  /// The screen, showing and changing [projects], for the user signed in through [session].
-  const ProjectsScreen({super.key, required this.projects, required this.session});
+  /// The screen, showing and changing [projects].
+  const ProjectsScreen({super.key, required this.projects});
 
   /// The projects this screen shows and changes.
   final Projects projects;
 
-  /// The session that says whether the user may start a project.
-  final Session session;
-
   /// The screen's route.
   static const path = '/projects';
 
-  /// The button that opens the new project form.
+  /// The button that opens the form to register a project.
   static const newProjectKey = Key('projects.new');
 
   /// The line shown while there are no projects.
@@ -64,6 +59,9 @@ class ProjectsScreen extends StatefulWidget {
 
   /// The way into the people of the project [id].
   static Key usersKey(String id) => Key('projects.users.$id');
+
+  /// Why the admin refused the project [id].
+  static Key reasonKey(String id) => Key('projects.reason.$id');
 
   /// What the signed-in user is in the project [id].
   static Key rolesKey(String id) => Key('projects.roles.$id');
@@ -134,14 +132,12 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
     final words = Words.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(words.projectsTitle)),
-      floatingActionButton: widget.session.may(Permission.startProject)
-          ? FloatingActionButton.extended(
-              key: ProjectsScreen.newProjectKey,
-              icon: const Icon(Icons.add),
-              label: Text(words.projectsNew),
-              onPressed: () => context.push(NewProjectScreen.path),
-            )
-          : null,
+      floatingActionButton: FloatingActionButton.extended(
+        key: ProjectsScreen.newProjectKey,
+        icon: const Icon(Icons.add),
+        label: Text(words.projectsNew),
+        onPressed: () => context.push(NewProjectScreen.path),
+      ),
       body: ApiListBody(
         list: widget.projects,
         emptyText: words.projectsEmpty,

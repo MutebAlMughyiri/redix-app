@@ -3,17 +3,13 @@ import '../auth/session.dart';
 import 'role.dart';
 import 'user.dart';
 
-/// The people of one project, or every login while [projectId] is empty, and the one way to change them. Each change returns an empty string once made, otherwise
-/// the word key of the refusal.
+/// The people of one project, and the one way to change them. Each change returns an empty string once made, otherwise the word key of the refusal.
 class Users extends ApiList<User> {
-  /// The users seen through [session]: those of the project [projectId], or every login.
-  Users(Session session, {this.projectId = ''}) : super(session, projectId.isEmpty ? '/users' : '/projects/$projectId/users', 'users', User.fromJson);
+  /// The people of the project [projectId], seen through [session].
+  Users(Session session, this.projectId) : super(session, '/projects/$projectId/users', 'users', User.fromJson);
 
-  /// The project these people belong to; empty for every login.
+  /// The project these people belong to.
   final String projectId;
-
-  /// True for a project's people, whom its manager adds and gives roles.
-  bool get isOfAProject => projectId.isNotEmpty;
 
   /// Creates a login in this project, who must change [temporaryPassword] at first sign-in.
   Future<String> create(String displayName, String username, String mobile, String temporaryPassword) =>

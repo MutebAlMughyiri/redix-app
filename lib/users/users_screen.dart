@@ -15,23 +15,19 @@ import 'user_roles_screen.dart';
 import 'user_row.dart';
 import 'users.dart';
 
-/// The people of one project, for its manager, or every login, for the system admin (UC-007, UC-009): one row per user, with a menu to edit, reset the password,
-/// and disable or enable. A project's list also adds people and gives their roles.
+/// The people of one project, for its manager (UC-007, UC-008): one row per user, with a menu to edit, give roles, reset the password, and disable or enable.
 class UsersScreen extends StatefulWidget {
-  /// The screen, showing and changing [users], of the project [projectName] if they belong to one.
-  const UsersScreen({super.key, required this.users, this.projectName = ''});
+  /// The screen, showing and changing the [users] of the project [projectName].
+  const UsersScreen({super.key, required this.users, required this.projectName});
 
   /// The users this screen shows and changes.
   final Users users;
 
-  /// The name of their project; empty on the list of every login.
+  /// The name of their project.
   final String projectName;
 
-  /// The route of every login.
-  static const path = '/users';
-
-  /// The route of a project's people.
-  static const projectPath = '/projects/:projectId/users';
+  /// The screen's route.
+  static const path = '/projects/:projectId/users';
 
   /// The route of the people of the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId/users';
@@ -108,8 +104,8 @@ class UsersScreen extends StatefulWidget {
   /// The username and mobile of the user [id].
   static Key detailsKey(String id) => Key('users.details.$id');
 
-  /// The projects and roles of the user [id].
-  static Key projectsLineKey(String id) => Key('users.projectsLine.$id');
+  /// The roles of the user [id] in this project.
+  static Key rolesLineKey(String id) => Key('users.rolesLine.$id');
 
   /// The badge of the user [id], when disabled.
   static Key statusKey(String id) => Key('users.status.$id');
@@ -148,34 +144,30 @@ class _UsersScreenState extends State<UsersScreen> {
     final users = widget.users;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.projectName.isEmpty ? words.usersTitle : '${words.usersTitle} · ${widget.projectName}'),
+        title: Text('${words.usersTitle} · ${widget.projectName}'),
         actions: [
-          if (users.isOfAProject)
-            IconButton(
-              key: UsersScreen.addExistingKey,
-              icon: const Icon(Icons.person_search_outlined),
-              tooltip: words.usersAddExisting,
-              onPressed: () => showDialog<void>(
-                context: context,
-                builder: (_) => AddExistingUserDialog(users: users),
-              ),
+          IconButton(
+            key: UsersScreen.addExistingKey,
+            icon: const Icon(Icons.person_search_outlined),
+            tooltip: words.usersAddExisting,
+            onPressed: () => showDialog<void>(
+              context: context,
+              builder: (_) => AddExistingUserDialog(users: users),
             ),
+          ),
         ],
       ),
-      floatingActionButton: users.isOfAProject
-          ? FloatingActionButton.extended(
-              key: UsersScreen.newUserKey,
-              icon: const Icon(Icons.add),
-              label: Text(words.usersNew),
-              onPressed: () => context.push(NewUserScreen.pathOf(users.projectId)),
-            )
-          : null,
+      floatingActionButton: FloatingActionButton.extended(
+        key: UsersScreen.newUserKey,
+        icon: const Icon(Icons.add),
+        label: Text(words.usersNew),
+        onPressed: () => context.push(NewUserScreen.pathOf(users.projectId)),
+      ),
       body: ApiListBody(
         list: widget.users,
         emptyText: '',
         itemBuilder: (user) => UserRow(
           user: user,
-          inProject: users.isOfAProject,
           onEdit: () => showDialog<void>(
             context: context,
             builder: (_) => EditUserDialog(user: user, users: widget.users),

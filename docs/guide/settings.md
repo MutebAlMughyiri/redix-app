@@ -12,7 +12,7 @@
 | Row | Who sees it | Opens |
 | --- | --- | --- |
 | Projects | Everyone | [Projects](projects.md) |
-| Users | The system admin | [Users](users.md) |
+| Registered projects | The admin | [Register a project](register-a-project.md) |
 | My account | Everyone | [My account](my-account.md) |
 
 ## العربية
@@ -23,5 +23,5 @@
 | الصف | من يراه | يفتح |
 | --- | --- | --- |
 | المشاريع | الجميع | [المشاريع](projects.md) |
-| المستخدمون | مسؤول النظام | [المستخدمون](users.md) |
+| المشاريع المسجّلة | مسؤول النظام | [تسجيل مشروع](register-a-project.md) |
 | حسابي | الجميع | [حسابي](my-account.md) |

@@ -6,11 +6,10 @@ import 'users_screen.dart';
 
 /// One user on the list: their name, username, mobile and roles, a badge when disabled, and a menu of what can be done to them.
 class UserRow extends StatelessWidget {
-  /// The row of [user] on a project's list when [inProject], otherwise on the list of every login, calling the given callback when its menu item is chosen.
+  /// The row of [user], calling the given callback when its menu item is chosen.
   const UserRow({
     super.key,
     required this.user,
-    required this.inProject,
     required this.onEdit,
     required this.onRoles,
     required this.onResetPassword,
@@ -20,9 +19,6 @@ class UserRow extends StatelessWidget {
 
   /// The user this row shows.
   final User user;
-
-  /// True on a project's list, which shows the roles alone and offers Roles.
-  final bool inProject;
 
   /// Called when Edit is chosen.
   final VoidCallback onEdit;
@@ -38,16 +34,6 @@ class UserRow extends StatelessWidget {
 
   /// Called when Enable is chosen.
   final VoidCallback onEnable;
-
-  String _projectsLine(Words words) {
-    if (user.projects.isEmpty) {
-      return words.usersNoProjects;
-    }
-    if (inProject) {
-      return user.projects.map((project) => words.text(project.role.wordKey)).join(' · ');
-    }
-    return user.projects.map((project) => '${words.text(project.role.wordKey)} · ${project.name}').join(' / ');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +67,7 @@ class UserRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(user.mobile.isEmpty ? user.username : '${user.username} · ${user.mobile}', key: UsersScreen.detailsKey(user.id)),
-            Text(_projectsLine(words), key: UsersScreen.projectsLineKey(user.id)),
+            Text(user.roles.map((role) => words.text(role.wordKey)).join(' · '), key: UsersScreen.rolesLineKey(user.id)),
           ],
         ),
         trailing: PopupMenuButton<VoidCallback>(
@@ -89,7 +75,7 @@ class UserRow extends StatelessWidget {
           onSelected: (action) => action(),
           itemBuilder: (context) => [
             PopupMenuItem(key: UsersScreen.editKey, value: onEdit, child: Text(words.usersEdit)),
-            if (inProject) PopupMenuItem(key: UsersScreen.rolesKey, value: onRoles, child: Text(words.usersRoles)),
+            PopupMenuItem(key: UsersScreen.rolesKey, value: onRoles, child: Text(words.usersRoles)),
             PopupMenuItem(key: UsersScreen.resetPasswordKey, value: onResetPassword, child: Text(words.usersResetPassword)),
             if (user.isActive)
               PopupMenuItem(key: UsersScreen.disableKey, value: onDisable, child: Text(words.usersDisable))
