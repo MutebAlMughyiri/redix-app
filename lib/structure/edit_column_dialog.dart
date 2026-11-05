@@ -28,10 +28,12 @@ class _EditColumnDialogState extends State<EditColumnDialog> {
   late final _name = TextEditingController(text: widget.column.name);
   late var _isRequired = widget.column.isRequired;
   late var _showInReports = widget.column.showInReports;
+  final _newChoices = TextEditingController();
 
   @override
   void dispose() {
     _name.dispose();
+    _newChoices.dispose();
     super.dispose();
   }
 
@@ -40,6 +42,7 @@ class _EditColumnDialogState extends State<EditColumnDialog> {
     _name.text,
     isRequired: _isRequired,
     showInReports: _showInReports,
+    newOptions: _newChoices.text.trim().isEmpty ? [] : _newChoices.text.split('\n'),
     applyToAll: await widget.applyToAll(),
   );
 
@@ -72,6 +75,16 @@ class _EditColumnDialogState extends State<EditColumnDialog> {
           value: _showInReports,
           onChanged: mayChangeMore ? (value) => setState(() => _showInReports = value) : null,
         ),
+        if (widget.column.gainsChoices) ...[
+          Text(widget.column.options.join(' · '), key: ItemColumnsScreen.existingChoicesKey),
+          const SizedBox(height: 8),
+          TextField(
+            key: ItemColumnsScreen.newChoicesKey,
+            controller: _newChoices,
+            maxLines: 3,
+            decoration: InputDecoration(labelText: words.columnsNewChoices, border: const OutlineInputBorder()),
+          ),
+        ],
       ],
     );
   }

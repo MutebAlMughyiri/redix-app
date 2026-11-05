@@ -27,11 +27,12 @@ class Columns extends ApiList<ItemColumn> {
     'applyToAllItems': applyToAll,
   });
 
-  /// Changes [column]; its type never changes.
-  Future<String> edit(ItemColumn column, String name, {required bool isRequired, required bool showInReports, required bool applyToAll}) => change('$_path/${column.id}', {
+  /// Changes [column], and adds [newOptions] to its choices; its type never changes, and no choice is taken away.
+  Future<String> edit(ItemColumn column, String name, {required bool isRequired, required bool showInReports, List<String> newOptions = const [], required bool applyToAll}) => change('$_path/${column.id}', {
     'name': name,
     'isRequired': isRequired,
     'showInReports': showInReports,
+    if (newOptions.isNotEmpty) 'newOptions': newOptions,
     'applyToAllItems': applyToAll,
   });
 

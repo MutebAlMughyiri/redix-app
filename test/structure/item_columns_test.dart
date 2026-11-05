@@ -154,6 +154,33 @@ void main() {
     expect(text(tester, ItemColumnsScreen.detailsKey(opened.unit)), 'en columns.typeList · en columns.required · en columns.inReports');
   });
 
+  testWidgets('a list a person added gains choices, one a line, showing those that stay', (tester) async {
+    final opened = await openColumns(tester);
+    final list = opened.api.addColumn(itemPath, 'الجهة', dataType: 'list', isCustom: true)..['options'] = <String>['شرق', 'غرب'];
+    await showTemplate(tester, opened.api);
+    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.thisItemKey)));
+    await tester.ensureVisible(find.byKey(ItemColumnsScreen.editKey(list['id'] as String)));
+    await tester.pumpAndSettle();
+    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.editKey(list['id'] as String))));
+
+    expect(text(tester, ItemColumnsScreen.existingChoicesKey), 'شرق · غرب');
+    await tester.enterText(find.byKey(ItemColumnsScreen.newChoicesKey), 'شمال\nجنوب');
+    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.saveKey)));
+
+    expect(opened.api.sentStructureChanges.single.$2['newOptions'], ['شمال', 'جنوب']);
+    expect(list['options'], ['شرق', 'غرب', 'شمال', 'جنوب']);
+  });
+
+  testWidgets('only a list a person added offers new choices, and an edit that gives none sends none', (tester) async {
+    final opened = await openColumns(tester);
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.editKey(opened.unit))));
+    expect(find.byKey(ItemColumnsScreen.newChoicesKey), findsNothing);
+    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.saveKey)));
+
+    expect(opened.api.sentStructureChanges.single.$2.containsKey('newOptions'), isFalse);
+  });
+
   testWidgets('deleting asks first and says values stay; Cancel changes nothing', (tester) async {
     final opened = await openColumns(tester);
 

@@ -46,7 +46,7 @@ Map<String, String> wordsIn(String language) => {
     'users.noConnection', 'users.refused',
     'columns.title', 'columns.template', 'columns.thisItem', 'columns.hint', 'columns.empty', 'columns.loadFailed', 'columns.noConnection', 'columns.refused', 'columns.projectFinished',
     'columns.invalidName', 'columns.invalidOrder', 'columns.invalidDataType', 'columns.invalidOptions', 'columns.coreColumn', 'columns.new', 'columns.name', 'columns.type', 'columns.typeText',
-    'columns.typeNumber', 'columns.typeAmount', 'columns.typeDate', 'columns.typeList', 'columns.typeFile', 'columns.choices', 'columns.required', 'columns.optional', 'columns.showInReports',
+    'columns.typeNumber', 'columns.typeAmount', 'columns.typeDate', 'columns.typeList', 'columns.typeFile', 'columns.choices', 'columns.newChoices', 'columns.required', 'columns.optional', 'columns.showInReports',
     'columns.inReports', 'columns.custom', 'columns.core', 'columns.edit', 'columns.delete', 'columns.save', 'columns.deleteExplain', 'columns.applyQuestion', 'columns.applyExplain',
     'columns.applyToAll', 'columns.templateOnly',
     'categories.title', 'categories.hint', 'categories.empty', 'categories.loadFailed', 'categories.noConnection', 'categories.refused', 'categories.projectFinished',
@@ -852,7 +852,8 @@ class FakeApi {
       list.singleWhere((column) => column['id'] == segments[columnsEnd])
         ..['name'] = body['name'] as String
         ..['isRequired'] = body['isRequired'] as bool
-        ..['showInReports'] = body['showInReports'] as bool;
+        ..['showInReports'] = body['showInReports'] as bool
+        ..update('options', (options) => [...options as List<String>, ...(body['newOptions'] as List<dynamic>? ?? const []).cast<String>()]);
     }
     return _json({}, 200);
   }

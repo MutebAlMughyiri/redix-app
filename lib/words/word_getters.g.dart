@@ -335,6 +335,9 @@ mixin WordGetters {
   /// The word `columns.new`.
   String get columnsNew => text('columns.new');
 
+  /// The word `columns.newChoices`.
+  String get columnsNewChoices => text('columns.newChoices');
+
   /// The word `columns.noConnection`.
   String get columnsNoConnection => text('columns.noConnection');
 

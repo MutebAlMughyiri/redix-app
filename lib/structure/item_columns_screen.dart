@@ -65,6 +65,12 @@ class ItemColumnsScreen extends StatefulWidget {
   /// The choices of a list, in the Add column dialog.
   static const choicesKey = Key('columns.choices');
 
+  /// The choices a list has, in the Edit column dialog.
+  static const existingChoicesKey = Key('columns.existingChoices');
+
+  /// The choices a list gains, in the Edit column dialog.
+  static const newChoicesKey = Key('columns.newChoices');
+
   /// Whether entry requires it, in the dialogs that add and change.
   static const requiredKey = Key('columns.required');
 

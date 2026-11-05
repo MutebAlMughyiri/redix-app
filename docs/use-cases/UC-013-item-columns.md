@@ -28,6 +28,8 @@ On [Categories and items](../guide/categories.md), `CategoriesScreen`:
 | Its name | `ItemColumnsScreen.nameKey(id)` | |
 | What it is | `ItemColumnsScreen.detailsKey(id)` | Custom, type, required or optional, in reports |
 | Edit | `ItemColumnsScreen.editKey(id)` | Opens the Edit column dialog |
+| The choices it has, in the Edit dialog | `ItemColumnsScreen.existingChoicesKey` | A list a person added: they stay, because entries hold them |
+| New choices, in the Edit dialog | `ItemColumnsScreen.newChoicesKey` | One a line, added to those it has |
 | Lock | `ItemColumnsScreen.lockKey(id)` | On a core column, in place of Delete |
 | Delete | `ItemColumnsScreen.deleteKey(id)` | Asks first |
 | The name, in a dialog | `ItemColumnsScreen.columnNameKey` | |
@@ -64,6 +66,7 @@ The question after a change to the template, `ApplyToAllDialog`:
 | A refused column stays in its dialog, with why | `ChangeDialog` | `item_columns_test.dart`: a refused column |
 | A core column changes its name only | `EditColumnDialog` | `item_columns_test.dart`: a core column changes |
 | No dialog offers a type to change (AC-41.3) | `EditColumnDialog` | `item_columns_test.dart`: another column changes |
+| A list a person added gains choices, one a line, and those it has stay and show; no other column offers it | `EditColumnDialog`, `ItemColumn.gainsChoices`, `Columns.edit` | `item_columns_test.dart`: a list a person added gains choices; only a list a person added |
 | Deleting asks first, and says values stay | `ConfirmDialog` | `item_columns_test.dart`: deleting asks first |
 | Dragging sends the new order; on an item it asks nothing | `Columns.move`, `ReorderableListView` | `item_columns_test.dart`: dragging a column sends |
 | AC-41.3: every change to the template asks whether it reaches existing items | `_applyToAll`, `ApplyToAllDialog` | `item_columns_test.dart`: AC-41.3 group |

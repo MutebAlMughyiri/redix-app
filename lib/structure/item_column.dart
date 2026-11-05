@@ -75,6 +75,9 @@ class ItemColumn {
   /// Whether it prints in the reports.
   final bool showInReports;
 
+  /// Whether it can gain choices: only a list a person added, since the others read a register.
+  bool get gainsChoices => dataType == ColumnDataType.list && isCustom;
+
   /// What the API is sent for [typed]: a number in Western digits with no separators, anything else as it is.
   String valueToSend(String typed) {
     final number = dataType == ColumnDataType.number || dataType == ColumnDataType.amount ? parseNumber(typed) : double.nan;
