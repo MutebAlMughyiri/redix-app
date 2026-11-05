@@ -198,7 +198,7 @@ void main() {
     expect(find.byKey(HomeScreen.custodyKey(mine['id'] as String)), findsNothing);
   });
 
-  testWidgets('a list that cannot be read says so', (tester) async {
+  testWidgets('with no network the list shows what was kept, and no failure', (tester) async {
     final opened = await openAccounts(tester);
     opened.api.online = false;
 
@@ -206,7 +206,7 @@ void main() {
     await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));
     await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.accountsKey('project-0'))));
 
-    expect(text(tester, AccountsScreen.messageKey), 'en accounts.loadFailed');
+    expect(find.byKey(AccountsScreen.messageKey), findsNothing);
   });
 
   test('money shows two decimals, thousands separators, and negatives in brackets (NFR-04)', () {

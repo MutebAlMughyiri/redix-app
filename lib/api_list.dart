@@ -41,6 +41,14 @@ abstract class ApiList<T> extends ChangeNotifier {
   @protected
   void pointAt(String path) => _path = path;
 
+  /// Shows [items], found some other way than by reading the API.
+  @protected
+  void show(List<T> items) {
+    _all = items;
+    _message = '';
+    notifyListeners();
+  }
+
   /// What the API answered the last change, when that was a JSON object: for a change whose answer says more than a code.
   @protected
   Map<String, dynamic> get lastAnswer => _lastAnswer;

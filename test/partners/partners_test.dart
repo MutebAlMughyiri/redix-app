@@ -141,7 +141,7 @@ void main() {
     expect(find.byKey(HomeScreen.partnersKey('project-0')), findsNothing);
   });
 
-  testWidgets('a list that cannot be read says so', (tester) async {
+  testWidgets('with no network the list shows what was kept, and no failure', (tester) async {
     final opened = await openPartners(tester);
     opened.api.online = false;
 
@@ -149,6 +149,6 @@ void main() {
     await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
     await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
 
-    expect(text(tester, PartnersScreen.messageKey), 'en partners.loadFailed');
+    expect(find.byKey(PartnersScreen.messageKey), findsNothing);
   });
 }

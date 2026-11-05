@@ -320,6 +320,9 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
     }
     if (!_isDeduction && !_receipt.isNone && _attachmentId.isEmpty) {
       final refusal = await widget.attachments.keep(_receipt);
+      if (refusal == 'attachments.noConnection') {
+        return widget.expenses.keepContractorPayment(_body(submit, confirmDuplicate), _receipt);
+      }
       if (refusal.isNotEmpty) {
         return refusal;
       }
@@ -337,7 +340,8 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
       return;
     }
     if (refusal.isEmpty) {
-      final saved = widget.expenses.wasOverrun ? words.contractorPaymentsSavedOverrun : (submit ? words.expensesSent : words.expensesSaved);
+      final sent = widget.expenses.wasOverrun ? words.contractorPaymentsSavedOverrun : (submit ? words.expensesSent : words.expensesSaved);
+      final saved = widget.expenses.wasKept ? words.expensesKeptOnPhone : sent;
       messenger.showSnackBar(SnackBar(content: Text(saved, key: ContractorPaymentScreen.savedKey)));
       context.pop();
       return;

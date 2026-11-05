@@ -519,6 +519,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     }
     if (!_withoutInvoice && !_invoice.isNone && _attachmentId.isEmpty) {
       final refusal = await widget.attachments.keep(_invoice);
+      if (refusal == 'attachments.noConnection') {
+        return widget.expenses.keepPurchase(_body(submit, confirmDuplicate), _invoice);
+      }
       if (refusal.isNotEmpty) {
         return refusal;
       }
@@ -544,7 +547,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       return;
     }
     if (refusal.isEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(submit ? words.expensesSent : words.expensesSaved, key: AddExpenseScreen.savedKey)));
+      messenger.showSnackBar(SnackBar(content: Text(widget.expenses.wasKept ? words.expensesKeptOnPhone : (submit ? words.expensesSent : words.expensesSaved), key: AddExpenseScreen.savedKey)));
       context.pop();
       return;
     }

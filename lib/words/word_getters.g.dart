@@ -710,6 +710,9 @@ mixin WordGetters {
   /// The word `expenses.itemNotOffered`.
   String get expensesItemNotOffered => text('expenses.itemNotOffered');
 
+  /// The word `expenses.keptOnPhone`.
+  String get expensesKeptOnPhone => text('expenses.keptOnPhone');
+
   /// The word `expenses.loadFailed`.
   String get expensesLoadFailed => text('expenses.loadFailed');
 
@@ -877,6 +880,30 @@ mixin WordGetters {
 
   /// The word `myAccount.title`.
   String get myAccountTitle => text('myAccount.title');
+
+  /// The word `offline.discard`.
+  String get offlineDiscard => text('offline.discard');
+
+  /// The word `offline.discardExplain`.
+  String get offlineDiscardExplain => text('offline.discardExplain');
+
+  /// The word `offline.discardQuestion`.
+  String get offlineDiscardQuestion => text('offline.discardQuestion');
+
+  /// The word `offline.empty`.
+  String get offlineEmpty => text('offline.empty');
+
+  /// The word `offline.sendAgain`.
+  String get offlineSendAgain => text('offline.sendAgain');
+
+  /// The word `offline.sendAnyway`.
+  String get offlineSendAnyway => text('offline.sendAnyway');
+
+  /// The word `offline.title`.
+  String get offlineTitle => text('offline.title');
+
+  /// The word `offline.waiting`.
+  String get offlineWaiting => text('offline.waiting');
 
   /// The word `partners.edit`.
   String get partnersEdit => text('partners.edit');

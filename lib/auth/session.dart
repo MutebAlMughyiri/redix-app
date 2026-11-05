@@ -6,14 +6,19 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
 import '../api.dart';
+import '../offline/folder_store.dart';
+import '../offline/local_store.dart';
 import '../words/words.dart';
 import 'biometrics.dart';
 import 'permission.dart';
 
 /// The signed-in session (UC-002): the tokens the API issued, kept only in the Keychain or Keystore (NFR-09), and the one way to call the API as the user.
 class Session extends ChangeNotifier {
-  /// A session kept in the device's secure storage, the Keychain or Keystore, and opened through [_biometrics] on a phone that uses them.
-  Session([this._storage = const FlutterSecureStorage(), this._biometrics = const Biometrics()]);
+  /// A session kept in the device's secure storage, the Keychain or Keystore, opened through [_biometrics] on a phone that uses them, with what it reads kept in [store].
+  Session([this._storage = const FlutterSecureStorage(), this._biometrics = const Biometrics(), this.store = const FolderStore()]);
+
+  /// What this phone keeps of what it read, and of what waits to be sent.
+  final LocalStore store;
 
   /// The tries at the fingerprint or face before only the password works (AC-35.2).
   static const maxUnlockAttempts = 3;
@@ -21,9 +26,11 @@ class Session extends ChangeNotifier {
   final FlutterSecureStorage _storage;
   final Biometrics _biometrics;
   static const _storageKey = 'session';
+  static const _copies = 'copies';
 
   var _accessToken = '';
   var _refreshToken = '';
+  var _userId = '';
   var _renewal = Future<void>.value();
   var _sending = Future<void>.value();
   var _mustChangePassword = false;
@@ -176,11 +183,37 @@ class Session extends ChangeNotifier {
     }
   }
 
-  /// Reads the API [path] as the signed-in user, renewing an expired access token like [post]. It waits for what was sent before it, so its answer already holds those changes.
+  /// Who is signed in; empty when nobody is.
+  String get userId => _userId;
+
+  /// Reads the API [path] as the signed-in user, renewing an expired access token like [post]. A list read is kept, and without a network the kept copy answers (FR-16).
   Future<http.Response> get(String path) async {
+    try {
+      final response = await read(path);
+      if (response.statusCode == 200 && (response.headers['content-type'] ?? 'application/json').contains('json')) {
+        await keepCopy(path, utf8.decode(response.bodyBytes));
+      }
+      return response;
+    } on Exception {
+      final copy = await copyOf(path);
+      if (copy.isEmpty) {
+        rethrow;
+      }
+      return http.Response.bytes(utf8.encode(copy), 200);
+    }
+  }
+
+  /// Reads the API [path] and keeps nothing. It waits for what was sent before it, so its answer already holds those changes.
+  Future<http.Response> read(String path) async {
     await _sending;
     return _send(() => http.get(apiUri(path), headers: _authorized));
   }
+
+  /// Keeps [text] as what the API [path] answers, until sign-out.
+  Future<void> keepCopy(String path, String text) => store.write(_copies, path, text);
+
+  /// What the API [path] answered when last read; empty when it was not.
+  Future<String> copyOf(String path) => store.read(_copies, path);
 
   /// Sends [body] as JSON to the API [path] as the signed-in user. An expired access token is renewed once and the request sent again;
   /// a session the API refuses to renew ends.
@@ -246,12 +279,14 @@ class Session extends ChangeNotifier {
     _apply({});
     _notice = notice;
     await _storage.delete(key: _storageKey);
+    await store.clear(_copies);
     notifyListeners();
   }
 
   void _apply(Map<String, dynamic> session) {
     _accessToken = session['accessToken'] as String? ?? '';
     _refreshToken = session['refreshToken'] as String? ?? '';
+    _userId = session['userId'] as String? ?? '';
     _mustChangePassword = session['mustChangePassword'] as bool? ?? false;
     _permissions = {...(session['permissions'] as List<dynamic>? ?? []).cast<String>()};
     _defaultProjectId = session['defaultProjectId'] as String? ?? '';

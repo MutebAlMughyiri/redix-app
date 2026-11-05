@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:redix/offline/local_store.dart';
 import 'package:redix/attachments/invoice_capture.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/auth/biometrics.dart';
@@ -49,6 +50,7 @@ Map<String, String> wordsIn(String language) => {
     'columns.typeNumber', 'columns.typeAmount', 'columns.typeDate', 'columns.typeList', 'columns.typeFile', 'columns.choices', 'columns.newChoices', 'columns.required', 'columns.optional', 'columns.showInReports',
     'columns.inReports', 'columns.custom', 'columns.core', 'columns.edit', 'columns.delete', 'columns.save', 'columns.deleteExplain', 'columns.applyQuestion', 'columns.applyExplain',
     'columns.applyToAll', 'columns.templateOnly',
+    'expenses.keptOnPhone', 'offline.title', 'offline.empty', 'offline.waiting', 'offline.sendAgain', 'offline.sendAnyway', 'offline.discard', 'offline.discardQuestion', 'offline.discardExplain',
     'categories.title', 'categories.hint', 'categories.empty', 'categories.loadFailed', 'categories.noConnection', 'categories.refused', 'categories.projectFinished',
     'categories.invalidName', 'categories.invalidOrder', 'categories.generalSubgroup', 'categories.subgroupInUse', 'categories.itemHasEntries', 'categories.changeType', 'subgroups.delete', 'subgroups.deleteQuestion', 'subgroups.deleteExplain', 'categories.new', 'categories.categoryName', 'categories.items', 'categories.noItems',
     'categories.addItem', 'categories.itemName', 'categories.itemType', 'categories.typePurchases', 'categories.typeContractorPayments', 'categories.typeBoth', 'categories.rename',
@@ -205,6 +207,33 @@ class FakePrompt extends Fake implements FlutterSecureStorage {
   }
 }
 
+/// A phone's kept files, in memory.
+class MemoryStore extends LocalStore {
+  /// What is kept, by folder and name.
+  final kept = <String, Map<String, Object>>{};
+
+  @override
+  Future<String> read(String folder, String name) async => kept[folder]?[name] as String? ?? '';
+
+  @override
+  Future<void> write(String folder, String name, String text) async => kept.putIfAbsent(folder, () => {})[name] = text;
+
+  @override
+  Future<Uint8List> readBytes(String folder, String name) async => kept[folder]?[name] as Uint8List? ?? Uint8List(0);
+
+  @override
+  Future<void> writeBytes(String folder, String name, List<int> bytes) async => kept.putIfAbsent(folder, () => {})[name] = Uint8List.fromList(bytes);
+
+  @override
+  Future<void> delete(String folder, String name) async => kept[folder]?.remove(name);
+
+  @override
+  Future<List<String>> namesIn(String folder) async => kept[folder]?.keys.toList() ?? [];
+
+  @override
+  Future<void> clear(String folder) async => kept.remove(folder);
+}
+
 /// The API as the app's tests see it: words for any language, and the answers of sign-in, refresh and password change each test chooses.
 class FakeApi {
   /// Whether the network is up; when false every request fails like a phone without signal.
@@ -352,6 +381,18 @@ class FakeApi {
   /// How many sessions the API has issued, so that each gets a refresh token of its own.
   var _issued = 0;
 
+  /// How many times the phone asked what changed.
+  var syncs = 0;
+
+  /// What the lists of a project hold now.
+  var syncStamp = 'stamp-1';
+
+  /// The lists a sync answers, by address.
+  var syncLists = const <String, Object>{};
+
+  /// Who signing in makes the user.
+  var userId = 'user-signed-in';
+
   /// What a change waits on before it is answered, to hold one on its way.
   var holdWrites = Future<void>.value();
 
@@ -389,6 +430,11 @@ class FakeApi {
       signOuts++;
       return http.Response('', 204);
     }
+    if (path.endsWith('/sync')) {
+      syncs++;
+      final since = request.url.queryParameters['since'] ?? '';
+      return _json({'stamp': syncStamp, 'lists': since == syncStamp ? const <String, Object>{} : syncLists}, 200);
+    }
     if (path.startsWith('/projects')) {
       return _answerProjects(request);
     }
@@ -423,7 +469,7 @@ class FakeApi {
       mustChangePassword = false;
     }
     final body = status == 200
-        ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "openDefaultProject": $openDefaultProject, "usesBiometrics": $usesBiometrics}'
+        ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "openDefaultProject": $openDefaultProject, "usesBiometrics": $usesBiometrics, "userId": "$userId"}'
         : '{"code": "$code"}';
     return http.Response(body, status);
   });
@@ -1106,12 +1152,13 @@ Future<Session> pumpRedix(
   Map<String, Object> preferences = const {},
   FakePrompt? prompt,
   InvoiceCapture? capture,
+  LocalStore? store,
 }) async {
   SharedPreferences.setMockInitialValues(preferences);
   FlutterSecureStorage.setMockInitialValues(Map.of(stored));
   tester.platformDispatcher.localesTestValue = [locale];
   addTearDown(tester.platformDispatcher.clearLocalesTestValue);
-  final session = Session(const FlutterSecureStorage(), Biometrics(prompt ?? FakePrompt()));
+  final session = Session(const FlutterSecureStorage(), Biometrics(prompt ?? FakePrompt()), store ?? MemoryStore());
   final language = AppLanguage();
   await http.runWithClient(() async {
     await session.restore();

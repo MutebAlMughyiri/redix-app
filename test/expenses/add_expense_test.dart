@@ -8,6 +8,7 @@ import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/expenses/original_invoice_picker.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/offline/outbox.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/item_picker.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
@@ -262,14 +263,60 @@ void main() {
     expect(opened.api.sentExpenses, isEmpty);
   });
 
-  testWidgets('without a network the expense stays, and the screen says so', (tester) async {
+  testWidgets('without a network the expense is kept on the phone, and the screen says so', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
     opened.api.online = false;
 
     await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
 
-    expect(shown(tester, AddExpenseScreen.messageKey), 'en expenses.noConnection');
+    expect(shown(tester, AddExpenseScreen.savedKey), 'en expenses.keptOnPhone');
+    expect(find.byKey(HomeScreen.waitingKey('project-0')), findsOneWidget);
+  });
+
+  testWidgets('AC-16.1: five expenses with their photos, entered with no network, all go within a minute of it returning', (tester) async {
+    final opened = await openExpense(tester, camera: PickedFile('invoice.png', '/phone/invoice.png', Uint8List.fromList(onePixelPng)));
+    for (var entered = 1; entered <= 5; entered++) {
+      await fill(tester, opened);
+      opened.api.online = false;
+      await tapVisible(tester, opened.api, AddExpenseScreen.cameraKey);
+      await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+      expect(find.text('en offline.title · $entered'), findsOneWidget);
+      if (entered < 5) {
+        await tester.ensureVisible(find.byKey(HomeScreen.addExpenseKey('project-0')));
+        await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
+      }
+    }
+
+    opened.api.online = true;
+    await act(tester, opened.api, () => tester.pump(Outbox.tryEvery));
+
+    expect(opened.api.sentExpenses, hasLength(5));
+    expect(opened.api.sentAttachments, hasLength(5));
+    expect(opened.api.sentExpenses.map((body) => body['id']).toSet(), hasLength(5));
+    expect(find.byKey(HomeScreen.waitingKey('project-0')), findsNothing);
+  });
+
+  testWidgets('AC-16.3: an upload cut after its file went keeps the file\'s id, and sends the entry once', (tester) async {
+    final opened = await openExpense(tester, camera: PickedFile('invoice.png', '/phone/invoice.png', Uint8List.fromList(onePixelPng)));
+    await fill(tester, opened);
+    opened.api.online = false;
+    await tapVisible(tester, opened.api, AddExpenseScreen.cameraKey);
+    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+
+    opened.api
+      ..online = true
+      ..expenseAnswer = (status: 503, body: const <String, dynamic>{});
+    await act(tester, opened.api, () => tester.pump(Outbox.tryEvery));
+    expect(opened.api.sentAttachments, hasLength(1));
+    expect(find.byKey(HomeScreen.waitingKey('project-0')), findsOneWidget);
+
+    opened.api.expenseAnswer = (status: 201, body: const <String, dynamic>{});
+    await act(tester, opened.api, () => tester.pump(Outbox.tryEvery));
+
+    expect(opened.api.sentAttachments, hasLength(1));
+    expect(opened.api.sentExpenses.last['attachmentId'], startsWith('attachment-'));
+    expect(find.byKey(HomeScreen.waitingKey('project-0')), findsNothing);
   });
 
   testWidgets('AC-41.1: a required custom column is marked, asked only in its item, and the refusal marks its field', (tester) async {

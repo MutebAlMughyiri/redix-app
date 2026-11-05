@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +23,9 @@ import 'expenses/expenses.dart';
 import 'home/home_screen.dart';
 import 'partners/partners.dart';
 import 'partners/partners_screen.dart';
+import 'offline/outbox.dart';
+import 'offline/project_sync.dart';
+import 'offline/waiting_screen.dart';
 import 'projects/members.dart';
 import 'projects/new_project_screen.dart';
 import 'projects/projects.dart';
@@ -84,6 +89,8 @@ class RedixApp extends StatefulWidget {
 class _RedixAppState extends State<RedixApp> {
   var _wordsAttempt = 0;
   late final _projects = Projects(widget.session);
+  late final _outbox = Outbox(widget.session, widget.session.store);
+  late final _sync = ProjectSync(widget.session);
   late final _registered = RegisteredProjects(widget.session);
   final _projectUsers = <String, Users>{};
   final _projectRoles = <String, Roles>{};
@@ -114,8 +121,9 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync),
       ),
+      GoRoute(path: WaitingScreen.path, builder: (context, state) => WaitingScreen(projectId: state.pathParameters['projectId'] ?? '', outbox: _outbox)),
       GoRoute(path: NewProjectScreen.registerPath, builder: (context, state) => NewProjectScreen(projects: _projects, isPublic: true)),
       GoRoute(path: RegisteredProjectsScreen.path, builder: (context, state) => RegisteredProjectsScreen(projects: _registered)),
       GoRoute(
@@ -203,7 +211,7 @@ class _RedixAppState extends State<RedixApp> {
 
   Attachments _attachmentsOf(String projectId) => _projectAttachments.putIfAbsent(projectId, () => Attachments(widget.session, projectId));
 
-  Expenses _expensesOf(String projectId) => _projectExpenses.putIfAbsent(projectId, () => Expenses(widget.session, projectId));
+  Expenses _expensesOf(String projectId) => _projectExpenses.putIfAbsent(projectId, () => Expenses(widget.session, projectId, _outbox));
 
   OfferedAccounts _offeredAccountsOf(String projectId) => _projectOfferedAccounts.putIfAbsent(projectId, () => OfferedAccounts(widget.session, projectId));
 
@@ -258,8 +266,15 @@ class _RedixAppState extends State<RedixApp> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    unawaited(_outbox.start());
+  }
+
+  @override
   void dispose() {
     _router.dispose();
+    _outbox.dispose();
     _projects.dispose();
     _registered.dispose();
     super.dispose();

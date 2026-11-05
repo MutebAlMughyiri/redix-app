@@ -174,7 +174,7 @@ void main() {
     expect(find.byKey(HomeScreen.paymentMethodsKey('project-0')), findsNothing);
   });
 
-  testWidgets('a list that cannot be read says so', (tester) async {
+  testWidgets('with no network the list shows what was kept, and no failure', (tester) async {
     final opened = await openMethods(tester);
     opened.api.online = false;
 
@@ -182,7 +182,7 @@ void main() {
     await tester.ensureVisible(find.byKey(HomeScreen.paymentMethodsKey('project-0')));
     await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.paymentMethodsKey('project-0'))));
 
-    expect(text(tester, PaymentMethodsScreen.messageKey), 'en paymentMethods.loadFailed');
+    expect(find.byKey(PaymentMethodsScreen.messageKey), findsNothing);
   });
 
   test('a plain number shows as few decimals as it needs', () {

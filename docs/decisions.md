@@ -6,6 +6,11 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | A phone keeps its copies and its waiting entries as files in the app's private folder, not in a database | Nothing queries them: a list is read whole by its address, and entries are tried in turn. A database would add a package, a schema and migrations on the phone for no question it answers. This replaces the note on UC-029 that it adds a local database |
+| 2026-11-05 | One owner keeps lists for offline: `Session.get` answers from a copy when the network fails | Every list works offline without a screen knowing, and the sync only has to fill the same copies |
+| 2026-11-05 | Android's backup of the app's data is off | Copies hold a project's money. Tokens were already out of it, in the Keystore |
+| 2026-11-05 | A retry runs every 20 seconds while the app runs, with no connectivity package | AC-16.1 allows a minute, and asking is the only proof a network works |
+| 2026-11-05 | A typed supplier search with no network looks in the kept register, with the API's spelling rule copied in `sameSpelling` | The API owns matching, and it cannot be asked. This is the one copied rule, and the table is short |
 | 2026-11-05 | The journey's name sits on a group and the test's own description is blank | The test binding paints a test's description across the app; nothing else clears it, and the guide's pictures should show the app as a person gets it |
 | 2026-11-05 | A renamed built-in column names its field on the entry forms in Arabic only | A column's name is typed in one language; in English the field keeps its own word |
 | 2026-11-05 | A screen title with what it belongs to takes two lines, through `ScreenTitle` | On a 360-point phone "Categories and items · غصون 7" cut the project's name to one letter |

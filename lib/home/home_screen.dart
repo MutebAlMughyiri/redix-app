@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,6 +11,9 @@ import '../contractor_payments/contractor_payment_screen.dart';
 import '../contracts/contracts_screen.dart';
 import '../expenses/add_expense_screen.dart';
 import '../partners/partners_screen.dart';
+import '../offline/outbox.dart';
+import '../offline/project_sync.dart';
+import '../offline/waiting_screen.dart';
 import '../projects/add_unit_dialog.dart';
 import '../projects/project.dart';
 import '../projects/project_card.dart';
@@ -29,7 +34,13 @@ import '../words/words.dart';
 /// The home of the open project (UC-010): the project, with what the user's roles allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
   /// The home of the project [projectId], one of [projects], with [accounts], its accounts.
-  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts});
+  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync});
+
+  /// What waits on this phone for the network.
+  final Outbox outbox;
+
+  /// What keeps the project's lists on the phone.
+  final ProjectSync sync;
 
   /// The open project.
   final String projectId;
@@ -121,6 +132,9 @@ class HomeScreen extends StatefulWidget {
   /// The button that enters a new purchase expense in the running project [id].
   static Key addExpenseKey(String id) => Key('home.addExpense.$id');
 
+  /// The line saying how many entries of the project [id] wait on this phone.
+  static Key waitingKey(String id) => Key('home.waiting.$id');
+
   /// The way into a new contractor payment in the project [id].
   static Key contractorPaymentKey(String id) => Key('home.contractorPayment.$id');
 
@@ -162,6 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
     widget.projects.loadOnOpen();
     widget.accounts.loadOnOpen();
     widget.projects.addListener(_leaveIfGone);
+    unawaited(widget.sync.refresh(widget.projectId));
   }
 
   @override
@@ -308,6 +323,22 @@ class _HomeScreenState extends State<HomeScreen> {
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  ListenableBuilder(
+                    listenable: widget.outbox,
+                    builder: (context, _) {
+                      final waiting = widget.outbox.of(project.id).length;
+                      return waiting == 0
+                          ? const SizedBox.shrink()
+                          : Card.filled(
+                              child: ListTile(
+                                key: HomeScreen.waitingKey(project.id),
+                                leading: const Icon(Icons.cloud_upload_outlined),
+                                title: Text('${words.offlineTitle} · $waiting'),
+                                onTap: () => context.push(WaitingScreen.pathOf(project.id)),
+                              ),
+                            );
+                    },
+                  ),
                   MyCustody(accounts: widget.accounts),
                   ProjectCard(
                     project: project,

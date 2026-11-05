@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import '../api_list.dart';
 import '../auth/session.dart';
 import '../format/number_format.dart';
+import 'arabic_spelling.dart';
 import 'supplier.dart';
 
 /// What an entry may pick from a project's register (UC-018): what the API finds for what was typed. Nothing about what matches is decided here.
 class SupplierSearch extends ApiList<Supplier> {
   /// The search of the project [projectId], seen through [session].
-  SupplierSearch(Session session, this.projectId) : super(session, _pathOf(projectId, ''), 'suppliers', Supplier.fromJson);
+  SupplierSearch(this._session, this.projectId) : super(_session, _pathOf(projectId, ''), 'suppliers', Supplier.fromJson);
+
+  final Session _session;
 
   /// The project whose register this searches.
   final String projectId;
@@ -29,6 +34,20 @@ class SupplierSearch extends ApiList<Supplier> {
   Future<void> find(String typed) {
     _typed = typed.trim();
     pointAt(_pathOf(projectId, typed));
-    return load();
+    return load().then((_) => _findInKeptCopy());
+  }
+
+  /// With no network the API cannot be asked, so what was kept of the whole register is searched the same way.
+  Future<void> _findInKeptCopy() async {
+    if (message.isEmpty || _typed.isEmpty) {
+      return;
+    }
+    final kept = await _session.copyOf(_pathOf(projectId, ''));
+    if (kept.isEmpty) {
+      return;
+    }
+    final wanted = sameSpelling(westernDigits(_typed));
+    final found = [for (final row in jsonDecode(kept) as List<dynamic>) Supplier.fromJson(row as Map<String, dynamic>)];
+    show(found.where((supplier) => sameSpelling(supplier.name).contains(wanted) || supplier.vatNumber.contains(wanted)).toList());
   }
 }

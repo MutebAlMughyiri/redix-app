@@ -92,11 +92,13 @@ void main() {
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
 
-  testWidgets('with no network the home says so, and Try again reads it', (tester) async {
+  testWidgets('with no network and nothing kept the home says so, and Try again reads it', (tester) async {
+    final store = MemoryStore();
     final api = FakeApi()..addProject('غصون 6');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
 
     api.online = false;
+    await store.clear('copies');
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
     expect(text(tester, HomeScreen.messageKey), 'en projects.loadFailed');
 

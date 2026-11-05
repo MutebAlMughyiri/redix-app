@@ -7,7 +7,6 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/category.dart';
 import 'package:redix/structure/subgroups_screen.dart';
-import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 
 import '../app_harness.dart';
@@ -163,9 +162,6 @@ void main() {
     await drag(tester, opened.api, CategoriesScreen.categoryHandleKey(opened.bone), 200);
 
     expect(find.text('en categories.noConnection'), findsOneWidget);
-    expect(find.byKey(ApiListBody.retryKey), findsOneWidget);
-    opened.api.online = true;
-    await act(tester, opened.api, () => tester.tap(find.byKey(ApiListBody.retryKey)));
     expect(tester.getTopLeft(find.byKey(CategoriesScreen.cardKey(opened.bone))).dy, lessThan(tester.getTopLeft(find.byKey(CategoriesScreen.cardKey(opened.finishing))).dy));
   });
 
