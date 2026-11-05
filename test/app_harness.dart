@@ -75,7 +75,7 @@ Map<String, String> wordsIn(String language) => {
     'expenses.item', 'expenses.subgroup', 'expenses.generalSubgroup', 'expenses.unit', 'expenses.supplier', 'expenses.invoiceNumber', 'expenses.invoiceDate', 'expenses.product', 'expenses.unitPrice', 'expenses.quantity',
     'expenses.includingVat', 'expenses.beforeVat', 'expenses.amountIncludingVat', 'expenses.amountBeforeVat', 'expenses.discount', 'expenses.notTaxable', 'expenses.afterDiscount', 'expenses.vat', 'expenses.total',
     'expenses.paymentSource', 'expenses.paymentMethod', 'expenses.account', 'expenses.noAccount', 'expenses.paymentDiffers', 'expenses.paymentDate', 'expenses.paymentAmount', 'expenses.bankFees', 'expenses.notes',
-    'expenses.required', 'expenses.send', 'expenses.saveDraft', 'expenses.sent', 'expenses.saved', 'expenses.loadFailed', 'expenses.noConnection', 'expenses.refused', 'expenses.projectFinished', 'expenses.invalidEntryId',
+    'expenses.send', 'expenses.saveDraft', 'expenses.sent', 'expenses.saved', 'expenses.noConnection', 'expenses.refused', 'expenses.projectFinished', 'expenses.invalidEntryId',
     'expenses.entryExists', 'expenses.itemNotOffered', 'expenses.unknownSubgroup', 'expenses.unknownUnit', 'expenses.unknownSupplier', 'expenses.unknownPaymentMethod', 'expenses.accountNotOffered', 'expenses.unknownAttachment',
     'expenses.invalidInvoiceNumber', 'expenses.invalidProduct', 'expenses.invalidNotes', 'expenses.invalidUnitPrice', 'expenses.invalidQuantity', 'expenses.invalidAmount', 'expenses.invalidDiscount', 'expenses.invalidPaymentAmount',
     'expenses.invalidBankFees', 'expenses.invalidInvoiceDate', 'expenses.invalidPaymentDate', 'expenses.unknownColumn', 'expenses.invalidColumnValue', 'expenses.requiredColumnMissing', 'expenses.invoiceRequired', 'expenses.qrRead',
@@ -119,8 +119,20 @@ class FakeCapture extends InvoiceCapture {
   /// What the files answer.
   var files = PickedFile.none();
 
+  /// What the phone's barcode reader finds in any picture; empty for nothing.
+  var qrText = '';
+
+  /// How many pictures the barcode reader looked at.
+  var qrReads = 0;
+
   /// How many times the camera opened.
   var cameraOpened = 0;
+
+  @override
+  Future<String> qrTextOf(PickedFile file) async {
+    qrReads++;
+    return qrText;
+  }
 
   @override
   Future<PickedFile> fromCamera() async {

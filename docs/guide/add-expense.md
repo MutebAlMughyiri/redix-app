@@ -2,7 +2,7 @@
 
 # New purchase expense · مصروف شراء جديد
 
-<img src="images/add-expense.png" alt="New purchase expense" width="300"> <img src="images/add-expense-payment.png" alt="How it was paid" width="300">
+<img src="images/add-expense.png" alt="New purchase expense" width="300"> <img src="images/add-expense-payment.png" alt="How it was paid" width="300"> <img src="images/add-expense-send.png" alt="Sending it" width="300">
 
 ## English
 

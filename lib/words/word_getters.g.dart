@@ -608,9 +608,6 @@ mixin WordGetters {
   /// The word `expenses.itemNotOffered`.
   String get expensesItemNotOffered => text('expenses.itemNotOffered');
 
-  /// The word `expenses.loadFailed`.
-  String get expensesLoadFailed => text('expenses.loadFailed');
-
   /// The word `expenses.new`.
   String get expensesNew => text('expenses.new');
 
@@ -667,9 +664,6 @@ mixin WordGetters {
 
   /// The word `expenses.refused`.
   String get expensesRefused => text('expenses.refused');
-
-  /// The word `expenses.required`.
-  String get expensesRequired => text('expenses.required');
 
   /// The word `expenses.requiredColumnMissing`.
   String get expensesRequiredColumnMissing => text('expenses.requiredColumnMissing');

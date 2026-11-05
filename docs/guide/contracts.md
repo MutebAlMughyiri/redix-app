@@ -15,6 +15,7 @@
 | Add a contract with no fixed value | Turn on **Open-value contract**. Its payments only add up, with nothing remaining and no alert. |
 | See only some contracts | Tap **Overrun** or **Open value** above the list; **All** shows them all again. |
 | Change the value, the notes or an amendment | Open the menu on its card and tap **Amend contract**. Every change is recorded with who made it. |
+| Keep the contract's document | In the dialog, tap **Add a document** and pick a picture or a PDF. It is kept when you save, and stays once attached. It cannot be opened from the app yet. |
 | Stop using a contract | Open the menu on its card and tap **Disable**. It stays on the list, and nothing is ever deleted. |
 
 The contractor, item and unit never change. If one is wrong, disable the contract and add it again.
@@ -42,6 +43,7 @@ A remaining in red and brackets, such as (1,000.00), means more was paid than wa
 | تضيف عقداً بلا قيمة محددة | فعّل **عقد مفتوح القيمة**. فتُجمع دفعاته فقط، بلا متبقٍ ولا تنبيه. |
 | تعرض بعض العقود فقط | اضغط **متجاوز** أو **مفتوح القيمة** فوق القائمة، و**الكل** تعيدها كلها. |
 | تغيّر القيمة أو الملاحظات أو تسجل تعديلاً | افتح القائمة في بطاقته واضغط **تعديل العقد**. ويُسجَّل كل تغيير باسم من قام به. |
+| تحفظ مستند العقد | في النافذة، اضغط **إضافة مستند** واختر صورة أو ملف PDF. يُحفظ عند الحفظ، ويبقى بعد إرفاقه. لا يمكن فتحه من التطبيق حالياً. |
 | توقف استخدام عقد | افتح القائمة في بطاقته واضغط **تعطيل**. يبقى في القائمة، ولا يُحذف شيء أبداً. |
 
 المقاول والبند والوحدة لا تتغير. فإن أخطأت في أحدها فعطّل العقد وأضفه من جديد.

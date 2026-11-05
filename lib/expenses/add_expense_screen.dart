@@ -18,6 +18,7 @@ import '../structure/item_column.dart';
 import '../structure/item_picker.dart';
 import '../structure/offered_items.dart';
 import '../suppliers/supplier.dart';
+import '../suppliers/quick_add_supplier_dialog.dart';
 import '../suppliers/supplier_picker.dart';
 import '../suppliers/suppliers.dart';
 import '../ui/confirm_dialog.dart';
@@ -27,7 +28,9 @@ import 'column_value_field.dart';
 import 'expenses.dart';
 import 'figures_box.dart';
 import 'invoice_figures.dart';
+import 'invoice_qr.dart';
 import 'invoice_section.dart';
+import 'qr_summary.dart';
 
 /// A new purchase expense (UC-021, UC-022): the invoice first, then what it was for and how it was paid. The amounts below the fields only show what the API will compute. A draft can wait for the invoice and the required columns; sending cannot.
 class AddExpenseScreen extends StatefulWidget {
@@ -81,6 +84,9 @@ class AddExpenseScreen extends StatefulWidget {
   /// The screen's title.
   static const titleKey = Key('addExpense.title');
 
+  /// The project's name, under the title.
+  static const projectNameKey = Key('addExpense.projectName');
+
   /// The button that opens the camera.
   static const cameraKey = Key('addExpense.camera');
 
@@ -95,6 +101,33 @@ class AddExpenseScreen extends StatefulWidget {
 
   /// The line that says why the last try gave no file.
   static const invoiceMessageKey = Key('addExpense.invoiceMessage');
+
+  /// The title over what was read from the invoice's QR code.
+  static const qrReadKey = Key('addExpense.qrRead');
+
+  /// The seller, from the QR code.
+  static const qrSellerKey = Key('addExpense.qrSeller');
+
+  /// The VAT number, from the QR code.
+  static const qrVatNumberKey = Key('addExpense.qrVatNumber');
+
+  /// The date and time, from the QR code.
+  static const qrTimeKey = Key('addExpense.qrTime');
+
+  /// The total and the VAT, from the QR code.
+  static const qrAmountsKey = Key('addExpense.qrAmounts');
+
+  /// The line that says no supplier holds the QR code's number.
+  static const qrSupplierMissingKey = Key('addExpense.qrSupplierMissing');
+
+  /// The button that adds the seller to the register.
+  static const qrAddSupplierKey = Key('addExpense.qrAddSupplier');
+
+  /// The line that says no QR code could be read.
+  static const qrMessageKey = Key('addExpense.qrMessage');
+
+  /// The warning that the QR code's VAT differs from the computed VAT.
+  static const qrVatDiffersKey = Key('addExpense.qrVatDiffers');
 
   /// The item.
   static const itemKey = Key('addExpense.item');
@@ -223,6 +256,9 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   var _invoice = PickedFile.none();
   var _invoiceMessage = '';
   var _attachmentId = '';
+  var _qr = InvoiceQr.none();
+  var _qrMessage = '';
+  var _qrSupplierMissing = false;
   var _item = Item.none();
   var _columns = <ItemColumn>[];
   var _columnsMessage = '';
@@ -268,8 +304,57 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       if (!file.isNone) {
         _invoice = file;
         _attachmentId = '';
+        _qr = InvoiceQr.none();
+        _qrMessage = '';
+        _qrSupplierMissing = false;
       }
     });
+    if (!file.isNone && !file.isPdf) {
+      await _readQr(file);
+    }
+  }
+
+  Future<void> _readQr(PickedFile file) async {
+    final qr = InvoiceQr.parse(await widget.capture.qrTextOf(file));
+    if (!mounted) {
+      return;
+    }
+    if (qr.isNone) {
+      setState(() => _qrMessage = 'expenses.qrUnreadable');
+      return;
+    }
+    setState(() {
+      _qr = qr;
+      _amountIncludesVat = true;
+      _amount.text = formatPlain(qr.total);
+      _invoiceDate = qr.issuedAt;
+    });
+    final search = widget.suppliers.search;
+    await search.find(qr.vatNumber);
+    if (!mounted) {
+      return;
+    }
+    final holders = search.all.where((supplier) => supplier.vatNumber == qr.vatNumber).toList();
+    setState(() {
+      _supplier = holders.isEmpty ? _supplier : holders.first;
+      _qrSupplierMissing = holders.isEmpty;
+    });
+  }
+
+  Future<void> _addSupplierFromQr() async {
+    await showDialog<void>(
+      context: context,
+      builder: (_) => QuickAddSupplierDialog(
+        project: widget.project,
+        suppliers: widget.suppliers,
+        typed: _qr.vatNumber,
+        name: _qr.sellerName,
+        onPicked: (supplier) => setState(() {
+          _supplier = supplier;
+          _qrSupplierMissing = false;
+        }),
+      ),
+    );
   }
 
   Future<void> _chooseItem(Item item) async {
@@ -554,6 +639,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
       onChanged: (isNotTaxable) => setState(() => _isNotTaxable = isNotTaxable),
     ),
     FiguresBox(figures: _figures, vatPercent: _vatPercent),
+    if (!_qr.isNone && (_figures.vat - _qr.vat).abs() > InvoiceQr.vatTolerance)
+      Text(words.expensesQrVatDiffers, key: AddExpenseScreen.qrVatDiffersKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
   ];
 
   List<Widget> _itemsOwnFields(Words words) => [
@@ -640,13 +727,27 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     final words = Words.of(context);
     final ownFields = _itemsOwnFields(words);
     return Scaffold(
-      appBar: AppBar(title: Text('${words.expensesNew} · ${widget.project.name}', key: AddExpenseScreen.titleKey)),
+      appBar: AppBar(
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(words.expensesNew, key: AddExpenseScreen.titleKey),
+            Text(widget.project.name, key: AddExpenseScreen.projectNameKey, style: Theme.of(context).textTheme.bodySmall),
+          ],
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
           InvoiceSection(file: _invoice, message: _invoiceMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
+          if (_qrMessage.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(words.text(_qrMessage), key: AddExpenseScreen.qrMessageKey),
+            ),
+          if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: _qrSupplierMissing && widget.project.mayAddSupplier, onAddSupplier: _addSupplierFromQr),
           _section(_whatItWasFor(words)),
           if (ownFields.isNotEmpty) _section(ownFields),
           _payment(words),

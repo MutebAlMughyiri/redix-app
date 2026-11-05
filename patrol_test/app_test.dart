@@ -1,6 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as img;
 import 'package:patrol/patrol.dart';
+import 'package:qr/qr.dart';
 import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/session.dart';
@@ -8,6 +14,9 @@ import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
+import 'package:redix/attachments/invoice_capture.dart';
+import 'package:redix/attachments/picked_file.dart';
+import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/main.dart';
@@ -31,13 +40,57 @@ const username = String.fromEnvironment('TEST_USERNAME');
 const temporaryPassword = String.fromEnvironment('TEST_PASSWORD');
 const newPassword = String.fromEnvironment('TEST_NEW_PASSWORD');
 
+/// The picture of a made-up invoice's QR code, with the white border a reader needs.
+Uint8List pictureOfQr(String text) {
+  const cell = 8;
+  const border = 4;
+  final code = QrImage(QrCode(payload: QrPayload.fromString(text)));
+  final size = (code.moduleCount + border * 2) * cell;
+  final picture = img.fill(img.Image(width: size, height: size), color: img.ColorRgb8(255, 255, 255));
+  for (var y = 0; y < code.moduleCount; y++) {
+    for (var x = 0; x < code.moduleCount; x++) {
+      if (code.isDark(y, x)) {
+        final left = (x + border) * cell;
+        final top = (y + border) * cell;
+        img.fillRect(picture, x1: left, y1: top, x2: left + cell - 1, y2: top + cell - 1, color: img.ColorRgb8(0, 0, 0));
+      }
+    }
+  }
+  return img.encodePng(picture);
+}
+
+/// A camera that hands over a picture, because no test can point the emulator's virtual camera at an invoice. The phone's own barcode reader, which is real, reads that picture.
+class CameraWithAPicture extends InvoiceCapture {
+  /// The camera whose every photo is of a made-up invoice's QR code.
+  const CameraWithAPicture();
+
+  @override
+  Future<PickedFile> fromCamera() async {
+    final bytes = pictureOfQr(madeUpInvoiceQr);
+    final file = await File('${Directory.systemTemp.path}/made-up-invoice.png').writeAsBytes(bytes);
+    return PickedFile('made-up-invoice.png', file.path, bytes);
+  }
+}
+
+/// The QR code of a made-up invoice from شركة النخيل, whose VAT is what 7.5% makes.
+String get madeUpInvoiceQr {
+  List<int> field(int tag, String text) => [tag, utf8.encode(text).length, ...utf8.encode(text)];
+  return base64.encode([
+    ...field(1, 'شركة النخيل'),
+    ...field(2, '300000000000003'),
+    ...field(3, '${DateTime.now().toIso8601String().substring(0, 10)}T10:30:00Z'),
+    ...field(4, '1075.00'),
+    ...field(5, '75.00'),
+  ]);
+}
+
 void main() {
   patrolTest('a project is registered, approved and managed; a new user sees it by role', ($) async {
     final session = Session();
     final language = AppLanguage();
     await session.restore();
     await language.restore();
-    await $.pumpWidgetAndSettle(RedixApp(session: session, language: language));
+    await $.pumpWidgetAndSettle(RedixApp(session: session, language: language, capture: const CameraWithAPicture()));
     await $(SignInScreen.usernameKey).waitUntilVisible();
     final logo = find.byKey(SignInScreen.logoKey);
     await precacheImage($.tester.widget<Image>(logo).image, $.tester.element(logo));
@@ -137,7 +190,7 @@ void main() {
     await addUnit.tap();
     await $(HomeScreen.unitNameKey).enterText('الفلة الغربية');
     await $(HomeScreen.saveUnitKey).tap();
-    await $(find.text('الفلة الغربية')).waitUntilVisible();
+    await $(keyStartingWith('home.unit.')).at(2).waitUntilVisible();
     await $.takeNativeScreenshot('home');
 
     await $(keyStartingWith('home.categories.')).scrollTo().tap();
@@ -307,18 +360,6 @@ void main() {
     await $.takeNativeScreenshot('contracts');
     await $(BackButton).tap();
 
-    await $(keyStartingWith('home.close.')).scrollTo().tap();
-    await $(HomeScreen.confirmCloseKey).waitUntilVisible();
-    await $.takeNativeScreenshot('close-project');
-    await $(HomeScreen.cancelCloseKey).tap();
-    expect($(keyStartingWith('home.close.')), findsOneWidget);
-
-    await $(keyStartingWith('home.close.')).scrollTo().tap();
-    await $(HomeScreen.confirmCloseKey).tap();
-    await $.pumpAndSettle();
-    expect($(keyStartingWith('home.close.')), findsNothing);
-    expect($(keyStartingWith('home.addUnit.')), findsNothing);
-
     await projectUsers.scrollTo().tap();
     await $(keyStartingWith('users.menu.')).waitUntilVisible();
 
@@ -393,6 +434,22 @@ void main() {
     await $.takeNativeScreenshot('users-arabic');
     await $(BackButton).tap();
     await projectUsers.waitUntilVisible();
+
+    await $(keyStartingWith('home.accounts.')).scrollTo().tap();
+    await $(AccountsScreen.addKey).waitUntilVisible();
+    await $(AccountsScreen.addKey).tap();
+    await $(AccountsScreen.typeKey(AccountType.cashCustody)).tap();
+    await $(AccountsScreen.accountNameKey).enterText('عهدة الميدان');
+    await $(AccountsScreen.openingBalanceKey).enterText('5000');
+    final nawaf = find.descendant(of: keyStartingWith('memberPicker.option.'), matching: find.text('نواف الأول'));
+    await $.tester.ensureVisible(nawaf);
+    await $.pumpAndSettle();
+    await $(nawaf).tap();
+    await $.pumpAndSettle();
+    await $(AccountsScreen.saveKey).tap();
+    await $(find.text('عهدة الميدان')).waitUntilVisible();
+    await $(BackButton).tap();
+    await projectUsers.waitUntilVisible();
     await $(BackButton).tap();
     await $(ProjectsScreen.settingsKey).tap();
     await $(SettingsScreen.myAccountKey).tap();
@@ -409,21 +466,6 @@ void main() {
     await $(MyAccountScreen.signOutKey).tap();
     await $(MyAccountScreen.cancelSignOutKey).tap();
     expect($(MyAccountScreen.signOutKey), findsOneWidget);
-    await $(MyAccountScreen.signOutKey).tap();
-    await $(MyAccountScreen.confirmSignOutKey).tap();
-
-    await $(SignInScreen.usernameKey).waitUntilVisible();
-    await $(SignInScreen.usernameKey).enterText('patrol-reem');
-    await $(SignInScreen.passwordKey).enterText('Reem-chosen-1');
-    await $(SignInScreen.submitKey).scrollTo().tap();
-    await $(HomeScreen.titleKey).waitUntilVisible();
-    await $(find.text('غصون 7')).waitUntilVisible();
-    expect($(BackButton), findsNothing);
-    await $(HomeScreen.settingsKey).tap();
-    await $(SettingsScreen.switchProjectKey).tap();
-    await $(ProjectsScreen.titleKey).waitUntilVisible();
-    await $(ProjectsScreen.settingsKey).tap();
-    await $(SettingsScreen.myAccountKey).tap();
     await $(MyAccountScreen.signOutKey).tap();
     await $(MyAccountScreen.confirmSignOutKey).tap();
 
@@ -447,5 +489,76 @@ void main() {
     expect($(keyStartingWith('home.users.')), findsNothing);
     expect($(keyStartingWith('home.addUnit.')), findsNothing);
     expect($(keyStartingWith('home.close.')), findsNothing);
+
+    await $(keyStartingWith('home.addExpense.')).tap();
+    await $(AddExpenseScreen.qrReadKey).waitUntilVisible();
+    await $(AddExpenseScreen.supplierDetailsKey).waitUntilVisible();
+    expect($.tester.widget<TextField>(find.byKey(AddExpenseScreen.amountKey)).controller!.text, '1075');
+
+    await $(AddExpenseScreen.supplierKey).scrollTo().tap();
+    await $(SupplierPicker.searchKey).enterText('مورد الميدان');
+    await $(SupplierPicker.quickAddKey).tap();
+    await $(SuppliersScreen.vatNumberKey).enterText('322222222222223');
+    await $(SupplierPicker.pendingHintKey).waitUntilVisible();
+    await $(SuppliersScreen.saveKey).last.tap();
+    await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+    await $(find.text('مورد الميدان')).scrollTo();
+
+    await $(AddExpenseScreen.itemKey).scrollTo().tap();
+    await $(keyStartingWith('itemPicker.option.')).first.tap();
+    await $.pumpAndSettle();
+    await $(keyStartingWith('addExpense.unit.')).first.scrollTo().tap();
+    await $(AddExpenseScreen.invoiceNumberKey).scrollTo().enterText('2617');
+    await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+    await $.pumpAndSettle();
+    await $.tester.ensureVisible(find.byKey(AddExpenseScreen.cameraKey));
+    await $.pumpAndSettle();
+    await $.takeNativeScreenshot('add-expense');
+
+    await $(keyStartingWith('addExpense.paymentMethod.')).first.scrollTo().tap();
+    await $(AddExpenseScreen.paymentDiffersKey).scrollTo().tap();
+    await $.pumpAndSettle();
+    await $.takeNativeScreenshot('add-expense-payment');
+    await $(AddExpenseScreen.paymentDiffersKey).scrollTo().tap();
+    await $.pumpAndSettle();
+
+    await $(AddExpenseScreen.sendKey).scrollTo();
+    await $.takeNativeScreenshot('add-expense-send');
+    await $(AddExpenseScreen.sendKey).tap();
+    await $(AddExpenseScreen.savedKey).waitUntilVisible();
+    await $(keyStartingWith('home.addExpense.')).waitUntilVisible();
+
+    await $(HomeScreen.settingsKey).tap();
+    await $(SettingsScreen.myAccountKey).tap();
+    await $(MyAccountScreen.signOutKey).tap();
+    await $(MyAccountScreen.confirmSignOutKey).tap();
+
+    await $(SignInScreen.usernameKey).waitUntilVisible();
+    await $(SignInScreen.usernameKey).enterText('patrol-reem');
+    await $(SignInScreen.passwordKey).enterText('Reem-chosen-1');
+    await $(SignInScreen.submitKey).scrollTo().tap();
+    await $(HomeScreen.titleKey).waitUntilVisible();
+    await $(find.text('غصون 7')).waitUntilVisible();
+    expect($(BackButton), findsNothing);
+
+    await $(keyStartingWith('home.close.')).scrollTo().tap();
+    await $(HomeScreen.confirmCloseKey).waitUntilVisible();
+    await $.takeNativeScreenshot('close-project');
+    await $(HomeScreen.cancelCloseKey).tap();
+    expect($(keyStartingWith('home.close.')), findsOneWidget);
+
+    await $(keyStartingWith('home.close.')).scrollTo().tap();
+    await $(HomeScreen.confirmCloseKey).tap();
+    await $.pumpAndSettle();
+    expect($(keyStartingWith('home.close.')), findsNothing);
+    expect($(keyStartingWith('home.addUnit.')), findsNothing);
+
+    await $(HomeScreen.settingsKey).tap();
+    await $(SettingsScreen.switchProjectKey).tap();
+    await $(ProjectsScreen.titleKey).waitUntilVisible();
+    await $(ProjectsScreen.settingsKey).tap();
+    await $(SettingsScreen.myAccountKey).tap();
+    await $(MyAccountScreen.signOutKey).tap();
+    await $(MyAccountScreen.confirmSignOutKey).tap();
   });
 }

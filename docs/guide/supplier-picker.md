@@ -7,11 +7,11 @@
 ## English
 
 **What it is for:** naming a supplier from the project's list, so its VAT number comes with it and the same supplier is never typed two ways.
-**Who sees it:** whoever enters something that needs a supplier, such as a contract's contractor. It needs a network.
+**Who sees it:** whoever enters something that needs a supplier, such as a purchase expense or a contract's contractor. It needs a network.
 
 | To | Do this |
 | --- | --- |
-| Find a supplier | Type three letters of its name, or part of its VAT number. |
+| Find a supplier | Those you used most come first, under **Most used**. Otherwise type three letters of its name, or part of its VAT number. |
 | Choose it | Tap its row. |
 | Leave without choosing | Tap the X. |
 | Add a supplier that is not on the list | Tap **New supplier**. What you typed in the search is filled in. Add its name and VAT number, or turn on **Not VAT-registered**, then tap **Add and choose**. |
@@ -28,11 +28,11 @@ Someone who does not keep the project's settings adds a supplier **Pending appro
 ## العربية
 
 **الغرض:** اختيار مورد من قائمة المشروع، فيأتي رقمه الضريبي معه ولا يُكتب المورد نفسه بطريقتين.
-**من يراها:** من يدخل ما يحتاج إلى مورد، مثل مقاول العقد. تحتاج إلى اتصال بالشبكة.
+**من يراها:** من يدخل ما يحتاج إلى مورد، مثل مصروف شراء أو مقاول العقد. تحتاج إلى اتصال بالشبكة.
 
 | لكي | افعل هذا |
 | --- | --- |
-| تجد مورداً | اكتب ثلاثة أحرف من اسمه، أو جزءاً من رقمه الضريبي. |
+| تجد مورداً | يأتي الأكثر استخداماً لديك أولاً، تحت **الأكثر استخداماً**. وإلا فاكتب ثلاثة أحرف من اسمه، أو جزءاً من رقمه الضريبي. |
 | تختاره | اضغط صفه. |
 | تخرج دون اختيار | اضغط علامة الإغلاق. |
 | تضيف مورداً ليس في القائمة | اضغط **مورد جديد**. ويُعبّأ ما كتبته في البحث. أضف اسمه ورقمه الضريبي، أو فعّل **غير مسجل بالضريبة**، ثم اضغط **إضافة واختيار**. |

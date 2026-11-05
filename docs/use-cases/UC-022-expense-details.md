@@ -16,6 +16,7 @@ The app sends what was typed and never a figure. `InvoiceFigures` only shows wha
 
 | Element | `Key` | Does |
 | --- | --- | --- |
+| The title, and the project's name under it | `AddExpenseScreen.titleKey`, `projectNameKey` | Two lines, so a long name cuts neither off |
 | Item | `AddExpenseScreen.itemKey` | An `ItemPicker` of what takes purchases; its columns are read when chosen |
 | A subgroup | `AddExpenseScreen.subgroupKey(id)` | Shown when the item has named ones |
 | A unit | `AddExpenseScreen.unitKey(id)` | The project's units, and the shared one last |

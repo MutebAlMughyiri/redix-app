@@ -54,6 +54,8 @@ lib/
     column_value_field.dart the field of one custom column, by what it holds
     expenses.dart           Expenses: the way to record an expense, and what it was refused over
     earlier_entry.dart      EarlierEntry: the entry an invoice number repeats, as the API answers it
+    invoice_qr.dart         InvoiceQr: what a Saudi e-invoice's QR code carries, read from its text
+    qr_summary.dart         what was read from the code, and the offer to add its seller
   contracts/
     contract.dart           Contract and ContractFilter, as the API answers them
     contracts.dart          Contracts: the ApiList of one project's contracts, and its changes

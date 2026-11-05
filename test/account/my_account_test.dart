@@ -572,6 +572,8 @@ void main() {
       expectFits(HomeScreen.addExpenseKey(runningId));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey(runningId))));
       [
+        AddExpenseScreen.titleKey,
+        AddExpenseScreen.projectNameKey,
         AddExpenseScreen.cameraKey,
         AddExpenseScreen.filesKey,
         AddExpenseScreen.invoiceNameKey,

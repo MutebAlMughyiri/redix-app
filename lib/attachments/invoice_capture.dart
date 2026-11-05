@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cunning_document_scanner/cunning_document_scanner.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
 import 'picked_file.dart';
 import 'picture_compression.dart';
@@ -24,6 +25,21 @@ class InvoiceCapture {
     } on Exception catch (error) {
       debugPrint('Camera not opened: $error');
       return PickedFile.failed('attachments.cameraFailed');
+    }
+  }
+
+  /// The text of the QR code in the picture [file], read by the phone's own barcode reader; empty when none can be read.
+  Future<String> qrTextOf(PickedFile file) async {
+    final controller = MobileScannerController(autoStart: false);
+    try {
+      final path = file.path.isNotEmpty ? file.path : (await File('${Directory.systemTemp.path}/${file.name}').writeAsBytes(file.bytes)).path;
+      final found = await controller.analyzeImage(path, formats: const [BarcodeFormat.qrCode]);
+      return found?.barcodes.map((barcode) => barcode.rawValue ?? '').where((text) => text.isNotEmpty).firstOrNull ?? '';
+    } on Exception catch (error) {
+      debugPrint('QR code not read: $error');
+      return '';
+    } finally {
+      await controller.dispose();
     }
   }
 

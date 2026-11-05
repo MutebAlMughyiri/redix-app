@@ -6,6 +6,12 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | The QR code is read from the invoice's picture, with no live scanning screen | The canvas draws it that way, one photo gives both the invoice and its code, and `mobile_scanner` reads a file with the phone's own reader. Made without Muteb; see the findings |
+| 2026-11-05 | A picture with no readable code shows one message, "No QR code could be read from this invoice", whether it has none or a bad one | The reader cannot tell them apart, and the fields stay open either way, as AC-11.2 asks. Made without Muteb |
+| 2026-11-05 | The date stays as the code wrote it, with no conversion from UTC | Codes commonly end in `Z` whatever their time means, and the day a person checks is the one printed. Made without Muteb |
+| 2026-11-05 | The journey's camera hands over a picture of a made-up invoice's QR code, and the phone's real reader reads it | The emulator's camera is virtual. This proves everything from the picture inward without faking the reading. Made without Muteb; see the findings |
+| 2026-11-05 | A QR code's VAT warning is worked out here, following the fields; the API takes no QR code value | UC-024 has no API work, and the warning stops nothing. Made without Muteb |
+| 2026-11-05 | The expense's title and the project's name are two lines, and its unit price and quantity say no "(optional)" | The pictures showed both cut off on a phone. A required field is marked instead. Made without Muteb |
 | 2026-11-05 | The phone makes the entry's id, once per screen, with the `uuid` package's version 7 | The database design says so (AC-16.3), and trying again after a lost answer cannot make a second entry. Made without Muteb |
 | 2026-11-05 | `formatMoney` rounds half up from the four decimals the API keeps, working in whole ten-thousandths | AC-08.2 shows 2,955.385 as 2,955.39, and the nearest `double` lies just below, so plain rounding showed 2,955.38. Every amount on every screen gains this from one place. Made without Muteb |
 | 2026-11-05 | The app computes the amounts it shows, in `double`, only to show them; it never sends one | Step 6 shows them as a person types, and a call per keystroke would not work on a site. The API owns the figures kept. Made without Muteb |
