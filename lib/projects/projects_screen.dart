@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../auth/session.dart';
 import '../home/home_screen.dart';
+import '../notifications/notifications.dart';
+import '../notifications/notifications_bell.dart';
 import '../settings/settings_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/refusal_snack_bar.dart';
@@ -15,7 +17,10 @@ import 'projects.dart';
 /// The project list, the first screen after sign-in (UC-010, FR-37): the projects the user has access to, one to open, and the default project.
 class ProjectsScreen extends StatefulWidget {
   /// The screen, showing [projects] to the user signed in through [session].
-  const ProjectsScreen({super.key, required this.projects, required this.session});
+  const ProjectsScreen({super.key, required this.projects, required this.session, required this.notifications});
+
+  /// What the user was told.
+  final Notifications notifications;
 
   /// The projects this screen shows.
   final Projects projects;
@@ -99,6 +104,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         actions: [
+          NotificationsBell(notifications: widget.notifications),
           IconButton(
             key: ProjectsScreen.settingsKey,
             icon: const Icon(Icons.tune),

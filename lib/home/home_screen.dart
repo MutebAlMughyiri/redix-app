@@ -14,6 +14,8 @@ import '../partners/partners_screen.dart';
 import '../approvals/approvals_screen.dart';
 import '../entries/my_entries_summary.dart';
 import '../entries/project_entries.dart';
+import '../notifications/notifications.dart';
+import '../notifications/notifications_bell.dart';
 import '../offline/outbox.dart';
 import '../offline/project_sync.dart';
 import '../offline/waiting_screen.dart';
@@ -37,7 +39,10 @@ import '../words/words.dart';
 /// The home of the open project (UC-010): the project, with what the user's roles allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
   /// The home of the project [projectId], one of [projects], with [accounts], its accounts.
-  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries});
+  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications});
+
+  /// What the user was told.
+  final Notifications notifications;
 
   /// The project's entries.
   final ProjectEntries entries;
@@ -293,6 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
+          NotificationsBell(notifications: widget.notifications),
           IconButton(
             key: HomeScreen.settingsKey,
             icon: const Icon(Icons.tune),

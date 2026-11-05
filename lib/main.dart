@@ -28,6 +28,8 @@ import 'approvals/approvals_screen.dart';
 import 'attachments/attachment_screen.dart';
 import 'entries/entries_screen.dart';
 import 'entries/project_entries.dart';
+import 'notifications/notifications.dart';
+import 'notifications/notifications_screen.dart';
 import 'offline/outbox.dart';
 import 'offline/project_sync.dart';
 import 'offline/waiting_screen.dart';
@@ -97,6 +99,7 @@ class _RedixAppState extends State<RedixApp> {
   late final _outbox = Outbox(widget.session, widget.session.store);
   late final _sync = ProjectSync(widget.session);
   late final _registered = RegisteredProjects(widget.session);
+  late final _notifications = Notifications(widget.session);
   final _projectUsers = <String, Users>{};
   final _projectRoles = <String, Roles>{};
   final _projectCategories = <String, Categories>{};
@@ -120,7 +123,8 @@ class _RedixAppState extends State<RedixApp> {
     refreshListenable: widget.session,
     redirect: (context, state) => _redirect(state.matchedLocation),
     routes: [
-      GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects, session: widget.session)),
+      GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects, session: widget.session, notifications: _notifications)),
+      GoRoute(path: NotificationsScreen.path, builder: (context, state) => NotificationsScreen(notifications: _notifications, projects: _projects)),
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session)),
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
       GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(language: widget.language, session: widget.session)),
@@ -128,7 +132,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync, entries: _entriesOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), notifications: _notifications),
       ),
       GoRoute(
         path: ApprovalsScreen.path,
@@ -200,7 +204,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: ContractorPaymentScreen.path, builder: (context, state) => _contractorPaymentScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project, state.uri.queryParameters)),
       GoRoute(
         path: EntriesScreen.path,
-        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), openEntryId: state.uri.queryParameters['entry'] ?? ''),
       ),
       GoRoute(
         path: SubgroupsScreen.path,
@@ -309,6 +313,7 @@ class _RedixAppState extends State<RedixApp> {
     _outbox.dispose();
     _projects.dispose();
     _registered.dispose();
+    _notifications.dispose();
     super.dispose();
   }
 

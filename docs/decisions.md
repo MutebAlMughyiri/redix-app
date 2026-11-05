@@ -6,6 +6,7 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-05 | Tapping an entry that waits opens the inbox, and a decision opens the entries with that one's actions open | There is no screen for one entry, and these two already say what can be done with it |
 | 2026-11-05 | A PDF opens through the phone's own viewer, with the `printing` package's share sheet | UC-059 needs that package anyway, and drawing a PDF inside the app would add a renderer for what the phone already does |
 | 2026-11-05 | Every card in the inbox shows its full details and its buttons; the canvas shows one open and the rest compact | A card that opens adds state for what fits anyway, and Finance decides from the card |
 | 2026-11-05 | The test package `qr` moved back to 3.x | `printing` needs it through `pdf`; only the journey uses it |

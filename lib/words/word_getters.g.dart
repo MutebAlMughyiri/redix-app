@@ -1091,6 +1091,36 @@ mixin WordGetters {
   /// The word `myAccount.title`.
   String get myAccountTitle => text('myAccount.title');
 
+  /// The word `notifications.empty`.
+  String get notificationsEmpty => text('notifications.empty');
+
+  /// The word `notifications.entryApproved`.
+  String get notificationsEntryApproved => text('notifications.entryApproved');
+
+  /// The word `notifications.entryRejected`.
+  String get notificationsEntryRejected => text('notifications.entryRejected');
+
+  /// The word `notifications.entrySubmitted`.
+  String get notificationsEntrySubmitted => text('notifications.entrySubmitted');
+
+  /// The word `notifications.loadFailed`.
+  String get notificationsLoadFailed => text('notifications.loadFailed');
+
+  /// The word `notifications.noConnection`.
+  String get notificationsNoConnection => text('notifications.noConnection');
+
+  /// The word `notifications.projectApproved`.
+  String get notificationsProjectApproved => text('notifications.projectApproved');
+
+  /// The word `notifications.projectRejected`.
+  String get notificationsProjectRejected => text('notifications.projectRejected');
+
+  /// The word `notifications.refused`.
+  String get notificationsRefused => text('notifications.refused');
+
+  /// The word `notifications.title`.
+  String get notificationsTitle => text('notifications.title');
+
   /// The word `offline.discard`.
   String get offlineDiscard => text('offline.discard');
 

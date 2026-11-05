@@ -16,14 +16,20 @@ import 'project_entries.dart';
 
 /// A project's entries (UC-037): each person's own, or all of them, and what can be done to one (UC-028, UC-033, UC-035).
 class EntriesScreen extends StatefulWidget {
-  /// The entries of [project], in [entries].
-  const EntriesScreen({super.key, required this.project, required this.entries});
+  /// The entries of [project], in [entries], opening [openEntryId] when there is one.
+  const EntriesScreen({super.key, required this.project, required this.entries, this.openEntryId = ''});
+
+  /// The entry to open at once, as a notification asks; empty for none.
+  final String openEntryId;
 
   /// The address of the screen.
   static const path = '/projects/:projectId/entries';
 
   /// The address of the screen for the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId/entries';
+
+  /// The address of the screen with the entry [entryId] of the project [projectId] open.
+  static String pathOfEntry(String projectId, String entryId) => '/projects/$projectId/entries?entry=$entryId';
 
   /// The filter showing the user's own.
   static const mineKey = Key('entries.mine');
@@ -86,6 +92,25 @@ class _EntriesScreenState extends State<EntriesScreen> {
   void initState() {
     super.initState();
     widget.entries.loadOnOpen();
+    if (widget.openEntryId.isNotEmpty) {
+      widget.entries.addListener(_openAsked);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.entries.removeListener(_openAsked);
+    super.dispose();
+  }
+
+  void _openAsked() {
+    if (widget.entries.isLoading) {
+      return;
+    }
+    widget.entries.removeListener(_openAsked);
+    for (final entry in widget.entries.all.where((entry) => entry.id == widget.openEntryId)) {
+      EntriesScreen.openActions(context, widget.project, widget.entries, entry);
+    }
   }
 
   @override
