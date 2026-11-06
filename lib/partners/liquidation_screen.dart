@@ -5,13 +5,21 @@ import 'package:go_router/go_router.dart';
 
 import '../accounts/account.dart';
 import '../accounts/accounts.dart';
+import '../attachments/attachment_screen.dart';
+import '../attachments/invoice_capture.dart';
+import '../auth/permission.dart';
 import '../expenses/entry_date.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../projects/projects.dart';
+import '../structure/category.dart';
+import '../structure/item_picker.dart';
+import '../structure/offered_items.dart';
 import '../ui/api_object_body.dart';
+import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
+import '../ui/entry_field.dart';
 import '../ui/labelled_chips.dart';
 import '../ui/picker_field.dart';
 import '../ui/screen_title.dart';
@@ -20,10 +28,12 @@ import 'liquidation.dart';
 import 'partner.dart';
 import 'partners.dart';
 
-/// Liquidating a project (UC-061, FR-51, BR-27): each partner's part of the final surplus, paid out or carried to a later project, or of a deficit, paid in; then the project closes.
+/// Liquidating a project (UC-061, FR-51, BR-27): each partner's part of the final surplus, paid out or carried to a later project, or of a deficit, paid in; then the project closes. Once
+/// closed, it shows what each partner was given, takes each payout's receipt, and records a late expense or revenue.
 class LiquidationScreen extends StatefulWidget {
-  /// The liquidation of [project] through [liquidation], paying through its [accounts], carrying to one of [projects] whose partners and accounts come from [partnersOf] and [accountsOf].
-  const LiquidationScreen({super.key, required this.project, required this.liquidation, required this.projects, required this.accounts, required this.partnersOf, required this.accountsOf});
+  /// The liquidation of [project] through [liquidation], paying through its [accounts], carrying to one of [projects] whose partners and accounts come from [partnersOf] and [accountsOf]; a late
+  /// expense picks from [items], and a receipt comes from what [capture] picks.
+  const LiquidationScreen({super.key, required this.project, required this.liquidation, required this.projects, required this.accounts, required this.partnersOf, required this.accountsOf, required this.items, required this.capture});
 
   /// The screen's route.
   static const path = '/projects/:projectId/liquidation';
@@ -73,6 +83,36 @@ class LiquidationScreen extends StatefulWidget {
   /// A part already shared out, by its entry [entryId].
   static Key distributedKey(String entryId) => Key('liquidation.distributed.$entryId');
 
+  /// The button that records a late expense or revenue, in a closed project.
+  static const lateKey = Key('liquidation.late');
+
+  /// The late expense choice.
+  static const lateExpenseKey = Key('liquidation.lateExpense');
+
+  /// The late revenue choice.
+  static const lateRevenueKey = Key('liquidation.lateRevenue');
+
+  /// The late expense's item.
+  static const lateItemKey = Key('liquidation.lateItem');
+
+  /// The late entry's day.
+  static const lateDateKey = Key('liquidation.lateDate');
+
+  /// The late entry's amount.
+  static const lateAmountKey = Key('liquidation.lateAmount');
+
+  /// The late entry's description.
+  static const lateDescriptionKey = Key('liquidation.lateDescription');
+
+  /// The choice of the account [id] for the late entry.
+  static Key lateAccountKey(String id) => Key('liquidation.lateAccount.$id');
+
+  /// The button that attaches the receipt of the part [entryId].
+  static Key attachReceiptKey(String entryId) => Key('liquidation.attachReceipt.$entryId');
+
+  /// The receipt of the part [entryId].
+  static Key receiptKey(String entryId) => Key('liquidation.receipt.$entryId');
+
   /// The project.
   final Project project;
 
@@ -90,6 +130,12 @@ class LiquidationScreen extends StatefulWidget {
 
   /// Another project's accounts.
   final Accounts Function(String projectId) accountsOf;
+
+  /// The items a late expense may go to.
+  final OfferedItems items;
+
+  /// The phone's camera and files.
+  final InvoiceCapture capture;
 
   @override
   State<LiquidationScreen> createState() => _LiquidationScreenState();
@@ -234,7 +280,25 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
     ];
   }
 
+  Future<void> _attachReceipt(LiquidationShare share) async {
+    final words = Words.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final file = await widget.capture.fromFiles();
+    if (file.isNone || !mounted) {
+      return;
+    }
+    final refusal = await widget.liquidation.attachReceipt(share.entryId, file);
+    messenger.showSnackBar(SnackBar(content: Text(words.text(refusal.isEmpty ? 'liquidation.receiptAttached' : refusal))));
+  }
+
+  void _askLate() => showDialog<void>(
+    context: context,
+    builder: (_) => _LateDialog(project: widget.project, liquidation: widget.liquidation, items: widget.items, accounts: widget.accounts),
+  );
+
   List<Widget> _distributed(LiquidationFigures figures, Words words) => [
+    if (widget.project.may(Permission.moveMoney))
+      OutlinedButton.icon(key: LiquidationScreen.lateKey, icon: const Icon(Icons.add), label: Text(words.liquidationLate), onPressed: _askLate),
     if (figures.distributed.isEmpty) Text(words.liquidationNothing, key: LiquidationScreen.nothingKey),
     if (figures.distributed.isNotEmpty) Text(words.liquidationDistributed, style: Theme.of(context).textTheme.titleMedium),
     for (final share in figures.distributed)
@@ -242,7 +306,14 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
         key: LiquidationScreen.distributedKey(share.entryId),
         contentPadding: EdgeInsets.zero,
         title: Text(share.partnerName),
-        subtitle: Text('${formatDate(share.date)} · ${share.accountName}'),
+        subtitle: Text('${share.description} · ${formatDate(share.date)} · ${share.accountName}'),
+        leading: share.receiptId.isEmpty
+            ? IconButton(key: LiquidationScreen.attachReceiptKey(share.entryId), tooltip: words.liquidationAttachReceipt, icon: Icon(Icons.attach_file, color: Theme.of(context).colorScheme.error), onPressed: () => _attachReceipt(share))
+            : IconButton(
+                key: LiquidationScreen.receiptKey(share.entryId),
+                icon: const Icon(Icons.receipt_long_outlined),
+                onPressed: () => context.push(AttachmentScreen.pathOf(widget.project.id, share.receiptId), extra: share.receiptType),
+              ),
         trailing: Text(formatMoney(share.amount)),
       ),
   ];
@@ -265,6 +336,103 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// The form of a late expense or revenue in a closed project (FR-51): what it was, for an expense its item, the day, the amount and the account, shared among the partners by their shares.
+class _LateDialog extends StatefulWidget {
+  const _LateDialog({required this.project, required this.liquidation, required this.items, required this.accounts});
+
+  final Project project;
+
+  final Liquidation liquidation;
+
+  final OfferedItems items;
+
+  final Accounts accounts;
+
+  @override
+  State<_LateDialog> createState() => _LateDialogState();
+}
+
+class _LateDialogState extends State<_LateDialog> {
+  final _amount = TextEditingController();
+  final _description = TextEditingController();
+  var _isExpense = true;
+  var _item = Item.none();
+  var _accountId = '';
+  var _date = DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.items.loadOnOpen();
+    widget.accounts.loadOnOpen();
+  }
+
+  @override
+  void dispose() {
+    _amount.dispose();
+    _description.dispose();
+    super.dispose();
+  }
+
+  Future<void> _chooseDate() async {
+    final chosen = await pickEntryDate(context, widget.project, _date);
+    if (mounted) {
+      setState(() => _date = chosen);
+    }
+  }
+
+  Future<String> _save() async {
+    final words = Words.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final amount = parseNumber(_amount.text);
+    if (amount.isNaN) {
+      return 'capital.invalidAmount';
+    }
+    final refusal = await widget.liquidation.recordLate(isExpense: _isExpense, itemId: _item.id, date: _date, amount: amount, accountId: _accountId, description: _description.text);
+    if (refusal.isEmpty) {
+      messenger.showSnackBar(SnackBar(content: Text(words.liquidationLateRecorded)));
+    }
+    return refusal;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final words = Words.of(context);
+    return ChangeDialog(
+      title: words.liquidationLate,
+      saveLabel: words.liquidationRecord,
+      onSave: _save,
+      children: [
+        Text(words.liquidationLateExplain, style: Theme.of(context).textTheme.bodySmall),
+        SegmentedButton<bool>(
+          showSelectedIcon: false,
+          segments: [
+            ButtonSegment(value: true, label: Text(words.liquidationLateExpense, key: LiquidationScreen.lateExpenseKey)),
+            ButtonSegment(value: false, label: Text(words.liquidationLateRevenue, key: LiquidationScreen.lateRevenueKey)),
+          ],
+          selected: {_isExpense},
+          onSelectionChanged: (selected) => setState(() => _isExpense = selected.single),
+        ),
+        if (_isExpense) ItemPicker(key: LiquidationScreen.lateItemKey, items: widget.items, label: words.liquidationItem, itemName: _item.name, onChanged: (item) => setState(() => _item = item)),
+        PickerField(key: LiquidationScreen.lateDateKey, label: words.liquidationDate, value: formatDate(_date), onTap: _chooseDate),
+        entryField(key: LiquidationScreen.lateAmountKey, controller: _amount, label: words.liquidationAmount, isNumber: true, onChanged: (_) {}),
+        ListenableBuilder(
+          listenable: widget.accounts,
+          builder: (context, _) => LabelledChips<Account>(
+            label: words.capitalAccount,
+            choices: widget.accounts.bankAndCash,
+            keyOf: (account) => LiquidationScreen.lateAccountKey(account.id),
+            nameOf: (account) => account.name,
+            isChosen: (account) => account.id == _accountId,
+            onChosen: (account) => setState(() => _accountId = account.id),
+          ),
+        ),
+        entryField(key: LiquidationScreen.lateDescriptionKey, controller: _description, label: words.liquidationDescription, onChanged: (_) {}),
+      ],
     );
   }
 }

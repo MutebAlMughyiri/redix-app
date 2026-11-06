@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:http/http.dart' as http;
 
 import 'api.dart';
 import 'auth/session.dart';
@@ -96,10 +97,16 @@ abstract class ApiObject<T> extends ChangeNotifier {
   /// Sends a change to the API [path] and, once it has answered, reads this again, so what someone else changed shows as it is now.
   /// Returns an empty string once changed, otherwise the word key of the refusal, under [wordPrefix] when that is not empty, for a change other screens also make.
   @protected
-  Future<String> change(String path, Map<String, Object> body, {String wordPrefix = ''}) async {
+  Future<String> change(String path, Map<String, Object> body, {String wordPrefix = ''}) => _send(path, () => _session.post(path, body), wordPrefix);
+
+  /// Sends the file [bytes], named [name], to the API [path], and answers as [change] does.
+  @protected
+  Future<String> sendFile(String path, String name, List<int> bytes) => _send(path, () => _session.postFile(path, name, bytes), '');
+
+  Future<String> _send(String path, Future<http.Response> Function() send, String wordPrefix) async {
     final prefix = wordPrefix.isEmpty ? _wordPrefix : wordPrefix;
     try {
-      final response = await _session.post(path, body);
+      final response = await send();
       await load();
       final answer = response.body.isEmpty ? null : jsonOf(response);
       _lastAnswer = answer is Map<String, dynamic> ? answer : const {};

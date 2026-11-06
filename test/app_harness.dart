@@ -91,6 +91,8 @@ Map<String, String> wordsIn(String language) => {
     'expenses.split', 'expenses.splitEqual', 'expenses.splitPercent', 'expenses.splitTotal', 'expenses.splitNeedsSharedUnit', 'expenses.invalidSplit',
     'blueprints.title', 'blueprints.project', 'blueprints.none', 'blueprints.add', 'blueprints.titleField', 'blueprints.for', 'blueprints.file', 'blueprints.fileHint', 'blueprints.save', 'blueprints.saved',
     'blueprints.remove', 'blueprints.removeQuestion', 'blueprints.removeExplain', 'blueprints.removed', 'blueprints.unknownAttachment', 'blueprints.invalidTitle', 'blueprints.loadFailed',
+    'liquidation.late', 'liquidation.lateExplain', 'liquidation.lateExpense', 'liquidation.lateRevenue', 'liquidation.item', 'liquidation.amount', 'liquidation.description', 'liquidation.record',
+    'liquidation.lateRecorded', 'liquidation.attachReceipt', 'liquidation.noReceipt', 'liquidation.receiptAttached',
     'liquidation.title', 'liquidation.surplus', 'liquidation.deficit', 'liquidation.explain', 'liquidation.deficitExplain', 'liquidation.pending', 'liquidation.payOut', 'liquidation.carry', 'liquidation.date',
     'liquidation.confirm', 'liquidation.question', 'liquidation.questionExplain', 'liquidation.done', 'liquidation.distributed', 'liquidation.nothing', 'capital.pendingEntries', 'capital.incompleteLiquidation',
     'reports.save', 'reports.downloaded',
@@ -512,6 +514,9 @@ class FakeApi {
 
   /// The blueprint changes sent: the path and what was sent.
   final sentBlueprints = <(String, Map<String, dynamic>)>[];
+
+  /// The liquidation parts whose receipt was sent, by entry.
+  final sentReceipts = <String>[];
 
   /// What the project's liquidation answers.
   var liquidationAnswer = <String, Object>{'surplus': 0, 'pendingCount': 0, 'parts': <Map<String, Object>>[], 'distributed': <Map<String, Object>>[]};
@@ -1415,6 +1420,10 @@ class FakeApi {
     }
     if (segments.length == 4 && segments[2] == 'reconciliations' && segments[3] == 'latest') {
       return _json(reconciliationAnswer, 200);
+    }
+    if (segments.length == 5 && segments[2] == 'liquidation' && segments[4] == 'receipt') {
+      sentReceipts.add(segments[3]);
+      return _json(liquidationAnswer, 200);
     }
     if (segments.length == 3 && segments[2] == 'liquidation' && request.method == 'GET') {
       return _json(liquidationAnswer, 200);

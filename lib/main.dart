@@ -332,6 +332,8 @@ class _RedixAppState extends State<RedixApp> {
           accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
           partnersOf: _partnersOf,
           accountsOf: _accountsOf,
+          items: _offeredItemsOf(state.pathParameters['projectId'] ?? '', ItemType.purchases),
+          capture: widget.capture,
         ),
       ),
       GoRoute(

@@ -1,4 +1,5 @@
 import '../api_object.dart';
+import '../attachments/picked_file.dart';
 import '../auth/session.dart';
 
 /// A partner's part of the final surplus, as the API shares it (BR-27).
@@ -31,7 +32,10 @@ class LiquidationShare {
       partnerName = json['partnerName'] as String,
       date = DateTime.parse(json['date'] as String),
       amount = (json['amount'] as num).toDouble(),
-      accountName = json['accountName'] as String;
+      accountName = json['accountName'] as String,
+      description = json['description'] as String,
+      receiptId = json['receiptId'] as String,
+      receiptType = json['receiptType'] as String;
 
   /// The entry.
   final String entryId;
@@ -47,6 +51,15 @@ class LiquidationShare {
 
   /// The account it went through.
   final String accountName;
+
+  /// What it was for: the liquidation, or a late expense or revenue.
+  final String description;
+
+  /// Its bank receipt; empty until attached.
+  final String receiptId;
+
+  /// What the receipt is; empty until attached.
+  final String receiptType;
 }
 
 /// A project's liquidation, as the API reckons it.
@@ -113,6 +126,20 @@ class Liquidation extends ApiObject<LiquidationFigures> {
 
   /// The project.
   final String projectId;
+
+  /// Records a late expense on [itemId], or late revenue when [isExpense] is false, of [amount] on [date] through [accountId], shared among the partners by their shares at closing.
+  Future<String> recordLate({required bool isExpense, required String itemId, required DateTime date, required double amount, required String accountId, required String description}) =>
+      change('/projects/$projectId/liquidation/late', {
+        'isExpense': isExpense,
+        if (isExpense && itemId.isNotEmpty) 'itemId': itemId,
+        'date': date.toIso8601String().substring(0, 10),
+        'amount': amount,
+        'accountId': accountId,
+        'description': description,
+      });
+
+  /// Attaches [file] as the bank receipt of the part [entryId].
+  Future<String> attachReceipt(String entryId, PickedFile file) => sendFile('/projects/$projectId/liquidation/$entryId/receipt', file.name, file.bytes);
 
   /// Shares out the surplus on [date], each partner's part as [lines] says, and closes the project.
   Future<String> liquidate(DateTime date, Map<String, LiquidationLine> lines) => change('/projects/$projectId/liquidation', {

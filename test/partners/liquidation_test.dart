@@ -1,8 +1,13 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/liquidation_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
+import 'package:redix/structure/item_picker.dart';
+import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 
 import '../app_harness.dart';
@@ -10,10 +15,10 @@ import '../app_harness.dart';
 void main() {
   Map<String, Object> part(String partnerId, String name, double share, double amount) => {'partnerId': partnerId, 'name': name, 'sharePercent': share, 'amount': amount};
 
-  Future<FakeApi> openLiquidation(WidgetTester tester, void Function(FakeApi api) arrange, {String status = 'running'}) async {
+  Future<FakeApi> openLiquidation(WidgetTester tester, void Function(FakeApi api) arrange, {String status = 'running', FakeCapture? capture}) async {
     final api = FakeApi()..addProject('غصون 6', status: status, units: ['الفلة']);
     arrange(api);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture ?? FakeCapture());
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
     await tester.ensureVisible(find.byKey(HomeScreen.liquidateKey('project-0')));
     await tester.pumpAndSettle();
@@ -108,7 +113,7 @@ void main() {
         'pendingCount': 0,
         'parts': <Map<String, Object>>[],
         'distributed': [
-          {'entryId': 'entry-9', 'partnerName': 'سالم', 'date': '2026-11-05', 'amount': 540, 'accountName': 'حساب المؤسسة'},
+          {'entryId': 'entry-9', 'partnerName': 'سالم', 'date': '2026-11-05', 'amount': 540, 'accountName': 'حساب المؤسسة', 'description': 'تصفية المشروع', 'receiptId': '', 'receiptType': ''},
         ],
       };
     }, status: 'finished');
@@ -116,4 +121,62 @@ void main() {
     expect(find.descendant(of: find.byKey(LiquidationScreen.distributedKey('entry-9')), matching: find.text('540.00')), findsOneWidget);
     expect(find.byKey(LiquidationScreen.confirmKey), findsNothing);
   });
+
+  Map<String, Object> closedWith(List<Map<String, Object>> distributed) => {'surplus': 0, 'pendingCount': 0, 'parts': <Map<String, Object>>[], 'distributed': distributed};
+
+  Map<String, Object> payout(String entryId, {String receiptId = ''}) =>
+      {'entryId': entryId, 'partnerName': 'سالم', 'date': '2026-11-05', 'amount': 540, 'accountName': 'حساب المؤسسة', 'description': 'تصفية المشروع', 'receiptId': receiptId, 'receiptType': receiptId.isEmpty ? '' : 'image/png'};
+
+  testWidgets('BR-23: a payout still without its receipt is marked, and attaching one sends the file', (tester) async {
+    final capture = FakeCapture()..files = PickedFile('receipt.png', '/phone/receipt.png', Uint8List.fromList(onePixelPng));
+    final api = await openLiquidation(tester, (api) => api.liquidationAnswer = closedWith([payout('entry-9'), payout('entry-10', receiptId: 'attachment-3')]), status: 'finished', capture: capture);
+
+    expect(find.byKey(LiquidationScreen.receiptKey('entry-10')), findsOneWidget);
+    await tapVisible(tester, api, LiquidationScreen.attachReceiptKey('entry-9'));
+
+    expect(api.sentReceipts, ['entry-9']);
+    expect(find.text('en liquidation.receiptAttached'), findsOneWidget);
+  });
+
+  testWidgets('FR-51: a late expense in a closed project is sent with its item, day, amount and account', (tester) async {
+    late String item;
+    late String bank;
+    final api = await openLiquidation(tester, (api) {
+      api.liquidationAnswer = closedWith([]);
+      item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'بند الكهرباء')['id']! as String;
+      bank = api.addAccount('project-0', 'حساب المؤسسة')['id']! as String;
+    }, status: 'finished');
+
+    await tapVisible(tester, api, LiquidationScreen.lateKey);
+    await act(tester, api, () => tester.tap(find.byKey(LiquidationScreen.lateItemKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ItemPicker.optionKey(item))));
+    await tester.enterText(find.byKey(LiquidationScreen.lateAmountKey), '100');
+    await act(tester, api, () => tester.tap(find.byKey(LiquidationScreen.lateAccountKey(bank))));
+    await tester.enterText(find.byKey(LiquidationScreen.lateDescriptionKey), 'فاتورة كهرباء متأخرة');
+    await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
+
+    final (path, body) = api.sentMoney.single;
+    expect(path, '/projects/project-0/liquidation/late');
+    expect(body, {'isExpense': true, 'itemId': item, 'date': isA<String>(), 'amount': 100, 'accountId': bank, 'description': 'فاتورة كهرباء متأخرة'});
+    expect(find.text('en liquidation.lateRecorded'), findsOneWidget);
+  });
+
+  testWidgets('FR-51: late revenue asks no item', (tester) async {
+    late String bank;
+    final api = await openLiquidation(tester, (api) {
+      api.liquidationAnswer = closedWith([]);
+      bank = api.addAccount('project-0', 'حساب المؤسسة')['id']! as String;
+    }, status: 'finished');
+
+    await tapVisible(tester, api, LiquidationScreen.lateKey);
+    await act(tester, api, () => tester.tap(find.byKey(LiquidationScreen.lateRevenueKey)));
+    expect(find.byKey(LiquidationScreen.lateItemKey), findsNothing);
+    await tester.enterText(find.byKey(LiquidationScreen.lateAmountKey), '50');
+    await act(tester, api, () => tester.tap(find.byKey(LiquidationScreen.lateAccountKey(bank))));
+    await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
+
+    expect(api.sentMoney.single.$2['isExpense'], isFalse);
+    expect(api.sentMoney.single.$2.containsKey('itemId'), isFalse);
+  });
 }
+
