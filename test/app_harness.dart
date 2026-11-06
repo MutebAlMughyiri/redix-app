@@ -13,6 +13,7 @@ import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/auth/biometrics.dart';
 import 'package:redix/auth/session.dart';
 import 'package:redix/main.dart';
+import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/words/app_language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -1622,6 +1623,12 @@ Future<Session> pumpRedix(
     await tester.pumpAndSettle();
   }, () => api.client);
   return session;
+}
+
+/// Starts the app signed in, with [capture] as the phone's camera and files and [store] as its storage, and opens the first project from the list.
+Future<void> openProject(WidgetTester tester, FakeApi api, {InvoiceCapture? capture, LocalStore? store}) async {
+  await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture, store: store);
+  await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
 }
 
 /// Runs [action] and lets the app settle, with the app's requests reaching [api].

@@ -6,7 +6,6 @@ import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/contracts/contract.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/item_picker.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
@@ -28,8 +27,7 @@ void main() {
     final running = api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000, hasPayments: hasPayments);
     final overrun = api.addContract('project-0', 'مبلط الجنوبية', value: 34000, paid: 35000);
     final open = api.addContract('project-0', 'دهان داخلي', isOpenValue: true, paid: 12000);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
@@ -62,8 +60,7 @@ void main() {
       {'id': 'kept-document', 'fileName': 'العقد.pdf'},
     ];
     apiOfDocuments = api;
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: capture);
     await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
@@ -77,8 +74,7 @@ void main() {
   testWidgets('BR-10: what waits for approval shows beside what was paid, and leaves the remaining alone', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة الغربية']);
     final contract = api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000, pending: 2000);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
     await tester.pumpAndSettle();
 
@@ -160,8 +156,7 @@ void main() {
   testWidgets('a contract with nothing paid has not started', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     final contract = api.addContract('project-0', 'الدرابزين', value: 19000, unitPrice: 380, quantity: 50)['id'] as String;
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
@@ -378,8 +373,7 @@ void main() {
 
   testWidgets('a project with no contracts says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
@@ -404,8 +398,7 @@ void main() {
 
   testWidgets('a list that cannot be read says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
     await tester.pumpAndSettle();
     api.online = false;

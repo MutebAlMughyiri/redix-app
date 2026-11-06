@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 
 import '../app_harness.dart';
 
@@ -16,8 +15,7 @@ void main() {
   Future<({FakeApi api, FakeCapture capture})> openExpense(WidgetTester tester, {PickedFile? camera}) async {
     final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
     final capture = FakeCapture()..camera = camera ?? PickedFile.none();
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
     return (api: api, capture: capture);
   }

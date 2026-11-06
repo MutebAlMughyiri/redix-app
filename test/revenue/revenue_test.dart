@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
 import 'package:redix/revenue/quarter_picker.dart';
@@ -19,8 +18,7 @@ void main() {
     addTearDown(tester.view.reset);
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة'], startDate: '2025-01-01');
     arrange(api);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     return api;
   }
 

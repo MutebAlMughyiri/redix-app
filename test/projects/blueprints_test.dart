@@ -6,7 +6,6 @@ import 'package:redix/attachments/attachment_screen.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/blueprints_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 
@@ -29,8 +28,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية'], permissions: permissions);
     arrange?.call(api);
     final capture = FakeCapture();
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: capture);
     await tester.ensureVisible(find.byKey(HomeScreen.blueprintsKey('project-0')));
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.blueprintsKey('project-0'))));

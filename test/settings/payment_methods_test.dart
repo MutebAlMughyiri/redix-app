@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
 
 import '../app_harness.dart';
@@ -15,8 +14,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions);
     final card = api.addPaymentMethod('project-0', 'شبكة');
     final sadad = api.addPaymentMethod('project-0', 'سداد', isActive: false);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.paymentMethodsKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.paymentMethodsKey('project-0'))));
     return (api: api, card: card['id'] as String, sadad: sadad['id'] as String);
@@ -167,9 +165,7 @@ void main() {
 
   testWidgets('without manageSettings there is no way in', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
 
     expect(find.byKey(HomeScreen.paymentMethodsKey('project-0')), findsNothing);
   });

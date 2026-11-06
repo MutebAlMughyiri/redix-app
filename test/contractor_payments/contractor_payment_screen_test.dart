@@ -8,7 +8,6 @@ import 'package:redix/contractor_payments/contractor_payment_screen.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 
 import '../app_harness.dart';
@@ -24,8 +23,7 @@ void main() {
     api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
     arrange?.call(api);
     final capture = FakeCapture();
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractorPaymentKey('project-0'))));
     return (api: api, capture: capture, running: running['id']! as String, disabled: disabled['id']! as String, open: open['id']! as String, method: method['id']! as String);
   }
@@ -273,18 +271,14 @@ void main() {
 
   testWidgets('who holds no recordEntries has no way in', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject'], units: ['الفلة الغربية']);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
 
     expect(find.byKey(HomeScreen.contractorPaymentKey('project-0')), findsNothing);
   });
 
   testWidgets('a finished project offers no new payment', (tester) async {
     final api = FakeApi()..addProject('غصون 5', status: 'finished', permissions: field, units: ['الفلة الشرقية']);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
 
     expect(find.byKey(HomeScreen.contractorPaymentKey('project-0')), findsNothing);
   });

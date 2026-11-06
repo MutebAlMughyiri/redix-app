@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 
 import '../app_harness.dart';
 
@@ -14,8 +13,7 @@ void main() {
     addTearDown(tester.view.reset);
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status, units: ['الفلة الغربية']);
     arrange(api);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     return api;
   }
 
@@ -240,8 +238,7 @@ void main() {
       ..expenseAnswer = (status: 409, body: const {'code': 'entryApproved'});
     final store = MemoryStore();
     await store.write('outbox', 'entry-0', '{"ownerId":"user-signed-in","projectId":"project-0","route":"expenses/entry-0","body":{"id":"entry-0","amount":9},"fileName":"","refusal":""}');
-    await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, store: store);
     await act(tester, api, () => tester.pump(const Duration(seconds: 20)));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
 

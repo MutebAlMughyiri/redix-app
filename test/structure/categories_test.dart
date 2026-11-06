@@ -21,8 +21,7 @@ void main() {
     final finishing = api.addCategory('project-0', 'التشطيب');
     final digging = api.addItem(bone, 'الحفر');
     final steel = api.addItem(bone, 'الحديد', type: 'purchases');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey('project-0'))));
     return (api: api, bone: bone['id'] as String, finishing: finishing['id'] as String, digging: digging['id'] as String, steel: steel['id'] as String);
@@ -212,8 +211,7 @@ void main() {
     api.contractTables[item['id'] as String] = [
       {'id': 'contract-1', 'kind': 'contract', 'name': 'مقاول الحفر', 'count': 27},
     ];
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey('project-0')));
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey('project-0'))));
@@ -359,8 +357,7 @@ void main() {
 
   testWidgets('a list that cannot be read offers to try again', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey('project-0')));
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey('project-0'))));
@@ -370,8 +367,7 @@ void main() {
 
   testWidgets('a project with no categories says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey('project-0'))));
 
@@ -393,8 +389,7 @@ void main() {
 
   testWidgets('without the permission there is no way in', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
 
     expect(find.byKey(HomeScreen.categoriesKey('project-0')), findsNothing);
   });

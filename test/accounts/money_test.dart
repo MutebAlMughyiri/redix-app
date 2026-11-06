@@ -16,7 +16,6 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/capital_move_screen.dart';
 import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/sharing/share_screen.dart';
 
 import '../app_harness.dart';
@@ -31,8 +30,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة']);
     arrange(api);
     final capture = FakeCapture();
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: capture);
     return (api: api, capture: capture);
   }
 
@@ -74,8 +72,7 @@ void main() {
       ..addMovement(attachmentId: 'attachment-1', amount: -9999999.99);
     final partner = api.addPartner('project-0', 'متعب بن عبدالله بن محمد المغيري الشريك المؤسس في المشروع', userId: 'user-1', userName: 'نواف بن عبدالله بن محمد العتيبي');
     api.addCapitalLine(partner['id']! as String, 9999999.99, 66.6666666667);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     final project = find.byKey(HomeScreen.accountsKey('project-0'));
 
     await tester.ensureVisible(project);

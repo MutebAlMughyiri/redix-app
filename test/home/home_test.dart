@@ -23,8 +23,7 @@ void main() {
   }
 
   Future<void> openHome(WidgetTester tester, FakeApi api) async {
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
   }
 
   const keptDirect = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": false, "defaultProjectId": "project-0", "openDefaultProject": true}';

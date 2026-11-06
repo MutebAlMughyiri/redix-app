@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/attachments/attachment_screen.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 
 import '../app_harness.dart';
 
@@ -11,8 +10,7 @@ void main() {
   Future<FakeApi> openInbox(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance, String status = 'running'}) async {
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status);
     arrange(api);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.approvalsKey('project-0')));
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.approvalsKey('project-0'))));
@@ -21,9 +19,7 @@ void main() {
 
   testWidgets('only whoever decides entries has a way in', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: field);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
 
     expect(find.byKey(HomeScreen.approvalsKey('project-0')), findsNothing);
   });

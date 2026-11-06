@@ -10,7 +10,6 @@ import 'package:redix/expenses/unit_split.dart';
 import 'package:redix/expenses/original_invoice_picker.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/offline/outbox.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/item_picker.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
@@ -45,8 +44,7 @@ void main() {
     final bank = api.addAccount('project-0', 'حساب المؤسسة');
     arrange?.call(api);
     final capture = FakeCapture()..camera = camera ?? PickedFile.none();
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: capture);
     await tester.ensureVisible(find.byKey(HomeScreen.addExpenseKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
     return (
@@ -455,8 +453,7 @@ void main() {
   testWidgets('a list that cannot be read says so, and Try again reads it', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
     api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: FakeCapture());
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: FakeCapture());
     await tester.ensureVisible(find.byKey(HomeScreen.addExpenseKey('project-0')));
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
@@ -726,17 +723,13 @@ void main() {
 
   testWidgets('who holds no recordEntries has no way in', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject'], units: ['الفلة الغربية']);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     expect(find.byKey(HomeScreen.addExpenseKey('project-0')), findsNothing);
   });
 
   testWidgets('a finished project offers no new expense', (tester) async {
     final api = FakeApi()..addProject('غصون 5', status: 'finished', permissions: field, units: ['الفلة الشرقية']);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
 
     expect(find.byKey(HomeScreen.addExpenseKey('project-0')), findsNothing);
   });

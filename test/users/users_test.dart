@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/users/users_screen.dart';
 
 import '../app_harness.dart';
@@ -19,8 +18,7 @@ void main() {
       ..giveRole(manager, 'project-0', 'role-finance')
       ..giveRole(field, 'project-0', 'role-field')
       ..giveRole(disabled, 'project-0', 'role-reader');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey('project-0'))));
     return api;
   }
@@ -204,9 +202,7 @@ void main() {
   testWidgets('without a network the list says so, and Try again reads it', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     api.giveRole(api.addUser('متعب', username: 'muteb'), 'project-0', 'role-manager');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey('project-0'))));
     expect(text(tester, UsersScreen.messageKey), 'en users.loadFailed');

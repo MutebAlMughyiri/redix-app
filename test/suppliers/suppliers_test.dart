@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/item_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
@@ -20,8 +19,7 @@ void main() {
     api.addItem(tiling, 'البلاط');
     final approved = api.addSupplier('project-0', 'شركة النخيل', vatNumber: vatNumber, defaultItemName: 'اللياسة');
     final pending = api.addSupplier('project-0', 'بقالة الحي', status: 'pendingApproval');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.suppliersKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey('project-0'))));
     return (api: api, approved: approved['id'] as String, pending: pending['id'] as String);
@@ -183,8 +181,7 @@ void main() {
 
   testWidgets('a project with no suppliers says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.suppliersKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey('project-0'))));
 
@@ -208,8 +205,7 @@ void main() {
 
   testWidgets('a list that cannot be read says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.suppliersKey('project-0')));
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey('project-0'))));

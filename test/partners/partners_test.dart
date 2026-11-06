@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/member_picker.dart';
-import 'package:redix/projects/projects_screen.dart';
 
 import '../app_harness.dart';
 
@@ -17,8 +16,7 @@ void main() {
     api.addMember('user-nawaf', 'نواف');
     final mutab = api.addPartner('project-0', 'متعب', userId: 'user-mutab', userName: 'متعب المغيري');
     final haitham = api.addPartner('project-0', 'هيثم');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
     return (api: api, mutab: mutab['id'] as String, haitham: haitham['id'] as String);
@@ -108,8 +106,7 @@ void main() {
 
   testWidgets('a project with no partners says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
 
@@ -134,9 +131,7 @@ void main() {
 
   testWidgets('everyone in the project has a way in, since each sees their own line (BR-31)', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
 
     expect(find.byKey(HomeScreen.partnersKey('project-0')), findsOneWidget);
   });

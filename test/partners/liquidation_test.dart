@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/liquidation_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/item_picker.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
@@ -18,8 +17,7 @@ void main() {
   Future<FakeApi> openLiquidation(WidgetTester tester, void Function(FakeApi api) arrange, {String status = 'running', FakeCapture? capture}) async {
     final api = FakeApi()..addProject('غصون 6', status: status, units: ['الفلة']);
     arrange(api);
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture ?? FakeCapture());
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: capture ?? FakeCapture());
     await tester.ensureVisible(find.byKey(HomeScreen.liquidateKey('project-0')));
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.liquidateKey('project-0'))));

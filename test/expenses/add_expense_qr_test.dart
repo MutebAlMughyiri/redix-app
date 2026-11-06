@@ -6,7 +6,6 @@ import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/format/date_format.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 
@@ -24,8 +23,7 @@ void main() {
     final capture = FakeCapture()
       ..camera = picture
       ..qrText = qrText;
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
     return (api: api, capture: capture);
   }
@@ -143,8 +141,7 @@ void main() {
   testWidgets('a PDF is not looked at for a QR code, and says nothing about one', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
     final capture = FakeCapture()..files = PickedFile('invoice.pdf', '/phone/invoice.pdf', Uint8List.fromList([1, 2, 3]));
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
 
     await tester.ensureVisible(find.byKey(AddExpenseScreen.filesKey));
@@ -160,8 +157,7 @@ void main() {
     final capture = FakeCapture()
       ..files = picture
       ..qrText = madeUpQr();
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
 
     await tester.ensureVisible(find.byKey(AddExpenseScreen.filesKey));

@@ -20,8 +20,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
     final supplier = api.addSupplier('project-0', 'شركة النخيل', vatNumber: '300000000000003', timesUsed: 3);
     api.addCategory('project-0', 'التشطيب');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.addExpenseKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
     await tester.ensureVisible(find.byKey(AddExpenseScreen.supplierKey));

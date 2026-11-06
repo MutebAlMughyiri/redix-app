@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/periodic_report_screen.dart';
 import 'package:redix/reports/report_files.dart';
@@ -16,8 +15,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة']);
     arrange(api);
     final capture = FakeCapture();
-    await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.reportsKey('project-0'))));
     return (api: api, capture: capture);
   }

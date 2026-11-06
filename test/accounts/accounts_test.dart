@@ -5,7 +5,6 @@ import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/member_picker.dart';
-import 'package:redix/projects/projects_screen.dart';
 
 import '../app_harness.dart';
 
@@ -19,8 +18,7 @@ void main() {
     api.addMember('user-fawaz', 'فواز');
     final bank = api.addAccount('project-0', 'حساب المؤسسة', openingBalance: 64250.75);
     final custody = api.addAccount('project-0', 'كاش مع نواف', type: 'cashCustody', openingBalance: 2750, custodianId: 'user-nawaf', custodianName: 'نواف');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.accountsKey('project-0'))));
     return (api: api, bank: bank['id'] as String, custody: custody['id'] as String);
@@ -137,8 +135,7 @@ void main() {
   testWidgets('a custodian who left the project stays on offer until changed', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     final custody = api.addAccount('project-0', 'كاش مع هيثم', type: 'cashCustody', custodianId: 'user-gone', custodianName: 'هيثم');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.accountsKey('project-0'))));
 
@@ -180,9 +177,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
     final mine = api.addAccount('project-0', 'كاش مع نواف', type: 'cashCustody', openingBalance: 2750, custodianId: 'user-nawaf', custodianName: 'نواف', isMine: true);
     final theirs = api.addAccount('project-0', 'كاش مع فواز', type: 'cashCustody', openingBalance: 40, custodianId: 'user-fawaz', custodianName: 'فواز');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
 
     expect(text(tester, HomeScreen.custodyBalanceKey(mine['id'] as String)), '2,750.00 en accounts.riyal');
     expect(find.byKey(HomeScreen.custodyKey(theirs['id'] as String)), findsNothing);
@@ -191,9 +186,7 @@ void main() {
   testWidgets('a disabled custody leaves the home', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
     final mine = api.addAccount('project-0', 'كاش مع نواف', type: 'cashCustody', custodianId: 'user-nawaf', custodianName: 'نواف', isMine: true, isActive: false);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
 
     expect(find.byKey(HomeScreen.custodyKey(mine['id'] as String)), findsNothing);
   });

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/apply_to_all_dialog.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/category.dart';
@@ -26,8 +25,7 @@ void main() {
     final area = api.addColumn(itemPath, 'المساحة م²', dataType: 'number', isCustom: true, isRequired: true, showInReports: true);
     api.addColumn(templatePath, 'تاريخ القالب', dataType: 'date', isCore: true, isRequired: true);
     api.addColumn(templatePath, 'وحدة القالب', dataType: 'list');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey('project-0'))));
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.categoryTileKey('category-0'))));
@@ -299,8 +297,7 @@ void main() {
   testWidgets('a list that cannot be read offers to try again', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     api.addItem(api.addCategory('project-0', 'التشطيب'), 'البلاط');
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey('project-0'))));
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.categoryTileKey('category-0'))));

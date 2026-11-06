@@ -32,8 +32,7 @@ void main() {
 
   Future<FakeApi> openHome(WidgetTester tester, MemoryStore store) async {
     final api = FakeApi()..addProject('غصون 6');
-    await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, store: store);
     return api;
   }
 
@@ -67,9 +66,7 @@ void main() {
           {'id': 'kept-supplier'},
         ],
       };
-    await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, store: store);
 
     expect(await store.read('copies', '/projects/project-0/suppliers'), contains('kept-supplier'));
     expect(api.syncs, 1);
@@ -85,9 +82,7 @@ void main() {
           {'id': 'would-be-sent-again'},
         ],
       };
-    await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
-
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, store: store);
 
     expect(await store.read('copies', '/projects/project-0/suppliers'), isEmpty);
   });
@@ -148,8 +143,7 @@ void main() {
     final api = FakeApi()
       ..addProject('غصون 6')
       ..expenseAnswer = (status: 400, body: const {'code': 'unknownSupplier'});
-    await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, store: store);
     await act(tester, api, () => tester.pump(Outbox.tryEvery));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
 
@@ -201,8 +195,7 @@ void main() {
     final api = FakeApi()
       ..addProject('غصون 6')
       ..expenseAnswer = (status: 503, body: const <String, dynamic>{});
-    await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api, store: store);
     await act(tester, api, () => tester.pump(Outbox.tryEvery));
 
     expect(find.text('en offline.title · 1'), findsOneWidget);

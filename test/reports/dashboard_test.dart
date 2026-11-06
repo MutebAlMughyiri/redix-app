@@ -4,7 +4,6 @@ import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/home/dashboard_card.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
@@ -41,8 +40,7 @@ void main() {
     addTearDown(tester.view.reset);
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة']);
     arrange(api);
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    await openProject(tester, api);
     return api;
   }
 
