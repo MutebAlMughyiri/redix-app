@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'documents/documents.dart';
+import 'documents/documents_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -29,8 +31,6 @@ import 'home/home_screen.dart';
 import 'partners/capital.dart';
 import 'partners/capital_move_screen.dart';
 import 'partners/liquidation.dart';
-import 'projects/blueprints.dart';
-import 'projects/blueprints_screen.dart';
 import 'partners/liquidation_screen.dart';
 import 'partners/capital_movements.dart';
 import 'partners/movements_screen.dart';
@@ -196,8 +196,10 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => AttachmentScreen(
           projectId: state.pathParameters['projectId'] ?? '',
           attachmentId: state.pathParameters['attachmentId'] ?? '',
+          fileName: state.uri.queryParameters['name'] ?? '',
           contentType: state.extra as String? ?? '',
           session: widget.session,
+          capture: widget.capture,
         ),
       ),
       GoRoute(path: WaitingScreen.path, builder: (context, state) => WaitingScreen(projectId: state.pathParameters['projectId'] ?? '', outbox: _outbox)),
@@ -317,11 +319,10 @@ class _RedixAppState extends State<RedixApp> {
         ),
       ),
       GoRoute(
-        path: BlueprintsScreen.path,
-        builder: (context, state) => BlueprintsScreen(
+        path: DocumentsScreen.path,
+        builder: (context, state) => DocumentsScreen(
           project: state.extra! as Project,
-          blueprints: Blueprints(widget.session, state.pathParameters['projectId'] ?? ''),
-          attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
+          documents: Documents(widget.session, state.pathParameters['projectId'] ?? ''),
           capture: widget.capture,
         ),
       ),

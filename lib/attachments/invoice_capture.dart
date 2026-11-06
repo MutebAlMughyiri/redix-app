@@ -85,6 +85,20 @@ class InvoiceCapture {
   Future<void> saveFile(Uint8List bytes, String name, String mimeType) =>
       FileSaver.instance.saveToDownloads(name: name, bytes: bytes, includeExtension: false, mimeType: MimeType.custom, customMimeType: mimeType);
 
+  /// Opens the phone's files for any file, kept as it is: a project's document (UC-064).
+  Future<PickedFile> fromAnyFile() async {
+    try {
+      final picked = await FilePicker.pickFile(type: FileType.any);
+      if (picked == null) {
+        return PickedFile.none();
+      }
+      return PickedFile(picked.name, picked.path ?? '', await picked.readAsBytes());
+    } on Exception catch (error) {
+      debugPrint('File not read: $error');
+      return PickedFile.failed('attachments.unreadable');
+    }
+  }
+
   /// Opens the phone's files for a picture or a PDF; a picture comes back under 1 MB.
   Future<PickedFile> fromFiles() async {
     try {

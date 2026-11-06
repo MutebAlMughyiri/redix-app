@@ -88,7 +88,7 @@ class Project {
   /// True once the project is closed: the app offers no change on it (AC-04.1).
   bool get isFinished => status == ProjectStatus.finished;
 
-  /// Whether the signed-in user may manage the project now: its units, its name, its blueprints, and closing it.
+  /// Whether the signed-in user may manage the project now: its units, its name, its documents, and closing it.
   bool get mayManageProject => !isFinished && may(Permission.manageProject);
 
   /// Whether the signed-in user may change the project's structure now.

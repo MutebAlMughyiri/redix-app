@@ -6,13 +6,13 @@ import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/contracts/contracts_screen.dart';
+import 'package:redix/documents/documents_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/home/dashboard_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
-import 'package:redix/projects/blueprints_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
@@ -79,28 +79,27 @@ final List<Gate> _gates = [
   (name: 'A unit\'s menu on the project card', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.unitMenuKey('$_project-unit-0'))),
   (name: 'Set completion on the dashboard', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(DashboardCard.setCompletionKey)),
   (
-    name: 'Add a blueprint',
+    name: 'Add a document',
     permission: Permission.manageProject,
     arrange: _nothing,
-    steps: [_openProject, _tapKey(HomeScreen.blueprintsKey(_project))],
-    control: _key(BlueprintsScreen.addKey),
+    steps: [_openProject, _tapKey(HomeScreen.documentsKey(_project))],
+    control: _key(DocumentsScreen.addKey),
   ),
   (
-    name: 'Remove a blueprint',
+    name: 'Remove a document',
     permission: Permission.manageProject,
-    arrange: (api) => api.blueprintRows.add({
-      'id': 'site',
-      'title': 'مخطط الموقع العام',
-      'unitId': '',
-      'unitName': '',
-      'attachmentId': 'attachment-site',
-      'fileName': 'site.png',
-      'contentType': 'image/png',
+    arrange: (api) => api.documentRows.add({
+      'id': 'permit',
+      'name': 'رخصة البناء',
+      'group': 'التراخيص',
+      'attachmentId': 'attachment-permit',
+      'fileName': 'permit.pdf',
+      'contentType': 'application/pdf',
       'sizeBytes': 4,
-      'uploadedAt': '2026-11-05T20:00:00Z',
+      'uploadedAt': '2026-11-07T20:00:00Z',
     }),
-    steps: [_openProject, _tapKey(HomeScreen.blueprintsKey(_project))],
-    control: _key(BlueprintsScreen.removeKey('site')),
+    steps: [_openProject, _tapKey(HomeScreen.documentsKey(_project))],
+    control: _key(DocumentsScreen.removeKey('permit')),
   ),
   (name: 'Categories on the project card', permission: Permission.manageStructure, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.categoriesKey(_project))),
   (name: 'Payment methods on the project card', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.paymentMethodsKey(_project))),

@@ -9,10 +9,10 @@ import '../accounts/my_custody.dart';
 import '../auth/session.dart';
 import '../contractor_payments/contractor_payment_screen.dart';
 import '../contracts/contracts_screen.dart';
+import '../documents/documents_screen.dart';
 import '../expenses/add_expense_screen.dart';
 import '../partners/partners_screen.dart';
 import '../partners/liquidation_screen.dart';
-import '../projects/blueprints_screen.dart';
 import '../reports/reports_screen.dart';
 import '../revenue/revenue_screen.dart';
 import '../approvals/approvals_screen.dart';
@@ -204,8 +204,8 @@ class HomeScreen extends StatefulWidget {
   /// The button that closes the running project [id].
   static Key closeKey(String id) => Key('home.close.$id');
 
-  /// The way into the blueprints of the project [id].
-  static Key blueprintsKey(String id) => Key('home.blueprints.$id');
+  /// The way into the documents of the project [id].
+  static Key documentsKey(String id) => Key('home.documents.$id');
 
   /// The way into the liquidation of the project [id].
   static Key liquidateKey(String id) => Key('home.liquidate.$id');
@@ -413,7 +413,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onRevenue: () => _open(RevenueScreen.pathOf(project.id), project),
                     onReports: () => _open(ReportsScreen.pathOf(project.id), project),
                     onLiquidate: () => _open(LiquidationScreen.pathOf(project.id), project),
-                    onBlueprints: () => _open(BlueprintsScreen.pathOf(project.id), project),
+                    onDocuments: () => _open(DocumentsScreen.pathOf(project.id), project),
                     onAddUnit: () => _askForUnit(project),
                     onRename: () => _askToRename(project),
                     onRenameUnit: (unit) => _askToRenameUnit(project, unit),

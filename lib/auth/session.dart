@@ -220,10 +220,11 @@ class Session extends ChangeNotifier {
   Future<http.Response> post(String path, Map<String, Object> body) =>
       _remember(_send(() => http.post(apiUri(path), headers: {...jsonHeaders, ..._authorized}, body: jsonEncode(body))));
 
-  /// Sends the file [bytes], named [fileName], to the API [path] as the signed-in user, renewing an expired access token like [post].
-  Future<http.Response> postFile(String path, String fileName, List<int> bytes) => _remember(_send(() async {
+  /// Sends the file [bytes], named [fileName], with the form [fields] beside it, to the API [path] as the signed-in user, renewing an expired access token like [post].
+  Future<http.Response> postFile(String path, String fileName, List<int> bytes, {Map<String, String> fields = const {}}) => _remember(_send(() async {
     final request = http.MultipartRequest('POST', apiUri(path))
       ..headers.addAll(_authorized)
+      ..fields.addAll(fields)
       ..files.add(http.MultipartFile.fromBytes('file', bytes, filename: fileName));
     final client = http.Client();
     try {

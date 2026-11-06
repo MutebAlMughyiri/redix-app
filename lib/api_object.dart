@@ -99,9 +99,9 @@ abstract class ApiObject<T> extends ChangeNotifier {
   @protected
   Future<String> change(String path, Map<String, Object> body, {String wordPrefix = ''}) => _send(path, () => _session.post(path, body), wordPrefix);
 
-  /// Sends the file [bytes], named [name], to the API [path], and answers as [change] does.
+  /// Sends the file [bytes], named [name], with the form [fields] beside it, to the API [path], and answers as [change] does.
   @protected
-  Future<String> sendFile(String path, String name, List<int> bytes) => _send(path, () => _session.postFile(path, name, bytes), '');
+  Future<String> sendFile(String path, String name, List<int> bytes, {Map<String, String> fields = const {}}) => _send(path, () => _session.postFile(path, name, bytes, fields: fields), '');
 
   Future<String> _send(String path, Future<http.Response> Function() send, String wordPrefix) async {
     final prefix = wordPrefix.isEmpty ? _wordPrefix : wordPrefix;

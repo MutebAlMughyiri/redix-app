@@ -9,7 +9,7 @@ import 'unit_row.dart';
 
 /// The open project: the signed-in user's roles in it, its start date, status and units, with what those roles allow: Users, Categories and items, Payment methods, Accounts, Partners, Suppliers, Contracts, and Add unit and Close project while it runs.
 class ProjectCard extends StatelessWidget {
-  /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAccounts], [onPartners], [onSuppliers], [onContracts], [onLiquidate], [onBlueprints], [onAddUnit], [onRename], [onRenameUnit], [onDeleteUnit] and [onClose] when those are tapped.
+  /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAccounts], [onPartners], [onSuppliers], [onContracts], [onLiquidate], [onDocuments], [onAddUnit], [onRename], [onRenameUnit], [onDeleteUnit] and [onClose] when those are tapped.
   const ProjectCard({
     super.key,
     required this.project,
@@ -24,7 +24,7 @@ class ProjectCard extends StatelessWidget {
     required this.onRevenue,
     required this.onReports,
     required this.onLiquidate,
-    required this.onBlueprints,
+    required this.onDocuments,
     required this.onAddUnit,
     required this.onRename,
     required this.onRenameUnit,
@@ -68,8 +68,8 @@ class ProjectCard extends StatelessWidget {
   /// Called when Liquidate and close is tapped.
   final VoidCallback onLiquidate;
 
-  /// Called when Blueprints is tapped.
-  final VoidCallback onBlueprints;
+  /// Called when Documents is tapped.
+  final VoidCallback onDocuments;
 
   /// Called when Add unit is tapped.
   final VoidCallback onAddUnit;
@@ -202,10 +202,10 @@ class ProjectCard extends StatelessWidget {
                     onPressed: onApprovals,
                   ),
                 TextButton.icon(
-                  key: HomeScreen.blueprintsKey(project.id),
-                  icon: const Icon(Icons.architecture_outlined),
-                  label: Text(words.blueprintsTitle),
-                  onPressed: onBlueprints,
+                  key: HomeScreen.documentsKey(project.id),
+                  icon: const Icon(Icons.folder_outlined),
+                  label: Text(words.documentsTitle),
+                  onPressed: onDocuments,
                 ),
                 if (project.may(Permission.moveMoney))
                   TextButton.icon(

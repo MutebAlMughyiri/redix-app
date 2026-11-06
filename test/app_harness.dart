@@ -90,8 +90,7 @@ Map<String, String> wordsIn(String language) => {
     'contractorPayments.overrun', 'contractorPayments.savedOverrun', 'contractorPayments.kind', 'contractorPayments.inside', 'contractorPayments.outside', 'contractorPayments.outsideExplain',
     'contractorPayments.date', 'contractorPayments.receipt', 'contractorPayments.deductionReason', 'contractorPayments.deductionNeedsReason', 'contractorPayments.hasInvoice', 'contractorPayments.invoiceExplain',
     'expenses.split', 'expenses.splitEqual', 'expenses.splitPercent', 'expenses.splitTotal', 'expenses.splitNeedsSharedUnit', 'expenses.invalidSplit',
-    'blueprints.title', 'blueprints.project', 'blueprints.none', 'blueprints.add', 'blueprints.titleField', 'blueprints.for', 'blueprints.file', 'blueprints.fileHint', 'blueprints.save', 'blueprints.saved',
-    'blueprints.remove', 'blueprints.removeQuestion', 'blueprints.removeExplain', 'blueprints.removed', 'blueprints.unknownAttachment', 'blueprints.invalidTitle', 'blueprints.loadFailed',
+    'documents.title', 'documents.none', 'documents.add', 'documents.name', 'documents.group', 'documents.groupHint', 'documents.file', 'documents.fileHint', 'documents.save', 'documents.saved', 'documents.remove', 'documents.removeQuestion', 'documents.removeExplain', 'documents.removed', 'documents.loadFailed', 'documents.noConnection', 'documents.refused', 'documents.projectFinished', 'documents.invalidName', 'documents.invalidGroup', 'documents.fileRequired', 'documents.fileTooLarge', 'documents.documentAlreadyKept',
     'liquidation.late', 'liquidation.lateExplain', 'liquidation.lateExpense', 'liquidation.lateRevenue', 'liquidation.item', 'liquidation.amount', 'liquidation.description', 'liquidation.record',
     'liquidation.lateRecorded', 'liquidation.attachReceipt', 'liquidation.noReceipt', 'liquidation.receiptAttached',
     'liquidation.title', 'liquidation.surplus', 'liquidation.deficit', 'liquidation.explain', 'liquidation.deficitExplain', 'liquidation.pending', 'liquidation.payOut', 'liquidation.carry', 'liquidation.date',
@@ -218,6 +217,9 @@ class FakeCapture extends InvoiceCapture {
 
   @override
   Future<PickedFile> fromFiles() async => files;
+
+  @override
+  Future<PickedFile> fromAnyFile() async => files;
 }
 
 /// The phone's own fingerprint or face prompt, as the app's tests see it.
@@ -541,11 +543,11 @@ class FakeApi {
   /// What an item's report answers.
   var itemReportAnswer = <String, Object>{'itemName': 'البلاط', 'categoryName': 'التشطيب', 'total': 0, 'columns': <String>[], 'subgroups': <Map<String, Object>>[], 'contracts': <Map<String, Object>>[]};
 
-  /// The project's blueprints, as the API holds them.
-  final blueprintRows = <Map<String, Object>>[];
+  /// The project's documents, as the API holds them.
+  final documentRows = <Map<String, Object>>[];
 
-  /// The blueprint changes sent: the path and what was sent.
-  final sentBlueprints = <(String, Map<String, dynamic>)>[];
+  /// The document changes sent: the path and the form fields sent, with the file's name as `file`.
+  final sentDocuments = <(String, Map<String, String>)>[];
 
   /// The liquidation parts whose receipt was sent, by entry.
   final sentReceipts = <String>[];
@@ -1528,17 +1530,29 @@ class FakeApi {
       sentExpenses.add(jsonDecode(request.body) as Map<String, dynamic>);
       return _json(expenseAnswer.body, expenseAnswer.status);
     }
-    if (segments.length >= 3 && segments[2] == 'blueprints') {
+    if (segments.length >= 3 && segments[2] == 'documents') {
       if (request.method == 'GET') {
-        return _json(blueprintRows, 200);
+        return _json(documentRows, 200);
       }
-      final body = jsonDecode(request.body) as Map<String, dynamic>;
-      sentBlueprints.add((request.url.path, body));
       if (segments.length == 5) {
-        blueprintRows.removeWhere((row) => row['id'] == segments[3]);
-      } else {
-        blueprintRows.add({'id': 'blueprint-${_nextStructureId++}', 'title': body['title'] as String, 'unitId': body['unitId'] as String? ?? '', 'unitName': '', 'attachmentId': body['attachmentId'] as String, 'fileName': 'plan.pdf', 'contentType': 'application/pdf', 'sizeBytes': 4, 'uploadedAt': '2026-11-05T20:00:00Z'});
+        sentDocuments.add((request.url.path, const {}));
+        documentRows.removeWhere((row) => row['id'] == segments[3]);
+        return _json(const <String, Object>{}, 200);
       }
+      final form = utf8.decode(request.bodyBytes, allowMalformed: true);
+      String field(String name) => RegExp('name="$name"\r\n(?:[^\r]+\r\n)*\r\n([^\r]*)\r\n').firstMatch(form)?.group(1) ?? '';
+      final fileName = RegExp('filename="([^"]*)"').firstMatch(form)?.group(1) ?? '';
+      sentDocuments.add((request.url.path, {'name': field('name'), 'group': field('group'), 'file': fileName}));
+      documentRows.add({
+        'id': 'document-${_nextStructureId++}',
+        'name': field('name'),
+        'group': field('group'),
+        'attachmentId': 'attachment-${_nextStructureId++}',
+        'fileName': fileName,
+        'contentType': 'application/octet-stream',
+        'sizeBytes': 4,
+        'uploadedAt': '2026-11-07T20:00:00Z',
+      });
       return _json(const <String, Object>{}, 200);
     }
     if (segments.length == 4 && segments[2] == 'attachments' && request.method == 'GET') {

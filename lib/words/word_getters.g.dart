@@ -278,72 +278,6 @@ mixin WordGetters {
   /// The word `biometrics.usePassword`.
   String get biometricsUsePassword => text('biometrics.usePassword');
 
-  /// The word `blueprints.add`.
-  String get blueprintsAdd => text('blueprints.add');
-
-  /// The word `blueprints.blueprintAlreadyKept`.
-  String get blueprintsBlueprintAlreadyKept => text('blueprints.blueprintAlreadyKept');
-
-  /// The word `blueprints.file`.
-  String get blueprintsFile => text('blueprints.file');
-
-  /// The word `blueprints.fileHint`.
-  String get blueprintsFileHint => text('blueprints.fileHint');
-
-  /// The word `blueprints.for`.
-  String get blueprintsFor => text('blueprints.for');
-
-  /// The word `blueprints.invalidTitle`.
-  String get blueprintsInvalidTitle => text('blueprints.invalidTitle');
-
-  /// The word `blueprints.loadFailed`.
-  String get blueprintsLoadFailed => text('blueprints.loadFailed');
-
-  /// The word `blueprints.noConnection`.
-  String get blueprintsNoConnection => text('blueprints.noConnection');
-
-  /// The word `blueprints.none`.
-  String get blueprintsNone => text('blueprints.none');
-
-  /// The word `blueprints.project`.
-  String get blueprintsProject => text('blueprints.project');
-
-  /// The word `blueprints.projectFinished`.
-  String get blueprintsProjectFinished => text('blueprints.projectFinished');
-
-  /// The word `blueprints.refused`.
-  String get blueprintsRefused => text('blueprints.refused');
-
-  /// The word `blueprints.remove`.
-  String get blueprintsRemove => text('blueprints.remove');
-
-  /// The word `blueprints.removeExplain`.
-  String get blueprintsRemoveExplain => text('blueprints.removeExplain');
-
-  /// The word `blueprints.removeQuestion`.
-  String get blueprintsRemoveQuestion => text('blueprints.removeQuestion');
-
-  /// The word `blueprints.removed`.
-  String get blueprintsRemoved => text('blueprints.removed');
-
-  /// The word `blueprints.save`.
-  String get blueprintsSave => text('blueprints.save');
-
-  /// The word `blueprints.saved`.
-  String get blueprintsSaved => text('blueprints.saved');
-
-  /// The word `blueprints.title`.
-  String get blueprintsTitle => text('blueprints.title');
-
-  /// The word `blueprints.titleField`.
-  String get blueprintsTitleField => text('blueprints.titleField');
-
-  /// The word `blueprints.unknownAttachment`.
-  String get blueprintsUnknownAttachment => text('blueprints.unknownAttachment');
-
-  /// The word `blueprints.unknownUnit`.
-  String get blueprintsUnknownUnit => text('blueprints.unknownUnit');
-
   /// The word `capital.account`.
   String get capitalAccount => text('capital.account');
 
@@ -1060,6 +994,75 @@ mixin WordGetters {
 
   /// The word `dashboard.surplusWithoutSales`.
   String get dashboardSurplusWithoutSales => text('dashboard.surplusWithoutSales');
+
+  /// The word `documents.add`.
+  String get documentsAdd => text('documents.add');
+
+  /// The word `documents.documentAlreadyKept`.
+  String get documentsDocumentAlreadyKept => text('documents.documentAlreadyKept');
+
+  /// The word `documents.file`.
+  String get documentsFile => text('documents.file');
+
+  /// The word `documents.fileHint`.
+  String get documentsFileHint => text('documents.fileHint');
+
+  /// The word `documents.fileRequired`.
+  String get documentsFileRequired => text('documents.fileRequired');
+
+  /// The word `documents.fileTooLarge`.
+  String get documentsFileTooLarge => text('documents.fileTooLarge');
+
+  /// The word `documents.group`.
+  String get documentsGroup => text('documents.group');
+
+  /// The word `documents.groupHint`.
+  String get documentsGroupHint => text('documents.groupHint');
+
+  /// The word `documents.invalidGroup`.
+  String get documentsInvalidGroup => text('documents.invalidGroup');
+
+  /// The word `documents.invalidName`.
+  String get documentsInvalidName => text('documents.invalidName');
+
+  /// The word `documents.loadFailed`.
+  String get documentsLoadFailed => text('documents.loadFailed');
+
+  /// The word `documents.name`.
+  String get documentsName => text('documents.name');
+
+  /// The word `documents.noConnection`.
+  String get documentsNoConnection => text('documents.noConnection');
+
+  /// The word `documents.none`.
+  String get documentsNone => text('documents.none');
+
+  /// The word `documents.projectFinished`.
+  String get documentsProjectFinished => text('documents.projectFinished');
+
+  /// The word `documents.refused`.
+  String get documentsRefused => text('documents.refused');
+
+  /// The word `documents.remove`.
+  String get documentsRemove => text('documents.remove');
+
+  /// The word `documents.removeExplain`.
+  String get documentsRemoveExplain => text('documents.removeExplain');
+
+  /// The word `documents.removeQuestion`.
+  String get documentsRemoveQuestion => text('documents.removeQuestion');
+
+  /// The word `documents.removed`.
+  String get documentsRemoved => text('documents.removed');
+
+  /// The word `documents.save`.
+  String get documentsSave => text('documents.save');
+
+  /// The word `documents.saved`.
+  String get documentsSaved => text('documents.saved');
+
+  /// The word `documents.title`.
+  String get documentsTitle => text('documents.title');
 
   /// The word `entries.all`.
   String get entriesAll => text('entries.all');
