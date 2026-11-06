@@ -7,7 +7,6 @@ import '../accounts/account.dart';
 import '../accounts/accounts.dart';
 import '../attachments/attachment_screen.dart';
 import '../attachments/invoice_capture.dart';
-import '../auth/permission.dart';
 import '../expenses/entry_date.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
@@ -300,8 +299,7 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
   );
 
   List<Widget> _distributed(LiquidationFigures figures, Words words) => [
-    if (widget.project.may(Permission.moveMoney))
-      OutlinedButton.icon(key: LiquidationScreen.lateKey, icon: const Icon(Icons.add), label: Text(words.liquidationLate), onPressed: _askLate),
+    OutlinedButton.icon(key: LiquidationScreen.lateKey, icon: const Icon(Icons.add), label: Text(words.liquidationLate), onPressed: _askLate),
     if (figures.distributed.isEmpty) Text(words.liquidationNothing, key: LiquidationScreen.nothingKey),
     if (figures.distributed.isNotEmpty) Text(words.liquidationDistributed, style: Theme.of(context).textTheme.titleMedium),
     for (final share in figures.distributed)
