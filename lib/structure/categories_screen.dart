@@ -70,6 +70,9 @@ class CategoriesScreen extends StatefulWidget {
   /// The choice of [type], in the Add item dialog.
   static Key itemTypeKey(ItemType type) => Key('categories.itemType.${type.name}');
 
+  /// The choice of an item's side: revenue when [isRevenue], expenses otherwise.
+  static Key sideKey({required bool isRevenue}) => Key('categories.side.$isRevenue');
+
   /// The card of the category [id].
   static Key cardKey(String id) => Key('categories.card.$id');
 

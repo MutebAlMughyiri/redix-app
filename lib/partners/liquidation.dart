@@ -127,11 +127,10 @@ class Liquidation extends ApiObject<LiquidationFigures> {
   /// The project.
   final String projectId;
 
-  /// Records a late expense on [itemId], or late revenue when [isExpense] is false, of [amount] on [date] through [accountId], shared among the partners by their shares at closing.
-  Future<String> recordLate({required bool isExpense, required String itemId, required DateTime date, required double amount, required String accountId, required String description}) =>
+  /// Records a late expense or revenue of [amount] on [date] through [accountId] on the item [itemId], whose side says which, shared among the partners by their shares at closing.
+  Future<String> recordLate({required String itemId, required DateTime date, required double amount, required String accountId, required String description}) =>
       change('/projects/$projectId/liquidation/late', {
-        'isExpense': isExpense,
-        if (isExpense && itemId.isNotEmpty) 'itemId': itemId,
+        'itemId': itemId,
         'date': date.toIso8601String().substring(0, 10),
         'amount': amount,
         'accountId': accountId,

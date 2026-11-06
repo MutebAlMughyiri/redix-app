@@ -623,6 +623,15 @@ mixin WordGetters {
   /// The word `categories.save`.
   String get categoriesSave => text('categories.save');
 
+  /// The word `categories.side`.
+  String get categoriesSide => text('categories.side');
+
+  /// The word `categories.sideExpenses`.
+  String get categoriesSideExpenses => text('categories.sideExpenses');
+
+  /// The word `categories.sideRevenue`.
+  String get categoriesSideRevenue => text('categories.sideRevenue');
+
   /// The word `categories.subgroupInUse`.
   String get categoriesSubgroupInUse => text('categories.subgroupInUse');
 
@@ -647,8 +656,17 @@ mixin WordGetters {
   /// The word `categories.typeContractorPayments`.
   String get categoriesTypeContractorPayments => text('categories.typeContractorPayments');
 
+  /// The word `categories.typeOtherRevenue`.
+  String get categoriesTypeOtherRevenue => text('categories.typeOtherRevenue');
+
   /// The word `categories.typePurchases`.
   String get categoriesTypePurchases => text('categories.typePurchases');
+
+  /// The word `categories.typeSale`.
+  String get categoriesTypeSale => text('categories.typeSale');
+
+  /// The word `categories.typeVatRefund`.
+  String get categoriesTypeVatRefund => text('categories.typeVatRefund');
 
   /// The word `changePassword.accountLocked`.
   String get changePasswordAccountLocked => text('changePassword.accountLocked');
@@ -760,6 +778,9 @@ mixin WordGetters {
 
   /// The word `columns.required`.
   String get columnsRequired => text('columns.required');
+
+  /// The word `columns.revenueTakesNoColumns`.
+  String get columnsRevenueTakesNoColumns => text('columns.revenueTakesNoColumns');
 
   /// The word `columns.save`.
   String get columnsSave => text('columns.save');
@@ -2174,6 +2195,9 @@ mixin WordGetters {
   /// The word `revenue.invoiceNumber`.
   String get revenueInvoiceNumber => text('revenue.invoiceNumber');
 
+  /// The word `revenue.item`.
+  String get revenueItem => text('revenue.item');
+
   /// The word `revenue.loadFailed`.
   String get revenueLoadFailed => text('revenue.loadFailed');
 
@@ -2185,9 +2209,6 @@ mixin WordGetters {
 
   /// The word `revenue.noConnection`.
   String get revenueNoConnection => text('revenue.noConnection');
-
-  /// The word `revenue.other`.
-  String get revenueOther => text('revenue.other');
 
   /// The word `revenue.quarter`.
   String get revenueQuarter => text('revenue.quarter');
@@ -2222,14 +2243,14 @@ mixin WordGetters {
   /// The word `revenue.title`.
   String get revenueTitle => text('revenue.title');
 
-  /// The word `revenue.type`.
-  String get revenueType => text('revenue.type');
-
   /// The word `revenue.unknownAccount`.
   String get revenueUnknownAccount => text('revenue.unknownAccount');
 
   /// The word `revenue.unknownAttachment`.
   String get revenueUnknownAttachment => text('revenue.unknownAttachment');
+
+  /// The word `revenue.unknownItem`.
+  String get revenueUnknownItem => text('revenue.unknownItem');
 
   /// The word `revenue.unknownSale`.
   String get revenueUnknownSale => text('revenue.unknownSale');

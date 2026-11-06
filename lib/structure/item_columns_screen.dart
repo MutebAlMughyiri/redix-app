@@ -182,10 +182,13 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
               key: ItemColumnsScreen.addKey,
               icon: const Icon(Icons.add),
               label: Text(words.columnsNew),
-              onPressed: () => showDialog<void>(
-                context: context,
-                builder: (_) => AddColumnDialog(columns: _columns, applyToAll: _applyToAll),
-              ),
+              tooltip: widget.item.type.isRevenue ? words.columnsRevenueTakesNoColumns : words.columnsNew,
+              onPressed: widget.item.type.isRevenue
+                  ? null
+                  : () => showDialog<void>(
+                      context: context,
+                      builder: (_) => AddColumnDialog(columns: _columns, applyToAll: _applyToAll),
+                    ),
             )
           : null,
       body: Column(
@@ -194,7 +197,7 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: Text(
-              '${widget.categoryName} · ${words.text(widget.item.type.wordKey)}',
+              [widget.categoryName, words.text(widget.item.type.wordKey), if (widget.item.type.isRevenue) words.columnsRevenueTakesNoColumns].join(' · '),
               key: ItemColumnsScreen.itemDetailsKey,
               style: textTheme.bodySmall,
             ),

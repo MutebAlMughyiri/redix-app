@@ -62,7 +62,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
     final words = Words.of(context);
     final project = widget.project;
     final details = [
-      words.text('revenue.${row.type}'),
+      row.itemName,
       formatDate(row.date),
       row.accountName,
       if (row.invoiceNumber.isNotEmpty) '${row.buyerName} · ${row.invoiceNumber}',
@@ -73,7 +73,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
-        title: Text(row.description.isEmpty ? words.text('revenue.${row.type}') : row.description),
+        title: Text(row.description.isEmpty ? row.itemName : row.description),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

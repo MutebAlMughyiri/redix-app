@@ -4,6 +4,7 @@ class RevenueRow {
   RevenueRow.fromJson(Map<String, dynamic> json)
     : id = json['id'] as String,
       type = json['type'] as String,
+      itemName = json['itemName'] as String,
       date = DateTime.parse(json['date'] as String),
       amount = (json['amount'] as num).toDouble(),
       periodStart = DateTime.parse(json['periodStart'] as String),
@@ -20,8 +21,11 @@ class RevenueRow {
   /// The entry.
   final String id;
 
-  /// `vatRefund`, `sale` or `other`, the end of its word key.
+  /// Its item's type: `vatRefund`, `sale` or `otherRevenue`.
   final String type;
+
+  /// The revenue item it came in on.
+  final String itemName;
 
   /// The day it came in.
   final DateTime date;

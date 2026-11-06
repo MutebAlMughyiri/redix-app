@@ -317,6 +317,22 @@ void main() {
     expect(tester.widget<CheckedPopupMenuItem<VoidCallback>>(find.byKey(CategoriesScreen.tablePercentagesKey)).checked, isTrue);
   });
 
+  testWidgets('FR-38: an item\'s side comes first, and revenue offers only revenue types', (tester) async {
+    final opened = await openCategories(tester);
+    await open(tester, opened.api, opened.bone);
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(opened.steel))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.changeTypeKey)));
+    expect(find.byKey(CategoriesScreen.itemTypeKey(ItemType.sale)), findsNothing);
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.sideKey(isRevenue: true))));
+    expect(find.byKey(CategoriesScreen.itemTypeKey(ItemType.both)), findsNothing);
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemTypeKey(ItemType.vatRefund))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.saveKey)));
+
+    expect(opened.api.sentStructureChanges.single.$2, {'type': 'vatRefund'});
+    expect(text(tester, CategoriesScreen.itemDetailsKey(opened.steel)), 'en categories.typeVatRefund');
+  });
+
   testWidgets('an item with entries keeps its type, and the dialog says why', (tester) async {
     final opened = await openCategories(tester);
     await open(tester, opened.api, opened.bone);

@@ -11,6 +11,9 @@ import '../expenses/invoice_section.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
+import '../structure/category.dart';
+import '../structure/item_picker.dart';
+import '../structure/offered_items.dart';
 import '../ui/entry_field.dart';
 import '../ui/labelled_chips.dart';
 import '../ui/picker_field.dart';
@@ -19,10 +22,10 @@ import '../words/words.dart';
 import 'quarter_picker.dart';
 import 'revenues.dart';
 
-/// Recording a VAT refund, a sale or other revenue (UC-047). It counts at once (BR-30).
+/// Recording revenue on a revenue item (UC-047, FR-28): the item's type says what it is, and a VAT refund asks its quarter. It counts at once (BR-30).
 class RevenueFormScreen extends StatefulWidget {
-  /// The screen recording revenue in [project] through [revenues], into one of [accounts].
-  const RevenueFormScreen({super.key, required this.project, required this.revenues, required this.accounts, required this.attachments, required this.capture});
+  /// The screen recording revenue in [project] through [revenues] on one of [items], into one of [accounts].
+  const RevenueFormScreen({super.key, required this.project, required this.revenues, required this.items, required this.accounts, required this.attachments, required this.capture});
 
   /// The address of the screen.
   static const path = '/projects/:projectId/revenue/new';
@@ -42,8 +45,8 @@ class RevenueFormScreen extends StatefulWidget {
   /// The line saying why it was refused.
   static const messageKey = Key('revenueForm.message');
 
-  /// The choice of [type].
-  static Key typeKey(String type) => Key('revenueForm.type.$type');
+  /// The choice of its revenue item.
+  static const itemKey = Key('revenueForm.item');
 
   /// The choice of the account [id].
   static Key accountKey(String id) => Key('revenueForm.account.$id');
@@ -53,6 +56,9 @@ class RevenueFormScreen extends StatefulWidget {
 
   /// The way to record it.
   final Revenues revenues;
+
+  /// The revenue items it may come in on.
+  final OfferedItems items;
 
   /// The accounts it may reach.
   final Accounts accounts;
@@ -68,11 +74,9 @@ class RevenueFormScreen extends StatefulWidget {
 }
 
 class _RevenueFormScreenState extends State<RevenueFormScreen> {
-  static const _types = ['vatRefund', 'sale', 'other'];
-
   final _amount = TextEditingController();
   final _description = TextEditingController();
-  var _type = 'vatRefund';
+  var _item = Item.none();
   var _quarter = quarterStartOf(DateTime.now());
   var _date = DateTime.now();
   var _accountId = '';
@@ -85,6 +89,7 @@ class _RevenueFormScreenState extends State<RevenueFormScreen> {
   void initState() {
     super.initState();
     widget.accounts.loadOnOpen();
+    widget.items.loadOnOpen();
   }
 
   @override
@@ -127,12 +132,12 @@ class _RevenueFormScreenState extends State<RevenueFormScreen> {
       attachmentId = widget.attachments.kept.id;
     }
     return widget.revenues.record({
-      'type': _type,
+      'itemId': _item.id,
       'date': _isoOf(_date),
       'amount': amount,
       'accountId': _accountId,
       'description': _description.text,
-      if (_type == 'vatRefund') 'periodStart': _isoOf(_quarter),
+      if (_item.type == ItemType.vatRefund) 'periodStart': _isoOf(_quarter),
       if (attachmentId.isNotEmpty) 'attachmentId': attachmentId,
     });
   }
@@ -169,15 +174,8 @@ class _RevenueFormScreenState extends State<RevenueFormScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 12,
             children: [
-              LabelledChips<String>(
-                label: words.revenueType,
-                choices: _types,
-                keyOf: RevenueFormScreen.typeKey,
-                nameOf: (type) => words.text('revenue.$type'),
-                isChosen: (type) => type == _type,
-                onChosen: (type) => setState(() => _type = type),
-              ),
-              if (_type == 'vatRefund') QuarterPicker(start: _quarter, firstYear: widget.project.startDate.year, onChanged: (start) => setState(() => _quarter = start)),
+              ItemPicker(key: RevenueFormScreen.itemKey, items: widget.items, label: words.revenueItem, itemName: _item.name, onChanged: (item) => setState(() => _item = item)),
+              if (_item.type == ItemType.vatRefund) QuarterPicker(start: _quarter, firstYear: widget.project.startDate.year, onChanged: (start) => setState(() => _quarter = start)),
               entryField(key: RevenueFormScreen.amountKey, controller: _amount, label: words.revenueAmount, isNumber: true, onChanged: (_) {}),
               PickerField(label: words.revenueDate, value: formatDate(_date), onTap: _chooseDate),
               LabelledChips<Account>(

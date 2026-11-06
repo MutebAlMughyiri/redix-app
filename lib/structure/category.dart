@@ -7,12 +7,24 @@ enum ItemType {
   contractorPayments('categories.typeContractorPayments'),
 
   /// Both purchases and contractor payments.
-  both('categories.typeBoth');
+  both('categories.typeBoth'),
+
+  /// Revenue: a unit sold, with its sales invoice.
+  sale('categories.typeSale'),
+
+  /// Revenue: VAT refunded for a quarter.
+  vatRefund('categories.typeVatRefund'),
+
+  /// Revenue: anything else that comes in.
+  otherRevenue('categories.typeOtherRevenue');
 
   const ItemType(this.wordKey);
 
   /// The key of the word that names this type.
   final String wordKey;
+
+  /// True for a revenue type: its entries are money coming in, on the revenue side of the summary (FR-38).
+  bool get isRevenue => index >= sale.index;
 }
 
 /// A group inside an item, such as مواد, as the API answers it. The item's general group has an empty name.

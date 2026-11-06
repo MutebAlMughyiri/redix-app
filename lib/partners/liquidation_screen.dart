@@ -33,7 +33,7 @@ import 'partners.dart';
 class LiquidationScreen extends StatefulWidget {
   /// The liquidation of [project] through [liquidation], paying through its [accounts], carrying to one of [projects] whose partners and accounts come from [partnersOf] and [accountsOf]; a late
   /// expense picks from [items], and a receipt comes from what [capture] picks.
-  const LiquidationScreen({super.key, required this.project, required this.liquidation, required this.projects, required this.accounts, required this.partnersOf, required this.accountsOf, required this.items, required this.capture});
+  const LiquidationScreen({super.key, required this.project, required this.liquidation, required this.projects, required this.accounts, required this.partnersOf, required this.accountsOf, required this.items, required this.revenueItems, required this.capture});
 
   /// The screen's route.
   static const path = '/projects/:projectId/liquidation';
@@ -133,6 +133,9 @@ class LiquidationScreen extends StatefulWidget {
 
   /// The items a late expense may go to.
   final OfferedItems items;
+
+  /// The revenue items late revenue may go to.
+  final OfferedItems revenueItems;
 
   /// The phone's camera and files.
   final InvoiceCapture capture;
@@ -293,7 +296,7 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
 
   void _askLate() => showDialog<void>(
     context: context,
-    builder: (_) => _LateDialog(project: widget.project, liquidation: widget.liquidation, items: widget.items, accounts: widget.accounts),
+    builder: (_) => _LateDialog(project: widget.project, liquidation: widget.liquidation, items: widget.items, revenueItems: widget.revenueItems, accounts: widget.accounts),
   );
 
   List<Widget> _distributed(LiquidationFigures figures, Words words) => [
@@ -342,13 +345,16 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
 
 /// The form of a late expense or revenue in a closed project (FR-51): what it was, for an expense its item, the day, the amount and the account, shared among the partners by their shares.
 class _LateDialog extends StatefulWidget {
-  const _LateDialog({required this.project, required this.liquidation, required this.items, required this.accounts});
+  const _LateDialog({required this.project, required this.liquidation, required this.items, required this.revenueItems, required this.accounts});
 
   final Project project;
 
   final Liquidation liquidation;
 
   final OfferedItems items;
+
+  /// The revenue items late revenue may go to.
+  final OfferedItems revenueItems;
 
   final Accounts accounts;
 
@@ -368,6 +374,7 @@ class _LateDialogState extends State<_LateDialog> {
   void initState() {
     super.initState();
     widget.items.loadOnOpen();
+    widget.revenueItems.loadOnOpen();
     widget.accounts.loadOnOpen();
   }
 
@@ -392,7 +399,7 @@ class _LateDialogState extends State<_LateDialog> {
     if (amount.isNaN) {
       return 'capital.invalidAmount';
     }
-    final refusal = await widget.liquidation.recordLate(isExpense: _isExpense, itemId: _item.id, date: _date, amount: amount, accountId: _accountId, description: _description.text);
+    final refusal = await widget.liquidation.recordLate(itemId: _item.id, date: _date, amount: amount, accountId: _accountId, description: _description.text);
     if (refusal.isEmpty) {
       messenger.showSnackBar(SnackBar(content: Text(words.liquidationLateRecorded)));
     }
@@ -415,9 +422,12 @@ class _LateDialogState extends State<_LateDialog> {
             ButtonSegment(value: false, label: Text(words.liquidationLateRevenue, key: LiquidationScreen.lateRevenueKey)),
           ],
           selected: {_isExpense},
-          onSelectionChanged: (selected) => setState(() => _isExpense = selected.single),
+          onSelectionChanged: (selected) => setState(() {
+            _isExpense = selected.single;
+            _item = Item.none();
+          }),
         ),
-        if (_isExpense) ItemPicker(key: LiquidationScreen.lateItemKey, items: widget.items, label: words.liquidationItem, itemName: _item.name, onChanged: (item) => setState(() => _item = item)),
+        ItemPicker(key: LiquidationScreen.lateItemKey, items: _isExpense ? widget.items : widget.revenueItems, label: words.liquidationItem, itemName: _item.name, onChanged: (item) => setState(() => _item = item)),
         PickerField(key: LiquidationScreen.lateDateKey, label: words.liquidationDate, value: formatDate(_date), onTap: _chooseDate),
         entryField(key: LiquidationScreen.lateAmountKey, controller: _amount, label: words.liquidationAmount, isNumber: true, onChanged: (_) {}),
         ListenableBuilder(

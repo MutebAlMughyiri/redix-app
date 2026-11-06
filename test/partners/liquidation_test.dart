@@ -157,26 +157,29 @@ void main() {
 
     final (path, body) = api.sentMoney.single;
     expect(path, '/projects/project-0/liquidation/late');
-    expect(body, {'isExpense': true, 'itemId': item, 'date': isA<String>(), 'amount': 100, 'accountId': bank, 'description': 'فاتورة كهرباء متأخرة'});
+    expect(body, {'itemId': item, 'date': isA<String>(), 'amount': 100, 'accountId': bank, 'description': 'فاتورة كهرباء متأخرة'});
     expect(find.text('en liquidation.lateRecorded'), findsOneWidget);
   });
 
-  testWidgets('FR-51: late revenue asks no item', (tester) async {
+  testWidgets('FR-51: late revenue goes on a revenue item, whose side the API reads', (tester) async {
     late String bank;
+    late String other;
     final api = await openLiquidation(tester, (api) {
       api.liquidationAnswer = closedWith([]);
       bank = api.addAccount('project-0', 'حساب المؤسسة')['id']! as String;
+      other = api.addItem(api.addCategory('project-0', 'إيرادات أخرى'), 'إيرادات أخرى', type: 'otherRevenue')['id']! as String;
     }, status: 'finished');
 
     await tapVisible(tester, api, LiquidationScreen.lateKey);
     await act(tester, api, () => tester.tap(find.byKey(LiquidationScreen.lateRevenueKey)));
-    expect(find.byKey(LiquidationScreen.lateItemKey), findsNothing);
+    await act(tester, api, () => tester.tap(find.byKey(LiquidationScreen.lateItemKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ItemPicker.optionKey(other))));
     await tester.enterText(find.byKey(LiquidationScreen.lateAmountKey), '50');
     await act(tester, api, () => tester.tap(find.byKey(LiquidationScreen.lateAccountKey(bank))));
     await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-    expect(api.sentMoney.single.$2['isExpense'], isFalse);
-    expect(api.sentMoney.single.$2.containsKey('itemId'), isFalse);
+    expect(api.sentMoney.single.$2['itemId'], other);
+    expect(api.sentMoney.single.$2.containsKey('isExpense'), isFalse);
   });
 }
 

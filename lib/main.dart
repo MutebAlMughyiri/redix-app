@@ -251,6 +251,7 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => RevenueFormScreen(
           project: state.extra! as Project,
           revenues: _revenuesOf(state.pathParameters['projectId'] ?? ''),
+          items: _revenueItemsOf(state.pathParameters['projectId'] ?? ''),
           accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
           attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
           capture: widget.capture,
@@ -333,6 +334,7 @@ class _RedixAppState extends State<RedixApp> {
           partnersOf: _partnersOf,
           accountsOf: _accountsOf,
           items: _offeredItemsOf(state.pathParameters['projectId'] ?? '', ItemType.purchases),
+          revenueItems: _revenueItemsOf(state.pathParameters['projectId'] ?? ''),
           capture: widget.capture,
         ),
       ),
@@ -412,6 +414,9 @@ class _RedixAppState extends State<RedixApp> {
   Partners _partnersOf(String projectId) => _projectPartners.putIfAbsent(projectId, () => Partners(widget.session, projectId));
 
   Suppliers _suppliersOf(String projectId) => _projectSuppliers.putIfAbsent(projectId, () => Suppliers(widget.session, projectId));
+
+  /// Every revenue item of [projectId]: entering revenue of any kind offers them all, and the item chosen says which kind it is.
+  OfferedItems _revenueItemsOf(String projectId) => _offeredItemsOf(projectId, ItemType.otherRevenue);
 
   OfferedItems _offeredItemsOf(String projectId, ItemType type) => _offeredItemLists.putIfAbsent('$projectId/${type.name}', () => OfferedItems(widget.session, projectId, type));
 
