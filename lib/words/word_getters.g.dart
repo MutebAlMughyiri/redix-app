@@ -635,6 +635,9 @@ mixin WordGetters {
   /// The word `categories.subgroupsHint`.
   String get categoriesSubgroupsHint => text('categories.subgroupsHint');
 
+  /// The word `categories.tablePercentages`.
+  String get categoriesTablePercentages => text('categories.tablePercentages');
+
   /// The word `categories.title`.
   String get categoriesTitle => text('categories.title');
 

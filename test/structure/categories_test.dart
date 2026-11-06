@@ -303,6 +303,20 @@ void main() {
     expect(text(tester, CategoriesScreen.itemDetailsKey(opened.steel)), 'en categories.typeBoth');
   });
 
+  testWidgets('AC-46.9: an item chooses from its menu whether its sheet calculates a percentage for each table, and the menu shows the choice', (tester) async {
+    final opened = await openCategories(tester);
+    await open(tester, opened.api, opened.bone);
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(opened.steel))));
+    expect(tester.widget<CheckedPopupMenuItem<VoidCallback>>(find.byKey(CategoriesScreen.tablePercentagesKey)).checked, isFalse);
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.tablePercentagesKey)));
+
+    expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/items/${opened.steel}/table-percentages');
+    expect(opened.api.sentStructureChanges.single.$2, {'isOn': true});
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(opened.steel))));
+    expect(tester.widget<CheckedPopupMenuItem<VoidCallback>>(find.byKey(CategoriesScreen.tablePercentagesKey)).checked, isTrue);
+  });
+
   testWidgets('an item with entries keeps its type, and the dialog says why', (tester) async {
     final opened = await openCategories(tester);
     await open(tester, opened.api, opened.bone);

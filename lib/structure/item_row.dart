@@ -83,6 +83,12 @@ class ItemRow extends StatelessWidget {
                   ),
                   child: Text(words.categoriesChangeType),
                 ),
+                CheckedPopupMenuItem(
+                  key: CategoriesScreen.tablePercentagesKey,
+                  value: () => showRefusalOf(context, categories.setTablePercentages(item, !item.showsTablePercentages)),
+                  checked: item.showsTablePercentages,
+                  child: Text(words.categoriesTablePercentages),
+                ),
                 if (item.isActive)
                   PopupMenuItem(
                     key: CategoriesScreen.disableItemKey,

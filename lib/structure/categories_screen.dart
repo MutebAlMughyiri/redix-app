@@ -55,6 +55,9 @@ class CategoriesScreen extends StatefulWidget {
   /// Change type, in an item's menu.
   static const changeTypeKey = Key('categories.changeType');
 
+  /// The check of whether an item's sheet calculates each table's percentage.
+  static const tablePercentagesKey = Key('categories.tablePercentages');
+
   /// Subgroups, in an item's menu.
   static const subgroupsKey = Key('categories.subgroups');
 

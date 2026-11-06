@@ -55,6 +55,9 @@ class Categories extends ApiList<Category> {
   /// Brings the disabled [item] back into entry.
   Future<String> enableItem(Item item) => change('/projects/$projectId/items/${item.id}/enable', {});
 
+  /// Sets whether [item]'s sheet in the report calculates each table's percentage of the grand total.
+  Future<String> setTablePercentages(Item item, bool isOn) => change('/projects/$projectId/items/${item.id}/table-percentages', {'isOn': isOn});
+
   /// Makes [item] for [type], which the API refuses once it has entries.
   Future<String> changeItemType(Item item, ItemType type) => change('/projects/$projectId/items/${item.id}/type', {'type': type.name});
 
