@@ -40,6 +40,7 @@ import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
+import '../ui/refresh_button.dart';
 import '../users/users_screen.dart';
 import '../words/words.dart';
 
@@ -239,11 +240,14 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  /// Opens [path] for [project], and reads the figures and the latest entries again on the way back, since what was done there may have changed them (AC-34.1).
+  /// Opens [path] for [project], and reads what home shows again on the way back, since what was done there may have changed it (AC-34.1).
   Future<void> _open(String path, Project project) async {
     await context.push(path, extra: project);
-    await Future.wait([widget.dashboard.load(), widget.entries.load()]);
+    await _readAgain();
   }
+
+  /// Reads again what home shows besides the project: its figures, the latest entries and the accounts.
+  Future<void> _readAgain() => Future.wait([widget.dashboard.load(), widget.entries.load(), widget.accounts.load()]);
 
   void _askToClose(Project project) {
     final words = Words.of(context);
@@ -326,6 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
+          RefreshButton(onRefresh: () => Future.wait([widget.projects.load(), _readAgain()])),
           NotificationsBell(notifications: widget.notifications),
           IconButton(
             key: HomeScreen.settingsKey,
@@ -372,6 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: ApiListBody(
         list: widget.projects,
         emptyText: '',
+        alsoRefresh: _readAgain,
         itemBuilder: (project) => project.id == widget.projectId
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

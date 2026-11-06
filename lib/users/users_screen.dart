@@ -6,6 +6,7 @@ import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'add_existing_user_dialog.dart';
 import 'edit_user_dialog.dart';
@@ -147,6 +148,7 @@ class _UsersScreenState extends State<UsersScreen> {
       appBar: AppBar(
         title: ScreenTitle(words.usersTitle, subject: widget.projectName),
         actions: [
+          RefreshButton(onRefresh: widget.users.load),
           IconButton(
             key: UsersScreen.addExistingKey,
             icon: const Icon(Icons.person_search_outlined),

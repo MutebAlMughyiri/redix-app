@@ -6,6 +6,8 @@ import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/home/home_screen.dart';
 
+import 'package:redix/ui/refresh_button.dart';
+
 import '../app_harness.dart';
 
 void main() {
@@ -132,6 +134,18 @@ void main() {
     expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2, api.sentEntryChanges.single.$3['reason']), ('entry-0', 'reverse', 'إدخال خاطئ'));
     expect(find.byKey(EntriesScreen.reverseSendKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.reversed');
+  });
+
+  testWidgets('the refresh button and pulling the list down each read the entries again', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry());
+
+    api.entryRows.single['status'] = 'approved';
+    await act(tester, api, () => tester.tap(find.byKey(RefreshButton.buttonKey)));
+    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.approved');
+
+    api.entryRows.single['status'] = 'draft';
+    await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 500)));
+    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.draft');
   });
 
   testWidgets('a reversal being sent cannot be sent again: its button is disabled until the answer comes', (tester) async {

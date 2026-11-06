@@ -9,6 +9,7 @@ import '../ui/api_list_body.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'entry_row.dart';
 import 'entry_tile.dart';
@@ -118,7 +119,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.entriesTitle, subject: widget.project.name)),
+      appBar: AppBar(title: ScreenTitle(words.entriesTitle, subject: widget.project.name), actions: [RefreshButton(onRefresh: widget.entries.load)]),
       body: Column(
         children: [
           Padding(

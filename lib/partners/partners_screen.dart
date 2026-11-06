@@ -8,6 +8,7 @@ import '../ui/api_list_body.dart';
 import '../ui/api_object_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/screen_title.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'capital.dart';
 import 'capital_move_screen.dart';
@@ -167,14 +168,14 @@ class _PartnersScreenState extends State<PartnersScreen> {
     final words = Words.of(context);
     final project = widget.project;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.partnersTitle, subject: project.name)),
+      appBar: AppBar(title: ScreenTitle(words.partnersTitle, subject: project.name), actions: [RefreshButton(onRefresh: widget.partners.load)]),
       floatingActionButton: project.mayManageSettings
           ? FloatingActionButton.extended(key: PartnersScreen.addKey, icon: const Icon(Icons.add), label: Text(words.partnersNew), onPressed: () => _ask(Partner.none()))
           : null,
       body: ApiListBody(
         list: widget.partners,
         emptyText: words.partnersEmpty,
-        listOf: (items) => ListView(padding: ApiListBody.padding, children: [_total(words), ...items]),
+        listOf: (items) => ListView(padding: ApiListBody.padding, physics: ApiListBody.physics, children: [_total(words), ...items]),
         itemBuilder: _row,
       ),
     );

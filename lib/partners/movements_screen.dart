@@ -9,6 +9,7 @@ import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/screen_title.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'capital.dart';
 import 'capital_movement.dart';
@@ -110,7 +111,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.capitalMovements, subject: widget.partnerName)),
+      appBar: AppBar(title: ScreenTitle(words.capitalMovements, subject: widget.partnerName), actions: [RefreshButton(onRefresh: widget.movements.load)]),
       body: ApiListBody(list: widget.movements, emptyText: words.capitalNoMovements, itemBuilder: _row),
     );
   }

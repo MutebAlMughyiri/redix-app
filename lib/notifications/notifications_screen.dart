@@ -9,6 +9,7 @@ import '../format/date_format.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
 import '../ui/api_list_body.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'notification_row.dart';
 import 'notifications.dart';
@@ -56,7 +57,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(words.notificationsTitle)),
+      appBar: AppBar(title: Text(words.notificationsTitle), actions: [RefreshButton(onRefresh: widget.notifications.load)]),
       body: ApiListBody(
         list: widget.notifications,
         emptyText: words.notificationsEmpty,

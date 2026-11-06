@@ -4,6 +4,7 @@ import '../format/date_format.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'registered_project.dart';
 import 'registered_projects.dart';
@@ -120,7 +121,7 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
     final words = Words.of(context);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(words.registeredTitle)),
+      appBar: AppBar(title: Text(words.registeredTitle), actions: [RefreshButton(onRefresh: widget.projects.load)]),
       body: ApiListBody(
         list: widget.projects,
         emptyText: words.registeredEmpty,

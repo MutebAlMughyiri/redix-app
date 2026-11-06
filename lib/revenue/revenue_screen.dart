@@ -9,6 +9,7 @@ import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/screen_title.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'revenue_form_screen.dart';
 import 'revenue_row.dart';
@@ -109,7 +110,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
     final words = Words.of(context);
     final project = widget.project;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.revenueTitle, subject: project.name)),
+      appBar: AppBar(title: ScreenTitle(words.revenueTitle, subject: project.name), actions: [RefreshButton(onRefresh: widget.revenues.load)]),
       bottomNavigationBar: project.mayMoveMoney
           ? SafeArea(
               child: Padding(

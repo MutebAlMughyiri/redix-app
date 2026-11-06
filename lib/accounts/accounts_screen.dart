@@ -10,6 +10,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/screen_title.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'account.dart';
 import 'account_dialog.dart';
@@ -191,7 +192,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
     final project = widget.project;
     final accounts = widget.accounts;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.accountsTitle, subject: project.name)),
+      appBar: AppBar(title: ScreenTitle(words.accountsTitle, subject: project.name), actions: [RefreshButton(onRefresh: accounts.load)]),
       floatingActionButton: project.mayManageSettings
           ? FloatingActionButton.extended(
               key: AccountsScreen.addKey,
@@ -206,7 +207,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
       body: ApiListBody(
         list: accounts,
         emptyText: words.accountsEmpty,
-        listOf: (items) => ListView(padding: ApiListBody.padding, children: [..._above(words), ...items, _below(words)]),
+        listOf: (items) => ListView(padding: ApiListBody.padding, physics: ApiListBody.physics, children: [..._above(words), ...items, _below(words)]),
         itemBuilder: (account) => AccountRow(account: account, accounts: accounts, members: widget.members, mayChange: project.mayManageSettings),
       ),
     );

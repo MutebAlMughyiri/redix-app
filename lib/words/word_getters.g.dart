@@ -767,6 +767,9 @@ mixin WordGetters {
   /// The word `common.cancel`.
   String get commonCancel => text('common.cancel');
 
+  /// The word `common.refresh`.
+  String get commonRefresh => text('common.refresh');
+
   /// The word `common.retry`.
   String get commonRetry => text('common.retry');
 

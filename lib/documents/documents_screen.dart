@@ -11,6 +11,7 @@ import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/entry_field.dart';
 import '../ui/screen_title.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'documents.dart';
 
@@ -114,7 +115,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.documentsTitle, subject: widget.project.name)),
+      appBar: AppBar(title: ScreenTitle(words.documentsTitle, subject: widget.project.name), actions: [RefreshButton(onRefresh: widget.documents.load)]),
       floatingActionButton: widget.project.mayManageProject
           ? FloatingActionButton.extended(
               key: DocumentsScreen.addKey,

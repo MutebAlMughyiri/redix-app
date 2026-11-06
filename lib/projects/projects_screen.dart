@@ -8,6 +8,7 @@ import '../notifications/notifications_bell.dart';
 import '../settings/settings_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/refusal_snack_bar.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'new_project_screen.dart';
 import 'project.dart';
@@ -104,6 +105,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         actions: [
+          RefreshButton(onRefresh: widget.projects.load),
           NotificationsBell(notifications: widget.notifications),
           IconButton(
             key: ProjectsScreen.settingsKey,

@@ -6,6 +6,7 @@ import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'add_column_dialog.dart';
 import 'apply_to_all_dialog.dart';
@@ -176,7 +177,7 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
     final textTheme = Theme.of(context).textTheme;
     final mayChange = widget.project.mayChangeStructure;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.columnsTitle, subject: widget.item.name)),
+      appBar: AppBar(title: ScreenTitle(words.columnsTitle, subject: widget.item.name), actions: [RefreshButton(onRefresh: _columns.load)]),
       floatingActionButton: mayChange
           ? FloatingActionButton.extended(
               key: ItemColumnsScreen.addKey,
@@ -226,6 +227,7 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
               itemBuilder: _row,
               listOf: (rows) => ReorderableListView(
                 padding: ApiListBody.padding,
+                physics: ApiListBody.physics,
                 buildDefaultDragHandles: false,
                 onReorderItem: (from, to) => showRefusalOf(context, _applyToAll().then((applyToAll) => _columns.move(from, to, applyToAll: applyToAll))),
                 children: rows,

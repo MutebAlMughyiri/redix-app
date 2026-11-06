@@ -8,6 +8,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'approvals.dart';
 import 'pending_approval.dart';
@@ -175,7 +176,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
     final colors = Theme.of(context).colorScheme;
     final mayDecide = !widget.project.isFinished;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.approvalsTitle, subject: widget.project.name)),
+      appBar: AppBar(title: ScreenTitle(words.approvalsTitle, subject: widget.project.name), actions: [RefreshButton(onRefresh: widget.approvals.load)]),
       bottomNavigationBar: !mayDecide || _selected.isEmpty
           ? null
           : SafeArea(

@@ -36,7 +36,7 @@ Map<String, String> wordsIn(String language) => {
     'projects.pending', 'projects.rejected', 'registered.title', 'registered.empty', 'registered.loadFailed', 'registered.approve', 'registered.reject',
     'registered.reason', 'registered.invalidReason', 'registered.notPending', 'registered.noConnection', 'registered.refused',
     'myAccount.changePassword', 'myAccount.signOut', 'myAccount.signOutQuestion', 'myAccount.signOutExplain',
-    'settings.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.running',
+    'settings.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'common.retry', 'common.refresh', 'projects.running',
     'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
     'projects.unitName', 'projects.addUnit', 'projects.removeUnit', 'projects.create', 'common.cancel', 'projects.close',
     'projects.closeQuestion', 'projects.closeExplain', 'projects.pendingEntries', 'projects.unitInUse', 'projects.sharedUnit', 'projects.rename', 'projects.renameUnit', 'projects.removeUnitQuestion', 'projects.removeUnitExplain', 'projects.save', 'projects.invalidName', 'projects.projectFinished', 'projects.noConnection',
