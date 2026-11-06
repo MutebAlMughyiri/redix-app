@@ -129,6 +129,37 @@ const onePixelPng = [
   0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
 ];
 
+/// Report 1 as the API answers it once issued.
+Map<String, Object> issuedReport() => {
+  'number': 1,
+  'issuedAt': '2026-11-05T20:00:00Z',
+  'accounts': [
+    {'name': 'البنك', 'type': 'bank', 'balance': 900},
+  ],
+  'accountsTotal': 900,
+  'previousExpenses': 100,
+  'expenses': 140,
+  'expensesDifference': 40,
+  'capital': 1000,
+  'vatRefunds': 0,
+  'sales': 0,
+  'revenue': 1000,
+  'revenueWithoutSales': 1000,
+  'categories': [
+    {'id': 'category-1', 'name': 'التشطيب', 'total': 140, 'items': <Map<String, Object>>[]},
+  ],
+  'surplus': 860,
+  'surplusWithoutSales': 860,
+  'liquidation': 0,
+  'reconciliationDifference': 40,
+  'pendingCount': 0,
+  'pendingAmount': 0,
+  'capitalTotal': 1000,
+  'partners': [
+    {'name': 'متعب', 'balance': 1000, 'sharePercent': 100},
+  ],
+};
+
 /// The phone's camera and files, as the app's tests see them: each answers what the test chose, and nothing until it chooses.
 class FakeCapture extends InvoiceCapture {
   final _sharedFiles = StreamController<PickedFile>.broadcast();

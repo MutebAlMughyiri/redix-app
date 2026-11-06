@@ -12,36 +12,6 @@ import 'package:redix/ui/confirm_dialog.dart';
 import '../app_harness.dart';
 
 void main() {
-  Map<String, Object> report() => {
-    'number': 1,
-    'issuedAt': '2026-11-05T20:00:00Z',
-    'accounts': [
-      {'name': 'البنك', 'type': 'bank', 'balance': 900},
-    ],
-    'accountsTotal': 900,
-    'previousExpenses': 100,
-    'expenses': 140,
-    'expensesDifference': 40,
-    'capital': 1000,
-    'vatRefunds': 0,
-    'sales': 0,
-    'revenue': 1000,
-    'revenueWithoutSales': 1000,
-    'categories': [
-      {'id': 'category-1', 'name': 'التشطيب', 'total': 140, 'items': <Map<String, Object>>[]},
-    ],
-    'surplus': 860,
-    'surplusWithoutSales': 860,
-    'liquidation': 0,
-    'reconciliationDifference': 40,
-    'pendingCount': 0,
-    'pendingAmount': 0,
-    'capitalTotal': 1000,
-    'partners': [
-      {'name': 'متعب', 'balance': 1000, 'sharePercent': 100},
-    ],
-  };
-
   Future<({FakeApi api, FakeCapture capture})> openReports(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance}) async {
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة']);
     arrange(api);
@@ -68,7 +38,7 @@ void main() {
     final (:api, capture: _) = await openReports(tester, (api) {
       api
         ..periodicRows.add({'number': 1, 'issuedAt': '2026-11-05T20:00:00Z', 'expenses': 140})
-        ..periodicAnswer = report();
+        ..periodicAnswer = issuedReport();
     });
 
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.periodicKey(1))));
@@ -81,7 +51,7 @@ void main() {
     final (:api, :capture) = await openReports(tester, (api) {
       api
         ..periodicRows.add({'number': 1, 'issuedAt': '2026-11-05T20:00:00Z', 'expenses': 140})
-        ..periodicAnswer = report();
+        ..periodicAnswer = issuedReport();
     });
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.periodicKey(1))));
 
@@ -98,7 +68,7 @@ void main() {
     final (:api, :capture) = await openReports(tester, (api) {
       api
         ..periodicRows.add({'number': 1, 'issuedAt': '2026-11-05T20:00:00Z', 'expenses': 140})
-        ..periodicAnswer = report();
+        ..periodicAnswer = issuedReport();
     });
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.periodicKey(1))));
 
@@ -114,7 +84,7 @@ void main() {
     final (:api, capture: _) = await openReports(tester, (api) {
       api
         ..periodicRows.add({'number': 1, 'issuedAt': '2026-11-05T20:00:00Z', 'expenses': 140})
-        ..periodicAnswer = report();
+        ..periodicAnswer = issuedReport();
     }, permissions: const ['readProject']);
 
     expect(find.byKey(ReportsScreen.issueKey), findsNothing);
