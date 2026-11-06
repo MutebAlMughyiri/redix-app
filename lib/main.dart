@@ -522,6 +522,13 @@ class _RedixAppState extends State<RedixApp> {
     super.dispose();
   }
 
+  /// Loads the words again: the no-network screen's retry, and newer words fetched in the background (findings row 133).
+  void _reloadWords() {
+    if (mounted) {
+      setState(() => _wordsAttempt++);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -531,7 +538,7 @@ class _RedixAppState extends State<RedixApp> {
         locale: widget.language.locale,
         onGenerateTitle: (context) => Words.of(context).appTitle,
         localizationsDelegates: [
-          WordsDelegate(_wordsAttempt),
+          WordsDelegate(_wordsAttempt, onRefreshed: _reloadWords),
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
@@ -539,7 +546,7 @@ class _RedixAppState extends State<RedixApp> {
         supportedLocales: [for (final language in Words.languages) Locale(language)],
         theme: ThemeData(colorSchemeSeed: const Color(0xFF0E6B68), fontFamily: 'IBMPlexSansArabic'),
         builder: (context, child) => Words.of(context).isEmpty
-            ? NoWordsScreen(onRetry: () => setState(() => _wordsAttempt++))
+            ? NoWordsScreen(onRetry: _reloadWords)
             : child ?? const SizedBox.shrink(),
       ),
     );

@@ -55,6 +55,33 @@ void main() {
     expect(sentTags, ['"v1"']);
   });
 
+  test('findings row 133: newer words fetched in the background are reported, so the screen shows them without a restart', () async {
+    SharedPreferences.setMockInitialValues({'words': '{"language": "ar", "etag": "\\"v1\\"", "words": {"app.title": "kept"}}'});
+    var refreshed = 0;
+    final client = MockClient((request) async => bundle({'app.title': 'kept', 'categories.tables': 'جداول البند'}, '"v2"'));
+
+    final words = await http.runWithClient(() => Words.load('ar', onRefreshed: () => refreshed++), () => client);
+    await pumpEventQueue();
+
+    expect(words.text('categories.tables'), 'categories.tables');
+    expect(refreshed, 1);
+    expect((await kept())['words'], {'app.title': 'kept', 'categories.tables': 'جداول البند'});
+  });
+
+  test('the same words fetched again, or none, never ask for a reload', () async {
+    SharedPreferences.setMockInitialValues({'words': '{"language": "ar", "etag": "", "words": {"app.title": "kept"}}'});
+    var refreshed = 0;
+    final unchanged = MockClient((request) async => bundle({'app.title': 'kept'}, ''));
+    final notModified = MockClient((request) async => http.Response('', 304));
+
+    await http.runWithClient(() => Words.load('ar', onRefreshed: () => refreshed++), () => unchanged);
+    await pumpEventQueue();
+    await http.runWithClient(() => Words.load('ar', onRefreshed: () => refreshed++), () => notModified);
+    await pumpEventQueue();
+
+    expect(refreshed, 0);
+  });
+
   test('without a network and nothing kept, the words are empty', () async {
     final words = await load('ar', MockClient((request) async => throw http.ClientException('offline')));
 

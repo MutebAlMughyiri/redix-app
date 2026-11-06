@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -28,19 +29,29 @@ class Words with WordGetters {
   @override
   String text(String key) => _values[key] ?? key;
 
-  /// The words of [language]. Kept words show at once and are refreshed in the background; another language is fetched first and replaces the kept one, since the phone keeps one language only. Empty when there is no network and nothing kept.
-  static Future<Words> load(String language) async {
+  /// The words of [language]. Kept words show at once and are refreshed in the background, calling [onRefreshed] when what arrived differs from what is shown, so the app loads
+  /// them at once rather than at the next start; another language is fetched first and replaces the kept one, since the phone keeps one language only. Empty when there is no
+  /// network and nothing kept.
+  static Future<Words> load(String language, {VoidCallback onRefreshed = _unchanged}) async {
     final preferences = await SharedPreferences.getInstance();
     final kept = _kept(preferences);
     final fetch = _fetch(preferences, language, kept.language == language ? kept.etag : '');
     if (kept.language == language) {
-      unawaited(fetch);
+      unawaited(
+        fetch.then((_) {
+          if (!mapEquals(_kept(preferences).words, kept.words)) {
+            onRefreshed();
+          }
+        }),
+      );
       return Words(kept.words);
     }
     await fetch;
     final fetched = _kept(preferences);
     return Words(fetched.language == language ? fetched.words : {});
   }
+
+  static void _unchanged() {}
 
   static ({String language, String etag, Map<String, String> words}) _kept(SharedPreferences preferences) {
     final kept = jsonDecode(preferences.getString(_keptKey) ?? '{"language": "", "etag": "", "words": {}}') as Map<String, dynamic>;
@@ -65,17 +76,20 @@ class Words with WordGetters {
 
 /// Loads [Words] through Flutter's localization, so a change of language loads that language's words.
 class WordsDelegate extends LocalizationsDelegate<Words> {
-  /// A delegate for this [attempt]; a new attempt reloads the words, which is how the no-network screen retries.
-  const WordsDelegate(this.attempt);
+  /// A delegate for this [attempt]; a new attempt reloads the words, which is how the no-network screen retries, and [onRefreshed] asks for one when newer words arrive.
+  const WordsDelegate(this.attempt, {required this.onRefreshed});
 
   /// Counts the retries; a different value makes Flutter load the words again.
   final int attempt;
+
+  /// Called when words fetched in the background differ from those shown, so the app makes a new attempt and shows them at once.
+  final VoidCallback onRefreshed;
 
   @override
   bool isSupported(Locale locale) => Words.languages.contains(locale.languageCode);
 
   @override
-  Future<Words> load(Locale locale) => Words.load(locale.languageCode);
+  Future<Words> load(Locale locale) => Words.load(locale.languageCode, onRefreshed: onRefreshed);
 
   @override
   bool shouldReload(WordsDelegate old) => old.attempt != attempt;
