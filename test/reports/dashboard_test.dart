@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/contracts/contracts_screen.dart';
+import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/home/dashboard_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
@@ -70,6 +71,19 @@ void main() {
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
     expect(tester.widget<Text>(find.byKey(DashboardCard.surplusKey)).data, '2,500.00');
+  });
+
+  testWidgets('coming back from approving reads the latest entries again', (tester) async {
+    final api = await openHome(tester, (api) {
+      api.dashboardAnswer = figures(pendingCount: 1);
+      api.addEntry();
+    });
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.pendingKey)));
+
+    api.entryRows.single['status'] = 'approved';
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.approved');
   });
 
   testWidgets('Field sees the figures and no way to approve', (tester) async {

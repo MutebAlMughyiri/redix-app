@@ -463,6 +463,9 @@ class FakeApi {
   /// What a change to an entry answers.
   var entryChangeAnswer = (status: 200, code: '');
 
+  /// While set, a change to an entry waits for this before it answers.
+  Completer<void> heldEntryChange = Completer<void>()..complete();
+
   /// The addresses expenses and payments were sent to, in order.
   final sentExpensePaths = <String>[];
 
@@ -1376,6 +1379,25 @@ class FakeApi {
     return _json({'defaultProjectId': defaultProjectId, 'openDefaultProject': openDefaultProject}, 200);
   }
 
+  Future<http.Response> _changeEntry(http.Request request) async {
+    final segments = request.url.pathSegments;
+    sentEntryChanges.add((segments[3], segments[4], request.body.isEmpty ? const <String, dynamic>{} : jsonDecode(request.body) as Map<String, dynamic>));
+    await heldEntryChange.future;
+    if (entryChangeAnswer.status >= 300) {
+      return _json({'code': entryChangeAnswer.code}, entryChangeAnswer.status);
+    }
+    final row = entryRows.singleWhere((row) => row['id'] == segments[3]);
+    switch (segments[4]) {
+      case 'submit':
+        row['status'] = 'pendingApproval';
+      case 'delete':
+        entryRows.remove(row);
+      case 'reverse':
+        row['isReversed'] = true;
+    }
+    return _json(const <String, Object>{}, 200);
+  }
+
   FutureOr<http.Response> _answerProjects(http.Request request) {
     final segments = request.url.pathSegments;
     if (segments.last == 'default' || segments.length == 3 && segments[1] == 'default') {
@@ -1421,20 +1443,7 @@ class FakeApi {
       return _json(entryDetails[segments[3]]!, 200);
     }
     if (segments.length == 5 && segments[2] == 'entries' && const ['submit', 'delete', 'reverse'].contains(segments[4])) {
-      sentEntryChanges.add((segments[3], segments[4], request.body.isEmpty ? const <String, dynamic>{} : jsonDecode(request.body) as Map<String, dynamic>));
-      if (entryChangeAnswer.status >= 300) {
-        return _json({'code': entryChangeAnswer.code}, entryChangeAnswer.status);
-      }
-      final row = entryRows.singleWhere((row) => row['id'] == segments[3]);
-      switch (segments[4]) {
-        case 'submit':
-          row['status'] = 'pendingApproval';
-        case 'delete':
-          entryRows.remove(row);
-        case 'reverse':
-          row['isReversed'] = true;
-      }
-      return _json(const <String, Object>{}, 200);
+      return _changeEntry(request);
     }
     if (const ['pdf', 'xlsx', 'zip'].contains(segments.last)) {
       sentFileReads.add(request.url.toString().replaceFirst('${request.url.scheme}://${request.url.authority}', ''));

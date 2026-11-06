@@ -239,10 +239,10 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  /// Opens [path] for [project], and reads the figures again on the way back, since what was done there may have changed them (AC-34.1).
+  /// Opens [path] for [project], and reads the figures and the latest entries again on the way back, since what was done there may have changed them (AC-34.1).
   Future<void> _open(String path, Project project) async {
     await context.push(path, extra: project);
-    await widget.dashboard.load();
+    await Future.wait([widget.dashboard.load(), widget.entries.load()]);
   }
 
   void _askToClose(Project project) {

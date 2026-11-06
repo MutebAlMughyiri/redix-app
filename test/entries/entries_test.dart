@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/entries/entries_screen.dart';
@@ -130,6 +132,24 @@ void main() {
     expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2, api.sentEntryChanges.single.$3['reason']), ('entry-0', 'reverse', 'إدخال خاطئ'));
     expect(find.byKey(EntriesScreen.reverseSendKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.reversed');
+  });
+
+  testWidgets('a reversal being sent cannot be sent again: its button is disabled until the answer comes', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: managerAndFinance);
+    await openActions(tester, api, 'entry-0');
+    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.reverseKey)));
+    await tester.enterText(find.byKey(EntriesScreen.reverseReasonKey), 'إدخال خاطئ');
+    api.heldEntryChange = Completer<void>();
+
+    await act(tester, api, () async {
+      await tester.tap(find.byKey(EntriesScreen.reverseSendKey));
+      await tester.pump();
+      await tester.tap(find.byKey(EntriesScreen.reverseSendKey), warnIfMissed: false);
+    });
+
+    expect(tester.widget<FilledButton>(find.byKey(EntriesScreen.reverseSendKey)).onPressed, isNull);
+    await act(tester, api, () async => api.heldEntryChange.complete());
+    expect(api.sentEntryChanges.length, 1);
   });
 
   testWidgets('a refused reversal stays open, saying why', (tester) async {

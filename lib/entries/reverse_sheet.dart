@@ -28,6 +28,7 @@ class ReverseSheet extends StatefulWidget {
 class _ReverseSheetState extends State<ReverseSheet> {
   final _reason = TextEditingController();
   var _message = '';
+  var _saving = false;
 
   @override
   void dispose() {
@@ -36,6 +37,10 @@ class _ReverseSheetState extends State<ReverseSheet> {
   }
 
   Future<void> _reverse() async {
+    setState(() {
+      _saving = true;
+      _message = '';
+    });
     final refusal = await widget.onReverse(_reason.text);
     if (!mounted) {
       return;
@@ -44,7 +49,10 @@ class _ReverseSheetState extends State<ReverseSheet> {
       Navigator.of(context).pop();
       return;
     }
-    setState(() => _message = refusal);
+    setState(() {
+      _saving = false;
+      _message = refusal;
+    });
   }
 
   @override
@@ -68,7 +76,7 @@ class _ReverseSheetState extends State<ReverseSheet> {
               decoration: InputDecoration(labelText: words.entriesReverseReason, border: const OutlineInputBorder()),
             ),
             if (_message.isNotEmpty) Text(words.text(_message), style: TextStyle(color: theme.colorScheme.error)),
-            FilledButton(key: ReverseSheet.sendKey, onPressed: _reverse, child: Text(words.entriesReverse)),
+            FilledButton(key: ReverseSheet.sendKey, onPressed: _saving ? null : _reverse, child: Text(words.entriesReverse)),
           ],
         ),
       ),
