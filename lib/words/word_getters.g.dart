@@ -608,9 +608,6 @@ mixin WordGetters {
   /// The word `categories.noItems`.
   String get categoriesNoItems => text('categories.noItems');
 
-  /// The word `categories.noSubgroups`.
-  String get categoriesNoSubgroups => text('categories.noSubgroups');
-
   /// The word `categories.projectFinished`.
   String get categoriesProjectFinished => text('categories.projectFinished');
 
@@ -638,14 +635,23 @@ mixin WordGetters {
   /// The word `categories.subgroupName`.
   String get categoriesSubgroupName => text('categories.subgroupName');
 
-  /// The word `categories.subgroups`.
-  String get categoriesSubgroups => text('categories.subgroups');
-
-  /// The word `categories.subgroupsHint`.
-  String get categoriesSubgroupsHint => text('categories.subgroupsHint');
+  /// The word `categories.tableContract`.
+  String get categoriesTableContract => text('categories.tableContract');
 
   /// The word `categories.tablePercentages`.
   String get categoriesTablePercentages => text('categories.tablePercentages');
+
+  /// The word `categories.tablePurchases`.
+  String get categoriesTablePurchases => text('categories.tablePurchases');
+
+  /// The word `categories.tableRevenue`.
+  String get categoriesTableRevenue => text('categories.tableRevenue');
+
+  /// The word `categories.tables`.
+  String get categoriesTables => text('categories.tables');
+
+  /// The word `categories.tablesHint`.
+  String get categoriesTablesHint => text('categories.tablesHint');
 
   /// The word `categories.title`.
   String get categoriesTitle => text('categories.title');

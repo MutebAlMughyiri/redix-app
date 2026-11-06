@@ -59,7 +59,7 @@ class CategoriesScreen extends StatefulWidget {
   static const tablePercentagesKey = Key('categories.tablePercentages');
 
   /// Subgroups, in an item's menu.
-  static const subgroupsKey = Key('categories.subgroups');
+  static const tablesKey = Key('categories.tables');
 
   /// Disable, in an item's menu.
   static const disableItemKey = Key('categories.disableItem');

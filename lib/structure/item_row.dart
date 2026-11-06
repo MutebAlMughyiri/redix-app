@@ -10,7 +10,7 @@ import 'categories_screen.dart';
 import 'category.dart';
 import 'change_item_type_dialog.dart';
 import 'item_columns_screen.dart';
-import 'subgroups_screen.dart';
+import 'item_tables_screen.dart';
 
 /// One item under its category: its name and type, or that it is disabled, a handle to drag it, the way into its columns, and a menu of what can be done to it.
 class ItemRow extends StatelessWidget {
@@ -71,9 +71,9 @@ class ItemRow extends StatelessWidget {
               itemBuilder: (_) => [
                 PopupMenuItem(key: CategoriesScreen.renameItemKey, value: () => _askForName(context), child: Text(words.categoriesRename)),
                 PopupMenuItem(
-                  key: CategoriesScreen.subgroupsKey,
-                  value: () => context.push(SubgroupsScreen.pathOf(project.id, item.id), extra: project),
-                  child: Text(words.categoriesSubgroups),
+                  key: CategoriesScreen.tablesKey,
+                  value: () => context.push(ItemTablesScreen.pathOf(project.id, item.id), extra: project),
+                  child: Text(words.categoriesTables),
                 ),
                 PopupMenuItem(
                   key: CategoriesScreen.changeTypeKey,

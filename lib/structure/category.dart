@@ -53,8 +53,6 @@ class Item {
   /// No item, for a screen whose list is not read yet.
   Item.none() : id = '', name = '', type = ItemType.both, isActive = false, subgroups = [], showsTablePercentages = false;
 
-  Item._(this.id, this.name, this.type, this.isActive, this.subgroups, this.showsTablePercentages);
-
   /// The item's id.
   final String id;
 
@@ -76,8 +74,6 @@ class Item {
   /// The subgroups a person named, without the general one.
   List<Subgroup> get namedSubgroups => subgroups.where((subgroup) => subgroup.name.isNotEmpty).toList();
 
-  /// The same item with [named] in place of its named subgroups, for showing a new order at once.
-  Item withNamedSubgroups(List<Subgroup> named) => Item._(id, name, type, isActive, [...subgroups.where((subgroup) => subgroup.name.isEmpty), ...named], showsTablePercentages);
 }
 
 /// A category (التصنيف الرئيسي) of a project's expenses, as the API answers it.

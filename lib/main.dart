@@ -77,8 +77,9 @@ import 'structure/categories_screen.dart';
 import 'structure/category.dart';
 import 'structure/columns.dart';
 import 'structure/item_columns_screen.dart';
+import 'structure/item_tables.dart';
+import 'structure/item_tables_screen.dart';
 import 'structure/offered_items.dart';
-import 'structure/subgroups_screen.dart';
 import 'suppliers/suppliers.dart';
 import 'suppliers/suppliers_screen.dart';
 import 'users/new_user_screen.dart';
@@ -379,11 +380,12 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), openEntryId: state.uri.queryParameters['entry'] ?? ''),
       ),
       GoRoute(
-        path: SubgroupsScreen.path,
-        builder: (context, state) => SubgroupsScreen(
+        path: ItemTablesScreen.path,
+        builder: (context, state) => ItemTablesScreen(
           itemId: state.pathParameters['itemId'] ?? '',
           project: state.extra! as Project,
           categories: _categoriesOf(state.pathParameters['projectId'] ?? ''),
+          tables: ItemTables(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? ''),
         ),
       ),
     ],
