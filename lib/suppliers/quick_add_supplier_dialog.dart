@@ -40,7 +40,6 @@ class _QuickAddSupplierDialogState extends State<QuickAddSupplierDialog> {
   late final _isNumber = RegExp(r'^\d+$').hasMatch(_typed);
   late final _name = TextEditingController(text: widget.name.isNotEmpty ? widget.name : (_isNumber ? '' : _typed));
   late final _vatNumber = TextEditingController(text: _isNumber ? _typed : '');
-  var _notVatRegistered = false;
   var _holder = Supplier.none();
 
   @override
@@ -52,7 +51,7 @@ class _QuickAddSupplierDialogState extends State<QuickAddSupplierDialog> {
 
   Future<String> _save() async {
     final suppliers = widget.suppliers;
-    final refusal = await suppliers.add((name: _name.text, vatNumber: _vatNumber.text, notVatRegistered: _notVatRegistered, mobile: '', defaultItemId: ''));
+    final refusal = await suppliers.add((name: _name.text, vatNumber: _vatNumber.text, mobile: '', defaultItemId: ''));
     if (refusal.isEmpty) {
       widget.onPicked(suppliers.added);
     } else if (mounted) {
@@ -81,15 +80,7 @@ class _QuickAddSupplierDialogState extends State<QuickAddSupplierDialog> {
           decoration: InputDecoration(labelText: words.suppliersName, border: const OutlineInputBorder()),
         ),
         const SizedBox(height: 8),
-        VatNumberField(
-          controller: _vatNumber,
-          notVatRegistered: _notVatRegistered,
-          holderName: _holder.name,
-          onNotVatRegisteredChanged: (notVatRegistered) => setState(() {
-            _notVatRegistered = notVatRegistered;
-            _holder = Supplier.none();
-          }),
-        ),
+        VatNumberField(controller: _vatNumber, holderName: _holder.name),
         if (_holder.isActive && _holder.id.isNotEmpty) TextButton(key: SupplierPicker.useExistingKey, onPressed: _useHolder, child: Text(words.suppliersUseExisting)),
         if (!widget.project.may(Permission.manageSettings)) ...[
           const SizedBox(height: 8),

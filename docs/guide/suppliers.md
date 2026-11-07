@@ -14,7 +14,7 @@ The list starts with مورد نقدي عام, the general cash supplier, for ex
 | To | Do this |
 | --- | --- |
 | Add a supplier | Tap **Add supplier**, type its name and VAT number, and add its mobile and default item if you know them. |
-| Add a supplier with no VAT number | Turn on **Not VAT-registered**. Its invoices stay out of the VAT statement. |
+| Add a supplier with no VAT number | Leave **VAT number** empty. Its purchases have no VAT in the VAT statement. |
 | Change a supplier | Open the menu on its row and tap **Edit supplier**. |
 | Stop using a supplier | Open the menu on its row and tap **Disable**. It disappears from entry and stays in the reports. Nothing is ever deleted. |
 
@@ -23,7 +23,7 @@ A supplier marked **Pending approval** was added from the field, and is approved
 | Message | Meaning |
 | --- | --- |
 | Enter a name of 1 to 100 characters. | The name is empty or too long. |
-| A VAT number is 15 digits, starting and ending with 3. | The number is wrong, or was left empty. |
+| A VAT number is a number of at most 20 digits. | The number holds something other than digits, or more than 20. Leave it empty if the supplier has none. |
 | This VAT number already belongs to another supplier. | The line under the number names that supplier. It may be a disabled one. |
 | Enter a mobile of up to 20 characters. | The mobile is too long. |
 | This project is finished, so nothing in it changes. | It was closed; you can still read this screen. |
@@ -38,7 +38,7 @@ A supplier marked **Pending approval** was added from the field, and is approved
 | لكي | افعل هذا |
 | --- | --- |
 | تضيف مورداً | اضغط **إضافة مورد**، واكتب اسمه ورقمه الضريبي، وأضف جواله وبنده الافتراضي إن عرفتهما. |
-| تضيف مورداً بلا رقم ضريبي | فعّل **غير مسجل بالضريبة**. ولا تدخل فواتيره كشف الضريبة. |
+| تضيف مورداً بلا رقم ضريبي | اترك **الرقم الضريبي** فارغاً. ولا ضريبة على مشترياته في كشف الضريبة. |
 | تغيّر بيانات مورد | افتح القائمة في صفه واضغط **تعديل المورد**. |
 | توقف استخدام مورد | افتح القائمة في صفه واضغط **تعطيل**. يختفي من الإدخال ويبقى في التقارير، ولا يُحذف شيء أبداً. |
 
@@ -47,7 +47,7 @@ A supplier marked **Pending approval** was added from the field, and is approved
 | الرسالة | معناها |
 | --- | --- |
 | أدخل اسماً من 1 إلى 100 حرف. | الاسم فارغ أو طويل جداً. |
-| الرقم الضريبي 15 رقماً، يبدأ بالرقم 3 وينتهي به. | الرقم خاطئ أو تُرك فارغاً. |
+| الرقم الضريبي رقم من 20 خانة على الأكثر. | في الرقم غير الأرقام، أو أكثر من 20 خانة. اتركه فارغاً إن لم يكن للمورد رقم. |
 | هذا الرقم الضريبي لمورد آخر. | يظهر اسم ذلك المورد تحت الرقم، وقد يكون مورداً معطّلاً. |
 | اكتب رقم جوال من 20 حرفاً على الأكثر. | الجوال طويل جداً. |
 | هذا المشروع منتهٍ، فلا يتغير فيه شيء. | أُغلق المشروع، وتبقى هذه الشاشة للقراءة. |

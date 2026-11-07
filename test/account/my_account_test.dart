@@ -533,13 +533,13 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey(runningId))));
       [SuppliersScreen.addKey, SuppliersScreen.nameKey(supplier), SuppliersScreen.detailsKey(supplier), SuppliersScreen.menuKey(supplier)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(SuppliersScreen.addKey)));
-      [SuppliersScreen.supplierNameKey, SuppliersScreen.notVatRegisteredKey, SuppliersScreen.vatNumberKey, SuppliersScreen.mobileKey, SuppliersScreen.defaultItemKey, SuppliersScreen.saveKey].forEach(expectFits);
+      [SuppliersScreen.supplierNameKey, SuppliersScreen.vatNumberKey, SuppliersScreen.mobileKey, SuppliersScreen.defaultItemKey, SuppliersScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       final project = Project.fromJson(jsonDecode(jsonEncode(running)) as Map<String, dynamic>);
       await act(tester, api, () async => unawaited(SupplierPicker.show(tester.element(find.byType(SuppliersScreen)), project, Suppliers(session, runningId))));
       [SupplierPicker.searchKey, SupplierPicker.closeKey, SupplierPicker.rowKey(supplier), SupplierPicker.detailsKey(supplier), SupplierPicker.quickAddKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(SupplierPicker.quickAddKey)));
-      [SuppliersScreen.supplierNameKey, SuppliersScreen.notVatRegisteredKey, SuppliersScreen.vatNumberKey, SuppliersScreen.saveKey].forEach(expectFits);
+      [SuppliersScreen.supplierNameKey, SuppliersScreen.vatNumberKey, SuppliersScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byKey(SupplierPicker.closeKey)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));

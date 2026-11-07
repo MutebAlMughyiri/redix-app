@@ -4,8 +4,8 @@ import '../format/number_format.dart';
 import 'supplier.dart';
 import 'supplier_search.dart';
 
-/// What a person fills in about a supplier: its [name], its [vatNumber] unless it is [notVatRegistered], its [mobile], and the id of its default item, empty for none.
-typedef SupplierFields = ({String name, String vatNumber, bool notVatRegistered, String mobile, String defaultItemId});
+/// What a person fills in about a supplier: its [name], its [vatNumber] and [mobile], each empty for none, and the id of its default item, empty for none.
+typedef SupplierFields = ({String name, String vatNumber, String mobile, String defaultItemId});
 
 /// A project's supplier register (UC-017), and the one way to change it. Each change returns an empty string once made, otherwise the word key of the refusal.
 class Suppliers extends ApiList<Supplier> {
@@ -26,7 +26,7 @@ class Suppliers extends ApiList<Supplier> {
 
   Map<String, Object> _bodyOf(SupplierFields fields) => {
     'name': fields.name,
-    if (fields.notVatRegistered) 'notVatRegistered': true else 'vatNumber': westernDigits(fields.vatNumber),
+    'vatNumber': westernDigits(fields.vatNumber.trim()),
     if (fields.mobile.isNotEmpty) 'mobile': westernDigits(fields.mobile),
     if (fields.defaultItemId.isNotEmpty) 'defaultItemId': fields.defaultItemId,
   };

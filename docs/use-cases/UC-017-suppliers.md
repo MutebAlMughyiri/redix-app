@@ -26,7 +26,6 @@ The project's home, `HomeScreen`:
 | A supplier's menu | `SuppliersScreen.menuKey(id)` | Shown with `manageSettings` |
 | Edit, Disable, Enable, in the menu | `SuppliersScreen.editKey`, `disableKey`, `enableKey` | |
 | The name, in the dialog | `SuppliersScreen.supplierNameKey` | |
-| Not VAT-registered, in the dialog | `SuppliersScreen.notVatRegisteredKey` | Hides the number |
 | The VAT number, in the dialog | `SuppliersScreen.vatNumberKey` | Arabic digits are sent as Western ones |
 | Who holds a refused number, in the dialog | `SuppliersScreen.holderKey` | |
 | The mobile, in the dialog | `SuppliersScreen.mobileKey` | |
@@ -51,11 +50,11 @@ The project's home, `HomeScreen`:
 | A supplier pending approval is marked, and one with no number says so | `Supplier.detailsIn` | `a supplier pending approval is marked, and one with no number says so` |
 | Adding sends only what was filled in | `Suppliers.add` | `adding sends the name and the VAT number, and only what was filled in` |
 | Arabic digits are sent as Western ones | `westernDigits`, `Suppliers` | `a VAT number and a mobile typed in Arabic digits are sent in Western ones` |
-| Not VAT-registered hides the number and sends the mark (AC-06.2) | `VatNumberField`, `Suppliers` | `marking a supplier not VAT-registered hides the number and sends the mark` |
+| BR-16: the VAT number may stay empty, which is no number, and there is no switch for it (AC-06.2) | `VatNumberField`, `Suppliers` | `BR-16: a supplier is sent with its VAT number left empty` |
 | An invalid number stays in the dialog with the rule (AC-06.1) | `ChangeDialog` | `an invalid VAT number stays in the dialog with the rule` |
 | A number another supplier holds is refused, naming it (AC-06.1) | `Suppliers.holder`, `VatNumberField` | `a VAT number another supplier holds is refused, naming that supplier` |
 | Editing starts from the supplier and changes it | `SupplierDialog`, `Suppliers.edit` | `editing starts from the supplier and changes it` |
-| Editing a supplier with no number starts marked | `SupplierDialog` | `editing a supplier with no number starts marked not VAT-registered` |
+| Editing a supplier with no number shows it empty | `SupplierDialog` | `editing a supplier with no number shows its VAT number empty` |
 | A default item is chosen among what a purchase is offered, and can be taken away | `ItemPicker`, `OfferedItems` | `a default item is chosen among what a purchase is offered, and can be taken away` |
 | Disabled, it stays on the list, marked, and can be enabled (BR-15) | `SupplierRow` | `a disabled supplier stays on the list, marked, and can be enabled` |
 | The general cash supplier stays active, and the refusal says why; no menu in the app has a disabled entry with a reason, so the refusal is what shows | `showRefusalOf`, the word `suppliers.generalCashSupplier` | `the general cash supplier stays active, and the refusal says why` |

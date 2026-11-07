@@ -14,7 +14,6 @@
 | --- | --- | --- |
 | New supplier, on the sheet | `SupplierPicker.quickAddKey` | Opens the dialog, starting from what the search held; shown while the project runs, with `addSupplier` |
 | The name, in the dialog | `SuppliersScreen.supplierNameKey` | |
-| Not VAT-registered, in the dialog | `SuppliersScreen.notVatRegisteredKey` | Hides the number |
 | The VAT number, in the dialog | `SuppliersScreen.vatNumberKey` | |
 | Who holds a refused number, in the dialog | `SuppliersScreen.holderKey` | |
 | Use this supplier, in the dialog | `SupplierPicker.useExistingKey` | Goes on with that supplier; shown unless it is disabled |
@@ -26,7 +25,7 @@
 
 | Call | When |
 | --- | --- |
-| `POST /projects/{id}/suppliers` with `{ name, vatNumber }` or `{ name, notVatRegistered }` | Add and choose; it answers the supplier, or names the one holding the number as `existing` |
+| `POST /projects/{id}/suppliers` with `{ name, vatNumber }`, the number empty when it has none | Add and choose; it answers the supplier, or names the one holding the number as `existing` |
 
 ## Rules and where they live
 

@@ -6,6 +6,7 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-07 | A supplier's VAT number may stay empty, which is no number; the Not VAT-registered switch goes from both dialogs, and the list shows a number only when there is one | Muteb: "just a number has max 20 digit numbers and not required and can keep it empty with remove toogle not vat registered"; the 2026-11-05 rows on the switch no longer hold |
 | 2026-11-07 | No account belongs to a partner: the pocket type, its row on the accounts screen and the reconciliation's "owed to partners" go | Muteb: "Remove pockets completely"; redix-api #99 |
 | 2026-11-07 | One إضافة قيد button, where New purchase expense and Contractor payment were, opens one screen; the table chosen says whether it is a purchase or a contractor payment, and `EntryTable` answers everything the two differ in | Muteb: "زر اضافة قيد في المكان القديم بدلاً من مصروف شراء جديد ودفعة مقاول"; redix-app #84, R5, R6, R10 |
 | 2026-11-07 | A contractor payment asks no subgroup: its contract is its table | redix-app #84, R11: no report read a payment's subgroup |

@@ -69,7 +69,7 @@ Map<String, String> wordsIn(String language) => {
     'partners.new', 'partners.edit', 'partners.save', 'partners.name', 'partners.login', 'partners.noLogin', 'partners.loginHint',
     'suppliers.title', 'suppliers.empty', 'suppliers.loadFailed', 'suppliers.noConnection', 'suppliers.refused', 'suppliers.projectFinished', 'suppliers.invalidName', 'suppliers.invalidVatNumber',
     'suppliers.invalidMobile', 'suppliers.generalCashSupplier', 'suppliers.vatNumberTaken', 'suppliers.holder', 'suppliers.unknownItem', 'suppliers.new', 'suppliers.edit', 'suppliers.save', 'suppliers.name', 'suppliers.vatNumber',
-    'suppliers.notVatRegistered', 'suppliers.mobile', 'suppliers.defaultItem', 'suppliers.noDefaultItem', 'suppliers.pendingApproval', 'suppliers.disable', 'suppliers.enable', 'suppliers.disabled',
+    'suppliers.mobile', 'suppliers.defaultItem', 'suppliers.noDefaultItem', 'suppliers.pendingApproval', 'suppliers.disable', 'suppliers.enable', 'suppliers.disabled',
     'suppliers.pick', 'suppliers.searchHint', 'suppliers.noMatch', 'suppliers.quickAdd', 'suppliers.addAndPick', 'suppliers.pendingHint', 'suppliers.useExisting',
     'contracts.title', 'contracts.empty', 'contracts.loadFailed', 'contracts.noConnection', 'contracts.refused', 'contracts.projectFinished', 'contracts.unknownSupplier', 'contracts.itemNotOffered',
     'contracts.contractHasPayments', 'contracts.invalidValue', 'contracts.invalidUnitPrice', 'contracts.invalidQuantity', 'contracts.invalidNotes', 'contracts.new', 'contracts.edit', 'contracts.save',

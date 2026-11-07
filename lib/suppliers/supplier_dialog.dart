@@ -31,7 +31,6 @@ class _SupplierDialogState extends State<SupplierDialog> {
   late final _name = TextEditingController(text: widget.supplier.name);
   late final _vatNumber = TextEditingController(text: widget.supplier.vatNumber);
   late final _mobile = TextEditingController(text: widget.supplier.mobile);
-  late var _notVatRegistered = !_isNew && widget.supplier.vatNumber.isEmpty;
   late var _defaultItemId = widget.supplier.defaultItemId;
   late var _defaultItemName = widget.supplier.defaultItemName;
   var _holderName = '';
@@ -47,7 +46,7 @@ class _SupplierDialogState extends State<SupplierDialog> {
   }
 
   Future<String> _save() async {
-    final fields = (name: _name.text, vatNumber: _vatNumber.text, notVatRegistered: _notVatRegistered, mobile: _mobile.text, defaultItemId: _defaultItemId);
+    final fields = (name: _name.text, vatNumber: _vatNumber.text, mobile: _mobile.text, defaultItemId: _defaultItemId);
     final refusal = await (_isNew ? widget.suppliers.add(fields) : widget.suppliers.edit(widget.supplier, fields));
     if (mounted) {
       setState(() => _holderName = widget.suppliers.holder.name);
@@ -70,15 +69,7 @@ class _SupplierDialogState extends State<SupplierDialog> {
           decoration: InputDecoration(labelText: words.suppliersName, border: const OutlineInputBorder()),
         ),
         const SizedBox(height: 8),
-        VatNumberField(
-          controller: _vatNumber,
-          notVatRegistered: _notVatRegistered,
-          holderName: _holderName,
-          onNotVatRegisteredChanged: (notVatRegistered) => setState(() {
-            _notVatRegistered = notVatRegistered;
-            _holderName = '';
-          }),
-        ),
+        VatNumberField(controller: _vatNumber, holderName: _holderName),
         const SizedBox(height: 16),
         TextField(
           key: SuppliersScreen.mobileKey,

@@ -32,7 +32,7 @@ class Supplier {
   /// The supplier's name, as it was typed.
   final String name;
 
-  /// Its VAT number; empty for a supplier not VAT-registered.
+  /// Its VAT number; empty when it has none.
   final String vatNumber;
 
   /// Its mobile; empty when none.
@@ -53,10 +53,10 @@ class Supplier {
   /// How many of the signed-in user's purchases name it, in a search; 0 otherwise.
   final int timesUsed;
 
-  /// What a list says about it, in [words]: that it is disabled or pending approval, its VAT number or that it has none, and its default item.
+  /// What a list says about it, in [words]: that it is disabled or pending approval, its VAT number when it has one, and its default item.
   String detailsIn(Words words) => [
     if (!isActive) words.suppliersDisabled else if (status == SupplierStatus.pendingApproval) words.suppliersPendingApproval,
-    if (vatNumber.isEmpty) words.suppliersNotVatRegistered else vatNumber,
+    if (vatNumber.isNotEmpty) vatNumber,
     if (defaultItemName.isNotEmpty) defaultItemName,
   ].join(' · ');
 }

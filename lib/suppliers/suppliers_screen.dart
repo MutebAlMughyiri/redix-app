@@ -47,9 +47,6 @@ class SuppliersScreen extends StatefulWidget {
   /// The name, in the dialog.
   static const supplierNameKey = Key('suppliers.supplierName');
 
-  /// The switch that says it has no VAT number, in the dialog.
-  static const notVatRegisteredKey = Key('suppliers.notVatRegistered');
-
   /// The VAT number, in the dialog.
   static const vatNumberKey = Key('suppliers.vatNumber');
 

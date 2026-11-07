@@ -2303,9 +2303,6 @@ mixin WordGetters {
   /// The word `suppliers.noMatch`.
   String get suppliersNoMatch => text('suppliers.noMatch');
 
-  /// The word `suppliers.notVatRegistered`.
-  String get suppliersNotVatRegistered => text('suppliers.notVatRegistered');
-
   /// The word `suppliers.pendingApproval`.
   String get suppliersPendingApproval => text('suppliers.pendingApproval');
 

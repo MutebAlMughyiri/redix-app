@@ -36,10 +36,10 @@ void main() {
     expect(text(tester, SuppliersScreen.detailsKey(opened.approved)), '$vatNumber · اللياسة');
   });
 
-  testWidgets('a supplier pending approval is marked, and one with no number says so', (tester) async {
+  testWidgets('a supplier pending approval is marked, and one with no number shows none', (tester) async {
     final opened = await openSuppliers(tester);
 
-    expect(text(tester, SuppliersScreen.detailsKey(opened.pending)), 'en suppliers.pendingApproval · en suppliers.notVatRegistered');
+    expect(text(tester, SuppliersScreen.detailsKey(opened.pending)), 'en suppliers.pendingApproval');
   });
 
   testWidgets('adding sends the name and the VAT number, and only what was filled in', (tester) async {
@@ -68,17 +68,15 @@ void main() {
     expect(opened.api.sentSettingsChanges.single.$2, {'name': 'مورد', 'vatNumber': '311111111111113', 'mobile': '0500'});
   });
 
-  testWidgets('marking a supplier not VAT-registered hides the number and sends the mark', (tester) async {
+  testWidgets('BR-16: a supplier is sent with its VAT number left empty, as having none, and there is no switch for it', (tester) async {
     final opened = await openSuppliers(tester);
 
     await act(tester, opened.api, () => tester.tap(find.byKey(SuppliersScreen.addKey)));
     await tester.enterText(find.byKey(SuppliersScreen.supplierNameKey), 'مورد');
-    await tester.enterText(find.byKey(SuppliersScreen.vatNumberKey), '123');
-    await act(tester, opened.api, () => tester.tap(find.byKey(SuppliersScreen.notVatRegisteredKey)));
-    expect(find.byKey(SuppliersScreen.vatNumberKey), findsNothing);
     await save(tester, opened.api);
 
-    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'مورد', 'notVatRegistered': true});
+    expect(find.byType(SwitchListTile), findsNothing);
+    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'مورد', 'vatNumber': ''});
   });
 
   testWidgets('an invalid VAT number stays in the dialog with the rule', (tester) async {
@@ -122,14 +120,13 @@ void main() {
     expect(text(tester, SuppliersScreen.nameKey(opened.approved)), 'النخيل');
   });
 
-  testWidgets('editing a supplier with no number starts marked not VAT-registered', (tester) async {
+  testWidgets('editing a supplier with no number shows its VAT number empty', (tester) async {
     final opened = await openSuppliers(tester);
 
     await openMenu(tester, opened.api, opened.pending);
     await act(tester, opened.api, () => tester.tap(find.byKey(SuppliersScreen.editKey)));
 
-    expect(find.byKey(SuppliersScreen.vatNumberKey), findsNothing);
-    expect(tester.widget<SwitchListTile>(find.byKey(SuppliersScreen.notVatRegisteredKey)).value, isTrue);
+    expect(tester.widget<TextField>(find.byKey(SuppliersScreen.vatNumberKey)).controller!.text, '');
   });
 
   testWidgets('a default item is chosen among what a purchase is offered, and can be taken away', (tester) async {
