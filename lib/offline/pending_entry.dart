@@ -40,7 +40,7 @@ class PendingEntry {
   String get date => (body['invoiceDate'] ?? body['paymentDate'] ?? '') as String;
 
   /// The amount it carries.
-  num get amount => (body['amount'] ?? body['paymentAmount'] ?? 0) as num;
+  num get amount => (body['amount'] ?? 0) as num;
 
   /// The entry as it is kept.
   Map<String, Object> toJson() => {'ownerId': ownerId, 'projectId': projectId, 'route': route, 'body': body, 'fileName': fileName, 'refusal': refusal};

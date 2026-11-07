@@ -604,15 +604,10 @@ void main() {
         AddExpenseScreen.afterDiscountKey,
         AddExpenseScreen.vatKey,
         AddExpenseScreen.totalKey,
-        AddExpenseScreen.paymentDiffersKey,
         AddExpenseScreen.notesKey,
         AddExpenseScreen.sendKey,
         AddExpenseScreen.draftKey,
       ].forEach(expectFits);
-      await tester.ensureVisible(find.byKey(AddExpenseScreen.paymentDiffersKey));
-      await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.paymentDiffersKey)));
-      [AddExpenseScreen.paymentDateKey, AddExpenseScreen.paymentAmountKey, AddExpenseScreen.bankFeesKey].forEach(expectFits);
       await tester.ensureVisible(find.byKey(AddExpenseScreen.withoutInvoiceKey));
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.withoutInvoiceKey)));

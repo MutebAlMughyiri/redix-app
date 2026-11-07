@@ -228,17 +228,8 @@ class AddExpenseScreen extends StatefulWidget {
   /// The line that says the user holds nothing to pay from.
   static const noAccountKey = PaymentChoices.noAccountKey;
 
-  /// The switch that says the payment differs from the invoice.
-  static const paymentDiffersKey = Key('addExpense.paymentDiffers');
-
   /// The payment's date.
   static const paymentDateKey = Key('addExpense.paymentDate');
-
-  /// The amount paid.
-  static const paymentAmountKey = Key('addExpense.paymentAmount');
-
-  /// The bank fees.
-  static const bankFeesKey = Key('addExpense.bankFees');
 
   /// The notes.
   static const notesKey = Key('addExpense.notes');
@@ -286,8 +277,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _quantity = TextEditingController();
   final _amount = TextEditingController();
   final _discount = TextEditingController();
-  final _paymentAmount = TextEditingController();
-  final _bankFees = TextEditingController();
   final _notes = TextEditingController();
   final _withoutInvoiceReason = TextEditingController();
   final _customValues = <String, String>{};
@@ -306,7 +295,6 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   var _paymentDate = DateTime.now();
   var _amountIncludesVat = true;
   var _isNotTaxable = false;
-  var _paymentDiffers = false;
   var _withoutInvoice = false;
   var _isCreditNote = false;
   var _original = CreditableInvoice.none();
@@ -326,7 +314,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   @override
   void dispose() {
-    for (final controller in [_invoiceNumber, _product, _unitPrice, _quantity, _amount, _discount, _paymentAmount, _bankFees, _notes, _withoutInvoiceReason]) {
+    for (final controller in [_invoiceNumber, _product, _unitPrice, _quantity, _amount, _discount, _notes, _withoutInvoiceReason]) {
       controller.dispose();
     }
     super.dispose();
@@ -552,16 +540,12 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   String _isoOf(DateTime date) => date.toIso8601String().substring(0, 10);
 
-  bool get _paysOtherThanInvoiced => _paymentDiffers && !_withoutInvoice;
-
   /// Each number field's API name, field and the word key of what can be wrong with it.
   List<(String, TextEditingController, String)> get _numbers => [
     ('unitPrice', _unitPrice, 'expenses.invalidUnitPrice'),
     ('quantity', _quantity, 'expenses.invalidQuantity'),
     ('amount', _amount, 'expenses.invalidAmount'),
     ('discount', _discount, 'expenses.invalidDiscount'),
-    if (_paysOtherThanInvoiced) ('paymentAmount', _paymentAmount, 'expenses.invalidPaymentAmount'),
-    if (_paysOtherThanInvoiced) ('bankFees', _bankFees, 'expenses.invalidBankFees'),
   ];
 
   Map<String, Object> _body(bool submit, bool confirmDuplicate) => {
@@ -583,7 +567,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     'isNotTaxable': _isNotTaxable,
     if (_payment.chosenAccountIn(widget.accounts.all).isNotEmpty) 'accountId': _payment.chosenAccountIn(widget.accounts.all),
     if (_payment.paymentMethodId.isNotEmpty) 'paymentMethodId': _payment.paymentMethodId,
-    if (_paymentDiffers || _withoutInvoice) 'paymentDate': _isoOf(_paymentDate),
+    if (_withoutInvoice) 'paymentDate': _isoOf(_paymentDate),
     'notes': _notes.text,
     'customValues': ItemColumn.valuesToSend(_columns, _customValues),
     'submit': submit,
@@ -762,21 +746,8 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
 
   Widget _paymentSection(Words words) => FormSection([
     PaymentChoices(choice: _payment, accounts: widget.accounts, paymentMethods: widget.paymentMethods, onChanged: () => setState(() {}), onRetry: _readListsAgain),
-    if (!_withoutInvoice)
-      SwitchListTile(
-        key: AddExpenseScreen.paymentDiffersKey,
-        contentPadding: EdgeInsets.zero,
-        title: Text(words.expensesPaymentDiffers),
-        value: _paymentDiffers,
-        onChanged: (paymentDiffers) => setState(() => _paymentDiffers = paymentDiffers),
-      ),
-    if (_paymentDiffers || _withoutInvoice)
+    if (_withoutInvoice)
       PickerField(key: AddExpenseScreen.paymentDateKey, label: words.expensesPaymentDate, value: formatDate(_paymentDate), onTap: () => _chooseDate(_paymentDate, (date) => _paymentDate = date)),
-    if (_paysOtherThanInvoiced)
-      TwoFields(
-        _textField(AddExpenseScreen.paymentAmountKey, _paymentAmount, words.expensesPaymentAmount, isNumber: true),
-        _textField(AddExpenseScreen.bankFeesKey, _bankFees, words.expensesBankFees, isNumber: true),
-      ),
     if (_asks('notes')) _textField(AddExpenseScreen.notesKey, _notes, _labelOf('notes', words.expensesNotes), maxLines: 2, errorText: _errorOf('notes', words)),
   ]);
 

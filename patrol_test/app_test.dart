@@ -692,13 +692,9 @@ void main() {
       await goTo($(keyStartingWith('payment.method.')).first);
 
       await $(keyStartingWith('payment.method.')).first.tap();
-      await goTo($(AddExpenseScreen.paymentDiffersKey));
-      await $(AddExpenseScreen.paymentDiffersKey).tap();
+      await goTo($(keyStartingWith('payment.account.')).first);
       await $.pumpAndSettle();
       await picture('add-expense-payment');
-      await goTo($(AddExpenseScreen.paymentDiffersKey));
-      await $(AddExpenseScreen.paymentDiffersKey).tap();
-      await $.pumpAndSettle();
 
       await goTo($(AddExpenseScreen.sendKey));
       await picture('add-expense-send');

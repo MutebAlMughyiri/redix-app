@@ -452,25 +452,10 @@ void main() {
     expect(find.byKey(AddExpenseScreen.listMessageKey), findsNothing);
   });
 
-  testWidgets('BR-24: a payment that differs sends its own date and amount, and its bank fees', (tester) async {
+  testWidgets('D10: an expense with an invoice is paid on its date, with no payment of its own', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
-    expect(find.byKey(AddExpenseScreen.paymentAmountKey), findsNothing);
-
-    await tapVisible(tester, opened.api, AddExpenseScreen.paymentDiffersKey);
-    await type(tester, AddExpenseScreen.paymentAmountKey, '6001.50');
-    await type(tester, AddExpenseScreen.bankFeesKey, '1.50');
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
-
-    final body = opened.api.sentExpenses.single;
-    expect(body['paymentAmount'], 6001.5);
-    expect(body['bankFees'], 1.5);
-    expect(body['paymentDate'], DateTime.now().toIso8601String().substring(0, 10));
-  });
-
-  testWidgets('a payment that does not differ sends none of its own', (tester) async {
-    final opened = await openExpense(tester);
-    await fill(tester, opened);
+    expect(find.byKey(AddExpenseScreen.paymentDateKey), findsNothing);
 
     await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
 
@@ -546,7 +531,7 @@ void main() {
 
     await tapVisible(tester, opened.api, AddExpenseScreen.withoutInvoiceKey);
 
-    for (final gone in [AddExpenseScreen.cameraKey, AddExpenseScreen.invoiceNumberKey, AddExpenseScreen.invoiceDateKey, AddExpenseScreen.includingVatKey, AddExpenseScreen.notTaxableKey, AddExpenseScreen.paymentDiffersKey]) {
+    for (final gone in [AddExpenseScreen.cameraKey, AddExpenseScreen.invoiceNumberKey, AddExpenseScreen.invoiceDateKey, AddExpenseScreen.includingVatKey, AddExpenseScreen.notTaxableKey]) {
       expect(find.byKey(gone), findsNothing);
     }
     expect(find.byKey(AddExpenseScreen.paymentDateKey), findsOneWidget);

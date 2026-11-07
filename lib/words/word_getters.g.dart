@@ -1151,9 +1151,6 @@ mixin WordGetters {
   /// The word `expenses.amountIncludingVat`.
   String get expensesAmountIncludingVat => text('expenses.amountIncludingVat');
 
-  /// The word `expenses.bankFees`.
-  String get expensesBankFees => text('expenses.bankFees');
-
   /// The word `expenses.beforeVat`.
   String get expensesBeforeVat => text('expenses.beforeVat');
 
@@ -1208,9 +1205,6 @@ mixin WordGetters {
   /// The word `expenses.invalidAmount`.
   String get expensesInvalidAmount => text('expenses.invalidAmount');
 
-  /// The word `expenses.invalidBankFees`.
-  String get expensesInvalidBankFees => text('expenses.invalidBankFees');
-
   /// The word `expenses.invalidColumnValue`.
   String get expensesInvalidColumnValue => text('expenses.invalidColumnValue');
 
@@ -1231,9 +1225,6 @@ mixin WordGetters {
 
   /// The word `expenses.invalidNotes`.
   String get expensesInvalidNotes => text('expenses.invalidNotes');
-
-  /// The word `expenses.invalidPaymentAmount`.
-  String get expensesInvalidPaymentAmount => text('expenses.invalidPaymentAmount');
 
   /// The word `expenses.invalidPaymentDate`.
   String get expensesInvalidPaymentDate => text('expenses.invalidPaymentDate');
@@ -1304,14 +1295,8 @@ mixin WordGetters {
   /// The word `expenses.originalInvoice`.
   String get expensesOriginalInvoice => text('expenses.originalInvoice');
 
-  /// The word `expenses.paymentAmount`.
-  String get expensesPaymentAmount => text('expenses.paymentAmount');
-
   /// The word `expenses.paymentDate`.
   String get expensesPaymentDate => text('expenses.paymentDate');
-
-  /// The word `expenses.paymentDiffers`.
-  String get expensesPaymentDiffers => text('expenses.paymentDiffers');
 
   /// The word `expenses.paymentMethod`.
   String get expensesPaymentMethod => text('expenses.paymentMethod');
