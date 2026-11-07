@@ -8,8 +8,8 @@ import 'entries_screen.dart';
 import 'entry_tile.dart';
 import 'project_entries.dart';
 
-/// The project's entries on its home (UC-037, redix-app #84): the latest five by anyone, a spinner while they are first read, how many of the user's own wait and were rejected, a
-/// search beside the heading, and the way to all of them.
+/// The project's entries on its home (UC-037, redix-app #84): the latest five by anyone, a spinner while they are first read, a search beside the heading, and the way to all of
+/// them. It counts nothing: each row says where it stands (Muteb, 7 Nov 2026).
 class HomeEntries extends StatelessWidget {
   /// The entries of [project], in [entries].
   const HomeEntries({super.key, required this.project, required this.entries});
@@ -29,7 +29,6 @@ class HomeEntries extends StatelessWidget {
     return ListenableBuilder(
       listenable: entries,
       builder: (context, _) {
-        final mine = entries.mine;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -47,14 +46,6 @@ class HomeEntries extends StatelessWidget {
                 ],
               ),
             ),
-            if (mine.isNotEmpty)
-              Wrap(
-                spacing: 8,
-                children: [
-                  Chip(key: HomeScreen.waitingCountKey(project.id), label: Text('${words.entriesPendingApproval} · ${mine.where((entry) => entry.isPending).length}')),
-                  Chip(key: HomeScreen.rejectedCountKey(project.id), label: Text('${words.entriesRejected} · ${mine.where((entry) => entry.isRejected).length}')),
-                ],
-              ),
             const SizedBox(height: 4),
             if (entries.isLoading && entries.all.isEmpty)
               const Padding(

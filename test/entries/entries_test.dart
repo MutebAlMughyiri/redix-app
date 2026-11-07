@@ -34,7 +34,7 @@ void main() {
 
   Future<void> openActions(WidgetTester tester, FakeApi api, String id) => act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey(id))));
 
-  testWidgets('AC-22.1, R1, R2, R3, R15: the home lists the project\'s latest five entries by anyone under القيود, someone else\'s saying who entered it, and counts what of mine waits and was rejected', (tester) async {
+  testWidgets('AC-22.1, R1, R2, R3, R15: the home lists the project\'s latest five entries by anyone under القيود, someone else\'s saying who entered it, and counts none of mine waiting or rejected', (tester) async {
     await openHome(tester, (api) {
       api
         ..addEntry(status: 'draft')
@@ -46,8 +46,8 @@ void main() {
     });
 
     expect(find.text('en entries.title'), findsOneWidget);
-    expect(find.text('en entries.pendingApproval · 1'), findsOneWidget);
-    expect(find.text('en entries.rejected · 1'), findsOneWidget);
+    expect(find.textContaining('en entries.pendingApproval ·'), findsNothing);
+    expect(find.textContaining('en entries.rejected ·'), findsNothing);
     for (final shown in ['entry-5', 'entry-4', 'entry-3', 'entry-2', 'entry-1']) {
       expect(find.byKey(EntriesScreen.rowKey(shown)), findsOneWidget, reason: shown);
     }
@@ -56,10 +56,24 @@ void main() {
     expect(find.text('en entries.reason: الصورة غير واضحة'), findsOneWidget);
   });
 
-  testWidgets('R3, R14: with no entries of their own the home counts nothing of theirs and still lists the project\'s, and with none at all says so under its heading', (tester) async {
+  testWidgets('a row says whether it waits or was rejected, and an approved one says nothing (Muteb, 7 Nov 2026)', (tester) async {
+    await openHome(tester, (api) {
+      api
+        ..addEntry()
+        ..addEntry(status: 'rejected', rejectionReason: 'الصورة غير واضحة')
+        ..addEntry(status: 'approved')
+        ..addEntry(status: 'approved', isReversed: true);
+    });
+
+    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.pendingApproval');
+    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-1'))).data, 'en entries.rejected');
+    expect(find.byKey(EntriesScreen.statusKey('entry-2')), findsNothing);
+    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-3'))).data, 'en entries.reversed');
+  });
+
+  testWidgets('R3, R14: with no entries of their own the home still lists the project\'s, and with none at all says so under its heading', (tester) async {
     await openHome(tester, (api) => api.addEntry(isMine: false));
 
-    expect(find.byKey(HomeScreen.waitingCountKey('project-0')), findsNothing);
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
     expect(find.byKey(HomeScreen.entriesKey('project-0')), findsOneWidget);
   });
@@ -179,7 +193,7 @@ void main() {
 
     api.entryRows.single['status'] = 'approved';
     await act(tester, api, () => tester.tap(find.byKey(RefreshButton.buttonKey)));
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.approved');
+    expect(find.byKey(EntriesScreen.statusKey('entry-0')), findsNothing);
 
     api.entryRows.single['status'] = 'draft';
     await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 500)));

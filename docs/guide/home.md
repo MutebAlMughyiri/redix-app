@@ -9,7 +9,7 @@
 **What it is for:** one project: your roles in it, its start date, status and units, and what your roles let you do there.
 **Who sees it:** everyone with access to that project. Open it by tapping the project on the [project list](projects.md).
 
-Under **Entries** the home lists the project's latest five entries, by anyone, with how many of yours wait and were rejected. The search beside the heading finds any entry ([Entries](entries.md)). Whoever enters expenses sees **[إضافة قيد](add-expense.md)** at the bottom, while the project runs: one button for a purchase and a [contractor payment](contractor-payment.md) alike.
+Under **Entries** the home lists the project's latest five entries, by anyone, each saying whether it waits for approval or was rejected; an approved one says nothing. The search beside the heading finds any entry ([Entries](entries.md)). Whoever enters expenses sees **[إضافة قيد](add-expense.md)** at the bottom, while the project runs: one button for a purchase and a [contractor payment](contractor-payment.md) alike.
 
 Everyone sees **[Accounts](accounts.md)**, **[Suppliers](suppliers.md)** and **[Contracts](contracts.md)** there. Whoever does the project's finance also sees **[Categories and items](categories.md)** and **[Payment methods](payment-methods.md)**, in Settings, and the project's manager and whoever does its finance see **[Partners](partners.md)**.
 
@@ -28,7 +28,7 @@ Whoever does the project's finance can rename the project with **Rename project*
 **الغرض:** مشروع واحد: أدوارك فيه، وتاريخ بدئه، وحالته، ووحداته، وما تتيحه لك أدوارك فيه.
 **من يراها:** كل من له وصول إلى ذلك المشروع. افتحها بالضغط على المشروع في [قائمة المشاريع](projects.md).
 
-وتحت **القيود** تعرض الرئيسية آخر خمسة قيود في المشروع، من أي شخص، مع عدد قيودك المنتظرة والمرفوضة. ويجد زر البحث بجانب العنوان أي قيد ([القيود](entries.md)). ويرى من يُدخل المصروفات **[إضافة قيد](add-expense.md)** في الأسفل، زراً واحداً للشراء و[دفعة المقاول](contractor-payment.md) معاً، ما دام المشروع جارياً.
+وتحت **القيود** تعرض الرئيسية آخر خمسة قيود في المشروع، من أي شخص، ويقول كل قيد إن كان بانتظار الاعتماد أو مرفوضاً؛ والمعتمد لا يقول شيئاً. ويجد زر البحث بجانب العنوان أي قيد ([القيود](entries.md)). ويرى من يُدخل المصروفات **[إضافة قيد](add-expense.md)** في الأسفل، زراً واحداً للشراء و[دفعة المقاول](contractor-payment.md) معاً، ما دام المشروع جارياً.
 
 ويرى فيها الجميع **[الحسابات](accounts.md)** و**[الموردين](suppliers.md)** و**[العقود](contracts.md)**. ويرى من يتولى مالية المشروع أيضاً **[التصنيفات والبنود](categories.md)** و**[طرق الدفع](payment-methods.md)** في الإعدادات، ويرى مدير المشروع ومن يتولى ماليته **[الشركاء](partners.md)**.
 

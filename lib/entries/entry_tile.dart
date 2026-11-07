@@ -6,7 +6,7 @@ import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_row.dart';
 
-/// An entry on a list: what it was for, how much, who entered it when someone else did, and where it stands, with why it was rejected.
+/// An entry on a list: what it was for, how much, who entered it when someone else did, and where it stands unless approved, with why it was rejected.
 class EntryTile extends StatelessWidget {
   /// The tile of [entry], calling [onTap].
   const EntryTile({super.key, required this.entry, required this.onTap});
@@ -31,7 +31,7 @@ class EntryTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text([if (entry.supplierName.isNotEmpty) entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.replaceFirst('{0}', entry.authorName)].join(' · ')),
-            Text(words.text(entry.statusWordKey), key: EntriesScreen.statusKey(entry.id), style: TextStyle(color: entry.isRejected ? theme.colorScheme.error : null)),
+            if (entry.showsStatus) Text(words.text(entry.statusWordKey), key: EntriesScreen.statusKey(entry.id), style: TextStyle(color: entry.isRejected ? theme.colorScheme.error : null)),
             if (entry.isRejected) Text('${words.entriesReason}: ${entry.rejectionReason}', key: EntriesScreen.reasonKey(entry.id), style: TextStyle(color: theme.colorScheme.error)),
           ],
         ),

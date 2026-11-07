@@ -14,6 +14,8 @@
 | Narrow the list | Tap **Purchases** or **Contractor payments**, any of the statuses, and **Period** to choose a from and to date. The line under the filters says how many entries show. |
 | Show everything again | Tap **Clear filters**. Mine or All stays as you chose. |
 
+Each entry says where it stands: waiting for approval, rejected with the reason, a draft, or reversed. An approved entry says nothing.
+
 Tap an entry to see what you can do with it:
 
 | It is | Who | What they can do |
@@ -36,6 +38,8 @@ An approved entry never changes. Reversing it adds an opposite entry tied to it,
 | تجد قيداً | اكتب في البحث: بنداً أو مورداً أو مقاولاً أو من أدخله أو رقم فاتورة قديمة أو مبلغاً. تُعدّ الحروف مثل أ وا حرفاً واحداً، وتصلح الأرقام العربية والإنجليزية. |
 | تضيّق القائمة | اضغط **مشتريات** أو **دفعات مقاولين**، وأي حالة، و**الفترة** لتختار تاريخ البداية والنهاية. ويبيّن السطر تحت عوامل التصفية عدد القيود الظاهرة. |
 | تعرض الكل من جديد | اضغط **مسح التصفية**. ويبقى قيودي أو الكل كما اخترت. |
+
+ويقول كل قيد أين يقف: بانتظار الاعتماد، أو مرفوض مع السبب، أو مسودة، أو معكوس. والقيد المعتمد لا يقول شيئاً.
 
 اضغط قيداً لترى ما يمكنك فعله:
 

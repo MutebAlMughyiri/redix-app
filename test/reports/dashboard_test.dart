@@ -92,7 +92,7 @@ void main() {
     api.entryRows.single['status'] = 'approved';
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.approved');
+    expect(find.byKey(EntriesScreen.statusKey('entry-0')), findsNothing);
   });
 
   testWidgets('the refresh button on home reads the latest entries again', (tester) async {
@@ -104,7 +104,7 @@ void main() {
     api.entryRows.single['status'] = 'approved';
     await act(tester, api, () => tester.tap(find.byKey(RefreshButton.buttonKey)));
 
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.approved');
+    expect(find.byKey(EntriesScreen.statusKey('entry-0')), findsNothing);
   });
 
   testWidgets('Field sees the figures and no way to approve', (tester) async {

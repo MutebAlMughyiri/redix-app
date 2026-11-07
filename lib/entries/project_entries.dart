@@ -10,9 +10,6 @@ class ProjectEntries extends ApiList<EntryRow> {
   /// The project these belong to.
   final String projectId;
 
-  /// The signed-in user's own.
-  List<EntryRow> get mine => all.where((entry) => entry.isMine).toList();
-
   /// Sends a draft or a rejected entry for approval. Returns an empty string once sent, otherwise the word key of the refusal.
   Future<String> send(EntryRow entry) => change('/projects/$projectId/entries/${entry.id}/submit', {});
 
