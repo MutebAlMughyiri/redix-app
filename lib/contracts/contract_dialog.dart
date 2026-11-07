@@ -58,7 +58,6 @@ class _ContractDialogState extends State<ContractDialog> {
   late var _contractorName = widget.contract.supplierName;
   late var _itemId = widget.contract.itemId;
   late var _itemName = widget.contract.itemName;
-  late var _unitId = widget.contract.unitId;
   final _addedDocuments = <Attachment>[];
   var _documentMessage = '';
 
@@ -89,7 +88,7 @@ class _ContractDialogState extends State<ContractDialog> {
       return 'contracts.invalidQuantity';
     }
     final terms = (value: value, isOpenValue: _isOpenValue, unitPrice: unitPrice, quantity: quantity, notes: _notes.text, attachmentIds: [for (final document in _addedDocuments) document.id]);
-    return _isNew ? widget.contracts.add(_contractorId, _itemId, _unitId, terms) : widget.contracts.amend(widget.contract, terms, _contractorId, _itemId, _unitId);
+    return _isNew ? widget.contracts.add(_contractorId, _itemId, terms) : widget.contracts.amend(widget.contract, terms, _contractorId, _itemId);
   }
 
   Future<void> _addDocument() async {
@@ -145,17 +144,6 @@ class _ContractDialogState extends State<ContractDialog> {
         _itemName = item.name;
       }),
     ),
-    const SizedBox(height: 16),
-    Text(words.contractsUnit, style: Theme.of(context).textTheme.titleSmall),
-    RadioGroup<String>(
-      groupValue: _unitId,
-      onChanged: (unitId) => setState(() => _unitId = unitId ?? _unitId),
-      child: Column(
-        children: [
-          for (final unit in widget.project.entryUnits) RadioListTile<String>(key: ContractsScreen.unitKey(unit.id), contentPadding: EdgeInsets.zero, value: unit.id, title: Text(unit.name)),
-        ],
-      ),
-    ),
   ];
 
   Widget _amount(Key key, TextEditingController controller, String label) => TextField(
@@ -174,7 +162,7 @@ class _ContractDialogState extends State<ContractDialog> {
       saveLabel: _isNew ? words.contractsNew : words.contractsSave,
       onSave: _save,
       children: [
-        if (contract.hasPayments) Text([contract.supplierName, contract.itemName, contract.unitName].join(' · '), key: ContractsScreen.partiesKey) else ..._parties(words),
+        if (contract.hasPayments) Text([contract.supplierName, contract.itemName].join(' · '), key: ContractsScreen.partiesKey) else ..._parties(words),
         SwitchListTile(
           key: ContractsScreen.openValueKey,
           contentPadding: EdgeInsets.zero,

@@ -550,7 +550,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(SupplierPicker.closeKey)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-      final overrun = api.addContract(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', itemName: 'البلاط والرخام للواجهات الداخلية', unitName: 'الفلة الغربية الكبرى', value: 999999999.99, paid: 1099999999.99, unitPrice: 380, quantity: 50, notes: 'زيادة بملحق', hasPayments: true)['id'] as String;
+      final overrun = api.addContract(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', itemName: 'البلاط والرخام للواجهات الداخلية', value: 999999999.99, paid: 1099999999.99, unitPrice: 380, quantity: 50, notes: 'زيادة بملحق', hasPayments: true)['id'] as String;
       final open = api.addContract(runningId, 'دهان داخلي', isOpenValue: true, paid: 12000)['id'] as String;
       await tester.ensureVisible(find.byKey(HomeScreen.contractsKey(runningId)));
       expectFits(HomeScreen.contractsKey(runningId));
@@ -570,7 +570,7 @@ void main() {
         ],
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
-      [ContractsScreen.contractorKey, ContractsScreen.itemKey, ContractsScreen.unitKey('$runningId-unit-0'), ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.unitPriceKey, ContractsScreen.quantityKey, ContractsScreen.notesKey, ContractsScreen.addDocumentKey, ContractsScreen.saveKey].forEach(expectFits);
+      [ContractsScreen.contractorKey, ContractsScreen.itemKey, ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.unitPriceKey, ContractsScreen.quantityKey, ContractsScreen.notesKey, ContractsScreen.addDocumentKey, ContractsScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.menuKey(overrun))));
       [ContractsScreen.editKey, ContractsScreen.disableKey].forEach(expectFits);
@@ -589,8 +589,6 @@ void main() {
         AddExpenseScreen.filesKey,
         AddExpenseScreen.invoiceNameKey,
         AddExpenseScreen.itemKey,
-        AddExpenseScreen.unitKey('$runningId-unit-0'),
-        AddExpenseScreen.unitKey('$runningId-unit-shared'),
         AddExpenseScreen.supplierKey,
         AddExpenseScreen.invoiceNumberKey,
         AddExpenseScreen.invoiceDateKey,

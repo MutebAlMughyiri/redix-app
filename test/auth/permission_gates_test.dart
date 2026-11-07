@@ -224,15 +224,6 @@ final List<Gate> _gates = [
     control: _key(ApprovalsScreen.approveKey('entry-0')),
   ),
   (
-    name: 'How a partner\'s payment counts, reached from a notification',
-    permission: Permission.approveEntries,
-    arrange: (api) => api
-      ..addPending(partnerName: 'متعب')
-      ..addNotification(),
-    steps: [_openProject, _tapKey(NotificationsBell.buttonKey), _tapKey(NotificationsScreen.rowKey('notification-0'))],
-    control: _key(ApprovalsScreen.capitalKey('entry-0')),
-  ),
-  (
     name: 'What waits on the dashboard',
     permission: Permission.approveEntries,
     arrange: (api) => api.dashboardAnswer = {...api.dashboardAnswer, 'pendingCount': 2, 'pendingAmount': 200},

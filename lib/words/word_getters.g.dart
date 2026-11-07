@@ -101,9 +101,6 @@ mixin WordGetters {
   /// The word `app.title`.
   String get appTitle => text('app.title');
 
-  /// The word `approvals.addToCapital`.
-  String get approvalsAddToCapital => text('approvals.addToCapital');
-
   /// The word `approvals.all`.
   String get approvalsAll => text('approvals.all');
 
@@ -137,9 +134,6 @@ mixin WordGetters {
   /// The word `approvals.includingVat`.
   String get approvalsIncludingVat => text('approvals.includingVat');
 
-  /// The word `approvals.invalidTreatment`.
-  String get approvalsInvalidTreatment => text('approvals.invalidTreatment');
-
   /// The word `approvals.invoiceTotal`.
   String get approvalsInvoiceTotal => text('approvals.invoiceTotal');
 
@@ -149,20 +143,11 @@ mixin WordGetters {
   /// The word `approvals.noConnection`.
   String get approvalsNoConnection => text('approvals.noConnection');
 
-  /// The word `approvals.notPaidByPartner`.
-  String get approvalsNotPaidByPartner => text('approvals.notPaidByPartner');
-
   /// The word `approvals.openFile`.
   String get approvalsOpenFile => text('approvals.openFile');
 
   /// The word `approvals.originalNotApproved`.
   String get approvalsOriginalNotApproved => text('approvals.originalNotApproved');
-
-  /// The word `approvals.owedBack`.
-  String get approvalsOwedBack => text('approvals.owedBack');
-
-  /// The word `approvals.paidBy`.
-  String get approvalsPaidBy => text('approvals.paidBy');
 
   /// The word `approvals.purchases`.
   String get approvalsPurchases => text('approvals.purchases');
@@ -926,9 +911,6 @@ mixin WordGetters {
   /// The word `contracts.title`.
   String get contractsTitle => text('contracts.title');
 
-  /// The word `contracts.unit`.
-  String get contractsUnit => text('contracts.unit');
-
   /// The word `contracts.unitPrice`.
   String get contractsUnitPrice => text('contracts.unitPrice');
 
@@ -937,9 +919,6 @@ mixin WordGetters {
 
   /// The word `contracts.unknownSupplier`.
   String get contractsUnknownSupplier => text('contracts.unknownSupplier');
-
-  /// The word `contracts.unknownUnit`.
-  String get contractsUnknownUnit => text('contracts.unknownUnit');
 
   /// The word `contracts.value`.
   String get contractsValue => text('contracts.value');
@@ -1286,9 +1265,6 @@ mixin WordGetters {
   /// The word `expenses.invalidQuantity`.
   String get expensesInvalidQuantity => text('expenses.invalidQuantity');
 
-  /// The word `expenses.invalidSplit`.
-  String get expensesInvalidSplit => text('expenses.invalidSplit');
-
   /// The word `expenses.invalidUnitPrice`.
   String get expensesInvalidUnitPrice => text('expenses.invalidUnitPrice');
 
@@ -1361,9 +1337,6 @@ mixin WordGetters {
   /// The word `expenses.paymentMethod`.
   String get expensesPaymentMethod => text('expenses.paymentMethod');
 
-  /// The word `expenses.paymentSource`.
-  String get expensesPaymentSource => text('expenses.paymentSource');
-
   /// The word `expenses.product`.
   String get expensesProduct => text('expenses.product');
 
@@ -1418,21 +1391,6 @@ mixin WordGetters {
   /// The word `expenses.sent`.
   String get expensesSent => text('expenses.sent');
 
-  /// The word `expenses.split`.
-  String get expensesSplit => text('expenses.split');
-
-  /// The word `expenses.splitEqual`.
-  String get expensesSplitEqual => text('expenses.splitEqual');
-
-  /// The word `expenses.splitNeedsSharedUnit`.
-  String get expensesSplitNeedsSharedUnit => text('expenses.splitNeedsSharedUnit');
-
-  /// The word `expenses.splitPercent`.
-  String get expensesSplitPercent => text('expenses.splitPercent');
-
-  /// The word `expenses.splitTotal`.
-  String get expensesSplitTotal => text('expenses.splitTotal');
-
   /// The word `expenses.subgroup`.
   String get expensesSubgroup => text('expenses.subgroup');
 
@@ -1441,9 +1399,6 @@ mixin WordGetters {
 
   /// The word `expenses.total`.
   String get expensesTotal => text('expenses.total');
-
-  /// The word `expenses.unit`.
-  String get expensesUnit => text('expenses.unit');
 
   /// The word `expenses.unitPrice`.
   String get expensesUnitPrice => text('expenses.unitPrice');
@@ -1468,9 +1423,6 @@ mixin WordGetters {
 
   /// The word `expenses.unknownSupplier`.
   String get expensesUnknownSupplier => text('expenses.unknownSupplier');
-
-  /// The word `expenses.unknownUnit`.
-  String get expensesUnknownUnit => text('expenses.unknownUnit');
 
   /// The word `expenses.vat`.
   String get expensesVat => text('expenses.vat');
@@ -1943,17 +1895,11 @@ mixin WordGetters {
   /// The word `projects.save`.
   String get projectsSave => text('projects.save');
 
-  /// The word `projects.sharedUnit`.
-  String get projectsSharedUnit => text('projects.sharedUnit');
-
   /// The word `projects.startDate`.
   String get projectsStartDate => text('projects.startDate');
 
   /// The word `projects.structureSource`.
   String get projectsStructureSource => text('projects.structureSource');
-
-  /// The word `projects.unitInUse`.
-  String get projectsUnitInUse => text('projects.unitInUse');
 
   /// The word `projects.unitName`.
   String get projectsUnitName => text('projects.unitName');
@@ -2219,20 +2165,8 @@ mixin WordGetters {
   /// The word `reports.title`.
   String get reportsTitle => text('reports.title');
 
-  /// The word `reports.unitDirect`.
-  String get reportsUnitDirect => text('reports.unitDirect');
-
-  /// The word `reports.unitFromShared`.
-  String get reportsUnitFromShared => text('reports.unitFromShared');
-
   /// The word `reports.unitPrice`.
   String get reportsUnitPrice => text('reports.unitPrice');
-
-  /// The word `reports.units`.
-  String get reportsUnits => text('reports.units');
-
-  /// The word `reports.unsplit`.
-  String get reportsUnsplit => text('reports.unsplit');
 
   /// The word `revenue.account`.
   String get revenueAccount => text('revenue.account');

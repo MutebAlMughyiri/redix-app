@@ -35,7 +35,7 @@ class ContractPicker extends StatelessWidget {
           list: contracts,
           emptyText: Words.of(sheet).contractsEmpty,
           itemBuilder: (contract) => contract.isActive
-              ? ListTile(key: optionKey(contract.id), title: Text(contract.supplierName), subtitle: Text('${contract.itemName} · ${contract.unitName}'), onTap: () => Navigator.of(sheet).pop(contract))
+              ? ListTile(key: optionKey(contract.id), title: Text(contract.supplierName), subtitle: Text(contract.itemName), onTap: () => Navigator.of(sheet).pop(contract))
               : const SizedBox.shrink(),
         ),
       ),

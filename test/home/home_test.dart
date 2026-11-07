@@ -277,28 +277,6 @@ void main() {
     expect(find.byKey(HomeScreen.unitKey('project-0-unit-1')), findsOneWidget);
   });
 
-  testWidgets('a unit that entries or contracts use stays, and the refusal says why (BR-38)', (tester) async {
-    final api = FakeApi();
-    api.addProject('غصون 6', units: ['الفلة الغربية']);
-    await openHome(tester, api);
-    await chooseInUnitMenu(tester, api, 'project-0-unit-0', HomeScreen.deleteUnitKey);
-
-    api.projectAnswer = (status: 409, code: 'unitInUse');
-    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
-
-    expect(find.text('en projects.unitInUse'), findsOneWidget);
-    expect(find.byKey(HomeScreen.unitKey('project-0-unit-0')), findsOneWidget);
-  });
-
-  testWidgets('the shared unit is not on the list, so nothing offers to change it (BR-38)', (tester) async {
-    final api = FakeApi();
-    api.addProject('غصون 6', units: ['الفلة الغربية']);
-    await openHome(tester, api);
-
-    expect(find.text('مشترك'), findsNothing);
-    expect(find.byKey(HomeScreen.unitMenuKey('project-0-unit-shared')), findsNothing);
-  });
-
   testWidgets('without manageProject, or in a finished project, nothing offers a rename or a deletion (BR-38)', (tester) async {
     final api = FakeApi();
     api.addProject('غصون 6', units: ['الفلة الغربية'], permissions: field);

@@ -133,24 +133,6 @@ void main() {
     expect(capture.sharedOut.single, ('البلاط.pdf', 'application/pdf'));
   });
 
-  testWidgets('UC-060: each unit shows what it cost, its own and its part of the shared, and the shared unit what was never split', (tester) async {
-    await openReports(tester, (api) {
-      api.unitTotalsAnswer = [
-        {'unitId': 'project-0-unit-0', 'name': 'الفلة', 'isShared': false, 'direct': 200, 'fromShared': 700, 'total': 900},
-        {'unitId': 'project-0-unit-shared', 'name': 'مشترك', 'isShared': true, 'direct': 50, 'fromShared': 0, 'total': 50},
-      ];
-    });
-
-    final own = find.byKey(ReportsScreen.unitKey('project-0-unit-0'));
-    final shared = find.byKey(ReportsScreen.unitKey('project-0-unit-shared'));
-    await tester.ensureVisible(shared);
-
-    expect(find.descendant(of: own, matching: find.text('en reports.unitDirect: 200.00 · en reports.unitFromShared: 700.00')), findsOneWidget);
-    expect(find.descendant(of: own, matching: find.text('900.00')), findsOneWidget);
-    expect(find.descendant(of: shared, matching: find.text('en reports.unsplit')), findsOneWidget);
-    expect(find.descendant(of: shared, matching: find.text('50.00')), findsOneWidget);
-  });
-
   testWidgets('a file that cannot be read says so', (tester) async {
     final (:api, capture: _) = await openReports(tester, (api) {});
     api.online = false;

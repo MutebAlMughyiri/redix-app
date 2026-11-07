@@ -6,11 +6,8 @@ import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/accounts/reconcile_screen.dart';
 import 'package:redix/accounts/reconciliation_card.dart';
 import 'package:redix/accounts/transfer_screen.dart';
-import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/entries/reverse_sheet.dart';
-import 'package:redix/expenses/payment_choices.dart';
-import 'package:redix/accounts/account.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/capital_move_screen.dart';
@@ -434,43 +431,12 @@ void main() {
     });
   });
 
-  group('UC-045', () {
-    testWidgets('AC-25.3: a partner is a third source of payment on an expense', (tester) async {
-      final (:api, capture: _) = await openHome(tester, (api) {
-        api
-          ..addAccount('project-0', 'البنك')
-          ..addAccount('project-0', 'نواف', type: 'partnerPocket');
-      });
+  testWidgets('a pocket on the accounts screen has no menu', (tester) async {
+    final (:api, capture: _) = await openAccounts(tester, (api) => api.addAccount('project-0', 'نواف', type: 'partnerPocket'));
 
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
-      await tester.ensureVisible(find.byKey(PaymentChoices.sourceKey(AccountType.partnerPocket)));
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(PaymentChoices.sourceKey(AccountType.partnerPocket)), findsOneWidget);
-    });
-
-    testWidgets('a pocket on the accounts screen has no menu', (tester) async {
-      final (:api, capture: _) = await openAccounts(tester, (api) => api.addAccount('project-0', 'نواف', type: 'partnerPocket'));
-
-      final id = api.accounts['project-0']!.single['id']! as String;
-      expect(find.byKey(AccountsScreen.nameKey(id)), findsOneWidget);
-      expect(find.byKey(AccountsScreen.menuKey(id)), findsNothing);
-    });
-
-    testWidgets('AC-25.3: Finance chooses what becomes of what a partner paid', (tester) async {
-      final (:api, capture: _) = await openHome(tester, (api) => api.addPending(partnerName: 'نواف'));
-      await tester.ensureVisible(find.byKey(HomeScreen.approvalsKey('project-0')));
-      await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.approvalsKey('project-0'))));
-
-      expect(find.byKey(ApprovalsScreen.paidByKey('entry-0')), findsOneWidget);
-
-      await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.owedKey('entry-0'))));
-
-      final (path, body) = api.sentMoney.single;
-      expect(path, '/projects/project-0/entries/entry-0/partner-treatment');
-      expect(body['treatment'], 'amountDue');
-    });
+    final id = api.accounts['project-0']!.single['id']! as String;
+    expect(find.byKey(AccountsScreen.nameKey(id)), findsOneWidget);
+    expect(find.byKey(AccountsScreen.menuKey(id)), findsNothing);
   });
 
   group('UC-046', () {

@@ -283,7 +283,7 @@ void main() {
           ..addEntry(status: 'rejected', rejectionReason: 'الصورة غير واضحة')
           ..entryDetails['entry-0'] = {
             'entry': {'id': 'entry-0', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 1150, 'accountId': account['id']!, 'notes': 'دفعة أولى'},
-            'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'unitId': 'project-0-unit-0', 'paymentMethodId': method['id']!, 'bankFees': 0, 'withoutInvoiceReason': '', 'customValues': '{}'},
+            'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!, 'bankFees': 0, 'withoutInvoiceReason': '', 'customValues': '{}'},
             'purchase': {'supplierId': supplier['id']!, 'product': 'مواد لياسة', 'unitPrice': 0, 'quantity': 0},
             'contractorPayment': {'contractId': '00000000-0000-0000-0000-000000000000', 'isOutsideContract': false},
             'invoice': invoice,

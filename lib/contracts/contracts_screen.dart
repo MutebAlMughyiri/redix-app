@@ -104,9 +104,6 @@ class ContractsScreen extends StatefulWidget {
   /// The choice of the filter [filter].
   static Key filterKey(ContractFilter filter) => Key('contracts.filter.${filter.name}');
 
-  /// The choice of the unit [id], in the dialog that adds.
-  static Key unitKey(String id) => Key('contracts.unit.$id');
-
   /// The contractor of the contract [id].
   static Key nameKey(String id) => Key('contracts.name.$id');
 

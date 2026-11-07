@@ -42,7 +42,6 @@ class Project {
       status = ProjectStatus.values.byName(json['status'] as String),
       rejectionReason = json['rejectionReason'] as String,
       units = [for (final unit in json['units'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
-      entryUnits = [for (final unit in json['entryUnits'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
       _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()},
       vatPercent = (json['vatPercent'] as num).toDouble();
 
@@ -64,16 +63,10 @@ class Project {
   /// The project's units, in order.
   final List<Unit> units;
 
-  /// What an entry or a contract may name: its units, and the shared one last.
-  final List<Unit> entryUnits;
-
   final Set<String> _permissions;
 
   /// The VAT rate of its new entries, as a percentage (BR-14).
   final double vatPercent;
-
-  /// Whether [unitId] is the unit shared between all of its units, whose expense may be split between them (FR-15).
-  bool isSharedUnit(String unitId) => entryUnits.any((unit) => unit.id == unitId) && units.every((unit) => unit.id != unitId);
 
   /// Whether the signed-in user holds [permission] in this project.
   bool may(Permission permission) => _permissions.contains(permission.name);

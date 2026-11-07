@@ -22,17 +22,16 @@ class Contracts extends ApiList<Contract> {
     if (terms.attachmentIds.isNotEmpty) 'attachmentIds': terms.attachmentIds,
   };
 
-  /// Adds a contract with the contractor [supplierId], for [itemId] and [unitId], on [terms]. Any of the three still empty is left for the API to refuse.
-  Future<String> add(String supplierId, String itemId, String unitId, ContractTerms terms) => change('/projects/$projectId/contracts', {
+  /// Adds a contract with the contractor [supplierId], for [itemId], on [terms]. Either still empty is left for the API to refuse.
+  Future<String> add(String supplierId, String itemId, ContractTerms terms) => change('/projects/$projectId/contracts', {
     if (supplierId.isNotEmpty) 'supplierId': supplierId,
     if (itemId.isNotEmpty) 'itemId': itemId,
-    if (unitId.isNotEmpty) 'unitId': unitId,
     ..._bodyOf(terms),
   });
 
-  /// Amends [contract] to [terms], with the contractor [supplierId], for [itemId] and [unitId] while no payment names it.
-  Future<String> amend(Contract contract, ContractTerms terms, String supplierId, String itemId, String unitId) => change('/projects/$projectId/contracts/${contract.id}', {
-    if (!contract.hasPayments) ...{'supplierId': supplierId, 'itemId': itemId, 'unitId': unitId},
+  /// Amends [contract] to [terms], with the contractor [supplierId], for [itemId] while no payment names it.
+  Future<String> amend(Contract contract, ContractTerms terms, String supplierId, String itemId) => change('/projects/$projectId/contracts/${contract.id}', {
+    if (!contract.hasPayments) ...{'supplierId': supplierId, 'itemId': itemId},
     ..._bodyOf(terms),
   });
 

@@ -2,11 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:redix/accounts/account.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/expenses/payment_choices.dart';
-import 'package:redix/expenses/unit_split.dart';
 import 'package:redix/expenses/original_invoice_picker.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/offline/outbox.dart';
@@ -88,7 +86,6 @@ void main() {
   /// Fills everything an expense needs, for a test whose subject is something else.
   Future<void> fill(WidgetTester tester, ({FakeApi api, FakeCapture capture, String item, String otherItem, String supplier, String cash, String method, String custody, String bank}) opened) async {
     await pickItem(tester, opened.api, opened.item);
-    await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-0'));
     await pickSupplier(tester, opened.api, opened.supplier);
     await type(tester, AddExpenseScreen.invoiceNumberKey, '2617');
     await type(tester, AddExpenseScreen.amountKey, '6000');
@@ -171,7 +168,6 @@ void main() {
 
     final body = opened.api.sentExpenses.single;
     expect(body['itemId'], opened.item);
-    expect(body['unitId'], 'project-0-unit-0');
     expect(body['supplierId'], opened.supplier);
     expect(body['invoiceNumber'], '2617');
     expect(body['product'], 'مواد لياسة');
@@ -405,31 +401,19 @@ void main() {
     expect(find.text('en expenses.subgroup'), findsNothing);
   });
 
-  testWidgets('open question 3: the shared unit is on offer with the project\'s own', (tester) async {
-    final opened = await openExpense(tester);
-    await fill(tester, opened);
-
-    await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-shared'));
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
-
-    expect(opened.api.sentExpenses.single['unitId'], 'project-0-unit-shared');
-  });
-
   testWidgets('open question 4: Field is offered only what they hold, and one account is already chosen', (tester) async {
     final opened = await openExpense(tester);
 
     expect(find.byKey(PaymentChoices.accountKey(opened.custody)), findsOneWidget);
     expect(find.byKey(PaymentChoices.accountKey(opened.bank)), findsNothing);
-    expect(find.byKey(PaymentChoices.sourceKey(AccountType.bank)), findsNothing);
     expect(tester.widget<RadioGroup<String>>(find.byType(RadioGroup<String>)).groupValue, opened.custody);
   });
 
-  testWidgets('ChargeAnyAccount: Finance chooses a source, then an account of it', (tester) async {
+  testWidgets('ChargeAnyAccount: Finance is offered every account and chooses one', (tester) async {
     final opened = await openExpense(tester, permissions: managerAndFinance);
     await fill(tester, opened);
 
-    await tapVisible(tester, opened.api, PaymentChoices.sourceKey(AccountType.bank));
-    expect(find.byKey(PaymentChoices.accountKey(opened.custody)), findsNothing);
+    expect(find.byKey(PaymentChoices.accountKey(opened.custody)), findsOneWidget);
     await tapVisible(tester, opened.api, PaymentChoices.accountKey(opened.bank));
     await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
 
@@ -556,7 +540,6 @@ void main() {
   testWidgets('AC-09.1: without an invoice, the reason takes the place of the invoice, and the expense is sent with no file', (tester) async {
     final opened = await openExpense(tester);
     await pickItem(tester, opened.api, opened.item);
-    await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-0'));
     await pickSupplier(tester, opened.api, opened.supplier);
     await type(tester, AddExpenseScreen.amountKey, '200');
     await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
@@ -760,57 +743,5 @@ void main() {
     await pickSupplier(tester, opened.api, usual['id']! as String);
 
     expect(tester.widget<ItemPicker>(find.byKey(AddExpenseScreen.itemKey)).itemName, '');
-  });
-
-  group('UC-060: splitting a shared expense between the units', () {
-    Future<({FakeApi api, FakeCapture capture, String item, String otherItem, String supplier, String cash, String method, String custody, String bank})> openShared(WidgetTester tester) async {
-      final opened = await openExpense(tester, units: ['الفلة الغربية', 'الفلة الشرقية']);
-      await fill(tester, opened);
-      return opened;
-    }
-
-    testWidgets('FR-15: only the shared unit offers a split, and an equal one sends half each', (tester) async {
-      final opened = await openShared(tester);
-      expect(find.byKey(UnitSplitFields.splitKey), findsNothing);
-
-      await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-shared'));
-      await tapVisible(tester, opened.api, UnitSplitFields.splitKey);
-
-      expect(shown(tester, UnitSplitFields.partKey('project-0-unit-1')), 'الفلة الشرقية: 50%');
-      expect(shown(tester, UnitSplitFields.totalKey), 'en expenses.splitTotal: 100%');
-      await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
-      expect(opened.api.sentExpenses.single['unitShares'], [
-        {'unitId': 'project-0-unit-0', 'percent': 50},
-        {'unitId': 'project-0-unit-1', 'percent': 50},
-      ]);
-    });
-
-    testWidgets('FR-15: by percentage each unit takes what is typed, and the line under them says what they make together', (tester) async {
-      final opened = await openShared(tester);
-      await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-shared'));
-      await tapVisible(tester, opened.api, UnitSplitFields.splitKey);
-      await tapVisible(tester, opened.api, UnitSplitFields.percentKey);
-
-      await type(tester, UnitSplitFields.partKey('project-0-unit-0'), '70');
-      await type(tester, UnitSplitFields.partKey('project-0-unit-1'), '20');
-
-      expect(shown(tester, UnitSplitFields.totalKey), 'en expenses.splitTotal: 90%');
-      await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
-      expect(opened.api.sentExpenses.single['unitShares'], [
-        {'unitId': 'project-0-unit-0', 'percent': 70},
-        {'unitId': 'project-0-unit-1', 'percent': 20},
-      ]);
-    });
-
-    testWidgets('an expense moved off the shared unit sends no split', (tester) async {
-      final opened = await openShared(tester);
-      await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-shared'));
-      await tapVisible(tester, opened.api, UnitSplitFields.splitKey);
-
-      await tapVisible(tester, opened.api, AddExpenseScreen.unitKey('project-0-unit-1'));
-      await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
-
-      expect(opened.api.sentExpenses.single.containsKey('unitShares'), isFalse);
-    });
   });
 }

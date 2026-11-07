@@ -54,7 +54,6 @@ import 'reports/periodic_report_screen.dart';
 import 'reports/periodic_reports.dart';
 import 'reports/report_files.dart';
 import 'reports/reports_screen.dart';
-import 'reports/unit_totals.dart';
 import 'reports/vat_statement.dart';
 import 'reports/vat_statement_screen.dart';
 import 'revenue/revenue_form_screen.dart';
@@ -271,7 +270,6 @@ class _RedixAppState extends State<RedixApp> {
           dashboard: _dashboardOf(state.pathParameters['projectId'] ?? ''),
           periodicReports: _projectPeriodicReports.putIfAbsent(state.pathParameters['projectId'] ?? '', () => PeriodicReports(widget.session, state.pathParameters['projectId'] ?? '')),
           nextReport: NextReport(widget.session, state.pathParameters['projectId'] ?? ''),
-          unitTotals: UnitTotals(widget.session, state.pathParameters['projectId'] ?? ''),
           files: _reportFiles,
         ),
       ),

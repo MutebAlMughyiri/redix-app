@@ -26,7 +26,6 @@ class ContractCard extends StatelessWidget {
 
   String _terms() => [
     contract.itemName,
-    contract.unitName,
     if (contract.unitPrice > 0 && contract.quantity > 0) '${formatPlain(contract.unitPrice)} × ${formatPlain(contract.quantity)}' else if (contract.unitPrice > 0) formatPlain(contract.unitPrice),
   ].join(' · ');
 

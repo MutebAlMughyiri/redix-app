@@ -120,11 +120,11 @@ void main() {
     expect(find.byKey(ContractsScreen.documentMessageKey), findsNothing);
   });
 
-  testWidgets('each contract shows its contractor, item, unit and figures', (tester) async {
+  testWidgets('each contract shows its contractor, item and figures', (tester) async {
     final opened = await openContracts(tester);
 
     expect(text(tester, ContractsScreen.nameKey(opened.running)), 'مبلط الغربية');
-    expect(text(tester, ContractsScreen.termsKey(opened.running)), 'البلاط · الفلة الغربية');
+    expect(text(tester, ContractsScreen.termsKey(opened.running)), 'البلاط');
     expect(text(tester, ContractsScreen.valueOfKey(opened.running)), '34,000.00');
     expect(text(tester, ContractsScreen.paidKey(opened.running)), '30,000.00');
   });
@@ -162,7 +162,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
 
     expect(find.descendant(of: find.byKey(ContractsScreen.standingKey(contract)), matching: find.text('en contracts.notStarted')), findsOneWidget);
-    expect(text(tester, ContractsScreen.termsKey(contract)), 'البلاط · الفلة الغربية · 380 × 50');
+    expect(text(tester, ContractsScreen.termsKey(contract)), 'البلاط · 380 × 50');
   });
 
   testWidgets('the filters count their contracts and keep only those', (tester) async {
@@ -181,14 +181,13 @@ void main() {
     expect(find.byKey(ContractsScreen.nameKey(opened.overrun)), findsNothing);
   });
 
-  testWidgets('adding sends the contractor, item, unit and terms', (tester) async {
+  testWidgets('adding sends the contractor, item and terms', (tester) async {
     final opened = await openContracts(tester);
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
     await pickContractor(tester, opened.api, opened.contractor);
     expect(find.text('شركة النخيل'), findsOneWidget);
     await pickItem(tester, opened.api, opened.item);
-    await tapVisible(tester, opened.api, ContractsScreen.unitKey('project-0-unit-0'));
     await tester.enterText(find.byKey(ContractsScreen.valueKey), '٣٤٬٠٠٠');
     await tester.enterText(find.byKey(ContractsScreen.unitPriceKey), '380');
     await tester.enterText(find.byKey(ContractsScreen.quantityKey), '89.47');
@@ -199,7 +198,6 @@ void main() {
     expect(opened.api.sentSettingsChanges.single.$2, {
       'supplierId': opened.contractor,
       'itemId': opened.item,
-      'unitId': 'project-0-unit-0',
       'value': 34000.0,
       'isOpenValue': false,
       'unitPrice': 380.0,
@@ -207,19 +205,6 @@ void main() {
       'notes': 'دفعات شهرية',
     });
     expect(find.byKey(ContractsScreen.contractorKey), findsNothing);
-  });
-
-  testWidgets('a contract may be for the shared unit', (tester) async {
-    final opened = await openContracts(tester);
-
-    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
-    await pickContractor(tester, opened.api, opened.contractor);
-    await pickItem(tester, opened.api, opened.item);
-    await tapVisible(tester, opened.api, ContractsScreen.unitKey('project-0-unit-shared'));
-    await tester.enterText(find.byKey(ContractsScreen.valueKey), '1000');
-    await save(tester, opened.api);
-
-    expect(opened.api.sentSettingsChanges.single.$2['unitId'], 'project-0-unit-shared');
   });
 
   testWidgets('a contractor missing from the register is added from the picker and goes on', (tester) async {
@@ -255,7 +240,6 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
     await pickContractor(tester, opened.api, opened.contractor);
     await pickItem(tester, opened.api, opened.item);
-    await tapVisible(tester, opened.api, ContractsScreen.unitKey('project-0-unit-0'));
     await tapVisible(tester, opened.api, ContractsScreen.openValueKey);
     expect(find.byKey(ContractsScreen.valueKey), findsNothing);
     await save(tester, opened.api);
@@ -285,7 +269,7 @@ void main() {
     expect(opened.api.sentSettingsChanges, isEmpty);
   });
 
-  testWidgets('a contract with no payments offers its contractor, item and unit, starting from what it has, and sends them', (tester) async {
+  testWidgets('a contract with no payments offers its contractor and item, starting from what it has, and sends them', (tester) async {
     final opened = await openContracts(tester);
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
@@ -298,18 +282,6 @@ void main() {
 
     expect(opened.api.sentSettingsChanges.single.$2, containsPair('supplierId', 'supplier-of-contract'));
     expect(opened.api.sentSettingsChanges.single.$2, containsPair('itemId', 'item-of-contract'));
-    expect(opened.api.sentSettingsChanges.single.$2, containsPair('unitId', 'unit-of-contract'));
-  });
-
-  testWidgets('another unit chosen is what is sent', (tester) async {
-    final opened = await openContracts(tester);
-
-    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
-    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
-    await tapVisible(tester, opened.api, ContractsScreen.unitKey('project-0-unit-shared'));
-    await save(tester, opened.api);
-
-    expect(opened.api.sentSettingsChanges.single.$2, containsPair('unitId', 'project-0-unit-shared'));
   });
 
   testWidgets('a refused change of contractor stays in the dialog and says why', (tester) async {
@@ -323,13 +295,13 @@ void main() {
     expect(text(tester, ChangeDialog.messageKey), 'en contracts.contractHasPayments');
   });
 
-  testWidgets('amending a contract with payments starts from it, whose contractor, item and unit stay', (tester) async {
+  testWidgets('amending a contract with payments starts from it, whose contractor and item stay', (tester) async {
     final opened = await openContracts(tester, hasPayments: true);
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
 
-    expect(text(tester, ContractsScreen.partiesKey), 'مبلط الغربية · البلاط · الفلة الغربية');
+    expect(text(tester, ContractsScreen.partiesKey), 'مبلط الغربية · البلاط');
     expect(find.byKey(ContractsScreen.contractorKey), findsNothing);
     expect(find.byKey(ContractsScreen.itemKey), findsNothing);
     expect(tester.widget<TextField>(find.byKey(ContractsScreen.valueKey)).controller!.text, '34000');

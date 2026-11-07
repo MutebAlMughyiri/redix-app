@@ -492,8 +492,6 @@ void main() {
       await $(ContractsScreen.itemKey).tap();
       await $(keyStartingWith('itemPicker.option.')).first.tap();
       await $.pumpAndSettle();
-      await showInDialog(keyStartingWith('contracts.unit.').first);
-      await $(keyStartingWith('contracts.unit.')).first.tap();
       await $.pumpAndSettle();
       await showInDialog(find.byKey(ContractsScreen.valueKey));
       await $(ContractsScreen.valueKey).enterText('34000');
@@ -506,8 +504,6 @@ void main() {
       await picture('contracts');
       await $(keyStartingWith('contracts.menu.')).tap();
       await $(ContractsScreen.editKey).tap();
-      await showInDialog(keyStartingWith('contracts.unit.').last);
-      await $(keyStartingWith('contracts.unit.')).last.tap();
       await $.pumpAndSettle();
       await $(ContractsScreen.saveKey).tap();
       await reach($(find.text('34,000.00')));
@@ -676,8 +672,6 @@ void main() {
       await $(AddExpenseScreen.itemKey).tap();
       await $(keyStartingWith('itemPicker.option.')).first.tap();
       await $.pumpAndSettle();
-      await goTo($(keyStartingWith('addExpense.unit.')).first);
-      await $(keyStartingWith('addExpense.unit.')).first.tap();
       await goTo($(AddExpenseScreen.invoiceNumberKey));
       await $(AddExpenseScreen.invoiceNumberKey).enterText('2617');
       await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
@@ -715,8 +709,6 @@ void main() {
       await $(AddExpenseScreen.itemKey).tap();
       await $(keyStartingWith('itemPicker.option.')).first.tap();
       await $.pumpAndSettle();
-      await goTo($(keyStartingWith('addExpense.unit.')).first);
-      await $(keyStartingWith('addExpense.unit.')).first.tap();
       await goTo($(AddExpenseScreen.amountKey));
       await $(AddExpenseScreen.amountKey).enterText('200');
       await goTo($(keyStartingWith('payment.method.')).first);
@@ -735,8 +727,6 @@ void main() {
       await $(AddExpenseScreen.itemKey).tap();
       await $(keyStartingWith('itemPicker.option.')).first.tap();
       await $.pumpAndSettle();
-      await goTo($(keyStartingWith('addExpense.unit.')).first);
-      await $(keyStartingWith('addExpense.unit.')).first.tap();
       await goTo($(AddExpenseScreen.supplierKey));
       await $(AddExpenseScreen.supplierKey).tap();
       await $(SupplierPicker.searchKey).enterText('مورد الميدان');

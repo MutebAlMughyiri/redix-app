@@ -239,7 +239,6 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
     final invoice = held['invoice'] as Map<String, dynamic>;
     final files = held['attachments'] as List<dynamic>;
     final contracts = widget.contracts.all.where((contract) => contract.id == payment['contractId']);
-    final accounts = widget.accounts.all.where((account) => account.id == entry['accountId']);
     final number = invoice['number'] as String? ?? '';
     setState(() {
       _amount.text = formatPlain((entry['amount'] as num).toDouble());
@@ -250,9 +249,6 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
       _payment
         ..accountId = entry['accountId'] as String
         ..paymentMethodId = expense['paymentMethodId'] as String;
-      if (accounts.isNotEmpty) {
-        _payment.source = accounts.first.type;
-      }
       if (number.isNotEmpty) {
         _hasInvoice = true;
         _invoiceNumber.text = number;

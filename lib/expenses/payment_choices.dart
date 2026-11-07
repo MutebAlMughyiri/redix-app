@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../accounts/account.dart';
 import '../accounts/offered_accounts.dart';
 import '../api_list.dart';
 import '../settings/payment_methods.dart';
@@ -37,9 +36,6 @@ class PaymentChoices extends StatelessWidget {
   /// The button that reads that list again.
   static const retryKey = Key('payment.retry');
 
-  /// The choice of paying from an account of [type].
-  static Key sourceKey(AccountType type) => Key('payment.source.${type.name}');
-
   /// The choice of the payment method [id].
   static Key paymentMethodKey(String id) => Key('payment.method.$id');
 
@@ -53,8 +49,7 @@ class PaymentChoices extends StatelessWidget {
       listenable: Listenable.merge([accounts, paymentMethods]),
       builder: (context, _) {
         final failed = <ApiList<Object?>>[accounts, paymentMethods].where((list) => list.message.isNotEmpty).firstOrNull;
-        final sources = choice.sourcesIn(accounts.all);
-        final offered = choice.accountsIn(accounts.all);
+        final offered = accounts.all;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 12,
@@ -63,19 +58,7 @@ class PaymentChoices extends StatelessWidget {
               Text(words.text(failed.message), key: listMessageKey),
               OutlinedButton(key: retryKey, onPressed: onRetry, child: Text(words.commonRetry)),
             ],
-            if (failed == null && !accounts.isLoading && sources.isEmpty) Text(words.expensesNoAccount, key: noAccountKey),
-            if (sources.isNotEmpty)
-              LabelledChips<AccountType>(
-                label: words.expensesPaymentSource,
-                choices: sources,
-                keyOf: sourceKey,
-                nameOf: (type) => words.text(type.wordKey),
-                isChosen: (type) => choice.sourceIn(accounts.all) == type,
-                onChosen: (type) {
-                  choice.source = type;
-                  onChanged();
-                },
-              ),
+            if (failed == null && !accounts.isLoading && offered.isEmpty) Text(words.expensesNoAccount, key: noAccountKey),
             if (offered.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
