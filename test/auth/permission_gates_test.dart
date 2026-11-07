@@ -209,7 +209,7 @@ final List<Gate> _gates = [
     name: 'An item report\'s files',
     permission: Permission.seeAllCapital,
     arrange: (api) => api.dashboardAnswer = _dashboardWithAnItem,
-    steps: [_openProject, _tapKey(DashboardCard.categoryKey('category-1')), _tapKey(DashboardCard.itemKey('item-1'))],
+    steps: [_openProject, _tapKey(DashboardCard.expensesKey), _tapKey(DashboardCard.categoryKey('category-1')), _tapKey(DashboardCard.itemKey('item-1'))],
     control: (_) => find.byType(ReportFileButtons),
   ),
   (name: 'Approvals on the project card', permission: Permission.approveEntries, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.approvalsKey(_project))),

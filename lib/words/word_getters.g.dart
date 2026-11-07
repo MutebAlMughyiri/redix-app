@@ -929,9 +929,6 @@ mixin WordGetters {
   /// The word `dashboard.completion`.
   String get dashboardCompletion => text('dashboard.completion');
 
-  /// The word `dashboard.cost`.
-  String get dashboardCost => text('dashboard.cost');
-
   /// The word `dashboard.difference`.
   String get dashboardDifference => text('dashboard.difference');
 
@@ -949,6 +946,9 @@ mixin WordGetters {
 
   /// The word `dashboard.revenue`.
   String get dashboardRevenue => text('dashboard.revenue');
+
+  /// The word `dashboard.revenueByCategory`.
+  String get dashboardRevenueByCategory => text('dashboard.revenueByCategory');
 
   /// The word `dashboard.surplus`.
   String get dashboardSurplus => text('dashboard.surplus');

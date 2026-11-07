@@ -45,16 +45,16 @@ class DashboardFigures {
     : revenue = (json['revenue'] as num).toDouble(),
       expenses = (json['expenses'] as num).toDouble(),
       surplus = (json['surplus'] as num).toDouble(),
-      surplusWithoutSales = (json['surplusWithoutSales'] as num).toDouble(),
       wasReconciled = json['wasReconciled'] as bool,
       reconciliationDifference = (json['reconciliationDifference'] as num).toDouble(),
       pendingCount = json['pendingCount'] as int,
       pendingAmount = (json['pendingAmount'] as num).toDouble(),
       completionPercent = (json['completionPercent'] as num).toDouble(),
-      categories = [for (final row in json['categories'] as List<dynamic>) CategoryTotal.fromJson(row as Map<String, dynamic>)];
+      categories = [for (final row in json['categories'] as List<dynamic>) CategoryTotal.fromJson(row as Map<String, dynamic>)],
+      revenueCategories = [for (final row in json['revenueCategories'] as List<dynamic>) CategoryTotal.fromJson(row as Map<String, dynamic>)];
 
   /// Nothing yet.
-  DashboardFigures.none() : revenue = 0, expenses = 0, surplus = 0, surplusWithoutSales = 0, wasReconciled = false, reconciliationDifference = 0, pendingCount = 0, pendingAmount = 0, completionPercent = 0, categories = const [];
+  DashboardFigures.none() : revenue = 0, expenses = 0, surplus = 0, wasReconciled = false, reconciliationDifference = 0, pendingCount = 0, pendingAmount = 0, completionPercent = 0, categories = const [], revenueCategories = const [];
 
   /// Capital, VAT refunds and sales.
   final double revenue;
@@ -64,9 +64,6 @@ class DashboardFigures {
 
   /// Revenue less expenses.
   final double surplus;
-
-  /// The same without sales.
-  final double surplusWithoutSales;
 
   /// True once the accounts were checked against the books.
   final bool wasReconciled;
@@ -85,6 +82,9 @@ class DashboardFigures {
 
   /// Each category's total.
   final List<CategoryTotal> categories;
+
+  /// Each category holding revenue items, its total with those items'.
+  final List<CategoryTotal> revenueCategories;
 }
 
 /// A project's dashboard (UC-049), read again whenever its home comes back into view.

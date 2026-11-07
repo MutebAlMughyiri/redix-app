@@ -16,7 +16,6 @@ void main() {
     'revenue': 5000,
     'expenses': 4000,
     'surplus': surplus,
-    'surplusWithoutSales': surplus,
     'wasReconciled': wasReconciled,
     'reconciliationDifference': difference,
     'pendingCount': pendingCount,
@@ -30,6 +29,16 @@ void main() {
         'items': [
           {'id': 'item-1', 'name': 'البلاط', 'total': 3000},
           {'id': 'item-2', 'name': 'الجبس', 'total': 1000},
+        ],
+      },
+    ],
+    'revenueCategories': [
+      {
+        'id': 'category-9',
+        'name': 'الإيرادات',
+        'total': 5000,
+        'items': [
+          {'id': 'item-9', 'name': 'رأس المال', 'total': 5000},
         ],
       },
     ],
@@ -105,10 +114,39 @@ void main() {
     expect(find.byKey(DashboardCard.pendingKey), findsNothing);
   });
 
+  testWidgets('the categories show only once a tile is tapped: expenses opens the expense categories, revenue the revenue ones', (tester) async {
+    final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
+
+    expect(find.byKey(DashboardCard.categoryKey('category-1')), findsNothing);
+    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsNothing);
+
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.expensesKey)));
+    expect(find.byKey(DashboardCard.categoryKey('category-1')), findsOneWidget);
+    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsNothing);
+
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
+    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsOneWidget);
+    expect(find.byKey(DashboardCard.categoryKey('category-1')), findsNothing);
+
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
+    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsNothing);
+  });
+
+  testWidgets('the surplus comes first, then the completion, then the difference, and nothing without sales', (tester) async {
+    await openHome(tester, (api) => api.dashboardAnswer = figures(wasReconciled: true, difference: 12));
+
+    final surplus = tester.getTopLeft(find.byKey(DashboardCard.surplusKey)).dy;
+    final completion = tester.getTopLeft(find.byKey(DashboardCard.completionKey)).dy;
+    final difference = tester.getTopLeft(find.byKey(DashboardCard.differenceKey)).dy;
+    expect(surplus < completion && completion < difference, isTrue);
+    expect(find.textContaining('en dashboard.surplusWithoutSales'), findsNothing);
+  });
+
   testWidgets('a category opens to its items, and an item opens its report', (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
 
     expect(find.byKey(DashboardCard.itemKey('item-1')), findsNothing);
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.expensesKey)));
     await act(tester, api, () => tester.tap(find.byKey(DashboardCard.categoryKey('category-1'))));
     expect(find.text('3,000.00'), findsOneWidget);
 
@@ -117,10 +155,10 @@ void main() {
     expect(find.byKey(ItemReportScreen.totalKey), findsOneWidget);
   });
 
-  testWidgets('UC-063: everyone sees the completion the API computed, with the cost', (tester) async {
+  testWidgets('UC-063: everyone sees the completion the API computed, and no cost line beside it', (tester) async {
     await openHome(tester, (api) => api.dashboardAnswer = figures(completion: 40), permissions: field);
 
-    expect(tester.widget<Text>(find.byKey(DashboardCard.completionKey)).data, 'en dashboard.completion: 40% · en dashboard.cost: 4,000.00');
+    expect(tester.widget<Text>(find.byKey(DashboardCard.completionKey)).data, 'en dashboard.completion: 40%');
   });
 
   testWidgets('AC-30.1: an item report shows its total, a table per subgroup, and each contract with what remains', (tester) async {

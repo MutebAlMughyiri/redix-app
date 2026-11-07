@@ -7,7 +7,7 @@ import '../reports/dashboard.dart';
 import '../ui/api_object_body.dart';
 import '../words/words.dart';
 
-/// The project's figures at a glance (UC-049): what waits for approval, the surplus, revenue and expenses, the reconciliation difference, completion and cost (UC-063), and expenses by category, each opening to its items.
+/// The project's figures at a glance (UC-049): what waits for approval, the surplus, the completion (UC-063), the reconciliation difference, and revenue and expenses, each opening to its categories and each category to its items.
 class DashboardCard extends StatefulWidget {
   /// The card of [dashboard] in [project], calling [onApprovals] for what waits and [onItem] for an item's report.
   const DashboardCard({super.key, required this.project, required this.dashboard, required this.onApprovals, required this.onItem});
@@ -52,8 +52,12 @@ class DashboardCard extends StatefulWidget {
   State<DashboardCard> createState() => _DashboardCardState();
 }
 
+/// Which tile shows its categories.
+enum _Side { none, revenue, expenses }
+
 class _DashboardCardState extends State<DashboardCard> {
   final _openCategories = <String>{};
+  var _side = _Side.none;
 
   @override
   void initState() {
@@ -61,23 +65,40 @@ class _DashboardCardState extends State<DashboardCard> {
     widget.dashboard.loadOnOpen();
   }
 
-  Widget _tile(String label, double amount, Key key) => Expanded(
+  Widget _tile(String label, double amount, Key key, _Side side) => Expanded(
     child: Card.filled(
       margin: EdgeInsets.zero,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: Theme.of(context).textTheme.bodySmall),
-            Text(formatMoney(amount), key: key, style: Theme.of(context).textTheme.titleSmall),
-          ],
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => setState(() => _side = _side == side ? _Side.none : side),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(child: Text(label, style: Theme.of(context).textTheme.bodySmall)),
+                  Icon(_side == side ? Icons.expand_less : Icons.expand_more, size: 18),
+                ],
+              ),
+              Text(formatMoney(amount), key: key, style: Theme.of(context).textTheme.titleSmall),
+            ],
+          ),
         ),
       ),
     ),
   );
 
-  Widget _category(CategoryTotal category, double expenses) {
+  Widget _categories(String heading, List<CategoryTotal> categories, double total) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      if (categories.isNotEmpty) Text(heading, style: Theme.of(context).textTheme.titleMedium),
+      for (final category in categories) _category(category, total),
+    ],
+  );
+
+  Widget _category(CategoryTotal category, double total) {
     final isOpen = _openCategories.contains(category.id);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -98,7 +119,7 @@ class _DashboardCardState extends State<DashboardCard> {
                     Icon(isOpen ? Icons.expand_less : Icons.expand_more, size: 18),
                   ],
                 ),
-                LinearProgressIndicator(value: expenses <= 0 ? 0 : (category.total / expenses).clamp(0, 1)),
+                LinearProgressIndicator(value: total <= 0 ? 0 : (category.total / total).clamp(0, 1)),
               ],
             ),
           ),
@@ -139,8 +160,8 @@ class _DashboardCardState extends State<DashboardCard> {
           ),
         Text(words.dashboardSurplus, style: theme.textTheme.bodySmall),
         Text(formatMoney(figures.surplus), key: DashboardCard.surplusKey, style: theme.textTheme.headlineMedium),
-        Text('${words.dashboardSurplusWithoutSales}: ${formatMoney(figures.surplusWithoutSales)}', style: theme.textTheme.bodySmall),
-        Row(spacing: 8, children: [_tile(words.dashboardRevenue, figures.revenue, DashboardCard.revenueKey), _tile(words.dashboardExpenses, figures.expenses, DashboardCard.expensesKey)]),
+        Text('${words.dashboardCompletion}: ${formatPlain(figures.completionPercent)}%', key: DashboardCard.completionKey),
+        LinearProgressIndicator(value: (figures.completionPercent / 100).clamp(0, 1)),
         if (figures.wasReconciled)
           ColoredBox(
             color: figures.reconciliationDifference == 0 ? theme.colorScheme.surfaceContainerHighest : theme.colorScheme.errorContainer,
@@ -154,10 +175,15 @@ class _DashboardCardState extends State<DashboardCard> {
               ),
             ),
           ),
-        Text('${words.dashboardCompletion}: ${formatPlain(figures.completionPercent)}% · ${words.dashboardCost}: ${formatMoney(figures.expenses)}', key: DashboardCard.completionKey),
-        LinearProgressIndicator(value: (figures.completionPercent / 100).clamp(0, 1)),
-        if (figures.categories.isNotEmpty) Text(words.dashboardByCategory, style: theme.textTheme.titleMedium),
-        for (final category in figures.categories) _category(category, figures.expenses),
+        Row(
+          spacing: 8,
+          children: [
+            _tile(words.dashboardRevenue, figures.revenue, DashboardCard.revenueKey, _Side.revenue),
+            _tile(words.dashboardExpenses, figures.expenses, DashboardCard.expensesKey, _Side.expenses),
+          ],
+        ),
+        if (_side == _Side.revenue) _categories(words.dashboardRevenueByCategory, figures.revenueCategories, figures.revenue),
+        if (_side == _Side.expenses) _categories(words.dashboardByCategory, figures.categories, figures.expenses),
       ],
     );
   }
