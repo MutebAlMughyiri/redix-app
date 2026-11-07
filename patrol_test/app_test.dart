@@ -303,7 +303,7 @@ void main() {
       await reach($(CategoriesScreen.addCategoryKey));
       await goTo($(find.text('الملاحق')));
 
-      await $(keyStartingWith('categories.tile.')).at(5).tap();
+      await $(find.text('الملاحق')).tap();
       await goTo($(keyStartingWith('categories.addItem.')));
       await $(keyStartingWith('categories.addItem.')).tap();
       await $(CategoriesScreen.nameKey).enterText('المظلة');
