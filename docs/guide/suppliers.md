@@ -14,7 +14,7 @@ The list starts with مورد نقدي عام, the general cash supplier, for ex
 | To | Do this |
 | --- | --- |
 | Add a supplier | Tap **Add supplier**, type its name and VAT number, and add its mobile and default item if you know them. |
-| Add a supplier with no VAT number | Leave **VAT number** empty. Its purchases have no VAT in the VAT statement. |
+| Add a supplier with no VAT number | Leave **VAT number** empty. It means nothing more than that none was given. |
 | Change a supplier | Open the menu on its row and tap **Edit supplier**. |
 | Stop using a supplier | Open the menu on its row and tap **Disable**. It disappears from entry and stays in the reports. Nothing is ever deleted. |
 
@@ -38,7 +38,7 @@ A supplier marked **Pending approval** was added from the field, and is approved
 | لكي | افعل هذا |
 | --- | --- |
 | تضيف مورداً | اضغط **إضافة مورد**، واكتب اسمه ورقمه الضريبي، وأضف جواله وبنده الافتراضي إن عرفتهما. |
-| تضيف مورداً بلا رقم ضريبي | اترك **الرقم الضريبي** فارغاً. ولا ضريبة على مشترياته في كشف الضريبة. |
+| تضيف مورداً بلا رقم ضريبي | اترك **الرقم الضريبي** فارغاً. ولا يعني ذلك أكثر من أنه لم يُدخل. |
 | تغيّر بيانات مورد | افتح القائمة في صفه واضغط **تعديل المورد**. |
 | توقف استخدام مورد | افتح القائمة في صفه واضغط **تعطيل**. يختفي من الإدخال ويبقى في التقارير، ولا يُحذف شيء أبداً. |
 
