@@ -84,6 +84,12 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(TablePicker.optionKey((item['subgroups']! as List<Map<String, Object>>).first['id']! as String))));
   }
 
+  /// The tables of the item [id]: its general one first, then each named one.
+  List<String> tableIdsOf(FakeApi api, String id) => [
+    for (final subgroup in api.categories['project-0']!.expand((category) => category['items']! as List<Map<String, Object>>).singleWhere((item) => item['id'] == id)['subgroups']! as List<Map<String, Object>>)
+      subgroup['id']! as String,
+  ];
+
   String chosenTable(WidgetTester tester) => tester.widget<TablePicker>(find.byKey(AddEntryScreen.tableKey)).chosen.label;
 
   /// Fills everything an expense needs, for a test whose subject is something else.
@@ -318,6 +324,33 @@ void main() {
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     expect(opened.api.sentExpenses.single['customValues'], isEmpty);
+  });
+
+  testWidgets('the table sheet searches the items\' and the tables\' names in one spelling, and says when nothing matches', (tester) async {
+    var steel = <String, Object>{};
+    final opened = await openExpense(tester, arrange: (api) => steel = api.addItem(api.categories['project-0']!.single, 'أعمال الحديد'));
+    String generalOf(String itemId) => tableIdsOf(opened.api, itemId).first;
+    final tiles = tableIdsOf(opened.api, opened.item);
+    await tapVisible(tester, opened.api, AddEntryScreen.tableKey);
+
+    await tester.enterText(find.byKey(TablePicker.searchKey), 'مواد');
+    await tester.pumpAndSettle();
+    expect(find.byKey(TablePicker.optionKey(tiles.last)), findsOneWidget);
+    expect(find.byKey(TablePicker.optionKey(generalOf(opened.otherItem))), findsNothing);
+
+    await tester.enterText(find.byKey(TablePicker.searchKey), 'اعمال');
+    await tester.pumpAndSettle();
+    expect(find.byKey(TablePicker.optionKey(generalOf(steel['id']! as String))), findsOneWidget);
+    expect(find.byKey(TablePicker.optionKey(tiles.first)), findsNothing);
+
+    await tester.enterText(find.byKey(TablePicker.searchKey), 'البلاط');
+    await tester.pumpAndSettle();
+    expect(find.byKey(TablePicker.optionKey(tiles.first)), findsOneWidget);
+    expect(find.byKey(TablePicker.optionKey(tiles.last)), findsOneWidget);
+
+    await tester.enterText(find.byKey(TablePicker.searchKey), 'لا شيء');
+    await tester.pumpAndSettle();
+    expect(find.byKey(TablePicker.noMatchKey), findsOneWidget);
   });
 
   testWidgets('R10: an item\'s named table takes the purchase into that subgroup', (tester) async {

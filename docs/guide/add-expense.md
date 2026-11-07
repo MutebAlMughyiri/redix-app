@@ -13,7 +13,7 @@
 | --- | --- |
 | Photograph the invoice | The camera opens by itself. Line up the invoice and take it; it is cropped and made smaller for you. **Take again** replaces it. The picture is optional. |
 | Use a file instead | Tap **Pick from files** for a picture or a PDF. |
-| Choose the table | Tap **Table**. Each item shows by its category, with its named tables and its contracts under it. An item's own table, or a named one, takes a purchase; a contract's takes a [contractor payment](contractor-payment.md). |
+| Choose the table | Tap **Table**, and type in its search to find an item or a contractor. Each item shows by its category, with its named tables and its contracts under it. An item's own table, or a named one, takes a purchase; a contract's takes a [contractor payment](contractor-payment.md). |
 | Fill from the QR code | If the picture holds the e-invoice's QR code, the date and the total fill in, and the supplier with that VAT number is chosen. Check them. |
 | Enter the total | Type the total paid, or leave it empty and type the unit price and quantity. |
 | Record a credit note | Turn on **Credit note**, type the amount as printed, and choose the **Original invoice** it returns; the list says what each has left to return. |
@@ -44,7 +44,7 @@ No VAT is entered or kept: the VAT statement works it out of each total when the
 | --- | --- |
 | تصوّر الفاتورة | تفتح الكاميرا من تلقاء نفسها. وجّهها إلى الفاتورة والتقطها، فتُقص وتُصغَّر تلقائياً. **إعادة التصوير** تستبدلها. والصورة اختيارية. |
 | تستخدم ملفاً بدلاً منها | اضغط **اختيار من الملفات** لصورة أو ملف PDF. |
-| تختار الجدول | اضغط **الجدول**. يظهر كل بند تحت تصنيفه، وتحته جداوله المسماة وعقوده. جدول البند نفسه أو جدول مسمى يأخذ عملية شراء، وجدول العقد يأخذ [دفعة مقاول](contractor-payment.md). |
+| تختار الجدول | اضغط **الجدول**، واكتب في بحثه لتجد بنداً أو مقاولاً. يظهر كل بند تحت تصنيفه، وتحته جداوله المسماة وعقوده. جدول البند نفسه أو جدول مسمى يأخذ عملية شراء، وجدول العقد يأخذ [دفعة مقاول](contractor-payment.md). |
 | تعبّئ من رمز QR | إن كانت الصورة تحوي رمز QR للفاتورة الإلكترونية، يُعبَّأ التاريخ والإجمالي، ويُختار المورد صاحب الرقم الضريبي. راجعها. |
 | تُدخل الإجمالي | اكتب الإجمالي المدفوع، أو اتركه فارغاً واكتب سعر الوحدة والعدد. |
 | تسجّل مرتجعاً | فعّل **مرتجع (إشعار دائن)**، واكتب المبلغ كما هو مكتوب، واختر **الفاتورة الأصلية** التي يرجعها؛ وتبيّن القائمة المتبقي للإرجاع من كل فاتورة. |

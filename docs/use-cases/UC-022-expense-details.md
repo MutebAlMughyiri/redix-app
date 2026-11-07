@@ -17,6 +17,7 @@ A purchase is a total on one date, with an optional file (redix-api #96, D3, D10
 | The title, and the project's name under it | `AddEntryScreen.titleKey`, `projectNameKey` | إضافة قيد, or تعديل when an entry opens to change |
 | The file | `AddEntryScreen.cameraKey`, `filesKey`, `invoiceNameKey` | UC-021: the bill's picture for a purchase, the receipt for a payment |
 | Table | `AddEntryScreen.tableKey`, `TablePicker.optionKey(id)` | A sheet of every table on offer, by category: each item's general table, and its named tables and contracts under it. Its item's columns are read when the item changes |
+| Searching the tables, and nothing matching | `TablePicker.searchKey`, `noMatchKey` | Keeps every table of an item whose name holds what was typed, and any table whose own name does, in one spelling |
 | Date | `AddEntryScreen.dateKey` | Starts at today and picks within the project's period; sent as `paymentDate` |
 | Supplier, and what is known of it | `AddEntryScreen.supplierKey`, `supplierDetailsKey` | A purchase's: opens `SupplierPicker`, with its quick add (UC-018, UC-019) |
 | Credit note | `AddEntryScreen.creditNoteKey`, `originalInvoiceKey` | A purchase's (UC-026) |
@@ -55,6 +56,7 @@ Tests are in `test/entries/add_entry_test.dart`, with the payment's in `add_entr
 | R10: the table decides the kind: an item's named table takes the purchase into that subgroup | `TablePicker`, `_purchasePart` | R10: an item's named table |
 | R10, R11: a contract's table takes a contractor payment, sent with its contract and no item or subgroup | `_body`, `EntryTable.route` | `add_entry_contract_test`: R10, R11 |
 | R7: only tables taking a purchase or a contractor payment are offered | `GET /entry-tables` | API `CategoriesTests`: R7, R10 |
+| The table sheet searches the items' and the tables' names, Arabic spelling read as one, and says when nothing matches | `TablePicker._keptOf` | the table sheet searches the items' and the tables' names |
 | R12, D10: an entry opens to change in its own table, under the title تعديل | `_openEntry` | `entries_test`: R12, D10; the reason shows at the top |
 | Choosing a supplier fills its usual item's general table while none is chosen | `AddEntryScreen._useSupplier`, `EntryTables.generalTableOf` | choosing a supplier fills its usual item; an item already chosen stays; a usual item no longer on offer |
 | D10: an entry has one date, sent as its payment date | `_body` | D10: an expense has one date |

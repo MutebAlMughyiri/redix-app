@@ -1055,6 +1055,9 @@ mixin WordGetters {
   /// The word `entries.noConnection`.
   String get entriesNoConnection => text('entries.noConnection');
 
+  /// The word `entries.noTableMatch`.
+  String get entriesNoTableMatch => text('entries.noTableMatch');
+
   /// The word `entries.notYourEntry`.
   String get entriesNotYourEntry => text('entries.notYourEntry');
 
@@ -1108,6 +1111,9 @@ mixin WordGetters {
 
   /// The word `entries.table`.
   String get entriesTable => text('entries.table');
+
+  /// The word `entries.tableSearchHint`.
+  String get entriesTableSearchHint => text('entries.tableSearchHint');
 
   /// The word `entries.tiedProjectRefused`.
   String get entriesTiedProjectRefused => text('entries.tiedProjectRefused');

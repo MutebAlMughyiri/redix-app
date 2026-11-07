@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../format/number_format.dart';
 import '../structure/item_tables.dart';
+import '../suppliers/arabic_spelling.dart';
 import '../ui/api_list_body.dart';
 import '../ui/picker_field.dart';
 import '../words/words.dart';
 import 'entry_tables.dart';
 
 /// The field that chooses the table an expense goes into (redix-app #84), opening a sheet of every table on offer: by category, each item with its general table first and its
-/// named tables and contracts under it.
+/// named tables and contracts under it, with a search over the items' and the tables' names.
 class TablePicker extends StatelessWidget {
   /// The field showing [chosen], choosing among [tables] and answering [onChanged].
   const TablePicker({super.key, required this.tables, required this.chosen, required this.onChanged});
@@ -24,49 +26,113 @@ class TablePicker extends StatelessWidget {
   /// The choice of the table [id].
   static Key optionKey(String id) => Key('tablePicker.option.$id');
 
+  /// The search field, in the sheet.
+  static const searchKey = Key('tablePicker.search');
+
+  /// The line that says nothing matches the search.
+  static const noMatchKey = Key('tablePicker.noMatch');
+
   Future<void> _choose(BuildContext context) async {
     final picked = await showModalBottomSheet<EntryTable>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
       showDragHandle: true,
-      builder: (sheet) => FractionallySizedBox(
-        heightFactor: 0.9,
-        child: ApiListBody(
-          list: tables,
-          emptyText: Words.of(sheet).categoriesEmpty,
-          itemBuilder: (category) => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(category.name, style: Theme.of(sheet).textTheme.titleSmall),
-              for (final item in category.items) ..._rowsOf(sheet, item),
-            ],
-          ),
-        ),
-      ),
+      builder: (_) => _TableSheet(tables: tables),
     );
     if (picked != null) {
       onChanged(picked);
     }
   }
 
-  /// The item's general table, or its name when it takes no purchase, and under it each of its other tables.
-  List<Widget> _rowsOf(BuildContext sheet, TableItem item) {
-    final words = Words.of(sheet);
-    final general = item.tables.where((table) => table.kind == ItemTableKind.general);
+  @override
+  Widget build(BuildContext context) => PickerField(label: Words.of(context).entriesTable, value: chosen.label, onTap: () => _choose(context));
+}
+
+/// The sheet of tables, narrowed by what is typed.
+class _TableSheet extends StatefulWidget {
+  const _TableSheet({required this.tables});
+
+  final EntryTables tables;
+
+  @override
+  State<_TableSheet> createState() => _TableSheetState();
+}
+
+class _TableSheetState extends State<_TableSheet> {
+  var _typed = '';
+
+  /// The tables of [item] the search keeps: all of them when the item's name holds what was typed, otherwise those whose own name does, in one spelling.
+  List<EntryTable> _keptOf(TableItem item) {
+    bool holds(String name) => sameSpelling(name).contains(_typed);
+    return holds(item.name) ? item.tables : item.tables.where((table) => holds(table.name)).toList();
+  }
+
+  /// The item's general table, or its name when it takes no purchase, and under it each of its other [kept] tables.
+  List<Widget> _rowsOf(TableItem item, List<EntryTable> kept) {
+    final words = Words.of(context);
+    final general = kept.where((table) => table.kind == ItemTableKind.general);
     ListTile row(EntryTable table, String title, {double indent = 16}) => ListTile(
-      key: optionKey(table.id),
+      key: TablePicker.optionKey(table.id),
       contentPadding: EdgeInsetsDirectional.only(start: indent, end: 16),
       title: Text(title),
       subtitle: Text(table.isContract ? words.categoriesTableContract : words.categoriesTablePurchases),
-      onTap: () => Navigator.of(sheet).pop(table),
+      onTap: () => Navigator.of(context).pop(table),
     );
     return [
       if (general.isEmpty) ListTile(title: Text(item.name), enabled: false) else row(general.first, item.name),
-      for (final table in item.tables.where((table) => table.kind != ItemTableKind.general)) row(table, table.name, indent: 40),
+      for (final table in kept.where((table) => table.kind != ItemTableKind.general)) row(table, table.name, indent: 40),
     ];
   }
 
   @override
-  Widget build(BuildContext context) => PickerField(label: Words.of(context).entriesTable, value: chosen.label, onTap: () => _choose(context));
+  Widget build(BuildContext context) {
+    final words = Words.of(context);
+    return FractionallySizedBox(
+      heightFactor: 0.9,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: TextField(
+                key: TablePicker.searchKey,
+                onChanged: (text) => setState(() => _typed = sameSpelling(westernDigits(text.trim()))),
+                decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: words.entriesTableSearchHint, border: const OutlineInputBorder()),
+              ),
+            ),
+            ListenableBuilder(
+              listenable: widget.tables,
+              builder: (context, _) => widget.tables.all.any((category) => category.items.any((item) => _keptOf(item).isNotEmpty)) || widget.tables.all.isEmpty
+                  ? const SizedBox.shrink()
+                  : Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(words.entriesNoTableMatch, key: TablePicker.noMatchKey),
+                    ),
+            ),
+            Expanded(
+              child: ApiListBody(
+                list: widget.tables,
+                emptyText: words.categoriesEmpty,
+                itemBuilder: (category) {
+                  final items = [for (final item in category.items) (item, _keptOf(item))].where((pair) => pair.$2.isNotEmpty).toList();
+                  return items.isEmpty
+                      ? const SizedBox.shrink()
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(category.name, style: Theme.of(context).textTheme.titleSmall),
+                            for (final (item, kept) in items) ..._rowsOf(item, kept),
+                          ],
+                        );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
