@@ -89,7 +89,7 @@ class ReportFiles {
   Future<String> hand(String address, String name, ReportFileKind kind, FileHanding handing) async {
     try {
       final path = address.contains('?') ? address.replaceFirst('?', '/${kind.extension}?') : '$address/${kind.extension}';
-      final response = await _session.read(path);
+      final response = await _session.read(path, file: true);
       if (response.statusCode != 200) {
         return 'reports.fileFailed';
       }

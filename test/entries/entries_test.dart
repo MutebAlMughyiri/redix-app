@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/config/app_config.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/home/home_screen.dart';
@@ -238,6 +239,25 @@ void main() {
 
     expect(find.byKey(EntriesScreen.editKey), findsOneWidget);
     expect(find.byKey(EntriesScreen.deleteKey), findsNothing);
+  });
+
+  testWidgets('UC-070: a change with no answer within the configured time ends as no connection, and the bill stays', (tester) async {
+    config.apply({'requestTimeoutSeconds': '10', 'fileTimeoutSeconds': '120'});
+    addTearDown(() => config.apply({}));
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'));
+    await openActions(tester, api, 'entry-0');
+    api.heldEntryChange = Completer<void>();
+
+    await act(tester, api, () async {
+      await tester.tap(find.byKey(EntriesScreen.deleteKey));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('en entries.delete').last);
+      await tester.pump(const Duration(seconds: 11));
+    });
+
+    expect(find.text('en entries.noConnection'), findsOneWidget);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
+    api.heldEntryChange.complete();
   });
 
   testWidgets('a finished project changes nothing', (tester) async {

@@ -57,7 +57,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
   late final _file = _read();
 
   Future<Uint8List> _read() async {
-    final response = await widget.session.read(AttachmentScreen.pathOf(widget.projectId, widget.attachmentId));
+    final response = await widget.session.read(AttachmentScreen.pathOf(widget.projectId, widget.attachmentId), file: true);
     return response.statusCode == 200 ? response.bodyBytes : Uint8List(0);
   }
 

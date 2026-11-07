@@ -11,6 +11,7 @@ import '../offline/local_store.dart';
 import '../words/words.dart';
 import 'biometrics.dart';
 import 'permission.dart';
+import '../config/app_config.dart';
 
 /// The signed-in session (UC-002): the tokens the API issued, kept only in the Keychain or Keystore (NFR-09), and the one way to call the API as the user.
 class Session extends ChangeNotifier {
@@ -142,7 +143,7 @@ class Session extends ChangeNotifier {
   /// refusal: `signIn.invalidCredentials`, `signIn.accountLocked` or `signIn.noConnection`.
   Future<String> signIn(String username, String password) async {
     try {
-      final response = await http.post(apiUri('/auth/sign-in'), headers: jsonHeaders, body: jsonEncode({'username': username, 'password': password}));
+      final response = await timed(http.post(apiUri('/auth/sign-in'), headers: jsonHeaders, body: jsonEncode({'username': username, 'password': password})));
       if (response.statusCode != 200) {
         return 'signIn.${(jsonDecode(response.body) as Map<String, dynamic>)['code']}';
       }
@@ -203,10 +204,10 @@ class Session extends ChangeNotifier {
     }
   }
 
-  /// Reads the API [path] and keeps nothing. It waits for what was sent before it, so its answer already holds those changes.
-  Future<http.Response> read(String path) async {
+  /// Reads the API [path] and keeps nothing, waiting for a [file] as long as a file may take (UC-070). It waits for what was sent before it, so its answer already holds those changes.
+  Future<http.Response> read(String path, {bool file = false}) async {
     await _sending;
-    return _send(() => http.get(apiUri(path), headers: _authorized));
+    return _send(() => timed(http.get(apiUri(path), headers: _authorized), file: file));
   }
 
   /// Keeps [text] as what the API [path] answers, until sign-out.
@@ -218,7 +219,7 @@ class Session extends ChangeNotifier {
   /// Sends [body] as JSON to the API [path] as the signed-in user. An expired access token is renewed once and the request sent again;
   /// a session the API refuses to renew ends.
   Future<http.Response> post(String path, Map<String, Object> body) =>
-      _remember(_send(() => http.post(apiUri(path), headers: {...jsonHeaders, ..._authorized}, body: jsonEncode(body))));
+      _remember(_send(() => timed(http.post(apiUri(path), headers: {...jsonHeaders, ..._authorized}, body: jsonEncode(body)))));
 
   /// Sends the file [bytes], named [fileName], with the form [fields] beside it, to the API [path] as the signed-in user, renewing an expired access token like [post].
   Future<http.Response> postFile(String path, String fileName, List<int> bytes, {Map<String, String> fields = const {}}) => _remember(_send(() async {
@@ -228,7 +229,7 @@ class Session extends ChangeNotifier {
       ..files.add(http.MultipartFile.fromBytes('file', bytes, filename: fileName));
     final client = http.Client();
     try {
-      return await http.Response.fromStream(await client.send(request));
+      return await timed(client.send(request).then(http.Response.fromStream), file: true);
     } finally {
       client.close();
     }
@@ -259,7 +260,7 @@ class Session extends ChangeNotifier {
       return;
     }
     try {
-      final response = await http.post(apiUri('/auth/refresh'), headers: jsonHeaders, body: jsonEncode({'refreshToken': _refreshToken}));
+      final response = await timed(http.post(apiUri('/auth/refresh'), headers: jsonHeaders, body: jsonEncode({'refreshToken': _refreshToken})));
       if (response.statusCode == 200) {
         await _keep(response);
       } else if (response.statusCode == 401) {

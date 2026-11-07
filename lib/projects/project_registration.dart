@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import '../api.dart';
 import '../format/number_format.dart';
+import '../config/app_config.dart';
 
 /// Registers a project from the sign-in page, with no session, and a new login as its manager (UC-066). Returns an empty string once sent, otherwise the word key of
 /// the refusal.
@@ -18,7 +19,7 @@ Future<String> registerProject(
   required String password,
 }) async {
   try {
-    final response = await http.post(
+    final response = await timed(http.post(
       apiUri('/projects/register'),
       headers: jsonHeaders,
       body: jsonEncode({
@@ -30,7 +31,7 @@ Future<String> registerProject(
         'mobile': westernDigits(mobile),
         'password': password,
       }),
-    );
+    ));
     if (response.statusCode < 300) {
       return '';
     }

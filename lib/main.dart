@@ -89,6 +89,7 @@ import 'users/users_screen.dart';
 import 'words/app_language.dart';
 import 'words/no_words_screen.dart';
 import 'words/words.dart';
+import 'config/app_config.dart';
 
 /// Starts the app with the session and the language kept from an earlier start, if any. An app built without its environment's config
 /// file stops here, rather than calling an address nobody chose.
@@ -99,6 +100,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final session = Session();
   final language = AppLanguage();
+  await config.restore();
+  unawaited(config.refresh());
   await session.restore();
   await language.restore();
   runApp(RedixApp(session: session, language: language));

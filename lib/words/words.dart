@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import 'word_getters.g.dart';
+import '../config/app_config.dart';
 
 /// The words of the language in use, fetched from the API. The app's code names a word by its key; [WordGetters] gives one typed getter per key.
 class Words with WordGetters {
@@ -60,10 +61,10 @@ class Words with WordGetters {
 
   static Future<void> _fetch(SharedPreferences preferences, String language, String etag) async {
     try {
-      final response = await http.get(
+      final response = await timed(http.get(
         apiUri('/translations/$language'),
         headers: {if (etag.isNotEmpty) 'If-None-Match': etag},
-      );
+      ));
       if (response.statusCode == 200) {
         final kept = {'language': language, 'etag': response.headers['etag'] ?? '', 'words': jsonOf(response)};
         await preferences.setString(_keptKey, jsonEncode(kept));
