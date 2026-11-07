@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../auth/permission.dart';
+import '../ui/part_keys.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'permission_tick.dart';
 import 'users.dart';
@@ -40,6 +42,9 @@ class NewUserScreen extends StatefulWidget {
 
   /// The tick of [permission]; See the project is always ticked.
   static Key permissionKey(Permission permission) => Key('newUser.${permission.name}');
+
+  /// The heading over the permissions.
+  static const permissionsHeadingKey = Key('newUser.permissionsHeading');
 
   @override
   State<NewUserScreen> createState() => _NewUserScreenState();
@@ -88,7 +93,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
     InputDecoration field(String label, {String helper = ''}) =>
         InputDecoration(labelText: label, helperText: helper.isEmpty ? null : helper, border: const OutlineInputBorder());
     return Scaffold(
-      appBar: AppBar(title: Text(words.usersNew)),
+      appBar: AppBar(title: Text(words.usersNew, key: ScreenTitle.titleKey)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -110,7 +115,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
               decoration: field(words.usersTemporaryPassword, helper: words.usersTemporaryPasswordHint),
             ),
             const SizedBox(height: 16),
-            Text(words.permissionsTitle, style: Theme.of(context).textTheme.titleMedium),
+            Text(words.permissionsTitle, key: NewUserScreen.permissionsHeadingKey, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             for (final permission in Permission.inAProject)
               PermissionTick(
@@ -124,7 +129,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
               key: NewUserScreen.submitKey,
               onPressed: _saving ? null : _add,
               style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-              child: Text(words.usersAdd),
+              child: Text(words.usersAdd, key: NewUserScreen.submitKey.label),
             ),
             if (_message.isNotEmpty) ...[
               const SizedBox(height: 16),

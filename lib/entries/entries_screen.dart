@@ -6,6 +6,7 @@ import '../format/date_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/confirm_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
@@ -91,6 +92,9 @@ class EntriesScreen extends StatefulWidget {
   /// The button reversing the open entry.
   static const reverseKey = Key('entries.reverse');
 
+  /// Who supplied the entry [id], when, and who entered it.
+  static Key detailsKey(String id) => Key('entries.details.$id');
+
   /// The project.
   final Project project;
 
@@ -165,26 +169,26 @@ class _EntriesScreenState extends State<EntriesScreen> {
             controller: _search,
             autoFocus: widget.startsSearching,
             hintText: words.entriesSearchHint,
-            leading: const Icon(Icons.search),
+            leading: Icon(Icons.search, key: EntriesScreen.searchKey.icon),
             onChanged: (text) => setState(() => _filter.text = text),
           ),
           Wrap(
             spacing: 8,
             runSpacing: 4,
             children: [
-              ChoiceChip(key: EntriesScreen.mineKey, label: Text(words.entriesMine), selected: _filter.onlyMine, onSelected: (_) => setState(() => _filter.onlyMine = true)),
-              ChoiceChip(key: EntriesScreen.allKey, label: Text(words.entriesAll), selected: !_filter.onlyMine, onSelected: (_) => setState(() => _filter.onlyMine = false)),
+              ChoiceChip(key: EntriesScreen.mineKey, label: Text(words.entriesMine, key: EntriesScreen.mineKey.label), selected: _filter.onlyMine, onSelected: (_) => setState(() => _filter.onlyMine = true)),
+              ChoiceChip(key: EntriesScreen.allKey, label: Text(words.entriesAll, key: EntriesScreen.allKey.label), selected: !_filter.onlyMine, onSelected: (_) => setState(() => _filter.onlyMine = false)),
               for (final MapEntry(key: kind, value: wordKey) in EntryFilter.kinds.entries)
-                FilterChip(key: EntriesScreen.kindKey(kind), label: Text(words.text(wordKey)), selected: _filter.chosenKinds.contains(kind), onSelected: (isOn) => _toggle(_filter.chosenKinds, kind, isOn)),
+                FilterChip(key: EntriesScreen.kindKey(kind), label: Text(words.text(wordKey), key: EntriesScreen.kindKey(kind).label), selected: _filter.chosenKinds.contains(kind), onSelected: (isOn) => _toggle(_filter.chosenKinds, kind, isOn)),
               for (final status in EntryFilter.statuses)
-                FilterChip(key: EntriesScreen.statusFilterKey(status), label: Text(words.text(status)), selected: _filter.chosenStatuses.contains(status), onSelected: (isOn) => _toggle(_filter.chosenStatuses, status, isOn)),
+                FilterChip(key: EntriesScreen.statusFilterKey(status), label: Text(words.text(status), key: EntriesScreen.statusFilterKey(status).label), selected: _filter.chosenStatuses.contains(status), onSelected: (isOn) => _toggle(_filter.chosenStatuses, status, isOn)),
               FilterChip(
                 key: EntriesScreen.periodKey,
-                label: Text(_filter.hasPeriod ? '${words.entriesPeriod}: ${formatDate(_filter.period.start)} – ${formatDate(_filter.period.end)}' : words.entriesPeriod),
+                label: Text(_filter.hasPeriod ? '${words.entriesPeriod}: ${formatDate(_filter.period.start)} – ${formatDate(_filter.period.end)}' : words.entriesPeriod, key: EntriesScreen.periodKey.label),
                 selected: _filter.hasPeriod,
                 onSelected: (_) => _pickPeriod(),
               ),
-              if (_filter.isNarrowed) ActionChip(key: EntriesScreen.clearKey, label: Text(words.entriesClearFilters), onPressed: _clear),
+              if (_filter.isNarrowed) ActionChip(key: EntriesScreen.clearKey, label: Text(words.entriesClearFilters, key: EntriesScreen.clearKey.label), onPressed: _clear),
             ],
           ),
           Text(words.entriesFound.replaceFirst('{0}', '$found'), key: EntriesScreen.foundKey, style: Theme.of(context).textTheme.bodySmall),
@@ -278,7 +282,7 @@ class _EntryActions extends StatelessWidget {
                 Navigator.of(context).pop();
                 EntriesScreen.openForm(context, project, entry);
               },
-              child: Text(entry.isRejected ? words.entriesFix : words.entriesEdit),
+              child: Text(entry.isRejected ? words.entriesFix : words.entriesEdit, key: EntriesScreen.editKey.label),
             ),
             if (entry.isDraft)
               OutlinedButton(
@@ -287,11 +291,11 @@ class _EntryActions extends StatelessWidget {
                   Navigator.of(context).pop();
                   showRefusalOf(context, entries.send(entry));
                 },
-                child: Text(words.entriesSend),
+                child: Text(words.entriesSend, key: EntriesScreen.sendKey.label),
               ),
           ],
-          if (_may(Permission.deleteEntries)) TextButton(key: EntriesScreen.deleteKey, onPressed: () => _askToDelete(context), child: Text(words.entriesDelete)),
-          if (mayReverse) OutlinedButton(key: EntriesScreen.reverseKey, onPressed: () => _askToReverse(context), child: Text(words.entriesReverse)),
+          if (_may(Permission.deleteEntries)) TextButton(key: EntriesScreen.deleteKey, onPressed: () => _askToDelete(context), child: Text(words.entriesDelete, key: EntriesScreen.deleteKey.label)),
+          if (mayReverse) OutlinedButton(key: EntriesScreen.reverseKey, onPressed: () => _askToReverse(context), child: Text(words.entriesReverse, key: EntriesScreen.reverseKey.label)),
         ],
       ),
     );

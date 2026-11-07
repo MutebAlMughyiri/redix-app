@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../home/home_screen.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'session.dart';
 
@@ -31,6 +32,12 @@ class ChangePasswordScreen extends StatefulWidget {
 
   /// The line that says why the change was refused.
   static const messageKey = Key('changePassword.message');
+
+  /// The title.
+  static const titleKey = Key('changePassword.title');
+
+  /// What to do.
+  static const hintKey = Key('changePassword.hint');
 
   @override
   State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
@@ -81,9 +88,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
           children: [
-            Text(words.changePasswordTitle, style: theme.textTheme.headlineMedium),
+            Text(words.changePasswordTitle, key: ChangePasswordScreen.titleKey, style: theme.textTheme.headlineMedium),
             const SizedBox(height: 8),
-            Text(words.changePasswordHint, style: theme.textTheme.bodyLarge),
+            Text(words.changePasswordHint, key: ChangePasswordScreen.hintKey, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 32),
             TextField(key: ChangePasswordScreen.currentKey, controller: _current, decoration: field(words.changePasswordCurrent), obscureText: true),
             const SizedBox(height: 16),
@@ -101,7 +108,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               key: ChangePasswordScreen.submitKey,
               onPressed: _saving ? null : _save,
               style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-              child: Text(words.changePasswordSubmit),
+              child: Text(words.changePasswordSubmit, key: ChangePasswordScreen.submitKey.label),
             ),
             if (_message.isNotEmpty) ...[
               const SizedBox(height: 16),

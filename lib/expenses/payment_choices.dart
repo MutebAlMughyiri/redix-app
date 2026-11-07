@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../accounts/offered_accounts.dart';
 import '../settings/payment_methods.dart';
 import '../ui/labelled_chips.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'payment_choice.dart';
 
@@ -41,6 +42,12 @@ class PaymentChoices extends StatelessWidget {
   /// The choice of the account [id].
   static Key accountKey(String id) => Key('payment.account.$id');
 
+  /// The choice of the payment method.
+  static const methodChoiceKey = Key('payment.methodChoice');
+
+  /// The heading over the accounts.
+  static const accountHeadingKey = Key('payment.accountHeading');
+
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
@@ -55,14 +62,14 @@ class PaymentChoices extends StatelessWidget {
           children: [
             if (failure.isNotEmpty) ...[
               Text(words.text(failure), key: listMessageKey),
-              OutlinedButton(key: retryKey, onPressed: onRetry, child: Text(words.commonRetry)),
+              OutlinedButton(key: retryKey, onPressed: onRetry, child: Text(words.commonRetry, key: retryKey.label)),
             ],
             if (failure.isEmpty && !accounts.isLoading && offered.isEmpty) Text(words.expensesNoAccount, key: noAccountKey),
             if (offered.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(words.expensesAccount, style: Theme.of(context).textTheme.titleSmall),
+                  Text(words.expensesAccount, key: PaymentChoices.accountHeadingKey, style: Theme.of(context).textTheme.titleSmall),
                   RadioGroup<String>(
                     groupValue: choice.chosenAccountIn(accounts.all),
                     onChanged: (accountId) {
@@ -71,13 +78,14 @@ class PaymentChoices extends StatelessWidget {
                     },
                     child: Column(
                       children: [
-                        for (final account in offered) RadioListTile<String>(key: accountKey(account.id), contentPadding: EdgeInsets.zero, dense: true, value: account.id, title: Text(account.name)),
+                        for (final account in offered) RadioListTile<String>(key: accountKey(account.id), contentPadding: EdgeInsets.zero, dense: true, value: account.id, title: Text(account.name, key: accountKey(account.id).title)),
                       ],
                     ),
                   ),
                 ],
               ),
             LabelledChips(
+              key: PaymentChoices.methodChoiceKey,
               label: words.expensesPaymentMethod,
               choices: paymentMethods.all.where((method) => method.isActive),
               keyOf: (method) => paymentMethodKey(method.id),

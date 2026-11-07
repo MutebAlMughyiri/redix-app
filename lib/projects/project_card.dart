@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../auth/permission.dart';
 import '../format/date_format.dart';
 import '../home/home_screen.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'project.dart';
 import 'unit_row.dart';
@@ -108,7 +109,7 @@ class ProjectCard extends StatelessWidget {
                 ),
                 Chip(
                   key: HomeScreen.statusKey(project.id),
-                  label: Text(words.text(project.status.wordKey)),
+                  label: Text(words.text(project.status.wordKey), key: HomeScreen.statusKey(project.id).label),
                   backgroundColor: project.status == ProjectStatus.running ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest,
                   side: BorderSide.none,
                   visualDensity: VisualDensity.compact,
@@ -117,7 +118,7 @@ class ProjectCard extends StatelessWidget {
             ),
           ),
           const Divider(height: 1),
-          if (project.units.isEmpty) ListTile(dense: true, title: Text(words.projectsNoUnits, key: HomeScreen.noUnitsKey(project.id))),
+          if (project.units.isEmpty) ListTile(key: HomeScreen.noUnitsRowKey(project.id), dense: true, title: Text(words.projectsNoUnits, key: HomeScreen.noUnitsKey(project.id))),
           for (final unit in project.units) UnitRow(unit: unit, mayChange: mayChange, onRename: () => onRenameUnit(unit), onDelete: () => onDeleteUnit(unit)),
           const Divider(height: 1),
           Padding(
@@ -127,84 +128,84 @@ class ProjectCard extends StatelessWidget {
               children: [
                 TextButton.icon(
                   key: HomeScreen.accountsKey(project.id),
-                  icon: const Icon(Icons.account_balance_wallet_outlined),
-                  label: Text(words.accountsTitle),
+                  icon: Icon(Icons.account_balance_wallet_outlined, key: HomeScreen.accountsKey(project.id).icon),
+                  label: Text(words.accountsTitle, key: HomeScreen.accountsKey(project.id).label),
                   onPressed: onAccounts,
                 ),
                 TextButton.icon(
                   key: HomeScreen.partnersKey(project.id),
-                  icon: const Icon(Icons.handshake_outlined),
-                  label: Text(words.partnersTitle),
+                  icon: Icon(Icons.handshake_outlined, key: HomeScreen.partnersKey(project.id).icon),
+                  label: Text(words.partnersTitle, key: HomeScreen.partnersKey(project.id).label),
                   onPressed: onPartners,
                 ),
                 TextButton.icon(
                   key: HomeScreen.suppliersKey(project.id),
-                  icon: const Icon(Icons.storefront_outlined),
-                  label: Text(words.suppliersTitle),
+                  icon: Icon(Icons.storefront_outlined, key: HomeScreen.suppliersKey(project.id).icon),
+                  label: Text(words.suppliersTitle, key: HomeScreen.suppliersKey(project.id).label),
                   onPressed: onSuppliers,
                 ),
                 TextButton.icon(
                   key: HomeScreen.contractsKey(project.id),
-                  icon: const Icon(Icons.description_outlined),
-                  label: Text(words.contractsTitle),
+                  icon: Icon(Icons.description_outlined, key: HomeScreen.contractsKey(project.id).icon),
+                  label: Text(words.contractsTitle, key: HomeScreen.contractsKey(project.id).label),
                   onPressed: onContracts,
                 ),
                 TextButton.icon(
                   key: HomeScreen.revenueKey(project.id),
-                  icon: const Icon(Icons.trending_up),
-                  label: Text(words.revenueTitle),
+                  icon: Icon(Icons.trending_up, key: HomeScreen.revenueKey(project.id).icon),
+                  label: Text(words.revenueTitle, key: HomeScreen.revenueKey(project.id).label),
                   onPressed: onRevenue,
                 ),
                 TextButton.icon(
                   key: HomeScreen.reportsKey(project.id),
-                  icon: const Icon(Icons.summarize_outlined),
-                  label: Text(words.reportsTitle),
+                  icon: Icon(Icons.summarize_outlined, key: HomeScreen.reportsKey(project.id).icon),
+                  label: Text(words.reportsTitle, key: HomeScreen.reportsKey(project.id).label),
                   onPressed: onReports,
                 ),
                 TextButton.icon(
                   key: HomeScreen.settingsKey(project.id),
-                  icon: const Icon(Icons.tune),
-                  label: Text(words.settingsTitle),
+                  icon: Icon(Icons.tune, key: HomeScreen.settingsKey(project.id).icon),
+                  label: Text(words.settingsTitle, key: HomeScreen.settingsKey(project.id).label),
                   onPressed: onSettings,
                 ),
                 if (project.may(Permission.approveEntries))
                   TextButton.icon(
                     key: HomeScreen.approvalsKey(project.id),
-                    icon: const Icon(Icons.fact_check_outlined),
-                    label: Text(words.approvalsTitle),
+                    icon: Icon(Icons.fact_check_outlined, key: HomeScreen.approvalsKey(project.id).icon),
+                    label: Text(words.approvalsTitle, key: HomeScreen.approvalsKey(project.id).label),
                     onPressed: onApprovals,
                   ),
                 TextButton.icon(
                   key: HomeScreen.documentsKey(project.id),
-                  icon: const Icon(Icons.folder_outlined),
-                  label: Text(words.documentsTitle),
+                  icon: Icon(Icons.folder_outlined, key: HomeScreen.documentsKey(project.id).icon),
+                  label: Text(words.documentsTitle, key: HomeScreen.documentsKey(project.id).label),
                   onPressed: onDocuments,
                 ),
                 if (project.may(Permission.moveMoney))
                   TextButton.icon(
                     key: HomeScreen.liquidateKey(project.id),
-                    icon: const Icon(Icons.request_quote_outlined),
-                    label: Text(words.liquidationTitle),
+                    icon: Icon(Icons.request_quote_outlined, key: HomeScreen.liquidateKey(project.id).icon),
+                    label: Text(words.liquidationTitle, key: HomeScreen.liquidateKey(project.id).label),
                     onPressed: onLiquidate,
                   ),
                 if (mayChange) ...[
                   TextButton.icon(
                     key: HomeScreen.addUnitKey(project.id),
-                    icon: const Icon(Icons.add),
-                    label: Text(words.projectsAddUnit),
+                    icon: Icon(Icons.add, key: HomeScreen.addUnitKey(project.id).icon),
+                    label: Text(words.projectsAddUnit, key: HomeScreen.addUnitKey(project.id).label),
                     onPressed: onAddUnit,
                   ),
                   TextButton.icon(
                     key: HomeScreen.renameKey(project.id),
-                    icon: const Icon(Icons.edit_outlined),
-                    label: Text(words.projectsRename),
+                    icon: Icon(Icons.edit_outlined, key: HomeScreen.renameKey(project.id).icon),
+                    label: Text(words.projectsRename, key: HomeScreen.renameKey(project.id).label),
                     onPressed: onRename,
                   ),
                   TextButton(
                     key: HomeScreen.closeKey(project.id),
                     style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
                     onPressed: onClose,
-                    child: Text(words.projectsClose),
+                    child: Text(words.projectsClose, key: HomeScreen.closeKey(project.id).label),
                   ),
                 ],
               ],

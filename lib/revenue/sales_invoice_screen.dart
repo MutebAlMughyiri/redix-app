@@ -9,7 +9,9 @@ import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/entry_field.dart';
 import '../ui/labelled_chips.dart';
+import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
+import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'revenue_row.dart';
@@ -49,6 +51,15 @@ class SalesInvoiceScreen extends StatefulWidget {
 
   /// The choice of the sale [id] already recorded.
   static Key saleKey(String id) => Key('salesInvoice.sale.$id');
+
+  /// The invoice's date.
+  static const dateKey = Key('salesInvoice.date');
+
+  /// The choice of the sale it is for.
+  static const saleChoiceKey = Key('salesInvoice.saleChoice');
+
+  /// The choice of the account it was paid into.
+  static const accountChoiceKey = Key('salesInvoice.accountChoice');
 
   /// The project.
   final Project project;
@@ -118,7 +129,7 @@ class _SalesInvoiceScreenState extends State<SalesInvoiceScreen> {
       return;
     }
     if (refusal.isEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(words.revenueSaved)));
+      showMessage(messenger, words, 'revenue.saved');
       context.pop(true);
       return;
     }
@@ -146,10 +157,11 @@ class _SalesInvoiceScreenState extends State<SalesInvoiceScreen> {
                 entryField(key: SalesInvoiceScreen.buyerKey, controller: _buyer, label: words.revenueBuyer, onChanged: (_) {}),
                 entryField(key: SalesInvoiceScreen.buyerVatNumberKey, controller: _buyerVatNumber, label: words.revenueBuyerVatNumber, isNumber: true, onChanged: (_) {}),
                 entryField(key: SalesInvoiceScreen.numberKey, controller: _number, label: words.revenueInvoiceNumber, onChanged: (_) {}),
-                PickerField(label: words.revenueInvoiceDate, value: formatDate(_date), onTap: _chooseDate),
+                PickerField(key: SalesInvoiceScreen.dateKey, label: words.revenueInvoiceDate, value: formatDate(_date), onTap: _chooseDate),
                 entryField(key: SalesInvoiceScreen.amountKey, controller: _amount, label: words.revenueTotal, isNumber: true, onChanged: (_) {}),
                 if (openSales.isNotEmpty)
                   LabelledChips<RevenueRow>(
+                    key: SalesInvoiceScreen.saleChoiceKey,
                     label: words.revenueSale,
                     choices: openSales,
                     keyOf: (row) => SalesInvoiceScreen.saleKey(row.id),
@@ -159,6 +171,7 @@ class _SalesInvoiceScreenState extends State<SalesInvoiceScreen> {
                   ),
                 if (_saleId.isEmpty)
                   LabelledChips<Account>(
+                    key: SalesInvoiceScreen.accountChoiceKey,
                     label: words.revenueAccount,
                     choices: widget.accounts.bankAndCash,
                     keyOf: (account) => SalesInvoiceScreen.accountKey(account.id),
@@ -167,7 +180,7 @@ class _SalesInvoiceScreenState extends State<SalesInvoiceScreen> {
                     onChosen: (account) => setState(() => _accountId = account.id),
                   ),
                 if (_message.isNotEmpty) Text(words.text(_message), key: SalesInvoiceScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-                FilledButton(key: SalesInvoiceScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.revenueSave)),
+                FilledButton(key: SalesInvoiceScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.revenueSave, key: SalesInvoiceScreen.saveKey.label)),
               ],
             );
           },

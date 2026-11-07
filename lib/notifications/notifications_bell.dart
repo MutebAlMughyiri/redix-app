@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'notifications.dart';
 import 'notifications_screen.dart';
@@ -35,7 +36,7 @@ class _NotificationsBellState extends State<NotificationsBell> {
         final unread = widget.notifications.unread;
         return IconButton(
           key: NotificationsBell.buttonKey,
-          icon: Badge.count(count: unread, isLabelVisible: unread > 0, child: const Icon(Icons.notifications_outlined)),
+          icon: Badge.count(key: NotificationsBell.buttonKey.label, count: unread, isLabelVisible: unread > 0, child: Icon(Icons.notifications_outlined, key: NotificationsBell.buttonKey.icon)),
           tooltip: Words.of(context).notificationsTitle,
           onPressed: () => context.push(NotificationsScreen.path),
         );

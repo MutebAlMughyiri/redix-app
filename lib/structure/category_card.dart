@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
 import '../ui/name_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'add_item_dialog.dart';
@@ -50,25 +51,25 @@ class CategoryCard extends StatelessWidget {
         children: [
           TextButton.icon(
             key: CategoriesScreen.addItemKey(category.id),
-            icon: const Icon(Icons.add),
-            label: Text(words.categoriesAddItem),
+            icon: Icon(Icons.add, key: CategoriesScreen.addItemKey(category.id).icon),
+            label: Text(words.categoriesAddItem, key: CategoriesScreen.addItemKey(category.id).label),
             onPressed: () => showDialog<void>(
               context: context,
               builder: (_) => AddItemDialog(category: category, categories: categories),
             ),
           ),
-          TextButton(key: CategoriesScreen.renameCategoryKey(category.id), onPressed: () => _askForName(context), child: Text(words.categoriesRename)),
+          TextButton(key: CategoriesScreen.renameCategoryKey(category.id), onPressed: () => _askForName(context), child: Text(words.categoriesRename, key: CategoriesScreen.renameCategoryKey(category.id).label)),
           if (category.isActive)
             TextButton(
               key: CategoriesScreen.disableCategoryKey(category.id),
               onPressed: () => showRefusalOf(context, categories.disableCategory(category)),
-              child: Text(words.categoriesDisable),
+              child: Text(words.categoriesDisable, key: CategoriesScreen.disableCategoryKey(category.id).label),
             )
           else
             TextButton(
               key: CategoriesScreen.enableCategoryKey(category.id),
               onPressed: () => showRefusalOf(context, categories.enableCategory(category)),
-              child: Text(words.categoriesEnable),
+              child: Text(words.categoriesEnable, key: CategoriesScreen.enableCategoryKey(category.id).label),
             ),
         ],
       ),
@@ -81,13 +82,14 @@ class CategoryCard extends StatelessWidget {
     final mayChange = project.mayChangeStructure;
     final colors = Theme.of(context).colorScheme;
     return Card.outlined(
+      key: CategoriesScreen.cardKey(category.id).card,
       margin: const EdgeInsets.only(bottom: 12),
       clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
         key: CategoriesScreen.categoryTileKey(category.id),
         shape: const Border(),
         leading: mayChange
-            ? ReorderableDragStartListener(key: CategoriesScreen.categoryHandleKey(category.id), index: index, child: const Icon(Icons.drag_indicator))
+            ? ReorderableDragStartListener(key: CategoriesScreen.categoryHandleKey(category.id), index: index, child: Icon(Icons.drag_indicator, key: CategoriesScreen.categoryHandleKey(category.id).icon))
             : null,
         title: Text(
           category.name,
@@ -100,7 +102,7 @@ class CategoryCard extends StatelessWidget {
         ),
         children: [
           if (mayChange) _actions(context),
-          if (category.items.isEmpty) ListTile(dense: true, title: Text(words.categoriesNoItems, key: CategoriesScreen.noItemsKey(category.id))),
+          if (category.items.isEmpty) ListTile(key: CategoriesScreen.noItemsRowKey(category.id), dense: true, title: Text(words.categoriesNoItems, key: CategoriesScreen.noItemsKey(category.id))),
           ReorderableListView(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),

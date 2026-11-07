@@ -11,6 +11,12 @@ class ScreenTitle extends StatelessWidget {
   /// What it belongs to.
   final String subject;
 
+  /// The screen's title.
+  static const titleKey = Key('screen.title');
+
+  /// What the screen belongs to.
+  static const subjectKey = Key('screen.subject');
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -18,8 +24,8 @@ class ScreenTitle extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: theme.textTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
-        Text(subject, style: theme.textTheme.bodySmall, maxLines: 1, overflow: TextOverflow.ellipsis),
+        Text(title, key: titleKey, style: theme.textTheme.titleMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+        Text(subject, key: subjectKey, style: theme.textTheme.bodySmall, maxLines: 1, overflow: TextOverflow.ellipsis),
       ],
     );
   }

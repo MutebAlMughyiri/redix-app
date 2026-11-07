@@ -6,6 +6,7 @@ import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'payment_method_row.dart';
@@ -70,6 +71,9 @@ class PaymentMethodsScreen extends StatefulWidget {
   /// The menu of the payment method [id].
   static Key menuKey(String id) => Key('paymentMethods.menu.$id');
 
+  /// The row of the payment method [id].
+  static Key rowKey(String id) => Key('paymentMethods.row.$id');
+
   @override
   State<PaymentMethodsScreen> createState() => _PaymentMethodsScreenState();
 }
@@ -91,9 +95,9 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
       floatingActionButton: project.mayManageSettings
           ? FloatingActionButton.extended(
               key: PaymentMethodsScreen.addKey,
-              icon: const Icon(Icons.add),
+              icon: Icon(Icons.add, key: PaymentMethodsScreen.addKey.icon),
               tooltip: words.paymentMethodsNew,
-              label: Text(words.commonAdd),
+              label: Text(words.commonAdd, key: PaymentMethodsScreen.addKey.label),
               onPressed: () => showDialog<void>(
                 context: context,
                 builder: (_) => NameDialog(title: words.paymentMethodsNew, label: words.paymentMethodsName, saveLabel: words.paymentMethodsNew, onSave: paymentMethods.add),

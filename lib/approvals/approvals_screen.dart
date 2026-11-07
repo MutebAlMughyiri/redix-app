@@ -7,8 +7,10 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
+import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
+import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'approvals.dart';
 import 'pending_approval.dart';
@@ -67,6 +69,33 @@ class ApprovalsScreen extends StatefulWidget {
   /// The quick reason at [index].
   static Key quickReasonKey(int index) => Key('approvals.quickReason.$index');
 
+  /// The item of the entry [id].
+  static Key itemKey(String id) => Key('approvals.item.$id');
+
+  /// The supplier of the entry [id].
+  static Key supplierKey(String id) => Key('approvals.supplier.$id');
+
+  /// The bill number and date of the entry [id].
+  static Key dateKey(String id) => Key('approvals.date.$id');
+
+  /// Who entered the entry [id], and from which account.
+  static Key enteredByKey(String id) => Key('approvals.enteredBy.$id');
+
+  /// The notes of the entry [id].
+  static Key notesKey(String id) => Key('approvals.notes.$id');
+
+  /// The amount of the entry [id].
+  static Key amountKey(String id) => Key('approvals.amount.$id');
+
+  /// The title of the reject sheet.
+  static const rejectTitleKey = Key('approvals.rejectTitle');
+
+  /// The entry the reject sheet is about.
+  static const rejectEntryKey = Key('approvals.rejectEntry');
+
+  /// The heading over the quick reasons.
+  static const quickReasonHeadingKey = Key('approvals.quickReasonHeading');
+
   /// The project.
   final Project project;
 
@@ -104,7 +133,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
       return;
     }
     if (refusal.isNotEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(words.text(refusal))));
+      showMessage(messenger, words, refusal);
       return;
     }
     setState(() {
@@ -134,12 +163,12 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 2,
       children: [
-        Text(entry.itemName, style: theme.textTheme.titleSmall),
-        if (entry.supplierName.isNotEmpty) Text(entry.supplierName),
-        Text([if (entry.invoiceNumber.isNotEmpty) entry.invoiceNumber, formatDate(entry.date)].join(' · '), style: small),
-        Text('${words.approvalsEnteredBy}: ${entry.authorName} · ${entry.accountName}', style: small),
-        if (entry.notes.isNotEmpty) Text(entry.notes, style: small),
-        Text(formatMoney(entry.amount), style: theme.textTheme.titleMedium),
+        Text(entry.itemName, key: ApprovalsScreen.itemKey(entry.id), style: theme.textTheme.titleSmall),
+        if (entry.supplierName.isNotEmpty) Text(entry.supplierName, key: ApprovalsScreen.supplierKey(entry.id)),
+        Text([if (entry.invoiceNumber.isNotEmpty) entry.invoiceNumber, formatDate(entry.date)].join(' · '), key: ApprovalsScreen.dateKey(entry.id), style: small),
+        Text('${words.approvalsEnteredBy}: ${entry.authorName} · ${entry.accountName}', key: ApprovalsScreen.enteredByKey(entry.id), style: small),
+        if (entry.notes.isNotEmpty) Text(entry.notes, key: ApprovalsScreen.notesKey(entry.id), style: small),
+        Text(formatMoney(entry.amount), key: ApprovalsScreen.amountKey(entry.id), style: theme.textTheme.titleMedium),
       ],
     );
   }
@@ -156,7 +185,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
           : SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(8),
-                child: FilledButton(key: ApprovalsScreen.approveSelectedKey, onPressed: () => _approve(_selected.toList()), child: Text('${words.approvalsApproveSelected} · ${_selected.length}')),
+                child: FilledButton(key: ApprovalsScreen.approveSelectedKey, onPressed: () => _approve(_selected.toList()), child: Text('${words.approvalsApproveSelected} · ${_selected.length}', key: ApprovalsScreen.approveSelectedKey.label)),
               ),
             ),
       body: Column(
@@ -173,7 +202,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
                     (_Filter.purchases, ApprovalsScreen.purchasesKey, words.approvalsPurchases),
                     (_Filter.contractorPayments, ApprovalsScreen.contractorPaymentsKey, words.approvalsContractorPayments),
                   ])
-                    ChoiceChip(key: key, label: Text(label), selected: _filter == filter, onSelected: (_) => setState(() => _filter = filter)),
+                    ChoiceChip(key: key, label: Text(label, key: key.label), selected: _filter == filter, onSelected: (_) => setState(() => _filter = filter)),
                 ],
               ),
             ),
@@ -215,16 +244,16 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
                                   TextButton(
                                     key: ApprovalsScreen.fileKey(entry.id),
                                     onPressed: () => context.push(AttachmentScreen.pathOf(widget.project.id, entry.attachmentId), extra: entry.contentType),
-                                    child: Text(words.approvalsOpenFile),
+                                    child: Text(words.approvalsOpenFile, key: ApprovalsScreen.fileKey(entry.id).label),
                                   ),
                                 if (mayDecide) ...[
                                   OutlinedButton(
                                     key: ApprovalsScreen.rejectKey(entry.id),
                                     style: OutlinedButton.styleFrom(foregroundColor: colors.error),
                                     onPressed: () => _askToReject(entry),
-                                    child: Text(words.approvalsReject),
+                                    child: Text(words.approvalsReject, key: ApprovalsScreen.rejectKey(entry.id).label),
                                   ),
-                                  FilledButton(key: ApprovalsScreen.approveKey(entry.id), onPressed: () => _approve([entry.id]), child: Text(words.approvalsApprove)),
+                                  FilledButton(key: ApprovalsScreen.approveKey(entry.id), onPressed: () => _approve([entry.id]), child: Text(words.approvalsApprove, key: ApprovalsScreen.approveKey(entry.id).label)),
                                 ],
                               ],
                             ),

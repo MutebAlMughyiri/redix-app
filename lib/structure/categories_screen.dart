@@ -4,6 +4,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
@@ -122,6 +123,18 @@ class CategoriesScreen extends StatefulWidget {
   /// The menu of the item [id].
   static Key itemMenuKey(String id) => Key('categories.itemMenu.$id');
 
+  /// The row saying the category [id] has no items.
+  static Key noItemsRowKey(String id) => Key('categories.noItemsRow.$id');
+
+  /// The heading over the side, in the item dialogs.
+  static const sideHeadingKey = Key('categories.sideHeading');
+
+  /// The heading over the item types, in the item dialogs.
+  static const typeHeadingKey = Key('categories.typeHeading');
+
+  /// The choice of an item's side: expenses or revenue.
+  static const sideChoiceKey = Key('categories.sideChoice');
+
   @override
   State<CategoriesScreen> createState() => _CategoriesScreenState();
 }
@@ -143,8 +156,8 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
       floatingActionButton: project.mayChangeStructure
           ? FloatingActionButton.extended(
               key: CategoriesScreen.addCategoryKey,
-              icon: const Icon(Icons.add),
-              label: Text(words.categoriesNew),
+              icon: Icon(Icons.add, key: CategoriesScreen.addCategoryKey.icon),
+              label: Text(words.categoriesNew, key: CategoriesScreen.addCategoryKey.label),
               onPressed: () => showDialog<void>(
                 context: context,
                 builder: (_) => NameDialog(

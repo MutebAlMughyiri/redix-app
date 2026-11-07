@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../words/words.dart';
+import 'part_keys.dart';
 
 /// A dialog that sends a change: it closes once saved, and a refusal stays in it with what was typed.
 class ChangeDialog extends StatefulWidget {
@@ -24,6 +25,15 @@ class ChangeDialog extends StatefulWidget {
 
   /// The line that says why the change was refused.
   static const messageKey = Key('change.message');
+
+  /// The dialog.
+  static const dialogKey = Key('change.dialog');
+
+  /// Its title.
+  static const titleKey = Key('change.title');
+
+  /// The button that closes it unchanged.
+  static const cancelKey = Key('change.cancel');
 
   @override
   State<ChangeDialog> createState() => _ChangeDialogState();
@@ -53,7 +63,8 @@ class _ChangeDialogState extends State<ChangeDialog> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return AlertDialog(
-      title: Text(widget.title),
+      key: ChangeDialog.dialogKey,
+      title: Text(widget.title, key: ChangeDialog.titleKey),
       content: SingleChildScrollView(
         padding: const EdgeInsets.only(top: 8),
         child: Column(
@@ -73,8 +84,8 @@ class _ChangeDialogState extends State<ChangeDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: Navigator.of(context).pop, child: Text(words.commonCancel)),
-        FilledButton(key: ChangeDialog.saveKey, onPressed: _saving ? null : _save, child: Text(widget.saveLabel)),
+        TextButton(key: ChangeDialog.cancelKey, onPressed: Navigator.of(context).pop, child: Text(words.commonCancel, key: ChangeDialog.cancelKey.label)),
+        FilledButton(key: ChangeDialog.saveKey, onPressed: _saving ? null : _save, child: Text(widget.saveLabel, key: ChangeDialog.saveKey.label)),
       ],
     );
   }

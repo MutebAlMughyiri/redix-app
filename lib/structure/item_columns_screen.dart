@@ -4,6 +4,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
@@ -118,6 +119,15 @@ class ItemColumnsScreen extends StatefulWidget {
   /// The button that deletes the column [id].
   static Key deleteKey(String id) => Key('columns.delete.$id');
 
+  /// The choice of the data type [dataType], in the add dialog.
+  static Key dataTypeOptionKey(ColumnDataType dataType) => Key('columns.dataTypeOption.${dataType.name}');
+
+  /// The note saying the column [id] is built in.
+  static Key coreKey(String id) => Key('columns.core.$id');
+
+  /// The choice of changing the template's columns or this item's.
+  static const scopeKey = Key('columns.scope');
+
   @override
   State<ItemColumnsScreen> createState() => _ItemColumnsScreenState();
 }
@@ -181,8 +191,8 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
       floatingActionButton: mayChange
           ? FloatingActionButton.extended(
               key: ItemColumnsScreen.addKey,
-              icon: const Icon(Icons.add),
-              label: Text(words.columnsNew),
+              icon: Icon(Icons.add, key: ItemColumnsScreen.addKey.icon),
+              label: Text(words.columnsNew, key: ItemColumnsScreen.addKey.label),
               tooltip: widget.item.type.isRevenue ? words.columnsRevenueTakesNoColumns : words.columnsNew,
               onPressed: widget.item.type.isRevenue
                   ? null
@@ -206,6 +216,7 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SegmentedButton<bool>(
+              key: ItemColumnsScreen.scopeKey,
               showSelectedIcon: false,
               segments: [
                 ButtonSegment(value: true, label: Text(words.columnsTemplate, key: ItemColumnsScreen.templateKey)),

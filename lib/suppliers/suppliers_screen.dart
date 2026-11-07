@@ -4,6 +4,7 @@ import '../projects/project.dart';
 import '../structure/offered_items.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
@@ -80,6 +81,9 @@ class SuppliersScreen extends StatefulWidget {
   /// The menu of the supplier [id].
   static Key menuKey(String id) => Key('suppliers.menu.$id');
 
+  /// The row of the supplier [id].
+  static Key rowKey(String id) => Key('suppliers.row.$id');
+
   @override
   State<SuppliersScreen> createState() => _SuppliersScreenState();
 }
@@ -104,8 +108,8 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
       floatingActionButton: project.mayManageSettings
           ? FloatingActionButton.extended(
               key: SuppliersScreen.addKey,
-              icon: const Icon(Icons.add),
-              label: Text(words.suppliersNew),
+              icon: Icon(Icons.add, key: SuppliersScreen.addKey.icon),
+              label: Text(words.suppliersNew, key: SuppliersScreen.addKey.label),
               onPressed: () => showDialog<void>(
                 context: context,
                 builder: (_) => SupplierDialog(supplier: Supplier.none(), suppliers: suppliers, items: widget.items),

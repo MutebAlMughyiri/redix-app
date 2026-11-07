@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'quick_add_supplier_dialog.dart';
 import 'supplier.dart';
@@ -48,6 +49,9 @@ class SupplierPicker extends StatefulWidget {
 
   /// What the sheet says about the supplier [id].
   static Key detailsKey(String id) => Key('supplierPicker.details.$id');
+
+  /// The sheet's title.
+  static const titleKey = Key('supplierPicker.title');
 
   /// Opens the sheet over [context], picking from the [suppliers] of [project]. Answers the supplier picked, with its VAT number, or no supplier when closed without picking.
   static Future<Supplier> show(BuildContext context, Project project, Suppliers suppliers) async =>
@@ -105,7 +109,7 @@ class _SupplierPickerState extends State<SupplierPicker> {
               padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 8, 8),
               child: Row(
                 children: [
-                  Expanded(child: Text(words.suppliersPick, style: Theme.of(context).textTheme.titleLarge)),
+                  Expanded(child: Text(words.suppliersPick, key: SupplierPicker.titleKey, style: Theme.of(context).textTheme.titleLarge)),
                   const CloseButton(key: SupplierPicker.closeKey),
                 ],
               ),
@@ -116,7 +120,7 @@ class _SupplierPickerState extends State<SupplierPicker> {
                 key: SupplierPicker.searchKey,
                 controller: _typed,
                 onChanged: _search.find,
-                decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: words.suppliersSearchHint, border: const OutlineInputBorder()),
+                decoration: InputDecoration(prefixIcon: Icon(Icons.search, key: SupplierPicker.searchKey.icon), hintText: words.suppliersSearchHint, border: const OutlineInputBorder()),
               ),
             ),
             ListenableBuilder(
@@ -138,7 +142,7 @@ class _SupplierPickerState extends State<SupplierPicker> {
                 itemBuilder: (supplier) => ListTile(
                   key: SupplierPicker.rowKey(supplier.id),
                   contentPadding: EdgeInsets.zero,
-                  title: Text(supplier.name),
+                  title: Text(supplier.name, key: SupplierPicker.rowKey(supplier.id).title),
                   subtitle: Text(supplier.detailsIn(words), key: SupplierPicker.detailsKey(supplier.id)),
                   onTap: () => Navigator.of(context).pop(supplier),
                 ),
@@ -149,7 +153,7 @@ class _SupplierPickerState extends State<SupplierPicker> {
                 padding: const EdgeInsets.all(16),
                 child: SizedBox(
                   width: double.infinity,
-                  child: OutlinedButton.icon(key: SupplierPicker.quickAddKey, icon: const Icon(Icons.add), label: Text(words.suppliersQuickAdd), onPressed: _quickAdd),
+                  child: OutlinedButton.icon(key: SupplierPicker.quickAddKey, icon: Icon(Icons.add, key: SupplierPicker.quickAddKey.icon), label: Text(words.suppliersQuickAdd, key: SupplierPicker.quickAddKey.label), onPressed: _quickAdd),
                 ),
               ),
           ],

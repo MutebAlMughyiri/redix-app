@@ -4,6 +4,7 @@ import '../contracts/contract.dart';
 import '../format/number_format.dart';
 import '../words/words.dart';
 import '../entries/add_entry_screen.dart';
+import '../ui/part_keys.dart';
 
 /// What the chosen contract stands at with this payment, before it is saved (AC-12.1): its value, what was paid, what waits, what remains after it, and the alert of an overrun.
 class ContractFigures extends StatelessWidget {
@@ -20,7 +21,7 @@ class ContractFigures extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: theme.textTheme.bodySmall),
+        Text(label, key: key.label, style: theme.textTheme.bodySmall),
         Text(figure, key: key, style: theme.textTheme.titleSmall?.copyWith(color: color)),
       ],
     ),

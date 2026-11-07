@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'user.dart';
 import 'users_screen.dart';
@@ -43,7 +44,8 @@ class UserRow extends StatelessWidget {
       key: UsersScreen.rowKey(user.id),
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: CircleAvatar(child: Text(user.displayName.characters.take(1).toString())),
+        key: UsersScreen.rowKey(user.id).body,
+        leading: CircleAvatar(key: UsersScreen.rowKey(user.id).icon, child: Text(user.displayName.characters.take(1).toString(), key: UsersScreen.rowKey(user.id).label)),
         title: Wrap(
           spacing: 8,
           crossAxisAlignment: WrapCrossAlignment.center,
@@ -56,7 +58,7 @@ class UserRow extends StatelessWidget {
             if (!user.isActive)
               Chip(
                 key: UsersScreen.statusKey(user.id),
-                label: Text(words.usersDisabled),
+                label: Text(words.usersDisabled, key: UsersScreen.statusKey(user.id).label),
                 backgroundColor: colors.surfaceContainerHighest,
                 side: BorderSide.none,
                 visualDensity: VisualDensity.compact,
@@ -74,13 +76,13 @@ class UserRow extends StatelessWidget {
           key: UsersScreen.menuKey(user.id),
           onSelected: (action) => action(),
           itemBuilder: (context) => [
-            PopupMenuItem(key: UsersScreen.editKey, value: onEdit, child: Text(words.usersEdit)),
-            PopupMenuItem(key: UsersScreen.permissionsKey, value: onPermissions, child: Text(words.permissionsTitle)),
-            PopupMenuItem(key: UsersScreen.resetPasswordKey, value: onResetPassword, child: Text(words.usersResetPassword)),
+            PopupMenuItem(key: UsersScreen.editKey, value: onEdit, child: Text(words.usersEdit, key: UsersScreen.editKey.label)),
+            PopupMenuItem(key: UsersScreen.permissionsKey, value: onPermissions, child: Text(words.permissionsTitle, key: UsersScreen.permissionsKey.label)),
+            PopupMenuItem(key: UsersScreen.resetPasswordKey, value: onResetPassword, child: Text(words.usersResetPassword, key: UsersScreen.resetPasswordKey.label)),
             if (user.isActive)
-              PopupMenuItem(key: UsersScreen.disableKey, value: onDisable, child: Text(words.usersDisable))
+              PopupMenuItem(key: UsersScreen.disableKey, value: onDisable, child: Text(words.usersDisable, key: UsersScreen.disableKey.label))
             else
-              PopupMenuItem(key: UsersScreen.enableKey, value: onEnable, child: Text(words.usersEnable)),
+              PopupMenuItem(key: UsersScreen.enableKey, value: onEnable, child: Text(words.usersEnable, key: UsersScreen.enableKey.label)),
           ],
         ),
       ),

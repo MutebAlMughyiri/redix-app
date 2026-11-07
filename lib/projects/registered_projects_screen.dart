@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import '../format/date_format.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/refresh_button.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'registered_project.dart';
 import 'registered_projects.dart';
@@ -57,6 +59,9 @@ class RegisteredProjectsScreen extends StatefulWidget {
   /// The button that rejects the project [id].
   static Key rejectKey(String id) => Key('registered.reject.$id');
 
+  /// The name of the project [id].
+  static Key nameKey(String id) => Key('registered.name.$id');
+
   @override
   State<RegisteredProjectsScreen> createState() => _RegisteredProjectsScreenState();
 }
@@ -82,7 +87,7 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(project.name, style: theme.textTheme.titleMedium),
+                Text(project.name, key: RegisteredProjectsScreen.nameKey(project.id), style: theme.textTheme.titleMedium),
                 Text(details, key: RegisteredProjectsScreen.detailsKey(project.id), style: theme.textTheme.bodySmall),
                 Text(manager, key: RegisteredProjectsScreen.managerKey(project.id), style: theme.textTheme.bodySmall),
               ],
@@ -97,7 +102,7 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
                 TextButton(
                   key: RegisteredProjectsScreen.approveKey(project.id),
                   onPressed: () => showRefusalOf(context, widget.projects.approve(project)),
-                  child: Text(words.registeredApprove),
+                  child: Text(words.registeredApprove, key: RegisteredProjectsScreen.approveKey(project.id).label),
                 ),
                 TextButton(
                   key: RegisteredProjectsScreen.rejectKey(project.id),
@@ -106,7 +111,7 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
                     context: context,
                     builder: (_) => RejectProjectDialog(project: project, projects: widget.projects),
                   ),
-                  child: Text(words.registeredReject),
+                  child: Text(words.registeredReject, key: RegisteredProjectsScreen.rejectKey(project.id).label),
                 ),
               ],
             ),
@@ -121,7 +126,7 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
     final words = Words.of(context);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(words.registeredTitle), actions: [RefreshButton(onRefresh: widget.projects.load)]),
+      appBar: AppBar(title: Text(words.registeredTitle, key: ScreenTitle.titleKey), actions: [RefreshButton(onRefresh: widget.projects.load)]),
       body: ApiListBody(
         list: widget.projects,
         emptyText: words.registeredEmpty,

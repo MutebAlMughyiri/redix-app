@@ -19,6 +19,9 @@ import '../structure/item_picker.dart';
 import '../structure/offered_items.dart';
 import '../ui/form_section.dart';
 import '../ui/labelled_chips.dart';
+import '../ui/part_keys.dart';
+import '../ui/refusal_snack_bar.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'attachable_entries.dart';
 import 'attachable_entry.dart';
@@ -72,6 +75,33 @@ class ShareScreen extends StatefulWidget {
 
   /// The mark on the expense [id] that matches the QR code.
   static Key matchingKey(String id) => Key('share.matching.$id');
+
+  /// The choice of the project the file goes to.
+  static const projectChoiceKey = Key('share.projectChoice');
+
+  /// The section asking what the file is for.
+  static const forSectionKey = Key('share.forSection');
+
+  /// The heading over the expenses a file can go to.
+  static const expenseHeadingKey = Key('share.expenseHeading');
+
+  /// Why the expenses could not be read.
+  static const entriesMessageKey = Key('share.entriesMessage');
+
+  /// The line saying no expense waits for a file.
+  static const emptyKey = Key('share.empty');
+
+  /// The file shared, when it is a PDF.
+  static const fileKey = Key('share.file');
+
+  /// The line asking for an item first.
+  static const chooseItemKey = Key('share.chooseItem');
+
+  /// The spinner while the projects are read.
+  static const loadingKey = Key('share.loading');
+
+  /// The picture shared, when it is one.
+  static const pictureKey = Key('share.picture');
 
   /// The shared file.
   final PickedFile file;
@@ -172,7 +202,7 @@ class _ShareScreenState extends State<ShareScreen> {
       return;
     }
     if (refusal.isEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(words.shareAttached)));
+      showMessage(messenger, words, 'share.attached');
       widget.onDone();
       return;
     }
@@ -203,13 +233,13 @@ class _ShareScreenState extends State<ShareScreen> {
       key: ShareScreen.entryKey(entry.id),
       value: entry.id,
       contentPadding: EdgeInsets.zero,
-      title: Text(title),
-      subtitle: Text('${entry.supplierName} · ${formatDate(entry.date)}'),
+      title: Text(title, key: ShareScreen.entryKey(entry.id).title),
+      subtitle: Text('${entry.supplierName} · ${formatDate(entry.date)}', key: ShareScreen.entryKey(entry.id).subtitle),
       secondary: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Text(formatMoney(entry.amount)),
+          Text(formatMoney(entry.amount), key: ShareScreen.entryKey(entry.id).trailing),
           if (entry.isMatching) Text(words.shareMatching, key: ShareScreen.matchingKey(entry.id), style: TextStyle(color: Theme.of(context).colorScheme.primary)),
         ],
       ),
@@ -236,9 +266,9 @@ class _ShareScreenState extends State<ShareScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 8,
           children: [
-            Text(words.shareExpense, style: Theme.of(context).textTheme.titleSmall),
-            if (entries.message.isNotEmpty) Text(words.text(entries.message)),
-            if (!entries.isLoading && entries.message.isEmpty && entries.all.isEmpty) Text(words.shareEmpty),
+            Text(words.shareExpense, key: ShareScreen.expenseHeadingKey, style: Theme.of(context).textTheme.titleSmall),
+            if (entries.message.isNotEmpty) Text(words.text(entries.message), key: ShareScreen.entriesMessageKey),
+            if (!entries.isLoading && entries.message.isEmpty && entries.all.isEmpty) Text(words.shareEmpty, key: ShareScreen.emptyKey),
             RadioGroup<String>(
               groupValue: _chosen,
               onChanged: (id) => setState(() => _chosen = id ?? ''),
@@ -246,7 +276,7 @@ class _ShareScreenState extends State<ShareScreen> {
             ),
             for (final entry in chosen) ..._differences(entry),
             if (_message.isNotEmpty) Text(words.text(_message), key: ShareScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-            if (chosen.isNotEmpty) FilledButton(key: ShareScreen.attachKey, onPressed: _saving ? null : _attach, child: Text(words.shareAttach)),
+            if (chosen.isNotEmpty) FilledButton(key: ShareScreen.attachKey, onPressed: _saving ? null : _attach, child: Text(words.shareAttach, key: ShareScreen.attachKey.label)),
           ],
         );
       },
@@ -271,10 +301,11 @@ class _ShareScreenState extends State<ShareScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 12,
         children: [
-          if (widget.file.isPdf) ListTile(leading: const Icon(Icons.picture_as_pdf_outlined), title: Text(widget.file.name)) else SizedBox(height: 160, child: Image.memory(widget.file.bytes, fit: BoxFit.contain)),
+          if (widget.file.isPdf) ListTile(key: ShareScreen.fileKey, leading: Icon(Icons.picture_as_pdf_outlined, key: ShareScreen.fileKey.icon), title: Text(widget.file.name, key: ShareScreen.fileKey.title)) else SizedBox(height: 160, child: Image.memory(widget.file.bytes, key: ShareScreen.pictureKey, fit: BoxFit.contain)),
           if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: false, onAddSupplier: () {}),
           if (_open.length > 1)
             LabelledChips(
+              key: ShareScreen.projectChoiceKey,
               label: words.shareProject,
               choices: _open,
               keyOf: (choice) => ShareScreen.projectKey(choice.id),
@@ -282,19 +313,19 @@ class _ShareScreenState extends State<ShareScreen> {
               isChosen: (choice) => choice.id == project.id,
               onChosen: _chooseProject,
             ),
-          FormSection([
+          FormSection(key: ShareScreen.forSectionKey, [
             Wrap(
               spacing: 8,
               children: [
-                ChoiceChip(key: ShareScreen.purchasesKey, label: Text(words.approvalsPurchases), selected: _type == ItemType.purchases, onSelected: (_) => _chooseType(ItemType.purchases)),
-                ChoiceChip(key: ShareScreen.contractorPaymentsKey, label: Text(words.approvalsContractorPayments), selected: _type == ItemType.contractorPayments, onSelected: (_) => _chooseType(ItemType.contractorPayments)),
+                ChoiceChip(key: ShareScreen.purchasesKey, label: Text(words.approvalsPurchases, key: ShareScreen.purchasesKey.label), selected: _type == ItemType.purchases, onSelected: (_) => _chooseType(ItemType.purchases)),
+                ChoiceChip(key: ShareScreen.contractorPaymentsKey, label: Text(words.approvalsContractorPayments, key: ShareScreen.contractorPaymentsKey.label), selected: _type == ItemType.contractorPayments, onSelected: (_) => _chooseType(ItemType.contractorPayments)),
               ],
             ),
             ItemPicker(key: ShareScreen.itemKey, items: _itemsOf(project), label: words.expensesItem, itemName: _item.name, onChanged: _chooseItem),
-            if (_item.id.isEmpty) Text(words.shareChooseItem) else _expenses(),
+            if (_item.id.isEmpty) Text(words.shareChooseItem, key: ShareScreen.chooseItemKey) else _expenses(),
           ]),
-          OutlinedButton(key: ShareScreen.newExpenseKey, onPressed: _newExpense, child: Text(words.shareNewExpense)),
-          if (project.mayMoveMoney) OutlinedButton(key: ShareScreen.capitalReceiptKey, onPressed: _capitalReceipt, child: Text(words.shareCapitalReceipt)),
+          OutlinedButton(key: ShareScreen.newExpenseKey, onPressed: _newExpense, child: Text(words.shareNewExpense, key: ShareScreen.newExpenseKey.label)),
+          if (project.mayMoveMoney) OutlinedButton(key: ShareScreen.capitalReceiptKey, onPressed: _capitalReceipt, child: Text(words.shareCapitalReceipt, key: ShareScreen.capitalReceiptKey.label)),
         ],
       ),
     );
@@ -306,8 +337,8 @@ class _ShareScreenState extends State<ShareScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: IconButton(key: ShareScreen.closeKey, icon: const Icon(Icons.close), onPressed: widget.onDone),
-        title: Text(words.shareTitle),
+        leading: IconButton(key: ShareScreen.closeKey, icon: Icon(Icons.close, key: ShareScreen.closeKey.icon), onPressed: widget.onDone),
+        title: Text(words.shareTitle, key: ScreenTitle.titleKey),
       ),
       body: ListenableBuilder(
         listenable: widget.projects,
@@ -315,7 +346,7 @@ class _ShareScreenState extends State<ShareScreen> {
           if (_open.isNotEmpty) {
             return _body();
           }
-          return widget.projects.isLoading ? const Center(child: CircularProgressIndicator()) : Center(child: Text(widget.projects.message.isEmpty ? words.shareNoProject : words.text(widget.projects.message), key: ShareScreen.noProjectKey));
+          return widget.projects.isLoading ? const Center(child: CircularProgressIndicator(key: ShareScreen.loadingKey)) : Center(child: Text(widget.projects.message.isEmpty ? words.shareNoProject : words.text(widget.projects.message), key: ShareScreen.noProjectKey));
         },
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 
 /// Asks why something approved is reversed (FR-50), and reverses it.
@@ -12,6 +13,15 @@ class ReverseSheet extends StatefulWidget {
 
   /// The button reversing it.
   static const sendKey = Key('entries.reverseSend');
+
+  /// The title.
+  static const titleKey = Key('entries.reverseTitle');
+
+  /// What reversing does.
+  static const explainKey = Key('entries.reverseExplain');
+
+  /// Why the reversal was refused.
+  static const messageKey = Key('entries.reverseMessage');
 
   /// Opens the sheet over [context].
   static void show(BuildContext context, Future<String> Function(String reason) onReverse) {
@@ -67,16 +77,16 @@ class _ReverseSheetState extends State<ReverseSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 12,
           children: [
-            Text(words.entriesReverseTitle, style: theme.textTheme.titleLarge),
-            Text(words.entriesReverseExplain),
+            Text(words.entriesReverseTitle, key: ReverseSheet.titleKey, style: theme.textTheme.titleLarge),
+            Text(words.entriesReverseExplain, key: ReverseSheet.explainKey),
             TextField(
               key: ReverseSheet.reasonKey,
               controller: _reason,
               maxLines: 2,
               decoration: InputDecoration(labelText: words.entriesReverseReason, border: const OutlineInputBorder()),
             ),
-            if (_message.isNotEmpty) Text(words.text(_message), style: TextStyle(color: theme.colorScheme.error)),
-            FilledButton(key: ReverseSheet.sendKey, onPressed: _saving ? null : _reverse, child: Text(words.entriesReverse)),
+            if (_message.isNotEmpty) Text(words.text(_message), key: ReverseSheet.messageKey, style: TextStyle(color: theme.colorScheme.error)),
+            FilledButton(key: ReverseSheet.sendKey, onPressed: _saving ? null : _reverse, child: Text(words.entriesReverse, key: ReverseSheet.sendKey.label)),
           ],
         ),
       ),

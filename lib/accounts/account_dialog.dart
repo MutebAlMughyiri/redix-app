@@ -4,6 +4,7 @@ import '../format/number_format.dart';
 import '../projects/member_picker.dart';
 import '../projects/members.dart';
 import '../ui/change_dialog.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'account.dart';
 import 'accounts.dart';
@@ -61,14 +62,14 @@ class _AccountDialogState extends State<AccountDialog> {
       onSave: _save,
       children: [
         if (_isNew) ...[
-          Text(words.accountsType, style: Theme.of(context).textTheme.titleSmall),
+          Text(words.accountsType, key: AccountsScreen.typeHeadingKey, style: Theme.of(context).textTheme.titleSmall),
           RadioGroup<AccountType>(
             groupValue: _type,
             onChanged: (type) => setState(() => _type = type ?? _type),
             child: Column(
               children: [
                 for (final type in AccountType.values)
-                  RadioListTile<AccountType>(key: AccountsScreen.typeKey(type), contentPadding: EdgeInsets.zero, value: type, title: Text(words.text(type.wordKey))),
+                  RadioListTile<AccountType>(key: AccountsScreen.typeKey(type), contentPadding: EdgeInsets.zero, value: type, title: Text(words.text(type.wordKey), key: AccountsScreen.typeKey(type).title)),
               ],
             ),
           ),

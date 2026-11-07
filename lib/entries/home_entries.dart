@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../home/home_screen.dart';
 import '../projects/project.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_tile.dart';
@@ -36,10 +37,10 @@ class HomeEntries extends StatelessWidget {
               padding: const EdgeInsets.only(top: 8),
               child: Row(
                 children: [
-                  Expanded(child: Text(words.entriesTitle, style: Theme.of(context).textTheme.titleMedium)),
+                  Expanded(child: Text(words.entriesTitle, key: HomeScreen.entriesHeadingKey(project.id), style: Theme.of(context).textTheme.titleMedium)),
                   IconButton(
                     key: HomeScreen.searchEntriesKey(project.id),
-                    icon: const Icon(Icons.search),
+                    icon: Icon(Icons.search, key: HomeScreen.searchEntriesKey(project.id).icon),
                     tooltip: words.entriesSearch,
                     onPressed: () => context.push(EntriesScreen.searchPathOf(project.id), extra: project),
                   ),
@@ -52,14 +53,14 @@ class HomeEntries extends StatelessWidget {
                 padding: EdgeInsets.all(16),
                 child: Center(child: CircularProgressIndicator(key: HomeScreen.entriesLoadingKey)),
               ),
-            if (!entries.isLoading && entries.all.isEmpty) Text(words.entriesEmpty),
+            if (!entries.isLoading && entries.all.isEmpty) Text(words.entriesEmpty, key: HomeScreen.entriesEmptyKey(project.id)),
             for (final entry in entries.all.take(latest)) EntryTile(entry: entry, onTap: () => EntriesScreen.openActions(context, project, entries, entry)),
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: TextButton(
                 key: HomeScreen.entriesKey(project.id),
                 onPressed: () => context.push(EntriesScreen.pathOf(project.id), extra: project),
-                child: Text(words.entriesSeeAll),
+                child: Text(words.entriesSeeAll, key: HomeScreen.entriesKey(project.id).label),
               ),
             ),
           ],

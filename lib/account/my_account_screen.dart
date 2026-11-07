@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../auth/change_password_screen.dart';
 import '../auth/session.dart';
 import '../ui/confirm_dialog.dart';
+import '../ui/part_keys.dart';
+import '../ui/screen_title.dart';
 import '../words/app_language.dart';
 import '../words/language_switch.dart';
 import '../words/words.dart';
@@ -43,6 +45,9 @@ class MyAccountScreen extends StatefulWidget {
 
   /// The row that signs out, after asking.
   static const signOutKey = Key('myAccount.signOut');
+
+  /// The heading over the language choice.
+  static const languageHeadingKey = Key('myAccount.languageHeading');
 
   /// What signing out means, in the question.
   static const signOutExplainKey = ConfirmDialog.explanationKey;
@@ -86,11 +91,11 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
     final words = Words.of(context);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(words.myAccountTitle)),
+      appBar: AppBar(title: Text(words.myAccountTitle, key: ScreenTitle.titleKey)),
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          Text(words.myAccountLanguage, style: theme.textTheme.titleMedium),
+          Text(words.myAccountLanguage, key: MyAccountScreen.languageHeadingKey, style: theme.textTheme.titleMedium),
           const SizedBox(height: 12),
           LanguageSwitch(language: widget.language),
           const SizedBox(height: 32),
@@ -99,9 +104,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             builder: (context, _) => SwitchListTile(
               key: MyAccountScreen.biometricsKey,
               contentPadding: EdgeInsets.zero,
-              secondary: const Icon(Icons.fingerprint),
-              title: Text(words.biometricsSignIn),
-              subtitle: Text(words.biometricsHint),
+              secondary: Icon(Icons.fingerprint, key: MyAccountScreen.biometricsKey.icon),
+              title: Text(words.biometricsSignIn, key: MyAccountScreen.biometricsKey.title),
+              subtitle: Text(words.biometricsHint, key: MyAccountScreen.biometricsKey.subtitle),
               value: widget.session.usesBiometrics,
               onChanged: _setBiometrics,
             ),
@@ -111,9 +116,9 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           ListTile(
             key: MyAccountScreen.changePasswordKey,
             contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.lock_outline),
-            title: Text(words.myAccountChangePassword),
-            trailing: const Icon(Icons.chevron_right),
+            leading: Icon(Icons.lock_outline, key: MyAccountScreen.changePasswordKey.icon),
+            title: Text(words.myAccountChangePassword, key: MyAccountScreen.changePasswordKey.title),
+            trailing: Icon(Icons.chevron_right, key: MyAccountScreen.changePasswordKey.trailing),
             onTap: () => context.push(ChangePasswordScreen.path),
           ),
           ListTile(
@@ -121,8 +126,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             contentPadding: EdgeInsets.zero,
             iconColor: theme.colorScheme.error,
             textColor: theme.colorScheme.error,
-            leading: const Icon(Icons.logout),
-            title: Text(words.myAccountSignOut),
+            leading: Icon(Icons.logout, key: MyAccountScreen.signOutKey.icon),
+            title: Text(words.myAccountSignOut, key: MyAccountScreen.signOutKey.title),
             onTap: _askToSignOut,
           ),
         ],

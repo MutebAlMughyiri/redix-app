@@ -8,6 +8,7 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
+import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
@@ -38,6 +39,9 @@ class RevenueScreen extends StatefulWidget {
 
   /// The button reversing the revenue [id].
   static Key reverseKey(String id) => Key('revenue.reverse.$id');
+
+  /// The button opening the receipt of the row [id].
+  static Key receiptKey(String id) => Key('revenue.receipt.$id');
 
   /// The project.
   final Project project;
@@ -70,24 +74,25 @@ class _RevenueScreenState extends State<RevenueScreen> {
       key: RevenueScreen.rowKey(row.id),
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
+        key: RevenueScreen.rowKey(row.id).body,
         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
-        title: Text(row.description.isEmpty ? row.itemName : row.description),
+        title: Text(row.description.isEmpty ? row.itemName : row.description, key: RevenueScreen.rowKey(row.id).title),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(details.join(' · ')),
+            Text(details.join(' · '), key: RevenueScreen.rowKey(row.id).subtitle),
           ],
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(formatMoney(row.amount), style: Theme.of(context).textTheme.titleSmall),
+            Text(formatMoney(row.amount), key: RevenueScreen.rowKey(row.id).trailing, style: Theme.of(context).textTheme.titleSmall),
             if (row.attachmentId.isNotEmpty)
-              IconButton(icon: const Icon(Icons.receipt_long_outlined), onPressed: () => context.push(AttachmentScreen.pathOf(project.id, row.attachmentId), extra: row.contentType)),
+              IconButton(key: RevenueScreen.receiptKey(row.id), icon: Icon(Icons.receipt_long_outlined, key: RevenueScreen.receiptKey(row.id).icon), onPressed: () => context.push(AttachmentScreen.pathOf(project.id, row.attachmentId), extra: row.contentType)),
             if (!project.isFinished && !row.isReversed && project.may(Permission.approveEntries))
               IconButton(
                 key: RevenueScreen.reverseKey(row.id),
-                icon: const Icon(Icons.undo),
+                icon: Icon(Icons.undo, key: RevenueScreen.reverseKey(row.id).icon),
                 tooltip: words.capitalReverse,
                 onPressed: () => ReverseSheet.show(context, (reason) => widget.revenues.reverse(row, reason)),
               ),
@@ -110,8 +115,8 @@ class _RevenueScreenState extends State<RevenueScreen> {
                 child: Row(
                   spacing: 8,
                   children: [
-                    Expanded(child: FilledButton.icon(key: RevenueScreen.newKey, icon: const Icon(Icons.add), label: Text(words.revenueNew), onPressed: () => context.push(RevenueFormScreen.pathOf(project.id), extra: project))),
-                    Expanded(child: FilledButton.tonalIcon(key: RevenueScreen.newSaleKey, icon: const Icon(Icons.receipt_outlined), label: Text(words.revenueNewSale), onPressed: () => context.push(SalesInvoiceScreen.pathOf(project.id), extra: project))),
+                    Expanded(child: FilledButton.icon(key: RevenueScreen.newKey, icon: Icon(Icons.add, key: RevenueScreen.newKey.icon), label: Text(words.revenueNew, key: RevenueScreen.newKey.label), onPressed: () => context.push(RevenueFormScreen.pathOf(project.id), extra: project))),
+                    Expanded(child: FilledButton.tonalIcon(key: RevenueScreen.newSaleKey, icon: Icon(Icons.receipt_outlined, key: RevenueScreen.newSaleKey.icon), label: Text(words.revenueNewSale, key: RevenueScreen.newSaleKey.label), onPressed: () => context.push(SalesInvoiceScreen.pathOf(project.id), extra: project))),
                   ],
                 ),
               ),

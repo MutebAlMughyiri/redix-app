@@ -3,6 +3,9 @@ import 'package:go_router/go_router.dart';
 
 import '../format/date_format.dart';
 import '../auth/sign_in_screen.dart';
+import '../ui/part_keys.dart';
+import '../ui/refusal_snack_bar.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'project_registration.dart';
 import 'projects.dart';
@@ -67,6 +70,15 @@ class NewProjectScreen extends StatefulWidget {
   /// The button that takes the unit at [index] off the list.
   static Key removeUnitKey(int index) => Key('newProject.removeUnit.$index');
 
+  /// The heading over the units.
+  static const unitsHeadingKey = Key('newProject.unitsHeading');
+
+  /// The heading over the manager.
+  static const managerHeadingKey = Key('newProject.managerHeading');
+
+  /// The choice of the project [id] to copy the structure from; the default template's is empty.
+  static Key structureSourceOptionKey(String id) => Key('newProject.structureSource.$id');
+
   @override
   State<NewProjectScreen> createState() => _NewProjectScreenState();
 }
@@ -118,7 +130,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
       context.pop();
       return;
     }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(Words.of(context).registerSent)));
+    showMessage(ScaffoldMessenger.of(context), Words.of(context), 'register.sent');
     context.go(SignInScreen.path);
   }
 
@@ -146,7 +158,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
     final words = Words.of(context);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(words.projectsNew)),
+      appBar: AppBar(title: Text(words.projectsNew, key: ScreenTitle.titleKey)),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.all(16),
@@ -166,21 +178,21 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                 decoration: InputDecoration(
                   labelText: words.projectsStartDate,
                   border: const OutlineInputBorder(),
-                  suffixIcon: const Icon(Icons.calendar_today_outlined),
+                  suffixIcon: Icon(Icons.calendar_today_outlined, key: NewProjectScreen.startDateKey.icon),
                 ),
-                child: Text(formatDate(_startDate)),
+                child: Text(formatDate(_startDate), key: NewProjectScreen.startDateKey.label),
               ),
             ),
             const SizedBox(height: 24),
-            Text(words.projectsUnits, style: theme.textTheme.titleSmall),
+            Text(words.projectsUnits, key: NewProjectScreen.unitsHeadingKey, style: theme.textTheme.titleSmall),
             for (final (index, unit) in _units.indexed)
               ListTile(
                 key: NewProjectScreen.unitKey(index),
                 contentPadding: EdgeInsets.zero,
-                title: Text(unit),
+                title: Text(unit, key: NewProjectScreen.unitKey(index).title),
                 trailing: IconButton(
                   key: NewProjectScreen.removeUnitKey(index),
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close, key: NewProjectScreen.removeUnitKey(index).icon),
                   tooltip: words.projectsRemoveUnit,
                   onPressed: () => setState(() => _units.removeAt(index)),
                 ),
@@ -196,8 +208,8 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                   valueListenable: _unitName,
                   builder: (context, name, _) => TextButton.icon(
                     key: NewProjectScreen.addUnitKey,
-                    icon: const Icon(Icons.add),
-                    label: Text(words.projectsAddUnit),
+                    icon: Icon(Icons.add, key: NewProjectScreen.addUnitKey.icon),
+                    label: Text(words.projectsAddUnit, key: NewProjectScreen.addUnitKey.label),
                     onPressed: name.text.trim().isEmpty ? null : _addUnit,
                   ),
                 ),
@@ -211,15 +223,15 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                 isExpanded: true,
                 decoration: InputDecoration(labelText: words.projectsStructureSource, border: const OutlineInputBorder()),
                 items: [
-                  DropdownMenuItem(value: '', child: Text(words.projectsDefaultTemplate)),
-                  for (final project in widget.projects.all.where((project) => project.isApproved)) DropdownMenuItem(value: project.id, child: Text(project.name)),
+                  DropdownMenuItem(key: NewProjectScreen.structureSourceOptionKey(''), value: '', child: Text(words.projectsDefaultTemplate, key: NewProjectScreen.structureSourceOptionKey('').label)),
+                  for (final project in widget.projects.all.where((project) => project.isApproved)) DropdownMenuItem(key: NewProjectScreen.structureSourceOptionKey(project.id), value: project.id, child: Text(project.name, key: NewProjectScreen.structureSourceOptionKey(project.id).label)),
                 ],
                 onChanged: (id) => setState(() => _structureSourceId = id ?? ''),
               ),
             ],
             if (widget.isPublic) ...[
               const SizedBox(height: 24),
-              Text(words.projectsManager, style: theme.textTheme.titleSmall),
+              Text(words.projectsManager, key: NewProjectScreen.managerHeadingKey, style: theme.textTheme.titleSmall),
               const SizedBox(height: 12),
               TextField(
                 key: NewProjectScreen.managerNameKey,
@@ -253,7 +265,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               key: NewProjectScreen.submitKey,
               onPressed: _saving ? null : _create,
               style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-              child: Text(words.projectsCreate),
+              child: Text(words.projectsCreate, key: NewProjectScreen.submitKey.label),
             ),
             if (_message.isNotEmpty) ...[
               const SizedBox(height: 16),

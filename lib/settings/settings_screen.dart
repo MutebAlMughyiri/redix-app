@@ -8,6 +8,8 @@ import '../projects/project.dart';
 import '../projects/projects_screen.dart';
 import '../projects/registered_projects_screen.dart';
 import '../structure/categories_screen.dart';
+import '../ui/part_keys.dart';
+import '../ui/screen_title.dart';
 import '../users/users_screen.dart';
 import '../words/words.dart';
 import 'payment_methods_screen.dart';
@@ -51,13 +53,13 @@ class SettingsScreen extends StatelessWidget {
   static const paymentMethodsKey = Key('settings.paymentMethods');
 
   Widget _row(Key key, IconData icon, String title, VoidCallback onTap) =>
-      ListTile(key: key, leading: Icon(icon), title: Text(title), trailing: const Icon(Icons.chevron_right), onTap: onTap);
+      ListTile(key: key, leading: Icon(icon, key: key.icon), title: Text(title, key: key.title), trailing: Icon(Icons.chevron_right, key: key.trailing), onTap: onTap);
 
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(words.settingsTitle)),
+      appBar: AppBar(title: Text(words.settingsTitle, key: ScreenTitle.titleKey)),
       body: ListenableBuilder(
         listenable: session,
         builder: (context, _) => ListView(

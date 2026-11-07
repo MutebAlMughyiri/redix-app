@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
@@ -151,7 +152,7 @@ class _UsersScreenState extends State<UsersScreen> {
           RefreshButton(onRefresh: widget.users.load),
           IconButton(
             key: UsersScreen.addExistingKey,
-            icon: const Icon(Icons.person_search_outlined),
+            icon: Icon(Icons.person_search_outlined, key: UsersScreen.addExistingKey.icon),
             tooltip: words.usersAddExisting,
             onPressed: () => showDialog<void>(
               context: context,
@@ -162,8 +163,8 @@ class _UsersScreenState extends State<UsersScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         key: UsersScreen.newUserKey,
-        icon: const Icon(Icons.add),
-        label: Text(words.usersNew),
+        icon: Icon(Icons.add, key: UsersScreen.newUserKey.icon),
+        label: Text(words.usersNew, key: UsersScreen.newUserKey.label),
         onPressed: () => context.push(NewUserScreen.pathOf(users.projectId)),
       ),
       body: ApiListBody(

@@ -16,7 +16,9 @@ import '../projects/project.dart';
 import '../projects/projects.dart';
 import '../ui/entry_field.dart';
 import '../ui/labelled_chips.dart';
+import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
+import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'capital.dart';
@@ -114,6 +116,27 @@ class CapitalMoveScreen extends StatefulWidget {
 
   /// The choice of the account [id] in the other project.
   static Key targetAccountKey(String id) => Key('capitalMove.targetAccount.$id');
+
+  /// The choice of the project the money moves to.
+  static const targetProjectChoiceKey = Key('capitalMove.targetProjectChoice');
+
+  /// The choice of the partner it reaches there.
+  static const targetPartnerChoiceKey = Key('capitalMove.targetPartnerChoice');
+
+  /// The choice of the account it reaches there.
+  static const targetAccountChoiceKey = Key('capitalMove.targetAccountChoice');
+
+  /// The choice of the partner.
+  static const partnerChoiceKey = Key('capitalMove.partnerChoice');
+
+  /// The choice of what the move is.
+  static const typeChoiceKey = Key('capitalMove.typeChoice');
+
+  /// The choice of the account.
+  static const accountChoiceKey = Key('capitalMove.accountChoice');
+
+  /// The heading over the receipt.
+  static const receiptHeadingKey = Key('capitalMove.receiptHeading');
 
   /// The project.
   final Project project;
@@ -289,7 +312,7 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
       return;
     }
     if (refusal.isEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(words.capitalSaved)));
+      showMessage(messenger, words, 'capital.saved');
       await Future.wait([widget.accounts.load(), widget.partners.load()]);
       if (mounted) {
         context.pop(true);
@@ -314,6 +337,7 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
     }
     return [
       LabelledChips<Project>(
+        key: CapitalMoveScreen.targetProjectChoiceKey,
         label: words.capitalTargetProject,
         choices: others,
         keyOf: (project) => CapitalMoveScreen.targetProjectKey(project.id),
@@ -329,6 +353,7 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
             spacing: 12,
             children: [
               LabelledChips<Partner>(
+                key: CapitalMoveScreen.targetPartnerChoiceKey,
                 label: words.capitalTargetPartner,
                 choices: widget.partnersOf(_targetProjectId).all,
                 keyOf: (partner) => CapitalMoveScreen.targetPartnerKey(partner.id),
@@ -337,6 +362,7 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
                 onChosen: (partner) => setState(() => _targetPartnerId = partner.id),
               ),
               LabelledChips<Account>(
+                key: CapitalMoveScreen.targetAccountChoiceKey,
                 label: words.capitalTargetAccount,
                 choices: widget.accountsOf(_targetProjectId).bankAndCash,
                 keyOf: (account) => CapitalMoveScreen.targetAccountKey(account.id),
@@ -354,9 +380,9 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
     final theme = Theme.of(context);
     return [
       if (!_type.asksReasonOnly) ...[
-        SwitchListTile(key: CapitalMoveScreen.cashKey, contentPadding: EdgeInsets.zero, title: Text(words.capitalPaidInCash), value: _isCash, onChanged: (isCash) => setState(() => _isCash = isCash)),
+        SwitchListTile(key: CapitalMoveScreen.cashKey, contentPadding: EdgeInsets.zero, title: Text(words.capitalPaidInCash, key: CapitalMoveScreen.cashKey.title), value: _isCash, onChanged: (isCash) => setState(() => _isCash = isCash)),
         if (!_isCash) ...[
-          Text('${words.capitalReceipt} · ${words.capitalReceiptRequiredWord}', style: theme.textTheme.titleSmall),
+          Text('${words.capitalReceipt} · ${words.capitalReceiptRequiredWord}', key: CapitalMoveScreen.receiptHeadingKey, style: theme.textTheme.titleSmall),
           InvoiceSection(project: widget.project, file: _file, emptyLabel: words.capitalReceiptHint, message: _fileMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
           entryField(key: CapitalMoveScreen.receiptAmountKey, controller: _receiptAmount, label: words.capitalReceiptAmount, isNumber: true, onChanged: (_) => setState(() {})),
           if (_receiptDiffers) Text(words.capitalReceiptDiffers, key: CapitalMoveScreen.receiptDiffersKey, style: TextStyle(color: theme.colorScheme.error)),
@@ -380,6 +406,7 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
             spacing: 12,
             children: [
               LabelledChips<Partner>(
+                key: CapitalMoveScreen.partnerChoiceKey,
                 label: words.capitalPartner,
                 choices: widget.partners.all,
                 keyOf: (partner) => CapitalMoveScreen.partnerKey(partner.id),
@@ -388,6 +415,7 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
                 onChosen: _choosePartner,
               ),
               LabelledChips<MoveType>(
+                key: CapitalMoveScreen.typeChoiceKey,
                 label: words.capitalType,
                 choices: MoveType.values,
                 keyOf: CapitalMoveScreen.typeKey,
@@ -398,6 +426,7 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
               entryField(key: CapitalMoveScreen.amountKey, controller: _amount, label: words.capitalAmount, isNumber: true, onChanged: (_) => setState(() {})),
               PickerField(key: CapitalMoveScreen.dateKey, label: words.capitalDate, value: formatDate(_date), onTap: _chooseDate),
               LabelledChips<Account>(
+                key: CapitalMoveScreen.accountChoiceKey,
                 label: words.capitalAccount,
                 choices: widget.accounts.bankAndCash,
                 keyOf: (account) => CapitalMoveScreen.accountKey(account.id),
@@ -408,7 +437,7 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
               entryField(key: CapitalMoveScreen.descriptionKey, controller: _description, label: words.capitalDescription, onChanged: (_) {}),
               if (_type.isCarry) ..._carrySection(words) else ..._receiptSection(words),
               if (_message.isNotEmpty) Text(words.text(_message), key: CapitalMoveScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-              FilledButton(key: CapitalMoveScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.capitalSave)),
+              FilledButton(key: CapitalMoveScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.capitalSave, key: CapitalMoveScreen.saveKey.label)),
             ],
           ),
         ),

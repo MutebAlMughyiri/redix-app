@@ -8,6 +8,7 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
+import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
@@ -80,24 +81,25 @@ class _MovementsScreenState extends State<MovementsScreen> {
       key: MovementsScreen.rowKey(movement.id),
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
+        key: MovementsScreen.rowKey(movement.id).body,
         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
-        title: Text(movement.description.isEmpty ? words.text('capital.${movement.type}') : movement.description),
-        subtitle: Text(parts.join(' · ')),
+        title: Text(movement.description.isEmpty ? words.text('capital.${movement.type}') : movement.description, key: MovementsScreen.rowKey(movement.id).title),
+        subtitle: Text(parts.join(' · '), key: MovementsScreen.rowKey(movement.id).subtitle),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(formatMoney(movement.amount), style: Theme.of(context).textTheme.titleSmall),
+            Text(formatMoney(movement.amount), key: MovementsScreen.rowKey(movement.id).trailing, style: Theme.of(context).textTheme.titleSmall),
             if (movement.attachmentId.isNotEmpty)
               IconButton(
                 key: MovementsScreen.receiptKey(movement.id),
-                icon: const Icon(Icons.receipt_long_outlined),
+                icon: Icon(Icons.receipt_long_outlined, key: MovementsScreen.receiptKey(movement.id).icon),
                 tooltip: words.capitalReceiptAttached,
                 onPressed: () => context.push(AttachmentScreen.pathOf(project.id, movement.attachmentId), extra: movement.contentType),
               ),
             if (!project.isFinished && !movement.isReversed && project.may(Permission.approveEntries))
               IconButton(
                 key: MovementsScreen.reverseKey(movement.id),
-                icon: const Icon(Icons.undo),
+                icon: Icon(Icons.undo, key: MovementsScreen.reverseKey(movement.id).icon),
                 tooltip: words.capitalReverse,
                 onPressed: () => ReverseSheet.show(context, (reason) => _reverse(movement, reason)),
               ),

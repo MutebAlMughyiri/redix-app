@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../ui/change_dialog.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'columns.dart';
 import 'item_column.dart';
@@ -64,7 +65,7 @@ class _AddColumnDialogState extends State<AddColumnDialog> {
           initialValue: _dataType,
           isExpanded: true,
           decoration: InputDecoration(labelText: words.columnsType, border: const OutlineInputBorder()),
-          items: [for (final dataType in ColumnDataType.offered) DropdownMenuItem(value: dataType, child: Text(words.text(dataType.wordKey)))],
+          items: [for (final dataType in ColumnDataType.offered) DropdownMenuItem(key: ItemColumnsScreen.dataTypeOptionKey(dataType), value: dataType, child: Text(words.text(dataType.wordKey), key: ItemColumnsScreen.dataTypeOptionKey(dataType).label))],
           onChanged: (dataType) => setState(() => _dataType = dataType ?? _dataType),
         ),
         if (_dataType == ColumnDataType.list) ...[
@@ -79,14 +80,14 @@ class _AddColumnDialogState extends State<AddColumnDialog> {
         SwitchListTile(
           key: ItemColumnsScreen.requiredKey,
           contentPadding: EdgeInsets.zero,
-          title: Text(words.columnsRequired),
+          title: Text(words.columnsRequired, key: ItemColumnsScreen.requiredKey.title),
           value: _isRequired,
           onChanged: (value) => setState(() => _isRequired = value),
         ),
         SwitchListTile(
           key: ItemColumnsScreen.showInReportsKey,
           contentPadding: EdgeInsets.zero,
-          title: Text(words.columnsShowInReports),
+          title: Text(words.columnsShowInReports, key: ItemColumnsScreen.showInReportsKey.title),
           value: _showInReports,
           onChanged: (value) => setState(() => _showInReports = value),
         ),

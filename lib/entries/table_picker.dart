@@ -4,6 +4,7 @@ import '../format/number_format.dart';
 import '../structure/item_tables.dart';
 import '../suppliers/arabic_spelling.dart';
 import '../ui/api_list_body.dart';
+import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
 import '../words/words.dart';
 import 'entry_tables.dart';
@@ -32,6 +33,12 @@ class TablePicker extends StatelessWidget {
   /// The line that says nothing matches the search.
   static const noMatchKey = Key('tablePicker.noMatch');
 
+  /// The name of the item [id] that takes no purchase, shown without a table to choose.
+  static Key itemKey(String id) => Key('tablePicker.item.$id');
+
+  /// The heading of the category [name].
+  static Key categoryKey(String name) => Key('tablePicker.category.$name');
+
   Future<void> _choose(BuildContext context) async {
     final picked = await showModalBottomSheet<EntryTable>(
       context: context,
@@ -46,7 +53,7 @@ class TablePicker extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => PickerField(label: Words.of(context).entriesTable, value: chosen.label, onTap: () => _choose(context));
+  Widget build(BuildContext context) => PickerField(key: key.field, label: Words.of(context).entriesTable, value: chosen.label, onTap: () => _choose(context));
 }
 
 /// The sheet of tables, narrowed by what is typed.
@@ -75,12 +82,12 @@ class _TableSheetState extends State<_TableSheet> {
     ListTile row(EntryTable table, String title, {double indent = 16}) => ListTile(
       key: TablePicker.optionKey(table.id),
       contentPadding: EdgeInsetsDirectional.only(start: indent, end: 16),
-      title: Text(title),
-      subtitle: Text(table.isContract ? words.categoriesTableContract : words.categoriesTablePurchases),
+      title: Text(title, key: TablePicker.optionKey(table.id).title),
+      subtitle: Text(table.isContract ? words.categoriesTableContract : words.categoriesTablePurchases, key: TablePicker.optionKey(table.id).subtitle),
       onTap: () => Navigator.of(context).pop(table),
     );
     return [
-      if (general.isEmpty) ListTile(title: Text(item.name), enabled: false) else row(general.first, item.name),
+      if (general.isEmpty) ListTile(key: TablePicker.itemKey(item.id), title: Text(item.name, key: TablePicker.itemKey(item.id).title), enabled: false) else row(general.first, item.name),
       for (final table in kept.where((table) => table.kind != ItemTableKind.general)) row(table, table.name, indent: 40),
     ];
   }
@@ -100,7 +107,7 @@ class _TableSheetState extends State<_TableSheet> {
               child: TextField(
                 key: TablePicker.searchKey,
                 onChanged: (text) => setState(() => _typed = sameSpelling(westernDigits(text.trim()))),
-                decoration: InputDecoration(prefixIcon: const Icon(Icons.search), hintText: words.entriesTableSearchHint, border: const OutlineInputBorder()),
+                decoration: InputDecoration(prefixIcon: Icon(Icons.search, key: TablePicker.searchKey.icon), hintText: words.entriesTableSearchHint, border: const OutlineInputBorder()),
               ),
             ),
             ListenableBuilder(
@@ -123,7 +130,7 @@ class _TableSheetState extends State<_TableSheet> {
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(category.name, style: Theme.of(context).textTheme.titleSmall),
+                            Text(category.name, key: TablePicker.categoryKey(category.name), style: Theme.of(context).textTheme.titleSmall),
                             for (final (item, kept) in items) ..._rowsOf(item, kept),
                           ],
                         );

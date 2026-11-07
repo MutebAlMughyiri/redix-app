@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'project.dart';
 import 'projects_screen.dart';
@@ -31,6 +32,7 @@ class ProjectChoice extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
+        key: ProjectsScreen.cardKey(project.id).body,
         onTap: project.isApproved ? onOpen : null,
         child: Padding(
           padding: EdgeInsetsDirectional.fromSTEB(16, 8, project.isApproved ? 4 : 16, 8),
@@ -52,7 +54,7 @@ class ProjectChoice extends StatelessWidget {
                     ),
                     Chip(
                       key: ProjectsScreen.statusKey(project.id),
-                      label: Text(words.text(project.status.wordKey)),
+                      label: Text(words.text(project.status.wordKey), key: ProjectsScreen.statusKey(project.id).label),
                       backgroundColor: project.status == ProjectStatus.running ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest,
                       side: BorderSide.none,
                       visualDensity: VisualDensity.compact,
@@ -63,7 +65,7 @@ class ProjectChoice extends StatelessWidget {
               if (project.isApproved)
                 IconButton(
                   key: ProjectsScreen.starKey(project.id),
-                  icon: Icon(isDefault ? Icons.star : Icons.star_border, color: isDefault ? theme.colorScheme.primary : null),
+                  icon: Icon(isDefault ? Icons.star : Icons.star_border, key: ProjectsScreen.starKey(project.id).icon, color: isDefault ? theme.colorScheme.primary : null),
                   tooltip: words.projectsDefaultProject,
                   onPressed: onStar,
                 ),

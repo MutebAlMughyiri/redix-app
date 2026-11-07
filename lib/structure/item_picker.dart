@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../ui/api_list_body.dart';
+import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
 import '../words/words.dart';
 import 'category.dart';
@@ -29,6 +30,9 @@ class ItemPicker extends StatelessWidget {
   /// The choice of the item [id]; of no item when that is empty.
   static Key optionKey(String id) => Key('itemPicker.option.$id');
 
+  /// The heading of the category [id].
+  static Key categoryKey(String id) => Key('itemPicker.category.$id');
+
   Future<void> _choose(BuildContext context) async {
     final chosen = await showModalBottomSheet<Item>(
       context: context,
@@ -39,7 +43,7 @@ class ItemPicker extends StatelessWidget {
         heightFactor: 0.9,
         child: Column(
           children: [
-            if (none.isNotEmpty) ListTile(key: optionKey(''), title: Text(none), onTap: () => Navigator.of(sheet).pop(Item.none())),
+            if (none.isNotEmpty) ListTile(key: optionKey(''), title: Text(none, key: optionKey('').title), onTap: () => Navigator.of(sheet).pop(Item.none())),
             Expanded(
               child: ApiListBody(
                 list: items,
@@ -47,8 +51,8 @@ class ItemPicker extends StatelessWidget {
                 itemBuilder: (category) => Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(category.name, style: Theme.of(sheet).textTheme.titleSmall),
-                    for (final item in category.items) ListTile(key: optionKey(item.id), title: Text(item.name), onTap: () => Navigator.of(sheet).pop(item)),
+                    Text(category.name, key: categoryKey(category.id), style: Theme.of(sheet).textTheme.titleSmall),
+                    for (final item in category.items) ListTile(key: optionKey(item.id), title: Text(item.name, key: optionKey(item.id).title), onTap: () => Navigator.of(sheet).pop(item)),
                   ],
                 ),
               ),
@@ -63,5 +67,5 @@ class ItemPicker extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => PickerField(label: label, value: itemName.isEmpty ? none : itemName, onTap: () => _choose(context));
+  Widget build(BuildContext context) => PickerField(key: key.field, label: label, value: itemName.isEmpty ? none : itemName, onTap: () => _choose(context));
 }

@@ -9,7 +9,9 @@ import '../format/date_format.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
 import '../ui/api_list_body.dart';
+import '../ui/part_keys.dart';
 import '../ui/refresh_button.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'notification_row.dart';
 import 'notifications.dart';
@@ -57,15 +59,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(words.notificationsTitle), actions: [RefreshButton(onRefresh: widget.notifications.load)]),
+      appBar: AppBar(title: Text(words.notificationsTitle, key: ScreenTitle.titleKey), actions: [RefreshButton(onRefresh: widget.notifications.load)]),
       body: ApiListBody(
         list: widget.notifications,
         emptyText: words.notificationsEmpty,
         itemBuilder: (row) => ListTile(
           key: NotificationsScreen.rowKey(row.id),
-          leading: Icon(row.isRead ? Icons.notifications_none : Icons.notifications_active),
-          title: Text(words.text('notifications.${row.kind}'), style: row.isRead ? null : const TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text('${row.projectName} · ${formatDate(row.at)}'),
+          leading: Icon(row.isRead ? Icons.notifications_none : Icons.notifications_active, key: NotificationsScreen.rowKey(row.id).icon),
+          title: Text(words.text('notifications.${row.kind}'), key: NotificationsScreen.rowKey(row.id).title, style: row.isRead ? null : const TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text('${row.projectName} · ${formatDate(row.at)}', key: NotificationsScreen.rowKey(row.id).subtitle),
           onTap: () => _open(row),
         ),
       ),

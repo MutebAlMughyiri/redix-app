@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../ui/confirm_dialog.dart';
+import '../ui/part_keys.dart';
+import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'outbox.dart';
 import 'pending_entry.dart';
@@ -33,6 +35,9 @@ class WaitingScreen extends StatelessWidget {
   /// The button deleting the entry [id].
   static Key discardKey(String id) => Key('waiting.discard.$id');
 
+  /// What the entry [id] is.
+  static Key titleKey(String id) => Key('waiting.title.$id');
+
   /// The project whose entries show.
   final String projectId;
 
@@ -62,7 +67,7 @@ class WaitingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(words.offlineTitle)),
+      appBar: AppBar(title: Text(words.offlineTitle, key: ScreenTitle.titleKey)),
       body: ListenableBuilder(
         listenable: outbox,
         builder: (context, _) {
@@ -81,7 +86,7 @@ class WaitingScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(_titleOf(entry), style: Theme.of(context).textTheme.titleMedium),
+                        Text(_titleOf(entry), key: titleKey(entry.id), style: Theme.of(context).textTheme.titleMedium),
                         Text(
                           entry.isRefused ? words.text(entry.refusal) : words.offlineWaiting,
                           key: stateKey(entry.id),
@@ -91,8 +96,8 @@ class WaitingScreen extends StatelessWidget {
                           alignment: WrapAlignment.end,
                           children: [
                             if (entry.isRefused)
-                              TextButton(key: sendAgainKey(entry.id), onPressed: () => outbox.sendAgain(entry), child: Text(words.offlineSendAgain)),
-                            TextButton(key: discardKey(entry.id), onPressed: () => _askToDiscard(context, entry), child: Text(words.offlineDiscard)),
+                              TextButton(key: sendAgainKey(entry.id), onPressed: () => outbox.sendAgain(entry), child: Text(words.offlineSendAgain, key: sendAgainKey(entry.id).label)),
+                            TextButton(key: discardKey(entry.id), onPressed: () => _askToDiscard(context, entry), child: Text(words.offlineDiscard, key: discardKey(entry.id).label)),
                           ],
                         ),
                       ],

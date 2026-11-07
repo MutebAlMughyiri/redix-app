@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../words/words.dart';
+import 'part_keys.dart';
+
+/// The key of the SnackBar saying the word [wordKey]: every message has its own key, made from what it says, so a test finds it by key (Muteb, 7 Nov 2026).
+Key messageKeyOf(String wordKey) => Key('message.$wordKey');
+
+/// Shows the word [wordKey] in a SnackBar through [messenger], keyed by [messageKeyOf].
+void showMessage(ScaffoldMessengerState messenger, Words words, String wordKey) =>
+    messenger.showSnackBar(SnackBar(key: messageKeyOf(wordKey), content: Text(words.text(wordKey), key: messageKeyOf(wordKey).label)));
 
 /// Waits for [change], which answers an empty string once made, otherwise the word key of the refusal, and shows a refusal in a SnackBar.
 Future<void> showRefusalOf(BuildContext context, Future<String> change) async {
@@ -8,6 +16,6 @@ Future<void> showRefusalOf(BuildContext context, Future<String> change) async {
   final messenger = ScaffoldMessenger.of(context);
   final refusal = await change;
   if (refusal.isNotEmpty) {
-    messenger.showSnackBar(SnackBar(content: Text(words.text(refusal))));
+    showMessage(messenger, words, refusal);
   }
 }

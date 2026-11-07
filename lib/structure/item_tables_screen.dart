@@ -4,6 +4,7 @@ import '../projects/project.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
@@ -109,7 +110,7 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
     return ListTile(
       key: ItemTablesScreen.rowKey(table.id),
       contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
-      leading: mayChange ? ReorderableDragStartListener(key: ItemTablesScreen.handleKey(table.id), index: index, child: const Icon(Icons.drag_indicator)) : null,
+      leading: mayChange ? ReorderableDragStartListener(key: ItemTablesScreen.handleKey(table.id), index: index, child: Icon(Icons.drag_indicator, key: ItemTablesScreen.handleKey(table.id).icon)) : null,
       title: Text(table.name, key: ItemTablesScreen.tableNameKey(table.id)),
       subtitle: Text('${_kindOf(table, words)} · ${table.count}', key: ItemTablesScreen.detailsKey(table.id)),
       trailing: mayChange && table.isNamedSubgroup
@@ -118,11 +119,11 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
               children: [
                 IconButton(
                   key: ItemTablesScreen.renameKey(table.id),
-                  icon: const Icon(Icons.edit_outlined),
+                  icon: Icon(Icons.edit_outlined, key: ItemTablesScreen.renameKey(table.id).icon),
                   tooltip: words.categoriesRename,
                   onPressed: () => _ask(title: words.categoriesRename, saveLabel: words.categoriesSave, name: table.name, onSave: (name) => widget.tables.renameSubgroup(table, name)),
                 ),
-                IconButton(key: ItemTablesScreen.deleteKey(table.id), icon: const Icon(Icons.delete_outline), tooltip: words.subgroupsDelete, onPressed: () => _askToRemove(table)),
+                IconButton(key: ItemTablesScreen.deleteKey(table.id), icon: Icon(Icons.delete_outline, key: ItemTablesScreen.deleteKey(table.id).icon), tooltip: words.subgroupsDelete, onPressed: () => _askToRemove(table)),
               ],
             )
           : null,
@@ -139,8 +140,8 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
         floatingActionButton: widget.project.mayChangeStructure && widget.categories.itemOf(widget.itemId).type.takesPurchases
             ? FloatingActionButton.extended(
                 key: ItemTablesScreen.addKey,
-                icon: const Icon(Icons.add),
-                label: Text(words.subgroupsNew),
+                icon: Icon(Icons.add, key: ItemTablesScreen.addKey.icon),
+                label: Text(words.subgroupsNew, key: ItemTablesScreen.addKey.label),
                 onPressed: () => _ask(title: words.subgroupsNew, saveLabel: words.subgroupsNew, onSave: widget.tables.addSubgroup),
               )
             : null,

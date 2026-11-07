@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../ui/api_object_body.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'reconciliation.dart';
 
@@ -23,6 +24,15 @@ class ReconciliationCard extends StatelessWidget {
   /// The line saying no check was done.
   static const neverKey = Key('reconciliation.never');
 
+  /// The card.
+  static const cardKey = Key('reconciliation.card');
+
+  /// The line explaining a difference.
+  static const differenceExplainKey = Key('reconciliation.differenceExplain');
+
+  /// When the check was last done.
+  static const lastUpdatedKey = Key('reconciliation.lastUpdated');
+
   /// What it shows.
   final Reconciliations reconciliations;
 
@@ -30,7 +40,7 @@ class ReconciliationCard extends StatelessWidget {
     padding: const EdgeInsets.symmetric(vertical: 2),
     child: Row(
       children: [
-        Expanded(child: Text(label)),
+        Expanded(child: Text(label, key: key.label)),
         Text(formatMoney(amount), key: key, style: Theme.of(context).textTheme.titleSmall),
       ],
     ),
@@ -51,14 +61,14 @@ class ReconciliationCard extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: Row(
               children: [
-                Expanded(child: Text(words.reconciliationsDifference, style: TextStyle(color: color, fontWeight: FontWeight.bold))),
+                Expanded(child: Text(words.reconciliationsDifference, key: differenceKey.label, style: TextStyle(color: color, fontWeight: FontWeight.bold))),
                 Text(formatMoney(figures.difference), key: differenceKey, style: theme.textTheme.titleMedium?.copyWith(color: color)),
               ],
             ),
           ),
         ),
-        if (isOff) Text(words.reconciliationsDifferenceExplain, style: theme.textTheme.bodySmall),
-        Text('${words.reconciliationsLastUpdated}: ${formatDate(figures.at)}', style: theme.textTheme.bodySmall),
+        if (isOff) Text(words.reconciliationsDifferenceExplain, key: differenceExplainKey, style: theme.textTheme.bodySmall),
+        Text('${words.reconciliationsLastUpdated}: ${formatDate(figures.at)}', key: lastUpdatedKey, style: theme.textTheme.bodySmall),
       ],
     );
   }
@@ -67,6 +77,7 @@ class ReconciliationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Card.outlined(
+      key: cardKey,
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(12),

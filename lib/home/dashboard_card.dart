@@ -5,6 +5,7 @@ import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../reports/dashboard.dart';
 import '../ui/api_object_body.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 
 /// The project's figures at a glance (UC-049): what waits for approval, the surplus, the completion (UC-063), the reconciliation difference, and revenue and expenses, each opening to its categories and each category to its items.
@@ -35,6 +36,15 @@ class DashboardCard extends StatefulWidget {
 
   /// The item [id] under its category.
   static Key itemKey(String id) => Key('dashboard.item.$id');
+
+  /// The card.
+  static const cardKey = Key('dashboard.card');
+
+  /// The heading over the categories of the side opened.
+  static const categoriesHeadingKey = Key('dashboard.categoriesHeading');
+
+  /// The bar of the completion.
+  static const completionBarKey = Key('dashboard.completionBar');
 
   /// The project.
   final Project project;
@@ -67,9 +77,11 @@ class _DashboardCardState extends State<DashboardCard> {
 
   Widget _tile(String label, double amount, Key key, _Side side) => Expanded(
     child: Card.filled(
+      key: key.card,
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
+        key: key.body,
         onTap: () => setState(() => _side = _side == side ? _Side.none : side),
         child: Padding(
           padding: const EdgeInsets.all(10),
@@ -78,8 +90,8 @@ class _DashboardCardState extends State<DashboardCard> {
             children: [
               Row(
                 children: [
-                  Expanded(child: Text(label, style: Theme.of(context).textTheme.bodySmall)),
-                  Icon(_side == side ? Icons.expand_less : Icons.expand_more, size: 18),
+                  Expanded(child: Text(label, key: key.label, style: Theme.of(context).textTheme.bodySmall)),
+                  Icon(_side == side ? Icons.expand_less : Icons.expand_more, key: key.icon, size: 18),
                 ],
               ),
               Text(formatMoney(amount), key: key, style: Theme.of(context).textTheme.titleSmall),
@@ -93,7 +105,7 @@ class _DashboardCardState extends State<DashboardCard> {
   Widget _categories(String heading, List<CategoryTotal> categories, double total) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      if (categories.isNotEmpty) Text(heading, style: Theme.of(context).textTheme.titleMedium),
+      if (categories.isNotEmpty) Text(heading, key: DashboardCard.categoriesHeadingKey, style: Theme.of(context).textTheme.titleMedium),
       for (final category in categories) _category(category, total),
     ],
   );
@@ -114,12 +126,12 @@ class _DashboardCardState extends State<DashboardCard> {
               children: [
                 Row(
                   children: [
-                    Expanded(child: Text(category.name)),
-                    Text(formatMoney(category.total)),
-                    Icon(isOpen ? Icons.expand_less : Icons.expand_more, size: 18),
+                    Expanded(child: Text(category.name, key: DashboardCard.categoryKey(category.id).title)),
+                    Text(formatMoney(category.total), key: DashboardCard.categoryKey(category.id).trailing),
+                    Icon(isOpen ? Icons.expand_less : Icons.expand_more, key: DashboardCard.categoryKey(category.id).icon, size: 18),
                   ],
                 ),
-                LinearProgressIndicator(value: total <= 0 ? 0 : (category.total / total).clamp(0, 1)),
+                LinearProgressIndicator(key: DashboardCard.categoryKey(category.id).bar, value: total <= 0 ? 0 : (category.total / total).clamp(0, 1)),
               ],
             ),
           ),
@@ -130,8 +142,8 @@ class _DashboardCardState extends State<DashboardCard> {
               key: DashboardCard.itemKey(item.id),
               dense: true,
               contentPadding: const EdgeInsetsDirectional.only(start: 16),
-              title: Text(item.name),
-              trailing: Text(formatMoney(item.total)),
+              title: Text(item.name, key: DashboardCard.itemKey(item.id).title),
+              trailing: Text(formatMoney(item.total), key: DashboardCard.itemKey(item.id).trailing),
               onTap: () => widget.onItem(item),
             ),
       ],
@@ -148,20 +160,21 @@ class _DashboardCardState extends State<DashboardCard> {
       children: [
         if (figures.pendingCount > 0 && project.may(Permission.approveEntries))
           Card.filled(
+            key: DashboardCard.pendingKey.card,
             margin: EdgeInsets.zero,
             color: theme.colorScheme.tertiaryContainer,
             child: ListTile(
               key: DashboardCard.pendingKey,
-              title: Text(words.dashboardPending.replaceFirst('{0}', '${figures.pendingCount}')),
-              subtitle: Text('${words.dashboardPendingHint} · ${formatMoney(figures.pendingAmount)}'),
-              trailing: const Icon(Icons.chevron_right),
+              title: Text(words.dashboardPending.replaceFirst('{0}', '${figures.pendingCount}'), key: DashboardCard.pendingKey.title),
+              subtitle: Text('${words.dashboardPendingHint} · ${formatMoney(figures.pendingAmount)}', key: DashboardCard.pendingKey.subtitle),
+              trailing: Icon(Icons.chevron_right, key: DashboardCard.pendingKey.icon),
               onTap: widget.onApprovals,
             ),
           ),
-        Text(words.dashboardSurplus, style: theme.textTheme.bodySmall),
+        Text(words.dashboardSurplus, key: DashboardCard.surplusKey.label, style: theme.textTheme.bodySmall),
         Text(formatMoney(figures.surplus), key: DashboardCard.surplusKey, style: theme.textTheme.headlineMedium),
         Text('${words.dashboardCompletion}: ${formatPlain(figures.completionPercent)}%', key: DashboardCard.completionKey),
-        LinearProgressIndicator(value: (figures.completionPercent / 100).clamp(0, 1)),
+        LinearProgressIndicator(key: DashboardCard.completionBarKey, value: (figures.completionPercent / 100).clamp(0, 1)),
         if (figures.wasReconciled)
           ColoredBox(
             color: figures.reconciliationDifference == 0 ? theme.colorScheme.surfaceContainerHighest : theme.colorScheme.errorContainer,
@@ -169,7 +182,7 @@ class _DashboardCardState extends State<DashboardCard> {
               padding: const EdgeInsets.all(8),
               child: Row(
                 children: [
-                  Expanded(child: Text(words.dashboardDifference)),
+                  Expanded(child: Text(words.dashboardDifference, key: DashboardCard.differenceKey.label)),
                   Text(formatMoney(figures.reconciliationDifference), key: DashboardCard.differenceKey, style: theme.textTheme.titleSmall),
                 ],
               ),
@@ -190,6 +203,7 @@ class _DashboardCardState extends State<DashboardCard> {
 
   @override
   Widget build(BuildContext context) => Card.outlined(
+    key: DashboardCard.cardKey,
     margin: const EdgeInsets.only(bottom: 12),
     child: Padding(padding: const EdgeInsets.all(12), child: ApiObjectBody(object: widget.dashboard, builder: _figures)),
   );

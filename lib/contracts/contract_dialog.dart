@@ -12,6 +12,7 @@ import '../structure/offered_items.dart';
 import '../suppliers/supplier_picker.dart';
 import '../suppliers/suppliers.dart';
 import '../ui/change_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
 import '../words/words.dart';
 import 'contract.dart';
@@ -107,17 +108,18 @@ class _ContractDialogState extends State<ContractDialog> {
 
   List<Widget> _documents(Words words) => [
     const SizedBox(height: 16),
-    Text(words.contractsDocuments, style: Theme.of(context).textTheme.titleSmall),
+    Text(words.contractsDocuments, key: ContractsScreen.documentsHeadingKey, style: Theme.of(context).textTheme.titleSmall),
     for (final document in [...widget.contract.documents, ..._addedDocuments])
       Align(
         alignment: AlignmentDirectional.centerStart,
         child: TextButton(
+          key: ContractsScreen.openDocumentKey(document.id),
           onPressed: () => context.push(AttachmentScreen.pathOf(widget.project.id, document.id), extra: document.contentType),
           child: Text(document.fileName, key: ContractsScreen.documentKey(document.id)),
         ),
       ),
     const SizedBox(height: 8),
-    if (widget.project.mayAttachFiles) OutlinedButton.icon(key: ContractsScreen.addDocumentKey, icon: const Icon(Icons.attach_file), label: Text(words.contractsAddDocument), onPressed: _addDocument),
+    if (widget.project.mayAttachFiles) OutlinedButton.icon(key: ContractsScreen.addDocumentKey, icon: Icon(Icons.attach_file, key: ContractsScreen.addDocumentKey.icon), label: Text(words.contractsAddDocument, key: ContractsScreen.addDocumentKey.label), onPressed: _addDocument),
     if (_documentMessage.isNotEmpty) Text(words.text(_documentMessage), key: ContractsScreen.documentMessageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
   ];
 
@@ -166,7 +168,7 @@ class _ContractDialogState extends State<ContractDialog> {
         SwitchListTile(
           key: ContractsScreen.openValueKey,
           contentPadding: EdgeInsets.zero,
-          title: Text(words.contractsOpenValue),
+          title: Text(words.contractsOpenValue, key: ContractsScreen.openValueKey.title),
           value: _isOpenValue,
           onChanged: (isOpenValue) => setState(() => _isOpenValue = isOpenValue),
         ),

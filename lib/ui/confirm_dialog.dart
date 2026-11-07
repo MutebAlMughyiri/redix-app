@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../words/words.dart';
+import 'part_keys.dart';
 
 /// Asks before a change that deserves a second thought: what it applies to, what it means, and a red button to go ahead.
 class ConfirmDialog extends StatelessWidget {
@@ -32,6 +33,12 @@ class ConfirmDialog extends StatelessWidget {
   /// What the question is about.
   static const subjectKey = Key('confirm.subject');
 
+  /// The dialog.
+  static const dialogKey = Key('confirm.dialog');
+
+  /// Its title.
+  static const titleKey = Key('confirm.title');
+
   /// What going ahead means.
   static const explanationKey = Key('confirm.explanation');
 
@@ -45,7 +52,8 @@ class ConfirmDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final navigator = Navigator.of(context);
     return AlertDialog(
-      title: Text(title),
+      key: dialogKey,
+      title: Text(title, key: titleKey),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +66,7 @@ class ConfirmDialog extends StatelessWidget {
         ],
       ),
       actions: [
-        TextButton(key: cancelKey, onPressed: navigator.pop, child: Text(Words.of(context).commonCancel)),
+        TextButton(key: cancelKey, onPressed: navigator.pop, child: Text(Words.of(context).commonCancel, key: cancelKey.label)),
         FilledButton(
           key: confirmKey,
           style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
@@ -66,7 +74,7 @@ class ConfirmDialog extends StatelessWidget {
             navigator.pop();
             onConfirm();
           },
-          child: Text(confirmLabel),
+          child: Text(confirmLabel, key: confirmKey.label),
         ),
       ],
     );

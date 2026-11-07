@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../ui/part_keys.dart';
 import 'members.dart';
 
 /// Chooses someone in a project, or nobody, as a list of choices with every name in full.
@@ -51,9 +52,9 @@ class MemberPicker extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: Theme.of(context).textTheme.titleSmall),
+            Text(label, key: key.label, style: Theme.of(context).textTheme.titleSmall),
             for (final person in people.entries)
-              RadioListTile<String>(key: optionKey(person.key), contentPadding: EdgeInsets.zero, value: person.key, title: Text(person.value)),
+              RadioListTile<String>(key: optionKey(person.key), contentPadding: EdgeInsets.zero, value: person.key, title: Text(person.value, key: optionKey(person.key).title)),
           ],
         ),
       );

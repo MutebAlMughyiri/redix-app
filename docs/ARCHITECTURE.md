@@ -169,7 +169,7 @@ Settings such as projects keep nothing on the phone: the API owns every rule, th
 | Rule | Where it lives |
 | --- | --- |
 | No word value in the code; words come from the API | `lib/words/` |
-| Every element a user sees or acts on has a `Key` constant on its screen | Each screen |
+| Every element a user sees or acts on has a `Key` constant on its screen, and every label, icon, title, subtitle, card and message has one too: a part inside a keyed element takes its element's key and the part's name (`HomeScreen.accountsKey(id).label`), and a message its word (`messageKeyOf('projects.pendingEntries')`). A test finds an element by its key, never by its text or its place | Each screen, `PartKeys`, `messageKeyOf` |
 | One class to a file: a screen's card, row and dialogs are files of their own | Each feature folder |
 | Every public class and member has a doc comment | The lint `public_member_api_docs` |
 | The API's address comes from the environment's config file (`--dart-define-from-file=config/local.json`); none is built in | `apiBaseUrl`, `config/` |

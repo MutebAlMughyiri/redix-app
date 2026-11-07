@@ -7,6 +7,7 @@ import '../notifications/notifications.dart';
 import '../notifications/notifications_bell.dart';
 import '../settings/settings_screen.dart';
 import '../ui/api_list_body.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
@@ -107,7 +108,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
           NotificationsBell(notifications: widget.notifications),
           IconButton(
             key: ProjectsScreen.settingsKey,
-            icon: const Icon(Icons.tune),
+            icon: Icon(Icons.tune, key: ProjectsScreen.settingsKey.icon),
             tooltip: words.settingsTitle,
             onPressed: () => context.push(SettingsScreen.path),
           ),
@@ -115,8 +116,8 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         key: ProjectsScreen.newProjectKey,
-        icon: const Icon(Icons.add),
-        label: Text(words.projectsNew),
+        icon: Icon(Icons.add, key: ProjectsScreen.newProjectKey.icon),
+        label: Text(words.projectsNew, key: ProjectsScreen.newProjectKey.label),
         onPressed: () => context.push(NewProjectScreen.path),
       ),
       bottomNavigationBar: SafeArea(
@@ -124,8 +125,8 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
           listenable: session,
           builder: (context, _) => SwitchListTile(
             key: ProjectsScreen.openDefaultKey,
-            title: Text(words.projectsOpenDefault),
-            subtitle: Text(words.projectsOpenDefaultHint),
+            title: Text(words.projectsOpenDefault, key: ProjectsScreen.openDefaultKey.title),
+            subtitle: Text(words.projectsOpenDefaultHint, key: ProjectsScreen.openDefaultKey.subtitle),
             value: session.opensDefaultProject,
             onChanged: session.defaultProjectId.isEmpty
                 ? null

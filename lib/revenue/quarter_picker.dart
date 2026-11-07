@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 
 /// The first day of the quarter [date] falls in.
@@ -37,14 +38,14 @@ class QuarterPicker extends StatelessWidget {
           spacing: 8,
           children: [
             for (var year = DateTime.now().year; year >= firstYear; year--)
-              ChoiceChip(key: yearKey(year), label: Text('$year'), selected: year == start.year, onSelected: (_) => onChanged(DateTime(year, start.month))),
+              ChoiceChip(key: yearKey(year), label: Text('$year', key: yearKey(year).label), selected: year == start.year, onSelected: (_) => onChanged(DateTime(year, start.month))),
           ],
         ),
         Wrap(
           spacing: 8,
           children: [
             for (var quarter = 1; quarter <= 4; quarter++)
-              ChoiceChip(key: quarterKey(quarter), label: Text(words.text('vat.q$quarter')), selected: quarter == number, onSelected: (_) => onChanged(DateTime(start.year, (quarter - 1) * 3 + 1))),
+              ChoiceChip(key: quarterKey(quarter), label: Text(words.text('vat.q$quarter'), key: quarterKey(quarter).label), selected: quarter == number, onSelected: (_) => onChanged(DateTime(start.year, (quarter - 1) * 3 + 1))),
           ],
         ),
       ],

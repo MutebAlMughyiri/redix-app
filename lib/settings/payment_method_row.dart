@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'payment_method.dart';
@@ -54,8 +55,10 @@ class PaymentMethodRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Card.outlined(
+      key: PaymentMethodsScreen.rowKey(method.id),
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
+        key: PaymentMethodsScreen.rowKey(method.id).body,
         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
         title: Text(
           method.name,
@@ -68,20 +71,20 @@ class PaymentMethodRow extends StatelessWidget {
                 key: PaymentMethodsScreen.menuKey(method.id),
                 onSelected: (action) => action(),
                 itemBuilder: (_) => [
-                  PopupMenuItem(key: PaymentMethodsScreen.renameKey, value: () => _askForName(context), child: Text(words.paymentMethodsRename)),
+                  PopupMenuItem(key: PaymentMethodsScreen.renameKey, value: () => _askForName(context), child: Text(words.paymentMethodsRename, key: PaymentMethodsScreen.renameKey.label)),
                   if (method.isActive)
                     PopupMenuItem(
                       key: PaymentMethodsScreen.disableKey,
                       value: () => showRefusalOf(context, paymentMethods.disable(method)),
-                      child: Text(words.paymentMethodsDisable),
+                      child: Text(words.paymentMethodsDisable, key: PaymentMethodsScreen.disableKey.label),
                     )
                   else
                     PopupMenuItem(
                       key: PaymentMethodsScreen.enableKey,
                       value: () => showRefusalOf(context, paymentMethods.enable(method)),
-                      child: Text(words.paymentMethodsEnable),
+                      child: Text(words.paymentMethodsEnable, key: PaymentMethodsScreen.enableKey.label),
                     ),
-                  PopupMenuItem(key: PaymentMethodsScreen.deleteKey, value: () => _askToDelete(context), child: Text(words.paymentMethodsDelete)),
+                  PopupMenuItem(key: PaymentMethodsScreen.deleteKey, value: () => _askToDelete(context), child: Text(words.paymentMethodsDelete, key: PaymentMethodsScreen.deleteKey.label)),
                 ],
               )
             : null,

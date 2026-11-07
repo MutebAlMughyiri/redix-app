@@ -5,6 +5,7 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/api_object_body.dart';
+import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'item_report.dart';
@@ -42,6 +43,18 @@ class ItemReportScreen extends StatefulWidget {
   /// The alert of the overrun contract [id].
   static Key overrunKey(String id) => Key('itemReport.overrun.$id');
 
+  /// The card of the subgroup [id].
+  static Key subgroupKey(String id) => Key('itemReport.subgroup.$id');
+
+  /// The card of the contract [id].
+  static Key contractCardKey(String id) => Key('itemReport.contractCard.$id');
+
+  /// The contractor of the contract [id].
+  static Key contractorKey(String id) => Key('itemReport.contractor.$id');
+
+  /// The total paid on the contract [id].
+  static Key contractTotalKey(String id) => Key('itemReport.contractTotal.$id');
+
   /// The project.
   final Project project;
 
@@ -74,15 +87,16 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
       key: ItemReportScreen.rowKey(row.entryId),
       dense: true,
       contentPadding: EdgeInsets.zero,
-      title: Text(row.description.isEmpty ? row.supplierName : row.description),
-      subtitle: Text(details.join(' · ')),
-      trailing: Text(formatMoney(row.amount)),
+      title: Text(row.description.isEmpty ? row.supplierName : row.description, key: ItemReportScreen.rowKey(row.entryId).title),
+      subtitle: Text(details.join(' · '), key: ItemReportScreen.rowKey(row.entryId).subtitle),
+      trailing: Text(formatMoney(row.amount), key: ItemReportScreen.rowKey(row.entryId).trailing),
     );
   }
 
   Widget _subgroup(SubgroupReport subgroup, List<String> columns) {
     final words = Words.of(context);
     return Card.outlined(
+      key: ItemReportScreen.subgroupKey(subgroup.id),
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -91,7 +105,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
           children: [
             Row(
               children: [
-                Expanded(child: Text(subgroup.name.isEmpty ? words.reportsGeneralSubgroup : subgroup.name, style: Theme.of(context).textTheme.titleSmall)),
+                Expanded(child: Text(subgroup.name.isEmpty ? words.reportsGeneralSubgroup : subgroup.name, key: ItemReportScreen.subgroupKey(subgroup.id).title, style: Theme.of(context).textTheme.titleSmall)),
                 Text(formatMoney(subgroup.total), key: ItemReportScreen.subgroupTotalKey(subgroup.id), style: Theme.of(context).textTheme.titleSmall),
               ],
             ),
@@ -106,13 +120,14 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
     final words = Words.of(context);
     final theme = Theme.of(context);
     return Card.outlined(
+      key: ItemReportScreen.contractCardKey(contract.id),
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(contract.contractorName, style: theme.textTheme.titleSmall),
+            Text(contract.contractorName, key: ItemReportScreen.contractorKey(contract.id), style: theme.textTheme.titleSmall),
             Text(
               [
                 '${words.reportsContractValue}: ${contract.isOpenValue ? words.reportsOpenValue : formatMoney(contract.value)}',
@@ -123,7 +138,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
             ),
             if (contract.isOverrun) Text(words.reportsOverrun, key: ItemReportScreen.overrunKey(contract.id), style: TextStyle(color: theme.colorScheme.error)),
             for (final row in contract.payments) _row(row, columns),
-            Align(alignment: AlignmentDirectional.centerEnd, child: Text('${words.reportsGrandTotal}: ${formatMoney(contract.paymentsTotal)}')),
+            Align(alignment: AlignmentDirectional.centerEnd, child: Text('${words.reportsGrandTotal}: ${formatMoney(contract.paymentsTotal)}', key: ItemReportScreen.contractTotalKey(contract.id))),
           ],
         ),
       ),
@@ -149,7 +164,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
                   children: [
                     Row(
                       children: [
-                        Expanded(child: Text(words.reportsItemTotal, style: Theme.of(context).textTheme.titleMedium)),
+                        Expanded(child: Text(words.reportsItemTotal, key: ItemReportScreen.totalKey.label, style: Theme.of(context).textTheme.titleMedium)),
                         Text(formatMoney(report.total), key: ItemReportScreen.totalKey, style: Theme.of(context).textTheme.titleLarge),
                       ],
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../format/number_format.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'contract.dart';
@@ -33,7 +34,7 @@ class ContractCard extends StatelessWidget {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: theme.textTheme.bodySmall),
+        Text(label, key: key.label, style: theme.textTheme.bodySmall),
         Text(figure, key: key, style: theme.textTheme.titleSmall?.copyWith(color: color)),
       ],
     ),
@@ -45,6 +46,7 @@ class ContractCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     return Card.outlined(
+      key: ContractsScreen.nameKey(contract.id).card,
       margin: const EdgeInsets.only(bottom: 8),
       shape: contract.isOverrun ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: colors.error)) : null,
       child: Padding(
@@ -70,7 +72,7 @@ class ContractCard extends StatelessWidget {
                       ),
                       Chip(
                         key: ContractsScreen.standingKey(contract.id),
-                        label: Text(words.text(contract.standingWordKey)),
+                        label: Text(words.text(contract.standingWordKey), key: ContractsScreen.standingKey(contract.id).label),
                         backgroundColor: contract.isOverrun ? colors.errorContainer : colors.surfaceContainerHighest,
                         side: BorderSide.none,
                         visualDensity: VisualDensity.compact,
@@ -83,11 +85,11 @@ class ContractCard extends StatelessWidget {
                     key: ContractsScreen.menuKey(contract.id),
                     onSelected: (action) => action(),
                     itemBuilder: (_) => [
-                      PopupMenuItem(key: ContractsScreen.editKey, value: onAmend, child: Text(words.contractsEdit)),
+                      PopupMenuItem(key: ContractsScreen.editKey, value: onAmend, child: Text(words.contractsEdit, key: ContractsScreen.editKey.label)),
                       if (contract.isActive)
-                        PopupMenuItem(key: ContractsScreen.disableKey, value: () => showRefusalOf(context, contracts.disable(contract)), child: Text(words.contractsDisable))
+                        PopupMenuItem(key: ContractsScreen.disableKey, value: () => showRefusalOf(context, contracts.disable(contract)), child: Text(words.contractsDisable, key: ContractsScreen.disableKey.label))
                       else
-                        PopupMenuItem(key: ContractsScreen.enableKey, value: () => showRefusalOf(context, contracts.enable(contract)), child: Text(words.contractsEnable)),
+                        PopupMenuItem(key: ContractsScreen.enableKey, value: () => showRefusalOf(context, contracts.enable(contract)), child: Text(words.contractsEnable, key: ContractsScreen.enableKey.label)),
                     ],
                   ),
               ],

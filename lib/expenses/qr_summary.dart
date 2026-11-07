@@ -4,6 +4,7 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../words/words.dart';
 import '../entries/add_entry_screen.dart';
+import '../ui/part_keys.dart';
 import 'invoice_qr.dart';
 
 /// What was read from the invoice's QR code (AC-11.1): its five fields, and an offer to add the seller when no supplier holds its number.
@@ -27,6 +28,7 @@ class QrSummary extends StatelessWidget {
     final words = Words.of(context);
     final theme = Theme.of(context);
     return Card.filled(
+      key: AddEntryScreen.qrSummaryKey,
       margin: const EdgeInsets.only(top: 12),
       color: theme.colorScheme.primaryContainer,
       child: Padding(
@@ -44,7 +46,7 @@ class QrSummary extends StatelessWidget {
               const SizedBox(height: 8),
               Text(words.expensesQrSupplierMissing, key: AddEntryScreen.qrSupplierMissingKey),
               const SizedBox(height: 4),
-              OutlinedButton(key: AddEntryScreen.qrAddSupplierKey, onPressed: onAddSupplier, child: Text(words.expensesQrAddSupplier)),
+              OutlinedButton(key: AddEntryScreen.qrAddSupplierKey, onPressed: onAddSupplier, child: Text(words.expensesQrAddSupplier, key: AddEntryScreen.qrAddSupplierKey.label)),
             ],
           ],
         ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../api_object.dart';
 import '../words/words.dart';
 import 'api_list_body.dart';
+import 'part_keys.dart';
 
 /// What shows something the API owns: why it could not load with a way to try again, or what [builder] draws from it.
 class ApiObjectBody<T> extends StatelessWidget {
@@ -31,7 +32,7 @@ class ApiObjectBody<T> extends StatelessWidget {
             children: [
               Text(words.text(object.message), key: ApiListBody.messageKey, textAlign: TextAlign.center),
               const SizedBox(height: 8),
-              OutlinedButton(key: ApiListBody.retryKey, onPressed: object.load, child: Text(words.commonRetry)),
+              OutlinedButton(key: ApiListBody.retryKey, onPressed: object.load, child: Text(words.commonRetry, key: ApiListBody.retryKey.label)),
             ],
           ),
         );

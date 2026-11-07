@@ -17,6 +17,9 @@ class LanguageSwitch extends StatefulWidget {
   /// The line that says why the language could not be switched.
   static const messageKey = Key('language.message');
 
+  /// The choice of the language.
+  static const choiceKey = Key('language.choice');
+
   /// The language choice it changes.
   final AppLanguage language;
 
@@ -47,6 +50,7 @@ class _LanguageSwitchState extends State<LanguageSwitch> {
       spacing: 12,
       children: [
         SegmentedButton<String>(
+          key: LanguageSwitch.choiceKey,
           segments: [
             ButtonSegment(value: 'ar', label: Text(words.myAccountArabic, key: LanguageSwitch.arabicKey)),
             ButtonSegment(value: 'en', label: Text(words.myAccountEnglish, key: LanguageSwitch.englishKey)),

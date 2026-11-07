@@ -7,6 +7,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/api_object_body.dart';
 import '../ui/change_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
@@ -85,6 +86,9 @@ class PartnersScreen extends StatefulWidget {
   /// The button that edits the partner [id].
   static Key editKey(String id) => Key('partners.edit.$id');
 
+  /// The row of the partner [id].
+  static Key rowKey(String id) => Key('partners.row.$id');
+
   @override
   State<PartnersScreen> createState() => _PartnersScreenState();
 }
@@ -108,6 +112,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
   }
 
   Widget _total(Words words) => Card.outlined(
+    key: PartnersScreen.totalKey.card,
     margin: const EdgeInsets.only(bottom: 12),
     child: Padding(
       padding: const EdgeInsets.all(16),
@@ -119,12 +124,12 @@ class _PartnersScreenState extends State<PartnersScreen> {
           children: [
             Row(
               children: [
-                Expanded(child: Text(words.capitalTotal)),
+                Expanded(child: Text(words.capitalTotal, key: PartnersScreen.totalKey.label)),
                 Text(formatMoney(figures.total), key: PartnersScreen.totalKey, style: Theme.of(context).textTheme.titleLarge),
               ],
             ),
             if (widget.project.mayMoveMoney)
-              FilledButton.icon(key: PartnersScreen.moveKey, icon: const Icon(Icons.add), label: Text(words.capitalMovement), onPressed: () => context.push(CapitalMoveScreen.pathOf(widget.project.id), extra: widget.project)),
+              FilledButton.icon(key: PartnersScreen.moveKey, icon: Icon(Icons.add, key: PartnersScreen.moveKey.icon), label: Text(words.capitalMovement, key: PartnersScreen.moveKey.label), onPressed: () => context.push(CapitalMoveScreen.pathOf(widget.project.id), extra: widget.project)),
           ],
         ),
       ),
@@ -135,12 +140,14 @@ class _PartnersScreenState extends State<PartnersScreen> {
     final words = Words.of(context);
     final project = widget.project;
     return Card.outlined(
+      key: PartnersScreen.rowKey(partner.id),
       margin: const EdgeInsets.only(bottom: 8),
       child: ListenableBuilder(
         listenable: widget.capital,
         builder: (context, _) {
           final line = widget.capital.value.of(partner.id);
           return ListTile(
+            key: PartnersScreen.rowKey(partner.id).body,
             onTap: () => context.push(MovementsScreen.pathOf(project.id, partner.id, partner.name), extra: project),
             title: Text(partner.name, key: PartnersScreen.nameKey(partner.id)),
             subtitle: Column(
@@ -154,7 +161,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(formatMoney(line.balance), key: PartnersScreen.balanceKey(partner.id), style: Theme.of(context).textTheme.titleSmall),
-                if (project.mayManageSettings) IconButton(key: PartnersScreen.editKey(partner.id), icon: const Icon(Icons.edit_outlined), tooltip: words.partnersEdit, onPressed: () => _ask(partner)),
+                if (project.mayManageSettings) IconButton(key: PartnersScreen.editKey(partner.id), icon: Icon(Icons.edit_outlined, key: PartnersScreen.editKey(partner.id).icon), tooltip: words.partnersEdit, onPressed: () => _ask(partner)),
               ],
             ),
           );
@@ -170,7 +177,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.partnersTitle, subject: project.name), actions: [RefreshButton(onRefresh: widget.partners.load)]),
       floatingActionButton: project.mayManageSettings
-          ? FloatingActionButton.extended(key: PartnersScreen.addKey, icon: const Icon(Icons.add), label: Text(words.partnersNew), onPressed: () => _ask(Partner.none()))
+          ? FloatingActionButton.extended(key: PartnersScreen.addKey, icon: Icon(Icons.add, key: PartnersScreen.addKey.icon), label: Text(words.partnersNew, key: PartnersScreen.addKey.label), onPressed: () => _ask(Partner.none()))
           : null,
       body: ApiListBody(
         list: widget.partners,

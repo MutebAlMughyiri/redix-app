@@ -4,6 +4,7 @@ import '../attachments/picked_file.dart';
 import '../projects/project.dart';
 import '../words/words.dart';
 import '../entries/add_entry_screen.dart';
+import '../ui/part_keys.dart';
 
 /// The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files. Not shown to whoever may not attach files in [project].
 class InvoiceSection extends StatelessWidget {
@@ -38,7 +39,7 @@ class InvoiceSection extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(file.isNone ? Icons.receipt_long_outlined : Icons.picture_as_pdf_outlined),
+          Icon(file.isNone ? Icons.receipt_long_outlined : Icons.picture_as_pdf_outlined, key: AddEntryScreen.invoiceNameKey.icon),
           const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -75,12 +76,12 @@ class InvoiceSection extends StatelessWidget {
                 children: [
                   OutlinedButton.icon(
                     key: AddEntryScreen.cameraKey,
-                    icon: const Icon(Icons.document_scanner_outlined),
-                    label: Text(file.isNone ? words.attachmentsTakePhoto : words.attachmentsRetake),
+                    icon: Icon(Icons.document_scanner_outlined, key: AddEntryScreen.cameraKey.icon),
+                    label: Text(file.isNone ? words.attachmentsTakePhoto : words.attachmentsRetake, key: AddEntryScreen.cameraKey.label),
                     onPressed: onCamera,
                   ),
                   const SizedBox(height: 8),
-                  OutlinedButton.icon(key: AddEntryScreen.filesKey, icon: const Icon(Icons.folder_open_outlined), label: Text(words.attachmentsPickFile), onPressed: onFiles),
+                  OutlinedButton.icon(key: AddEntryScreen.filesKey, icon: Icon(Icons.folder_open_outlined, key: AddEntryScreen.filesKey.icon), label: Text(words.attachmentsPickFile, key: AddEntryScreen.filesKey.label), onPressed: onFiles),
                 ],
               ),
             ),

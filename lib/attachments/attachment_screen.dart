@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:printing/printing.dart';
 
 import '../auth/session.dart';
+import '../ui/part_keys.dart';
+import '../ui/screen_title.dart';
 import 'invoice_capture.dart';
 import '../words/words.dart';
 
@@ -30,6 +32,9 @@ class AttachmentScreen extends StatefulWidget {
 
   /// The button handing any other file to the phone.
   static const openFileKey = Key('attachment.openFile');
+
+  /// The spinner while the file is read.
+  static const loadingKey = Key('attachment.loading');
 
   /// The project.
   final String projectId;
@@ -65,12 +70,12 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(words.approvalsOpenFile)),
+      appBar: AppBar(title: Text(words.approvalsOpenFile, key: ScreenTitle.titleKey)),
       body: FutureBuilder<Uint8List>(
         future: _file,
         builder: (context, file) {
           if (file.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(key: AttachmentScreen.loadingKey));
           }
           if (file.hasError || (file.data ?? Uint8List(0)).isEmpty) {
             return Center(child: Text(words.approvalsFileFailed, key: AttachmentScreen.failedKey));
@@ -78,12 +83,12 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
           final bytes = file.requireData;
           if (widget.contentType == 'application/pdf') {
             return Center(
-              child: FilledButton(key: AttachmentScreen.openPdfKey, onPressed: () => Printing.sharePdf(bytes: bytes, filename: 'invoice.pdf'), child: Text(words.approvalsOpenFile)),
+              child: FilledButton(key: AttachmentScreen.openPdfKey, onPressed: () => Printing.sharePdf(bytes: bytes, filename: 'invoice.pdf'), child: Text(words.approvalsOpenFile, key: AttachmentScreen.openPdfKey.label)),
             );
           }
           if (!widget.contentType.startsWith('image/')) {
             return Center(
-              child: FilledButton(key: AttachmentScreen.openFileKey, onPressed: () => widget.capture.shareFile(bytes, widget.fileName, widget.contentType), child: Text(words.approvalsOpenFile)),
+              child: FilledButton(key: AttachmentScreen.openFileKey, onPressed: () => widget.capture.shareFile(bytes, widget.fileName, widget.contentType), child: Text(words.approvalsOpenFile, key: AttachmentScreen.openFileKey.label)),
             );
           }
           return InteractiveViewer(maxScale: 6, child: Center(child: Image.memory(bytes, key: AttachmentScreen.pictureKey)));

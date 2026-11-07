@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../home/home_screen.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'project.dart';
 
@@ -25,6 +26,7 @@ class UnitRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return ListTile(
+      key: HomeScreen.unitRowKey(unit.id),
       dense: true,
       title: Text(unit.name, key: HomeScreen.unitKey(unit.id)),
       trailing: mayChange
@@ -32,8 +34,8 @@ class UnitRow extends StatelessWidget {
               key: HomeScreen.unitMenuKey(unit.id),
               onSelected: (action) => action(),
               itemBuilder: (_) => [
-                PopupMenuItem(key: HomeScreen.renameUnitKey, value: onRename, child: Text(words.projectsRenameUnit)),
-                PopupMenuItem(key: HomeScreen.deleteUnitKey, value: onDelete, child: Text(words.projectsRemoveUnit)),
+                PopupMenuItem(key: HomeScreen.renameUnitKey, value: onRename, child: Text(words.projectsRenameUnit, key: HomeScreen.renameUnitKey.label)),
+                PopupMenuItem(key: HomeScreen.deleteUnitKey, value: onDelete, child: Text(words.projectsRemoveUnit, key: HomeScreen.deleteUnitKey.label)),
               ],
             )
           : null,

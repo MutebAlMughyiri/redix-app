@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../format/number_format.dart';
 import '../home/home_screen.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'accounts.dart';
 
@@ -32,7 +33,7 @@ class MyCustody extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('${words.accountsMyCustody} · ${account.name}', style: theme.textTheme.bodySmall),
+                    Text('${words.accountsMyCustody} · ${account.name}', key: HomeScreen.custodyKey(account.id).title, style: theme.textTheme.bodySmall),
                     const SizedBox(height: 4),
                     Text('${formatMoney(account.balance)} ${words.accountsRiyal}', key: HomeScreen.custodyBalanceKey(account.id), style: theme.textTheme.headlineSmall),
                   ],

@@ -9,6 +9,7 @@ import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
@@ -109,6 +110,18 @@ class AccountsScreen extends StatefulWidget {
   /// The menu of the account [id].
   static Key menuKey(String id) => Key('accounts.menu.$id');
 
+  /// The row of the account [id].
+  static Key rowKey(String id) => Key('accounts.row.$id');
+
+  /// The amount of the transfer [id].
+  static Key transferAmountKey(String id) => Key('accounts.transferAmount.$id');
+
+  /// The heading over the latest transfers.
+  static const transfersHeadingKey = Key('accounts.transfersHeading');
+
+  /// The heading over the account types, in the dialog.
+  static const typeHeadingKey = Key('accounts.typeHeading');
+
   @override
   State<AccountsScreen> createState() => _AccountsScreenState();
 }
@@ -138,16 +151,16 @@ class _AccountsScreenState extends State<AccountsScreen> {
     return ListTile(
       key: AccountsScreen.transferRowKey(transfer.id),
       contentPadding: EdgeInsets.zero,
-      title: Text('${transfer.fromAccountName} ← ${transfer.toAccountName}'),
-      subtitle: Text([if (transfer.description.isNotEmpty) transfer.description, formatDate(transfer.date)].join(' · ')),
+      title: Text('${transfer.fromAccountName} ← ${transfer.toAccountName}', key: AccountsScreen.transferRowKey(transfer.id).title),
+      subtitle: Text([if (transfer.description.isNotEmpty) transfer.description, formatDate(transfer.date)].join(' · '), key: AccountsScreen.transferRowKey(transfer.id).subtitle),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(formatMoney(transfer.amount)),
+          Text(formatMoney(transfer.amount), key: AccountsScreen.transferAmountKey(transfer.id)),
           if (!project.isFinished && project.may(Permission.approveEntries))
             IconButton(
               key: AccountsScreen.reverseTransferKey(transfer.id),
-              icon: const Icon(Icons.undo),
+              icon: Icon(Icons.undo, key: AccountsScreen.reverseTransferKey(transfer.id).icon),
               tooltip: Words.of(context).capitalReverse,
               onPressed: () => ReverseSheet.show(context, (reason) => _reverse(transfer, reason)),
             ),
@@ -165,10 +178,10 @@ class _AccountsScreenState extends State<AccountsScreen> {
           spacing: 8,
           children: [
             Expanded(
-              child: FilledButton(key: AccountsScreen.reconcileKey, onPressed: () => context.push(ReconcileScreen.pathOf(widget.project.id), extra: widget.project), child: Text(words.accountsReconcile)),
+              child: FilledButton(key: AccountsScreen.reconcileKey, onPressed: () => context.push(ReconcileScreen.pathOf(widget.project.id), extra: widget.project), child: Text(words.accountsReconcile, key: AccountsScreen.reconcileKey.label)),
             ),
             Expanded(
-              child: OutlinedButton(key: AccountsScreen.transferKey, onPressed: () => context.push(TransferScreen.pathOf(widget.project.id), extra: widget.project), child: Text(words.accountsTransfer)),
+              child: OutlinedButton(key: AccountsScreen.transferKey, onPressed: () => context.push(TransferScreen.pathOf(widget.project.id), extra: widget.project), child: Text(words.accountsTransfer, key: AccountsScreen.transferKey.label)),
             ),
           ],
         ),
@@ -180,7 +193,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
     builder: (context, _) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (widget.transfers.all.isNotEmpty) Text(words.transfersLatest, style: Theme.of(context).textTheme.titleMedium),
+        if (widget.transfers.all.isNotEmpty) Text(words.transfersLatest, key: AccountsScreen.transfersHeadingKey, style: Theme.of(context).textTheme.titleMedium),
         for (final transfer in widget.transfers.all) _transferRow(transfer),
       ],
     ),
@@ -196,8 +209,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
       floatingActionButton: project.mayManageSettings
           ? FloatingActionButton.extended(
               key: AccountsScreen.addKey,
-              icon: const Icon(Icons.add),
-              label: Text(words.accountsNew),
+              icon: Icon(Icons.add, key: AccountsScreen.addKey.icon),
+              label: Text(words.accountsNew, key: AccountsScreen.addKey.label),
               onPressed: () => showDialog<void>(
                 context: context,
                 builder: (_) => AccountDialog(account: Account.none(), accounts: accounts, members: widget.members),

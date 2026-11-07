@@ -36,6 +36,7 @@ import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
@@ -194,6 +195,18 @@ class HomeScreen extends StatefulWidget {
   /// The way into the liquidation of the project [id].
   static Key liquidateKey(String id) => Key('home.liquidate.$id');
 
+  /// The heading over the entries of the project [id].
+  static Key entriesHeadingKey(String id) => Key('home.entriesHeading.$id');
+
+  /// The line saying the project [id] has no entries yet.
+  static Key entriesEmptyKey(String id) => Key('home.entriesEmpty.$id');
+
+  /// The row saying the project [id] has no units.
+  static Key noUnitsRowKey(String id) => Key('home.noUnitsRow.$id');
+
+  /// The row of the unit [id].
+  static Key unitRowKey(String id) => Key('home.unitRow.$id');
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -328,8 +341,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.all(8),
                     child: FilledButton.icon(
                       key: HomeScreen.addEntryKey(widget.projectId),
-                      icon: const Icon(Icons.add),
-                      label: Text(words.entriesNew),
+                      icon: Icon(Icons.add, key: HomeScreen.addEntryKey(widget.projectId).icon),
+                      label: Text(words.entriesNew, key: HomeScreen.addEntryKey(widget.projectId).label),
                       onPressed: () => _open(AddEntryScreen.pathOf(widget.projectId), project.single),
                     ),
                   ),
@@ -351,10 +364,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       return waiting == 0
                           ? const SizedBox.shrink()
                           : Card.filled(
+                              key: HomeScreen.waitingKey(project.id).card,
                               child: ListTile(
                                 key: HomeScreen.waitingKey(project.id),
-                                leading: const Icon(Icons.cloud_upload_outlined),
-                                title: Text('${words.offlineTitle} · $waiting'),
+                                leading: Icon(Icons.cloud_upload_outlined, key: HomeScreen.waitingKey(project.id).icon),
+                                title: Text('${words.offlineTitle} · $waiting', key: HomeScreen.waitingKey(project.id).title),
                                 onTap: () => context.push(WaitingScreen.pathOf(project.id)),
                               ),
                             );

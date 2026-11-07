@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../attachments/invoice_capture.dart';
 import '../auth/session.dart';
+import '../ui/part_keys.dart';
+import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 
 Future<String> _save(InvoiceCapture capture, Uint8List bytes, String name, String mimeType) async {
@@ -126,7 +128,7 @@ class ReportFileButtons extends StatelessWidget {
     final messenger = ScaffoldMessenger.of(context);
     final said = await files.hand(address, name, kind, handing);
     if (said.isNotEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(words.text(said))));
+      showMessage(messenger, words, said);
     }
   }
 
@@ -141,8 +143,8 @@ class ReportFileButtons extends StatelessWidget {
             for (final handing in kind.handings)
               ListTile(
                 key: handingKey(name, kind, handing),
-                leading: Icon(handing.icon),
-                title: Text(words.text(handing.wordKey)),
+                leading: Icon(handing.icon, key: handingKey(name, kind, handing).icon),
+                title: Text(words.text(handing.wordKey), key: handingKey(name, kind, handing).title),
                 onTap: () {
                   Navigator.pop(sheet);
                   _run(context, kind, handing);
@@ -164,8 +166,8 @@ class ReportFileButtons extends StatelessWidget {
         for (final kind in kinds)
           OutlinedButton.icon(
             key: buttonKey(name, kind),
-            icon: Icon(kind.icon),
-            label: Text(words.text(kind.wordKey)),
+            icon: Icon(kind.icon, key: buttonKey(name, kind).icon),
+            label: Text(words.text(kind.wordKey), key: buttonKey(name, kind).label),
             onPressed: () => kind.handings.length == 1 ? _run(context, kind, kind.handings.single) : _ask(context, kind),
           ),
       ],

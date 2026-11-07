@@ -11,7 +11,9 @@ import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/entry_field.dart';
 import '../ui/labelled_chips.dart';
+import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
+import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'account.dart';
@@ -49,6 +51,12 @@ class TransferScreen extends StatefulWidget {
 
   /// The choice of the account [id] as where it arrives.
   static Key toKey(String id) => Key('transfer.to.$id');
+
+  /// The choice of the account the money leaves.
+  static const fromChoiceKey = Key('transfer.fromChoice');
+
+  /// The choice of the account the money reaches.
+  static const toChoiceKey = Key('transfer.toChoice');
 
   /// The project.
   final Project project;
@@ -132,7 +140,7 @@ class _TransferScreenState extends State<TransferScreen> {
       return;
     }
     if (refusal.isEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(words.transfersDone)));
+      showMessage(messenger, words, 'transfers.done');
       await widget.accounts.load();
       if (mounted) {
         context.pop();
@@ -158,6 +166,7 @@ class _TransferScreenState extends State<TransferScreen> {
           spacing: 12,
           children: [
             LabelledChips<Account>(
+              key: TransferScreen.fromChoiceKey,
               label: words.transfersFrom,
               choices: accounts,
               keyOf: (account) => TransferScreen.fromKey(account.id),
@@ -166,6 +175,7 @@ class _TransferScreenState extends State<TransferScreen> {
               onChosen: (account) => setState(() => _fromId = account.id),
             ),
             LabelledChips<Account>(
+              key: TransferScreen.toChoiceKey,
               label: words.transfersTo,
               choices: accounts,
               keyOf: (account) => TransferScreen.toKey(account.id),
@@ -178,7 +188,7 @@ class _TransferScreenState extends State<TransferScreen> {
             entryField(key: TransferScreen.descriptionKey, controller: _description, label: words.transfersDescription, onChanged: (_) {}),
             InvoiceSection(project: widget.project, file: _file, emptyLabel: words.transfersReceipt, message: _fileMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
             if (_message.isNotEmpty) Text(words.text(_message), key: TransferScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-            FilledButton(key: TransferScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.transfersSave)),
+            FilledButton(key: TransferScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.transfersSave, key: TransferScreen.saveKey.label)),
           ],
         ),
       ),

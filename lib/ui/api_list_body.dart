@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api_list.dart';
 import '../words/words.dart';
+import 'part_keys.dart';
 
 /// The body of a screen that shows an [ApiList]: why it could not load with a way to try again, loading, empty, or its items, which are read again when pulled down.
 class ApiListBody<T> extends StatelessWidget {
@@ -48,6 +49,9 @@ class ApiListBody<T> extends StatelessWidget {
   /// The line shown while the list has no items.
   static const emptyKey = Key('apiList.empty');
 
+  /// The spinner shown while the list is first read.
+  static const loadingKey = Key('apiList.loading');
+
   Widget _state(BuildContext context) {
     final words = Words.of(context);
     if (list.message.isNotEmpty) {
@@ -59,7 +63,7 @@ class ApiListBody<T> extends StatelessWidget {
             children: [
               Text(words.text(list.message), key: messageKey, textAlign: TextAlign.center),
               const SizedBox(height: 16),
-              OutlinedButton(key: retryKey, onPressed: list.load, child: Text(words.commonRetry)),
+              OutlinedButton(key: retryKey, onPressed: list.load, child: Text(words.commonRetry, key: retryKey.label)),
             ],
           ),
         ),
@@ -68,7 +72,7 @@ class ApiListBody<T> extends StatelessWidget {
     if (list.all.isEmpty) {
       return Center(
         child: list.isLoading
-            ? const CircularProgressIndicator()
+            ? const CircularProgressIndicator(key: loadingKey)
             : Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(emptyText, key: emptyKey, textAlign: TextAlign.center),

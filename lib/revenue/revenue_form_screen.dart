@@ -16,7 +16,9 @@ import '../structure/item_picker.dart';
 import '../structure/offered_items.dart';
 import '../ui/entry_field.dart';
 import '../ui/labelled_chips.dart';
+import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
+import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'revenues.dart';
@@ -49,6 +51,12 @@ class RevenueFormScreen extends StatefulWidget {
 
   /// The choice of the account [id].
   static Key accountKey(String id) => Key('revenueForm.account.$id');
+
+  /// The date it came in.
+  static const dateKey = Key('revenueForm.date');
+
+  /// The choice of the account it came into.
+  static const accountChoiceKey = Key('revenueForm.accountChoice');
 
   /// The project.
   final Project project;
@@ -148,7 +156,7 @@ class _RevenueFormScreenState extends State<RevenueFormScreen> {
       return;
     }
     if (refusal.isEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(words.revenueSaved)));
+      showMessage(messenger, words, 'revenue.saved');
       context.pop(true);
       return;
     }
@@ -173,8 +181,9 @@ class _RevenueFormScreenState extends State<RevenueFormScreen> {
             children: [
               ItemPicker(key: RevenueFormScreen.itemKey, items: widget.items, label: words.revenueItem, itemName: _item.name, onChanged: (item) => setState(() => _item = item)),
               entryField(key: RevenueFormScreen.amountKey, controller: _amount, label: words.revenueAmount, isNumber: true, onChanged: (_) {}),
-              PickerField(label: words.revenueDate, value: formatDate(_date), onTap: _chooseDate),
+              PickerField(key: RevenueFormScreen.dateKey, label: words.revenueDate, value: formatDate(_date), onTap: _chooseDate),
               LabelledChips<Account>(
+                key: RevenueFormScreen.accountChoiceKey,
                 label: words.revenueAccount,
                 choices: widget.accounts.bankAndCash,
                 keyOf: (account) => RevenueFormScreen.accountKey(account.id),
@@ -185,7 +194,7 @@ class _RevenueFormScreenState extends State<RevenueFormScreen> {
               entryField(key: RevenueFormScreen.descriptionKey, controller: _description, label: words.revenueDescription, onChanged: (_) {}),
               InvoiceSection(project: widget.project, file: _file, emptyLabel: words.revenueFile, message: _fileMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
               if (_message.isNotEmpty) Text(words.text(_message), key: RevenueFormScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-              FilledButton(key: RevenueFormScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.revenueSave)),
+              FilledButton(key: RevenueFormScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.revenueSave, key: RevenueFormScreen.saveKey.label)),
             ],
           ),
         ),

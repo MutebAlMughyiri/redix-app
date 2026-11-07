@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../ui/api_list_body.dart';
+import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
 import '../words/words.dart';
 import 'creditable_invoice.dart';
@@ -47,8 +48,8 @@ class OriginalInvoicePicker extends StatelessWidget {
                   emptyText: words.expensesNoCreditableInvoice,
                   itemBuilder: (invoice) => ListTile(
                     key: optionKey(invoice.entryId),
-                    title: Text(invoice.label),
-                    subtitle: Text('${formatDate(invoice.date)} · ${words.expensesReturnable} ${formatMoney(invoice.returnable)}'),
+                    title: Text(invoice.label, key: optionKey(invoice.entryId).title),
+                    subtitle: Text('${formatDate(invoice.date)} · ${words.expensesReturnable} ${formatMoney(invoice.returnable)}', key: optionKey(invoice.entryId).subtitle),
                     onTap: () => Navigator.of(sheet).pop(invoice),
                   ),
                 ),
@@ -66,6 +67,6 @@ class OriginalInvoicePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    return PickerField(label: words.expensesOriginalInvoice, value: chosen.label, onTap: () => _choose(context));
+    return PickerField(key: key.field, label: words.expensesOriginalInvoice, value: chosen.label, onTap: () => _choose(context));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'categories_screen.dart';
 import 'category.dart';
@@ -21,8 +22,9 @@ class ItemTypeChoice extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(words.categoriesSide, style: Theme.of(context).textTheme.titleSmall),
+        Text(words.categoriesSide, key: CategoriesScreen.sideHeadingKey, style: Theme.of(context).textTheme.titleSmall),
         SegmentedButton<bool>(
+          key: CategoriesScreen.sideChoiceKey,
           showSelectedIcon: false,
           segments: [
             ButtonSegment(value: false, label: Text(words.categoriesSideExpenses, key: CategoriesScreen.sideKey(isRevenue: false))),
@@ -31,14 +33,14 @@ class ItemTypeChoice extends StatelessWidget {
           selected: {value.isRevenue},
           onSelectionChanged: (side) => onChanged(ItemType.values.firstWhere((type) => type.isRevenue == side.single)),
         ),
-        Text(words.categoriesItemType, style: Theme.of(context).textTheme.titleSmall),
+        Text(words.categoriesItemType, key: CategoriesScreen.typeHeadingKey, style: Theme.of(context).textTheme.titleSmall),
         RadioGroup<ItemType>(
           groupValue: value,
           onChanged: (type) => onChanged(type ?? value),
           child: Column(
             children: [
               for (final type in ItemType.values.where((type) => type.isRevenue == value.isRevenue))
-                RadioListTile<ItemType>(key: CategoriesScreen.itemTypeKey(type), contentPadding: EdgeInsets.zero, value: type, title: Text(words.text(type.wordKey))),
+                RadioListTile<ItemType>(key: CategoriesScreen.itemTypeKey(type), contentPadding: EdgeInsets.zero, value: type, title: Text(words.text(type.wordKey), key: CategoriesScreen.itemTypeKey(type).title)),
             ],
           ),
         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../projects/new_project_screen.dart';
+import '../ui/part_keys.dart';
 import '../words/app_language.dart';
 import '../words/language_switch.dart';
 import '../words/words.dart';
@@ -47,6 +48,12 @@ class SignInScreen extends StatefulWidget {
 
   /// The line that says why sign-in was refused, or why the last session ended.
   static const messageKey = Key('signIn.message');
+
+  /// What to do.
+  static const hintKey = Key('signIn.hint');
+
+  /// Who to ask for a forgotten password.
+  static const forgotKey = Key('signIn.forgot');
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -113,7 +120,7 @@ class _SignInScreenState extends State<SignInScreen> {
             const SizedBox(height: 16),
             Text(words.appTitle, key: SignInScreen.titleKey, style: theme.textTheme.headlineMedium),
             const SizedBox(height: 8),
-            Text(words.signInHint, style: theme.textTheme.bodyLarge),
+            Text(words.signInHint, key: SignInScreen.hintKey, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 32),
             TextField(
               key: SignInScreen.usernameKey,
@@ -136,7 +143,7 @@ class _SignInScreenState extends State<SignInScreen> {
               key: SignInScreen.submitKey,
               onPressed: _signingIn ? null : _signIn,
               style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-              child: Text(words.signInSubmit),
+              child: Text(words.signInSubmit, key: SignInScreen.submitKey.label),
             ),
             ListenableBuilder(
               listenable: widget.session,
@@ -173,8 +180,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             key: SignInScreen.unlockKey,
                             onPressed: _unlock,
                             style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
-                            icon: const Icon(Icons.fingerprint),
-                            label: Text(words.biometricsSignIn),
+                            icon: Icon(Icons.fingerprint, key: SignInScreen.unlockKey.icon),
+                            label: Text(words.biometricsSignIn, key: SignInScreen.unlockKey.label),
                           ),
                         ],
                       ),
@@ -182,9 +189,9 @@ class _SignInScreenState extends State<SignInScreen> {
                   : const SizedBox.shrink(),
             ),
             const SizedBox(height: 16),
-            TextButton(key: SignInScreen.registerKey, onPressed: () => context.push(NewProjectScreen.registerPath), child: Text(words.signInRegisterProject)),
+            TextButton(key: SignInScreen.registerKey, onPressed: () => context.push(NewProjectScreen.registerPath), child: Text(words.signInRegisterProject, key: SignInScreen.registerKey.label)),
             const SizedBox(height: 16),
-            Text(words.signInForgotPassword, style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
+            Text(words.signInForgotPassword, key: SignInScreen.forgotKey, style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
           ],
         ),
       ),

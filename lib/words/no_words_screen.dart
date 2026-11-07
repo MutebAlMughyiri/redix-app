@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../ui/part_keys.dart';
+
 /// Shown on a first start without a network, when the app has no words yet; it needs none, only an icon and a retry button.
 class NoWordsScreen extends StatelessWidget {
   /// The screen, calling [onRetry] when the user retries.
@@ -22,7 +24,7 @@ class NoWordsScreen extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.wifi_off, key: iconKey, size: 48),
-            IconButton(key: retryKey, icon: const Icon(Icons.refresh), onPressed: onRetry),
+            IconButton(key: retryKey, icon: Icon(Icons.refresh, key: retryKey.icon), onPressed: onRetry),
           ],
         ),
       ),

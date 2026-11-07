@@ -36,6 +36,7 @@ import '../suppliers/supplier_picker.dart';
 import '../suppliers/suppliers.dart';
 import '../ui/entry_field.dart';
 import '../ui/form_section.dart';
+import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
 import '../ui/two_fields.dart';
 import '../words/words.dart';
@@ -253,6 +254,28 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The field of the item's column [key].
   static Key columnKey(String key) => Key('addEntry.column.$key');
+
+  /// The section asking what the entry is for.
+  static const forSectionKey = Key('addEntry.forSection');
+
+  /// The section asking the item's own columns.
+  static const columnsSectionKey = Key('addEntry.columnsSection');
+
+  /// The section asking how it was paid.
+  static const paymentSectionKey = Key('addEntry.paymentSection');
+
+  /// The SnackBar saying the entry was saved, sent or kept on the phone.
+  static const savedMessageKey = Key('addEntry.savedMessage');
+
+
+  /// The choice [option] of the list column [key].
+  static Key columnOptionKey(String key, String option) => Key('addEntry.columnOption.$key.$option');
+
+  /// The choice of a contractor payment's kind: inside the contract or outside it.
+  static const kindKey = Key('addEntry.kind');
+
+  /// The card of what the invoice's QR code says.
+  static const qrSummaryKey = Key('addEntry.qrSummary');
 
   @override
   State<AddEntryScreen> createState() => _AddEntryScreenState();
@@ -570,7 +593,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     }
     if (refusal.isEmpty) {
       final sent = widget.expenses.wasOverrun ? words.contractorPaymentsSavedOverrun : (submit ? words.expensesSent : words.expensesSaved);
-      messenger.showSnackBar(SnackBar(content: Text(widget.expenses.wasKept ? words.expensesKeptOnPhone : sent, key: AddEntryScreen.savedKey)));
+      messenger.showSnackBar(SnackBar(key: AddEntryScreen.savedMessageKey, content: Text(widget.expenses.wasKept ? words.expensesKeptOnPhone : sent, key: AddEntryScreen.savedKey)));
       context.pop(true);
       return;
     }
@@ -614,8 +637,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     SwitchListTile(
       key: AddEntryScreen.creditNoteKey,
       contentPadding: EdgeInsets.zero,
-      title: Text(words.expensesCreditNote),
-      subtitle: Text(words.expensesCreditNoteExplain),
+      title: Text(words.expensesCreditNote, key: AddEntryScreen.creditNoteKey.title),
+      subtitle: Text(words.expensesCreditNoteExplain, key: AddEntryScreen.creditNoteKey.subtitle),
       value: _isCreditNote,
       onChanged: (isCreditNote) => setState(() => _setCreditNote(isCreditNote)),
     ),
@@ -642,8 +665,9 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 4,
       children: [
-        Text(words.contractorPaymentsKind, style: Theme.of(context).textTheme.titleSmall),
+        Text(words.contractorPaymentsKind, key: AddEntryScreen.kindKey.label, style: Theme.of(context).textTheme.titleSmall),
         SegmentedButton<bool>(
+          key: AddEntryScreen.kindKey,
           showSelectedIcon: false,
           segments: [
             ButtonSegment(value: false, label: Text(words.contractorPaymentsInside, key: AddEntryScreen.insideKey)),
@@ -669,7 +693,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       ),
   ];
 
-  Widget _paymentSection(Words words) => FormSection([
+  Widget _paymentSection(Words words) => FormSection(key: AddEntryScreen.paymentSectionKey, [
     PaymentChoices(choice: _payment, accounts: widget.accounts, paymentMethods: widget.paymentMethods, onChanged: () => setState(() {}), onRetry: _readListsAgain),
     if (_asks('notes')) _textField(AddEntryScreen.notesKey, _notes, _labelOf('notes', words.expensesNotes), maxLines: 2, errorText: _errorOf('notes', words)),
   ]);
@@ -707,8 +731,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                 child: Text(words.text(_qrMessage), key: AddEntryScreen.qrMessageKey),
               ),
             if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: _qrSupplierMissing && !_table.isContract && widget.project.mayAddSupplier, onAddSupplier: _addSupplierFromQr),
-            FormSection(_whatItIsFor(words)),
-            if (ownFields.isNotEmpty) FormSection(ownFields),
+            FormSection(key: AddEntryScreen.forSectionKey, _whatItIsFor(words)),
+            if (ownFields.isNotEmpty) FormSection(key: AddEntryScreen.columnsSectionKey, ownFields),
             _paymentSection(words),
             const SizedBox(height: 16),
             if (_message.isNotEmpty) ...[
@@ -720,10 +744,10 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
               children: [
                 Expanded(
                   flex: 2,
-                  child: FilledButton(key: AddEntryScreen.sendKey, onPressed: _saving ? null : () => _save(true), child: Text(words.expensesSend)),
+                  child: FilledButton(key: AddEntryScreen.sendKey, onPressed: _saving ? null : () => _save(true), child: Text(words.expensesSend, key: AddEntryScreen.sendKey.label)),
                 ),
                 Expanded(
-                  child: OutlinedButton(key: AddEntryScreen.draftKey, onPressed: _saving ? null : () => _save(false), child: Text(words.expensesSaveDraft)),
+                  child: OutlinedButton(key: AddEntryScreen.draftKey, onPressed: _saving ? null : () => _save(false), child: Text(words.expensesSaveDraft, key: AddEntryScreen.draftKey.label)),
                 ),
               ],
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../format/number_format.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'approvals.dart';
 import 'approvals_screen.dart';
@@ -64,14 +65,14 @@ class _RejectSheetState extends State<RejectSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 12,
           children: [
-            Text(words.approvalsRejectTitle, style: theme.textTheme.titleLarge),
-            Text('${entry.itemName} · ${entry.supplierName} · ${formatMoney(entry.amount)}'),
-            Text(words.approvalsQuickReason, style: theme.textTheme.titleSmall),
+            Text(words.approvalsRejectTitle, key: ApprovalsScreen.rejectTitleKey, style: theme.textTheme.titleLarge),
+            Text('${entry.itemName} · ${entry.supplierName} · ${formatMoney(entry.amount)}', key: ApprovalsScreen.rejectEntryKey),
+            Text(words.approvalsQuickReason, key: ApprovalsScreen.quickReasonHeadingKey, style: theme.textTheme.titleSmall),
             Wrap(
               spacing: 8,
               children: [
                 for (final (index, reason) in [words.approvalsReasonUnclear, words.approvalsReasonAmount, words.approvalsReasonItem, words.approvalsReasonDuplicate].indexed)
-                  ActionChip(key: ApprovalsScreen.quickReasonKey(index), label: Text(reason), onPressed: () => setState(() => _reason.text = reason)),
+                  ActionChip(key: ApprovalsScreen.quickReasonKey(index), label: Text(reason, key: ApprovalsScreen.quickReasonKey(index).label), onPressed: () => setState(() => _reason.text = reason)),
               ],
             ),
             TextField(
@@ -85,7 +86,7 @@ class _RejectSheetState extends State<RejectSheet> {
               key: ApprovalsScreen.rejectSendKey,
               style: FilledButton.styleFrom(backgroundColor: theme.colorScheme.error, foregroundColor: theme.colorScheme.onError),
               onPressed: _saving ? null : _reject,
-              child: Text(words.approvalsRejectSend),
+              child: Text(words.approvalsRejectSend, key: ApprovalsScreen.rejectSendKey.label),
             ),
           ],
         ),

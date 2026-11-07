@@ -20,7 +20,9 @@ import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/entry_field.dart';
 import '../ui/labelled_chips.dart';
+import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
+import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'liquidation.dart';
@@ -112,6 +114,36 @@ class LiquidationScreen extends StatefulWidget {
   /// The receipt of the part [entryId].
   static Key receiptKey(String entryId) => Key('liquidation.receipt.$entryId');
 
+  /// The choice of the account paying the partner [partnerId].
+  static Key accountChoiceKey(String partnerId) => Key('liquidation.accountChoice.$partnerId');
+
+  /// The choice of the project the partner [partnerId]'s share moves to.
+  static Key targetProjectChoiceKey(String partnerId) => Key('liquidation.targetProjectChoice.$partnerId');
+
+  /// The choice of the partner it reaches there.
+  static Key targetPartnerChoiceKey(String partnerId) => Key('liquidation.targetPartnerChoice.$partnerId');
+
+  /// The choice of the account it reaches there.
+  static Key targetAccountChoiceKey(String partnerId) => Key('liquidation.targetAccountChoice.$partnerId');
+
+  /// The choice of the account of a late entry.
+  static const lateAccountChoiceKey = Key('liquidation.lateAccountChoice');
+
+  /// What liquidating does, or what a deficit means.
+  static const explainKey = Key('liquidation.explain');
+
+  /// The heading over what was distributed.
+  static const distributedHeadingKey = Key('liquidation.distributedHeading');
+
+  /// What recording a late entry does.
+  static const lateExplainKey = Key('liquidation.lateExplain');
+
+  /// The choice of paying the partner [partnerId] out or carrying the share to another project.
+  static Key wayKey(String partnerId) => Key('liquidation.way.$partnerId');
+
+  /// The choice of what a late entry is: an expense or revenue.
+  static const lateKindKey = Key('liquidation.lateKind');
+
   /// The project.
   final Project project;
 
@@ -188,7 +220,7 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
       return;
     }
     if (refusal.isEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(words.liquidationDone)));
+      showMessage(messenger, words, 'liquidation.done');
       await widget.projects.load();
       if (mounted) {
         context.pop(true);
@@ -215,8 +247,8 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
     );
   }
 
-  Widget _chips<T>(String label, List<T> choices, Key Function(T) keyOf, String Function(T) nameOf, bool Function(T) isChosen, ValueChanged<T> onChosen) =>
-      LabelledChips<T>(label: label, choices: choices, keyOf: keyOf, nameOf: nameOf, isChosen: isChosen, onChosen: (choice) => setState(() => onChosen(choice)));
+  Widget _chips<T>(Key key, String label, List<T> choices, Key Function(T) keyOf, String Function(T) nameOf, bool Function(T) isChosen, ValueChanged<T> onChosen) =>
+      LabelledChips<T>(key: key, label: label, choices: choices, keyOf: keyOf, nameOf: nameOf, isChosen: isChosen, onChosen: (choice) => setState(() => onChosen(choice)));
 
   Widget _part(LiquidationPart part, Words words) {
     final line = _lineOf(part.partnerId);
@@ -232,12 +264,14 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
             spacing: 12,
             children: [
               ListTile(
+                key: LiquidationScreen.partKey(id).body,
                 contentPadding: EdgeInsets.zero,
-                title: Text(part.name),
-                subtitle: Text('${words.capitalShare}: ${formatShare(part.sharePercent)}%'),
-                trailing: Text(formatMoney(part.amount), style: Theme.of(context).textTheme.titleMedium),
+                title: Text(part.name, key: LiquidationScreen.partKey(id).title),
+                subtitle: Text('${words.capitalShare}: ${formatShare(part.sharePercent)}%', key: LiquidationScreen.partKey(id).subtitle),
+                trailing: Text(formatMoney(part.amount), key: LiquidationScreen.partKey(id).trailing, style: Theme.of(context).textTheme.titleMedium),
               ),
               SegmentedButton<bool>(
+                key: LiquidationScreen.wayKey(id),
                 showSelectedIcon: false,
                 segments: [
                   ButtonSegment(value: false, label: Text(words.liquidationPayOut, key: LiquidationScreen.payOutKey(id))),
@@ -246,12 +280,12 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
                 selected: {line.isCarry},
                 onSelectionChanged: (selected) => setState(() => line.isCarry = selected.single),
               ),
-              _chips<Account>(words.capitalAccount, widget.accounts.bankAndCash, (account) => LiquidationScreen.accountKey(id, account.id), (account) => account.name, (account) => account.id == line.accountId, (account) => line.accountId = account.id),
+              _chips<Account>(LiquidationScreen.accountChoiceKey(id), words.capitalAccount, widget.accounts.bankAndCash, (account) => LiquidationScreen.accountKey(id, account.id), (account) => account.name, (account) => account.id == line.accountId, (account) => line.accountId = account.id),
               if (line.isCarry) ...[
-                _chips<Project>(words.capitalTargetProject, _laterProjects, (project) => LiquidationScreen.targetProjectKey(id, project.id), (project) => project.name, (project) => project.id == line.targetProjectId, (project) => _chooseTarget(line, project)),
+                _chips<Project>(LiquidationScreen.targetProjectChoiceKey(id), words.capitalTargetProject, _laterProjects, (project) => LiquidationScreen.targetProjectKey(id, project.id), (project) => project.name, (project) => project.id == line.targetProjectId, (project) => _chooseTarget(line, project)),
                 if (line.targetProjectId.isNotEmpty) ...[
-                  _chips<Partner>(words.capitalTargetPartner, widget.partnersOf(line.targetProjectId).all, (partner) => LiquidationScreen.targetPartnerKey(id, partner.id), (partner) => partner.name, (partner) => partner.id == line.targetPartnerId, (partner) => line.targetPartnerId = partner.id),
-                  _chips<Account>(words.capitalTargetAccount, widget.accountsOf(line.targetProjectId).bankAndCash, (account) => LiquidationScreen.targetAccountKey(id, account.id), (account) => account.name, (account) => account.id == line.targetAccountId, (account) => line.targetAccountId = account.id),
+                  _chips<Partner>(LiquidationScreen.targetPartnerChoiceKey(id), words.capitalTargetPartner, widget.partnersOf(line.targetProjectId).all, (partner) => LiquidationScreen.targetPartnerKey(id, partner.id), (partner) => partner.name, (partner) => partner.id == line.targetPartnerId, (partner) => line.targetPartnerId = partner.id),
+                  _chips<Account>(LiquidationScreen.targetAccountChoiceKey(id), words.capitalTargetAccount, widget.accountsOf(line.targetProjectId).bankAndCash, (account) => LiquidationScreen.targetAccountKey(id, account.id), (account) => account.name, (account) => account.id == line.targetAccountId, (account) => line.targetAccountId = account.id),
                 ],
               ],
             ],
@@ -266,9 +300,9 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
     final isDeficit = figures.surplus < 0;
     final ready = figures.pendingCount == 0 && figures.parts.every((part) => _lineOf(part.partnerId).isComplete);
     return [
-      Text(isDeficit ? words.liquidationDeficit : words.liquidationSurplus, style: theme.textTheme.bodySmall),
+      Text(isDeficit ? words.liquidationDeficit : words.liquidationSurplus, key: LiquidationScreen.surplusKey.label, style: theme.textTheme.bodySmall),
       Text(formatMoney(figures.surplus.abs()), key: LiquidationScreen.surplusKey, style: theme.textTheme.headlineMedium),
-      Text(isDeficit ? words.liquidationDeficitExplain : words.liquidationExplain),
+      Text(isDeficit ? words.liquidationDeficitExplain : words.liquidationExplain, key: LiquidationScreen.explainKey),
       if (figures.pendingCount > 0) Text(words.liquidationPending.replaceFirst('{0}', '${figures.pendingCount}'), key: LiquidationScreen.pendingKey, style: TextStyle(color: theme.colorScheme.error)),
       PickerField(key: LiquidationScreen.dateKey, label: words.liquidationDate, value: formatDate(_date), onTap: _chooseDate),
       for (final part in figures.parts) _part(part, words),
@@ -277,7 +311,7 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
         key: LiquidationScreen.confirmKey,
         style: FilledButton.styleFrom(backgroundColor: theme.colorScheme.error),
         onPressed: ready && !_saving ? () => _askToLiquidate(figures.parts) : null,
-        child: Text(words.liquidationConfirm),
+        child: Text(words.liquidationConfirm, key: LiquidationScreen.confirmKey.label),
       ),
     ];
   }
@@ -290,7 +324,7 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
       return;
     }
     final refusal = await widget.liquidation.attachReceipt(share.entryId, file);
-    messenger.showSnackBar(SnackBar(content: Text(words.text(refusal.isEmpty ? 'liquidation.receiptAttached' : refusal))));
+    showMessage(messenger, words, refusal.isEmpty ? 'liquidation.receiptAttached' : refusal);
   }
 
   void _askLate() => showDialog<void>(
@@ -299,23 +333,23 @@ class _LiquidationScreenState extends State<LiquidationScreen> {
   );
 
   List<Widget> _distributed(LiquidationFigures figures, Words words) => [
-    OutlinedButton.icon(key: LiquidationScreen.lateKey, icon: const Icon(Icons.add), label: Text(words.liquidationLate), onPressed: _askLate),
+    OutlinedButton.icon(key: LiquidationScreen.lateKey, icon: Icon(Icons.add, key: LiquidationScreen.lateKey.icon), label: Text(words.liquidationLate, key: LiquidationScreen.lateKey.label), onPressed: _askLate),
     if (figures.distributed.isEmpty) Text(words.liquidationNothing, key: LiquidationScreen.nothingKey),
-    if (figures.distributed.isNotEmpty) Text(words.liquidationDistributed, style: Theme.of(context).textTheme.titleMedium),
+    if (figures.distributed.isNotEmpty) Text(words.liquidationDistributed, key: LiquidationScreen.distributedHeadingKey, style: Theme.of(context).textTheme.titleMedium),
     for (final share in figures.distributed)
       ListTile(
         key: LiquidationScreen.distributedKey(share.entryId),
         contentPadding: EdgeInsets.zero,
-        title: Text(share.partnerName),
-        subtitle: Text('${share.description} · ${formatDate(share.date)} · ${share.accountName}'),
+        title: Text(share.partnerName, key: LiquidationScreen.distributedKey(share.entryId).title),
+        subtitle: Text('${share.description} · ${formatDate(share.date)} · ${share.accountName}', key: LiquidationScreen.distributedKey(share.entryId).subtitle),
         leading: share.receiptId.isEmpty
-            ? IconButton(key: LiquidationScreen.attachReceiptKey(share.entryId), tooltip: words.liquidationAttachReceipt, icon: Icon(Icons.attach_file, color: Theme.of(context).colorScheme.error), onPressed: () => _attachReceipt(share))
+            ? IconButton(key: LiquidationScreen.attachReceiptKey(share.entryId), tooltip: words.liquidationAttachReceipt, icon: Icon(Icons.attach_file, key: LiquidationScreen.attachReceiptKey(share.entryId).icon, color: Theme.of(context).colorScheme.error), onPressed: () => _attachReceipt(share))
             : IconButton(
                 key: LiquidationScreen.receiptKey(share.entryId),
-                icon: const Icon(Icons.receipt_long_outlined),
+                icon: Icon(Icons.receipt_long_outlined, key: LiquidationScreen.receiptKey(share.entryId).icon),
                 onPressed: () => context.push(AttachmentScreen.pathOf(widget.project.id, share.receiptId), extra: share.receiptType),
               ),
-        trailing: Text(formatMoney(share.amount)),
+        trailing: Text(formatMoney(share.amount), key: LiquidationScreen.distributedKey(share.entryId).trailing),
       ),
   ];
 
@@ -399,7 +433,7 @@ class _LateDialogState extends State<_LateDialog> {
     }
     final refusal = await widget.liquidation.recordLate(itemId: _item.id, date: _date, amount: amount, accountId: _accountId, description: _description.text);
     if (refusal.isEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(words.liquidationLateRecorded)));
+      showMessage(messenger, words, 'liquidation.lateRecorded');
     }
     return refusal;
   }
@@ -412,8 +446,9 @@ class _LateDialogState extends State<_LateDialog> {
       saveLabel: words.liquidationRecord,
       onSave: _save,
       children: [
-        Text(words.liquidationLateExplain, style: Theme.of(context).textTheme.bodySmall),
+        Text(words.liquidationLateExplain, key: LiquidationScreen.lateExplainKey, style: Theme.of(context).textTheme.bodySmall),
         SegmentedButton<bool>(
+          key: LiquidationScreen.lateKindKey,
           showSelectedIcon: false,
           segments: [
             ButtonSegment(value: true, label: Text(words.liquidationLateExpense, key: LiquidationScreen.lateExpenseKey)),
@@ -431,6 +466,7 @@ class _LateDialogState extends State<_LateDialog> {
         ListenableBuilder(
           listenable: widget.accounts,
           builder: (context, _) => LabelledChips<Account>(
+            key: LiquidationScreen.lateAccountChoiceKey,
             label: words.capitalAccount,
             choices: widget.accounts.bankAndCash,
             keyOf: (account) => LiquidationScreen.lateAccountKey(account.id),

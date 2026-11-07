@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../ui/change_dialog.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'columns.dart';
 import 'item_column.dart';
@@ -64,14 +65,14 @@ class _EditColumnDialogState extends State<EditColumnDialog> {
         SwitchListTile(
           key: ItemColumnsScreen.requiredKey,
           contentPadding: EdgeInsets.zero,
-          title: Text(words.columnsRequired),
+          title: Text(words.columnsRequired, key: ItemColumnsScreen.requiredKey.title),
           value: _isRequired,
           onChanged: mayChangeMore ? (value) => setState(() => _isRequired = value) : null,
         ),
         SwitchListTile(
           key: ItemColumnsScreen.showInReportsKey,
           contentPadding: EdgeInsets.zero,
-          title: Text(words.columnsShowInReports),
+          title: Text(words.columnsShowInReports, key: ItemColumnsScreen.showInReportsKey.title),
           value: _showInReports,
           onChanged: mayChangeMore ? (value) => setState(() => _showInReports = value) : null,
         ),

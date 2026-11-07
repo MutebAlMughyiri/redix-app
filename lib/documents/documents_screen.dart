@@ -10,8 +10,10 @@ import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/entry_field.dart';
+import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
+import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'documents.dart';
 
@@ -47,6 +49,9 @@ class DocumentsScreen extends StatefulWidget {
   /// The button that removes the document [id].
   static Key removeKey(String id) => Key('documents.remove.$id');
 
+  /// What the file field asks, or why the file was refused.
+  static const fileHintKey = Key('documents.fileHint');
+
   /// The project.
   final Project project;
 
@@ -79,7 +84,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         confirmLabel: words.documentsRemove,
         onConfirm: () async {
           final refusal = await widget.documents.remove(document);
-          messenger.showSnackBar(SnackBar(content: Text(words.text(refusal.isEmpty ? 'documents.removed' : refusal))));
+          showMessage(messenger, words, refusal.isEmpty ? 'documents.removed' : refusal);
         },
       ),
     );
@@ -97,13 +102,14 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           child: Text(document.group, key: DocumentsScreen.groupHeadingKey(document.group), style: Theme.of(context).textTheme.titleSmall),
         ),
       Card.outlined(
+        key: DocumentsScreen.documentKey(document.id).card,
         child: ListTile(
           key: DocumentsScreen.documentKey(document.id),
-          leading: Icon(_iconOf(document.contentType)),
-          title: Text(document.name),
-          subtitle: Text('${document.fileName} · ${formatDate(document.uploadedAt)}'),
+          leading: Icon(_iconOf(document.contentType), key: DocumentsScreen.documentKey(document.id).icon),
+          title: Text(document.name, key: DocumentsScreen.documentKey(document.id).title),
+          subtitle: Text('${document.fileName} · ${formatDate(document.uploadedAt)}', key: DocumentsScreen.documentKey(document.id).subtitle),
           trailing: widget.project.mayManageProject
-              ? IconButton(key: DocumentsScreen.removeKey(document.id), tooltip: words.documentsRemove, icon: const Icon(Icons.delete_outline), onPressed: () => _askToRemove(document))
+              ? IconButton(key: DocumentsScreen.removeKey(document.id), tooltip: words.documentsRemove, icon: Icon(Icons.delete_outline, key: DocumentsScreen.removeKey(document.id).icon), onPressed: () => _askToRemove(document))
               : null,
           onTap: () => context.push(AttachmentScreen.pathOf(widget.project.id, document.attachmentId, fileName: document.fileName), extra: document.contentType),
         ),
@@ -119,8 +125,8 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       floatingActionButton: widget.project.mayManageProject
           ? FloatingActionButton.extended(
               key: DocumentsScreen.addKey,
-              icon: const Icon(Icons.add),
-              label: Text(words.documentsAdd),
+              icon: Icon(Icons.add, key: DocumentsScreen.addKey.icon),
+              label: Text(words.documentsAdd, key: DocumentsScreen.addKey.label),
               onPressed: () => showDialog<void>(context: context, builder: (_) => _DocumentDialog(documents: widget.documents, capture: widget.capture)),
             )
           : null,
@@ -177,7 +183,7 @@ class _DocumentDialogState extends State<_DocumentDialog> {
     }
     final refusal = await widget.documents.add(_file, _name.text, _group);
     if (refusal.isEmpty) {
-      messenger.showSnackBar(SnackBar(content: Text(words.documentsSaved)));
+      showMessage(messenger, words, 'documents.saved');
     }
     return refusal;
   }
@@ -202,8 +208,8 @@ class _DocumentDialogState extends State<_DocumentDialog> {
             onChanged: (typed) => _group = typed,
           ),
         ),
-        OutlinedButton.icon(key: DocumentsScreen.fileKey, icon: const Icon(Icons.attach_file), label: Text(_file.isNone ? words.documentsFile : _file.name), onPressed: _pickFile),
-        Text(_fileMessage.isEmpty ? words.documentsFileHint : words.text(_fileMessage), style: Theme.of(context).textTheme.bodySmall),
+        OutlinedButton.icon(key: DocumentsScreen.fileKey, icon: Icon(Icons.attach_file, key: DocumentsScreen.fileKey.icon), label: Text(_file.isNone ? words.documentsFile : _file.name, key: DocumentsScreen.fileKey.label), onPressed: _pickFile),
+        Text(_fileMessage.isEmpty ? words.documentsFileHint : words.text(_fileMessage), key: DocumentsScreen.fileHintKey, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
   }

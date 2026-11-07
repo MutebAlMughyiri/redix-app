@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/entry_field.dart';
+import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'reconciliation.dart';
@@ -33,6 +34,9 @@ class ReconcileScreen extends StatefulWidget {
 
   /// The field of the account [id].
   static Key balanceKey(String id) => Key('reconcile.balance.$id');
+
+  /// The books' balance of the account [id].
+  static Key booksKey(String id) => Key('reconcile.books.$id');
 
   /// The project.
   final Project project;
@@ -100,13 +104,13 @@ class _ReconcileScreenState extends State<ReconcileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   entryField(key: ReconcileScreen.balanceKey(row.accountId), controller: _fields[row.accountId]!, label: row.accountName, isNumber: true, isSigned: true, onChanged: (_) => setState(() {})),
-                  Text('${words.reconciliationsBooks}: ${formatMoney(row.booksBalance)}', style: theme.textTheme.bodySmall),
+                  Text('${words.reconciliationsBooks}: ${formatMoney(row.booksBalance)}', key: ReconcileScreen.booksKey(row.accountId), style: theme.textTheme.bodySmall),
                 ],
               ),
             Text('${words.reconciliationsActualTotal}: ${formatMoney(_total)}', key: ReconcileScreen.totalKey),
             Text('${words.reconciliationsDifference}: ${formatMoney(_total - figures.surplus)}', key: ReconcileScreen.differenceKey, style: theme.textTheme.titleMedium),
             if (_message.isNotEmpty) Text(words.text(_message), key: ReconcileScreen.messageKey, style: TextStyle(color: theme.colorScheme.error)),
-            FilledButton(key: ReconcileScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.reconciliationsSave)),
+            FilledButton(key: ReconcileScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.reconciliationsSave, key: ReconcileScreen.saveKey.label)),
           ],
         ),
       ),

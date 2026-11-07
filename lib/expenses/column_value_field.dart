@@ -5,6 +5,7 @@ import '../structure/item_column.dart';
 import '../ui/picker_field.dart';
 import '../words/words.dart';
 import '../entries/add_entry_screen.dart';
+import '../ui/part_keys.dart';
 
 /// The field of one custom column (FR-41), drawn from what the column holds: a required one is marked.
 class ColumnValueField extends StatelessWidget {
@@ -41,7 +42,7 @@ class ColumnValueField extends StatelessWidget {
         isExpanded: true,
         initialValue: value.isEmpty ? null : value,
         decoration: decoration,
-        items: [for (final option in column.options) DropdownMenuItem(value: option, child: Text(option, overflow: TextOverflow.ellipsis))],
+        items: [for (final option in column.options) DropdownMenuItem(key: AddEntryScreen.columnOptionKey(column.key, option), value: option, child: Text(option, key: AddEntryScreen.columnOptionKey(column.key, option).label, overflow: TextOverflow.ellipsis))],
         onChanged: (chosen) => onChanged(chosen ?? ''),
       ),
       ColumnDataType.date => PickerField(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../structure/offered_items.dart';
+import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'supplier.dart';
@@ -29,8 +30,10 @@ class SupplierRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Card.outlined(
+      key: SuppliersScreen.rowKey(supplier.id),
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
+        key: SuppliersScreen.rowKey(supplier.id).body,
         contentPadding: EdgeInsetsDirectional.fromSTEB(16, 0, mayChange ? 4 : 16, 0),
         title: Text(
           supplier.name,
@@ -49,12 +52,12 @@ class SupplierRow extends StatelessWidget {
                       context: context,
                       builder: (_) => SupplierDialog(supplier: supplier, suppliers: suppliers, items: items),
                     ),
-                    child: Text(words.suppliersEdit),
+                    child: Text(words.suppliersEdit, key: SuppliersScreen.editKey.label),
                   ),
                   if (supplier.isActive)
-                    PopupMenuItem(key: SuppliersScreen.disableKey, value: () => showRefusalOf(context, suppliers.disable(supplier)), child: Text(words.suppliersDisable))
+                    PopupMenuItem(key: SuppliersScreen.disableKey, value: () => showRefusalOf(context, suppliers.disable(supplier)), child: Text(words.suppliersDisable, key: SuppliersScreen.disableKey.label))
                   else
-                    PopupMenuItem(key: SuppliersScreen.enableKey, value: () => showRefusalOf(context, suppliers.enable(supplier)), child: Text(words.suppliersEnable)),
+                    PopupMenuItem(key: SuppliersScreen.enableKey, value: () => showRefusalOf(context, suppliers.enable(supplier)), child: Text(words.suppliersEnable, key: SuppliersScreen.enableKey.label)),
                 ],
               )
             : null,

@@ -8,6 +8,8 @@ import '../partners/partners_screen.dart';
 import '../projects/project.dart';
 import '../ui/api_object_body.dart';
 import '../ui/confirm_dialog.dart';
+import '../ui/part_keys.dart';
+import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'dashboard.dart';
@@ -49,6 +51,18 @@ class ReportsScreen extends StatefulWidget {
   /// The way into the report of the item [id].
   static Key itemKey(String id) => Key('reports.item.$id');
 
+  /// The card of the periodic reports.
+  static const periodicCardKey = Key('reports.periodicCard');
+
+  /// The heading over the periodic reports.
+  static const periodicHeadingKey = Key('reports.periodicHeading');
+
+  /// The heading over the items' reports.
+  static const itemsHeadingKey = Key('reports.itemsHeading');
+
+  /// The category [id], opening to its items.
+  static Key categoryKey(String id) => Key('reports.category.$id');
+
   /// The project.
   final Project project;
 
@@ -78,7 +92,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   Widget _way(Key key, IconData icon, String title, String path) => Card.outlined(
-    child: ListTile(key: key, leading: Icon(icon), title: Text(title), trailing: const Icon(Icons.chevron_right), onTap: () => context.push(path, extra: widget.project)),
+    key: key.card,
+    child: ListTile(key: key, leading: Icon(icon, key: key.icon), title: Text(title, key: key.title), trailing: Icon(Icons.chevron_right, key: key.trailing), onTap: () => context.push(path, extra: widget.project)),
   );
 
   void _askToIssue(NextReportFigures next) {
@@ -94,7 +109,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
         onConfirm: () async {
           final refusal = await widget.periodicReports.issue();
           await widget.nextReport.load();
-          messenger.showSnackBar(SnackBar(content: Text(words.text(refusal.isEmpty ? 'reports.issued' : refusal))));
+          showMessage(messenger, words, refusal.isEmpty ? 'reports.issued' : refusal);
         },
       ),
     );
@@ -104,6 +119,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
     final words = Words.of(context);
     final project = widget.project;
     return Card.outlined(
+      key: ReportsScreen.periodicCardKey,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: ListenableBuilder(
@@ -114,19 +130,19 @@ class _ReportsScreenState extends State<ReportsScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               spacing: 8,
               children: [
-                Text(words.reportsPeriodic, style: Theme.of(context).textTheme.titleMedium),
+                Text(words.reportsPeriodic, key: ReportsScreen.periodicHeadingKey, style: Theme.of(context).textTheme.titleMedium),
                 if (reports.isEmpty) Text(words.reportsNoneIssued, key: ReportsScreen.noneIssuedKey),
                 for (final report in reports)
                   ListTile(
                     key: ReportsScreen.periodicKey(report.number),
                     contentPadding: EdgeInsets.zero,
-                    title: Text('${words.reportsReportNumber} ${report.number}'),
-                    subtitle: Text(formatDate(report.issuedAt)),
-                    trailing: const Icon(Icons.chevron_right),
+                    title: Text('${words.reportsReportNumber} ${report.number}', key: ReportsScreen.periodicKey(report.number).title),
+                    subtitle: Text(formatDate(report.issuedAt), key: ReportsScreen.periodicKey(report.number).subtitle),
+                    trailing: Icon(Icons.chevron_right, key: ReportsScreen.periodicKey(report.number).icon),
                     onTap: () => context.push(PeriodicReportScreen.pathOf(project.id, report.number), extra: project),
                   ),
                 if (project.mayMoveMoney)
-                  FilledButton(key: ReportsScreen.issueKey, onPressed: () => _askToIssue(widget.nextReport.value), child: Text(words.reportsIssue.replaceFirst('{0}', '${widget.nextReport.value.number}'))),
+                  FilledButton(key: ReportsScreen.issueKey, onPressed: () => _askToIssue(widget.nextReport.value), child: Text(words.reportsIssue.replaceFirst('{0}', '${widget.nextReport.value.number}'), key: ReportsScreen.issueKey.label)),
               ],
             );
           },
@@ -156,20 +172,21 @@ class _ReportsScreenState extends State<ReportsScreen> {
             ),
           _way(ReportsScreen.partnersKey, Icons.handshake_outlined, words.reportsPartners, PartnersScreen.pathOf(project.id)),
           const SizedBox(height: 12),
-          Text(words.reportsItem, style: Theme.of(context).textTheme.titleMedium),
+          Text(words.reportsItem, key: ReportsScreen.itemsHeadingKey, style: Theme.of(context).textTheme.titleMedium),
           ApiObjectBody(
             object: widget.dashboard,
             builder: (figures) => Column(
               children: [
                 for (final category in figures.categories)
                   ExpansionTile(
-                    title: Text(category.name),
+                    key: ReportsScreen.categoryKey(category.id),
+                    title: Text(category.name, key: ReportsScreen.categoryKey(category.id).title),
                     children: [
                       for (final item in category.items)
                         ListTile(
                           key: ReportsScreen.itemKey(item.id),
-                          title: Text(item.name),
-                          trailing: const Icon(Icons.chevron_right),
+                          title: Text(item.name, key: ReportsScreen.itemKey(item.id).title),
+                          trailing: Icon(Icons.chevron_right, key: ReportsScreen.itemKey(item.id).icon),
                           onTap: () => context.push(ItemReportScreen.pathOf(project.id, item.id), extra: project),
                         ),
                     ],

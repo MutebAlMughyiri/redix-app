@@ -4,6 +4,7 @@ import '../auth/permission.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/change_dialog.dart';
+import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'supplier.dart';
 import 'supplier_picker.dart';
@@ -81,7 +82,7 @@ class _QuickAddSupplierDialogState extends State<QuickAddSupplierDialog> {
         ),
         const SizedBox(height: 8),
         VatNumberField(controller: _vatNumber, holderName: _holder.name),
-        if (_holder.isActive && _holder.id.isNotEmpty) TextButton(key: SupplierPicker.useExistingKey, onPressed: _useHolder, child: Text(words.suppliersUseExisting)),
+        if (_holder.isActive && _holder.id.isNotEmpty) TextButton(key: SupplierPicker.useExistingKey, onPressed: _useHolder, child: Text(words.suppliersUseExisting, key: SupplierPicker.useExistingKey.label)),
         if (!widget.project.may(Permission.manageSettings)) ...[
           const SizedBox(height: 8),
           Text(words.suppliersPendingHint, key: SupplierPicker.pendingHintKey, style: Theme.of(context).textTheme.bodySmall),
