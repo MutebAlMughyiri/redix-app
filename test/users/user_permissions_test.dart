@@ -43,7 +43,7 @@ void main() {
     api.sentReads.clear();
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await tapWhileWaiting(tester, api, find.byType(BackButton));
     expect(api.sentReads, isNot(contains('/projects')));
 
     saved.complete();

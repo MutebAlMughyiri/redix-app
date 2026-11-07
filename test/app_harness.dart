@@ -461,6 +461,9 @@ class FakeApi {
   /// While set, a change to an entry waits for this before it answers.
   Completer<void> heldEntryChange = Completer<void>()..complete();
 
+  /// While set, the project's list of entries waits for this before it answers.
+  Completer<void> heldEntries = Completer<void>()..complete();
+
   /// The addresses expenses and payments were sent to, in order.
   final sentExpensePaths = <String>[];
 
@@ -1457,7 +1460,7 @@ class FakeApi {
       return _answerContracts(request);
     }
     if (segments.length == 3 && segments[2] == 'entries') {
-      return _json(entryRows, 200);
+      return heldEntries.future.then((_) => _json(entryRows, 200));
     }
     if (segments.length == 4 && segments[2] == 'entries' && request.method == 'GET' && entryDetails.containsKey(segments[3])) {
       return _json(entryDetails[segments[3]]!, 200);
@@ -1668,6 +1671,14 @@ Future<void> openSettings(WidgetTester tester, FakeApi api, {String projectId = 
   await tester.pumpAndSettle();
   await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey(projectId))));
 }
+
+/// Taps [finder] and lets the app run half a second, with its requests reaching [api], without waiting for it to settle: a screen shows a spinner, which never settles,
+/// while [api] holds an answer back.
+Future<void> tapWhileWaiting(WidgetTester tester, FakeApi api, Finder finder) => http.runWithClient(() async {
+  await tester.tap(finder);
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 500));
+}, () => api.client);
 
 /// Runs [action] and lets the app settle, with the app's requests reaching [api].
 Future<void> act(WidgetTester tester, FakeApi api, Future<void> Function() action) => http.runWithClient(() async {

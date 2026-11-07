@@ -18,6 +18,7 @@
 | Rule | Code | Test |
 | --- | --- | --- |
 | AC-22.1, R1, R2, R3, R15: the home lists the project's latest five by anyone under القيود, someone else's saying who entered it, and counts what of mine waits and was rejected | `HomeEntries`, `EntryTile` | `entries_test.dart`: AC-22.1, R1, R2, R3, R15 |
+| While the entries are first read, the home shows a spinner under القيود, and the rows once they come | `HomeEntries`, `HomeScreen.entriesLoadingKey` | `entries_test.dart`: the home shows a spinner under القيود |
 | R3, R14: with none of mine the home still lists the project's; with none at all it keeps its heading, search and the way to all | `HomeEntries` | `entries_test.dart`: R3, R14; R14 |
 | R4: the search beside القيود opens the list ready to type | `HomeEntries`, `EntriesScreen.startsSearching` | `entries_test.dart`: search, R4 |
 | R8, R16: the text finds the item, supplier and amount, Arabic spelling read as one and digits in either script | `EntryFilter.keeps`, `EntryRow.searchText` | `entries_test.dart`: search, R8, R16 |

@@ -143,6 +143,9 @@ class HomeScreen extends StatefulWidget {
   /// The way to the entries of the project [id].
   static Key entriesKey(String id) => Key('home.entries.$id');
 
+  /// The spinner under the entries' heading while they are first read.
+  static const entriesLoadingKey = Key('home.entriesLoading');
+
   /// How many of the user's entries wait for a decision in the project [id].
   static Key waitingCountKey(String id) => Key('home.waitingCount.$id');
 

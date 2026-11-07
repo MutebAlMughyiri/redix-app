@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/config/app_config.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
@@ -61,6 +62,24 @@ void main() {
     expect(find.byKey(HomeScreen.waitingCountKey('project-0')), findsNothing);
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
     expect(find.byKey(HomeScreen.entriesKey('project-0')), findsOneWidget);
+  });
+
+  testWidgets('the home shows a spinner under القيود while its entries are first read, and the rows once they come', (tester) async {
+    final api = FakeApi()
+      ..addProject('غصون 6', permissions: field, units: ['الفلة الغربية'])
+      ..addEntry()
+      ..heldEntries = Completer<void>();
+    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await tapWhileWaiting(tester, api, find.byKey(ProjectsScreen.cardKey('project-0')));
+
+    expect(find.byKey(HomeScreen.entriesLoadingKey), findsOneWidget);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
+
+    api.heldEntries.complete();
+    await act(tester, api, () async {});
+
+    expect(find.byKey(HomeScreen.entriesLoadingKey), findsNothing);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
   });
 
   testWidgets('R14: a project with no entries keeps its heading, its search and the way to all, and says it has none', (tester) async {
