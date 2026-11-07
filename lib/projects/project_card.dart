@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../auth/permission.dart';
-import '../format/date_format.dart';
 import '../home/home_screen.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'project.dart';
-import 'unit_row.dart';
 
-/// The open project: its start date, status and units, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Settings, and Add unit and Close project while it runs.
+/// The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Revenue, Reports, Settings, Approvals and Documents.
+/// A finished project says first, in one line, that it is read-only (redix-api 93).
 class ProjectCard extends StatelessWidget {
-  /// The card of [project], calling [onAccounts], [onPartners], [onSuppliers], [onContracts], [onSettings], [onDocuments], [onRenameUnit] and [onDeleteUnit] when those are tapped.
+  /// The card of [project], calling [onAccounts], [onPartners], [onSuppliers], [onContracts], [onApprovals], [onRevenue], [onReports], [onSettings] and [onDocuments] when those are tapped.
   const ProjectCard({
     super.key,
     required this.project,
@@ -23,8 +22,6 @@ class ProjectCard extends StatelessWidget {
     required this.onReports,
     required this.onSettings,
     required this.onDocuments,
-    required this.onRenameUnit,
-    required this.onDeleteUnit,
   });
 
   /// The project this card shows.
@@ -57,54 +54,24 @@ class ProjectCard extends StatelessWidget {
   /// Called when Documents is tapped.
   final VoidCallback onDocuments;
 
-  /// Called when a unit's Rename is chosen.
-  final void Function(Unit unit) onRenameUnit;
-
-  /// Called when a unit's Delete is chosen.
-  final void Function(Unit unit) onDeleteUnit;
-
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    final theme = Theme.of(context);
-    final startDate = '${words.projectsStartDate} ${formatDate(project.startDate)}';
-    final mayChange = project.mayManageProject;
     return Card.outlined(
       key: HomeScreen.cardKey(project.id),
       margin: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 12, 8),
-            child: OverflowBar(
-              alignment: MainAxisAlignment.spaceBetween,
-              overflowSpacing: 4,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      project.isFinished ? '$startDate · ${words.projectsReadOnly}' : startDate,
-                      key: HomeScreen.detailsKey(project.id),
-                      style: theme.textTheme.bodySmall,
-                    ),
-                  ],
-                ),
-                Chip(
-                  key: HomeScreen.statusKey(project.id),
-                  label: Text(words.text(project.status.wordKey), key: HomeScreen.statusKey(project.id).label),
-                  backgroundColor: project.status == ProjectStatus.active ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest,
-                  side: BorderSide.none,
-                  visualDensity: VisualDensity.compact,
-                ),
-              ],
+          if (project.isFinished) ...[
+            ListTile(
+              key: HomeScreen.finishedKey(project.id),
+              dense: true,
+              leading: Icon(Icons.lock_outline, key: HomeScreen.finishedKey(project.id).icon),
+              title: Text('${words.projectsFinished} · ${words.projectsReadOnly}', key: HomeScreen.finishedKey(project.id).title),
             ),
-          ),
-          const Divider(height: 1),
-          if (project.units.isEmpty) ListTile(key: HomeScreen.noUnitsRowKey(project.id), dense: true, title: Text(words.projectsNoUnits, key: HomeScreen.noUnitsKey(project.id))),
-          for (final unit in project.units) UnitRow(unit: unit, mayChange: mayChange, onRename: () => onRenameUnit(unit), onDelete: () => onDeleteUnit(unit)),
-          const Divider(height: 1),
+            const Divider(height: 1),
+          ],
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: OverflowBar(

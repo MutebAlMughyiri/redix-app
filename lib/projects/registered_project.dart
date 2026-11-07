@@ -8,7 +8,8 @@ class RegisteredProject {
       units = (json['units'] as List<dynamic>).cast<String>(),
       managerName = json['managerName'] as String,
       managerUsername = json['managerUsername'] as String,
-      managerMobile = json['managerMobile'] as String;
+      managerMobile = json['managerMobile'] as String,
+      description = json['description'] as String;
 
   /// The project's id.
   final String id;
@@ -30,4 +31,7 @@ class RegisteredProject {
 
   /// Their mobile; empty when none.
   final String managerMobile;
+
+  /// What the project is, as its manager wrote it; empty for none.
+  final String description;
 }

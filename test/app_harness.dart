@@ -15,6 +15,7 @@ import 'package:redix/auth/session.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
 import 'package:redix/projects/projects_screen.dart';
+import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/words/app_language.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -42,7 +43,8 @@ Map<String, String> wordsIn(String language) => {
     'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
     'projects.unitName', 'projects.addUnit', 'projects.removeUnit', 'projects.create', 'common.cancel', 'projects.close',
     'projects.closeQuestion', 'projects.closeExplain', 'projects.pendingEntries', 'projects.rename', 'projects.renameUnit', 'projects.removeUnitQuestion', 'projects.removeUnitExplain', 'projects.save', 'projects.invalidName', 'projects.projectFinished', 'projects.noConnection',
-    'projects.refused',
+    'projects.refused', 'projects.description', 'projects.invalidDescription', 'register.invalidDescription', 'projectInfo.title', 'projectInfo.description',
+    'projectInfo.descriptionHint', 'projectInfo.noDescription', 'projectInfo.save', 'projectInfo.saved',
     'users.title', 'users.new', 'users.loadFailed', 'users.disabled', 'users.edit', 'users.resetPassword', 'users.disable',
     'users.enable', 'users.name', 'users.nameHint', 'users.username', 'users.mobile', 'users.temporaryPassword',
     'users.temporaryPasswordHint', 'users.add', 'users.save', 'users.disableQuestion', 'users.disableExplain', 'users.resetExplain',
@@ -755,6 +757,7 @@ class FakeApi {
     String startDate = '2026-03-01',
     List<String> units = const [],
     String rejectionReason = '',
+    String description = '',
     List<String> permissions = managerAndFinance,
   }) {
     final id = 'project-${projects.length}';
@@ -764,6 +767,7 @@ class FakeApi {
       'startDate': startDate,
       'status': status,
       'rejectionReason': rejectionReason,
+      'description': description,
       'units': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}],
       'permissions': permissions,
     };
@@ -1348,7 +1352,7 @@ class FakeApi {
   http.Response _json(Object body, int status) => http.Response.bytes(utf8.encode(jsonEncode(body)), status);
 
   /// Adds a project waiting for the admin.
-  void addRegistered(String name, {String managerName = 'ريم', String managerUsername = 'reem', String managerMobile = '0500000000', List<String> units = const ['الفلة الغربية']}) {
+  void addRegistered(String name, {String managerName = 'ريم', String managerUsername = 'reem', String managerMobile = '0500000000', List<String> units = const ['الفلة الغربية'], String description = ''}) {
     registered.add({
       'id': 'registered-${registered.length}',
       'name': name,
@@ -1357,6 +1361,7 @@ class FakeApi {
       'managerName': managerName,
       'managerUsername': managerUsername,
       'managerMobile': managerMobile,
+      'description': description,
     });
   }
 
@@ -1581,12 +1586,14 @@ class FakeApi {
       return _json({if (projectAnswer.code.isNotEmpty) 'code': projectAnswer.code}, projectAnswer.status);
     }
     if (path == '/projects') {
-      return _json(addProject(body['name'] as String, startDate: body['startDate'] as String, units: (body['units'] as List<dynamic>).cast<String>()), 201);
+      return _json(addProject(body['name'] as String, startDate: body['startDate'] as String, units: (body['units'] as List<dynamic>).cast<String>(), description: body['description'] as String), 201);
     }
     final project = projects.singleWhere((project) => project['id'] == request.url.pathSegments[1]);
     final units = project['units'] as List<Map<String, String>>;
     if (path.endsWith('/close')) {
       project['status'] = 'finished';
+    } else if (path.endsWith('/description')) {
+      project['description'] = (body['description'] as String).trim();
     } else if (segments.length == 2) {
       project['name'] = body['name'] as String;
     } else if (path.endsWith('/delete')) {
@@ -1648,6 +1655,12 @@ Future<void> openSettings(WidgetTester tester, FakeApi api, {String projectId = 
   await tester.ensureVisible(find.byKey(HomeScreen.settingsKey(projectId)));
   await tester.pumpAndSettle();
   await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey(projectId))));
+}
+
+/// Opens Settings › More info from the card of the open project [projectId] (redix-api 93).
+Future<void> openProjectInfo(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) async {
+  await openSettings(tester, api, projectId: projectId);
+  await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectInfoKey)));
 }
 
 /// Taps [finder] and lets the app run half a second, with its requests reaching [api], without waiting for it to settle: a screen shows a spinner, which never settles,

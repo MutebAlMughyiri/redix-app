@@ -14,6 +14,7 @@
 | Switch project | Everyone | The [project list](projects.md) |
 | Registered projects | The admin | [Register a project](register-a-project.md) |
 | My account | Everyone | [My account](my-account.md) |
+| More info | Everyone in the project, when opened from it | [More info](projects.md#more-info): its name, start date, status, units and description |
 
 ## العربية
 
@@ -25,3 +26,4 @@
 | تبديل المشروع | الجميع | [قائمة المشاريع](projects.md) |
 | المشاريع المسجّلة | مسؤول النظام | [تسجيل مشروع](register-a-project.md) |
 | حسابي | الجميع | [حسابي](my-account.md) |
+| معلومات المشروع | كل من في المشروع، عند فتحها منه | [معلومات المشروع](projects.md#more-info): اسمه وتاريخ بدئه وحالته ووحداته ووصفه |

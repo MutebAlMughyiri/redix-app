@@ -53,6 +53,9 @@ class RegisteredProjectsScreen extends StatefulWidget {
   /// Who registered the project [id].
   static Key managerKey(String id) => Key('registered.manager.$id');
 
+  /// What the project [id] is, as its manager wrote it; only when they wrote one (redix-api 93).
+  static Key descriptionKey(String id) => Key('registered.description.$id');
+
   /// The button that approves the project [id].
   static Key approveKey(String id) => Key('registered.approve.$id');
 
@@ -90,6 +93,11 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
                 Text(project.name, key: RegisteredProjectsScreen.nameKey(project.id), style: theme.textTheme.titleMedium),
                 Text(details, key: RegisteredProjectsScreen.detailsKey(project.id), style: theme.textTheme.bodySmall),
                 Text(manager, key: RegisteredProjectsScreen.managerKey(project.id), style: theme.textTheme.bodySmall),
+                if (project.description.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(project.description, key: RegisteredProjectsScreen.descriptionKey(project.id), style: theme.textTheme.bodyMedium),
+                  ),
               ],
             ),
           ),

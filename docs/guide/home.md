@@ -6,7 +6,7 @@
 
 ## English
 
-**What it is for:** one project: your roles in it, its start date, status and units, and what your roles let you do there.
+**What it is for:** one project, and what your roles let you do there. Its start date, status, units and description are in **Settings** › **[More info](projects.md#more-info)**.
 **Who sees it:** everyone with access to that project. Open it by tapping the project on the [project list](projects.md).
 
 Under **Entries** the home lists the project's latest five entries, by anyone, each saying whether it waits for approval or was rejected; an approved one says nothing. The search beside the heading finds any entry ([Entries](entries.md)). Whoever enters expenses sees **[إضافة قيد](add-expense.md)** at the bottom, while the project runs: one button for a purchase and a [contractor payment](contractor-payment.md) alike.
@@ -21,11 +21,11 @@ If the very first start has no network, the app shows a no-network icon and a re
 
 If you hold a custody, its balance shows at the top. See [Accounts](accounts.md).
 
-Whoever does the project's finance can rename the project, add a unit and close the project from **Settings** (**Rename project**, **Add unit**, **Close project**), and rename or delete a unit from the menu on its row. A unit that entries or contracts use cannot be deleted. Closing the project waits until no entry is waiting for approval.
+Whoever does the project's finance renames the project, adds, renames and deletes units, writes its description and closes it from **Settings** › **[More info](projects.md#more-info)**. A unit that entries or contracts use cannot be deleted. Closing the project waits until no entry is waiting for approval. A finished project says **Finished · Read-only** at the top of its home.
 
 ## العربية
 
-**الغرض:** مشروع واحد: أدوارك فيه، وتاريخ بدئه، وحالته، ووحداته، وما تتيحه لك أدوارك فيه.
+**الغرض:** مشروع واحد، وما تتيحه لك أدوارك فيه. وتاريخ بدئه وحالته ووحداته ووصفه في **الإعدادات** › **[معلومات المشروع](projects.md#more-info)**.
 **من يراها:** كل من له وصول إلى ذلك المشروع. افتحها بالضغط على المشروع في [قائمة المشاريع](projects.md).
 
 وتحت **القيود** تعرض الرئيسية آخر خمسة قيود في المشروع، من أي شخص، ويقول كل قيد إن كان بانتظار الاعتماد أو مرفوضاً؛ والمعتمد لا يقول شيئاً. ويجد زر البحث بجانب العنوان أي قيد ([القيود](entries.md)). ويرى من يُدخل المصروفات **[إضافة قيد](add-expense.md)** في الأسفل، زراً واحداً للشراء و[دفعة المقاول](contractor-payment.md) معاً، ما دام المشروع جارياً.
@@ -40,4 +40,4 @@ Whoever does the project's finance can rename the project, add a unit and close 
 
 إن كانت لديك عهدة، يظهر رصيدها في الأعلى. انظر [الحسابات](accounts.md).
 
-ويستطيع من يتولى مالية المشروع تعديل اسم المشروع وإضافة وحدة وإغلاق المشروع من **الإعدادات** (**تعديل اسم المشروع**، **إضافة وحدة**، **إغلاق المشروع**)، وتعديل اسم الوحدة أو حذفها من القائمة في سطرها. ولا تُحذف وحدة عليها قيود أو عقود. ولا يُغلق المشروع ما دام فيه قيد بانتظار الاعتماد.
+ويعدّل من يتولى مالية المشروع اسمه، ويضيف الوحدات ويعدّلها ويحذفها، ويكتب وصفه ويغلقه، من **الإعدادات** › **[معلومات المشروع](projects.md#more-info)**. ولا تُحذف وحدة عليها قيود أو عقود. ولا يُغلق المشروع ما دام فيه قيد بانتظار الاعتماد. ويظهر أعلى الشاشة الرئيسية للمشروع المنتهي **منتهٍ · للقراءة فقط**.

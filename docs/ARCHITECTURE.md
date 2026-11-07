@@ -81,9 +81,10 @@ lib/
     projects.dart           Projects: the ApiList of projects, and its changes
     projects_screen.dart    the project list, the first screen after sign-in, and the default project
     project_choice.dart     one project on the list
-    project_card.dart       the open project, on its home
+    project_card.dart       the open project's buttons, on its home
+    project_info_screen.dart More info: the project's name, start date, status, units and description
     add_unit_dialog.dart    the Add unit dialog
-    unit_row.dart           one unit on the project's home, with its menu
+    unit_row.dart           one unit on More info, with its menu
     member.dart             Member: someone in a project, as a person choosing among them sees them
     members.dart            Members: the ApiList of one project's active people
     member_picker.dart      the field that chooses someone in a project, or nobody

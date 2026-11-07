@@ -4,24 +4,20 @@ import 'package:go_router/go_router.dart';
 import '../account/my_account_screen.dart';
 import '../auth/permission.dart';
 import '../auth/session.dart';
-import '../projects/add_unit_dialog.dart';
 import '../projects/project.dart';
+import '../projects/project_info_screen.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
 import '../projects/registered_projects_screen.dart';
 import '../structure/categories_screen.dart';
-import '../ui/change_dialog.dart';
-import '../ui/confirm_dialog.dart';
-import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../users/users_screen.dart';
 import '../words/words.dart';
 import 'default_project_sheet.dart';
 import 'payment_methods_screen.dart';
 
-/// Settings (الإعدادات): the way back to the project list, My account, the registered projects for the admin and, for the project it was opened from, its users, its categories and items, and its payment methods, each for whoever may change them.
+/// Settings (الإعدادات): the way back to the project list, My account, the registered projects for the admin and, for the project it was opened from, More info for everyone in it, and its users, its categories and items, and its payment methods, each for whoever may change them.
 class SettingsScreen extends StatelessWidget {
   /// The screen of [project], for the user signed in through [session], whose [projects] the default is chosen among.
   const SettingsScreen({super.key, required this.session, required this.projects, required this.project});
@@ -65,61 +61,8 @@ class SettingsScreen extends StatelessWidget {
   /// The way into the project's payment methods.
   static const paymentMethodsKey = Key('settings.paymentMethods');
 
-  /// The way to add a unit to the project (Muteb, 8 Nov 2026: moved here from the project's card).
-  static const addUnitKey = Key('settings.addUnit');
-
-  /// The way to rename the project.
-  static const renameProjectKey = Key('settings.renameProject');
-
-  /// The way to close the project.
-  static const closeProjectKey = Key('settings.closeProject');
-
-  /// The unit's name, in the Add unit dialog.
-  static const unitNameKey = Key('settings.unitName');
-
-  /// The button that adds the unit, in the Add unit dialog.
-  static const saveUnitKey = ChangeDialog.saveKey;
-
-  /// The line that says why the unit was refused, in the Add unit dialog.
-  static const unitMessageKey = ChangeDialog.messageKey;
-
-  /// The project's name, in the close question.
-  static const closeNameKey = ConfirmDialog.subjectKey;
-
-  /// What closing means, in the close question.
-  static const closeExplainKey = ConfirmDialog.explanationKey;
-
-  /// The button that closes the project, in the close question.
-  static const confirmCloseKey = ConfirmDialog.confirmKey;
-
-  /// The button that keeps the project active, in the close question.
-  static const cancelCloseKey = ConfirmDialog.cancelKey;
-
-  void _askForUnit(BuildContext context, Project current) {
-    showDialog<void>(context: context, builder: (_) => AddUnitDialog(project: current, projects: projects));
-  }
-
-  void _askToRename(BuildContext context, Project current) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => NameDialog(title: words.projectsRename, label: words.projectsName, saveLabel: words.projectsSave, name: current.name, onSave: (name) => projects.rename(current, name)),
-    );
-  }
-
-  void _askToClose(BuildContext context, Project current) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => ConfirmDialog(
-        title: words.projectsCloseQuestion,
-        subject: current.name,
-        explanation: words.projectsCloseExplain,
-        confirmLabel: words.projectsClose,
-        onConfirm: () => showRefusalOf(context, projects.close(current)),
-      ),
-    );
-  }
+  /// The way into More info: the project's name, start date, status, units and description (redix-api 93).
+  static const projectInfoKey = Key('settings.projectInfo');
 
   Widget _row(Key key, IconData icon, String title, VoidCallback onTap) =>
       ListTile(key: key, leading: Icon(icon, key: key.icon), title: Text(title, key: key.title), trailing: Icon(Icons.chevron_right, key: key.trailing), onTap: onTap);
@@ -132,7 +75,7 @@ class SettingsScreen extends StatelessWidget {
       body: ListenableBuilder(
         listenable: Listenable.merge([session, projects]),
         builder: (context, _) {
-          final current = projects.all.firstWhere((each) => each.id == project.id, orElse: () => project);
+          final current = projects.latest(project);
           return ListView(
           children: [
             _row(switchProjectKey, Icons.swap_horiz, words.settingsSwitchProject, () => context.go(ProjectsScreen.path)),
@@ -140,17 +83,14 @@ class SettingsScreen extends StatelessWidget {
               _row(registeredKey, Icons.approval_outlined, words.registeredTitle, () => context.push(RegisteredProjectsScreen.path)),
             _row(defaultProjectKey, Icons.star_outline, words.settingsDefaultProject, () => DefaultProjectSheet.show(context, session, projects)),
             _row(myAccountKey, Icons.account_circle_outlined, words.myAccountTitle, () => context.push(MyAccountScreen.path)),
+            if (current.may(Permission.readProject))
+              _row(projectInfoKey, Icons.info_outline, words.projectInfoTitle, () => context.push(ProjectInfoScreen.pathOf(current.id), extra: current)),
             if (current.may(Permission.manageUsers))
               _row(usersKey, Icons.group_outlined, words.usersTitle, () => context.push(UsersScreen.pathOf(current.id), extra: current.name)),
             if (current.may(Permission.manageStructure))
               _row(categoriesKey, Icons.category_outlined, words.categoriesTitle, () => context.push(CategoriesScreen.pathOf(current.id), extra: current)),
             if (current.may(Permission.manageSettings))
               _row(paymentMethodsKey, Icons.credit_card_outlined, words.paymentMethodsTitle, () => context.push(PaymentMethodsScreen.pathOf(current.id), extra: current)),
-            if (current.mayManageProject) ...[
-              _row(addUnitKey, Icons.add, words.projectsAddUnit, () => _askForUnit(context, current)),
-              _row(renameProjectKey, Icons.edit_outlined, words.projectsRename, () => _askToRename(context, current)),
-              _row(closeProjectKey, Icons.lock_outline, words.projectsClose, () => _askToClose(context, current)),
-            ],
           ],
           );
         },

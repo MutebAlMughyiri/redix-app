@@ -7,12 +7,13 @@ import '../api.dart';
 import '../format/number_format.dart';
 import '../config/app_config.dart';
 
-/// Registers a project from the sign-in page, with no session, and a new login as its manager (UC-066). Returns an empty string once sent, otherwise the word key of
+/// Registers a project from the sign-in page, with its [description], no session, and a new login as its manager (UC-066). Returns an empty string once sent, otherwise the word key of
 /// the refusal.
 Future<String> registerProject(
   String name,
   DateTime startDate,
-  List<String> units, {
+  List<String> units,
+  String description, {
   required String displayName,
   required String username,
   required String mobile,
@@ -26,6 +27,7 @@ Future<String> registerProject(
         'name': name,
         'startDate': startDate.toIso8601String().substring(0, 10),
         'units': units,
+        'description': description,
         'displayName': displayName,
         'username': username,
         'mobile': westernDigits(mobile),

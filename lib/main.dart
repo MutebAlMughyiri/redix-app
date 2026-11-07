@@ -58,6 +58,7 @@ import 'revenue/revenue_screen.dart';
 import 'revenue/revenues.dart';
 import 'revenue/sales_invoice_screen.dart';
 import 'projects/new_project_screen.dart';
+import 'projects/project_info_screen.dart';
 import 'projects/projects.dart';
 import 'projects/projects_screen.dart';
 import 'projects/registered_projects.dart';
@@ -180,6 +181,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(language: widget.language, session: widget.session)),
       GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session, projects: _projects, project: Project.none())),
       GoRoute(path: SettingsScreen.projectPath, builder: (context, state) => SettingsScreen(session: widget.session, projects: _projects, project: state.extra! as Project)),
+      GoRoute(path: ProjectInfoScreen.path, builder: (context, state) => ProjectInfoScreen(project: state.extra! as Project, projects: _projects)),
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,

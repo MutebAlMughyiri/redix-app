@@ -1562,6 +1562,24 @@ mixin WordGetters {
   /// The word `permissions.title`.
   String get permissionsTitle => text('permissions.title');
 
+  /// The word `projectInfo.description`.
+  String get projectInfoDescription => text('projectInfo.description');
+
+  /// The word `projectInfo.descriptionHint`.
+  String get projectInfoDescriptionHint => text('projectInfo.descriptionHint');
+
+  /// The word `projectInfo.noDescription`.
+  String get projectInfoNoDescription => text('projectInfo.noDescription');
+
+  /// The word `projectInfo.save`.
+  String get projectInfoSave => text('projectInfo.save');
+
+  /// The word `projectInfo.saved`.
+  String get projectInfoSaved => text('projectInfo.saved');
+
+  /// The word `projectInfo.title`.
+  String get projectInfoTitle => text('projectInfo.title');
+
   /// The word `projects.active`.
   String get projectsActive => text('projects.active');
 
@@ -1595,11 +1613,17 @@ mixin WordGetters {
   /// The word `projects.defaultTemplate`.
   String get projectsDefaultTemplate => text('projects.defaultTemplate');
 
+  /// The word `projects.description`.
+  String get projectsDescription => text('projects.description');
+
   /// The word `projects.empty`.
   String get projectsEmpty => text('projects.empty');
 
   /// The word `projects.finished`.
   String get projectsFinished => text('projects.finished');
+
+  /// The word `projects.invalidDescription`.
+  String get projectsInvalidDescription => text('projects.invalidDescription');
 
   /// The word `projects.invalidName`.
   String get projectsInvalidName => text('projects.invalidName');
@@ -1726,6 +1750,9 @@ mixin WordGetters {
 
   /// The word `register.hint`.
   String get registerHint => text('register.hint');
+
+  /// The word `register.invalidDescription`.
+  String get registerInvalidDescription => text('register.invalidDescription');
 
   /// The word `register.invalidMobile`.
   String get registerInvalidMobile => text('register.invalidMobile');

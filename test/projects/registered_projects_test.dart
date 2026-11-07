@@ -27,6 +27,23 @@ void main() {
     expect(text(tester, RegisteredProjectsScreen.managerKey('registered-0')), 'ريم · reem · 0500000000');
   });
 
+  testWidgets('R11: the admin reads the description before deciding', (tester) async {
+    final api = FakeApi()
+      ..permissions = admin
+      ..addRegistered('غصون 8', description: 'ثلاث فلل في حي الياسمين، التمويل من الشركاء.');
+    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.registeredKey)));
+
+    expect(text(tester, RegisteredProjectsScreen.descriptionKey('registered-0')), 'ثلاث فلل في حي الياسمين، التمويل من الشركاء.');
+  });
+
+  testWidgets('R11: a project registered with no description shows no description line', (tester) async {
+    await openList(tester);
+
+    expect(find.byKey(RegisteredProjectsScreen.descriptionKey('registered-0')), findsNothing);
+  });
+
   testWidgets('with nothing waiting, the list says so', (tester) async {
     final api = FakeApi()..permissions = admin;
     await pumpRedix(tester, api, stored: {'session': keptSession});

@@ -55,6 +55,41 @@ void main() {
     expect(api.sentProjectChanges.single.$2['units'], ['الفلة الشرقية', 'الفلة الشمالية']);
   });
 
+  testWidgets('R5: the description written under the name goes with the project', (tester) async {
+    final api = FakeApi();
+    await openForm(tester, api);
+
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+    await tester.enterText(find.byKey(NewProjectScreen.descriptionKey), 'ثلاث فلل في حي الياسمين.');
+    await submit(tester, api);
+
+    expect(api.sentProjectChanges.single.$2['description'], 'ثلاث فلل في حي الياسمين.');
+    expect(api.projects.single['description'], 'ثلاث فلل في حي الياسمين.');
+  });
+
+  testWidgets('R5: a project needs no description, and sends it empty', (tester) async {
+    final api = FakeApi();
+    await openForm(tester, api);
+
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+    await submit(tester, api);
+
+    expect(api.sentProjectChanges.single.$2['description'], '');
+  });
+
+  testWidgets('R10: the description takes at most 2,000 characters, and a refused one says why and stays', (tester) async {
+    final api = FakeApi();
+    await openForm(tester, api);
+    await tester.enterText(find.byKey(NewProjectScreen.descriptionKey), 'و' * 2001);
+    expect(tester.widget<TextField>(find.byKey(NewProjectScreen.descriptionKey)).controller!.text.length, 2000);
+
+    api.projectAnswer = (status: 400, code: 'invalidDescription');
+    await submit(tester, api);
+
+    expect(tester.widget<Text>(find.byKey(NewProjectScreen.messageKey)).data, 'en projects.invalidDescription');
+    expect(tester.widget<TextField>(find.byKey(NewProjectScreen.descriptionKey)).controller!.text.length, 2000);
+  });
+
   testWidgets('a project needs no units', (tester) async {
     final api = FakeApi();
     await openForm(tester, api);

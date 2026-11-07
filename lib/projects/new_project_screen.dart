@@ -7,6 +7,7 @@ import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
+import 'project.dart';
 import 'project_registration.dart';
 import 'projects.dart';
 
@@ -49,6 +50,9 @@ class NewProjectScreen extends StatefulWidget {
   /// The start date, which opens the date picker.
   static const startDateKey = Key('newProject.startDate');
 
+  /// The project's description, optional (redix-api 93).
+  static const descriptionKey = Key('newProject.description');
+
   /// Where the categories and items are copied from, on the form of someone signed in.
   static const structureSourceKey = Key('newProject.structureSource');
 
@@ -85,6 +89,7 @@ class NewProjectScreen extends StatefulWidget {
 
 class _NewProjectScreenState extends State<NewProjectScreen> {
   final _name = TextEditingController();
+  final _description = TextEditingController();
   final _unitName = TextEditingController();
   final _managerName = TextEditingController();
   final _username = TextEditingController();
@@ -99,6 +104,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   @override
   void dispose() {
     _name.dispose();
+    _description.dispose();
     _unitName.dispose();
     _managerName.dispose();
     _username.dispose();
@@ -122,8 +128,8 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   }
 
   Future<String> _send(List<String> units) => widget.isPublic
-      ? registerProject(_name.text, _startDate, units, displayName: _managerName.text, username: _username.text, mobile: _mobile.text, password: _password.text)
-      : widget.projects.create(_name.text, _startDate, units, structureSourceId: _structureSourceId);
+      ? registerProject(_name.text, _startDate, units, _description.text, displayName: _managerName.text, username: _username.text, mobile: _mobile.text, password: _password.text)
+      : widget.projects.create(_name.text, _startDate, units, _description.text, structureSourceId: _structureSourceId);
 
   void _leave() {
     if (!widget.isPublic) {
@@ -169,6 +175,15 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               key: NewProjectScreen.nameKey,
               controller: _name,
               decoration: InputDecoration(labelText: words.projectsName, border: const OutlineInputBorder()),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              key: NewProjectScreen.descriptionKey,
+              controller: _description,
+              minLines: 2,
+              maxLines: 6,
+              maxLength: Project.descriptionMaxLength,
+              decoration: InputDecoration(labelText: words.projectsDescription, border: const OutlineInputBorder()),
             ),
             const SizedBox(height: 16),
             InkWell(

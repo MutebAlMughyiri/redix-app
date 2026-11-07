@@ -65,6 +65,26 @@ void main() {
     expect(find.text('en register.sent'), findsOneWidget);
   });
 
+  testWidgets('R5: the description written when registering goes with the project', (tester) async {
+    final api = await openForm(tester);
+
+    await tester.enterText(find.byKey(NewProjectScreen.descriptionKey), 'ثلاث فلل في حي الياسمين.');
+    await fillAndSend(tester, api);
+
+    expect(api.sentRegistrations.single.$2['description'], 'ثلاث فلل في حي الياسمين.');
+  });
+
+  testWidgets('R10: a description refused as too long says so and stays', (tester) async {
+    final api = await openForm(tester);
+    await tester.enterText(find.byKey(NewProjectScreen.descriptionKey), 'ثلاث فلل');
+
+    api.registrationAnswer = (status: 400, code: 'invalidDescription');
+    await fillAndSend(tester, api);
+
+    expect(tester.widget<Text>(find.byKey(NewProjectScreen.messageKey)).data, 'en register.invalidDescription');
+    expect(typed(tester, NewProjectScreen.descriptionKey), 'ثلاث فلل');
+  });
+
   testWidgets('a refusal stays on the form with what was typed', (tester) async {
     final api = await openForm(tester);
 

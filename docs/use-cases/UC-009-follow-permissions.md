@@ -14,7 +14,7 @@
 | Projects | Only the projects with access, each with the person's roles | Always |
 | Projects | Register new project | Always |
 | A project's card | Users | The project says `manageUsers` |
-| A project's card | Add unit, Close project | The project says `manageProject` |
+| More info | Rename, Add unit, a unit's menu, the description's field and Save, Close project | The project says `manageProject` and is active |
 | Settings | Projects, My account | Always |
 | Settings | Registered projects | The session says `approveProjects` |
 | A project's Users | New user, Add an existing user; a menu on each row | Always, on this screen |
@@ -28,7 +28,7 @@ A new person starts at the last project role the API lists. The app names no rol
 | --- | --- |
 | Anyone signed in can register a project | `projects_test.dart` |
 | Users on a project's home shows only with `manageUsers` | `home_test.dart` |
-| Add unit and Close show only with `manageProject` | `home_test.dart` |
+| Rename, Add unit, the unit menus, the description and Close show only with `manageProject` | `project_info_test.dart`, `permission_gates_test.dart` |
 | A project's roles show under its name | `projects_test.dart` |
 | Settings shows Registered projects only with `approveProjects` | `settings_test.dart` |
 | A project's Users lists only its people | `project_users_test.dart` |

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../home/home_screen.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'project.dart';
+import 'project_info_screen.dart';
 
-/// One unit on the project's home: its name and, for whoever manages the open project, a menu to rename or delete it.
+/// One unit on More info: its name and, for whoever manages the open project, a menu to rename or delete it.
 class UnitRow extends StatelessWidget {
   /// The row of [unit], offering [onRename] and [onDelete] while [mayChange].
   const UnitRow({super.key, required this.unit, required this.mayChange, required this.onRename, required this.onDelete});
@@ -26,16 +26,17 @@ class UnitRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return ListTile(
-      key: HomeScreen.unitRowKey(unit.id),
+      key: ProjectInfoScreen.unitRowKey(unit.id),
       dense: true,
-      title: Text(unit.name, key: HomeScreen.unitKey(unit.id)),
+      contentPadding: EdgeInsets.zero,
+      title: Text(unit.name, key: ProjectInfoScreen.unitKey(unit.id)),
       trailing: mayChange
           ? PopupMenuButton<VoidCallback>(
-              key: HomeScreen.unitMenuKey(unit.id),
+              key: ProjectInfoScreen.unitMenuKey(unit.id),
               onSelected: (action) => action(),
               itemBuilder: (_) => [
-                PopupMenuItem(key: HomeScreen.renameUnitKey, value: onRename, child: Text(words.projectsRenameUnit, key: HomeScreen.renameUnitKey.label)),
-                PopupMenuItem(key: HomeScreen.deleteUnitKey, value: onDelete, child: Text(words.projectsRemoveUnit, key: HomeScreen.deleteUnitKey.label)),
+                PopupMenuItem(key: ProjectInfoScreen.renameUnitKey, value: onRename, child: Text(words.projectsRenameUnit, key: ProjectInfoScreen.renameUnitKey.label)),
+                PopupMenuItem(key: ProjectInfoScreen.deleteUnitKey, value: onDelete, child: Text(words.projectsRemoveUnit, key: ProjectInfoScreen.deleteUnitKey.label)),
               ],
             )
           : null,

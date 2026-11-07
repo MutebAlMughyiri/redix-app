@@ -16,6 +16,7 @@ import 'package:redix/notifications/notifications_bell.dart';
 import 'package:redix/notifications/notifications_screen.dart';
 import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
+import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
@@ -76,10 +77,11 @@ final _dashboardWithAnItem = <String, Object>{
 final List<Gate> _gates = [
   (name: 'Registered projects in the settings', permission: Permission.approveProjects, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.registeredKey)),
   (name: 'Users in the settings', permission: Permission.manageUsers, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.usersKey)),
-  (name: 'Add unit in the settings', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.addUnitKey)),
-  (name: 'Rename project in the settings', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.renameProjectKey)),
-  (name: 'Close project in the settings', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.closeProjectKey)),
-  (name: 'A unit\'s menu on the project card', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.unitMenuKey('$_project-unit-0'))),
+  (name: 'Add unit in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.addUnitKey)),
+  (name: 'Rename project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.renameKey)),
+  (name: 'Close project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.closeKey)),
+  (name: 'A unit\'s menu in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.unitMenuKey('$_project-unit-0'))),
+  (name: 'The description in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.saveDescriptionKey)),
   (
     name: 'Add a document',
     permission: Permission.manageProject,

@@ -113,12 +113,13 @@ void main() {
   testWidgets('from the project list Settings holds nothing of a project', (tester) async {
     await openSettings(tester, FakeApi()..addProject('غصون 6'));
 
+    expect(find.byKey(SettingsScreen.projectInfoKey), findsNothing);
     expect(find.byKey(SettingsScreen.usersKey), findsNothing);
     expect(find.byKey(SettingsScreen.categoriesKey), findsNothing);
     expect(find.byKey(SettingsScreen.paymentMethodsKey), findsNothing);
   });
 
-  testWidgets('from a project Settings opens after Reports and holds its users, categories and items, and payment methods', (tester) async {
+  testWidgets('from a project Settings opens after Reports and holds More info, its users, categories and items, and payment methods', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
 
@@ -127,6 +128,7 @@ void main() {
     await harness.openSettings(tester, api);
 
     expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.projectInfoKey), findsOneWidget);
     expect(find.byKey(SettingsScreen.usersKey), findsOneWidget);
     expect(find.byKey(SettingsScreen.categoriesKey), findsOneWidget);
     expect(find.byKey(SettingsScreen.paymentMethodsKey), findsOneWidget);

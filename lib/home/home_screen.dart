@@ -31,10 +31,7 @@ import '../projects/projects_screen.dart';
 import '../settings/settings_screen.dart';
 import '../suppliers/suppliers_screen.dart';
 import '../ui/api_list_body.dart';
-import '../ui/confirm_dialog.dart';
-import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
 
@@ -89,18 +86,8 @@ class HomeScreen extends StatefulWidget {
   /// The card of the project [id].
   static Key cardKey(String id) => Key('home.card.$id');
 
-
-  /// The start date of the project [id], and whether it is read-only.
-  static Key detailsKey(String id) => Key('home.details.$id');
-
-  /// The status of the project [id].
-  static Key statusKey(String id) => Key('home.status.$id');
-
-  /// The unit [id].
-  static Key unitKey(String id) => Key('home.unit.$id');
-
-  /// The line of a project [id] with no units.
-  static Key noUnitsKey(String id) => Key('home.noUnits.$id');
+  /// The line that says the project [id] is finished and read-only (redix-api 93).
+  static Key finishedKey(String id) => Key('home.finished.$id');
 
   /// The way into the accounts of the project [id].
   static Key accountsKey(String id) => Key('home.accounts.$id');
@@ -147,15 +134,6 @@ class HomeScreen extends StatefulWidget {
   /// What the account [id] holds, on that card.
   static Key custodyBalanceKey(String id) => Key('home.custodyBalance.$id');
 
-  /// The menu of the unit [id].
-  static Key unitMenuKey(String id) => Key('home.unitMenu.$id');
-
-  /// The way to rename a unit, in its menu.
-  static const renameUnitKey = Key('home.renameUnit');
-
-  /// The way to delete a unit, in its menu.
-  static const deleteUnitKey = Key('home.deleteUnit');
-
   /// The way into the documents of the project [id].
   static Key documentsKey(String id) => Key('home.documents.$id');
 
@@ -164,12 +142,6 @@ class HomeScreen extends StatefulWidget {
 
   /// The line saying the project [id] has no entries yet.
   static Key entriesEmptyKey(String id) => Key('home.entriesEmpty.$id');
-
-  /// The row saying the project [id] has no units.
-  static Key noUnitsRowKey(String id) => Key('home.noUnitsRow.$id');
-
-  /// The row of the unit [id].
-  static Key unitRowKey(String id) => Key('home.unitRow.$id');
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -212,34 +184,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _openSettings(Project project) async {
     await context.push(SettingsScreen.pathOf(project.id), extra: project);
     await Future.wait([widget.projects.load(), _readAgain()]);
-  }
-
-  void _askToRenameUnit(Project project, Unit unit) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => NameDialog(
-        title: words.projectsRenameUnit,
-        label: words.projectsUnitName,
-        saveLabel: words.projectsSave,
-        name: unit.name,
-        onSave: (name) => widget.projects.renameUnit(project, unit, name),
-      ),
-    );
-  }
-
-  void _askToDeleteUnit(Project project, Unit unit) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => ConfirmDialog(
-        title: words.projectsRemoveUnitQuestion,
-        subject: unit.name,
-        explanation: words.projectsRemoveUnitExplain,
-        confirmLabel: words.projectsRemoveUnit,
-        onConfirm: () => showRefusalOf(context, widget.projects.deleteUnit(project, unit)),
-      ),
-    );
   }
 
   @override
@@ -322,8 +266,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     onReports: () => _open(ReportsScreen.pathOf(project.id), project),
                     onSettings: () => _openSettings(project),
                     onDocuments: () => _open(DocumentsScreen.pathOf(project.id), project),
-                    onRenameUnit: (unit) => _askToRenameUnit(project, unit),
-                    onDeleteUnit: (unit) => _askToDeleteUnit(project, unit),
                   ),
                 ],
               )

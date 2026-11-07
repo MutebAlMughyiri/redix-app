@@ -19,6 +19,7 @@ import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/member_picker.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/project.dart';
+import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
@@ -339,26 +340,25 @@ void main() {
       ].forEach(expectFits);
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.newProjectKey)));
-      [NewProjectScreen.nameKey, NewProjectScreen.startDateKey, NewProjectScreen.unitNameKey, NewProjectScreen.addUnitKey, NewProjectScreen.submitKey].forEach(expectFits);
+      [NewProjectScreen.nameKey, NewProjectScreen.descriptionKey, NewProjectScreen.startDateKey, NewProjectScreen.unitNameKey, NewProjectScreen.addUnitKey, NewProjectScreen.submitKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey(runningId))));
-      [
-        HomeScreen.titleKey,
-        HomeScreen.settingsKey(runningId),
-        HomeScreen.detailsKey(runningId),
-        HomeScreen.statusKey(runningId),
-        HomeScreen.unitMenuKey('$runningId-unit-0'),
-      ].forEach(expectFits);
+      [HomeScreen.titleKey, HomeScreen.settingsKey(runningId)].forEach(expectFits);
 
       await openSettings(tester, api, projectId: runningId);
-      await tester.scrollUntilVisible(find.byKey(SettingsScreen.closeProjectKey), 80);
-      await tester.ensureVisible(find.byKey(SettingsScreen.closeProjectKey));
+      expectFits(SettingsScreen.projectInfoKey);
+      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectInfoKey)));
+      [ProjectInfoScreen.nameKey, ProjectInfoScreen.renameKey, ProjectInfoScreen.detailsKey, ProjectInfoScreen.statusKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.unitMenuKey('$runningId-unit-0')]
+          .forEach(expectFits);
+      await tester.scrollUntilVisible(find.byKey(ProjectInfoScreen.closeKey), 80, scrollable: find.byType(Scrollable).first);
+      await tester.ensureVisible(find.byKey(ProjectInfoScreen.closeKey));
       await tester.pumpAndSettle();
-      [SettingsScreen.addUnitKey, SettingsScreen.renameProjectKey, SettingsScreen.closeProjectKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.closeProjectKey)));
-      [SettingsScreen.closeExplainKey, SettingsScreen.confirmCloseKey, SettingsScreen.cancelCloseKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.cancelCloseKey)));
+      [ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.closeKey)));
+      [ProjectInfoScreen.closeExplainKey, ProjectInfoScreen.confirmCloseKey, ProjectInfoScreen.cancelCloseKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.cancelCloseKey)));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       final bone = api.addCategory(runningId, 'العظم');

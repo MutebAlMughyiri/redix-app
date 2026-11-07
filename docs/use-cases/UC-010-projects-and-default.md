@@ -36,7 +36,7 @@ Settings, `SettingsScreen`, has **Default project** (`SettingsScreen.defaultProj
 
 The star and the tick change the default through one owner, `toggleDefaultProject`.
 
-The home, `HomeScreen` at `/projects/:projectId`, shows the project's card, with Users (`manageUsers`), and Add unit and Close project (`manageProject`). Settings has **Switch project** (`SettingsScreen.switchProjectKey`), which goes to the list.
+The home, `HomeScreen` at `/projects/:projectId`, shows the project's card; its Settings hold Users (`manageUsers`) and More info, where Add unit and Close project are (`manageProject`, UC-006). Settings has **Switch project** (`SettingsScreen.switchProjectKey`), which goes to the list.
 
 ## Rules and where they live
 
