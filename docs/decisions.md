@@ -6,6 +6,7 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-07 | A sub-table holds purchases: only an item of purchases or both offers one to add, and a payments item may become both while it has contracts. A named table shows as the table and then its item in brackets | Muteb, 7 Nov 2026: الجلاي, added on the payments-only item دفعات العظم, was never offered in إضافة قيد; "show it like that: table name (sheet name). example: الجلاي (دفعات العظم)"; redix-api the same day |
 | 2026-11-07 | An empty VAT number means nothing; the guides stop saying it means no VAT, and the VAT workbook works the VAT out of every total | Muteb, 7 Nov 2026: "if no vat number added when adding new supplier that is means nothing"; redix-api the same day |
 | 2026-11-07 | A supplier's VAT number may stay empty, which is no number; the Not VAT-registered switch goes from both dialogs, and the list shows a number only when there is one | Muteb: "just a number has max 20 digit numbers and not required and can keep it empty with remove toogle not vat registered"; the 2026-11-05 rows on the switch no longer hold |
 | 2026-11-07 | No account belongs to a partner: the pocket type, its row on the accounts screen and the reconciliation's "owed to partners" go | Muteb: "Remove pockets completely"; redix-api #99 |

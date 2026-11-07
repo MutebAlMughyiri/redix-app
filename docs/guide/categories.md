@@ -2,7 +2,7 @@
 
 # Categories and items · التصنيفات والبنود
 
-<img src="images/categories.png" alt="Categories and items" width="300"> <img src="images/subgroups.png" alt="An item's subgroups" width="300">
+<img src="images/categories.png" alt="Categories and items" width="300"> <img src="images/subgroups.png" alt="An item's tables" width="300">
 
 ## English
 
@@ -26,9 +26,9 @@ Tap a category to open it.
 
 An item's type says what it can be used for: **Purchases**, **Contractor payments**, or both. A purchases item is not offered when entering a contractor payment.
 
-### Subgroups
+### Tables
 
-A subgroup splits an item, as البلاط splits into مواد and دفان, and prints as its own table in the item's report. Tap the three dots on the item, then **Subgroups**. An entry with no subgroup goes to the item's general group, which needs nothing from you. Drag a subgroup by its handle to change its place in the report, and tap the bin to remove one that no entry uses.
+Tap the three dots on an item, then **Tables**, to see every table its sheet prints: its general one, its subgroups and its contracts. A subgroup splits an item's purchases, as البلاط splits into مواد and دفان, so only an item of purchases, or of both, has **Add subgroup**. In إضافة قيد a subgroup shows as its name and then its item, مواد (البلاط). An entry with no subgroup goes to the item's general table, which needs nothing from you. Drag a table by its handle to change its place in the sheet, and tap the bin to remove a subgroup that no entry uses.
 
 | Message | Meaning |
 | --- | --- |
@@ -58,9 +58,9 @@ A subgroup splits an item, as البلاط splits into مواد and دفان, an
 
 نوع البند يحدد ما يُستخدم له: **مشتريات**، أو **دفعات مقاولين**، أو الاثنان. بند المشتريات لا يظهر عند إدخال دفعة مقاول.
 
-### المجموعات الفرعية
+### جداول البند
 
-المجموعة الفرعية تقسم البند، كما ينقسم البلاط إلى مواد ودفان، وتُطبع جدولاً مستقلاً في تقرير البند. اضغط النقاط الثلاث في البند، ثم **المجموعات الفرعية**. والقيد بلا مجموعة يدخل في المجموعة العامة للبند، ولا تحتاج منك إلى شيء. واسحب المجموعة من مقبضها لتغيير مكانها في التقرير، واضغط سلة المهملات لحذف مجموعة لا قيود عليها.
+اضغط النقاط الثلاث في البند، ثم **جداول البند**، لترى كل جدول يطبعه كشفه: جدوله العام، ومجموعاته الفرعية، وعقوده. والمجموعة الفرعية تقسم مشتريات البند، كما ينقسم البلاط إلى مواد ودفان، فلا يظهر زر **إضافة مجموعة فرعية** إلا لبند مشتريات أو بند يأخذ الاثنين. وفي إضافة قيد تظهر المجموعة باسمها ثم اسم بندها، مواد (البلاط). والقيد بلا مجموعة يدخل في الجدول العام للبند، ولا يحتاج منك إلى شيء. واسحب الجدول من مقبضه لتغيير مكانه في الكشف، واضغط سلة المهملات لحذف مجموعة لا قيود عليها.
 
 | الرسالة | معناها |
 | --- | --- |

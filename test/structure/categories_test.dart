@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/sign_in_screen.dart';
+import 'package:redix/entries/add_entry_screen.dart';
+import 'package:redix/entries/table_picker.dart';
+import 'package:redix/expenses/payment_choices.dart';
+import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
@@ -232,6 +236,55 @@ void main() {
     expect(find.byKey(ItemTablesScreen.renameKey(opened.general)), findsNothing);
     expect(find.byKey(ItemTablesScreen.deleteKey('contract-1')), findsNothing);
     expect(find.byKey(ItemTablesScreen.renameKey(opened.ids[0])), findsOneWidget);
+  });
+
+  testWidgets('a sub-table added here is offered in إضافة قيد as its table and sheet, and takes a purchase', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance);
+    final bone = api.addCategory('project-0', 'تكلفة العظم');
+    final item = api.addItem(bone, 'دفعات العظم');
+    final method = api.addPaymentMethod('project-0', 'تحويل');
+    api.addAccount('project-0', 'حساب المؤسسة', isMine: true);
+    await openProject(tester, api);
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
+    await open(tester, api, bone['id'] as String);
+    await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(item['id'] as String))));
+    await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.tablesKey)));
+
+    await act(tester, api, () => tester.tap(find.byKey(ItemTablesScreen.addKey)));
+    await save(tester, api, 'الجلاي');
+    final added = (item['subgroups']! as List<Map<String, Object>>).last['id']! as String;
+    for (var back = 0; back < 3; back++) {
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    }
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
+    await act(tester, api, () => tester.tap(find.byKey(TablePicker.optionKey(added))));
+
+    expect(tester.widget<TablePicker>(find.byKey(AddEntryScreen.tableKey)).chosen.label, 'الجلاي (دفعات العظم)');
+    await tester.ensureVisible(find.byKey(AddEntryScreen.amountKey));
+    await tester.enterText(find.byKey(AddEntryScreen.amountKey), '500');
+    await tester.ensureVisible(find.byKey(PaymentChoices.paymentMethodKey(method['id']! as String)));
+    await act(tester, api, () => tester.tap(find.byKey(PaymentChoices.paymentMethodKey(method['id']! as String))));
+    await tester.ensureVisible(find.byKey(AddEntryScreen.draftKey));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.draftKey)));
+
+    final sent = api.sentExpenses.single;
+    expect((sent['itemId'], sent['subgroupId'], sent['amount']), (item['id'], added, 500));
+  });
+
+  testWidgets('an item that takes no purchases offers no sub-table to add, since a sub-table holds purchases', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance);
+    final bone = api.addCategory('project-0', 'تكلفة العظم');
+    final item = api.addItem(bone, 'دفعات العظم', type: 'contractorPayments');
+    await openProject(tester, api);
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
+    await open(tester, api, bone['id'] as String);
+    await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(item['id'] as String))));
+    await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.tablesKey)));
+
+    expect(find.byKey(ItemTablesScreen.addKey), findsNothing);
   });
 
   testWidgets('a subgroup is added to the tables and renamed there', (tester) async {

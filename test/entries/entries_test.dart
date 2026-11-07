@@ -380,7 +380,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.editKey)));
 
       expect(tester.widget<Text>(find.byKey(AddEntryScreen.titleKey)).data, 'en entries.edit');
-      expect(tester.widget<TablePicker>(find.byKey(AddEntryScreen.tableKey)).chosen.label, 'بند الحديد › مقاول الحديد');
+      expect(tester.widget<TablePicker>(find.byKey(AddEntryScreen.tableKey)).chosen.label, 'مقاول الحديد (بند الحديد)');
       expect(find.byKey(AddEntryScreen.supplierKey), findsNothing);
       await tester.ensureVisible(find.byKey(AddEntryScreen.sendKey));
       await tester.pumpAndSettle();

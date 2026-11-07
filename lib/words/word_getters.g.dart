@@ -488,6 +488,9 @@ mixin WordGetters {
   /// The word `categories.itemName`.
   String get categoriesItemName => text('categories.itemName');
 
+  /// The word `categories.itemTakesNoPurchases`.
+  String get categoriesItemTakesNoPurchases => text('categories.itemTakesNoPurchases');
+
   /// The word `categories.itemType`.
   String get categoriesItemType => text('categories.itemType');
 

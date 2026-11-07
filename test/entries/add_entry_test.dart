@@ -360,7 +360,7 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.tableKey);
     await act(tester, opened.api, () => tester.tap(find.byKey(TablePicker.optionKey(subgroups.last['id']! as String))));
-    expect(chosenTable(tester), 'البلاط › مواد');
+    expect(chosenTable(tester), 'مواد (البلاط)');
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     expect((opened.api.sentExpenses.single['itemId'], opened.api.sentExpenses.single['subgroupId']), (opened.item, subgroups.last['id']));

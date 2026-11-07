@@ -39,24 +39,24 @@ New project, `NewProjectScreen`, signed in:
 | Its name | `CategoriesScreen.itemNameKey(id)` | |
 | Its type, or Disabled | `CategoriesScreen.itemDetailsKey(id)` | |
 | Columns | `CategoriesScreen.itemColumnsKey(id)` | Opens [its columns](UC-013-item-columns.md) |
-| Its menu | `CategoriesScreen.itemMenuKey(id)` | Rename `renameItemKey`, Change type `changeTypeKey`, Subgroups `subgroupsKey`, Disable `disableItemKey` or Enable `enableItemKey` |
+| Its menu | `CategoriesScreen.itemMenuKey(id)` | Rename `renameItemKey`, Change type `changeTypeKey`, Tables `tablesKey`, the percentage of each table `tablePercentagesKey`, Disable `disableItemKey` or Enable `enableItemKey` |
 | The name, in a dialog | `CategoriesScreen.nameKey` | |
 | The type, in Add item | `CategoriesScreen.itemTypeKey(type)` | One choice per type, each in full; Purchases + contractor payments unless changed |
 | Save, in a dialog | `CategoriesScreen.saveKey` | |
 | Why refused, in a dialog | `CategoriesScreen.dialogMessageKey` | |
 | The list's states | `CategoriesScreen.messageKey`, `emptyKey` | Could not read; no categories |
 
-[Subgroups](../guide/categories.md#subgroups), `SubgroupsScreen` at `/projects/:projectId/items/:itemId/subgroups`:
+[Tables](../guide/categories.md#tables), `ItemTablesScreen` at `/projects/:projectId/items/:itemId/tables`:
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Hint | `SubgroupsScreen.hintKey` | Says what a subgroup is for |
-| No subgroups | `SubgroupsScreen.emptyKey` | |
-| Add subgroup | `SubgroupsScreen.addKey` | Opens the name dialog |
-| A subgroup | `SubgroupsScreen.subgroupNameKey(id)` | The item's general group is never shown |
-| Handle | `SubgroupsScreen.handleKey(id)` | Drags the subgroup; the order is the report's, and the general group stays first |
-| Rename | `SubgroupsScreen.renameKey(id)` | Opens the name dialog |
-| Remove | `SubgroupsScreen.deleteKey(id)` | Asks first, naming the subgroup, through `ConfirmDialog`; one that entries use stays and the refusal says why |
+| Hint | `ItemTablesScreen.hintKey` | Says the order is the sheet's |
+| Add subgroup | `ItemTablesScreen.addKey` | Opens the name dialog; shown only on an item that takes purchases, since a sub-table holds purchases |
+| A table | `ItemTablesScreen.rowKey(id)`, `tableNameKey(id)` | Every table the item's sheet prints: its general one, its subgroups and its contracts |
+| What it prints | `ItemTablesScreen.detailsKey(id)` | Its kind and how many entries it holds |
+| Handle | `ItemTablesScreen.handleKey(id)` | Drags the table; the order is the sheet's |
+| Rename | `ItemTablesScreen.renameKey(id)` | A subgroup only; opens the name dialog |
+| Remove | `ItemTablesScreen.deleteKey(id)` | A subgroup only; asks first, naming it, through `ConfirmDialog`; one that entries use stays and the refusal says why |
 
 ## API calls
 
@@ -76,9 +76,12 @@ New project, `NewProjectScreen`, signed in:
 | A category is disabled and enabled, and says so | `CategoryCard` | `categories_test.dart`: a category is disabled |
 | A new item takes the type chosen | `AddItemDialog` | `categories_test.dart`: a new item is sent |
 | A refused name stays in its dialog, with why | `ChangeDialog` | `categories_test.dart`: a refused name |
-| A subgroup is added and renamed; the general one is not shown | `Item.namedSubgroups`, `SubgroupsScreen` | `categories_test.dart`: subgroups |
-| Dragging a subgroup sends the order of the named ones and stays; a refused order goes back and says why | `Categories.moveSubgroup`, `ApiList.reorder` | `categories_test.dart`: dragging a subgroup; a refused order of subgroups |
-| A subgroup is removed only after asking; one that entries use stays and the refusal says why | `Categories.deleteSubgroup`, `ConfirmDialog`, `showRefusalOf` | `categories_test.dart`: a subgroup is removed; a subgroup that entries use |
+| AC-46.8: an item lists every table its sheet prints, and only a subgroup is renamed or removed | `ItemTablesScreen` | `categories_test.dart`: AC-46.8: an item lists every table |
+| A subgroup is added to the tables and renamed there | `ItemTablesScreen`, `ItemTables.addSubgroup` | `categories_test.dart`: a subgroup is added to the tables |
+| A sub-table holds purchases: only an item that takes purchases offers one to add (Muteb, 7 Nov 2026) | `ItemType.takesPurchases`, `ItemTablesScreen` | `categories_test.dart`: an item that takes no purchases offers no sub-table |
+| A sub-table added here is offered in إضافة قيد as its table and sheet, الجلاي (دفعات العظم), and takes a purchase | `ItemTablesScreen`, `EntryTable.label` | `categories_test.dart`: a sub-table added here is offered in إضافة قيد |
+| AC-46.8: dragging a table sends the order of every table and stays; a refused order goes back and says why | `ItemTables.move`, `ApiList.reorder` | `categories_test.dart`: AC-46.8: dragging a table; a refused order of tables |
+| A subgroup is removed only after asking; one that entries use stays and the refusal says why | `ItemTables.deleteSubgroup`, `ConfirmDialog`, `showRefusalOf` | `categories_test.dart`: a subgroup is removed; a subgroup that entries use |
 | An item's type changes from its menu, starting from the one it has; one with entries keeps it and the dialog says why | `ChangeItemTypeDialog`, `ItemTypeChoice`, `Categories.changeItemType` | `categories_test.dart`: an item's type changes; an item with entries keeps its type |
 | A finished project shows its structure with nothing to change (AC-04.1) | `Project.mayChangeStructure` | `categories_test.dart`: a finished project |
 | AC-05.2: a new project can copy an approved earlier one, and the sign-in page offers none | `NewProjectScreen` | `categories_test.dart`: a new project |

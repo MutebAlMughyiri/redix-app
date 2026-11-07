@@ -136,7 +136,7 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
       listenable: widget.tables,
       builder: (context, _) => Scaffold(
         appBar: AppBar(title: ScreenTitle(words.categoriesTables, subject: widget.categories.itemOf(widget.itemId).name)),
-        floatingActionButton: widget.project.mayChangeStructure
+        floatingActionButton: widget.project.mayChangeStructure && widget.categories.itemOf(widget.itemId).type.takesPurchases
             ? FloatingActionButton.extended(
                 key: ItemTablesScreen.addKey,
                 icon: const Icon(Icons.add),
