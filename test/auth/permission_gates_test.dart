@@ -304,6 +304,10 @@ void main() {
     return api;
   }
 
+  test('findings row 134: every permission that hides a control has one here; readProject is membership itself, and chargeAnyAccount only widens the accounts offered', () {
+    expect({for (final gate in _gates) gate.permission}, Permission.values.toSet().difference({Permission.readProject, Permission.chargeAnyAccount}));
+  });
+
   for (final gate in _gates) {
     testWidgets('FR-03: ${gate.name} shows to whoever holds ${gate.permission.name}', (tester) async {
       final api = await open(tester, gate, _every);

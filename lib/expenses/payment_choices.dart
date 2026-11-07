@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../accounts/offered_accounts.dart';
-import '../api_list.dart';
 import '../settings/payment_methods.dart';
 import '../ui/labelled_chips.dart';
 import '../words/words.dart';
@@ -48,17 +47,17 @@ class PaymentChoices extends StatelessWidget {
     return ListenableBuilder(
       listenable: Listenable.merge([accounts, paymentMethods]),
       builder: (context, _) {
-        final failed = <ApiList<Object?>>[accounts, paymentMethods].where((list) => list.message.isNotEmpty).firstOrNull;
+        final failure = [accounts.message, paymentMethods.message].firstWhere((message) => message.isNotEmpty, orElse: () => '');
         final offered = accounts.all;
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 12,
           children: [
-            if (failed != null) ...[
-              Text(words.text(failed.message), key: listMessageKey),
+            if (failure.isNotEmpty) ...[
+              Text(words.text(failure), key: listMessageKey),
               OutlinedButton(key: retryKey, onPressed: onRetry, child: Text(words.commonRetry)),
             ],
-            if (failed == null && !accounts.isLoading && offered.isEmpty) Text(words.expensesNoAccount, key: noAccountKey),
+            if (failure.isEmpty && !accounts.isLoading && offered.isEmpty) Text(words.expensesNoAccount, key: noAccountKey),
             if (offered.isNotEmpty)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

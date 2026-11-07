@@ -55,9 +55,6 @@ class RevenueRow {
   /// The number of its sales invoice; empty when it has none.
   final String invoiceNumber;
 
-  /// True for a VAT refund.
-  bool get isRefund => type == 'vatRefund';
-
   /// True for a sale with no invoice yet, which an invoice may go on.
   bool get isOpenSale => type == 'sale' && invoiceNumber.isEmpty && !isReversed;
 }
