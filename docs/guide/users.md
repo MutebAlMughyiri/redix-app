@@ -3,7 +3,7 @@
 # Users · المستخدمون
 
 <img src="images/users.png" alt="The users" width="300"> <img src="images/users-arabic.png" alt="المستخدمون بالعربية" width="300">
-<img src="images/new-user.png" alt="A new user" width="300"> <img src="images/user-roles.png" alt="A person's roles in a project" width="300">
+<img src="images/new-user.png" alt="A new user" width="300"> <img src="images/user-permissions.png" alt="A person's permissions in a project" width="300">
 
 ## English
 

@@ -2,7 +2,7 @@
 
 # Categories and items · التصنيفات والبنود
 
-<img src="images/categories.png" alt="Categories and items" width="300"> <img src="images/subgroups.png" alt="An item's tables" width="300">
+<img src="images/categories.png" alt="Categories and items" width="300"> <img src="images/tables.png" alt="An item's tables" width="300">
 
 ## English
 
