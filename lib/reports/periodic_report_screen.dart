@@ -100,7 +100,7 @@ class _PeriodicReportScreenState extends State<PeriodicReportScreen> {
           _line(words.dashboardSurplusWithoutSales, report.surplusWithoutSales),
           _line(words.reportsLiquidation, report.liquidation),
           _line(words.reconciliationsDifference, report.reconciliationDifference),
-          if (report.pendingCount > 0) _line('${words.vatPending} (${report.pendingCount})', report.pendingAmount),
+          if (report.pendingCount > 0) _line('${words.reportsPending} (${report.pendingCount})', report.pendingAmount),
         ]),
         _section(words.reportsPartners, [
           for (final partner in report.partners) _line('${partner.name} · ${formatShare(partner.sharePercent)}%', partner.balance),

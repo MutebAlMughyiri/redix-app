@@ -12,7 +12,7 @@ enum ItemType {
   /// Revenue: a unit sold, with its sales invoice.
   sale('categories.typeSale'),
 
-  /// Revenue: VAT refunded for a quarter.
+  /// Revenue: VAT refunded, recorded like any other revenue (redix-api #96, D23).
   vatRefund('categories.typeVatRefund'),
 
   /// Revenue: anything else that comes in.

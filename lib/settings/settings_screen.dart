@@ -47,7 +47,7 @@ class SettingsScreen extends StatelessWidget {
   /// The way into the project's categories and items.
   static const categoriesKey = Key('settings.categories');
 
-  /// The way into the project's VAT rate and payment methods.
+  /// The way into the project's payment methods.
   static const paymentMethodsKey = Key('settings.paymentMethods');
 
   Widget _row(Key key, IconData icon, String title, VoidCallback onTap) =>

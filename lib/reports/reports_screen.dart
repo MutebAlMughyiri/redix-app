@@ -17,7 +17,7 @@ import 'periodic_reports.dart';
 import 'report_files.dart';
 import 'vat_statement_screen.dart';
 
-/// A project's reports (FR-29 to FR-33): the periodic report and those issued before, the VAT statement, an item's report, the contracts, the partners, and what each unit has cost (FR-15).
+/// A project's reports (FR-29 to FR-33): the periodic report and those issued before, the VAT statement, an item's report, the contracts and the partners.
 class ReportsScreen extends StatefulWidget {
   /// The reports of [project], whose items come from [dashboard], its periodic reports from [periodicReports] and [nextReport], and its files through [files].
   const ReportsScreen({super.key, required this.project, required this.dashboard, required this.periodicReports, required this.nextReport, required this.files});

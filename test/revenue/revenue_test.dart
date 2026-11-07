@@ -152,5 +152,20 @@ void main() {
       expect(api.sentFileReads.single, '/projects/project-0/vat-statement/xlsx?from=2026-07-01&to=2026-12-31');
     });
 
+    testWidgets('AC-32.2: a custom period never ends before it starts: a first day after the last moves the last day to it', (tester) async {
+      final api = await openVat(tester, (api) {});
+      final day = DateTime.now().add(const Duration(days: 30));
+      final typed = '${day.month.toString().padLeft(2, '0')}/${day.day.toString().padLeft(2, '0')}/${day.year}';
+      final sent = day.toIso8601String().substring(0, 10);
+
+      await act(tester, api, () => tester.tap(find.byKey(VatStatementScreen.customKey)));
+      await act(tester, api, () => tester.tap(find.byKey(VatStatementScreen.fromKey)));
+      await act(tester, api, () => tester.tap(find.byIcon(Icons.edit_outlined)));
+      await tester.enterText(find.byType(TextField).last, typed);
+      await act(tester, api, () => tester.tap(find.text('OK')));
+      await takeExcel(tester, api, 'vat-$sent-$sent');
+
+      expect(api.sentFileReads.single, '/projects/project-0/vat-statement/xlsx?from=$sent&to=$sent');
+    });
   });
 }

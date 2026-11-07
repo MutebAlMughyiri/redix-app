@@ -61,8 +61,9 @@ class _VatStatementScreenState extends State<VatStatementScreen> {
     _Mode.custom => (_from, _to),
   };
 
-  Future<void> _pick(DateTime current, ValueChanged<DateTime> onChosen) async {
-    final chosen = await showDatePicker(context: context, initialDate: current, firstDate: DateTime(widget.project.startDate.year), lastDate: DateTime(DateTime.now().year + 1, 12, 31));
+  /// Asks for a day from [first] on, starting at [current], and hands it to [onChosen].
+  Future<void> _pick(DateTime current, DateTime first, ValueChanged<DateTime> onChosen) async {
+    final chosen = await showDatePicker(context: context, initialDate: current, firstDate: first, lastDate: DateTime(DateTime.now().year + 1, 12, 31));
     if (chosen != null && mounted) {
       setState(() => onChosen(chosen));
     }
@@ -103,8 +104,16 @@ class _VatStatementScreenState extends State<VatStatementScreen> {
             _Mode.custom => Column(
               spacing: 8,
               children: [
-                PickerField(key: VatStatementScreen.fromKey, label: words.vatFrom, value: formatDate(_from), onTap: () => _pick(_from, (date) => _from = date)),
-                PickerField(key: VatStatementScreen.toKey, label: words.vatTo, value: formatDate(_to), onTap: () => _pick(_to, (date) => _to = date)),
+                PickerField(
+                  key: VatStatementScreen.fromKey,
+                  label: words.vatFrom,
+                  value: formatDate(_from),
+                  onTap: () => _pick(_from, DateTime(widget.project.startDate.year), (date) {
+                    _from = date;
+                    _to = _to.isBefore(date) ? date : _to;
+                  }),
+                ),
+                PickerField(key: VatStatementScreen.toKey, label: words.vatTo, value: formatDate(_to), onTap: () => _pick(_to, _from, (date) => _to = date)),
               ],
             ),
           },

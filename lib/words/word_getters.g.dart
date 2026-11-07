@@ -1994,6 +1994,9 @@ mixin WordGetters {
   /// The word `reports.pdf`.
   String get reportsPdf => text('reports.pdf');
 
+  /// The word `reports.pending`.
+  String get reportsPending => text('reports.pending');
+
   /// The word `reports.periodic`.
   String get reportsPeriodic => text('reports.periodic');
 
@@ -2516,21 +2519,6 @@ mixin WordGetters {
   /// The word `vat.halfYear`.
   String get vatHalfYear => text('vat.halfYear');
 
-  /// The word `vat.invalidPeriod`.
-  String get vatInvalidPeriod => text('vat.invalidPeriod');
-
-  /// The word `vat.invalidVatNumber`.
-  String get vatInvalidVatNumber => text('vat.invalidVatNumber');
-
-  /// The word `vat.loadFailed`.
-  String get vatLoadFailed => text('vat.loadFailed');
-
-  /// The word `vat.noConnection`.
-  String get vatNoConnection => text('vat.noConnection');
-
-  /// The word `vat.pending`.
-  String get vatPending => text('vat.pending');
-
   /// The word `vat.q1`.
   String get vatQ1 => text('vat.q1');
 
@@ -2546,15 +2534,9 @@ mixin WordGetters {
   /// The word `vat.quarter`.
   String get vatQuarter => text('vat.quarter');
 
-  /// The word `vat.refused`.
-  String get vatRefused => text('vat.refused');
-
   /// The word `vat.title`.
   String get vatTitle => text('vat.title');
 
   /// The word `vat.to`.
   String get vatTo => text('vat.to');
-
-  /// The word `vat.total`.
-  String get vatTotal => text('vat.total');
 }
