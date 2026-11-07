@@ -6,6 +6,7 @@ import '../projects/projects.dart';
 import '../ui/screen_title.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
+import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
@@ -13,7 +14,7 @@ import 'payment_method_row.dart';
 import 'payment_methods.dart';
 import 'vat_rate_dialog.dart';
 
-/// A project's VAT rate and payment methods (UC-014): whoever keeps its settings changes the rate, and adds, renames and disables methods. Nothing is deleted.
+/// A project's VAT rate and payment methods (UC-014): whoever keeps its settings changes the rate, and adds, renames, disables and deletes methods; one an expense was paid with is only disabled.
 class PaymentMethodsScreen extends StatefulWidget {
   /// The screen of [project], whose rate changes through [projects] and whose methods change through [paymentMethods].
   const PaymentMethodsScreen({super.key, required this.project, required this.projects, required this.paymentMethods});
@@ -56,6 +57,12 @@ class PaymentMethodsScreen extends StatefulWidget {
 
   /// Enable, in a method's menu.
   static const enableKey = Key('paymentMethods.enable');
+
+  /// Delete, in a method's menu.
+  static const deleteKey = Key('paymentMethods.delete');
+
+  /// The button that deletes, in the dialog that asks first.
+  static const deleteConfirmKey = ConfirmDialog.confirmKey;
 
   /// The name, in the dialogs that add and rename.
   static const dialogNameKey = NameDialog.nameKey;

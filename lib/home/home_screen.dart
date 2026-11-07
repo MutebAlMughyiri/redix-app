@@ -31,9 +31,7 @@ import '../projects/project.dart';
 import '../projects/project_card.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
-import '../settings/payment_methods_screen.dart';
 import '../settings/settings_screen.dart';
-import '../structure/categories_screen.dart';
 import '../suppliers/suppliers_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
@@ -41,7 +39,6 @@ import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/refresh_button.dart';
-import '../users/users_screen.dart';
 import '../words/words.dart';
 
 /// The home of the open project (UC-010): the project, with what the user's permissions allow in it (AC-36.2). Each later use case adds to it.
@@ -79,8 +76,6 @@ class HomeScreen extends StatefulWidget {
   /// The project's name.
   static const titleKey = Key('home.title');
 
-  /// The button that opens Settings.
-  static const settingsKey = Key('home.settings');
 
   /// The line that says the project could not be read.
   static const messageKey = ApiListBody.messageKey;
@@ -131,15 +126,6 @@ class HomeScreen extends StatefulWidget {
   /// The line of a project [id] with no units.
   static Key noUnitsKey(String id) => Key('home.noUnits.$id');
 
-  /// The way into the people of the project [id].
-  static Key usersKey(String id) => Key('home.users.$id');
-
-  /// The way into the categories and items of the project [id].
-  static Key categoriesKey(String id) => Key('home.categories.$id');
-
-  /// The way into the VAT rate and payment methods of the project [id].
-  static Key paymentMethodsKey(String id) => Key('home.paymentMethods.$id');
-
   /// The way into the accounts of the project [id].
   static Key accountsKey(String id) => Key('home.accounts.$id');
 
@@ -166,6 +152,9 @@ class HomeScreen extends StatefulWidget {
 
   /// The way to the reports of the project [id].
   static Key reportsKey(String id) => Key('home.reports.$id');
+
+  /// The way into the settings of the project [id].
+  static Key settingsKey(String id) => Key('home.settings.$id');
 
   /// The way to what waits for a decision in the project [id].
   static Key approvalsKey(String id) => Key('home.approvals.$id');
@@ -261,9 +250,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> _openUsers(Project project) async {
-    await context.push(UsersScreen.pathOf(project.id), extra: project.name);
-    await widget.projects.load();
+  Future<void> _openSettings(Project project) async {
+    await context.push(SettingsScreen.pathOf(project.id), extra: project);
+    await Future.wait([widget.projects.load(), _readAgain()]);
   }
 
   void _askForUnit(Project project) {
@@ -330,12 +319,6 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           RefreshButton(onRefresh: () => Future.wait([widget.projects.load(), _readAgain()])),
           NotificationsBell(notifications: widget.notifications),
-          IconButton(
-            key: HomeScreen.settingsKey,
-            icon: const Icon(Icons.tune),
-            tooltip: words.settingsTitle,
-            onPressed: () => context.push(SettingsScreen.path),
-          ),
         ],
       ),
       bottomNavigationBar: ListenableBuilder(
@@ -406,9 +389,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   MyEntriesSummary(project: project, entries: widget.entries),
                   ProjectCard(
                     project: project,
-                    onUsers: () => _openUsers(project),
-                    onCategories: () => _open(CategoriesScreen.pathOf(project.id), project),
-                    onPaymentMethods: () => _open(PaymentMethodsScreen.pathOf(project.id), project),
                     onAccounts: () => _open(AccountsScreen.pathOf(project.id), project),
                     onPartners: () => _open(PartnersScreen.pathOf(project.id), project),
                     onSuppliers: () => _open(SuppliersScreen.pathOf(project.id), project),
@@ -416,6 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
                     onRevenue: () => _open(RevenueScreen.pathOf(project.id), project),
                     onReports: () => _open(ReportsScreen.pathOf(project.id), project),
+                    onSettings: () => _openSettings(project),
                     onLiquidate: () => _open(LiquidationScreen.pathOf(project.id), project),
                     onDocuments: () => _open(DocumentsScreen.pathOf(project.id), project),
                     onAddUnit: () => _askForUnit(project),

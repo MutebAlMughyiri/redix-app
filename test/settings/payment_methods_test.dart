@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/format/number_format.dart';
-import 'package:redix/home/home_screen.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
+import 'package:redix/settings/settings_screen.dart';
 
 import '../app_harness.dart';
 
@@ -15,8 +15,8 @@ void main() {
     final card = api.addPaymentMethod('project-0', 'شبكة');
     final sadad = api.addPaymentMethod('project-0', 'سداد', isActive: false);
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.paymentMethodsKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.paymentMethodsKey('project-0'))));
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.paymentMethodsKey)));
     return (api: api, card: card['id'] as String, sadad: sadad['id'] as String);
   }
 
@@ -86,6 +86,28 @@ void main() {
 
     await chooseInMenu(tester, opened.api, opened.card, PaymentMethodsScreen.enableKey);
     expect(find.byKey(PaymentMethodsScreen.disabledKey(opened.card)), findsNothing);
+  });
+
+  testWidgets('deleting asks first, then sends the delete and the method leaves the list', (tester) async {
+    final opened = await openMethods(tester);
+
+    await chooseInMenu(tester, opened.api, opened.card, PaymentMethodsScreen.deleteKey);
+    expect(find.text('en paymentMethods.deleteQuestion'), findsOneWidget);
+    await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.deleteConfirmKey)));
+
+    expect(opened.api.sentSettingsChanges.last.$1, '/projects/project-0/payment-methods/${opened.card}/delete');
+    expect(find.byKey(PaymentMethodsScreen.nameKey(opened.card)), findsNothing);
+  });
+
+  testWidgets('a method an expense was paid with is not deleted, and the refusal says to disable it', (tester) async {
+    final opened = await openMethods(tester);
+    opened.api.settingsAnswer = (status: 409, code: 'paymentMethodUsed');
+
+    await chooseInMenu(tester, opened.api, opened.card, PaymentMethodsScreen.deleteKey);
+    await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.deleteConfirmKey)));
+
+    expect(find.text('en paymentMethods.paymentMethodUsed'), findsOneWidget);
+    expect(find.byKey(PaymentMethodsScreen.nameKey(opened.card)), findsOneWidget);
   });
 
   testWidgets('a refused disable says why', (tester) async {
@@ -167,7 +189,8 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
     await openProject(tester, api);
 
-    expect(find.byKey(HomeScreen.paymentMethodsKey('project-0')), findsNothing);
+    await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.paymentMethodsKey), findsNothing);
   });
 
   testWidgets('with no network the list shows what was kept, and no failure', (tester) async {
@@ -175,8 +198,7 @@ void main() {
     opened.api.online = false;
 
     await act(tester, opened.api, () => tester.tap(find.byType(BackButton)));
-    await tester.ensureVisible(find.byKey(HomeScreen.paymentMethodsKey('project-0')));
-    await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.paymentMethodsKey('project-0'))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(SettingsScreen.paymentMethodsKey)));
 
     expect(find.byKey(PaymentMethodsScreen.messageKey), findsNothing);
   });

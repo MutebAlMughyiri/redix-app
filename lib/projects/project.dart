@@ -45,6 +45,9 @@ class Project {
       _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()},
       vatPercent = (json['vatPercent'] as num).toDouble();
 
+  /// No project: what Settings holds when it is opened from the project list, where the signed-in user may do nothing to a project.
+  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.running, rejectionReason = '', units = const [], _permissions = const {}, vatPercent = 0;
+
   /// The project's id.
   final String id;
 

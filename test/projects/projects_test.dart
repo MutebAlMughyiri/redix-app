@@ -107,7 +107,7 @@ void main() {
 
     expect(text(tester, ProjectsScreen.titleKey), 'en projects.choose');
     expect(text(tester, ProjectsScreen.hintKey), 'en projects.chooseHint');
-    expect(find.byKey(HomeScreen.usersKey('project-0')), findsNothing);
+    expect(find.byKey(HomeScreen.settingsKey('project-0')), findsNothing);
     expect(find.byKey(HomeScreen.addUnitKey('project-0')), findsNothing);
     expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
   });

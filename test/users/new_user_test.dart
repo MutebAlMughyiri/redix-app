@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/permission.dart';
-import 'package:redix/home/home_screen.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
+import 'package:redix/settings/settings_screen.dart';
 
 import '../app_harness.dart';
 
@@ -12,7 +12,8 @@ void main() {
     final api = FakeApi()..addProject('غصون 6');
     api.give(api.addUser('متعب', username: 'muteb'), 'project-0', managerAndFinance);
     await openProject(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey('project-0'))));
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.newUserKey)));
     return api;
   }

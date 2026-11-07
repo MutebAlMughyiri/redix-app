@@ -7,15 +7,12 @@ import '../words/words.dart';
 import 'project.dart';
 import 'unit_row.dart';
 
-/// The open project: its start date, status and units, with what the signed-in user's permissions allow: Users, Categories and items, Payment methods, Accounts, Partners, Suppliers, Contracts, and Add unit and Close project while it runs.
+/// The open project: its start date, status and units, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Settings, and Add unit and Close project while it runs.
 class ProjectCard extends StatelessWidget {
-  /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAccounts], [onPartners], [onSuppliers], [onContracts], [onLiquidate], [onDocuments], [onAddUnit], [onRename], [onRenameUnit], [onDeleteUnit] and [onClose] when those are tapped.
+  /// The card of [project], calling [onAccounts], [onPartners], [onSuppliers], [onContracts], [onSettings], [onLiquidate], [onDocuments], [onAddUnit], [onRename], [onRenameUnit], [onDeleteUnit] and [onClose] when those are tapped.
   const ProjectCard({
     super.key,
     required this.project,
-    required this.onUsers,
-    required this.onCategories,
-    required this.onPaymentMethods,
     required this.onAccounts,
     required this.onPartners,
     required this.onSuppliers,
@@ -23,6 +20,7 @@ class ProjectCard extends StatelessWidget {
     required this.onApprovals,
     required this.onRevenue,
     required this.onReports,
+    required this.onSettings,
     required this.onLiquidate,
     required this.onDocuments,
     required this.onAddUnit,
@@ -34,15 +32,6 @@ class ProjectCard extends StatelessWidget {
 
   /// The project this card shows.
   final Project project;
-
-  /// Called when Users is tapped.
-  final VoidCallback onUsers;
-
-  /// Called when Categories and items is tapped.
-  final VoidCallback onCategories;
-
-  /// Called when Payment methods and VAT is tapped.
-  final VoidCallback onPaymentMethods;
 
   /// Called when Accounts is tapped.
   final VoidCallback onAccounts;
@@ -64,6 +53,9 @@ class ProjectCard extends StatelessWidget {
 
   /// Called when Reports is tapped.
   final VoidCallback onReports;
+
+  /// Opens Settings, which holds the users, the categories and items, and the payment methods.
+  final VoidCallback onSettings;
 
   /// Called when Liquidate and close is tapped.
   final VoidCallback onLiquidate;
@@ -91,10 +83,7 @@ class ProjectCard extends StatelessWidget {
     final words = Words.of(context);
     final theme = Theme.of(context);
     final startDate = '${words.projectsStartDate} ${formatDate(project.startDate)}';
-    final mayManageUsers = project.may(Permission.manageUsers);
     final mayChange = project.mayManageProject;
-    final mayShapeStructure = project.may(Permission.manageStructure);
-    final mayKeepSettings = project.may(Permission.manageSettings);
     return Card.outlined(
       key: HomeScreen.cardKey(project.id),
       margin: const EdgeInsets.only(bottom: 12),
@@ -136,27 +125,6 @@ class ProjectCard extends StatelessWidget {
             child: OverflowBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
-                if (mayManageUsers)
-                  TextButton.icon(
-                    key: HomeScreen.usersKey(project.id),
-                    icon: const Icon(Icons.group_outlined),
-                    label: Text(words.usersTitle),
-                    onPressed: onUsers,
-                  ),
-                if (mayShapeStructure)
-                  TextButton.icon(
-                    key: HomeScreen.categoriesKey(project.id),
-                    icon: const Icon(Icons.category_outlined),
-                    label: Text(words.categoriesTitle),
-                    onPressed: onCategories,
-                  ),
-                if (mayKeepSettings)
-                  TextButton.icon(
-                    key: HomeScreen.paymentMethodsKey(project.id),
-                    icon: const Icon(Icons.credit_card_outlined),
-                    label: Text(words.paymentMethodsTitle),
-                    onPressed: onPaymentMethods,
-                  ),
                 TextButton.icon(
                   key: HomeScreen.accountsKey(project.id),
                   icon: const Icon(Icons.account_balance_wallet_outlined),
@@ -192,6 +160,12 @@ class ProjectCard extends StatelessWidget {
                   icon: const Icon(Icons.summarize_outlined),
                   label: Text(words.reportsTitle),
                   onPressed: onReports,
+                ),
+                TextButton.icon(
+                  key: HomeScreen.settingsKey(project.id),
+                  icon: const Icon(Icons.tune),
+                  label: Text(words.settingsTitle),
+                  onPressed: onSettings,
                 ),
                 if (project.may(Permission.approveEntries))
                   TextButton.icon(

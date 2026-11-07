@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/sign_in_screen.dart';
-import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/category.dart';
 import 'package:redix/structure/item_tables_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/settings/settings_screen.dart';
 
 import '../app_harness.dart';
 
@@ -22,8 +22,8 @@ void main() {
     final digging = api.addItem(bone, 'الحفر');
     final steel = api.addItem(bone, 'الحديد', type: 'purchases');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey('project-0'))));
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
     return (api: api, bone: bone['id'] as String, finishing: finishing['id'] as String, digging: digging['id'] as String, steel: steel['id'] as String);
   }
 
@@ -212,9 +212,8 @@ void main() {
       {'id': 'contract-1', 'kind': 'contract', 'name': 'مقاول الحفر', 'count': 27},
     ];
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey('project-0')));
-    await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey('project-0'))));
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
     await open(tester, api, bone['id'] as String);
     if (status == 'running') {
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(item['id'] as String))));
@@ -358,9 +357,9 @@ void main() {
   testWidgets('a list that cannot be read offers to try again', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey('project-0')));
     api.online = false;
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey('project-0'))));
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
 
     expect(text(tester, CategoriesScreen.messageKey), 'en categories.loadFailed');
   });
@@ -368,8 +367,8 @@ void main() {
   testWidgets('a project with no categories says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey('project-0'))));
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
 
     expect(text(tester, CategoriesScreen.emptyKey), 'en categories.empty');
   });
@@ -391,7 +390,8 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
     await openProject(tester, api);
 
-    expect(find.byKey(HomeScreen.categoriesKey('project-0')), findsNothing);
+    await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.categoriesKey), findsNothing);
   });
 
   group('a new project', () {

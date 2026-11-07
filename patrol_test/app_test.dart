@@ -234,13 +234,14 @@ void main() {
       await goTo($(SignInScreen.submitKey));
       await $(SignInScreen.submitKey).tap();
       await reach($(keyStartingWith('projects.card.')));
-      expect($(keyStartingWith('home.users.')), findsNothing);
+      expect($(keyStartingWith('home.settings.')), findsNothing);
       await $(keyStartingWith('projects.card.')).tap();
 
-      final projectUsers = $(keyStartingWith('home.users.'));
-      await reach(projectUsers);
-      await goTo(projectUsers);
-      await projectUsers.tap();
+      final projectSettings = $(keyStartingWith('home.settings.'));
+      await reach(projectSettings);
+      await goTo(projectSettings);
+      await projectSettings.tap();
+      await $(SettingsScreen.usersKey).tap();
       await reach($(keyStartingWith('users.menu.')));
       await $(keyStartingWith('users.menu.')).tap();
       await $(UsersScreen.permissionsKey).tap();
@@ -248,6 +249,7 @@ void main() {
       await $(keyStartingWith('userPermissions.')).at(1).tap();
       await $.pumpAndSettle();
       await picture('user-permissions');
+      await $(BackButton).tap();
       await $(BackButton).tap();
       await $(BackButton).tap();
 
@@ -285,9 +287,10 @@ void main() {
       await $(ChangeDialog.saveKey).tap();
       await reach($(find.text('غصون 7')));
 
-      await goTo($(keyStartingWith('home.categories.')));
+      await goTo($(keyStartingWith('home.settings.')));
 
-      await $(keyStartingWith('home.categories.')).tap();
+      await $(keyStartingWith('home.settings.')).tap();
+      await $(SettingsScreen.categoriesKey).tap();
       await reach($(keyStartingWith('categories.tile.')).at(4));
       String firstCategory() => $.tester.widget<Text>(keyStartingWith('categories.name.').first).data!;
       expect(firstCategory(), 'تكلفة الأراضي');
@@ -392,9 +395,7 @@ void main() {
       await $.pumpAndSettle();
       await $(BackButton).tap();
 
-      await goTo($(keyStartingWith('home.paymentMethods.')));
-
-      await $(keyStartingWith('home.paymentMethods.')).tap();
+      await $(SettingsScreen.paymentMethodsKey).tap();
       await reach($(find.text('شبكة')));
       await $(PaymentMethodsScreen.addKey).tap();
       await $(PaymentMethodsScreen.dialogNameKey).enterText('مدى');
@@ -408,6 +409,7 @@ void main() {
       await $(PaymentMethodsScreen.saveKey).tap();
       await reach($(find.text('7.5%')));
       await picture('payment-methods');
+      await $(BackButton).tap();
       await $(BackButton).tap();
 
       await goTo($(keyStartingWith('home.accounts.')));
@@ -510,9 +512,10 @@ void main() {
       await $.pumpAndSettle();
       await $(BackButton).tap();
 
-      await goTo(projectUsers);
+      await goTo(projectSettings);
 
-      await projectUsers.tap();
+      await projectSettings.tap();
+      await $(SettingsScreen.usersKey).tap();
       await reach($(keyStartingWith('users.menu.')));
 
       await $(UsersScreen.newUserKey).tap();
@@ -558,7 +561,8 @@ void main() {
       await $.pumpAndSettle();
 
       await $(BackButton).tap();
-      await reach(projectUsers);
+      await $(BackButton).tap();
+      await reach(projectSettings);
       await $(BackButton).tap();
       await $(keyStartingWith('projects.star.')).tap();
       await reach($(Icons.star));
@@ -582,12 +586,14 @@ void main() {
       expect(Directionality.of($.tester.element(keyStartingWith('projects.status.'))), TextDirection.rtl);
       await picture('projects-arabic');
       await $(keyStartingWith('projects.card.')).tap();
-      await goTo(projectUsers);
-      await projectUsers.tap();
+      await goTo(projectSettings);
+      await projectSettings.tap();
+      await $(SettingsScreen.usersKey).tap();
       await reach($(keyStartingWith('users.menu.')));
       await picture('users-arabic');
       await $(BackButton).tap();
-      await reach(projectUsers);
+      await $(BackButton).tap();
+      await reach(projectSettings);
 
       await goTo($(keyStartingWith('home.accounts.')));
 
@@ -605,7 +611,7 @@ void main() {
       await $(AccountsScreen.saveKey).tap();
       await reach($(find.text('عهدة الميدان')));
       await $(BackButton).tap();
-      await reach(projectUsers);
+      await reach(projectSettings);
       await $(BackButton).tap();
       await $(ProjectsScreen.settingsKey).tap();
       await $(SettingsScreen.myAccountKey).tap();
@@ -647,7 +653,10 @@ void main() {
       expect($(ProjectsScreen.newProjectKey), findsOneWidget);
       await $(keyStartingWith('projects.card.')).tap();
       await reach($(keyStartingWith('home.card.')));
-      expect($(keyStartingWith('home.users.')), findsNothing);
+      await goTo($(keyStartingWith('home.settings.')));
+      await $(keyStartingWith('home.settings.')).tap();
+      expect($(SettingsScreen.usersKey), findsNothing);
+      await $(BackButton).tap();
       expect($(keyStartingWith('home.addUnit.')), findsNothing);
       expect($(keyStartingWith('home.close.')), findsNothing);
 
@@ -770,7 +779,8 @@ void main() {
       await reach($(ContractorPaymentScreen.savedKey));
       await reach($(keyStartingWith('home.contractorPayment.')));
 
-      await $(HomeScreen.settingsKey).tap();
+      await goTo($(keyStartingWith('home.settings.')));
+      await $(keyStartingWith('home.settings.')).tap();
       await $(SettingsScreen.myAccountKey).tap();
       await $(MyAccountScreen.signOutKey).tap();
       await $(MyAccountScreen.confirmSignOutKey).tap();
@@ -800,7 +810,8 @@ void main() {
       expect($(keyStartingWith('home.close.')), findsNothing);
       expect($(keyStartingWith('home.addUnit.')), findsNothing);
 
-      await $(HomeScreen.settingsKey).tap();
+      await goTo($(keyStartingWith('home.settings.')));
+      await $(keyStartingWith('home.settings.')).tap();
       await $(SettingsScreen.switchProjectKey).tap();
       await reach($(ProjectsScreen.titleKey));
       await $(ProjectsScreen.settingsKey).tap();

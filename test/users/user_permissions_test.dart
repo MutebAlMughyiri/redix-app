@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/permission.dart';
-import 'package:redix/home/home_screen.dart';
 import 'package:redix/users/user_permissions_screen.dart';
 import 'package:redix/users/users_screen.dart';
+import 'package:redix/settings/settings_screen.dart';
 
 import '../app_harness.dart';
 
@@ -18,7 +18,8 @@ void main() {
       ..give(manager, 'project-0', managerAndFinance)
       ..give(user, 'project-0', reader);
     await openProject(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey('project-0'))));
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-1'))));
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.permissionsKey)));
     return api;
@@ -40,6 +41,7 @@ void main() {
 
     await toggle(tester, api, Permission.approveEntries);
     api.sentReads.clear();
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     expect(api.sentReads, isNot(contains('/projects')));

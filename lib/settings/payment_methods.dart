@@ -21,4 +21,7 @@ class PaymentMethods extends ApiList<PaymentMethod> {
 
   /// Brings the disabled [method] back into entry.
   Future<String> enable(PaymentMethod method) => change('/projects/$projectId/payment-methods/${method.id}/enable', {});
+
+  /// Deletes [method]; one an expense was paid with is refused, and can be disabled instead.
+  Future<String> delete(PaymentMethod method) => change('/projects/$projectId/payment-methods/${method.id}/delete', {});
 }

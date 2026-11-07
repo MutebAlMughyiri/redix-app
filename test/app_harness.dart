@@ -12,6 +12,7 @@ import 'package:redix/attachments/invoice_capture.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/auth/biometrics.dart';
 import 'package:redix/auth/session.dart';
+import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/words/app_language.dart';
@@ -61,7 +62,7 @@ Map<String, String> wordsIn(String language) => {
     'categories.disable', 'categories.enable', 'categories.disabled', 'categories.save', 
     'subgroups.new', 'categories.subgroupName', 'projects.structureSource', 'projects.defaultTemplate', 'projects.unknownSource',
     'projects.invalidVatRate', 'common.add', 'paymentMethods.title', 'paymentMethods.empty', 'paymentMethods.loadFailed', 'paymentMethods.noConnection', 'paymentMethods.refused', 'paymentMethods.projectFinished',
-    'paymentMethods.invalidName', 'paymentMethods.new', 'paymentMethods.name', 'paymentMethods.rename', 'paymentMethods.save', 'paymentMethods.disable', 'paymentMethods.enable', 'paymentMethods.disabled',
+    'paymentMethods.invalidName', 'paymentMethods.new', 'paymentMethods.name', 'paymentMethods.rename', 'paymentMethods.save', 'paymentMethods.disable', 'paymentMethods.enable', 'paymentMethods.disabled', 'paymentMethods.delete', 'paymentMethods.deleteQuestion', 'paymentMethods.deleteExplain', 'paymentMethods.paymentMethodUsed',
     'paymentMethods.vatRate', 'paymentMethods.vatHint', 'paymentMethods.changeVatRate', 'paymentMethods.vatPercent',
     'accounts.title', 'accounts.empty', 'accounts.loadFailed', 'accounts.noConnection', 'accounts.refused', 'accounts.projectFinished', 'accounts.invalidName', 'accounts.invalidOpeningBalance',
     'accounts.custodianRequired', 'accounts.unknownCustodian', 'accounts.new', 'accounts.edit', 'accounts.save', 'accounts.type', 'accounts.typeBank', 'accounts.typeCashCustody', 'accounts.name',
@@ -818,6 +819,8 @@ class FakeApi {
     switch (segments.sublist(3)) {
       case []:
         addPaymentMethod(segments[1], body['name'] as String);
+      case [final id, 'delete']:
+        list.removeWhere((row) => row['id'] == id);
       case [final id, 'disable']:
         list.singleWhere((row) => row['id'] == id)['isActive'] = false;
       case [final id, 'enable']:
@@ -1633,6 +1636,13 @@ Future<Session> pumpRedix(
 Future<void> openProject(WidgetTester tester, FakeApi api, {InvoiceCapture? capture, LocalStore? store}) async {
   await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture, store: store);
   await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+}
+
+/// Opens Settings from the card of the open project [projectId].
+Future<void> openSettings(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) async {
+  await tester.ensureVisible(find.byKey(HomeScreen.settingsKey(projectId)));
+  await tester.pumpAndSettle();
+  await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey(projectId))));
 }
 
 /// Runs [action] and lets the app settle, with the app's requests reaching [api].

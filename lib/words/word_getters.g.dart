@@ -1625,6 +1625,15 @@ mixin WordGetters {
   /// The word `paymentMethods.changeVatRate`.
   String get paymentMethodsChangeVatRate => text('paymentMethods.changeVatRate');
 
+  /// The word `paymentMethods.delete`.
+  String get paymentMethodsDelete => text('paymentMethods.delete');
+
+  /// The word `paymentMethods.deleteExplain`.
+  String get paymentMethodsDeleteExplain => text('paymentMethods.deleteExplain');
+
+  /// The word `paymentMethods.deleteQuestion`.
+  String get paymentMethodsDeleteQuestion => text('paymentMethods.deleteQuestion');
+
   /// The word `paymentMethods.disable`.
   String get paymentMethodsDisable => text('paymentMethods.disable');
 
@@ -1651,6 +1660,9 @@ mixin WordGetters {
 
   /// The word `paymentMethods.noConnection`.
   String get paymentMethodsNoConnection => text('paymentMethods.noConnection');
+
+  /// The word `paymentMethods.paymentMethodUsed`.
+  String get paymentMethodsPaymentMethodUsed => text('paymentMethods.paymentMethodUsed');
 
   /// The word `paymentMethods.projectFinished`.
   String get paymentMethodsProjectFinished => text('paymentMethods.projectFinished');

@@ -75,8 +75,8 @@ final _dashboardWithAnItem = <String, Object>{
 };
 
 final List<Gate> _gates = [
-  (name: 'Registered projects in the settings', permission: Permission.approveProjects, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey)], control: _key(SettingsScreen.registeredKey)),
-  (name: 'Users on the project card', permission: Permission.manageUsers, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.usersKey(_project))),
+  (name: 'Registered projects in the settings', permission: Permission.approveProjects, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.registeredKey)),
+  (name: 'Users in the settings', permission: Permission.manageUsers, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.usersKey)),
   (name: 'Add unit on the project card', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.addUnitKey(_project))),
   (name: 'Rename on the project card', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.renameKey(_project))),
   (name: 'A unit\'s menu on the project card', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.unitMenuKey('$_project-unit-0'))),
@@ -103,8 +103,8 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.documentsKey(_project))],
     control: _key(DocumentsScreen.removeKey('permit')),
   ),
-  (name: 'Categories on the project card', permission: Permission.manageStructure, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.categoriesKey(_project))),
-  (name: 'Payment methods on the project card', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.paymentMethodsKey(_project))),
+  (name: 'Categories and items in the settings', permission: Permission.manageStructure, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.categoriesKey)),
+  (name: 'Payment methods in the settings', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.paymentMethodsKey)),
   (name: 'Add an account', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))], control: _key(AccountsScreen.addKey)),
   (
     name: 'An account\'s menu',

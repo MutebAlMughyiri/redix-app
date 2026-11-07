@@ -50,7 +50,8 @@ void main() {
 
     expect(find.byKey(HomeScreen.closeKey('project-1')), findsNothing);
     expect(find.byKey(HomeScreen.addUnitKey('project-1')), findsNothing);
-    expect(find.byKey(HomeScreen.usersKey('project-1')), findsNothing);
+    await openSettings(tester, api, projectId: 'project-1');
+    expect(find.byKey(SettingsScreen.usersKey), findsNothing);
   });
 
   testWidgets('with a default and the switch on, the app opens that project at start, with no back arrow', (tester) async {
@@ -72,7 +73,7 @@ void main() {
       ..addProject('غصون 6');
     await pumpRedix(tester, api, stored: {'session': keptDirect});
 
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey)));
+    await openSettings(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.switchProjectKey)));
 
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
@@ -83,8 +84,8 @@ void main() {
     final api = FakeApi()..addProject('غصون 6');
     await openHome(tester, api);
 
+    await openSettings(tester, api);
     api.projects.clear();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey('project-0'))));
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
@@ -358,37 +359,45 @@ void main() {
     await openHome(tester, api);
 
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsOneWidget);
-    expect(find.byKey(HomeScreen.usersKey('project-0')), findsNothing);
     expect(find.byKey(HomeScreen.addUnitKey('project-0')), findsNothing);
     expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
+    await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.usersKey), findsNothing);
+    expect(find.byKey(SettingsScreen.categoriesKey), findsNothing);
+    expect(find.byKey(SettingsScreen.paymentMethodsKey), findsNothing);
   });
 
   testWidgets('whoever only manages users has Users, but no Add unit or Close', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['manageUsers', 'readProject', 'seeAllCapital']);
     await openHome(tester, api);
 
-    expect(find.byKey(HomeScreen.usersKey('project-0')), findsOneWidget);
     expect(find.byKey(HomeScreen.addUnitKey('project-0')), findsNothing);
     expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
+    await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.usersKey), findsOneWidget);
   });
 
   testWidgets('whoever manages the project but not its users has Add unit and Close, but no Users', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject', 'seeAllCapital', 'manageProject']);
     await openHome(tester, api);
 
-    expect(find.byKey(HomeScreen.usersKey('project-0')), findsNothing);
     expect(find.byKey(HomeScreen.addUnitKey('project-0')), findsOneWidget);
     expect(find.byKey(HomeScreen.closeKey('project-0')), findsOneWidget);
+    await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.usersKey), findsNothing);
   });
 
   testWidgets('Users stays on a finished project, and the list is read again on coming back', (tester) async {
     final api = FakeApi()..addProject('غصون 6', status: 'finished', permissions: ['manageUsers', 'readProject']);
     await openHome(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey('project-0'))));
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
     api.projects.single['permissions'] = ['readProject'];
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-    expect(find.byKey(HomeScreen.usersKey('project-0')), findsNothing);
+    await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.usersKey), findsNothing);
   });
 }

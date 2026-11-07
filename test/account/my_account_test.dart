@@ -347,10 +347,9 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey(runningId))));
       [
         HomeScreen.titleKey,
-        HomeScreen.settingsKey,
+        HomeScreen.settingsKey(runningId),
         HomeScreen.detailsKey(runningId),
         HomeScreen.statusKey(runningId),
-        HomeScreen.usersKey(runningId),
         HomeScreen.addUnitKey(runningId),
         HomeScreen.renameKey(runningId),
         HomeScreen.unitMenuKey('$runningId-unit-0'),
@@ -368,9 +367,8 @@ void main() {
       final disabledItem = api.addItem(bone, 'بند الحديد', isActive: false);
       final boneId = bone['id'] as String;
       final tilesId = tiles['id'] as String;
-      await tester.ensureVisible(find.byKey(HomeScreen.categoriesKey(runningId)));
-      await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.categoriesKey(runningId))));
+      await openSettings(tester, api, projectId: runningId);
+      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.categoryTileKey(boneId))));
       [
         CategoriesScreen.hintKey,
@@ -448,12 +446,13 @@ void main() {
       [ItemTablesScreen.hintKey, ItemTablesScreen.addKey, ItemTablesScreen.handleKey(subgroupId), ItemTablesScreen.tableNameKey(subgroupId), ItemTablesScreen.detailsKey(subgroupId), ItemTablesScreen.renameKey(subgroupId), ItemTablesScreen.deleteKey(subgroupId)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       final cardMethod = api.addPaymentMethod(runningId, 'شبكة')['id'] as String;
       final longMethod = api.addPaymentMethod(runningId, 'تحويل بنكي عن طريق الحساب الجاري للمؤسسة', isActive: false)['id'] as String;
-      await tester.ensureVisible(find.byKey(HomeScreen.paymentMethodsKey(runningId)));
-      expectFits(HomeScreen.paymentMethodsKey(runningId));
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.paymentMethodsKey(runningId))));
+      await openSettings(tester, api, projectId: runningId);
+      [SettingsScreen.usersKey, SettingsScreen.categoriesKey, SettingsScreen.paymentMethodsKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.paymentMethodsKey)));
       [
         PaymentMethodsScreen.vatRateKey,
         PaymentMethodsScreen.vatHintKey,
@@ -474,12 +473,14 @@ void main() {
       [PaymentMethodsScreen.vatPercentKey, PaymentMethodsScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       api.addMember('user-nawaf', 'نواف بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني بالمشروع');
       final bankAccount = api.addAccount(runningId, 'حساب جارٍ باسم طويل جداً في بنك من البنوك المحلية', openingBalance: 64250.75)['id'] as String;
       final custody = api.addAccount(runningId, 'كاش مع نواف', type: 'cashCustody', openingBalance: 2750.5, custodianId: 'user-nawaf', custodianName: 'نواف بن عبدالله', isMine: true)['id'] as String;
       final oldAccount = api.addAccount(runningId, 'حساب قديم', openingBalance: -120.40, isActive: false)['id'] as String;
       await tester.ensureVisible(find.byKey(HomeScreen.accountsKey(runningId)));
+      await tester.pumpAndSettle();
       expectFits(HomeScreen.accountsKey(runningId));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.accountsKey(runningId))));
       [
@@ -656,9 +657,8 @@ void main() {
       [ContractorPaymentScreen.invoiceNumberKey, ContractorPaymentScreen.invoiceDateKey, ContractorPaymentScreen.invoiceAmountKey, ContractorPaymentScreen.invoiceVatKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-      await tester.ensureVisible(find.byKey(HomeScreen.usersKey(runningId)));
-      await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey(runningId))));
+      await openSettings(tester, api, projectId: runningId);
+      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
       [
         UsersScreen.newUserKey,
         UsersScreen.addExistingKey,
@@ -689,6 +689,7 @@ void main() {
       [NewUserScreen.nameKey, NewUserScreen.usernameKey, NewUserScreen.mobileKey, NewUserScreen.passwordKey].forEach(expectFits);
       await tester.scrollUntilVisible(find.byKey(NewUserScreen.submitKey), 300, scrollable: find.descendant(of: find.byType(NewUserScreen), matching: find.byType(Scrollable)).first);
       expectFits(NewUserScreen.submitKey);
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
