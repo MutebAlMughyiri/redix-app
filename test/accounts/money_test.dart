@@ -5,9 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/accounts/reconcile_screen.dart';
 import 'package:redix/accounts/reconciliation_card.dart';
-import 'package:redix/accounts/transfer_screen.dart';
 import 'package:redix/attachments/picked_file.dart';
-import 'package:redix/entries/reverse_sheet.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/capital_move_screen.dart';
@@ -61,7 +59,6 @@ void main() {
     final api = FakeApi()..addProject('مشروع غصون السادس في شمال مدينة الرياض بالمملكة', permissions: managerAndFinance, units: ['الفلة']);
     api
       ..addAccount('project-0', longName, openingBalance: 9999999.99)
-      ..transferRows.add({'id': 'entry-0', 'date': '2026-11-05', 'amount': 9999999.99, 'fromAccountName': longName, 'toAccountName': longName, 'description': longName})
       ..reconciliationAnswer = reconciled(9999999.99, 8888888.88, balances: [balanceRow(longName, 9999999.99, 8888888.88)])
       ..capitalTotal = 9999999.99
       ..addMovement(attachmentId: 'attachment-1', amount: -9999999.99);
@@ -81,11 +78,6 @@ void main() {
     expect(find.byKey(ReconcileScreen.saveKey, skipOffstage: false), findsOneWidget);
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-    await tester.ensureVisible(find.byKey(AccountsScreen.transferKey));
-    await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.transferKey)));
-    expect(find.byKey(TransferScreen.saveKey, skipOffstage: false), findsOneWidget);
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
     final partners = find.byKey(HomeScreen.partnersKey('project-0'));
@@ -162,73 +154,19 @@ void main() {
       expect(api.sentMoney, isEmpty);
     });
 
-    testWidgets('only whoever moves money enters balances or a transfer, and everyone sees the card', (tester) async {
+    testWidgets('only whoever moves money enters balances, and everyone sees the card', (tester) async {
       await openAccounts(tester, (api) => api.addAccount('project-0', 'حساب'), permissions: field);
 
       expect(find.byKey(ReconciliationCard.neverKey), findsOneWidget);
       expect(find.byKey(AccountsScreen.reconcileKey), findsNothing);
-      expect(find.byKey(AccountsScreen.transferKey), findsNothing);
-    });
-  });
-
-  group('UC-040', () {
-    testWidgets('AC-23.1: a transfer sends both accounts, the amount, the date and the file', (tester) async {
-      final (:api, :capture) = await openAccounts(tester, (api) {
-        api
-          ..addAccount('project-0', 'البنك')
-          ..addAccount('project-0', 'العهدة');
-      });
-      capture.files = _picture();
-      final ids = [for (final row in api.accounts['project-0']!) row['id']! as String];
-      await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.transferKey)));
-
-      await act(tester, api, () => tester.tap(find.byKey(TransferScreen.fromKey(ids[0]))));
-      await act(tester, api, () => tester.tap(find.byKey(TransferScreen.toKey(ids[1]))));
-      await tester.enterText(find.byKey(TransferScreen.amountKey), '5000');
-      await tester.enterText(find.byKey(TransferScreen.descriptionKey), 'تغذية العهدة');
-      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.filesKey)));
-      await act(tester, api, () => tester.tap(find.byKey(TransferScreen.saveKey)));
-
-      final (path, body) = api.sentMoney.single;
-      expect(path, '/projects/project-0/transfers');
-      expect((body['fromAccountId'], body['toAccountId'], body['amount'], body['description']), (ids[0], ids[1], 5000.0, 'تغذية العهدة'));
-      expect(body['attachmentId'], isNotNull);
-      expect(find.byKey(TransferScreen.saveKey), findsNothing);
     });
 
-    testWidgets('a refused transfer says why and stays', (tester) async {
-      final (:api, capture: _) = await openAccounts(tester, (api) {
-        api
-          ..addAccount('project-0', 'البنك')
-          ..moneyAnswer = (status: 400, code: 'sameAccount');
-      });
-      final id = api.accounts['project-0']!.single['id']! as String;
-      await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.transferKey)));
+    testWidgets('transfers between accounts are gone: Accounts offers only the actual balances (Muteb, 8 Nov 2026)', (tester) async {
+      await openAccounts(tester, (api) => api.addAccount('project-0', 'حساب'));
 
-      await act(tester, api, () => tester.tap(find.byKey(TransferScreen.fromKey(id))));
-      await act(tester, api, () => tester.tap(find.byKey(TransferScreen.toKey(id))));
-      await tester.enterText(find.byKey(TransferScreen.amountKey), '5');
-      await act(tester, api, () => tester.tap(find.byKey(TransferScreen.saveKey)));
-
-      expect(find.text('en transfers.sameAccount'), findsOneWidget);
-      expect(find.byKey(TransferScreen.saveKey), findsOneWidget);
-    });
-
-    testWidgets('the latest transfers show, and Finance can reverse one', (tester) async {
-      final (:api, capture: _) = await openAccounts(tester, (api) {
-        api
-          ..addAccount('project-0', 'البنك')
-          ..transferRows.add({'id': 'entry-0', 'date': '2026-11-05', 'amount': 5000, 'fromAccountName': 'البنك', 'toAccountName': 'العهدة', 'description': 'تغذية'})
-          ..addEntry(status: 'approved');
-      });
-
-      expect(find.byKey(AccountsScreen.transferRowKey('entry-0')), findsOneWidget);
-
-      await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.reverseTransferKey('entry-0'))));
-      await tester.enterText(find.byKey(ReverseSheet.reasonKey), 'خطأ');
-      await act(tester, api, () => tester.tap(find.byKey(ReverseSheet.sendKey)));
-
-      expect(api.sentEntryChanges.single.$1, 'entry-0');
+      expect(find.byKey(AccountsScreen.reconcileKey), findsOneWidget);
+      expect(find.byKey(const Key('accounts.transfer')), findsNothing);
+      expect(find.byKey(const Key('accounts.transfersHeading')), findsNothing);
     });
   });
 

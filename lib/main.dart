@@ -12,8 +12,6 @@ import 'accounts/accounts_screen.dart';
 import 'accounts/offered_accounts.dart';
 import 'accounts/reconcile_screen.dart';
 import 'accounts/reconciliation.dart';
-import 'accounts/transfer_screen.dart';
-import 'accounts/transfers.dart';
 import 'api.dart';
 import 'attachments/attachments.dart';
 import 'attachments/invoice_capture.dart';
@@ -149,7 +147,6 @@ class _RedixAppState extends State<RedixApp> {
   final _projectCreditableInvoices = <String, CreditableInvoices>{};
   final _projectOfferedAccounts = <String, OfferedAccounts>{};
   final _projectAttachable = <String, AttachableEntries>{};
-  final _projectTransfers = <String, Transfers>{};
   final _projectReconciliations = <String, Reconciliations>{};
   final _projectCapital = <String, Capital>{};
   final _projectRevenues = <String, Revenues>{};
@@ -233,18 +230,7 @@ class _RedixAppState extends State<RedixApp> {
           project: state.extra! as Project,
           accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
           members: _membersOf(state.pathParameters['projectId'] ?? ''),
-          transfers: _transfersOf(state.pathParameters['projectId'] ?? ''),
           reconciliations: _reconciliationsOf(state.pathParameters['projectId'] ?? ''),
-        ),
-      ),
-      GoRoute(
-        path: TransferScreen.path,
-        builder: (context, state) => TransferScreen(
-          project: state.extra! as Project,
-          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
-          transfers: _transfersOf(state.pathParameters['projectId'] ?? ''),
-          attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
-          capture: widget.capture,
         ),
       ),
       GoRoute(path: RevenueScreen.path, builder: (context, state) => RevenueScreen(project: state.extra! as Project, revenues: _revenuesOf(state.pathParameters['projectId'] ?? ''))),
@@ -382,8 +368,6 @@ class _RedixAppState extends State<RedixApp> {
   PaymentMethods _paymentMethodsOf(String projectId) => _projectPaymentMethods.putIfAbsent(projectId, () => PaymentMethods(widget.session, projectId));
 
   Accounts _accountsOf(String projectId) => _projectAccounts.putIfAbsent(projectId, () => Accounts(widget.session, projectId));
-
-  Transfers _transfersOf(String projectId) => _projectTransfers.putIfAbsent(projectId, () => Transfers(widget.session, projectId));
 
   Reconciliations _reconciliationsOf(String projectId) => _projectReconciliations.putIfAbsent(projectId, () => Reconciliations(widget.session, projectId));
 

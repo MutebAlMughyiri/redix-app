@@ -42,7 +42,7 @@ enum Permission {
   /// See the entries waiting in a project, approve or reject them, and reverse an approved one.
   approveEntries,
 
-  /// Enter what counts at once in a project: transfers, capital movements, revenue and reconciling.
+  /// Enter what counts at once in a project: capital movements, revenue and reconciling.
   moveMoney;
 
   /// What can be ticked in a project, in this order: every permission but the system's own.

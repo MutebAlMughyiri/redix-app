@@ -8,7 +8,7 @@
 
 ## Screens
 
-The canvas draws Accounts with reconciliation and transfers (`Accounts.dc.html`). This use case builds its list of accounts; the rest belongs to the use cases that compute them.
+The canvas draws Accounts with reconciliation and transfers (`Accounts.dc.html`); transfers were removed on 8 Nov 2026. This use case builds its list of accounts; the rest belongs to the use cases that compute them.
 
 The project's home, `HomeScreen`:
 
@@ -72,4 +72,4 @@ The real app is run on an emulator by the journey in `patrol_test/app_test.dart`
 | What | Use case |
 | --- | --- |
 | Pending and rejected counts beside the custody, and the card as the canvas draws it for Field | UC-037 "See my latest entries and custody balance" |
-| Reconciliation and transfers, which the canvas draws on this screen | Their own use cases |
+| Reconciliation, which the canvas draws on this screen | UC-040 |

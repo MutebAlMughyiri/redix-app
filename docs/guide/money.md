@@ -1,17 +1,16 @@
-[Documentation](../README.md) › User guide › Transfers, reconciliation and capital
+[Documentation](../README.md) › User guide › Reconciliation and capital
 
-# Transfers, reconciliation and capital · التحويلات والمطابقة ورأس المال
+# Reconciliation and capital · المطابقة ورأس المال
 
 ## English
 
-**What it is for:** moving money between accounts, checking the accounts against the books, and recording what partners put in and take out.
+**What it is for:** checking the accounts against the books, and recording what partners put in and take out.
 
 **Who sees it:** everyone sees the accounts, the difference, the total capital and their own line. Whoever does the project's finance enters these, and they count at once.
 
 **Accounts.** The card at the top shows what the accounts should hold, what they really held at the last check, and the difference. A difference means an expense not recorded, or bank fees.
 
-- **Update actual balances** asks what each account really holds, and shows the difference as you type.
-- **Transfer between accounts** moves money, or tops up a custody. Both balances change; the surplus does not.
+**Update actual balances** asks what each account really holds, and shows the difference as you type.
 
 **Partners.** The total sits at the top, and each partner shows their balance and share. Tap a partner to see their movements, with the receipt of each.
 
@@ -23,14 +22,13 @@ To correct any of these, reverse it. What was entered together reverses together
 
 ## العربية
 
-**الغرض:** نقل المال بين الحسابات، ومطابقة الحسابات مع الدفاتر، وتسجيل ما يضيفه الشركاء وما يسحبونه.
+**الغرض:** مطابقة الحسابات مع الدفاتر، وتسجيل ما يضيفه الشركاء وما يسحبونه.
 
 **من يراها:** يرى الجميع الحسابات والفرق وإجمالي رأس المال وسطره هو. ويُدخلها من يتولى مالية المشروع، وتُحتسب فوراً.
 
 **الحسابات.** تعرض البطاقة في الأعلى ما يفترض أن تحويه الحسابات، وما حوته فعلاً عند آخر مطابقة، والفرق. الفرق يعني مصروفاً لم يُسجَّل أو رسوماً بنكية.
 
-- **تحديث الأرصدة الفعلية** يسأل عما يحويه كل حساب فعلاً، ويعرض الفرق أثناء الكتابة.
-- **تحويل بين الحسابات** ينقل المال أو يغذّي العهدة. يتغير الرصيدان ولا يتغير الفائض.
+**تحديث الأرصدة الفعلية** يسأل عما يحويه كل حساب فعلاً، ويعرض الفرق أثناء الكتابة.
 
 **الشركاء.** الإجمالي في الأعلى، ولكل شريك رصيده ونسبته. اضغط الشريك لترى حركاته، ولكلٍّ إيصالها.
 

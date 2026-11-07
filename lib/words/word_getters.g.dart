@@ -74,9 +74,6 @@ mixin WordGetters {
   /// The word `accounts.title`.
   String get accountsTitle => text('accounts.title');
 
-  /// The word `accounts.transfer`.
-  String get accountsTransfer => text('accounts.transfer');
-
   /// The word `accounts.type`.
   String get accountsType => text('accounts.type');
 
@@ -2272,66 +2269,6 @@ mixin WordGetters {
 
   /// The word `suppliers.vatNumberTaken`.
   String get suppliersVatNumberTaken => text('suppliers.vatNumberTaken');
-
-  /// The word `transfers.amount`.
-  String get transfersAmount => text('transfers.amount');
-
-  /// The word `transfers.date`.
-  String get transfersDate => text('transfers.date');
-
-  /// The word `transfers.description`.
-  String get transfersDescription => text('transfers.description');
-
-  /// The word `transfers.done`.
-  String get transfersDone => text('transfers.done');
-
-  /// The word `transfers.from`.
-  String get transfersFrom => text('transfers.from');
-
-  /// The word `transfers.invalidAmount`.
-  String get transfersInvalidAmount => text('transfers.invalidAmount');
-
-  /// The word `transfers.invalidDate`.
-  String get transfersInvalidDate => text('transfers.invalidDate');
-
-  /// The word `transfers.invalidNotes`.
-  String get transfersInvalidNotes => text('transfers.invalidNotes');
-
-  /// The word `transfers.invoiceAlreadyAttached`.
-  String get transfersInvoiceAlreadyAttached => text('transfers.invoiceAlreadyAttached');
-
-  /// The word `transfers.latest`.
-  String get transfersLatest => text('transfers.latest');
-
-  /// The word `transfers.loadFailed`.
-  String get transfersLoadFailed => text('transfers.loadFailed');
-
-  /// The word `transfers.noConnection`.
-  String get transfersNoConnection => text('transfers.noConnection');
-
-  /// The word `transfers.receipt`.
-  String get transfersReceipt => text('transfers.receipt');
-
-  /// The word `transfers.refused`.
-  String get transfersRefused => text('transfers.refused');
-
-  /// The word `transfers.sameAccount`.
-  String get transfersSameAccount => text('transfers.sameAccount');
-
-  /// The word `transfers.save`.
-  String get transfersSave => text('transfers.save');
-
-  /// The word `transfers.title`.
-  String get transfersTitle => text('transfers.title');
-
-  /// The word `transfers.to`.
-  String get transfersTo => text('transfers.to');
-
-  /// The word `transfers.unknownAccount`.
-  String get transfersUnknownAccount => text('transfers.unknownAccount');
-
-  /// The word `transfers.unknownAttachment`.
-  String get transfersUnknownAttachment => text('transfers.unknownAttachment');
 
   /// The word `users.add`.
   String get usersAdd => text('users.add');

@@ -238,16 +238,6 @@ final List<Gate> _gates = [
     control: _key(EntriesScreen.reverseKey),
   ),
   (
-    name: 'Reverse a transfer',
-    permission: Permission.approveEntries,
-    arrange: (api) => api
-      ..addAccount(_project, 'البنك')
-      ..transferRows.add({'id': 'entry-0', 'date': '2026-11-05', 'amount': 5000, 'fromAccountName': 'البنك', 'toAccountName': 'العهدة', 'description': 'تغذية'})
-      ..addEntry(status: 'approved'),
-    steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))],
-    control: _key(AccountsScreen.reverseTransferKey('entry-0')),
-  ),
-  (
     name: 'Reverse a capital movement',
     permission: Permission.approveEntries,
     arrange: (api) => api
@@ -269,13 +259,6 @@ final List<Gate> _gates = [
     arrange: (api) => api.addAccount(_project, 'البنك'),
     steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))],
     control: _key(AccountsScreen.reconcileKey),
-  ),
-  (
-    name: 'Transfer on the accounts',
-    permission: Permission.moveMoney,
-    arrange: (api) => api.addAccount(_project, 'البنك'),
-    steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))],
-    control: _key(AccountsScreen.transferKey),
   ),
   (
     name: 'A capital movement on the partners',

@@ -6,6 +6,7 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-08 | Transfers between accounts are removed completely: Transfer between accounts and the latest transfers leave Accounts, with their screen, their list and their words. FR-23 and AC-23.1 are retired | Muteb: "remove this feature completely, تحويل بين الحسابات". RedixReal held no transfer |
 | 2026-11-08 | The project's own record, its name, start date, status, units and description, lives on one page, Settings › More info, for everyone in the project; Rename, Add unit, the unit menus, the description and Close project are there for `manageProject` while it is active. The home keeps its buttons, and a finished project says Finished · Read-only there | redix-api #93, approved by Muteb on 8 Nov with the More info design |
 | 2026-11-08 | Add unit, Rename project and Close project leave the project's card for Settings, which reads the project live from the list so its rows and names follow a change; a unit's own menu stays on its row | Muteb: "all of below, move it under setting: اضافة وحده، تعديل اسم المشروع، اغلاق المشروع" |
 | 2026-11-08 | Liquidation and closing (التصفية والإغلاق) is removed: its screen, its button on the project card, the periodic report's line and their words; a project closes from Close project alone | Muteb: "remove the feature التصفية والإغلاق"; redix-api the same day |
