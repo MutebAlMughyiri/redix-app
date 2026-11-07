@@ -329,7 +329,6 @@ void main() {
         ProjectsScreen.titleKey,
         ProjectsScreen.hintKey,
         ProjectsScreen.settingsKey,
-        ProjectsScreen.openDefaultKey,
         ProjectsScreen.newProjectKey,
         ProjectsScreen.nameKey(runningId),
         ProjectsScreen.detailsKey(runningId),
@@ -349,17 +348,18 @@ void main() {
         HomeScreen.settingsKey(runningId),
         HomeScreen.detailsKey(runningId),
         HomeScreen.statusKey(runningId),
-        HomeScreen.addUnitKey(runningId),
-        HomeScreen.renameKey(runningId),
         HomeScreen.unitMenuKey('$runningId-unit-0'),
-        HomeScreen.closeKey(runningId),
       ].forEach(expectFits);
 
-      await tester.ensureVisible(find.byKey(HomeScreen.closeKey(runningId)));
+      await openSettings(tester, api, projectId: runningId);
+      await tester.scrollUntilVisible(find.byKey(SettingsScreen.closeProjectKey), 80);
+      await tester.ensureVisible(find.byKey(SettingsScreen.closeProjectKey));
       await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.closeKey(runningId))));
-      [HomeScreen.closeExplainKey, HomeScreen.confirmCloseKey, HomeScreen.cancelCloseKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.cancelCloseKey)));
+      [SettingsScreen.addUnitKey, SettingsScreen.renameProjectKey, SettingsScreen.closeProjectKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.closeProjectKey)));
+      [SettingsScreen.closeExplainKey, SettingsScreen.confirmCloseKey, SettingsScreen.cancelCloseKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.cancelCloseKey)));
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       final bone = api.addCategory(runningId, 'العظم');
       final tiles = api.addItem(bone, 'بند الدرابزين والألمنيوم مع التركيب الكامل', subgroups: ['مواد']);

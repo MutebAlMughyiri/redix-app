@@ -16,7 +16,7 @@ import 'package:redix/ui/refresh_button.dart';
 import '../app_harness.dart';
 
 void main() {
-  Future<FakeApi> openHome(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field, String status = 'running'}) async {
+  Future<FakeApi> openHome(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field, String status = 'active'}) async {
     tester.view.physicalSize = const Size(800, 2000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -26,7 +26,7 @@ void main() {
     return api;
   }
 
-  Future<FakeApi> openEntries(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field, String status = 'running'}) async {
+  Future<FakeApi> openEntries(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field, String status = 'active'}) async {
     final api = await openHome(tester, arrange, permissions: permissions, status: status);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.entriesKey('project-0'))));
     return api;

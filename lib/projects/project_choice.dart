@@ -55,7 +55,7 @@ class ProjectChoice extends StatelessWidget {
                     Chip(
                       key: ProjectsScreen.statusKey(project.id),
                       label: Text(words.text(project.status.wordKey), key: ProjectsScreen.statusKey(project.id).label),
-                      backgroundColor: project.status == ProjectStatus.running ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest,
+                      backgroundColor: project.status == ProjectStatus.active ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest,
                       side: BorderSide.none,
                       visualDensity: VisualDensity.compact,
                     ),

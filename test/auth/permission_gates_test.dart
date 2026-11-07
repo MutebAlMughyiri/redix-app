@@ -76,8 +76,9 @@ final _dashboardWithAnItem = <String, Object>{
 final List<Gate> _gates = [
   (name: 'Registered projects in the settings', permission: Permission.approveProjects, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.registeredKey)),
   (name: 'Users in the settings', permission: Permission.manageUsers, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.usersKey)),
-  (name: 'Add unit on the project card', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.addUnitKey(_project))),
-  (name: 'Rename on the project card', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.renameKey(_project))),
+  (name: 'Add unit in the settings', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.addUnitKey)),
+  (name: 'Rename project in the settings', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.renameProjectKey)),
+  (name: 'Close project in the settings', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.closeProjectKey)),
   (name: 'A unit\'s menu on the project card', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.unitMenuKey('$_project-unit-0'))),
   (
     name: 'Add a document',
@@ -260,7 +261,6 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.revenueKey(_project))],
     control: _key(RevenueScreen.reverseKey('revenue-0')),
   ),
-  (name: 'Liquidation on the project card', permission: Permission.moveMoney, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.liquidateKey(_project))),
   (
     name: 'Reconcile on the accounts',
     permission: Permission.moveMoney,

@@ -28,8 +28,6 @@ import 'expenses/expenses.dart';
 import 'home/home_screen.dart';
 import 'partners/capital.dart';
 import 'partners/capital_move_screen.dart';
-import 'partners/liquidation.dart';
-import 'partners/liquidation_screen.dart';
 import 'partners/capital_movements.dart';
 import 'partners/movements_screen.dart';
 import 'partners/partners.dart';
@@ -180,8 +178,8 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session, language: widget.language)),
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
       GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(language: widget.language, session: widget.session)),
-      GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session, project: Project.none())),
-      GoRoute(path: SettingsScreen.projectPath, builder: (context, state) => SettingsScreen(session: widget.session, project: state.extra! as Project)),
+      GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session, projects: _projects, project: Project.none())),
+      GoRoute(path: SettingsScreen.projectPath, builder: (context, state) => SettingsScreen(session: widget.session, projects: _projects, project: state.extra! as Project)),
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
@@ -320,20 +318,6 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => DocumentsScreen(
           project: state.extra! as Project,
           documents: Documents(widget.session, state.pathParameters['projectId'] ?? ''),
-          capture: widget.capture,
-        ),
-      ),
-      GoRoute(
-        path: LiquidationScreen.path,
-        builder: (context, state) => LiquidationScreen(
-          project: state.extra! as Project,
-          liquidation: Liquidation(widget.session, state.pathParameters['projectId'] ?? ''),
-          projects: _projects,
-          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
-          partnersOf: _partnersOf,
-          accountsOf: _accountsOf,
-          items: _offeredItemsOf(state.pathParameters['projectId'] ?? '', ItemType.purchases),
-          revenueItems: _revenueItemsOf(state.pathParameters['projectId'] ?? ''),
           capture: widget.capture,
         ),
       ),

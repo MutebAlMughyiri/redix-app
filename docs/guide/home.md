@@ -21,7 +21,7 @@ If the very first start has no network, the app shows a no-network icon and a re
 
 If you hold a custody, its balance shows at the top. See [Accounts](accounts.md).
 
-Whoever does the project's finance can rename the project with **Rename project**, and rename or delete a unit from the menu on its row. A unit that entries or contracts use cannot be deleted. Closing the project waits until no entry is waiting for approval.
+Whoever does the project's finance can rename the project, add a unit and close the project from **Settings** (**Rename project**, **Add unit**, **Close project**), and rename or delete a unit from the menu on its row. A unit that entries or contracts use cannot be deleted. Closing the project waits until no entry is waiting for approval.
 
 ## العربية
 
@@ -40,4 +40,4 @@ Whoever does the project's finance can rename the project with **Rename project*
 
 إن كانت لديك عهدة، يظهر رصيدها في الأعلى. انظر [الحسابات](accounts.md).
 
-ويستطيع من يتولى مالية المشروع تعديل اسم المشروع من **تعديل اسم المشروع**، وتعديل اسم الوحدة أو حذفها من القائمة في سطرها. ولا تُحذف وحدة عليها قيود أو عقود. ولا يُغلق المشروع ما دام فيه قيد بانتظار الاعتماد.
+ويستطيع من يتولى مالية المشروع تعديل اسم المشروع وإضافة وحدة وإغلاق المشروع من **الإعدادات** (**تعديل اسم المشروع**، **إضافة وحدة**، **إغلاق المشروع**)، وتعديل اسم الوحدة أو حذفها من القائمة في سطرها. ولا تُحذف وحدة عليها قيود أو عقود. ولا يُغلق المشروع ما دام فيه قيد بانتظار الاعتماد.

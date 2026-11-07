@@ -10,7 +10,7 @@ void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   /// A project with شبكة and the disabled سداد, opened as far as its payment methods.
-  Future<({FakeApi api, String card, String sadad})> openMethods(WidgetTester tester, {String status = 'running', List<String> permissions = managerAndFinance}) async {
+  Future<({FakeApi api, String card, String sadad})> openMethods(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
     final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions);
     final card = api.addPaymentMethod('project-0', 'شبكة');
     final sadad = api.addPaymentMethod('project-0', 'سداد', isActive: false);

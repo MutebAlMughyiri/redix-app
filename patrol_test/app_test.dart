@@ -31,6 +31,7 @@ import 'package:redix/projects/member_picker.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
+import 'package:redix/settings/default_project_sheet.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/structure/apply_to_all_dialog.dart';
@@ -314,19 +315,33 @@ void main() {
       await back();
       await back();
 
-      final addUnit = $(HomeScreen.addUnitKey(projectId));
-      await reach(addUnit);
+      await reach(projectSettings);
       await idShowing('home.unit.', 'الفلة الشرقية');
       await idShowing('home.unit.', 'الفلة الشمالية');
+      final addUnit = $(SettingsScreen.addUnitKey);
+      await goTo(projectSettings);
+      await projectSettings.tap();
       await addUnit.tap();
-      await $(HomeScreen.unitNameKey).enterText('الفلة الغربية');
-      await $(HomeScreen.saveUnitKey).tap();
+      await $(SettingsScreen.unitNameKey).enterText('الفلة الغربية');
+      await $(SettingsScreen.saveUnitKey).tap();
+      await back();
       await idShowing('home.unit.', 'الفلة الغربية');
       await picture('home');
 
+      await goTo(projectSettings);
+      await projectSettings.tap();
       await addUnit.tap();
-      await $(HomeScreen.unitNameKey).enterText('ملحق');
-      await $(HomeScreen.saveUnitKey).tap();
+      await $(SettingsScreen.unitNameKey).enterText('ملحق');
+      await $(SettingsScreen.saveUnitKey).tap();
+      await $(SettingsScreen.renameProjectKey).tap();
+      await $(NameDialog.nameKey).enterText('غصون 7 الأولى');
+      await $(ChangeDialog.saveKey).tap();
+      await $(SettingsScreen.renameProjectKey).tap();
+      expect($.tester.widget<TextField>(find.byKey(NameDialog.nameKey)).controller!.text, 'غصون 7 الأولى');
+      await $(NameDialog.nameKey).enterText('غصون 7');
+      await $(ChangeDialog.saveKey).tap();
+      await back();
+      await says(HomeScreen.titleKey, 'غصون 7');
       final annexId = await idShowing('home.unit.', 'ملحق');
       await goTo($(HomeScreen.unitMenuKey(annexId)));
       await $(HomeScreen.unitMenuKey(annexId)).tap();
@@ -338,16 +353,6 @@ void main() {
       await $(HomeScreen.deleteUnitKey).tap();
       await $(ConfirmDialog.confirmKey).tap();
       await gone($(HomeScreen.unitKey(annexId)));
-      await goTo($(HomeScreen.renameKey(projectId)));
-      await $(HomeScreen.renameKey(projectId)).tap();
-      await $(NameDialog.nameKey).enterText('غصون 7 الأولى');
-      await $(ChangeDialog.saveKey).tap();
-      await says(HomeScreen.titleKey, 'غصون 7 الأولى');
-      await goTo($(HomeScreen.renameKey(projectId)));
-      await $(HomeScreen.renameKey(projectId)).tap();
-      await $(NameDialog.nameKey).enterText('غصون 7');
-      await $(ChangeDialog.saveKey).tap();
-      await says(HomeScreen.titleKey, 'غصون 7');
 
       await goTo(projectSettings);
 
@@ -628,14 +633,16 @@ void main() {
       await reach(projectSettings);
       await back();
       await $(ProjectsScreen.starKey(projectId)).tap();
-      await $.pumpAndSettle();
+      await reach($(messageKeyOf('projects.defaultSet')));
       expect($.tester.widget<Icon>(find.byKey(ProjectsScreen.starKey(projectId).icon)).icon, Icons.star);
-      await $(ProjectsScreen.openDefaultKey).tap();
-      await $.pumpAndSettle();
-      expect($.tester.widget<SwitchListTile>(find.byKey(ProjectsScreen.openDefaultKey)).value, isTrue);
       await picture('projects');
 
       await $(ProjectsScreen.settingsKey).tap();
+      await $(SettingsScreen.defaultProjectKey).tap();
+      await reach($(DefaultProjectSheet.optionKey(projectId)));
+      expect($.tester.widget<CheckboxListTile>(find.byKey(DefaultProjectSheet.optionKey(projectId))).value, isTrue);
+      await picture('default-project');
+      await back();
       await $(SettingsScreen.myAccountKey).tap();
       await reach($(MyAccountScreen.arabicKey));
       await picture('my-account');
@@ -720,9 +727,9 @@ void main() {
       await goTo(projectSettings);
       await projectSettings.tap();
       expect($(SettingsScreen.usersKey), findsNothing);
+      expect(addUnit, findsNothing);
+      expect($(SettingsScreen.closeProjectKey), findsNothing);
       await back();
-      expect($(HomeScreen.addUnitKey(projectId)), findsNothing);
-      expect($(HomeScreen.closeKey(projectId)), findsNothing);
 
       final addEntry = $(HomeScreen.addEntryKey(projectId));
       await addEntry.tap();
@@ -853,20 +860,21 @@ void main() {
       await says(HomeScreen.titleKey, 'غصون 7');
       expect(GoRouter.of($.tester.element(find.byKey(HomeScreen.titleKey))).canPop(), isFalse);
 
-      final close = $(HomeScreen.closeKey(projectId));
-      await goTo(close);
+      final close = $(SettingsScreen.closeProjectKey);
+      await goTo(projectSettings);
+      await projectSettings.tap();
 
       await close.tap();
-      await reach($(HomeScreen.confirmCloseKey));
+      await reach($(SettingsScreen.confirmCloseKey));
       await picture('close-project');
-      await $(HomeScreen.cancelCloseKey).tap();
+      await $(SettingsScreen.cancelCloseKey).tap();
       expect(close, findsOneWidget);
 
-      await goTo(close);
       await close.tap();
-      await $(HomeScreen.confirmCloseKey).tap();
+      await $(SettingsScreen.confirmCloseKey).tap();
       await reach($(messageKeyOf('projects.pendingEntries')));
-      expect(close, findsOneWidget, reason: 'BR-35: a project keeps running while entries wait for approval');
+      expect(close, findsOneWidget, reason: 'BR-35: a project stays active while entries wait for approval');
+      await back();
 
       final words = Words.of($.tester.element(find.byKey(HomeScreen.titleKey)));
       await goTo($(DashboardCard.pendingKey.title));
@@ -892,14 +900,13 @@ void main() {
       await back();
       await gone($(DashboardCard.pendingKey));
 
-      await goTo(close);
+      await goTo(projectSettings);
+      await projectSettings.tap();
       await close.tap();
-      await $(HomeScreen.confirmCloseKey).tap();
+      await $(SettingsScreen.confirmCloseKey).tap();
       await gone(close);
       expect(addUnit, findsNothing);
 
-      await goTo(projectSettings);
-      await projectSettings.tap();
       await $(SettingsScreen.switchProjectKey).tap();
       await reach($(ProjectsScreen.titleKey));
       await $(ProjectsScreen.settingsKey).tap();

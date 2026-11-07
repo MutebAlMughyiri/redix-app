@@ -99,7 +99,6 @@ class PeriodicReportFigures {
       categories = [for (final row in json['categories'] as List<dynamic>) ReportLine((row as Map<String, dynamic>)['name'] as String, (row['total'] as num).toDouble())],
       surplus = (json['surplus'] as num).toDouble(),
       surplusWithoutSales = (json['surplusWithoutSales'] as num).toDouble(),
-      liquidation = (json['liquidation'] as num).toDouble(),
       reconciliationDifference = (json['reconciliationDifference'] as num).toDouble(),
       pendingCount = json['pendingCount'] as int,
       pendingAmount = (json['pendingAmount'] as num).toDouble(),
@@ -123,7 +122,6 @@ class PeriodicReportFigures {
       categories = const [],
       surplus = 0,
       surplusWithoutSales = 0,
-      liquidation = 0,
       reconciliationDifference = 0,
       pendingCount = 0,
       pendingAmount = 0,
@@ -174,9 +172,6 @@ class PeriodicReportFigures {
 
   /// The surplus without sales.
   final double surplusWithoutSales;
-
-  /// What was distributed at closing.
-  final double liquidation;
 
   /// The reconciliation difference.
   final double reconciliationDifference;

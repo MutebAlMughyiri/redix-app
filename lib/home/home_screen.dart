@@ -10,7 +10,6 @@ import '../auth/session.dart';
 import '../contracts/contracts_screen.dart';
 import '../documents/documents_screen.dart';
 import '../partners/partners_screen.dart';
-import '../partners/liquidation_screen.dart';
 import '../reports/reports_screen.dart';
 import '../revenue/revenue_screen.dart';
 import '../approvals/approvals_screen.dart';
@@ -22,7 +21,6 @@ import '../notifications/notifications_bell.dart';
 import '../offline/outbox.dart';
 import '../offline/project_sync.dart';
 import '../offline/waiting_screen.dart';
-import '../projects/add_unit_dialog.dart';
 import '../reports/dashboard.dart';
 import '../reports/item_report_screen.dart';
 import 'dashboard_card.dart';
@@ -33,7 +31,6 @@ import '../projects/projects_screen.dart';
 import '../settings/settings_screen.dart';
 import '../suppliers/suppliers_screen.dart';
 import '../ui/api_list_body.dart';
-import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
@@ -83,32 +80,11 @@ class HomeScreen extends StatefulWidget {
   /// The button that reads it again.
   static const retryKey = ApiListBody.retryKey;
 
-  /// The unit's name, in the Add unit dialog.
-  static const unitNameKey = Key('home.unitName');
-
-  /// The button that adds the unit, in the Add unit dialog.
-  static const saveUnitKey = ChangeDialog.saveKey;
-
-  /// The line that says why the unit was refused, in the Add unit dialog.
-  static const unitMessageKey = ChangeDialog.messageKey;
-
-  /// The project's name, in the close question.
-  static const closeNameKey = ConfirmDialog.subjectKey;
-
-  /// What closing means, in the close question.
-  static const closeExplainKey = ConfirmDialog.explanationKey;
-
-  /// The button that closes the project, in the close question.
-  static const confirmCloseKey = ConfirmDialog.confirmKey;
-
-  /// The button that keeps the project running, in the close question.
-  static const cancelCloseKey = ConfirmDialog.cancelKey;
-
   /// The route of the home of the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId';
 
   /// Where [session] lands at app start and at sign-in, and nowhere else, so Switch project is never bounced (AC-37.1).
-  static String landingOf(Session session) => session.opensDefaultProject ? pathOf(session.defaultProjectId) : ProjectsScreen.path;
+  static String landingOf(Session session) => session.defaultProjectId.isEmpty ? ProjectsScreen.path : pathOf(session.defaultProjectId);
 
   /// The card of the project [id].
   static Key cardKey(String id) => Key('home.card.$id');
@@ -171,12 +147,6 @@ class HomeScreen extends StatefulWidget {
   /// What the account [id] holds, on that card.
   static Key custodyBalanceKey(String id) => Key('home.custodyBalance.$id');
 
-  /// The button that adds a unit to the running project [id].
-  static Key addUnitKey(String id) => Key('home.addUnit.$id');
-
-  /// The button that renames the running project [id].
-  static Key renameKey(String id) => Key('home.rename.$id');
-
   /// The menu of the unit [id].
   static Key unitMenuKey(String id) => Key('home.unitMenu.$id');
 
@@ -186,14 +156,8 @@ class HomeScreen extends StatefulWidget {
   /// The way to delete a unit, in its menu.
   static const deleteUnitKey = Key('home.deleteUnit');
 
-  /// The button that closes the running project [id].
-  static Key closeKey(String id) => Key('home.close.$id');
-
   /// The way into the documents of the project [id].
   static Key documentsKey(String id) => Key('home.documents.$id');
-
-  /// The way into the liquidation of the project [id].
-  static Key liquidateKey(String id) => Key('home.liquidate.$id');
 
   /// The heading over the entries of the project [id].
   static Key entriesHeadingKey(String id) => Key('home.entriesHeading.$id');
@@ -245,44 +209,9 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Reads again what home shows besides the project: its figures, the latest entries and the accounts.
   Future<void> _readAgain() => Future.wait([widget.dashboard.load(), widget.entries.load(), widget.accounts.load()]);
 
-  void _askToClose(Project project) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => ConfirmDialog(
-        title: words.projectsCloseQuestion,
-        subject: project.name,
-        explanation: words.projectsCloseExplain,
-        confirmLabel: words.projectsClose,
-        onConfirm: () => showRefusalOf(context, widget.projects.close(project)),
-      ),
-    );
-  }
-
   Future<void> _openSettings(Project project) async {
     await context.push(SettingsScreen.pathOf(project.id), extra: project);
     await Future.wait([widget.projects.load(), _readAgain()]);
-  }
-
-  void _askForUnit(Project project) {
-    showDialog<void>(
-      context: context,
-      builder: (_) => AddUnitDialog(project: project, projects: widget.projects),
-    );
-  }
-
-  void _askToRename(Project project) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => NameDialog(
-        title: words.projectsRename,
-        label: words.projectsName,
-        saveLabel: words.projectsSave,
-        name: project.name,
-        onSave: (name) => widget.projects.rename(project, name),
-      ),
-    );
   }
 
   void _askToRenameUnit(Project project, Unit unit) {
@@ -392,13 +321,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     onRevenue: () => _open(RevenueScreen.pathOf(project.id), project),
                     onReports: () => _open(ReportsScreen.pathOf(project.id), project),
                     onSettings: () => _openSettings(project),
-                    onLiquidate: () => _open(LiquidationScreen.pathOf(project.id), project),
                     onDocuments: () => _open(DocumentsScreen.pathOf(project.id), project),
-                    onAddUnit: () => _askForUnit(project),
-                    onRename: () => _askToRename(project),
                     onRenameUnit: (unit) => _askToRenameUnit(project, unit),
                     onDeleteUnit: (unit) => _askToDeleteUnit(project, unit),
-                    onClose: () => _askToClose(project),
                   ),
                 ],
               )

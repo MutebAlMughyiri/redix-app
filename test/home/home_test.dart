@@ -15,18 +15,22 @@ void main() {
   String status(WidgetTester tester, String id) =>
       tester.widget<Text>(find.descendant(of: find.byKey(HomeScreen.statusKey(id)), matching: find.byType(Text))).data!;
 
-  /// Signs in with the kept session, and opens the first project from the list.
-  Future<void> tapClose(WidgetTester tester, FakeApi api) async {
-    await tester.ensureVisible(find.byKey(HomeScreen.closeKey('project-0')));
-    await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.closeKey('project-0'))));
+  /// Opens Settings from the open project, where Add unit, Rename project and Close project are (Muteb, 8 Nov 2026), and taps [key] there.
+  Future<void> tapInSettings(WidgetTester tester, FakeApi api, Key key) async {
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(key)));
   }
+
+  Future<void> tapClose(WidgetTester tester, FakeApi api) => tapInSettings(tester, api, SettingsScreen.closeProjectKey);
+
+  /// Goes back from Settings to the project's home, which reads the project again.
+  Future<void> backHome(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byType(BackButton)));
 
   Future<void> openHome(WidgetTester tester, FakeApi api) async {
     await openProject(tester, api);
   }
 
-  const keptDirect = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": false, "defaultProjectId": "project-0", "openDefaultProject": true}';
+  const keptDirect = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": false, "defaultProjectId": "project-0"}';
 
   testWidgets('a card opens its home, whose title names it, and back returns to the list', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
@@ -43,21 +47,22 @@ void main() {
       ..addProject('غصون 6')
       ..addProject('غصون 7', permissions: ['readProject']);
     await openHome(tester, api);
-    expect(find.byKey(HomeScreen.closeKey('project-0')), findsOneWidget);
+    await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.closeProjectKey), findsOneWidget);
 
+    await backHome(tester, api);
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
 
-    expect(find.byKey(HomeScreen.closeKey('project-1')), findsNothing);
-    expect(find.byKey(HomeScreen.addUnitKey('project-1')), findsNothing);
     await openSettings(tester, api, projectId: 'project-1');
+    expect(find.byKey(SettingsScreen.closeProjectKey), findsNothing);
+    expect(find.byKey(SettingsScreen.addUnitKey), findsNothing);
     expect(find.byKey(SettingsScreen.usersKey), findsNothing);
   });
 
-  testWidgets('with a default and the switch on, the app opens that project at start, with no back arrow', (tester) async {
+  testWidgets('AC-37.1: with a default, the app opens that project at start, with no back arrow', (tester) async {
     final api = FakeApi()
       ..defaultProjectId = 'project-0'
-      ..openDefaultProject = true
       ..addProject('غصون 6');
 
     await pumpRedix(tester, api, stored: {'session': keptDirect});
@@ -69,7 +74,6 @@ void main() {
   testWidgets('Switch project reaches the list from a project opened directly, and stays there', (tester) async {
     final api = FakeApi()
       ..defaultProjectId = 'project-0'
-      ..openDefaultProject = true
       ..addProject('غصون 6');
     await pumpRedix(tester, api, stored: {'session': keptDirect});
 
@@ -106,20 +110,22 @@ void main() {
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsOneWidget);
   });
 
-  testWidgets('a running project shows its date, status and units in order, and offers its changes', (tester) async {
+  testWidgets('an active project shows its date, status and units in order, and its Settings offer its changes', (tester) async {
     final api = FakeApi()..addProject('غصون 6', startDate: '2026-03-01', units: ['الفلة الغربية', 'الفلة الجنوبية']);
     await openHome(tester, api);
 
     expect(text(tester, HomeScreen.detailsKey('project-0')), 'en projects.startDate 01.03.2026');
-    expect(status(tester, 'project-0'), 'en projects.running');
+    expect(status(tester, 'project-0'), 'en projects.active');
     expect(text(tester, HomeScreen.unitKey('project-0-unit-0')), 'الفلة الغربية');
     expect(text(tester, HomeScreen.unitKey('project-0-unit-1')), 'الفلة الجنوبية');
     expect(
       tester.getTopLeft(find.byKey(HomeScreen.unitKey('project-0-unit-0'))).dy,
       lessThan(tester.getTopLeft(find.byKey(HomeScreen.unitKey('project-0-unit-1'))).dy),
     );
-    expect(find.byKey(HomeScreen.addUnitKey('project-0')), findsOneWidget);
-    expect(find.byKey(HomeScreen.closeKey('project-0')), findsOneWidget);
+    await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.addUnitKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.renameProjectKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.closeProjectKey), findsOneWidget);
   });
 
   testWidgets('a project with no units says so', (tester) async {
@@ -136,8 +142,10 @@ void main() {
     expect(status(tester, 'project-0'), 'en projects.finished');
     expect(text(tester, HomeScreen.detailsKey('project-0')), 'en projects.startDate 15.01.2024 · en projects.readOnly');
     expect(find.byKey(HomeScreen.unitKey('project-0-unit-0')), findsOneWidget);
-    expect(find.byKey(HomeScreen.addUnitKey('project-0')), findsNothing);
-    expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
+    await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.addUnitKey), findsNothing);
+    expect(find.byKey(SettingsScreen.renameProjectKey), findsNothing);
+    expect(find.byKey(SettingsScreen.closeProjectKey), findsNothing);
   });
 
   testWidgets('closing asks first, says what it means, and Cancel changes nothing', (tester) async {
@@ -145,13 +153,14 @@ void main() {
     await openHome(tester, api);
 
     await tapClose(tester, api);
-    expect(text(tester, HomeScreen.closeNameKey), 'غصون 6');
-    expect(text(tester, HomeScreen.closeExplainKey), 'en projects.closeExplain');
+    expect(text(tester, SettingsScreen.closeNameKey), 'غصون 6');
+    expect(text(tester, SettingsScreen.closeExplainKey), 'en projects.closeExplain');
     expect(api.sentProjectChanges, isEmpty);
 
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.cancelCloseKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.cancelCloseKey)));
     expect(api.sentProjectChanges, isEmpty);
-    expect(status(tester, 'project-0'), 'en projects.running');
+    await backHome(tester, api);
+    expect(status(tester, 'project-0'), 'en projects.active');
   });
 
   testWidgets('closing a project makes it finished, with no more changes offered', (tester) async {
@@ -159,11 +168,12 @@ void main() {
     await openHome(tester, api);
 
     await tapClose(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.confirmCloseKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.confirmCloseKey)));
 
     expect(api.sentProjectChanges.single.$1, '/projects/project-0/close');
+    expect(find.byKey(SettingsScreen.closeProjectKey), findsNothing);
+    await backHome(tester, api);
     expect(status(tester, 'project-0'), 'en projects.finished');
-    expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
   });
 
   testWidgets('closing without a network says so, and the project stays as it was', (tester) async {
@@ -172,10 +182,10 @@ void main() {
     await tapClose(tester, api);
 
     api.online = false;
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.confirmCloseKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.confirmCloseKey)));
 
     expect(find.text('en projects.noConnection'), findsOneWidget);
-    expect(status(tester, 'project-0'), 'en projects.running');
+    expect(find.byKey(SettingsScreen.closeProjectKey), findsOneWidget);
   });
 
   testWidgets('a project someone else closed shows its refusal, and the list is read again', (tester) async {
@@ -186,26 +196,25 @@ void main() {
 
     project['status'] = 'finished';
     api.projectAnswer = (status: 409, code: 'projectFinished');
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.confirmCloseKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.confirmCloseKey)));
 
     expect(find.text('en projects.projectFinished'), findsOneWidget);
+    expect(find.byKey(SettingsScreen.closeProjectKey), findsNothing);
+    await backHome(tester, api);
     expect(status(tester, 'project-0'), 'en projects.finished');
-    expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
   });
 
   testWidgets('a unit name the project already has stays in the dialog with its reason (BR-37)', (tester) async {
     final api = FakeApi();
     api.addProject('غصون 6', units: ['الفلة الغربية']);
     await openHome(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.addUnitKey('project-0')));
-    await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addUnitKey('project-0'))));
+    await tapInSettings(tester, api, SettingsScreen.addUnitKey);
 
     api.projectAnswer = (status: 409, code: 'unitNameTaken');
-    await tester.enterText(find.byKey(HomeScreen.unitNameKey), 'الفلة الغربية');
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.saveUnitKey)));
+    await tester.enterText(find.byKey(SettingsScreen.unitNameKey), 'الفلة الغربية');
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.saveUnitKey)));
 
-    expect(text(tester, HomeScreen.unitMessageKey), 'en projects.unitNameTaken');
+    expect(text(tester, SettingsScreen.unitMessageKey), 'en projects.unitNameTaken');
   });
 
   Future<void> tapInHome(WidgetTester tester, FakeApi api, Key key) async {
@@ -224,13 +233,17 @@ void main() {
     api.addProject('غصون 6');
     await openHome(tester, api);
 
-    await tapInHome(tester, api, HomeScreen.renameKey('project-0'));
+    await tapInSettings(tester, api, SettingsScreen.renameProjectKey);
     expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).controller!.text, 'غصون 6');
     await tester.enterText(find.byKey(NameDialog.nameKey), 'غصون السادس');
     await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(api.sentProjectChanges.single.$1, '/projects/project-0');
     expect(api.sentProjectChanges.single.$2['name'], 'غصون السادس');
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.renameProjectKey)));
+    expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).controller!.text, 'غصون السادس');
+    await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
+    await backHome(tester, api);
     expect(text(tester, HomeScreen.titleKey), 'غصون السادس');
   });
 
@@ -284,15 +297,18 @@ void main() {
     api.addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
     await openHome(tester, api);
 
-    expect(find.byKey(HomeScreen.renameKey('project-0')), findsNothing);
     expect(find.byKey(HomeScreen.unitMenuKey('project-0-unit-0')), findsNothing);
+    await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.renameProjectKey), findsNothing);
 
+    await backHome(tester, api);
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     await tester.ensureVisible(find.byKey(ProjectsScreen.cardKey('project-1')));
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
 
-    expect(find.byKey(HomeScreen.renameKey('project-1')), findsNothing);
     expect(find.byKey(HomeScreen.unitMenuKey('project-1-unit-0')), findsNothing);
+    await openSettings(tester, api, projectId: 'project-1');
+    expect(find.byKey(SettingsScreen.renameProjectKey), findsNothing);
   });
 
   testWidgets('a project with entries waiting for approval stays open and says why (BR-35)', (tester) async {
@@ -302,11 +318,12 @@ void main() {
     await tapClose(tester, api);
 
     api.projectAnswer = (status: 409, code: 'pendingEntries');
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.confirmCloseKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.confirmCloseKey)));
 
     expect(find.text('en projects.pendingEntries'), findsOneWidget);
-    expect(status(tester, 'project-0'), 'en projects.running');
-    expect(find.byKey(HomeScreen.closeKey('project-0')), findsOneWidget);
+    expect(find.byKey(SettingsScreen.closeProjectKey), findsOneWidget);
+    await backHome(tester, api);
+    expect(status(tester, 'project-0'), 'en projects.active');
   });
 
   testWidgets('a refusal with no code shows the general word, never a raw key', (tester) async {
@@ -315,43 +332,40 @@ void main() {
     await tapClose(tester, api);
 
     api.projectAnswer = (status: 403, code: '');
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.confirmCloseKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.confirmCloseKey)));
 
     expect(find.text('en projects.refused'), findsOneWidget);
   });
 
-  testWidgets('Add unit adds to the end of a running project', (tester) async {
+  testWidgets('Add unit in Settings adds to the end of an active project', (tester) async {
     final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
     await openHome(tester, api);
 
-    await tester.ensureVisible(find.byKey(HomeScreen.addUnitKey('project-0')));
-    await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addUnitKey('project-0'))));
+    await tapInSettings(tester, api, SettingsScreen.addUnitKey);
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(HomeScreen.unitNameKey), 'الفلة الجنوبية');
-      await tester.tap(find.byKey(HomeScreen.saveUnitKey));
+      await tester.enterText(find.byKey(SettingsScreen.unitNameKey), 'الفلة الجنوبية');
+      await tester.tap(find.byKey(SettingsScreen.saveUnitKey));
     });
 
-    expect(find.byKey(HomeScreen.saveUnitKey), findsNothing);
+    expect(find.byKey(SettingsScreen.saveUnitKey), findsNothing);
     expect(api.sentProjectChanges.single.$1, '/projects/project-0/units');
+    await backHome(tester, api);
     expect(text(tester, HomeScreen.unitKey('project-0-unit-1')), 'الفلة الجنوبية');
   });
 
   testWidgets('a refused unit stays in the dialog with what was typed', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openHome(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.addUnitKey('project-0')));
-    await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addUnitKey('project-0'))));
+    await tapInSettings(tester, api, SettingsScreen.addUnitKey);
 
     api.projectAnswer = (status: 400, code: 'invalidName');
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(HomeScreen.unitNameKey), 'x');
-      await tester.tap(find.byKey(HomeScreen.saveUnitKey));
+      await tester.enterText(find.byKey(SettingsScreen.unitNameKey), 'x');
+      await tester.tap(find.byKey(SettingsScreen.saveUnitKey));
     });
 
-    expect(text(tester, HomeScreen.unitMessageKey), 'en projects.invalidName');
-    expect(tester.widget<TextField>(find.byKey(HomeScreen.unitNameKey)).controller!.text, 'x');
+    expect(text(tester, SettingsScreen.unitMessageKey), 'en projects.invalidName');
+    expect(tester.widget<TextField>(find.byKey(SettingsScreen.unitNameKey)).controller!.text, 'x');
   });
 
   testWidgets('a reader or a field supervisor sees the project and can change nothing', (tester) async {
@@ -359,9 +373,9 @@ void main() {
     await openHome(tester, api);
 
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsOneWidget);
-    expect(find.byKey(HomeScreen.addUnitKey('project-0')), findsNothing);
-    expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
     await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.addUnitKey), findsNothing);
+    expect(find.byKey(SettingsScreen.closeProjectKey), findsNothing);
     expect(find.byKey(SettingsScreen.usersKey), findsNothing);
     expect(find.byKey(SettingsScreen.categoriesKey), findsNothing);
     expect(find.byKey(SettingsScreen.paymentMethodsKey), findsNothing);
@@ -371,19 +385,19 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['manageUsers', 'readProject', 'seeAllCapital']);
     await openHome(tester, api);
 
-    expect(find.byKey(HomeScreen.addUnitKey('project-0')), findsNothing);
-    expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
     await openSettings(tester, api);
     expect(find.byKey(SettingsScreen.usersKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.addUnitKey), findsNothing);
+    expect(find.byKey(SettingsScreen.closeProjectKey), findsNothing);
   });
 
   testWidgets('whoever manages the project but not its users has Add unit and Close, but no Users', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject', 'seeAllCapital', 'manageProject']);
     await openHome(tester, api);
 
-    expect(find.byKey(HomeScreen.addUnitKey('project-0')), findsOneWidget);
-    expect(find.byKey(HomeScreen.closeKey('project-0')), findsOneWidget);
     await openSettings(tester, api);
+    expect(find.byKey(SettingsScreen.addUnitKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.closeProjectKey), findsOneWidget);
     expect(find.byKey(SettingsScreen.usersKey), findsNothing);
   });
 

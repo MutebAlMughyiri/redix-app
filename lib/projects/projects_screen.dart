@@ -8,11 +8,10 @@ import '../notifications/notifications_bell.dart';
 import '../settings/settings_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
+import 'default_project_toggle.dart';
 import 'new_project_screen.dart';
-import 'project.dart';
 import 'project_choice.dart';
 import 'projects.dart';
 
@@ -44,9 +43,6 @@ class ProjectsScreen extends StatefulWidget {
 
   /// The button that opens the form to register a project.
   static const newProjectKey = Key('projects.new');
-
-  /// The switch that opens the default project directly at sign-in.
-  static const openDefaultKey = Key('projects.openDefault');
 
   /// The line shown while there are no projects.
   static const emptyKey = ApiListBody.emptyKey;
@@ -87,14 +83,6 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
     widget.projects.loadOnOpen();
   }
 
-  void _toggleDefault(Project project) {
-    final session = widget.session;
-    showRefusalOf(
-      context,
-      session.defaultProjectId == project.id ? session.removeDefaultProject() : session.setDefaultProject(project.id, openDirectly: session.opensDefaultProject),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
@@ -120,20 +108,6 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
         label: Text(words.projectsNew, key: ProjectsScreen.newProjectKey.label),
         onPressed: () => context.push(NewProjectScreen.path),
       ),
-      bottomNavigationBar: SafeArea(
-        child: ListenableBuilder(
-          listenable: session,
-          builder: (context, _) => SwitchListTile(
-            key: ProjectsScreen.openDefaultKey,
-            title: Text(words.projectsOpenDefault, key: ProjectsScreen.openDefaultKey.title),
-            subtitle: Text(words.projectsOpenDefaultHint, key: ProjectsScreen.openDefaultKey.subtitle),
-            value: session.opensDefaultProject,
-            onChanged: session.defaultProjectId.isEmpty
-                ? null
-                : (on) => showRefusalOf(context, session.setDefaultProject(session.defaultProjectId, openDirectly: on)),
-          ),
-        ),
-      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -157,7 +131,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                   project: project,
                   isDefault: session.defaultProjectId == project.id,
                   onOpen: () => context.push(HomeScreen.pathOf(project.id)),
-                  onStar: () => _toggleDefault(project),
+                  onStar: () => toggleDefaultProject(context, session, project),
                 ),
               ),
             ),

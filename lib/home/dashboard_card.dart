@@ -40,9 +40,6 @@ class DashboardCard extends StatefulWidget {
   /// The card.
   static const cardKey = Key('dashboard.card');
 
-  /// The heading over the categories of the side opened.
-  static const categoriesHeadingKey = Key('dashboard.categoriesHeading');
-
   /// The bar of the completion.
   static const completionBarKey = Key('dashboard.completionBar');
 
@@ -102,12 +99,10 @@ class _DashboardCardState extends State<DashboardCard> {
     ),
   );
 
-  Widget _categories(String heading, List<CategoryTotal> categories, double total) => Column(
+  /// The categories of the side opened, with no heading over them: the tile tapped already names the side (Muteb, 8 Nov 2026).
+  Widget _categories(List<CategoryTotal> categories, double total) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      if (categories.isNotEmpty) Text(heading, key: DashboardCard.categoriesHeadingKey, style: Theme.of(context).textTheme.titleMedium),
-      for (final category in categories) _category(category, total),
-    ],
+    children: [for (final category in categories) _category(category, total)],
   );
 
   Widget _category(CategoryTotal category, double total) {
@@ -195,8 +190,8 @@ class _DashboardCardState extends State<DashboardCard> {
             _tile(words.dashboardExpenses, figures.expenses, DashboardCard.expensesKey, _Side.expenses),
           ],
         ),
-        if (_side == _Side.revenue) _categories(words.dashboardRevenueByCategory, figures.revenueCategories, figures.revenue),
-        if (_side == _Side.expenses) _categories(words.dashboardByCategory, figures.categories, figures.expenses),
+        if (_side == _Side.revenue) _categories(figures.revenueCategories, figures.revenue),
+        if (_side == _Side.expenses) _categories(figures.categories, figures.expenses),
       ],
     );
   }

@@ -23,26 +23,26 @@
 | A project's card | `HomeScreen.cardKey(id)` | One project; running projects first, then the newest |
 | Name | `HomeScreen.titleKey` | The project's name, in the top bar |
 | Details | `HomeScreen.detailsKey(id)` | The start date, and Read-only once finished |
-| Status | `HomeScreen.statusKey(id)` | Running or Finished |
+| Status | `HomeScreen.statusKey(id)` | Active or Finished |
 | A unit | `HomeScreen.unitKey(id)` | The project's units, in order |
 | No units yet | `HomeScreen.noUnitsKey(id)` | Shown while the project has no units |
-| Add unit | `HomeScreen.addUnitKey(id)` | Running projects only: asks for a name and adds the unit at the end |
-| Unit name | `HomeScreen.unitNameKey` | In the Add unit dialog |
-| Add unit, in the dialog | `HomeScreen.saveUnitKey` | Sends the unit; disabled while waiting |
-| Message, in the dialog | `HomeScreen.unitMessageKey` | One line saying why the unit was refused |
-| Rename project | `HomeScreen.renameKey(id)` | Running projects, with `manageProject`: asks for the name, starting from the current one (BR-38) |
-| A unit's menu | `HomeScreen.unitMenuKey(id)` | Running projects, with `manageProject`; the shared unit is not on the list |
+| Add unit, in Settings | `SettingsScreen.addUnitKey` | Active projects, with `manageProject`: asks for a name and adds the unit at the end |
+| Unit name | `SettingsScreen.unitNameKey` | In the Add unit dialog |
+| Add unit, in the dialog | `SettingsScreen.saveUnitKey` | Sends the unit; disabled while waiting |
+| Message, in the dialog | `SettingsScreen.unitMessageKey` | One line saying why the unit was refused |
+| Rename project, in Settings | `SettingsScreen.renameProjectKey` | Active projects, with `manageProject`: asks for the name, starting from the current one (BR-38) |
+| A unit's menu | `HomeScreen.unitMenuKey(id)` | Active projects, with `manageProject`; the shared unit is not on the list |
 | Rename unit, in the menu | `HomeScreen.renameUnitKey` | Asks for the name, starting from the current one |
 | Delete unit, in the menu | `HomeScreen.deleteUnitKey` | Asks first, naming the unit; a unit in use stays and the refusal says why |
 | The name, in the rename dialogs | `NameDialog.nameKey` | |
 | Save, in the rename dialogs | `ChangeDialog.saveKey` | Sends the name; a refusal stays in the dialog (`ChangeDialog.messageKey`) |
 | The unit's name, in the delete question | `ConfirmDialog.subjectKey` | Which unit is being deleted |
 | Delete unit, in the question | `ConfirmDialog.confirmKey` | Deletes the unit |
-| Close project | `HomeScreen.closeKey(id)` | Running projects only: asks first |
-| The project's name, in the question | `HomeScreen.closeNameKey` | Which project is being closed |
-| What closing means, in the question | `HomeScreen.closeExplainKey` | It becomes read-only, and this cannot be undone |
-| Close project, in the question | `HomeScreen.confirmCloseKey` | Closes the project |
-| Cancel, in the question | `HomeScreen.cancelCloseKey` | Changes nothing |
+| Close project, in Settings | `SettingsScreen.closeProjectKey` | Active projects, with `manageProject`: asks first |
+| The project's name, in the question | `SettingsScreen.closeNameKey` | Which project is being closed |
+| What closing means, in the question | `SettingsScreen.closeExplainKey` | It becomes read-only, and this cannot be undone |
+| Close project, in the question | `SettingsScreen.confirmCloseKey` | Closes the project |
+| Cancel, in the question | `SettingsScreen.cancelCloseKey` | Changes nothing |
 | No projects yet | `ProjectsScreen.emptyKey` | Shown while there are no projects |
 | Could not load | `ProjectsScreen.messageKey` | Shown when the list cannot be read |
 | Try again | `ProjectsScreen.retryKey` | Reads the list again |

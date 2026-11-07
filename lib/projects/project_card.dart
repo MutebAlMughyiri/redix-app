@@ -10,7 +10,7 @@ import 'unit_row.dart';
 
 /// The open project: its start date, status and units, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Settings, and Add unit and Close project while it runs.
 class ProjectCard extends StatelessWidget {
-  /// The card of [project], calling [onAccounts], [onPartners], [onSuppliers], [onContracts], [onSettings], [onLiquidate], [onDocuments], [onAddUnit], [onRename], [onRenameUnit], [onDeleteUnit] and [onClose] when those are tapped.
+  /// The card of [project], calling [onAccounts], [onPartners], [onSuppliers], [onContracts], [onSettings], [onDocuments], [onRenameUnit] and [onDeleteUnit] when those are tapped.
   const ProjectCard({
     super.key,
     required this.project,
@@ -22,13 +22,9 @@ class ProjectCard extends StatelessWidget {
     required this.onRevenue,
     required this.onReports,
     required this.onSettings,
-    required this.onLiquidate,
     required this.onDocuments,
-    required this.onAddUnit,
-    required this.onRename,
     required this.onRenameUnit,
     required this.onDeleteUnit,
-    required this.onClose,
   });
 
   /// The project this card shows.
@@ -58,26 +54,14 @@ class ProjectCard extends StatelessWidget {
   /// Opens Settings, which holds the users, the categories and items, and the payment methods.
   final VoidCallback onSettings;
 
-  /// Called when Liquidate and close is tapped.
-  final VoidCallback onLiquidate;
-
   /// Called when Documents is tapped.
   final VoidCallback onDocuments;
-
-  /// Called when Add unit is tapped.
-  final VoidCallback onAddUnit;
-
-  /// Called when Rename project is tapped.
-  final VoidCallback onRename;
 
   /// Called when a unit's Rename is chosen.
   final void Function(Unit unit) onRenameUnit;
 
   /// Called when a unit's Delete is chosen.
   final void Function(Unit unit) onDeleteUnit;
-
-  /// Called when Close project is tapped.
-  final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +94,7 @@ class ProjectCard extends StatelessWidget {
                 Chip(
                   key: HomeScreen.statusKey(project.id),
                   label: Text(words.text(project.status.wordKey), key: HomeScreen.statusKey(project.id).label),
-                  backgroundColor: project.status == ProjectStatus.running ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest,
+                  backgroundColor: project.status == ProjectStatus.active ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest,
                   side: BorderSide.none,
                   visualDensity: VisualDensity.compact,
                 ),
@@ -181,33 +165,6 @@ class ProjectCard extends StatelessWidget {
                   label: Text(words.documentsTitle, key: HomeScreen.documentsKey(project.id).label),
                   onPressed: onDocuments,
                 ),
-                if (project.may(Permission.moveMoney))
-                  TextButton.icon(
-                    key: HomeScreen.liquidateKey(project.id),
-                    icon: Icon(Icons.request_quote_outlined, key: HomeScreen.liquidateKey(project.id).icon),
-                    label: Text(words.liquidationTitle, key: HomeScreen.liquidateKey(project.id).label),
-                    onPressed: onLiquidate,
-                  ),
-                if (mayChange) ...[
-                  TextButton.icon(
-                    key: HomeScreen.addUnitKey(project.id),
-                    icon: Icon(Icons.add, key: HomeScreen.addUnitKey(project.id).icon),
-                    label: Text(words.projectsAddUnit, key: HomeScreen.addUnitKey(project.id).label),
-                    onPressed: onAddUnit,
-                  ),
-                  TextButton.icon(
-                    key: HomeScreen.renameKey(project.id),
-                    icon: Icon(Icons.edit_outlined, key: HomeScreen.renameKey(project.id).icon),
-                    label: Text(words.projectsRename, key: HomeScreen.renameKey(project.id).label),
-                    onPressed: onRename,
-                  ),
-                  TextButton(
-                    key: HomeScreen.closeKey(project.id),
-                    style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
-                    onPressed: onClose,
-                    child: Text(words.projectsClose, key: HomeScreen.closeKey(project.id).label),
-                  ),
-                ],
               ],
             ),
           ),

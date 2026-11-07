@@ -7,7 +7,7 @@ import 'package:redix/home/home_screen.dart';
 import '../app_harness.dart';
 
 void main() {
-  Future<FakeApi> openInbox(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance, String status = 'running'}) async {
+  Future<FakeApi> openInbox(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance, String status = 'active'}) async {
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status);
     arrange(api);
     await openProject(tester, api);

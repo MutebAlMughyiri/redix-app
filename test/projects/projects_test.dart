@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
+import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/refusal_snack_bar.dart';
 
 import '../app_harness.dart';
 
@@ -108,15 +110,13 @@ void main() {
     expect(text(tester, ProjectsScreen.titleKey), 'en projects.choose');
     expect(text(tester, ProjectsScreen.hintKey), 'en projects.chooseHint');
     expect(find.byKey(HomeScreen.settingsKey('project-0')), findsNothing);
-    expect(find.byKey(HomeScreen.addUnitKey('project-0')), findsNothing);
-    expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
   });
 
   testWidgets('a card shows its units, roles and status', (tester) async {
     await openProjects(tester, FakeApi()..addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الجنوبية']));
 
     expect(text(tester, ProjectsScreen.detailsKey('project-0')), 'الفلة الغربية · الفلة الجنوبية');
-    expect(status(tester, 'project-0'), 'en projects.running');
+    expect(status(tester, 'project-0'), 'en projects.active');
   });
 
   testWidgets('a finished project says it is read-only', (tester) async {
@@ -128,58 +128,54 @@ void main() {
 
   IconData star(WidgetTester tester, String id) => (tester.widget<IconButton>(find.byKey(ProjectsScreen.starKey(id))).icon as Icon).icon!;
 
-  SwitchListTile openDefault(WidgetTester tester) => tester.widget<SwitchListTile>(find.byKey(ProjectsScreen.openDefaultKey));
-
-  testWidgets('the switch waits until a project is starred', (tester) async {
-    await openProjects(tester, FakeApi()..addProject('غصون 6'));
-
-    expect(star(tester, 'project-0'), Icons.star_border);
-    expect(openDefault(tester).onChanged, isNull);
-    expect(openDefault(tester).value, isFalse);
-  });
-
-  testWidgets('the star sets the default, and the switch wakes', (tester) async {
+  testWidgets('AC-37.1: the star makes a project the default, which opens at sign-in, and a message says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProjects(tester, api);
 
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.starKey('project-0'))));
 
     expect(api.sentProjectChanges.single.$1, '/projects/project-0/default');
-    expect(api.sentProjectChanges.single.$2, {'openDirectly': false});
+    expect(api.defaultProjectId, 'project-0');
     expect(star(tester, 'project-0'), Icons.star);
-    expect(openDefault(tester).onChanged, isNotNull);
+    expect(text(tester, messageKeyOf('projects.defaultSet').label), 'en projects.defaultSet');
   });
 
-  testWidgets('the switch turns opening directly on, and the star moves the default and keeps it', (tester) async {
+  testWidgets('the star on another project moves the default there', (tester) async {
     final api = FakeApi()
       ..addProject('غصون 6')
       ..addProject('غصون 7');
     await openProjects(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.starKey('project-0'))));
 
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.openDefaultKey)));
-    expect(api.sentProjectChanges.last.$2, {'openDirectly': true});
-    expect(openDefault(tester).value, isTrue);
-
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.starKey('project-1'))));
+
     expect(api.sentProjectChanges.last.$1, '/projects/project-1/default');
-    expect(api.sentProjectChanges.last.$2, {'openDirectly': true});
     expect(star(tester, 'project-0'), Icons.star_border);
     expect(star(tester, 'project-1'), Icons.star);
   });
 
-  testWidgets('the star on the default clears it, and the switch goes off', (tester) async {
+  testWidgets('the star on the default clears it, so sign-in shows the list', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProjects(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.starKey('project-0'))));
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.openDefaultKey)));
 
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.starKey('project-0'))));
 
     expect(api.sentProjectChanges.last.$1, '/projects/default/remove');
+    expect(api.defaultProjectId, '');
     expect(star(tester, 'project-0'), Icons.star_border);
-    expect(openDefault(tester).value, isFalse);
-    expect(openDefault(tester).onChanged, isNull);
+  });
+
+  testWidgets('a refused star says why, says nothing of a default, and stays empty', (tester) async {
+    final api = FakeApi()..addProject('غصون 6');
+    await openProjects(tester, api);
+    api.projectAnswer = (status: 403, code: '');
+
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.starKey('project-0'))));
+
+    expect(text(tester, messageKeyOf('projects.refused').label), 'en projects.refused');
+    expect(find.byKey(messageKeyOf('projects.defaultSet')), findsNothing);
+    expect(star(tester, 'project-0'), Icons.star_border);
   });
 
   testWidgets('a star without a network says so', (tester) async {

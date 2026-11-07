@@ -45,7 +45,7 @@ void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   /// A register with two suppliers, the picker open on it for someone with [permissions] in a project of [status]; what it answers lands in the record's list.
-  Future<({FakeApi api, Project project, Suppliers suppliers, String palm, String oasis, List<Supplier> picked})> openPicker(WidgetTester tester, {List<String> permissions = managerAndFinance, String status = 'running'}) async {
+  Future<({FakeApi api, Project project, Suppliers suppliers, String palm, String oasis, List<Supplier> picked})> openPicker(WidgetTester tester, {List<String> permissions = managerAndFinance, String status = 'active'}) async {
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status);
     final project = Project.fromJson(jsonDecode(jsonEncode(api.projects.single)) as Map<String, dynamic>);
     final palm = api.addSupplier('project-0', 'شركة النخيل', vatNumber: vatNumber, defaultItemName: 'البلاط');

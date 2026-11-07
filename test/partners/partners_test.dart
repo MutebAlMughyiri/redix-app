@@ -10,7 +10,7 @@ void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   /// A project with متعب, who has a login, and هيثم, who has none, opened as far as its partners.
-  Future<({FakeApi api, String mutab, String haitham})> openPartners(WidgetTester tester, {String status = 'running', List<String> permissions = managerAndFinance}) async {
+  Future<({FakeApi api, String mutab, String haitham})> openPartners(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
     final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions);
     api.addMember('user-mutab', 'متعب المغيري');
     api.addMember('user-nawaf', 'نواف');

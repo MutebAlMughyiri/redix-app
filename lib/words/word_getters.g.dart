@@ -281,9 +281,6 @@ mixin WordGetters {
   /// The word `capital.inKind`.
   String get capitalInKind => text('capital.inKind');
 
-  /// The word `capital.incompleteLiquidation`.
-  String get capitalIncompleteLiquidation => text('capital.incompleteLiquidation');
-
   /// The word `capital.invalidAmount`.
   String get capitalInvalidAmount => text('capital.invalidAmount');
 
@@ -304,9 +301,6 @@ mixin WordGetters {
 
   /// The word `capital.left`.
   String get capitalLeft => text('capital.left');
-
-  /// The word `capital.liquidation`.
-  String get capitalLiquidation => text('capital.liquidation');
 
   /// The word `capital.loadFailed`.
   String get capitalLoadFailed => text('capital.loadFailed');
@@ -347,14 +341,8 @@ mixin WordGetters {
   /// The word `capital.projectFinished`.
   String get capitalProjectFinished => text('capital.projectFinished');
 
-  /// The word `capital.projectNotClosed`.
-  String get capitalProjectNotClosed => text('capital.projectNotClosed');
-
   /// The word `capital.receipt`.
   String get capitalReceipt => text('capital.receipt');
-
-  /// The word `capital.receiptAlreadyAttached`.
-  String get capitalReceiptAlreadyAttached => text('capital.receiptAlreadyAttached');
 
   /// The word `capital.receiptAmount`.
   String get capitalReceiptAmount => text('capital.receiptAmount');
@@ -431,17 +419,11 @@ mixin WordGetters {
   /// The word `capital.unknownAttachment`.
   String get capitalUnknownAttachment => text('capital.unknownAttachment');
 
-  /// The word `capital.unknownItem`.
-  String get capitalUnknownItem => text('capital.unknownItem');
-
   /// The word `capital.unknownPartner`.
   String get capitalUnknownPartner => text('capital.unknownPartner');
 
   /// The word `capital.useCarry`.
   String get capitalUseCarry => text('capital.useCarry');
-
-  /// The word `capital.useLiquidation`.
-  String get capitalUseLiquidation => text('capital.useLiquidation');
 
   /// The word `capital.withdrawal`.
   String get capitalWithdrawal => text('capital.withdrawal');
@@ -908,9 +890,6 @@ mixin WordGetters {
   /// The word `dashboard.revenue`.
   String get dashboardRevenue => text('dashboard.revenue');
 
-  /// The word `dashboard.revenueByCategory`.
-  String get dashboardRevenueByCategory => text('dashboard.revenueByCategory');
-
   /// The word `dashboard.surplus`.
   String get dashboardSurplus => text('dashboard.surplus');
 
@@ -1310,87 +1289,6 @@ mixin WordGetters {
   /// The word `expenses.unknownSupplier`.
   String get expensesUnknownSupplier => text('expenses.unknownSupplier');
 
-  /// The word `liquidation.amount`.
-  String get liquidationAmount => text('liquidation.amount');
-
-  /// The word `liquidation.attachReceipt`.
-  String get liquidationAttachReceipt => text('liquidation.attachReceipt');
-
-  /// The word `liquidation.carry`.
-  String get liquidationCarry => text('liquidation.carry');
-
-  /// The word `liquidation.confirm`.
-  String get liquidationConfirm => text('liquidation.confirm');
-
-  /// The word `liquidation.date`.
-  String get liquidationDate => text('liquidation.date');
-
-  /// The word `liquidation.deficit`.
-  String get liquidationDeficit => text('liquidation.deficit');
-
-  /// The word `liquidation.deficitExplain`.
-  String get liquidationDeficitExplain => text('liquidation.deficitExplain');
-
-  /// The word `liquidation.description`.
-  String get liquidationDescription => text('liquidation.description');
-
-  /// The word `liquidation.distributed`.
-  String get liquidationDistributed => text('liquidation.distributed');
-
-  /// The word `liquidation.done`.
-  String get liquidationDone => text('liquidation.done');
-
-  /// The word `liquidation.explain`.
-  String get liquidationExplain => text('liquidation.explain');
-
-  /// The word `liquidation.item`.
-  String get liquidationItem => text('liquidation.item');
-
-  /// The word `liquidation.late`.
-  String get liquidationLate => text('liquidation.late');
-
-  /// The word `liquidation.lateExpense`.
-  String get liquidationLateExpense => text('liquidation.lateExpense');
-
-  /// The word `liquidation.lateExplain`.
-  String get liquidationLateExplain => text('liquidation.lateExplain');
-
-  /// The word `liquidation.lateRecorded`.
-  String get liquidationLateRecorded => text('liquidation.lateRecorded');
-
-  /// The word `liquidation.lateRevenue`.
-  String get liquidationLateRevenue => text('liquidation.lateRevenue');
-
-  /// The word `liquidation.noReceipt`.
-  String get liquidationNoReceipt => text('liquidation.noReceipt');
-
-  /// The word `liquidation.nothing`.
-  String get liquidationNothing => text('liquidation.nothing');
-
-  /// The word `liquidation.payOut`.
-  String get liquidationPayOut => text('liquidation.payOut');
-
-  /// The word `liquidation.pending`.
-  String get liquidationPending => text('liquidation.pending');
-
-  /// The word `liquidation.question`.
-  String get liquidationQuestion => text('liquidation.question');
-
-  /// The word `liquidation.questionExplain`.
-  String get liquidationQuestionExplain => text('liquidation.questionExplain');
-
-  /// The word `liquidation.receiptAttached`.
-  String get liquidationReceiptAttached => text('liquidation.receiptAttached');
-
-  /// The word `liquidation.record`.
-  String get liquidationRecord => text('liquidation.record');
-
-  /// The word `liquidation.surplus`.
-  String get liquidationSurplus => text('liquidation.surplus');
-
-  /// The word `liquidation.title`.
-  String get liquidationTitle => text('liquidation.title');
-
   /// The word `myAccount.arabic`.
   String get myAccountArabic => text('myAccount.arabic');
 
@@ -1664,6 +1562,9 @@ mixin WordGetters {
   /// The word `permissions.title`.
   String get permissionsTitle => text('permissions.title');
 
+  /// The word `projects.active`.
+  String get projectsActive => text('projects.active');
+
   /// The word `projects.addUnit`.
   String get projectsAddUnit => text('projects.addUnit');
 
@@ -1688,6 +1589,9 @@ mixin WordGetters {
   /// The word `projects.defaultProject`.
   String get projectsDefaultProject => text('projects.defaultProject');
 
+  /// The word `projects.defaultSet`.
+  String get projectsDefaultSet => text('projects.defaultSet');
+
   /// The word `projects.defaultTemplate`.
   String get projectsDefaultTemplate => text('projects.defaultTemplate');
 
@@ -1699,9 +1603,6 @@ mixin WordGetters {
 
   /// The word `projects.invalidName`.
   String get projectsInvalidName => text('projects.invalidName');
-
-  /// The word `projects.liquidateFirst`.
-  String get projectsLiquidateFirst => text('projects.liquidateFirst');
 
   /// The word `projects.loadFailed`.
   String get projectsLoadFailed => text('projects.loadFailed');
@@ -1720,12 +1621,6 @@ mixin WordGetters {
 
   /// The word `projects.noUnits`.
   String get projectsNoUnits => text('projects.noUnits');
-
-  /// The word `projects.openDefault`.
-  String get projectsOpenDefault => text('projects.openDefault');
-
-  /// The word `projects.openDefaultHint`.
-  String get projectsOpenDefaultHint => text('projects.openDefaultHint');
 
   /// The word `projects.pending`.
   String get projectsPending => text('projects.pending');
@@ -1759,9 +1654,6 @@ mixin WordGetters {
 
   /// The word `projects.renameUnit`.
   String get projectsRenameUnit => text('projects.renameUnit');
-
-  /// The word `projects.running`.
-  String get projectsRunning => text('projects.running');
 
   /// The word `projects.save`.
   String get projectsSave => text('projects.save');
@@ -1961,9 +1853,6 @@ mixin WordGetters {
   /// The word `reports.lastIssued`.
   String get reportsLastIssued => text('reports.lastIssued');
 
-  /// The word `reports.liquidation`.
-  String get reportsLiquidation => text('reports.liquidation');
-
   /// The word `reports.loadFailed`.
   String get reportsLoadFailed => text('reports.loadFailed');
 
@@ -2143,6 +2032,12 @@ mixin WordGetters {
 
   /// The word `revenue.vatRefund`.
   String get revenueVatRefund => text('revenue.vatRefund');
+
+  /// The word `settings.defaultProject`.
+  String get settingsDefaultProject => text('settings.defaultProject');
+
+  /// The word `settings.defaultProjectHint`.
+  String get settingsDefaultProjectHint => text('settings.defaultProjectHint');
 
   /// The word `settings.switchProject`.
   String get settingsSwitchProject => text('settings.switchProject');

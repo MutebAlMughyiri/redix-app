@@ -3,7 +3,7 @@ import '../auth/permission.dart';
 /// Where a project stands, as the API says it (FR-04), each knowing its word so no reader needs to tell them apart.
 enum ProjectStatus {
   /// Entries are recorded and approved.
-  running('projects.running'),
+  active('projects.active'),
 
   /// Closed: read-only, with its reports still available (AC-04.1).
   finished('projects.finished'),
@@ -45,7 +45,7 @@ class Project {
       _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()};
 
   /// No project: what Settings holds when it is opened from the project list, where the signed-in user may do nothing to a project.
-  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.running, rejectionReason = '', units = const [], _permissions = const {};
+  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.active, rejectionReason = '', units = const [], _permissions = const {};
 
   /// The project's id.
   final String id;
@@ -71,7 +71,7 @@ class Project {
   bool may(Permission permission) => _permissions.contains(permission.name);
 
   /// True once the admin has let it in, so it can be opened (BR-34).
-  bool get isApproved => status == ProjectStatus.running || status == ProjectStatus.finished;
+  bool get isApproved => status == ProjectStatus.active || status == ProjectStatus.finished;
 
   /// True once the project is closed: the app offers no change on it (AC-04.1).
   bool get isFinished => status == ProjectStatus.finished;

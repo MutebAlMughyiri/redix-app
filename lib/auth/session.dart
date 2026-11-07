@@ -37,7 +37,6 @@ class Session extends ChangeNotifier {
   var _mustChangePassword = false;
   var _permissions = <String>{};
   var _defaultProjectId = '';
-  var _openDefaultProject = false;
   var _usesBiometrics = false;
   var _unlockAttempts = 0;
   var _notice = '';
@@ -54,11 +53,8 @@ class Session extends ChangeNotifier {
   /// Whether the user holds [permission] everywhere; what they hold in a project comes with the project.
   bool may(Permission permission) => _permissions.contains(permission.name);
 
-  /// The project the user chose to land on; empty when none, or when they can no longer read it (AC-37.2).
+  /// The project sign-in opens directly, skipping the list (AC-37.1); empty when none, or when they can no longer read it (AC-37.2).
   String get defaultProjectId => _defaultProjectId;
-
-  /// True when sign-in skips the list and opens the default project (AC-37.1).
-  bool get opensDefaultProject => _openDefaultProject && _defaultProjectId.isNotEmpty;
 
   /// True when opening the app on this phone asks for a fingerprint or face (UC-011).
   bool get usesBiometrics => _usesBiometrics;
@@ -66,8 +62,8 @@ class Session extends ChangeNotifier {
   /// True while the kept session waits for the fingerprint or face: 3 tries, then only the password works (AC-35.2).
   bool get canUnlock => _usesBiometrics && !isOpen && _unlockAttempts < maxUnlockAttempts;
 
-  /// Makes [projectId] the default project, and says whether sign-in opens it directly. Returns an empty string once made, otherwise the word key of the refusal.
-  Future<String> setDefaultProject(String projectId, {required bool openDirectly}) => _changeDefault('/projects/$projectId/default', {'openDirectly': openDirectly});
+  /// Makes [projectId] the default project, which sign-in opens directly. Returns an empty string once made, otherwise the word key of the refusal.
+  Future<String> setDefaultProject(String projectId) => _changeDefault('/projects/$projectId/default', {});
 
   /// Clears the default project. Returns an empty string once made, otherwise the word key of the refusal.
   Future<String> removeDefaultProject() => _changeDefault('/projects/default/remove', {});
@@ -292,7 +288,6 @@ class Session extends ChangeNotifier {
     _mustChangePassword = session['mustChangePassword'] as bool? ?? false;
     _permissions = {...(session['permissions'] as List<dynamic>? ?? []).cast<String>()};
     _defaultProjectId = session['defaultProjectId'] as String? ?? '';
-    _openDefaultProject = session['openDefaultProject'] as bool? ?? false;
     _usesBiometrics = session['usesBiometrics'] as bool? ?? false;
   }
 }

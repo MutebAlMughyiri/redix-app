@@ -13,7 +13,7 @@ void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   /// A project with one approved supplier and one pending, opened as far as its register.
-  Future<({FakeApi api, String approved, String pending})> openSuppliers(WidgetTester tester, {String status = 'running', List<String> permissions = managerAndFinance}) async {
+  Future<({FakeApi api, String approved, String pending})> openSuppliers(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
     final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions);
     final tiling = api.addCategory('project-0', 'التشطيب');
     api.addItem(tiling, 'البلاط');

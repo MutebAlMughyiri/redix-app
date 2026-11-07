@@ -12,7 +12,7 @@ Decided at app start and at sign-in, and nowhere else:
 
 | State | Lands on |
 | --- | --- |
-| A default, with "open directly" on, and still with access | That project's home |
+| A default, still with access: a default always opens directly (Muteb, 8 Nov 2026) | That project's home |
 | Anything else | The list |
 
 ## Screens
@@ -23,10 +23,18 @@ The list, `ProjectsScreen` at `/`:
 | --- | --- | --- |
 | Choose a project | `ProjectsScreen.titleKey` | The heading |
 | A project's card | `ProjectsScreen.cardKey(id)` | Opens its home |
-| Its star | `ProjectsScreen.starKey(id)` | Makes it the default, or clears it |
-| Open directly | `ProjectsScreen.openDefaultKey` | Disabled until there is a default |
+| Its star | `ProjectsScreen.starKey(id)` | Makes it the default, saying so in a message (`messageKeyOf('projects.defaultSet')`), or clears it |
 | Settings | `ProjectsScreen.settingsKey` | Opens Settings |
 | Register new project | `ProjectsScreen.newProjectKey` | Opens the form (UC-066) |
+
+Settings, `SettingsScreen`, has **Default project** (`SettingsScreen.defaultProjectKey`), which opens `DefaultProjectSheet`:
+
+| Element | `Key` | Does |
+| --- | --- | --- |
+| Title, what the tick does | `DefaultProjectSheet.titleKey`, `hintKey` | |
+| A project's tick | `DefaultProjectSheet.optionKey(id)`, `.title` | Every approved project; the default is ticked. Ticking makes it the default and says so; ticking another moves it; unticking clears it |
+
+The star and the tick change the default through one owner, `toggleDefaultProject`.
 
 The home, `HomeScreen` at `/projects/:projectId`, shows the project's card, with Users (`manageUsers`), and Add unit and Close project (`manageProject`). Settings has **Switch project** (`SettingsScreen.switchProjectKey`), which goes to the list.
 
@@ -38,9 +46,9 @@ The home, `HomeScreen` at `/projects/:projectId`, shows the project's card, with
 | A card opens its home, and back returns to the list | `home_test.dart` |
 | The buttons follow the role in the open project (AC-36.2) | `home_test.dart` |
 | The list has no change buttons | `projects_test.dart` |
-| The star sets, moves and clears the default | `projects_test.dart` |
-| The switch waits for a default | `projects_test.dart` |
-| A default with the switch on opens directly at sign-in and at start (AC-37.1) | `home_test.dart` |
+| AC-37.1: the star makes a project the default and a message says so; it moves and clears the default; a refusal says why | `projects_test.dart` |
+| Default project in Settings lists every approved project with a tick, none waiting or rejected; ticking sets and moves the default and says so, unticking clears it, a refusal says why | `settings_test.dart` |
+| AC-37.1: a default opens directly at sign-in and at start | `home_test.dart` |
 | A project gone while open returns to the list | `home_test.dart` |
 | Switch project reaches the list | `settings_test.dart` |
 | A journey on a real phone | `patrol_test/app_test.dart` |

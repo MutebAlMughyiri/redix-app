@@ -4,9 +4,9 @@ import '../ui/change_dialog.dart';
 import '../words/words.dart';
 import 'project.dart';
 import 'projects.dart';
-import '../home/home_screen.dart';
+import '../settings/settings_screen.dart';
 
-/// Asks for a new unit's name and adds it to a running project.
+/// Asks for a new unit's name and adds it to an active project.
 class AddUnitDialog extends StatefulWidget {
   /// The dialog adding a unit to [project] through [projects].
   const AddUnitDialog({super.key, required this.project, required this.projects});
@@ -39,7 +39,7 @@ class _AddUnitDialogState extends State<AddUnitDialog> {
       onSave: () => widget.projects.addUnit(widget.project, _name.text),
       children: [
         TextField(
-          key: HomeScreen.unitNameKey,
+          key: SettingsScreen.unitNameKey,
           controller: _name,
           autofocus: true,
           decoration: InputDecoration(labelText: words.projectsUnitName, border: const OutlineInputBorder()),

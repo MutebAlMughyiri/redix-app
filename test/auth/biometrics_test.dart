@@ -72,9 +72,8 @@ void main() {
   testWidgets('a pass lands where the person chose to land', (tester) async {
     final api = apiWithBiometrics()
       ..defaultProjectId = 'project-0'
-      ..openDefaultProject = true
       ..addProject('غصون 6');
-    const kept = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": false, "usesBiometrics": true, "defaultProjectId": "project-0", "openDefaultProject": true}';
+    const kept = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": false, "usesBiometrics": true, "defaultProjectId": "project-0"}';
 
     await pumpRedix(tester, api, stored: {'session': kept}, prompt: FakePrompt());
 
@@ -155,7 +154,7 @@ void main() {
     final session = await pumpRedix(tester, api, stored: {'session': keptBiometricSession}, prompt: prompt);
     expect(session.accessToken, 'new-access');
 
-    await act(tester, api, () => session.setDefaultProject('project-0', openDirectly: false));
+    await act(tester, api, () => session.setDefaultProject('project-0'));
 
     expect(prompt.shown, 1);
     expect(await const FlutterSecureStorage().read(key: 'session'), contains('new-refresh'));

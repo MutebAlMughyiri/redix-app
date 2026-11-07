@@ -19,7 +19,7 @@ void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   /// A project with العظم (الحفر, الحديد) and التشطيب, opened as far as its categories.
-  Future<({FakeApi api, String bone, String finishing, String digging, String steel})> openCategories(WidgetTester tester, {String status = 'running', List<String> permissions = managerAndFinance}) async {
+  Future<({FakeApi api, String bone, String finishing, String digging, String steel})> openCategories(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
     final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions);
     final bone = api.addCategory('project-0', 'العظم');
     final finishing = api.addCategory('project-0', 'التشطيب');
@@ -208,7 +208,7 @@ void main() {
   });
 
   /// A project whose item الحفر holds مواد and دفان and a contract with مقاول الحفر, opened as far as its tables.
-  Future<({FakeApi api, String item, String general, List<String> ids})> openTables(WidgetTester tester, {String status = 'running'}) async {
+  Future<({FakeApi api, String item, String general, List<String> ids})> openTables(WidgetTester tester, {String status = 'active'}) async {
     final api = FakeApi()..addProject('غصون 6', status: status);
     final bone = api.addCategory('project-0', 'العظم');
     final item = api.addItem(bone, 'الحفر', subgroups: ['مواد', 'دفان']);
@@ -219,7 +219,7 @@ void main() {
     await openSettings(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
     await open(tester, api, bone['id'] as String);
-    if (status == 'running') {
+    if (status == 'active') {
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(item['id'] as String))));
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.tablesKey)));
     }

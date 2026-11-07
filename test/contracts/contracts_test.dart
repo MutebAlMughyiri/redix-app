@@ -20,7 +20,7 @@ void main() {
   late FakeApi apiOfDocuments;
 
   /// A project with a contract running, one overrun and one of open value, opened as far as its contracts.
-  Future<({FakeApi api, String running, String overrun, String open, String contractor, String item})> openContracts(WidgetTester tester, {bool hasPayments = false, String status = 'running', List<String> permissions = managerAndFinance}) async {
+  Future<({FakeApi api, String running, String overrun, String open, String contractor, String item})> openContracts(WidgetTester tester, {bool hasPayments = false, String status = 'active', List<String> permissions = managerAndFinance}) async {
     final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions, units: ['الفلة الغربية']);
     final contractor = api.addSupplier('project-0', 'شركة النخيل', vatNumber: '300000000000003');
     final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'البلاط');
