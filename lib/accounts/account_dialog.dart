@@ -67,7 +67,7 @@ class _AccountDialogState extends State<AccountDialog> {
             onChanged: (type) => setState(() => _type = type ?? _type),
             child: Column(
               children: [
-                for (final type in AccountType.values.where((type) => type != AccountType.partnerPocket))
+                for (final type in AccountType.values)
                   RadioListTile<AccountType>(key: AccountsScreen.typeKey(type), contentPadding: EdgeInsets.zero, value: type, title: Text(words.text(type.wordKey))),
               ],
             ),

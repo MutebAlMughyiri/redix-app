@@ -6,6 +6,7 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-07 | No account belongs to a partner: the pocket type, its row on the accounts screen and the reconciliation's "owed to partners" go | Muteb: "Remove pockets completely"; redix-api #99 |
 | 2026-11-07 | One إضافة قيد button, where New purchase expense and Contractor payment were, opens one screen; the table chosen says whether it is a purchase or a contractor payment, and `EntryTable` answers everything the two differ in | Muteb: "زر اضافة قيد في المكان القديم بدلاً من مصروف شراء جديد ودفعة مقاول"; redix-app #84, R5, R6, R10 |
 | 2026-11-07 | A contractor payment asks no subgroup: its contract is its table | redix-app #84, R11: no report read a payment's subgroup |
 | 2026-11-07 | The home lists the project's latest five entries by anyone under القيود; the counts stay the person's own, and a row not theirs says who entered it | Muteb's answer; redix-app #84, R1, R2, R3, R15 |

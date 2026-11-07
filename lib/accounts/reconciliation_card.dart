@@ -20,9 +20,6 @@ class ReconciliationCard extends StatelessWidget {
   /// The difference.
   static const differenceKey = Key('reconciliation.difference');
 
-  /// What is owed to partners.
-  static const owedKey = Key('reconciliation.owed');
-
   /// The line saying no check was done.
   static const neverKey = Key('reconciliation.never');
 
@@ -79,7 +76,6 @@ class ReconciliationCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _line(context, surplusKey, words.reconciliationsSurplus, figures.surplus),
-              if (figures.owedToPartners != 0) _line(context, owedKey, words.reconciliationsOwed, figures.owedToPartners),
               if (figures.wasChecked) ...[
                 _line(context, actualTotalKey, words.reconciliationsActualTotal, figures.actualTotal),
                 _difference(context, figures),

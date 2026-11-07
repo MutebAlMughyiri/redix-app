@@ -43,12 +43,11 @@ void main() {
     return opened;
   }
 
-  Map<String, Object> reconciled(double surplus, double total, {double owed = 0, List<Map<String, Object>> balances = const []}) => {
+  Map<String, Object> reconciled(double surplus, double total, {List<Map<String, Object>> balances = const []}) => {
     'at': '2026-11-05T10:00:00Z',
     'surplus': surplus,
     'actualTotal': total,
     'difference': total - surplus,
-    'owedToPartners': owed,
     'balances': balances,
   };
 
@@ -62,9 +61,8 @@ void main() {
     final api = FakeApi()..addProject('مشروع غصون السادس في شمال مدينة الرياض بالمملكة', permissions: managerAndFinance, units: ['الفلة']);
     api
       ..addAccount('project-0', longName, openingBalance: 9999999.99)
-      ..addAccount('project-0', 'متعب بن عبدالله بن محمد المغيري الشريك المؤسس', type: 'partnerPocket')
       ..transferRows.add({'id': 'entry-0', 'date': '2026-11-05', 'amount': 9999999.99, 'fromAccountName': longName, 'toAccountName': longName, 'description': longName})
-      ..reconciliationAnswer = reconciled(9999999.99, 8888888.88, owed: 7777777.77, balances: [balanceRow(longName, 9999999.99, 8888888.88)])
+      ..reconciliationAnswer = reconciled(9999999.99, 8888888.88, balances: [balanceRow(longName, 9999999.99, 8888888.88)])
       ..capitalTotal = 9999999.99
       ..addMovement(attachmentId: 'attachment-1', amount: -9999999.99);
     final partner = api.addPartner('project-0', 'متعب بن عبدالله بن محمد المغيري الشريك المؤسس في المشروع', userId: 'user-1', userName: 'نواف بن عبدالله بن محمد العتيبي');
@@ -123,16 +121,6 @@ void main() {
 
       expect(find.byKey(ReconciliationCard.neverKey), findsOneWidget);
       expect(find.byKey(ReconciliationCard.differenceKey), findsNothing);
-    });
-
-    testWidgets('what is owed to partners shows beside it', (tester) async {
-      await openAccounts(tester, (api) {
-        api
-          ..addAccount('project-0', 'حساب')
-          ..reconciliationAnswer = reconciled(1000, 1000, owed: 72.5);
-      });
-
-      expect(tester.widget<Text>(find.byKey(ReconciliationCard.owedKey)).data, '72.50');
     });
 
     testWidgets('typing a balance shows the total and the difference, and saving sends each', (tester) async {
@@ -429,14 +417,6 @@ void main() {
 
       expect(find.byKey(CapitalMoveScreen.noTargetKey), findsOneWidget);
     });
-  });
-
-  testWidgets('a pocket on the accounts screen has no menu', (tester) async {
-    final (:api, capture: _) = await openAccounts(tester, (api) => api.addAccount('project-0', 'نواف', type: 'partnerPocket'));
-
-    final id = api.accounts['project-0']!.single['id']! as String;
-    expect(find.byKey(AccountsScreen.nameKey(id)), findsOneWidget);
-    expect(find.byKey(AccountsScreen.menuKey(id)), findsNothing);
   });
 
   group('UC-046', () {

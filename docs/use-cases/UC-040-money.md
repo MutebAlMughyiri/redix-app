@@ -8,7 +8,7 @@
 
 `ApiObject` now owns reading and changing anything the API owns; `ApiList` is one of those that holds a list.
 
-"From a partner" reaches an expense with no code of its own: a partner's pocket is an account the API offers, so `PaymentChoices` shows it as a third source. It comes with its name, the partner's.
+A partner paying with their own money is a capital movement (redix-api #96, D27), so no account belongs to a partner, and the reconciliation has no "owed to partners" line (redix-api #99).
 
 | Rule | Code | Test |
 | --- | --- | --- |
@@ -26,6 +26,5 @@
 | BR-23: a receipt saying another amount warns | `CapitalMoveScreen._receiptDiffers` | `BR-23: a receipt saying another amount warns` |
 | A settlement fills in all the partner holds | `CapitalMoveScreen._chooseType` | `a settlement fills in all the partner holds` |
 | AC-26.1: a carry asks for no receipt, and sends each side | `CapitalMoveScreen._carry` | `AC-26.1: a carry asks for no receipt, and sends each side`, `a carry from a project is the same route from the other side` |
-| AC-25.3: a partner is a third source of payment | `AccountType.partnerPocket`, `PaymentChoices` | `AC-25.3: a partner is a third source of payment on an expense` |
 | AC-25.3: Finance chooses what becomes of what a partner paid | `ApprovalsScreen._details` | `AC-25.3: Finance chooses what becomes of what a partner paid` |
 | AC-49.4: Finance may use a shared file as a capital receipt; Field may not | `ShareScreen` | `AC-49.4: Finance may use a shared file as a capital movement receipt, and Field may not`, `AC-49.4: Field sees no capital movement option` |

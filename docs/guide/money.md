@@ -17,7 +17,7 @@
 
 **Movement** enters what a partner put in or took out. It needs the bank receipt, unless it was paid in cash and you say why. A settlement takes all the partner holds, and they stop being active. Carrying to or from a project asks for that project, its partner and its account, and no receipt.
 
-**An expense a partner paid.** Choose **From a partner** as the source on the expense. When it is approved it adds the same amount to their capital, unless Finance chose **Owed back** in **Waiting for approval**. A transfer into their pocket pays them back.
+**A partner who pays with their own money.** Record it in **Partners** as a contribution to their capital, then pay the expense from the account the money went into. An expense is paid only from an account added in **Accounts**.
 
 To correct any of these, reverse it. What was entered together reverses together.
 
@@ -36,6 +36,6 @@ To correct any of these, reverse it. What was entered together reverses together
 
 **حركة** تُدخل ما أضافه الشريك أو سحبه. تحتاج الإيصال البنكي، إلا إن دُفعت نقداً وذكرت السبب. والتصفية تشمل كل رصيد الشريك، ثم يصبح غير نشط. والترحيل من مشروع أو إليه يسأل عن ذلك المشروع وشريكه وحسابه، بلا إيصال.
 
-**مصروف دفعه شريك.** اختر **من شريك** مصدراً للمصروف. عند اعتماده يُضاف المبلغ نفسه إلى رأس ماله، إلا إن اختار المالي **مستحق له** في **بانتظار الاعتماد**. والتحويل إلى حسابه يسدد له.
+**شريك يدفع من ماله.** سجّل ذلك في **الشركاء** مساهمةً في رأس ماله، ثم ادفع المصروف من الحساب الذي دخله المال. لا يُدفع المصروف إلا من حساب أُضيف في **الحسابات**.
 
 لتصحيح أي منها، اعكسه. وما أُدخل معاً يُعكس معاً.

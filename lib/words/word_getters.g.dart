@@ -35,9 +35,6 @@ mixin WordGetters {
   /// The word `accounts.invalidOpeningBalance`.
   String get accountsInvalidOpeningBalance => text('accounts.invalidOpeningBalance');
 
-  /// The word `accounts.invalidType`.
-  String get accountsInvalidType => text('accounts.invalidType');
-
   /// The word `accounts.loadFailed`.
   String get accountsLoadFailed => text('accounts.loadFailed');
 
@@ -58,9 +55,6 @@ mixin WordGetters {
 
   /// The word `accounts.openingBalance`.
   String get accountsOpeningBalance => text('accounts.openingBalance');
-
-  /// The word `accounts.pocketFollowsPartner`.
-  String get accountsPocketFollowsPartner => text('accounts.pocketFollowsPartner');
 
   /// The word `accounts.projectFinished`.
   String get accountsProjectFinished => text('accounts.projectFinished');
@@ -91,9 +85,6 @@ mixin WordGetters {
 
   /// The word `accounts.typeCashCustody`.
   String get accountsTypeCashCustody => text('accounts.typeCashCustody');
-
-  /// The word `accounts.typePartnerPocket`.
-  String get accountsTypePartnerPocket => text('accounts.typePartnerPocket');
 
   /// The word `accounts.unknownCustodian`.
   String get accountsUnknownCustodian => text('accounts.unknownCustodian');
@@ -1816,9 +1807,6 @@ mixin WordGetters {
 
   /// The word `reconciliations.noConnection`.
   String get reconciliationsNoConnection => text('reconciliations.noConnection');
-
-  /// The word `reconciliations.owed`.
-  String get reconciliationsOwed => text('reconciliations.owed');
 
   /// The word `reconciliations.refused`.
   String get reconciliationsRefused => text('reconciliations.refused');

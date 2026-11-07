@@ -36,11 +36,10 @@ class ReconciliationFigures {
       surplus = (json['surplus'] as num).toDouble(),
       actualTotal = (json['actualTotal'] as num).toDouble(),
       difference = (json['difference'] as num).toDouble(),
-      owedToPartners = (json['owedToPartners'] as num).toDouble(),
       balances = [for (final row in json['balances'] as List<dynamic>) ReconciliationBalance.fromJson(row as Map<String, dynamic>)];
 
   /// Nothing yet.
-  ReconciliationFigures.none() : at = DateTime(1), surplus = 0, actualTotal = 0, difference = 0, owedToPartners = 0, balances = const [];
+  ReconciliationFigures.none() : at = DateTime(1), surplus = 0, actualTotal = 0, difference = 0, balances = const [];
 
   /// When the latest check was done.
   final DateTime at;
@@ -53,9 +52,6 @@ class ReconciliationFigures {
 
   /// That total less the surplus.
   final double difference;
-
-  /// What the project owes partners who paid from their pockets.
-  final double owedToPartners;
 
   /// Each bank account and custody.
   final List<ReconciliationBalance> balances;

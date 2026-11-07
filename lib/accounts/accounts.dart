@@ -10,8 +10,8 @@ class Accounts extends ApiList<Account> {
   /// The project these accounts belong to.
   final String projectId;
 
-  /// The active bank accounts and cash custodies: what money is paid from or into, every account but a partner's pocket (BR-25).
-  List<Account> get bankAndCash => all.where((account) => account.isActive && account.type != AccountType.partnerPocket).toList();
+  /// The active accounts: what money is paid from or into.
+  List<Account> get bankAndCash => all.where((account) => account.isActive).toList();
 
   /// The active accounts the signed-in user holds, which their home shows (AC-22.1).
   List<Account> get mine => all.where((account) => account.isMine && account.isActive).toList();
