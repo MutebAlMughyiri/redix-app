@@ -6,6 +6,12 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-07 | The app shows and sends no VAT anywhere: no VAT, discount, bill number or without-invoice reason on an expense, no tax invoice on a contractor payment, no VAT rate in Payment methods, no quarter on a refund and no tax type on a sale | Muteb: "I do not want to see or store the VAT value except when printing the VAT report"; redix-api #96, D2, D3, D4, D12, D16, D22, D23 |
+| 2026-11-07 | The VAT statement screen chooses a period and hands on its Excel, nothing else | redix-api #96, D20: the VAT is a formula in the workbook |
+| 2026-11-07 | A credit note always names its bill; the picker has no "none", and shows an older bill's number or a newer one's date | redix-api #96, D13: a new expense has no bill number |
+| 2026-11-07 | A deduction says why in its notes, on a purchase and a contractor payment alike | redix-api #96, D14 |
+| 2026-11-07 | Attaching a shared file asks for nothing but the expense, and sends only the file | redix-api #96, D15 |
+| 2026-11-07 | A QR code fills the date, the total and the supplier; its VAT is read only to know the code is an e-invoice's | redix-api #96, D21 |
 | 2026-11-05 | The home's dashboard sits at the top, and widget tests start on a phone 2,400 points tall unless they set a size | The figures are what the home is for, as the canvas draws; a person scrolls, and a test that checks fitting sets its own size |
 | 2026-11-05 | Print and share go through `InvoiceCapture`, with `share_plus` for files other than a PDF | It is already the one owner of the phone's hardware, and `printing` labels every shared file a PDF |
 | 2026-11-05 | The partners list opens for everyone in the project | Row 70: someone who is a partner needs to see their own line; the API gives them only that line and the total |

@@ -37,7 +37,7 @@ class PendingEntry {
   bool get isRefused => refusal.isNotEmpty;
 
   /// The date it carries.
-  String get date => (body['invoiceDate'] ?? body['paymentDate'] ?? '') as String;
+  String get date => (body['paymentDate'] ?? '') as String;
 
   /// The amount it carries.
   num get amount => (body['amount'] ?? 0) as num;

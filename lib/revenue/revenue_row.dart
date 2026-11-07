@@ -13,8 +13,6 @@ class RevenueRow {
       attachmentId = json['attachmentId'] as String,
       contentType = json['contentType'] as String,
       isReversed = json['isReversed'] as bool,
-      statementRefund = (json['statementRefund'] as num).toDouble(),
-      refundDifference = (json['refundDifference'] as num).toDouble(),
       buyerName = json['buyerName'] as String,
       invoiceNumber = json['invoiceNumber'] as String;
 
@@ -50,12 +48,6 @@ class RevenueRow {
 
   /// True when it was reversed, or is itself a reversal.
   final bool isReversed;
-
-  /// What the statement of a refund's quarter expected back.
-  final double statementRefund;
-
-  /// What came back, less that.
-  final double refundDifference;
 
   /// The buyer on its sales invoice; empty when it has none.
   final String buyerName;

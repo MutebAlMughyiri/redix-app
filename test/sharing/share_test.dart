@@ -103,7 +103,6 @@ void main() {
     expect(find.byKey(ShareScreen.matchingKey('entry-match')), findsOneWidget);
     expect(find.byKey(ShareScreen.matchingKey('entry-other')), findsNothing);
     expect(find.byKey(ShareScreen.attachKey), findsOneWidget);
-    expect(find.byKey(ShareScreen.goesBackKey), findsNothing);
     expect(find.byKey(ShareScreen.amountDiffersKey), findsNothing);
     expect(find.byKey(ShareScreen.supplierDiffersKey), findsNothing);
     expect(api.sentReads.last, contains('attachable'));
@@ -117,46 +116,41 @@ void main() {
     expect(find.byKey(ShareScreen.attachKey), findsNothing);
   });
 
-  testWidgets('AC-49.3: choosing shows what differs and that approved goes back', (tester) async {
+  testWidgets('AC-49.3: choosing shows what differs from the QR code', (tester) async {
     final (:api, capture: _) = await share(tester, (api) => api.addAttachable(id: 'entry-1', status: 'approved', amount: 5000, supplierVatNumber: '300000000000099'), qrText: _qrText());
 
     await chooseItem(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.entryKey('entry-1'))));
 
-    expect(find.byKey(ShareScreen.goesBackKey), findsOneWidget);
     expect(find.byKey(ShareScreen.amountDiffersKey), findsOneWidget);
     expect(find.byKey(ShareScreen.supplierDiffersKey), findsOneWidget);
   });
 
-  testWidgets('attaching keeps the file, puts it on the expense, and lets go of it', (tester) async {
+  testWidgets('D15: attaching keeps the file, puts it alone on the expense, and lets go of it', (tester) async {
     final (:api, capture: _) = await share(tester, (api) => api.addAttachable(id: 'entry-1', amount: 6000, supplierVatNumber: _vatNumber), qrText: _qrText());
 
     await chooseItem(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.entryKey('entry-1'))));
-    await tester.enterText(find.byKey(ShareScreen.numberKey), '٢٦١٧');
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.attachKey)));
 
     expect(api.sentAttachments, hasLength(1));
     expect(api.sentInvoices.single.$1, 'entry-1');
-    expect(api.sentInvoices.single.$2, containsPair('invoiceNumber', '2617'));
-    expect(api.sentInvoices.single.$2, containsPair('invoiceDate', '2026-10-26'));
-    expect(api.sentInvoices.single.$2, containsPair('sellerVatNumber', _vatNumber));
+    expect(api.sentInvoices.single.$2.keys, ['attachmentId']);
     expect(find.byKey(ShareScreen.itemKey), findsNothing);
   });
 
-  testWidgets('AC-49.3: the same invoice on another expense is refused, and the person stays', (tester) async {
+  testWidgets('BR-22: a file already on another expense is refused, and the person stays', (tester) async {
     final (:api, capture: _) = await share(tester, (api) {
       api
         ..addAttachable(id: 'entry-1', amount: 6000, supplierVatNumber: _vatNumber)
-        ..invoiceAnswer = (status: 409, code: 'duplicateInvoice');
+        ..invoiceAnswer = (status: 409, code: 'invoiceAlreadyAttached');
     }, qrText: _qrText());
 
     await chooseItem(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.entryKey('entry-1'))));
-    await tester.enterText(find.byKey(ShareScreen.numberKey), '2617');
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.attachKey)));
 
-    expect(find.text('en share.duplicateInvoice'), findsOneWidget);
+    expect(find.text('en share.invoiceAlreadyAttached'), findsOneWidget);
     expect(find.byKey(ShareScreen.itemKey), findsOneWidget);
   });
 

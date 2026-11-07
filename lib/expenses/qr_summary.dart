@@ -39,7 +39,7 @@ class QrSummary extends StatelessWidget {
             Text(qr.sellerName, key: AddExpenseScreen.qrSellerKey),
             Text(qr.vatNumber, key: AddExpenseScreen.qrVatNumberKey),
             Text('${formatDate(qr.issuedAt)} ${_timeOf(qr.issuedAt)}', key: AddExpenseScreen.qrTimeKey),
-            Text('${words.expensesTotal} ${formatMoney(qr.total)} · ${words.expensesVat} ${formatMoney(qr.vat)}', key: AddExpenseScreen.qrAmountsKey),
+            Text('${words.expensesTotal} ${formatMoney(qr.total)}', key: AddExpenseScreen.qrAmountsKey),
             if (offerSupplier) ...[
               const SizedBox(height: 8),
               Text(words.expensesQrSupplierMissing, key: AddExpenseScreen.qrSupplierMissingKey),

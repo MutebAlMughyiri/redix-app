@@ -35,20 +35,14 @@ class SalesInvoiceScreen extends StatefulWidget {
   /// The invoice's number.
   static const numberKey = Key('salesInvoice.number');
 
-  /// The amount before tax.
+  /// What the buyer paid.
   static const amountKey = Key('salesInvoice.amount');
-
-  /// The discount.
-  static const discountKey = Key('salesInvoice.discount');
 
   /// The button saving it.
   static const saveKey = Key('salesInvoice.save');
 
   /// The line saying why it was refused.
   static const messageKey = Key('salesInvoice.message');
-
-  /// The choice of the tax [type].
-  static Key taxKey(String type) => Key('salesInvoice.tax.$type');
 
   /// The choice of the account [id].
   static Key accountKey(String id) => Key('salesInvoice.account.$id');
@@ -70,14 +64,10 @@ class SalesInvoiceScreen extends StatefulWidget {
 }
 
 class _SalesInvoiceScreenState extends State<SalesInvoiceScreen> {
-  static const _taxTypes = ['realEstateTransaction', 'vat'];
-
   final _buyer = TextEditingController();
   final _buyerVatNumber = TextEditingController();
   final _number = TextEditingController();
   final _amount = TextEditingController();
-  final _discount = TextEditingController();
-  var _taxType = 'realEstateTransaction';
   var _date = DateTime.now();
   var _accountId = '';
   var _saleId = '';
@@ -93,7 +83,7 @@ class _SalesInvoiceScreenState extends State<SalesInvoiceScreen> {
 
   @override
   void dispose() {
-    for (final field in [_buyer, _buyerVatNumber, _number, _amount, _discount]) {
+    for (final field in [_buyer, _buyerVatNumber, _number, _amount]) {
       field.dispose();
     }
     super.dispose();
@@ -109,10 +99,9 @@ class _SalesInvoiceScreenState extends State<SalesInvoiceScreen> {
   Future<void> _save() async {
     final words = Words.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final amount = parseNumber(_amount.text);
-    final discount = _discount.text.trim().isEmpty ? 0.0 : parseNumber(_discount.text);
-    if (amount.isNaN || discount.isNaN) {
-      setState(() => _message = amount.isNaN ? 'revenue.invalidAmount' : 'revenue.invalidDiscount');
+    final total = parseNumber(_amount.text);
+    if (total.isNaN) {
+      setState(() => _message = 'revenue.invalidAmount');
       return;
     }
     setState(() => _saving = true);
@@ -121,9 +110,7 @@ class _SalesInvoiceScreenState extends State<SalesInvoiceScreen> {
       'buyerVatNumber': westernDigits(_buyerVatNumber.text),
       'number': westernDigits(_number.text),
       'invoiceDate': _date.toIso8601String().substring(0, 10),
-      'amount': amount,
-      'discount': discount,
-      'taxType': _taxType,
+      'total': total,
       'accountId': _accountId,
       if (_saleId.isNotEmpty) 'saleEntryId': _saleId,
     });
@@ -160,16 +147,7 @@ class _SalesInvoiceScreenState extends State<SalesInvoiceScreen> {
                 entryField(key: SalesInvoiceScreen.buyerVatNumberKey, controller: _buyerVatNumber, label: words.revenueBuyerVatNumber, isNumber: true, onChanged: (_) {}),
                 entryField(key: SalesInvoiceScreen.numberKey, controller: _number, label: words.revenueInvoiceNumber, onChanged: (_) {}),
                 PickerField(label: words.revenueInvoiceDate, value: formatDate(_date), onTap: _chooseDate),
-                entryField(key: SalesInvoiceScreen.amountKey, controller: _amount, label: words.revenueAmountBeforeTax, isNumber: true, onChanged: (_) {}),
-                entryField(key: SalesInvoiceScreen.discountKey, controller: _discount, label: words.revenueDiscount, isNumber: true, onChanged: (_) {}),
-                LabelledChips<String>(
-                  label: words.revenueTaxType,
-                  choices: _taxTypes,
-                  keyOf: SalesInvoiceScreen.taxKey,
-                  nameOf: (type) => words.text('revenue.tax${type[0].toUpperCase()}${type.substring(1)}'),
-                  isChosen: (type) => type == _taxType,
-                  onChosen: (type) => setState(() => _taxType = type),
-                ),
+                entryField(key: SalesInvoiceScreen.amountKey, controller: _amount, label: words.revenueTotal, isNumber: true, onChanged: (_) {}),
                 if (openSales.isNotEmpty)
                   LabelledChips<RevenueRow>(
                     label: words.revenueSale,

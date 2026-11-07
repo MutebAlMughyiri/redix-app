@@ -19,7 +19,6 @@ import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
-import 'package:redix/reports/vat_statement_screen.dart';
 import 'package:redix/revenue/revenue_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/sharing/share_screen.dart';
@@ -287,33 +286,6 @@ final List<Gate> _gates = [
   (name: 'Issue a periodic report', permission: Permission.moveMoney, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _key(ReportsScreen.issueKey)),
   (name: 'New revenue', permission: Permission.moveMoney, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.revenueKey(_project))], control: _key(RevenueScreen.newKey)),
   (name: 'A shared file as a capital receipt', permission: Permission.moveMoney, arrange: _nothing, steps: [_shareAPicture], control: _key(ShareScreen.capitalReceiptKey)),
-  (
-    name: 'Declare an invoice later in the VAT statement',
-    permission: Permission.moveMoney,
-    arrange: (api) => api.vatAnswer = {
-      'from': '2026-07-01',
-      'to': '2026-09-30',
-      'quarters': [
-        {
-          'start': '2026-07-01',
-          'end': '2026-09-30',
-          'purchases': [
-            {'row': 1, 'entryId': 'entry-1', 'date': '2026-08-02', 'companyName': 'البواني', 'description': 'بلاط / البواني / ف2617', 'total': 1150, 'isCreditNote': false},
-          ],
-          'sales': <Map<String, Object>>[],
-          'purchasesAfterDiscount': 1000,
-          'purchasesVat': 150,
-          'purchasesTotal': 1150,
-          'salesVat': 0,
-          'realEstateTax': 0,
-          'netDue': -150,
-        },
-      ],
-      'exceptions': <Map<String, Object>>[],
-    },
-    steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project)), _tapKey(ReportsScreen.vatKey), _tap((_) => find.text('en vat.purchaseInvoices'))],
-    control: (_) => find.byWidgetPredicate((widget) => widget is ListTile && widget.key == VatStatementScreen.rowKey('entry-1') && widget.onTap != null),
-  ),
 ];
 
 void main() {

@@ -11,7 +11,7 @@
 
 Whoever enters expenses sees **[New purchase expense](add-expense.md)** and **[Contractor payment](contractor-payment.md)** at the bottom, while the project runs.
 
-Everyone sees **[Accounts](accounts.md)**, **[Suppliers](suppliers.md)** and **[Contracts](contracts.md)** there. Whoever does the project's finance also sees **[Categories and items](categories.md)** and **[Payment methods and VAT](payment-methods.md)**, and the project's manager and whoever does its finance see **[Partners](partners.md)**.
+Everyone sees **[Accounts](accounts.md)**, **[Suppliers](suppliers.md)** and **[Contracts](contracts.md)** there. Whoever does the project's finance also sees **[Categories and items](categories.md)** and **[Payment methods](payment-methods.md)**, in Settings, and the project's manager and whoever does its finance see **[Partners](partners.md)**.
 
 After you sign in, REDIX lists the projects you have access to. Tap one to open it: what you can do there follows your role in that project. To open the same project every time, tap its star and turn on **Open the default project directly**. To change project later, open **Settings**, then **Switch project**.
 
@@ -30,7 +30,7 @@ Whoever does the project's finance can rename the project with **Rename project*
 
 ويرى من يُدخل المصروفات **[مصروف شراء جديد](add-expense.md)** و**[دفعة مقاول](contractor-payment.md)** في الأسفل، ما دام المشروع جارياً.
 
-ويرى فيها الجميع **[الحسابات](accounts.md)** و**[الموردين](suppliers.md)** و**[العقود](contracts.md)**. ويرى من يتولى مالية المشروع أيضاً **[التصنيفات والبنود](categories.md)** و**[طرق الدفع والضريبة](payment-methods.md)**، ويرى مدير المشروع ومن يتولى ماليته **[الشركاء](partners.md)**.
+ويرى فيها الجميع **[الحسابات](accounts.md)** و**[الموردين](suppliers.md)** و**[العقود](contracts.md)**. ويرى من يتولى مالية المشروع أيضاً **[التصنيفات والبنود](categories.md)** و**[طرق الدفع](payment-methods.md)** في الإعدادات، ويرى مدير المشروع ومن يتولى ماليته **[الشركاء](partners.md)**.
 
 بعد تسجيل الدخول، يعرض REDIX المشاريع المصرّح لك بها. اضغط أحدها لفتحه: وما يمكنك فعله فيه يتبع دورك في ذلك المشروع. لفتح المشروع نفسه كل مرة، اضغط نجمته وفعّل **فتح المشروع الافتراضي مباشرة**. ولتغيير المشروع لاحقاً، افتح **الإعدادات** ثم **تبديل المشروع**.
 

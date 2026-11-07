@@ -19,10 +19,9 @@ import '../ui/labelled_chips.dart';
 import '../ui/picker_field.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
-import 'quarter_picker.dart';
 import 'revenues.dart';
 
-/// Recording revenue on a revenue item (UC-047, FR-28): the item's type says what it is, and a VAT refund asks its quarter. It counts at once (BR-30).
+/// Recording revenue on a revenue item (UC-047, FR-28): the item's type says what it is, a VAT refund included (D23). It counts at once (BR-30).
 class RevenueFormScreen extends StatefulWidget {
   /// The screen recording revenue in [project] through [revenues] on one of [items], into one of [accounts].
   const RevenueFormScreen({super.key, required this.project, required this.revenues, required this.items, required this.accounts, required this.attachments, required this.capture});
@@ -77,7 +76,6 @@ class _RevenueFormScreenState extends State<RevenueFormScreen> {
   final _amount = TextEditingController();
   final _description = TextEditingController();
   var _item = Item.none();
-  var _quarter = quarterStartOf(DateTime.now());
   var _date = DateTime.now();
   var _accountId = '';
   var _file = PickedFile.none();
@@ -137,7 +135,6 @@ class _RevenueFormScreenState extends State<RevenueFormScreen> {
       'amount': amount,
       'accountId': _accountId,
       'description': _description.text,
-      if (_item.type == ItemType.vatRefund) 'periodStart': _isoOf(_quarter),
       if (attachmentId.isNotEmpty) 'attachmentId': attachmentId,
     });
   }
@@ -175,7 +172,6 @@ class _RevenueFormScreenState extends State<RevenueFormScreen> {
             spacing: 12,
             children: [
               ItemPicker(key: RevenueFormScreen.itemKey, items: widget.items, label: words.revenueItem, itemName: _item.name, onChanged: (item) => setState(() => _item = item)),
-              if (_item.type == ItemType.vatRefund) QuarterPicker(start: _quarter, firstYear: widget.project.startDate.year, onChanged: (start) => setState(() => _quarter = start)),
               entryField(key: RevenueFormScreen.amountKey, controller: _amount, label: words.revenueAmount, isNumber: true, onChanged: (_) {}),
               PickerField(label: words.revenueDate, value: formatDate(_date), onTap: _chooseDate),
               LabelledChips<Account>(

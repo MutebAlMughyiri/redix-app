@@ -54,10 +54,7 @@ enum ReportFileKind {
   excel('xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'reports.excel', Icons.table_chart_outlined, [FileHanding.save, FileHanding.share]),
 
   /// The PDF, printed.
-  print('pdf', 'application/pdf', 'reports.print', Icons.print_outlined, [FileHanding.print]),
-
-  /// The invoice images as one ZIP.
-  zip('zip', 'application/zip', 'reports.invoiceImages', Icons.folder_zip_outlined, [FileHanding.save, FileHanding.share]);
+  print('pdf', 'application/pdf', 'reports.print', Icons.print_outlined, [FileHanding.print]);
 
   const ReportFileKind(this.extension, this.mimeType, this.wordKey, this.icon, this.handings);
 

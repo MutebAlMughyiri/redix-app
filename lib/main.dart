@@ -54,7 +54,6 @@ import 'reports/periodic_report_screen.dart';
 import 'reports/periodic_reports.dart';
 import 'reports/report_files.dart';
 import 'reports/reports_screen.dart';
-import 'reports/vat_statement.dart';
 import 'reports/vat_statement_screen.dart';
 import 'revenue/revenue_form_screen.dart';
 import 'revenue/revenue_screen.dart';
@@ -154,7 +153,6 @@ class _RedixAppState extends State<RedixApp> {
   final _projectReconciliations = <String, Reconciliations>{};
   final _projectCapital = <String, Capital>{};
   final _projectRevenues = <String, Revenues>{};
-  final _projectVat = <String, VatStatement>{};
   final _projectDashboards = <String, Dashboard>{};
   final _projectPeriodicReports = <String, PeriodicReports>{};
   late final _reportFiles = ReportFiles(widget.session, widget.capture);
@@ -226,7 +224,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: ItemColumnsScreen.path, builder: (context, state) => _itemColumnsScreen(state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? '', state.extra! as Project)),
       GoRoute(
         path: PaymentMethodsScreen.path,
-        builder: (context, state) => PaymentMethodsScreen(project: state.extra! as Project, projects: _projects, paymentMethods: _paymentMethodsOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => PaymentMethodsScreen(project: state.extra! as Project, paymentMethods: _paymentMethodsOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(
         path: AccountsScreen.path,
@@ -296,7 +294,6 @@ class _RedixAppState extends State<RedixApp> {
         path: VatStatementScreen.path,
         builder: (context, state) => VatStatementScreen(
           project: state.extra! as Project,
-          statement: _projectVat.putIfAbsent(state.pathParameters['projectId'] ?? '', () => VatStatement(widget.session, state.pathParameters['projectId'] ?? '')),
           files: _reportFiles,
         ),
       ),

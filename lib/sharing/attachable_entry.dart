@@ -35,6 +35,4 @@ class AttachableEntry {
   /// True when the invoice's QR code matches it (AC-49.2).
   final bool isMatching;
 
-  /// True when attaching returns it to approval (AC-49.3).
-  bool get goesBackToApproval => status == 'approved';
 }

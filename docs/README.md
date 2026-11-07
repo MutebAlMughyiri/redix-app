@@ -25,7 +25,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Register a project](guide/register-a-project.md) | Everyone; the admin approves |
 | [Categories and items](guide/categories.md) | Whoever does a project's finance |
 | [Item columns](guide/item-columns.md) | Whoever does a project's finance |
-| [Payment methods and VAT](guide/payment-methods.md) | Whoever does a project's finance |
+| [Payment methods](guide/payment-methods.md) | Whoever does a project's finance |
 | [Accounts](guide/accounts.md) | Everyone in the project; whoever does its finance changes them |
 | [Partners](guide/partners.md) | The project's manager and whoever does its finance |
 | [Suppliers](guide/suppliers.md) | Everyone in the project; whoever does its finance changes them |
@@ -60,7 +60,7 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-011](use-cases/UC-011-biometrics.md) | Sign in with a fingerprint or face instead of the password | Everyone, for this phone |
 | [UC-012](use-cases/UC-012-categories-and-items.md) | Shape a project's categories, items and subgroups, and choose what a new project copies | Whoever does a project's finance |
 | [UC-013](use-cases/UC-013-item-columns.md) | Change the fields an item asks for, on one item or on the default template | Whoever does a project's finance |
-| [UC-014](use-cases/UC-014-payment-methods-and-vat.md) | Keep a project's payment methods and its VAT rate | Whoever does a project's finance |
+| [UC-014](use-cases/UC-014-payment-methods-and-vat.md) | Keep a project's payment methods | Whoever does a project's finance |
 | [UC-015](use-cases/UC-015-accounts-and-custodies.md) | Define a project's accounts and custodies, and show each custodian what they hold | Whoever does a project's finance changes; everyone sees |
 | [UC-016](use-cases/UC-016-partners.md) | Keep a project's partners, each linked to their login | Whoever does a project's finance changes; its manager reads |
 | [UC-017](use-cases/UC-017-suppliers.md) | Keep a project's supplier register clean | Whoever does a project's finance changes; everyone with access reads |
@@ -70,7 +70,7 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-021](use-cases/UC-021-capture-invoice.md) | Photograph an invoice, cropped and under 1 MB, and keep a contract's document | Whoever may enter an expense; Finance for a contract |
 | [UC-022](use-cases/UC-022-expense-details.md) | Enter a purchase expense, and send it or save it as a draft | Finance and Field |
 | [UC-024](use-cases/UC-024-invoice-qr.md) | Fill an expense from the e-invoice's QR code in its picture | Whoever enters an expense |
-| [UC-025](use-cases/UC-025-expense-without-invoice.md) | Send an expense that has no invoice, with the reason | Whoever enters an expense |
+| [UC-025](use-cases/UC-025-expense-without-invoice.md) | Retired: every expense's file is optional (redix-api #96) | Nobody |
 | [UC-026](use-cases/UC-026-credit-note.md) | Record money coming back: a credit note, or a deduction | Whoever enters an expense |
 | [UC-027](use-cases/UC-027-contractor-payment.md) | Pay a contractor and see the effect before saving | Whoever enters an expense |
 | [UC-029](use-cases/UC-029-offline.md) | Record entries without a network, and send them when it returns | Whoever enters expenses in the project |
@@ -80,7 +80,7 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-038, UC-039, UC-046](use-cases/UC-038-share.md) | Share a file to the app, and attach it or start an expense with it | Whoever enters expenses |
 | [UC-049, UC-050, UC-051, UC-063](use-cases/UC-049-dashboard-and-reports.md) | The dashboard on the home, an item's report, the contracts, completion and cost | Everyone in the project |
 | [UC-053, UC-059](use-cases/UC-053-reports.md) | Issue and read the periodic report; print or share any report | Everyone reads; finance issues |
-| [UC-047, UC-048, UC-056](use-cases/UC-047-revenue-and-vat.md) | Record revenue and sales invoices, see the VAT statement | Everyone reads; finance records |
+| [UC-047, UC-048, UC-056](use-cases/UC-047-revenue-and-vat.md) | Record revenue and sales invoices, take the VAT statement's workbook | Everyone reads; finance records |
 | [UC-040 to UC-044](use-cases/UC-040-money.md) | See balances, transfer, reconcile, record capital, see shares | Everyone reads; finance enters |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

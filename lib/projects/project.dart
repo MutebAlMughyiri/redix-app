@@ -42,11 +42,10 @@ class Project {
       status = ProjectStatus.values.byName(json['status'] as String),
       rejectionReason = json['rejectionReason'] as String,
       units = [for (final unit in json['units'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
-      _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()},
-      vatPercent = (json['vatPercent'] as num).toDouble();
+      _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()};
 
   /// No project: what Settings holds when it is opened from the project list, where the signed-in user may do nothing to a project.
-  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.running, rejectionReason = '', units = const [], _permissions = const {}, vatPercent = 0;
+  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.running, rejectionReason = '', units = const [], _permissions = const {};
 
   /// The project's id.
   final String id;
@@ -67,9 +66,6 @@ class Project {
   final List<Unit> units;
 
   final Set<String> _permissions;
-
-  /// The VAT rate of its new entries, as a percentage (BR-14).
-  final double vatPercent;
 
   /// Whether the signed-in user holds [permission] in this project.
   bool may(Permission permission) => _permissions.contains(permission.name);

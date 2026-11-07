@@ -58,12 +58,9 @@ class Outbox extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Sends a refused [entry] again, saying a repeated invoice is meant when [confirmDuplicate].
-  Future<void> sendAgain(PendingEntry entry, {bool confirmDuplicate = false}) async {
+  /// Sends a refused [entry] again.
+  Future<void> sendAgain(PendingEntry entry) async {
     entry.refusal = '';
-    if (confirmDuplicate) {
-      entry.body['confirmDuplicate'] = true;
-    }
     await _save(entry);
     notifyListeners();
     await send();

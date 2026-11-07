@@ -24,7 +24,6 @@ Android's backup of the app's data is off, so none of this leaves the phone that
 | A row on **Waiting to sync** | `WaitingScreen.rowKey` |
 | Where it stands | `WaitingScreen.stateKey` |
 | Send again, for a refused entry | `WaitingScreen.sendAgainKey` |
-| Send anyway, for a repeated invoice | `WaitingScreen.sendAnywayKey` |
 | Delete | `WaitingScreen.discardKey` |
 | Nothing waits | `WaitingScreen.emptyKey` |
 
@@ -41,7 +40,6 @@ Android's backup of the app's data is off, so none of this leaves the phone that
 | What someone else entered neither shows nor goes | `Outbox.of`, `Outbox.send` | `offline_test.dart`: what someone else entered |
 | What waits survives a sign-out | `Outbox` | `offline_test.dart`: what waits survives |
 | An entry the API refuses waits for its author, and is not tried again | `Outbox._refuse` | `offline_test.dart`: an entry the API refuses |
-| A repeated invoice can be sent anyway | `WaitingScreen`, `Outbox.sendAgain` | `offline_test.dart`: a repeated invoice |
 | A server that could not answer leaves it waiting | `Outbox._sendOne` | `offline_test.dart`: an answer the server could not give |
 | A typed search looks in what was kept, whichever way the name is spelled | `SupplierSearch._findInKeptCopy` | `offline_test.dart`: with no network a typed search |
 

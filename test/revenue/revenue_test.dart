@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
 import 'package:redix/revenue/quarter_picker.dart';
@@ -35,29 +36,13 @@ void main() {
     return api;
   }
 
-  Map<String, Object> quarter(String start, String end, {double netDue = -150, List<Map<String, Object>> purchases = const []}) => {
-    'start': start,
-    'end': end,
-    'purchases': purchases,
-    'sales': <Map<String, Object>>[],
-    'purchasesAfterDiscount': 1000,
-    'purchasesVat': 150,
-    'purchasesTotal': 1150,
-    'salesVat': 0,
-    'realEstateTax': 0,
-    'netDue': netDue,
-  };
-
-  Map<String, Object> purchase(String entryId) => {'row': 1, 'entryId': entryId, 'date': '2026-08-02', 'companyName': 'البواني', 'description': 'بلاط / البواني / ف2617', 'total': 1150, 'isCreditNote': false};
+  Future<void> takeExcel(WidgetTester tester, FakeApi api, String name) async {
+    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey(name, ReportFileKind.excel))));
+    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey(name, ReportFileKind.excel, FileHanding.save))));
+  }
 
   group('UC-047', () {
-    testWidgets('AC-28.1: a refund shows what the statement expected and the difference', (tester) async {
-      await openRevenue(tester, (api) => api.addRevenue(type: 'vatRefund', amount: 140, statementRefund: 150, refundDifference: -10));
-
-      expect(find.text('en revenue.statementRefund: 150.00 · en revenue.refundDifference: (10.00)'), findsOneWidget);
-    });
-
-    testWidgets('FR-28: a refund goes on its revenue item and sends its quarter, its amount and its account', (tester) async {
+    testWidgets('D23: a refund is plain revenue: it goes on its item with its amount and account, and no quarter', (tester) async {
       late String refunds;
       final api = await openRevenue(tester, (api) {
         api.addAccount('project-0', 'البنك');
@@ -66,19 +51,16 @@ void main() {
       final accountId = api.accounts['project-0']!.single['id']! as String;
       await act(tester, api, () => tester.tap(find.byKey(RevenueScreen.newKey)));
 
-      expect(find.byKey(QuarterPicker.yearKey(2026)), findsNothing);
       await act(tester, api, () => tester.tap(find.byKey(RevenueFormScreen.itemKey)));
       await act(tester, api, () => tester.tap(find.byKey(ItemPicker.optionKey(refunds))));
-      await act(tester, api, () => tester.tap(find.byKey(QuarterPicker.yearKey(2026))));
-      await act(tester, api, () => tester.tap(find.byKey(QuarterPicker.quarterKey(2))));
+      expect(find.byKey(QuarterPicker.yearKey(2026)), findsNothing);
       await tester.enterText(find.byKey(RevenueFormScreen.amountKey), '140');
       await act(tester, api, () => tester.tap(find.byKey(RevenueFormScreen.accountKey(accountId))));
       await act(tester, api, () => tester.tap(find.byKey(RevenueFormScreen.saveKey)));
 
       final (path, body) = api.sentMoney.single;
       expect(path, '/projects/project-0/revenue');
-      expect((body['itemId'], body['periodStart'], body['amount'], body['accountId']), (refunds, '2026-04-01', 140.0, accountId));
-      expect(find.byKey(RevenueFormScreen.saveKey), findsNothing);
+      expect((body['itemId'], body['amount'], body['accountId'], body.containsKey('periodStart')), (refunds, 140.0, accountId, false));
     });
 
     testWidgets('other revenue goes on its item and sends no quarter', (tester) async {
@@ -114,7 +96,7 @@ void main() {
   });
 
   group('UC-048', () {
-    testWidgets('a sales invoice sends the buyer and its figures, with the real estate tax by default', (tester) async {
+    testWidgets('D22: a sales invoice sends the buyer, its number and its total', (tester) async {
       final api = await openRevenue(tester, (api) => api.addAccount('project-0', 'البنك'));
       final accountId = api.accounts['project-0']!.single['id']! as String;
       await act(tester, api, () => tester.tap(find.byKey(RevenueScreen.newSaleKey)));
@@ -127,8 +109,10 @@ void main() {
 
       final (path, body) = api.sentMoney.single;
       expect(path, '/projects/project-0/sales-invoices');
-      expect((body['buyerName'], body['number'], body['amount'], body['discount'], body['taxType'], body['accountId']), ('أحمد', '12', 900000.0, 0.0, 'realEstateTransaction', accountId));
-      expect(body.containsKey('saleEntryId'), isFalse);
+      expect((body['buyerName'], body['number'], body['total'], body['accountId']), ('أحمد', '12', 900000.0, accountId));
+      for (final gone in ['amount', 'discount', 'taxType', 'saleEntryId']) {
+        expect(body.containsKey(gone), isFalse);
+      }
     });
 
     testWidgets('AC-42.1: an invoice may go on a sale already recorded, so it counts once', (tester) async {
@@ -139,65 +123,34 @@ void main() {
       await tester.enterText(find.byKey(SalesInvoiceScreen.numberKey), '12');
       await tester.enterText(find.byKey(SalesInvoiceScreen.amountKey), '900000');
       await act(tester, api, () => tester.tap(find.byKey(SalesInvoiceScreen.saleKey('revenue-0'))));
-      await act(tester, api, () => tester.tap(find.byKey(SalesInvoiceScreen.taxKey('vat'))));
       await act(tester, api, () => tester.tap(find.byKey(SalesInvoiceScreen.saveKey)));
 
-      final body = api.sentMoney.single.$2;
-      expect((body['saleEntryId'], body['taxType']), ('revenue-0', 'vat'));
+      expect(api.sentMoney.single.$2['saleEntryId'], 'revenue-0');
     });
   });
 
   group('UC-056', () {
-    testWidgets('AC-32.2: the third quarter of 2026 runs from 01.07.2026 to 30.09.2026, and a refund shows in brackets', (tester) async {
-      await openVat(tester, (api) => api.vatAnswer = {'from': '2026-07-01', 'to': '2026-09-30', 'quarters': [quarter('2026-07-01', '2026-09-30')], 'exceptions': <Map<String, Object>>[]});
-
-      expect(find.textContaining('01.07.2026 – 30.09.2026'), findsOneWidget);
-      expect(tester.widget<Text>(find.byKey(VatStatementScreen.netKey('2026-07-01'))).data, '(150.00)');
-    });
-
-    testWidgets('choosing a quarter reads its first and last days', (tester) async {
+    testWidgets('AC-32.2, D20: the third quarter of 2026 takes its Excel, and nothing else, from 01.07.2026 to 30.09.2026', (tester) async {
       final api = await openVat(tester, (api) {});
 
       await act(tester, api, () => tester.tap(find.byKey(QuarterPicker.yearKey(2026))));
       await act(tester, api, () => tester.tap(find.byKey(QuarterPicker.quarterKey(3))));
+      expect(find.byKey(ReportFileButtons.buttonKey('vat-2026-07-01-2026-09-30', ReportFileKind.pdf)), findsNothing);
+      await takeExcel(tester, api, 'vat-2026-07-01-2026-09-30');
 
-      expect(api.vatQuery, 'from=2026-07-01&to=2026-09-30');
+      expect(api.sentFileReads.single, '/projects/project-0/vat-statement/xlsx?from=2026-07-01&to=2026-09-30');
     });
 
-    testWidgets('AC-32.2: a half-year reads six months', (tester) async {
+    testWidgets('AC-32.2: a half-year takes six months', (tester) async {
       final api = await openVat(tester, (api) {});
 
       await act(tester, api, () => tester.tap(find.byKey(VatStatementScreen.halfYearKey)));
       await act(tester, api, () => tester.tap(find.byKey(QuarterPicker.yearKey(2026))));
       await act(tester, api, () => tester.tap(find.byKey(VatStatementScreen.secondHalfKey)));
+      await takeExcel(tester, api, 'vat-2026-07-01-2026-12-31');
 
-      expect(api.vatQuery, 'from=2026-07-01&to=2026-12-31');
+      expect(api.sentFileReads.single, '/projects/project-0/vat-statement/xlsx?from=2026-07-01&to=2026-12-31');
     });
 
-    testWidgets('AC-32.3: what was left out shows, saying why', (tester) async {
-      await openVat(tester, (api) => api.vatAnswer = {
-        'from': '2026-07-01',
-        'to': '2026-09-30',
-        'quarters': [quarter('2026-07-01', '2026-09-30')],
-        'exceptions': [
-          {'reason': 'noVatNumber', 'entryId': 'entry-9', 'date': '2026-08-01', 'companyName': 'الأفق', 'invoiceNumber': '77', 'amount': 500},
-        ],
-      });
-
-      expect(find.byKey(VatStatementScreen.exceptionKey('entry-9')), findsOneWidget);
-      expect(find.text('en vat.noVatNumber'), findsOneWidget);
-    });
-
-    testWidgets('BR-17: Finance may declare an invoice in the next quarter', (tester) async {
-      final api = await openVat(tester, (api) => api.vatAnswer = {'from': '2026-07-01', 'to': '2026-09-30', 'quarters': [quarter('2026-07-01', '2026-09-30', purchases: [purchase('entry-1')])], 'exceptions': <Map<String, Object>>[]});
-
-      await act(tester, api, () => tester.tap(find.text('en vat.purchaseInvoices').last));
-      await act(tester, api, () => tester.tap(find.byKey(VatStatementScreen.rowKey('entry-1'))));
-      await act(tester, api, () => tester.tap(find.byKey(VatStatementScreen.declareLaterKey)));
-
-      final (path, body) = api.sentMoney.single;
-      expect(path, '/projects/project-0/entries/entry-1/vat-period');
-      expect(body['periodStart'], '2026-10-01');
-    });
   });
 }

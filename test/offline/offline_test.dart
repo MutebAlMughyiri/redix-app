@@ -18,7 +18,7 @@ void main() {
     ownerId: ownerId,
     projectId: 'project-0',
     route: 'expenses',
-    body: {'id': id, 'amount': 6000, 'invoiceDate': '2026-11-05'},
+    body: {'id': id, 'amount': 6000, 'paymentDate': '2026-11-05'},
     refusal: refusal,
   );
 
@@ -152,17 +152,6 @@ void main() {
     final tries = api.sentExpenses.length;
     await act(tester, api, () => tester.pump(Outbox.tryEvery));
     expect(api.sentExpenses, hasLength(tries));
-  });
-
-  testWidgets('a repeated invoice waits for its author, and Send anyway says it is meant', (tester) async {
-    final store = await storeHolding([pending('entry-1', refusal: 'expenses.duplicateInvoice')]);
-    final api = await openHome(tester, store);
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
-
-    await act(tester, api, () => tester.tap(find.byKey(WaitingScreen.sendAnywayKey('entry-1'))));
-
-    expect(api.sentExpenses.single['confirmDuplicate'], isTrue);
-    expect(find.byKey(WaitingScreen.emptyKey), findsOneWidget);
   });
 
   testWidgets('a refused entry can be sent again, and leaves once it lands', (tester) async {

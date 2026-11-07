@@ -454,9 +454,6 @@ void main() {
       [SettingsScreen.usersKey, SettingsScreen.categoriesKey, SettingsScreen.paymentMethodsKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.paymentMethodsKey)));
       [
-        PaymentMethodsScreen.vatRateKey,
-        PaymentMethodsScreen.vatHintKey,
-        PaymentMethodsScreen.changeVatRateKey,
         PaymentMethodsScreen.addKey,
         PaymentMethodsScreen.nameKey(cardMethod),
         PaymentMethodsScreen.menuKey(cardMethod),
@@ -468,9 +465,6 @@ void main() {
       [PaymentMethodsScreen.renameKey, PaymentMethodsScreen.disableKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(PaymentMethodsScreen.renameKey)));
       [PaymentMethodsScreen.dialogNameKey, PaymentMethodsScreen.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
-      await act(tester, api, () => tester.tap(find.byKey(PaymentMethodsScreen.changeVatRateKey)));
-      [PaymentMethodsScreen.vatPercentKey, PaymentMethodsScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
@@ -591,30 +585,15 @@ void main() {
         AddExpenseScreen.invoiceNameKey,
         AddExpenseScreen.itemKey,
         AddExpenseScreen.supplierKey,
-        AddExpenseScreen.invoiceNumberKey,
-        AddExpenseScreen.invoiceDateKey,
+        AddExpenseScreen.dateKey,
         AddExpenseScreen.productKey,
         AddExpenseScreen.unitPriceKey,
         AddExpenseScreen.quantityKey,
-        AddExpenseScreen.includingVatKey,
-        AddExpenseScreen.beforeVatKey,
         AddExpenseScreen.amountKey,
-        AddExpenseScreen.discountKey,
-        AddExpenseScreen.notTaxableKey,
-        AddExpenseScreen.afterDiscountKey,
-        AddExpenseScreen.vatKey,
-        AddExpenseScreen.totalKey,
         AddExpenseScreen.notesKey,
         AddExpenseScreen.sendKey,
         AddExpenseScreen.draftKey,
       ].forEach(expectFits);
-      await tester.ensureVisible(find.byKey(AddExpenseScreen.withoutInvoiceKey));
-      await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.withoutInvoiceKey)));
-      [AddExpenseScreen.withoutInvoiceKey, AddExpenseScreen.withoutInvoiceReasonKey].forEach(expectFits);
-      await tester.ensureVisible(find.byKey(AddExpenseScreen.withoutInvoiceKey));
-      await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.withoutInvoiceKey)));
       await tester.ensureVisible(find.byKey(AddExpenseScreen.creditNoteKey));
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.creditNoteKey)));
@@ -641,15 +620,10 @@ void main() {
         ContractorPaymentScreen.receiptKey,
         ContractorPaymentScreen.cameraKey,
         ContractorPaymentScreen.filesKey,
-        ContractorPaymentScreen.hasInvoiceKey,
         ContractorPaymentScreen.notesKey,
         ContractorPaymentScreen.sendKey,
         ContractorPaymentScreen.draftKey,
       ].forEach(expectFits);
-      await tester.ensureVisible(find.byKey(ContractorPaymentScreen.hasInvoiceKey));
-      await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(ContractorPaymentScreen.hasInvoiceKey)));
-      [ContractorPaymentScreen.invoiceNumberKey, ContractorPaymentScreen.invoiceDateKey, ContractorPaymentScreen.invoiceAmountKey, ContractorPaymentScreen.invoiceVatKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await openSettings(tester, api, projectId: runningId);

@@ -32,34 +32,18 @@ void main() {
 
   String typed(WidgetTester tester, Key key) => tester.widget<TextField>(find.byKey(key)).controller!.text;
 
-  testWidgets('AC-11.1: the five fields fill, and the supplier with that VAT number is chosen', (tester) async {
+  testWidgets('AC-11.1, D21: the date, the total and the supplier fill, from the QR code', (tester) async {
     await openExpense(tester, madeUpQr());
 
     expect(shown(tester, AddExpenseScreen.qrReadKey), 'en expenses.qrRead');
     expect(shown(tester, AddExpenseScreen.qrSellerKey), 'شركة البواني للتجارة');
     expect(shown(tester, AddExpenseScreen.qrVatNumberKey), '310823353100003');
     expect(shown(tester, AddExpenseScreen.qrTimeKey), '26.10.2026 14:25');
-    expect(shown(tester, AddExpenseScreen.qrAmountsKey), 'en expenses.total 6,000.00 · en expenses.vat 782.61');
+    expect(shown(tester, AddExpenseScreen.qrAmountsKey), 'en expenses.total 6,000.00');
     expect(typed(tester, AddExpenseScreen.amountKey), '6000');
     expect(find.text('شركة البواني للتجارة'), findsNWidgets(2));
     expect(shown(tester, AddExpenseScreen.supplierDetailsKey), contains('310823353100003'));
-    expect(find.descendant(of: find.byKey(AddExpenseScreen.invoiceDateKey), matching: find.text(formatDate(DateTime(2026, 10, 26)))), findsOneWidget);
-    expect(shown(tester, AddExpenseScreen.totalKey), '6,000.00');
-  });
-
-  testWidgets('a QR code sets the amount as including VAT, whatever was chosen', (tester) async {
-    final opened = await openExpense(tester, '');
-    await tester.ensureVisible(find.byKey(AddExpenseScreen.beforeVatKey));
-    await tester.pumpAndSettle();
-    await act(tester, opened.api, () => tester.tap(find.byKey(AddExpenseScreen.beforeVatKey)));
-
-    opened.capture.qrText = madeUpQr();
-    await tester.ensureVisible(find.byKey(AddExpenseScreen.cameraKey));
-    await tester.pumpAndSettle();
-    await act(tester, opened.api, () => tester.tap(find.byKey(AddExpenseScreen.cameraKey)));
-
-    expect(shown(tester, AddExpenseScreen.afterDiscountKey), '5,217.39');
-    expect(shown(tester, AddExpenseScreen.vatKey), '782.61');
+    expect(find.descendant(of: find.byKey(AddExpenseScreen.dateKey), matching: find.text(formatDate(DateTime(2026, 10, 26)))), findsOneWidget);
   });
 
   for (final text in ['', 'https://example.com/invoice']) {
@@ -72,7 +56,7 @@ void main() {
       expect(typed(tester, AddExpenseScreen.amountKey), isEmpty);
       await tester.enterText(find.byKey(AddExpenseScreen.amountKey), '100');
       await tester.pumpAndSettle();
-      expect(shown(tester, AddExpenseScreen.totalKey), '100.00');
+      expect(typed(tester, AddExpenseScreen.amountKey), '100');
     });
   }
 
@@ -98,44 +82,6 @@ void main() {
     await openExpense(tester, madeUpQr(), hasSupplier: false, permissions: ['readProject', 'recordEntries', 'attachFiles']);
 
     expect(find.byKey(AddExpenseScreen.qrAddSupplierKey), findsNothing);
-  });
-
-  testWidgets('AC-11.3: a QR code\'s VAT more than 0.01 from the computed VAT warns, and saving still works', (tester) async {
-    final opened = await openExpense(tester, madeUpQr(vat: '700.00'));
-
-    expect(shown(tester, AddExpenseScreen.qrVatDiffersKey), 'en expenses.qrVatDiffers');
-
-    await tester.ensureVisible(find.byKey(AddExpenseScreen.draftKey));
-    await tester.pumpAndSettle();
-    await act(tester, opened.api, () => tester.tap(find.byKey(AddExpenseScreen.draftKey)));
-
-    expect(opened.api.sentExpenses, hasLength(1));
-  });
-
-  testWidgets('AC-09.1: without an invoice there is no VAT to compare, so a code read before says nothing', (tester) async {
-    final opened = await openExpense(tester, madeUpQr(vat: '700.00'));
-    await tester.ensureVisible(find.byKey(AddExpenseScreen.withoutInvoiceKey));
-    await tester.pumpAndSettle();
-
-    await act(tester, opened.api, () => tester.tap(find.byKey(AddExpenseScreen.withoutInvoiceKey)));
-
-    expect(find.byKey(AddExpenseScreen.qrVatDiffersKey), findsNothing);
-    expect(find.byKey(AddExpenseScreen.qrReadKey), findsNothing);
-  });
-
-  testWidgets('AC-11.3: a QR code\'s VAT within 0.01 of the computed VAT does not warn', (tester) async {
-    await openExpense(tester, madeUpQr(vat: '782.61'));
-
-    expect(find.byKey(AddExpenseScreen.qrVatDiffersKey), findsNothing);
-  });
-
-  testWidgets('AC-11.3: the warning follows the fields as they change', (tester) async {
-    await openExpense(tester, madeUpQr(vat: '782.61'));
-
-    await tester.enterText(find.byKey(AddExpenseScreen.amountKey), '5000');
-    await tester.pumpAndSettle();
-
-    expect(find.byKey(AddExpenseScreen.qrVatDiffersKey), findsOneWidget);
   });
 
   testWidgets('a PDF is not looked at for a QR code, and says nothing about one', (tester) async {

@@ -270,7 +270,7 @@ void main() {
   });
 
   group('AC-19.1: fixing a rejected entry', () {
-    Future<FakeApi> openRejected(WidgetTester tester, {Map<String, Object> invoice = const {'number': '2617', 'invoiceDate': '2026-11-05', 'amountBeforeDiscount': 1000, 'discount': 0, 'amountAfterDiscount': 1000, 'vat': 150, 'total': 1150, 'isCreditNote': false}}) async {
+    Future<FakeApi> openRejected(WidgetTester tester) async {
       final api = await openEntries(tester, (api) {
         final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'بند اللياسة', subgroups: ['مواد']);
         for (final key in ['product', 'notes']) {
@@ -283,10 +283,9 @@ void main() {
           ..addEntry(status: 'rejected', rejectionReason: 'الصورة غير واضحة')
           ..entryDetails['entry-0'] = {
             'entry': {'id': 'entry-0', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 1150, 'accountId': account['id']!, 'notes': 'دفعة أولى'},
-            'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!, 'withoutInvoiceReason': '', 'customValues': '{}'},
+            'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!, 'customValues': '{}'},
             'purchase': {'supplierId': supplier['id']!, 'product': 'مواد لياسة', 'unitPrice': 0, 'quantity': 0},
             'contractorPayment': {'contractId': '00000000-0000-0000-0000-000000000000', 'isOutsideContract': false},
-            'invoice': invoice,
             'attachments': [
               {'attachmentId': 'attachment-1'},
             ],
@@ -305,19 +304,8 @@ void main() {
       await openRejected(tester);
 
       expect(tester.widget<Text>(find.byKey(AddExpenseScreen.rejectionKey)).data, 'en entries.reason: الصورة غير واضحة');
-      expect(typed(tester, AddExpenseScreen.invoiceNumberKey), '2617');
-      expect(typed(tester, AddExpenseScreen.amountKey), '1000');
+      expect(typed(tester, AddExpenseScreen.amountKey), '1150');
       expect(typed(tester, AddExpenseScreen.notesKey), 'دفعة أولى');
-    });
-
-    testWidgets('an amount typed with VAT comes back with VAT and two decimals at most, not the four the API keeps before VAT', (tester) async {
-      await openRejected(
-        tester,
-        invoice: const {'number': '2617', 'invoiceDate': '2026-11-05', 'amountBeforeDiscount': 869.5652, 'discount': 0, 'amountAfterDiscount': 869.5652, 'vat': 130.4348, 'total': 1000, 'isCreditNote': false},
-      );
-
-      expect(typed(tester, AddExpenseScreen.amountKey), '1000');
-      expect(tester.widget<SegmentedButton<bool>>(find.ancestor(of: find.byKey(AddExpenseScreen.includingVatKey), matching: find.byType(SegmentedButton<bool>))).selected, {true});
     });
 
     testWidgets('saving goes to that entry, with its own id, file and figures', (tester) async {
@@ -329,7 +317,7 @@ void main() {
 
       expect(api.sentExpensePaths.single, '/projects/project-0/expenses/entry-0');
       final body = api.sentExpenses.single;
-      expect((body['id'], body['attachmentId'], body['amount'], body['amountIncludesVat'], body['submit']), ('entry-0', 'attachment-1', 1000, false, true));
+      expect((body['id'], body['attachmentId'], body['amount'], body['paymentDate'], body['submit']), ('entry-0', 'attachment-1', 1150, '2026-11-05', true));
       expect(body['supplierId'], isNotEmpty);
       expect(body['subgroupId'], isNotEmpty);
     });

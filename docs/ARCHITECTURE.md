@@ -14,9 +14,8 @@ lib/
     settings_screen.dart    Settings: the way back to the project list, My account and, for the admin, the registered projects
     payment_method.dart     PaymentMethod, as the API answers it
     payment_methods.dart    PaymentMethods: the ApiList of one project's methods, and its changes
-    payment_methods_screen.dart  a project's VAT rate and payment methods
+    payment_methods_screen.dart  a project's payment methods
     payment_method_row.dart one method, with its menu
-    vat_rate_dialog.dart    the dialog that asks for the rate
   accounts/
     account.dart            Account and AccountType, as the API answers them
     accounts.dart           Accounts: the ApiList of one project's accounts, and its changes
@@ -49,18 +48,14 @@ lib/
   expenses/
     add_expense_screen.dart a new purchase expense
     invoice_section.dart    its invoice: the picture, and the ways to take or pick it
-    invoice_figures.dart    InvoiceFigures: the amounts shown while typing; the API computes the ones kept
-    figures_box.dart        those amounts, read-only and to two decimals
     column_value_field.dart the field of one custom column, by what it holds
     expenses.dart           Expenses: the way to record a purchase or a contractor payment, and what it was refused over
     payment_choice.dart     PaymentChoice: where an entry is paid from and how, as chosen
     payment_choices.dart    the choices of it, for any kind of expense
     entry_date.dart         pickEntryDate: an entry's date, within the project's period
-    duplicate_invoice_dialog.dart  the question when a supplier's invoice number is entered again
-    creditable_invoice.dart CreditableInvoice: an invoice a credit note can return, as the API answers it
-    creditable_invoices.dart  CreditableInvoices: the ApiList of one supplier's invoices to return
-    original_invoice_picker.dart  the field that links a credit note to its invoice
-    earlier_entry.dart      EarlierEntry: the entry an invoice number repeats, as the API answers it
+    creditable_invoice.dart CreditableInvoice: a bill a credit note can return, as the API answers it
+    creditable_invoices.dart  CreditableInvoices: the ApiList of one supplier's bills to return
+    original_invoice_picker.dart  the field that links a credit note to its bill
     invoice_qr.dart         InvoiceQr: what a Saudi e-invoice's QR code carries, read from its text
     qr_summary.dart         what was read from the code, and the offer to add its seller
   contractor_payments/

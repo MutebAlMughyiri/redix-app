@@ -14,7 +14,6 @@ With no network, enter expenses as usual. **Saved on this phone. It will be sent
 | --- | --- | --- |
 | Waiting for the network | It has not been sent yet | Nothing |
 | The server's reason | The server refused it | **Send again**, or **Delete** |
-| A repeated invoice | This supplier's invoice number is already recorded | **Send anyway** if you meant it, or **Delete** |
 
 Signing out keeps what waits on this phone. It goes when you sign in again, and nobody else who signs in here sees it.
 
@@ -30,6 +29,5 @@ Signing out keeps what waits on this phone. It goes when you sign in again, and 
 | --- | --- | --- |
 | بانتظار الشبكة | لم يُرسل بعد | لا شيء |
 | سبب من الخادم | رفضه الخادم | **إعادة الإرسال** أو **حذف** |
-| فاتورة مكررة | رقم فاتورة هذا المورد مسجّل من قبل | **إرسال رغم ذلك** إن كنت تقصده، أو **حذف** |
 
 تسجيل الخروج يبقي ما ينتظر على هذا الجهاز. يُرسل حين تسجّل الدخول مجدداً، ولا يراه غيرك ممن يدخل هنا.

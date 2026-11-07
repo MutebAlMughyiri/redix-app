@@ -2,7 +2,7 @@
 
 # UC-038, UC-039, UC-046: A file shared from another app
 
-**Purpose:** share an invoice from WhatsApp, the gallery or email, and put it on an expense entered without one, or start a new expense with it.
+**Purpose:** share an invoice from WhatsApp, the gallery or email, and put it on an expense entered without a file, or start a new expense with it. Attaching puts only the file on the expense: its status stays, an approved one included (redix-api #96, D15).
 
 **Who uses it:** whoever may enter expenses.
 
@@ -18,8 +18,7 @@ The first screen after signing in continues with the file. The capital movement 
 | With more than one project, the person chooses | `ShareScreen` | `with more than one project, the person chooses` |
 | Leaving lets go of the file | `_RedixAppState._letGoOfShared` | `leaving lets go of the file` |
 | AC-49.2: the expense matching the QR code is marked and chosen | `ShareScreen._chooseItem` | `AC-49.2: the expense matching the QR code is marked and chosen` |
-| AC-49.3: choosing shows what differs, and that approved goes back | `ShareScreen._differences` | `AC-49.3: choosing shows what differs and that approved goes back` |
-| Attaching keeps the file and puts it on the expense | `ShareScreen._attach`, `AttachableEntries.attach` | `attaching keeps the file, puts it on the expense, and lets go of it` |
-| AC-49.3: the same invoice on another expense is refused | `ShareScreen._attach` | `AC-49.3: the same invoice on another expense is refused, and the person stays` |
+| AC-49.3: choosing shows what differs from the QR code | `ShareScreen._differences` | `AC-49.3: choosing shows what differs from the QR code` |
+| D15: attaching keeps the file, puts it alone on the expense, and lets go of it | `ShareScreen._attach`, `AttachableEntries.attach` | `D15: attaching keeps the file, puts it alone on the expense, and lets go of it` |
+| BR-22: a file already on another expense is refused | `ShareScreen._attach` | `BR-22: a file already on another expense is refused, and the person stays` |
 | UC-046: a new expense opens with the shared file and its QR code | `AddExpenseScreen._start` | `UC-046: a new expense opens with the shared file and its QR code, not the camera` |
-| AC-49.3: Finance sees the invoice's total and another seller | `ApprovalsScreen._details` | `AC-49.3: the inbox shows what an attached invoice says differently` |

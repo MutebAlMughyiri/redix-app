@@ -131,12 +131,6 @@ mixin WordGetters {
   /// The word `approvals.fileFailed`.
   String get approvalsFileFailed => text('approvals.fileFailed');
 
-  /// The word `approvals.includingVat`.
-  String get approvalsIncludingVat => text('approvals.includingVat');
-
-  /// The word `approvals.invoiceTotal`.
-  String get approvalsInvoiceTotal => text('approvals.invoiceTotal');
-
   /// The word `approvals.loadFailed`.
   String get approvalsLoadFailed => text('approvals.loadFailed');
 
@@ -191,17 +185,11 @@ mixin WordGetters {
   /// The word `approvals.selectHint`.
   String get approvalsSelectHint => text('approvals.selectHint');
 
-  /// The word `approvals.sellerDiffers`.
-  String get approvalsSellerDiffers => text('approvals.sellerDiffers');
-
   /// The word `approvals.title`.
   String get approvalsTitle => text('approvals.title');
 
   /// The word `approvals.unknownEntry`.
   String get approvalsUnknownEntry => text('approvals.unknownEntry');
-
-  /// The word `approvals.withoutInvoice`.
-  String get approvalsWithoutInvoice => text('approvals.withoutInvoice');
 
   /// The word `attachments.cameraFailed`.
   String get attachmentsCameraFailed => text('attachments.cameraFailed');
@@ -764,20 +752,11 @@ mixin WordGetters {
   /// The word `contractorPayments.date`.
   String get contractorPaymentsDate => text('contractorPayments.date');
 
-  /// The word `contractorPayments.deductionNeedsReason`.
-  String get contractorPaymentsDeductionNeedsReason => text('contractorPayments.deductionNeedsReason');
-
-  /// The word `contractorPayments.deductionReason`.
-  String get contractorPaymentsDeductionReason => text('contractorPayments.deductionReason');
-
-  /// The word `contractorPayments.hasInvoice`.
-  String get contractorPaymentsHasInvoice => text('contractorPayments.hasInvoice');
+  /// The word `contractorPayments.deductionNeedsNotes`.
+  String get contractorPaymentsDeductionNeedsNotes => text('contractorPayments.deductionNeedsNotes');
 
   /// The word `contractorPayments.inside`.
   String get contractorPaymentsInside => text('contractorPayments.inside');
-
-  /// The word `contractorPayments.invoiceExplain`.
-  String get contractorPaymentsInvoiceExplain => text('contractorPayments.invoiceExplain');
 
   /// The word `contractorPayments.kind`.
   String get contractorPaymentsKind => text('contractorPayments.kind');
@@ -1136,23 +1115,11 @@ mixin WordGetters {
   /// The word `expenses.accountNotOffered`.
   String get expensesAccountNotOffered => text('expenses.accountNotOffered');
 
-  /// The word `expenses.afterDiscount`.
-  String get expensesAfterDiscount => text('expenses.afterDiscount');
-
   /// The word `expenses.alreadyReversed`.
   String get expensesAlreadyReversed => text('expenses.alreadyReversed');
 
   /// The word `expenses.amount`.
   String get expensesAmount => text('expenses.amount');
-
-  /// The word `expenses.amountBeforeVat`.
-  String get expensesAmountBeforeVat => text('expenses.amountBeforeVat');
-
-  /// The word `expenses.amountIncludingVat`.
-  String get expensesAmountIncludingVat => text('expenses.amountIncludingVat');
-
-  /// The word `expenses.beforeVat`.
-  String get expensesBeforeVat => text('expenses.beforeVat');
 
   /// The word `expenses.creditNote`.
   String get expensesCreditNote => text('expenses.creditNote');
@@ -1163,20 +1130,17 @@ mixin WordGetters {
   /// The word `expenses.creditNoteExplain`.
   String get expensesCreditNoteExplain => text('expenses.creditNoteExplain');
 
-  /// The word `expenses.creditNoteNeedsInvoice`.
-  String get expensesCreditNoteNeedsInvoice => text('expenses.creditNoteNeedsInvoice');
+  /// The word `expenses.creditNoteNeedsOriginal`.
+  String get expensesCreditNoteNeedsOriginal => text('expenses.creditNoteNeedsOriginal');
 
-  /// The word `expenses.deductionNeedsReason`.
-  String get expensesDeductionNeedsReason => text('expenses.deductionNeedsReason');
+  /// The word `expenses.date`.
+  String get expensesDate => text('expenses.date');
 
-  /// The word `expenses.discount`.
-  String get expensesDiscount => text('expenses.discount');
+  /// The word `expenses.deductionNeedsNotes`.
+  String get expensesDeductionNeedsNotes => text('expenses.deductionNeedsNotes');
 
   /// The word `expenses.duplicateExplain`.
   String get expensesDuplicateExplain => text('expenses.duplicateExplain');
-
-  /// The word `expenses.duplicateInvoice`.
-  String get expensesDuplicateInvoice => text('expenses.duplicateInvoice');
 
   /// The word `expenses.duplicateTitle`.
   String get expensesDuplicateTitle => text('expenses.duplicateTitle');
@@ -1199,29 +1163,14 @@ mixin WordGetters {
   /// The word `expenses.generalSubgroup`.
   String get expensesGeneralSubgroup => text('expenses.generalSubgroup');
 
-  /// The word `expenses.includingVat`.
-  String get expensesIncludingVat => text('expenses.includingVat');
-
   /// The word `expenses.invalidAmount`.
   String get expensesInvalidAmount => text('expenses.invalidAmount');
 
   /// The word `expenses.invalidColumnValue`.
   String get expensesInvalidColumnValue => text('expenses.invalidColumnValue');
 
-  /// The word `expenses.invalidDiscount`.
-  String get expensesInvalidDiscount => text('expenses.invalidDiscount');
-
   /// The word `expenses.invalidEntryId`.
   String get expensesInvalidEntryId => text('expenses.invalidEntryId');
-
-  /// The word `expenses.invalidInvoiceAmount`.
-  String get expensesInvalidInvoiceAmount => text('expenses.invalidInvoiceAmount');
-
-  /// The word `expenses.invalidInvoiceDate`.
-  String get expensesInvalidInvoiceDate => text('expenses.invalidInvoiceDate');
-
-  /// The word `expenses.invalidInvoiceNumber`.
-  String get expensesInvalidInvoiceNumber => text('expenses.invalidInvoiceNumber');
 
   /// The word `expenses.invalidNotes`.
   String get expensesInvalidNotes => text('expenses.invalidNotes');
@@ -1238,23 +1187,8 @@ mixin WordGetters {
   /// The word `expenses.invalidUnitPrice`.
   String get expensesInvalidUnitPrice => text('expenses.invalidUnitPrice');
 
-  /// The word `expenses.invalidWithoutInvoiceReason`.
-  String get expensesInvalidWithoutInvoiceReason => text('expenses.invalidWithoutInvoiceReason');
-
   /// The word `expenses.invoiceAlreadyAttached`.
   String get expensesInvoiceAlreadyAttached => text('expenses.invoiceAlreadyAttached');
-
-  /// The word `expenses.invoiceAndReason`.
-  String get expensesInvoiceAndReason => text('expenses.invoiceAndReason');
-
-  /// The word `expenses.invoiceDate`.
-  String get expensesInvoiceDate => text('expenses.invoiceDate');
-
-  /// The word `expenses.invoiceNumber`.
-  String get expensesInvoiceNumber => text('expenses.invoiceNumber');
-
-  /// The word `expenses.invoiceRequired`.
-  String get expensesInvoiceRequired => text('expenses.invoiceRequired');
 
   /// The word `expenses.item`.
   String get expensesItem => text('expenses.item');
@@ -1280,12 +1214,6 @@ mixin WordGetters {
   /// The word `expenses.noCreditableInvoice`.
   String get expensesNoCreditableInvoice => text('expenses.noCreditableInvoice');
 
-  /// The word `expenses.noOriginalInvoice`.
-  String get expensesNoOriginalInvoice => text('expenses.noOriginalInvoice');
-
-  /// The word `expenses.notTaxable`.
-  String get expensesNotTaxable => text('expenses.notTaxable');
-
   /// The word `expenses.notYourEntry`.
   String get expensesNotYourEntry => text('expenses.notYourEntry');
 
@@ -1294,9 +1222,6 @@ mixin WordGetters {
 
   /// The word `expenses.originalInvoice`.
   String get expensesOriginalInvoice => text('expenses.originalInvoice');
-
-  /// The word `expenses.paymentDate`.
-  String get expensesPaymentDate => text('expenses.paymentDate');
 
   /// The word `expenses.paymentMethod`.
   String get expensesPaymentMethod => text('expenses.paymentMethod');
@@ -1319,17 +1244,11 @@ mixin WordGetters {
   /// The word `expenses.qrUnreadable`.
   String get expensesQrUnreadable => text('expenses.qrUnreadable');
 
-  /// The word `expenses.qrVatDiffers`.
-  String get expensesQrVatDiffers => text('expenses.qrVatDiffers');
-
   /// The word `expenses.quantity`.
   String get expensesQuantity => text('expenses.quantity');
 
   /// The word `expenses.reasonRequired`.
   String get expensesReasonRequired => text('expenses.reasonRequired');
-
-  /// The word `expenses.receiptRequired`.
-  String get expensesReceiptRequired => text('expenses.receiptRequired');
 
   /// The word `expenses.refused`.
   String get expensesRefused => text('expenses.refused');
@@ -1339,9 +1258,6 @@ mixin WordGetters {
 
   /// The word `expenses.returnable`.
   String get expensesReturnable => text('expenses.returnable');
-
-  /// The word `expenses.saveAnyway`.
-  String get expensesSaveAnyway => text('expenses.saveAnyway');
 
   /// The word `expenses.saveDraft`.
   String get expensesSaveDraft => text('expenses.saveDraft');
@@ -1387,15 +1303,6 @@ mixin WordGetters {
 
   /// The word `expenses.unknownSupplier`.
   String get expensesUnknownSupplier => text('expenses.unknownSupplier');
-
-  /// The word `expenses.vat`.
-  String get expensesVat => text('expenses.vat');
-
-  /// The word `expenses.withoutInvoice`.
-  String get expensesWithoutInvoice => text('expenses.withoutInvoice');
-
-  /// The word `expenses.withoutInvoiceReason`.
-  String get expensesWithoutInvoiceReason => text('expenses.withoutInvoiceReason');
 
   /// The word `liquidation.amount`.
   String get liquidationAmount => text('liquidation.amount');
@@ -1550,9 +1457,6 @@ mixin WordGetters {
   /// The word `offline.sendAgain`.
   String get offlineSendAgain => text('offline.sendAgain');
 
-  /// The word `offline.sendAnyway`.
-  String get offlineSendAnyway => text('offline.sendAnyway');
-
   /// The word `offline.title`.
   String get offlineTitle => text('offline.title');
 
@@ -1607,9 +1511,6 @@ mixin WordGetters {
   /// The word `partners.userTaken`.
   String get partnersUserTaken => text('partners.userTaken');
 
-  /// The word `paymentMethods.changeVatRate`.
-  String get paymentMethodsChangeVatRate => text('paymentMethods.changeVatRate');
-
   /// The word `paymentMethods.delete`.
   String get paymentMethodsDelete => text('paymentMethods.delete');
 
@@ -1663,15 +1564,6 @@ mixin WordGetters {
 
   /// The word `paymentMethods.title`.
   String get paymentMethodsTitle => text('paymentMethods.title');
-
-  /// The word `paymentMethods.vatHint`.
-  String get paymentMethodsVatHint => text('paymentMethods.vatHint');
-
-  /// The word `paymentMethods.vatPercent`.
-  String get paymentMethodsVatPercent => text('paymentMethods.vatPercent');
-
-  /// The word `paymentMethods.vatRate`.
-  String get paymentMethodsVatRate => text('paymentMethods.vatRate');
 
   /// The word `permissions.addSupplier`.
   String get permissionsAddSupplier => text('permissions.addSupplier');
@@ -1801,9 +1693,6 @@ mixin WordGetters {
 
   /// The word `projects.invalidName`.
   String get projectsInvalidName => text('projects.invalidName');
-
-  /// The word `projects.invalidVatRate`.
-  String get projectsInvalidVatRate => text('projects.invalidVatRate');
 
   /// The word `projects.liquidateFirst`.
   String get projectsLiquidateFirst => text('projects.liquidateFirst');
@@ -2045,9 +1934,6 @@ mixin WordGetters {
   /// The word `reports.grandTotal`.
   String get reportsGrandTotal => text('reports.grandTotal');
 
-  /// The word `reports.invoiceImages`.
-  String get reportsInvoiceImages => text('reports.invoiceImages');
-
   /// The word `reports.invoiceNumber`.
   String get reportsInvoiceNumber => text('reports.invoiceNumber');
 
@@ -2150,9 +2036,6 @@ mixin WordGetters {
   /// The word `revenue.amount`.
   String get revenueAmount => text('revenue.amount');
 
-  /// The word `revenue.amountBeforeTax`.
-  String get revenueAmountBeforeTax => text('revenue.amountBeforeTax');
-
   /// The word `revenue.buyer`.
   String get revenueBuyer => text('revenue.buyer');
 
@@ -2164,9 +2047,6 @@ mixin WordGetters {
 
   /// The word `revenue.description`.
   String get revenueDescription => text('revenue.description');
-
-  /// The word `revenue.discount`.
-  String get revenueDiscount => text('revenue.discount');
 
   /// The word `revenue.duplicateInvoice`.
   String get revenueDuplicateInvoice => text('revenue.duplicateInvoice');
@@ -2185,9 +2065,6 @@ mixin WordGetters {
 
   /// The word `revenue.invalidDate`.
   String get revenueInvalidDate => text('revenue.invalidDate');
-
-  /// The word `revenue.invalidDiscount`.
-  String get revenueInvalidDiscount => text('revenue.invalidDiscount');
 
   /// The word `revenue.invalidInvoiceDate`.
   String get revenueInvalidInvoiceDate => text('revenue.invalidInvoiceDate');
@@ -2228,12 +2105,6 @@ mixin WordGetters {
   /// The word `revenue.noConnection`.
   String get revenueNoConnection => text('revenue.noConnection');
 
-  /// The word `revenue.quarter`.
-  String get revenueQuarter => text('revenue.quarter');
-
-  /// The word `revenue.refundDifference`.
-  String get revenueRefundDifference => text('revenue.refundDifference');
-
   /// The word `revenue.refused`.
   String get revenueRefused => text('revenue.refused');
 
@@ -2246,20 +2117,11 @@ mixin WordGetters {
   /// The word `revenue.saved`.
   String get revenueSaved => text('revenue.saved');
 
-  /// The word `revenue.statementRefund`.
-  String get revenueStatementRefund => text('revenue.statementRefund');
-
-  /// The word `revenue.taxRealEstateTransaction`.
-  String get revenueTaxRealEstateTransaction => text('revenue.taxRealEstateTransaction');
-
-  /// The word `revenue.taxType`.
-  String get revenueTaxType => text('revenue.taxType');
-
-  /// The word `revenue.taxVat`.
-  String get revenueTaxVat => text('revenue.taxVat');
-
   /// The word `revenue.title`.
   String get revenueTitle => text('revenue.title');
+
+  /// The word `revenue.total`.
+  String get revenueTotal => text('revenue.total');
 
   /// The word `revenue.unknownAccount`.
   String get revenueUnknownAccount => text('revenue.unknownAccount');
@@ -2297,9 +2159,6 @@ mixin WordGetters {
   /// The word `share.chooseItem`.
   String get shareChooseItem => text('share.chooseItem');
 
-  /// The word `share.duplicateInvoice`.
-  String get shareDuplicateInvoice => text('share.duplicateInvoice');
-
   /// The word `share.empty`.
   String get shareEmpty => text('share.empty');
 
@@ -2308,21 +2167,6 @@ mixin WordGetters {
 
   /// The word `share.expense`.
   String get shareExpense => text('share.expense');
-
-  /// The word `share.goesBack`.
-  String get shareGoesBack => text('share.goesBack');
-
-  /// The word `share.invalidAmount`.
-  String get shareInvalidAmount => text('share.invalidAmount');
-
-  /// The word `share.invalidInvoiceDate`.
-  String get shareInvalidInvoiceDate => text('share.invalidInvoiceDate');
-
-  /// The word `share.invalidInvoiceNumber`.
-  String get shareInvalidInvoiceNumber => text('share.invalidInvoiceNumber');
-
-  /// The word `share.invalidVatNumber`.
-  String get shareInvalidVatNumber => text('share.invalidVatNumber');
 
   /// The word `share.invoiceAlreadyAttached`.
   String get shareInvoiceAlreadyAttached => text('share.invoiceAlreadyAttached');
@@ -2657,23 +2501,8 @@ mixin WordGetters {
   /// The word `users.weakPassword`.
   String get usersWeakPassword => text('users.weakPassword');
 
-  /// The word `vat.afterDiscount`.
-  String get vatAfterDiscount => text('vat.afterDiscount');
-
-  /// The word `vat.creditNotes`.
-  String get vatCreditNotes => text('vat.creditNotes');
-
   /// The word `vat.custom`.
   String get vatCustom => text('vat.custom');
-
-  /// The word `vat.declareLater`.
-  String get vatDeclareLater => text('vat.declareLater');
-
-  /// The word `vat.declaredLater`.
-  String get vatDeclaredLater => text('vat.declaredLater');
-
-  /// The word `vat.exceptions`.
-  String get vatExceptions => text('vat.exceptions');
 
   /// The word `vat.from`.
   String get vatFrom => text('vat.from');
@@ -2696,35 +2525,11 @@ mixin WordGetters {
   /// The word `vat.loadFailed`.
   String get vatLoadFailed => text('vat.loadFailed');
 
-  /// The word `vat.netDue`.
-  String get vatNetDue => text('vat.netDue');
-
-  /// The word `vat.netRefund`.
-  String get vatNetRefund => text('vat.netRefund');
-
   /// The word `vat.noConnection`.
   String get vatNoConnection => text('vat.noConnection');
 
-  /// The word `vat.noExceptions`.
-  String get vatNoExceptions => text('vat.noExceptions');
-
-  /// The word `vat.noFile`.
-  String get vatNoFile => text('vat.noFile');
-
-  /// The word `vat.noVatNumber`.
-  String get vatNoVatNumber => text('vat.noVatNumber');
-
-  /// The word `vat.notTaxable`.
-  String get vatNotTaxable => text('vat.notTaxable');
-
   /// The word `vat.pending`.
   String get vatPending => text('vat.pending');
-
-  /// The word `vat.purchaseInvoices`.
-  String get vatPurchaseInvoices => text('vat.purchaseInvoices');
-
-  /// The word `vat.purchasesVat`.
-  String get vatPurchasesVat => text('vat.purchasesVat');
 
   /// The word `vat.q1`.
   String get vatQ1 => text('vat.q1');
@@ -2741,14 +2546,8 @@ mixin WordGetters {
   /// The word `vat.quarter`.
   String get vatQuarter => text('vat.quarter');
 
-  /// The word `vat.realEstateTax`.
-  String get vatRealEstateTax => text('vat.realEstateTax');
-
   /// The word `vat.refused`.
   String get vatRefused => text('vat.refused');
-
-  /// The word `vat.salesVat`.
-  String get vatSalesVat => text('vat.salesVat');
 
   /// The word `vat.title`.
   String get vatTitle => text('vat.title');
@@ -2758,7 +2557,4 @@ mixin WordGetters {
 
   /// The word `vat.total`.
   String get vatTotal => text('vat.total');
-
-  /// The word `vat.withoutInvoice`.
-  String get vatWithoutInvoice => text('vat.withoutInvoice');
 }

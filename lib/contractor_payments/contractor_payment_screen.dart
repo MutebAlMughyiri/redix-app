@@ -12,10 +12,8 @@ import '../contracts/contract.dart';
 import '../contracts/contracts.dart';
 import '../expenses/add_expense_screen.dart';
 import '../expenses/column_value_field.dart';
-import '../expenses/duplicate_invoice_dialog.dart';
 import '../expenses/entry_date.dart';
 import '../expenses/expenses.dart';
-import '../expenses/invoice_figures.dart';
 import '../expenses/invoice_section.dart';
 import '../expenses/payment_choice.dart';
 import '../expenses/payment_choices.dart';
@@ -150,24 +148,6 @@ class ContractorPaymentScreen extends StatefulWidget {
   /// The button that opens the phone's files.
   static const filesKey = AddExpenseScreen.filesKey;
 
-  /// Why a deduction is deducted, in place of the receipt.
-  static const deductionReasonKey = Key('contractorPayment.deductionReason');
-
-  /// The switch that says it has a tax invoice.
-  static const hasInvoiceKey = Key('contractorPayment.hasInvoice');
-
-  /// The tax invoice's number.
-  static const invoiceNumberKey = Key('contractorPayment.invoiceNumber');
-
-  /// The tax invoice's date.
-  static const invoiceDateKey = Key('contractorPayment.invoiceDate');
-
-  /// The tax invoice's amount before VAT.
-  static const invoiceAmountKey = Key('contractorPayment.invoiceAmount');
-
-  /// The tax invoice's VAT, computed.
-  static const invoiceVatKey = Key('contractorPayment.invoiceVat');
-
   /// The notes.
   static const notesKey = Key('contractorPayment.notes');
 
@@ -193,9 +173,6 @@ class ContractorPaymentScreen extends StatefulWidget {
 class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
   late final _entryId = widget.editingId.isEmpty ? const Uuid().v7() : widget.editingId;
   final _amount = TextEditingController();
-  final _deductionReason = TextEditingController();
-  final _invoiceNumber = TextEditingController();
-  final _invoiceAmount = TextEditingController();
   final _notes = TextEditingController();
   final _payment = PaymentChoice();
   final _customValues = <String, String>{};
@@ -204,9 +181,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
   var _columns = <ItemColumn>[];
   var _columnsMessage = '';
   var _date = DateTime.now();
-  var _invoiceDate = DateTime.now();
   var _isOutside = false;
-  var _hasInvoice = false;
   var _receipt = PickedFile.none();
   var _receiptMessage = '';
   var _attachmentId = '';
@@ -236,25 +211,16 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
     final entry = held['entry'] as Map<String, dynamic>;
     final expense = held['expense'] as Map<String, dynamic>;
     final payment = held['contractorPayment'] as Map<String, dynamic>;
-    final invoice = held['invoice'] as Map<String, dynamic>;
     final files = held['attachments'] as List<dynamic>;
     final contracts = widget.contracts.all.where((contract) => contract.id == payment['contractId']);
-    final number = invoice['number'] as String? ?? '';
     setState(() {
       _amount.text = formatPlain((entry['amount'] as num).toDouble());
       _date = DateTime.parse(entry['entryDate'] as String);
       _isOutside = payment['isOutsideContract'] as bool;
       _notes.text = entry['notes'] as String;
-      _deductionReason.text = expense['withoutInvoiceReason'] as String;
       _payment
         ..accountId = entry['accountId'] as String
         ..paymentMethodId = expense['paymentMethodId'] as String;
-      if (number.isNotEmpty) {
-        _hasInvoice = true;
-        _invoiceNumber.text = number;
-        _invoiceDate = DateTime.parse(invoice['invoiceDate'] as String);
-        _invoiceAmount.text = formatPlain((invoice['amountBeforeDiscount'] as num).toDouble());
-      }
       if (files.isNotEmpty) {
         _attachmentId = (files.first as Map<String, dynamic>)['attachmentId'] as String;
       }
@@ -275,7 +241,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
 
   @override
   void dispose() {
-    for (final controller in [_amount, _deductionReason, _invoiceNumber, _invoiceAmount, _notes]) {
+    for (final controller in [_amount, _notes]) {
       controller.dispose();
     }
     super.dispose();
@@ -287,10 +253,6 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
   }
 
   bool get _isDeduction => _typed(_amount) < 0;
-
-  bool get _sendsInvoice => _hasInvoice && !_isDeduction;
-
-  double get _vatPercent => _contract.supplierVatNumber.isEmpty ? 0 : widget.project.vatPercent;
 
   String _isoOf(DateTime date) => date.toIso8601String().substring(0, 10);
 
@@ -344,16 +306,10 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
     if (_amount.text.trim().isNotEmpty && parseNumber(_amount.text).isNaN) {
       return 'expenses.invalidAmount';
     }
-    if (_isDeduction && _deductionReason.text.trim().isEmpty) {
-      return 'contractorPayments.deductionNeedsReason';
-    }
-    if (_sendsInvoice && _invoiceNumber.text.trim().isEmpty) {
-      return 'expenses.invalidInvoiceNumber';
-    }
-    return _sendsInvoice && parseNumber(_invoiceAmount.text).isNaN ? 'expenses.invalidInvoiceAmount' : '';
+    return _isDeduction && _notes.text.trim().isEmpty ? 'contractorPayments.deductionNeedsNotes' : '';
   }
 
-  Map<String, Object> _body(bool submit, bool confirmDuplicate) {
+  Map<String, Object> _body(bool submit) {
     final accountId = _payment.chosenAccountIn(widget.accounts.all);
     return {
       'id': _entryId,
@@ -364,41 +320,35 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
       if (_amount.text.trim().isNotEmpty) 'amount': parseNumber(_amount.text),
       if (accountId.isNotEmpty) 'accountId': accountId,
       if (_payment.paymentMethodId.isNotEmpty) 'paymentMethodId': _payment.paymentMethodId,
-      if (_isDeduction) 'withoutInvoiceReason': _deductionReason.text else if (_attachmentId.isNotEmpty) 'attachmentId': _attachmentId,
-      if (_sendsInvoice) ...{
-        'invoiceNumber': westernDigits(_invoiceNumber.text),
-        'invoiceDate': _isoOf(_invoiceDate),
-        'invoiceAmountBeforeVat': parseNumber(_invoiceAmount.text),
-      },
+      if (!_isDeduction && _attachmentId.isNotEmpty) 'attachmentId': _attachmentId,
       'notes': _notes.text,
       'customValues': ItemColumn.valuesToSend(_columns, _customValues),
       'submit': submit,
-      if (confirmDuplicate) 'confirmDuplicate': true,
     };
   }
 
-  Future<String> _record(bool submit, bool confirmDuplicate) async {
+  Future<String> _record(bool submit) async {
     if (_whatIsWrong.isNotEmpty) {
       return _whatIsWrong;
     }
     if (!_isDeduction && !_receipt.isNone && _attachmentId.isEmpty) {
       final refusal = await widget.attachments.keep(_receipt);
       if (refusal == 'attachments.noConnection') {
-        return widget.expenses.keepContractorPayment(_body(submit, confirmDuplicate), _receipt, editing: widget.editingId);
+        return widget.expenses.keepContractorPayment(_body(submit), _receipt, editing: widget.editingId);
       }
       if (refusal.isNotEmpty) {
         return refusal;
       }
       _attachmentId = widget.attachments.kept.id;
     }
-    return widget.expenses.recordContractorPayment(_body(submit, confirmDuplicate), editing: widget.editingId);
+    return widget.expenses.recordContractorPayment(_body(submit), editing: widget.editingId);
   }
 
-  Future<void> _save(bool submit, {bool confirmDuplicate = false}) async {
+  Future<void> _save(bool submit) async {
     final words = Words.of(context);
     final messenger = ScaffoldMessenger.of(context);
     setState(() => _saving = true);
-    final refusal = await _record(submit, confirmDuplicate);
+    final refusal = await _record(submit);
     if (!mounted) {
       return;
     }
@@ -409,19 +359,11 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
       context.pop();
       return;
     }
-    final isDuplicate = refusal == 'expenses.duplicateInvoice';
     setState(() {
       _saving = false;
-      _message = isDuplicate ? '' : refusal;
+      _message = refusal;
       _refusedColumn = widget.expenses.refusedColumnKey;
     });
-    if (isDuplicate) {
-      final earlier = widget.expenses.earlier;
-      showDialog<void>(
-        context: context,
-        builder: (_) => DuplicateInvoiceDialog(earlier: earlier, onConfirm: () => _save(submit, confirmDuplicate: true)),
-      );
-    }
   }
 
   Widget _textField(Key key, TextEditingController controller, String label, {bool isNumber = false, bool isSigned = false, int maxLines = 1}) =>
@@ -475,8 +417,9 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
     PaymentChoices(choice: _payment, accounts: widget.accounts, paymentMethods: widget.paymentMethods, onChanged: () => setState(() {}), onRetry: _readListsAgain),
   ];
 
+  /// The receipt, which is optional (D16); a deduction moves no money, so it has none and says why in its notes (D14).
   List<Widget> _theReceipt(Words words) => _isDeduction
-      ? [_textField(ContractorPaymentScreen.deductionReasonKey, _deductionReason, words.contractorPaymentsDeductionReason, maxLines: 2)]
+      ? []
       : [
           Text(words.contractorPaymentsReceipt, key: ContractorPaymentScreen.receiptKey, style: Theme.of(context).textTheme.titleSmall),
           InvoiceSection(
@@ -487,25 +430,6 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
             onCamera: () => _takeFrom(widget.capture.fromCamera),
             onFiles: () => _takeFrom(widget.capture.fromFiles),
           ),
-          SwitchListTile(
-            key: ContractorPaymentScreen.hasInvoiceKey,
-            contentPadding: EdgeInsets.zero,
-            title: Text(words.contractorPaymentsHasInvoice),
-            subtitle: Text(words.contractorPaymentsInvoiceExplain),
-            value: _hasInvoice,
-            onChanged: (hasInvoice) => setState(() => _hasInvoice = hasInvoice),
-          ),
-          if (_hasInvoice) ...[
-            TwoFields(
-              _textField(ContractorPaymentScreen.invoiceNumberKey, _invoiceNumber, words.expensesInvoiceNumber),
-              PickerField(key: ContractorPaymentScreen.invoiceDateKey, label: words.expensesInvoiceDate, value: formatDate(_invoiceDate), onTap: () => _chooseDate(_invoiceDate, (date) => _invoiceDate = date)),
-            ),
-            _textField(ContractorPaymentScreen.invoiceAmountKey, _invoiceAmount, words.expensesAmountBeforeVat, isNumber: true),
-            Text(
-              '${words.expensesVat} ${formatPlain(_vatPercent)}%: ${formatMoney(InvoiceFigures.of(amount: _typed(_invoiceAmount), includesVat: false, discount: 0, vatRate: _vatPercent / 100).vat)}',
-              key: ContractorPaymentScreen.invoiceVatKey,
-            ),
-          ],
         ];
 
   List<Widget> _itemsOwnFields(Words words) => [
@@ -541,7 +465,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
           children: [
             FormSection(_theContract(words)),
             FormSection(_thePayment(words)),
-            FormSection(_theReceipt(words)),
+            if (!_isDeduction) FormSection(_theReceipt(words)),
             if (ownFields.isNotEmpty) FormSection(ownFields),
             const SizedBox(height: 16),
             _textField(ContractorPaymentScreen.notesKey, _notes, columnLabel(context, _columns, 'notes', words.expensesNotes), maxLines: 2),

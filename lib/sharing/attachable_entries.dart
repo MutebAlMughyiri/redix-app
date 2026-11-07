@@ -22,12 +22,6 @@ class AttachableEntries extends ApiList<AttachableEntry> {
     return load();
   }
 
-  /// Puts the file [attachmentId] on [entry] as the invoice numbered [number], dated [date], with what [qr] says. Returns an empty string once attached, otherwise the word key of the refusal.
-  Future<String> attach(AttachableEntry entry, String attachmentId, String number, DateTime date, InvoiceQr qr) => change('/projects/$projectId/entries/${entry.id}/invoice', {
-    'attachmentId': attachmentId,
-    'invoiceNumber': number,
-    'invoiceDate': date.toIso8601String().substring(0, 10),
-    'total': qr.total,
-    'sellerVatNumber': qr.vatNumber,
-  });
+  /// Puts the file [attachmentId] on [entry], and changes nothing else (D15). Returns an empty string once attached, otherwise the word key of the refusal.
+  Future<String> attach(AttachableEntry entry, String attachmentId) => change('/projects/$projectId/entries/${entry.id}/invoice', {'attachmentId': attachmentId});
 }

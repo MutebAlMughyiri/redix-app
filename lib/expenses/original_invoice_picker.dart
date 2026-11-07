@@ -8,7 +8,7 @@ import '../words/words.dart';
 import 'creditable_invoice.dart';
 import 'creditable_invoices.dart';
 
-/// The field that links a credit note to its original invoice, opening a sheet of what that supplier's invoices have left to return, or none.
+/// The field that links a credit note to the bill it returns, which it needs (D13), opening a sheet of what that supplier's bills have left to return.
 class OriginalInvoicePicker extends StatelessWidget {
   /// The field showing [chosen], choosing among [invoices] of the supplier [supplierId] and answering [onChanged].
   const OriginalInvoicePicker({super.key, required this.invoices, required this.supplierId, required this.chosen, required this.onChanged});
@@ -19,13 +19,13 @@ class OriginalInvoicePicker extends StatelessWidget {
   /// The credit note's supplier.
   final String supplierId;
 
-  /// The invoice chosen; none when it is not linked.
+  /// The bill chosen; none until one is.
   final CreditableInvoice chosen;
 
-  /// Called with the invoice chosen, or none.
+  /// Called with the bill chosen.
   final ValueChanged<CreditableInvoice> onChanged;
 
-  /// The choice of the invoice of the entry [id]; of none when that is empty.
+  /// The choice of the bill of the entry [id].
   static Key optionKey(String id) => Key('originalInvoice.option.$id');
 
   Future<void> _choose(BuildContext context) async {
@@ -41,15 +41,14 @@ class OriginalInvoicePicker extends StatelessWidget {
           heightFactor: 0.9,
           child: Column(
             children: [
-              ListTile(key: optionKey(''), title: Text(words.expensesNoOriginalInvoice), onTap: () => Navigator.of(sheet).pop(CreditableInvoice.none())),
               Expanded(
                 child: ApiListBody(
                   list: invoices,
                   emptyText: words.expensesNoCreditableInvoice,
                   itemBuilder: (invoice) => ListTile(
                     key: optionKey(invoice.entryId),
-                    title: Text(invoice.number),
-                    subtitle: Text('${formatDate(invoice.invoiceDate)} · ${words.expensesReturnable} ${formatMoney(invoice.returnable)}'),
+                    title: Text(invoice.label),
+                    subtitle: Text('${formatDate(invoice.date)} · ${words.expensesReturnable} ${formatMoney(invoice.returnable)}'),
                     onTap: () => Navigator.of(sheet).pop(invoice),
                   ),
                 ),
@@ -67,6 +66,6 @@ class OriginalInvoicePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    return PickerField(label: words.expensesOriginalInvoice, value: chosen.isNone ? words.expensesNoOriginalInvoice : chosen.number, onTap: () => _choose(context));
+    return PickerField(label: words.expensesOriginalInvoice, value: chosen.label, onTap: () => _choose(context));
   }
 }

@@ -28,29 +28,15 @@ void main() {
     await openInbox(tester, (api) {
       api
         ..addPending()
-        ..addPending(amount: 500, vat: 0, withoutInvoiceReason: 'شراء من السوق', attachmentId: '');
+        ..addPending(amount: 500, notes: 'شراء من السوق', attachmentId: '');
     });
 
     expect(tester.getTopLeft(find.byKey(ApprovalsScreen.cardKey('entry-0'))).dy, lessThan(tester.getTopLeft(find.byKey(ApprovalsScreen.cardKey('entry-1'))).dy));
     expect(find.text('شركة البواني'), findsNWidgets(2));
     expect(find.text('1,150.00'), findsOneWidget);
-    expect(find.text('en approvals.includingVat 150.00'), findsOneWidget);
-    expect(find.text('en approvals.withoutInvoice: شراء من السوق'), findsOneWidget);
+    expect(find.text('شراء من السوق'), findsOneWidget);
     expect(find.byKey(ApprovalsScreen.fileKey('entry-0')), findsOneWidget);
     expect(find.byKey(ApprovalsScreen.fileKey('entry-1')), findsNothing);
-  });
-
-  testWidgets('AC-49.3: the inbox shows what an attached invoice says differently', (tester) async {
-    await openInbox(tester, (api) {
-      api
-        ..addPending(amount: 100, invoiceTotal: 150, sellerVatNumber: '300000000000099', supplierVatNumber: '300000000000003')
-        ..addPending();
-    });
-
-    expect(find.byKey(ApprovalsScreen.invoiceTotalKey('entry-0')), findsOneWidget);
-    expect(find.byKey(ApprovalsScreen.sellerDiffersKey('entry-0')), findsOneWidget);
-    expect(find.byKey(ApprovalsScreen.invoiceTotalKey('entry-1')), findsNothing);
-    expect(find.byKey(ApprovalsScreen.sellerDiffersKey('entry-1')), findsNothing);
   });
 
   testWidgets('nothing waiting says so', (tester) async {

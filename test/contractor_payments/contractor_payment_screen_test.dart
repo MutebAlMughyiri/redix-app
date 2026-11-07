@@ -8,15 +8,14 @@ import 'package:redix/contractor_payments/contractor_payment_screen.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/ui/confirm_dialog.dart';
 
 import '../app_harness.dart';
 
 void main() {
   /// A project with a contract of 34,000 with 30,000 paid, a disabled one and one of open value, opened as far as a new payment.
-  Future<({FakeApi api, FakeCapture capture, String running, String disabled, String open, String method})> openPayment(WidgetTester tester, {void Function(FakeApi api)? arrange, double pending = 0, String vatNumber = '300000000000003', List<String> permissions = field}) async {
+  Future<({FakeApi api, FakeCapture capture, String running, String disabled, String open, String method})> openPayment(WidgetTester tester, {void Function(FakeApi api)? arrange, double pending = 0, List<String> permissions = field}) async {
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة الغربية']);
-    final running = api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000, pending: pending, supplierVatNumber: vatNumber);
+    final running = api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000, pending: pending);
     final disabled = api.addContract('project-0', 'مبلط قديم', value: 1000, isActive: false);
     final open = api.addContract('project-0', 'دهان داخلي', isOpenValue: true, paid: 12000);
     final method = api.addPaymentMethod('project-0', 'شبكة');
@@ -112,7 +111,7 @@ void main() {
     expect(opened.api.sentContractorPayments.single['isOutsideContract'], isTrue);
   });
 
-  testWidgets('AC-14.1: a deduction is a negative amount, which raises what remains, and says why in place of the receipt', (tester) async {
+  testWidgets('AC-14.1, D14: a deduction is a negative amount, which raises what remains, has no receipt, and says why in its notes', (tester) async {
     final opened = await openPayment(tester);
     await pickContract(tester, opened.api, opened.running);
 
@@ -120,38 +119,43 @@ void main() {
 
     expect(shown(tester, ContractorPaymentScreen.remainingKey), '4,136.00');
     expect(find.byKey(ContractorPaymentScreen.cameraKey), findsNothing);
-    expect(find.byKey(ContractorPaymentScreen.hasInvoiceKey), findsNothing);
     expect(tester.widget<TextField>(find.byKey(ContractorPaymentScreen.amountKey)).keyboardType, const TextInputType.numberWithOptions(decimal: true, signed: true));
 
     await tapVisible(tester, opened.api, ContractorPaymentScreen.sendKey);
     expect(opened.api.sentContractorPayments, isEmpty);
-    expect(shown(tester, ContractorPaymentScreen.messageKey), 'en contractorPayments.deductionNeedsReason');
+    expect(shown(tester, ContractorPaymentScreen.messageKey), 'en contractorPayments.deductionNeedsNotes');
 
-    await type(tester, ContractorPaymentScreen.deductionReasonKey, 'خصم من المبلط');
+    await type(tester, ContractorPaymentScreen.notesKey, 'خصم من المبلط');
     await tapVisible(tester, opened.api, ContractorPaymentScreen.sendKey);
 
     final sent = opened.api.sentContractorPayments.single;
     expect(sent['amount'], -136);
-    expect(sent['withoutInvoiceReason'], 'خصم من المبلط');
+    expect(sent['notes'], 'خصم من المبلط');
     expect(sent.containsKey('attachmentId'), isFalse);
   });
 
-  testWidgets('AC-12.1: sending with no receipt is refused with a message, and the receipt taken is kept and sent', (tester) async {
-    final opened = await openPayment(tester, arrange: (api) => api.expenseAnswer = (status: 400, body: const {'code': 'receiptRequired'}));
+  testWidgets('D16: a payment is sent with no receipt', (tester) async {
+    final opened = await openPayment(tester);
     await pickContract(tester, opened.api, opened.running);
     await type(tester, ContractorPaymentScreen.amountKey, '3000');
 
     await tapVisible(tester, opened.api, ContractorPaymentScreen.sendKey);
-    expect(shown(tester, ContractorPaymentScreen.messageKey), 'en expenses.receiptRequired');
 
+    final sent = opened.api.sentContractorPayments.single;
+    expect((sent.containsKey('attachmentId'), sent['submit']), (false, true));
+  });
+
+  testWidgets('a receipt taken is kept and sent', (tester) async {
+    final opened = await openPayment(tester);
     opened.capture.camera = PickedFile('receipt.png', '/phone/receipt.png', Uint8List.fromList(onePixelPng));
+    await pickContract(tester, opened.api, opened.running);
+    await type(tester, ContractorPaymentScreen.amountKey, '3000');
+
     await tapVisible(tester, opened.api, ContractorPaymentScreen.cameraKey);
     expect(find.byKey(AddExpenseScreen.invoicePictureKey), findsOneWidget);
-    opened.api.expenseAnswer = (status: 201, body: const {});
     await tapVisible(tester, opened.api, ContractorPaymentScreen.sendKey);
 
-    expect(opened.api.sentContractorPayments.last['attachmentId'], startsWith('attachment-'));
-    expect(opened.api.sentContractorPayments.last['submit'], isTrue);
+    expect(opened.api.sentContractorPayments.single['attachmentId'], startsWith('attachment-'));
   });
 
   testWidgets('a draft sends what is chosen, and the date as the payment date', (tester) async {
@@ -183,45 +187,6 @@ void main() {
     expect(find.byKey(ContractPicker.optionKey(opened.disabled)), findsNothing);
   });
 
-  testWidgets('a tax invoice sends its number, date and amount, and shows the VAT the API will compute', (tester) async {
-    final opened = await openPayment(tester);
-    await pickContract(tester, opened.api, opened.running);
-    await type(tester, ContractorPaymentScreen.amountKey, '1150');
-
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.hasInvoiceKey);
-    await type(tester, ContractorPaymentScreen.invoiceNumberKey, '٧٧');
-    await type(tester, ContractorPaymentScreen.invoiceAmountKey, '1000');
-
-    expect(shown(tester, ContractorPaymentScreen.invoiceVatKey), 'en expenses.vat 15%: 150.00');
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.draftKey);
-    final sent = opened.api.sentContractorPayments.single;
-    expect(sent['invoiceNumber'], '77');
-    expect(sent['invoiceAmountBeforeVat'], 1000);
-    expect(sent['invoiceDate'], isNotNull);
-  });
-
-  testWidgets('a contractor with no VAT number has no VAT on its tax invoice', (tester) async {
-    final opened = await openPayment(tester, vatNumber: '');
-    await pickContract(tester, opened.api, opened.running);
-
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.hasInvoiceKey);
-    await type(tester, ContractorPaymentScreen.invoiceAmountKey, '1000');
-
-    expect(shown(tester, ContractorPaymentScreen.invoiceVatKey), 'en expenses.vat 0%: 0.00');
-  });
-
-  testWidgets('a tax invoice with no number sends nothing, so it can never be lost unseen', (tester) async {
-    final opened = await openPayment(tester);
-    await pickContract(tester, opened.api, opened.running);
-    await type(tester, ContractorPaymentScreen.amountKey, '1150');
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.hasInvoiceKey);
-
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.draftKey);
-
-    expect(opened.api.sentContractorPayments, isEmpty);
-    expect(shown(tester, ContractorPaymentScreen.messageKey), 'en expenses.invalidInvoiceNumber');
-  });
-
   testWidgets('what is no number is refused here and never sent', (tester) async {
     final opened = await openPayment(tester);
     await pickContract(tester, opened.api, opened.running);
@@ -247,26 +212,6 @@ void main() {
     await tapVisible(tester, opened.api, ContractorPaymentScreen.sendKey);
 
     expect(find.text('en expenses.requiredColumnMissing'), findsWidgets);
-  });
-
-  testWidgets('AC-17.1: the same tax invoice again shows the earlier entry, and saves only once confirmed', (tester) async {
-    final opened = await openPayment(tester, arrange: (api) => api.expenseAnswer = (
-      status: 409,
-      body: const {'code': 'duplicateInvoice', 'earlier': {'projectName': 'غصون 6', 'invoiceDate': '2026-11-01', 'total': 1150.0}},
-    ));
-    await pickContract(tester, opened.api, opened.running);
-    await type(tester, ContractorPaymentScreen.amountKey, '1150');
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.hasInvoiceKey);
-    await type(tester, ContractorPaymentScreen.invoiceNumberKey, '77');
-    await type(tester, ContractorPaymentScreen.invoiceAmountKey, '1000');
-
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.draftKey);
-    expect(find.byKey(ConfirmDialog.subjectKey), findsOneWidget);
-
-    opened.api.expenseAnswer = (status: 201, body: const {});
-    await act(tester, opened.api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
-
-    expect(opened.api.sentContractorPayments.last['confirmDuplicate'], isTrue);
   });
 
   testWidgets('who holds no recordEntries has no way in', (tester) async {

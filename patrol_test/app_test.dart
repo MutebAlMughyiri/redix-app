@@ -404,10 +404,6 @@ void main() {
       await $(keyStartingWith('paymentMethods.menu.')).last.tap();
       await $(PaymentMethodsScreen.disableKey).tap();
       await reach($(keyStartingWith('paymentMethods.disabled.')));
-      await $(PaymentMethodsScreen.changeVatRateKey).tap();
-      await $(PaymentMethodsScreen.vatPercentKey).enterText('7.5');
-      await $(PaymentMethodsScreen.saveKey).tap();
-      await reach($(find.text('7.5%')));
       await picture('payment-methods');
       await $(BackButton).tap();
       await $(BackButton).tap();
@@ -681,10 +677,6 @@ void main() {
       await $(AddExpenseScreen.itemKey).tap();
       await $(keyStartingWith('itemPicker.option.')).first.tap();
       await $.pumpAndSettle();
-      await goTo($(AddExpenseScreen.invoiceNumberKey));
-      await $(AddExpenseScreen.invoiceNumberKey).enterText('2617');
-      await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
-      await $.pumpAndSettle();
       await $.tester.ensureVisible(find.byKey(AddExpenseScreen.cameraKey));
       await $.pumpAndSettle();
       await picture('add-expense');
@@ -705,11 +697,6 @@ void main() {
       await $(keyStartingWith('home.addExpense.')).tap();
       await reach($(AddExpenseScreen.qrReadKey));
       await reach($(AddExpenseScreen.supplierDetailsKey));
-      await goTo($(AddExpenseScreen.withoutInvoiceKey));
-      await $(AddExpenseScreen.withoutInvoiceKey).tap();
-      await $.pumpAndSettle();
-      await showInDialog(find.byKey(AddExpenseScreen.withoutInvoiceReasonKey));
-      await $(AddExpenseScreen.withoutInvoiceReasonKey).enterText('شراء نقدي من السوق');
       await goTo($(AddExpenseScreen.itemKey));
       await $(AddExpenseScreen.itemKey).tap();
       await $(keyStartingWith('itemPicker.option.')).first.tap();
@@ -718,8 +705,6 @@ void main() {
       await $(AddExpenseScreen.amountKey).enterText('200');
       await goTo($(keyStartingWith('payment.method.')).first);
       await $(keyStartingWith('payment.method.')).first.tap();
-      await showInDialog(find.byKey(AddExpenseScreen.withoutInvoiceReasonKey));
-      await picture('add-expense-without-invoice');
       await goTo($(AddExpenseScreen.sendKey));
       await $(AddExpenseScreen.sendKey).tap();
       await reach($(AddExpenseScreen.savedKey));
@@ -737,14 +722,12 @@ void main() {
       await $(SupplierPicker.searchKey).enterText('مورد الميدان');
       await $(find.descendant(of: keyStartingWith('supplierPicker.row.'), matching: find.text('مورد الميدان'))).tap();
       await $.pumpAndSettle();
-      await goTo($(AddExpenseScreen.invoiceNumberKey));
-      await $(AddExpenseScreen.invoiceNumberKey).enterText('CN-1');
       await goTo($(AddExpenseScreen.creditNoteKey));
       await $(AddExpenseScreen.creditNoteKey).tap();
       await $.pumpAndSettle();
       await goTo($(AddExpenseScreen.originalInvoiceKey));
       await $(AddExpenseScreen.originalInvoiceKey).tap();
-      await $(keyStartingWith('originalInvoice.option.')).at(1).tap();
+      await $(keyStartingWith('originalInvoice.option.')).first.tap();
       await $.pumpAndSettle();
       await goTo($(AddExpenseScreen.amountKey));
       await $(AddExpenseScreen.amountKey).enterText('100');

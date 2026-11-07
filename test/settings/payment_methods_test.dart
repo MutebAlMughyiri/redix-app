@@ -25,11 +25,6 @@ void main() {
     await tester.tap(find.byKey(PaymentMethodsScreen.saveKey));
   });
 
-  Future<void> saveVat(WidgetTester tester, FakeApi api, String percent) => act(tester, api, () async {
-    await tester.enterText(find.byKey(PaymentMethodsScreen.vatPercentKey), percent);
-    await tester.tap(find.byKey(PaymentMethodsScreen.saveKey));
-  });
-
   Future<void> chooseInMenu(WidgetTester tester, FakeApi api, String id, Key item) async {
     await act(tester, api, () => tester.tap(find.byKey(PaymentMethodsScreen.menuKey(id))));
     await act(tester, api, () => tester.tap(find.byKey(item)));
@@ -119,65 +114,12 @@ void main() {
     expect(find.text('en paymentMethods.projectFinished'), findsOneWidget);
   });
 
-  testWidgets('the rate shows as a percentage, with what it applies to', (tester) async {
-    await openMethods(tester);
-
-    expect(text(tester, PaymentMethodsScreen.vatRateKey), '15%');
-    expect(text(tester, PaymentMethodsScreen.vatHintKey), 'en paymentMethods.vatHint');
-  });
-
-  testWidgets('changing the rate starts from it, sends the percentage and shows the new one', (tester) async {
-    final opened = await openMethods(tester);
-
-    await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.changeVatRateKey)));
-    expect(tester.widget<TextField>(find.byKey(PaymentMethodsScreen.vatPercentKey)).controller!.text, '15');
-    await saveVat(tester, opened.api, '7.5');
-
-    expect(opened.api.sentProjectChanges.single.$1, '/projects/project-0/vat-rate');
-    expect(opened.api.sentProjectChanges.single.$2, {'vatPercent': 7.5});
-    expect(text(tester, PaymentMethodsScreen.vatRateKey), '7.5%');
-    expect(find.byKey(PaymentMethodsScreen.vatPercentKey), findsNothing);
-  });
-
-  testWidgets('a rate in Arabic digits is understood', (tester) async {
-    final opened = await openMethods(tester);
-
-    await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.changeVatRateKey)));
-    await saveVat(tester, opened.api, '٧٫٥');
-
-    expect(opened.api.sentProjectChanges.single.$1, '/projects/project-0/vat-rate');
-    expect(opened.api.sentProjectChanges.single.$2, {'vatPercent': 7.5});
-  });
-
-  testWidgets('what is not a number is refused without asking the API', (tester) async {
-    final opened = await openMethods(tester);
-
-    await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.changeVatRateKey)));
-    await saveVat(tester, opened.api, 'abc');
-
-    expect(opened.api.sentProjectChanges, isEmpty);
-    expect(text(tester, PaymentMethodsScreen.dialogMessageKey), 'en projects.invalidVatRate');
-  });
-
-  testWidgets('a rate the API refuses stays in the dialog with its reason', (tester) async {
-    final opened = await openMethods(tester);
-    opened.api.projectAnswer = (status: 400, code: 'invalidVatRate');
-
-    await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.changeVatRateKey)));
-    await saveVat(tester, opened.api, '101');
-
-    expect(text(tester, PaymentMethodsScreen.dialogMessageKey), 'en projects.invalidVatRate');
-    expect(text(tester, PaymentMethodsScreen.vatRateKey), '15%');
-  });
-
-  testWidgets('a finished project shows its methods and rate with nothing to change', (tester) async {
+  testWidgets('a finished project shows its methods with nothing to change', (tester) async {
     final opened = await openMethods(tester, status: 'finished');
 
     expect(find.byKey(PaymentMethodsScreen.nameKey(opened.card)), findsOneWidget);
-    expect(find.byKey(PaymentMethodsScreen.vatRateKey), findsOneWidget);
     for (final key in [
       PaymentMethodsScreen.addKey,
-      PaymentMethodsScreen.changeVatRateKey,
       PaymentMethodsScreen.menuKey(opened.card),
       PaymentMethodsScreen.menuKey(opened.sadad),
     ]) {

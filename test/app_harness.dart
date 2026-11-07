@@ -54,16 +54,15 @@ Map<String, String> wordsIn(String language) => {
     'columns.inReports', 'columns.custom', 'columns.core', 'columns.edit', 'columns.delete', 'columns.save', 'columns.deleteExplain', 'columns.applyQuestion', 'columns.applyExplain',
     'columns.applyToAll', 'columns.templateOnly',
     'entries.title', 'entries.mine', 'entries.all', 'entries.latest', 'entries.seeAll', 'entries.empty', 'entries.loadFailed', 'entries.noConnection', 'entries.refused', 'entries.draft', 'entries.pendingApproval', 'entries.approved', 'entries.rejected', 'entries.reversed', 'entries.reason', 'entries.fix', 'entries.edit', 'entries.send', 'entries.delete', 'entries.deleteQuestion', 'entries.deleteExplain', 'entries.reverse', 'entries.reverseTitle', 'entries.reverseReason', 'entries.reverseExplain', 'entries.entryApproved', 'entries.entryWaitingForDecision', 'entries.notYourEntry', 'entries.entryHasCreditNote', 'entries.reasonRequired', 'entries.entryNotApproved', 'entries.alreadyReversed', 'entries.entryIncomplete', 'entries.entryNotSubmittable', 'expenses.entryApproved', 'expenses.entryWaitingForDecision', 'expenses.notYourEntry', 'expenses.entryHasCreditNote', 'expenses.reasonRequired', 'expenses.entryNotApproved', 'expenses.alreadyReversed',
-    'reports.title', 'reports.periodic', 'reports.lastIssued', 'reports.noneIssued', 'reports.issue', 'reports.issueQuestion', 'reports.issueExplain', 'reports.issued', 'reports.reportNumber', 'reports.pdf', 'reports.excel', 'reports.print', 'reports.share', 'reports.invoiceImages', 'reports.earlier', 'reports.fileFailed', 'reports.previous', 'reports.current', 'reports.difference', 'reports.liquidation', 'reports.item', 'reports.contracts', 'reports.partners', 'reports.chooseItem', 'reports.loadFailed', 'reports.noConnection', 'reports.refused', 'reports.itemTotal', 'reports.generalSubgroup', 'reports.number', 'reports.description', 'reports.invoiceNumber', 'reports.date', 'reports.unitPrice', 'reports.quantity', 'reports.cost', 'reports.contractValue', 'reports.openValue', 'reports.paid', 'reports.remaining', 'reports.overrun', 'reports.outsideContract', 'reports.grandTotal', 'reports.noContracts', 'dashboard.pending', 'dashboard.pendingHint', 'dashboard.surplus', 'dashboard.surplusWithoutSales', 'dashboard.revenue', 'dashboard.expenses', 'dashboard.difference', 'dashboard.byCategory', 'dashboard.revenueByCategory', 'dashboard.completion', 'dashboard.loadFailed', 'revenue.title', 'revenue.empty', 'revenue.new', 'revenue.newSale', 'revenue.item', 'revenue.unknownItem', 'revenue.vatRefund', 'revenue.sale', 'revenue.quarter', 'revenue.date', 'revenue.amount', 'revenue.account', 'revenue.description', 'revenue.file', 'revenue.save', 'revenue.saved', 'revenue.statementRefund', 'revenue.refundDifference', 'revenue.buyer', 'revenue.buyerVatNumber', 'revenue.invoiceNumber', 'revenue.invoiceDate', 'revenue.amountBeforeTax', 'revenue.discount', 'revenue.taxType', 'revenue.taxRealEstateTransaction', 'revenue.taxVat', 'revenue.loadFailed', 'revenue.noConnection', 'revenue.refused', 'revenue.invalidPeriod', 'revenue.invalidDate', 'revenue.invalidAmount', 'revenue.invalidNotes', 'revenue.unknownAccount', 'revenue.unknownAttachment', 'revenue.invoiceAlreadyAttached', 'revenue.invalidBuyerName', 'revenue.invalidVatNumber', 'revenue.invalidInvoiceNumber', 'revenue.invalidInvoiceDate', 'revenue.invalidDiscount', 'revenue.duplicateInvoice', 'revenue.unknownSale', 'vat.title', 'vat.quarter', 'vat.halfYear', 'vat.custom', 'vat.q1', 'vat.q2', 'vat.q3', 'vat.q4', 'vat.h1', 'vat.h2', 'vat.from', 'vat.to', 'vat.purchaseInvoices', 'vat.creditNotes', 'vat.afterDiscount', 'vat.purchasesVat', 'vat.total', 'vat.salesVat', 'vat.realEstateTax', 'vat.netDue', 'vat.netRefund', 'vat.exceptions', 'vat.noExceptions', 'vat.withoutInvoice', 'vat.pending', 'vat.noVatNumber', 'vat.invalidVatNumber', 'vat.notTaxable', 'vat.declaredLater', 'vat.noFile', 'vat.declareLater', 'vat.loadFailed', 'vat.noConnection', 'vat.refused', 'vat.invalidPeriod', 'accounts.typePartnerPocket', 'accounts.invalidType', 'accounts.pocketFollowsPartner', 'accounts.transfer', 'accounts.reconcile', 'transfers.title', 'transfers.latest', 'transfers.from', 'transfers.to', 'transfers.amount', 'transfers.date', 'transfers.description', 'transfers.receipt', 'transfers.save', 'transfers.done', 'transfers.loadFailed', 'transfers.noConnection', 'transfers.refused', 'transfers.sameAccount', 'transfers.invalidDate', 'transfers.invalidAmount', 'transfers.invalidNotes', 'transfers.unknownAccount', 'transfers.unknownAttachment', 'transfers.invoiceAlreadyAttached', 'reconciliations.title', 'reconciliations.surplus', 'reconciliations.actualTotal', 'reconciliations.difference', 'reconciliations.differenceExplain', 'reconciliations.owed', 'reconciliations.lastUpdated', 'reconciliations.never', 'reconciliations.enterTitle', 'reconciliations.books', 'reconciliations.save', 'reconciliations.loadFailed', 'reconciliations.noConnection', 'reconciliations.refused', 'reconciliations.unknownAccount', 'reconciliations.invalidAmount', 'reconciliations.accountMissing', 'capital.total', 'capital.balance', 'capital.share', 'capital.active', 'capital.left', 'capital.movement', 'capital.movements', 'capital.noMovements', 'capital.moveTitle', 'capital.partner', 'capital.type', 'capital.contribution', 'capital.withdrawal', 'capital.settlementAndExit', 'capital.carryIn', 'capital.carryOut', 'capital.inKind', 'capital.refundableAdvance', 'capital.amount', 'capital.date', 'capital.account', 'capital.description', 'capital.receipt', 'capital.receiptRequiredWord', 'capital.receiptHint', 'capital.receiptAmount', 'capital.receiptDiffers', 'capital.paidInCash', 'capital.cashReason', 'capital.targetProject', 'capital.targetPartner', 'capital.targetAccount', 'capital.noTargetProject', 'capital.save', 'capital.saved', 'capital.cash', 'capital.receiptAttached', 'capital.reversed', 'capital.reverse', 'capital.loadFailed', 'capital.noConnection', 'capital.refused', 'capital.receiptRequired', 'capital.invalidReason', 'capital.useCarry', 'capital.settlementNotFull', 'capital.unknownPartner', 'capital.partnerLeft', 'capital.invalidDate', 'capital.invalidAmount', 'capital.invalidNotes', 'capital.unknownAccount', 'capital.unknownAttachment', 'capital.invoiceAlreadyAttached', 'capital.sameProject', 'capital.targetProjectRefused', 'capital.targetProjectFinished', 'entries.tiedProjectRefused', 'share.capitalReceipt', 'share.title', 'share.project', 'share.noProject', 'share.chooseItem', 'share.empty', 'share.expense', 'share.matching', 'share.attach', 'share.newExpense', 'share.attached', 'share.goesBack', 'share.amountDiffers', 'share.supplierDiffers', 'share.loadFailed', 'share.noConnection', 'share.refused', 'share.notYourEntry', 'share.entryNotAttachable', 'share.unknownAttachment', 'share.invoiceAlreadyAttached', 'share.duplicateInvoice', 'share.invalidInvoiceNumber', 'share.invalidInvoiceDate', 'share.invalidVatNumber', 'share.invalidAmount', 'approvals.invoiceTotal', 'approvals.sellerDiffers', 'notifications.title', 'notifications.empty', 'notifications.loadFailed', 'notifications.noConnection', 'notifications.refused', 'notifications.entrySubmitted', 'notifications.entryApproved', 'notifications.entryRejected', 'notifications.projectApproved', 'notifications.projectRejected', 'approvals.title', 'approvals.empty', 'approvals.loadFailed', 'approvals.noConnection', 'approvals.all', 'approvals.purchases', 'approvals.contractorPayments', 'approvals.approve', 'approvals.reject', 'approvals.approveSelected', 'approvals.selectHint', 'approvals.enteredBy', 'approvals.includingVat', 'approvals.withoutInvoice', 'approvals.openFile', 'approvals.fileFailed', 'approvals.rejectTitle', 'approvals.quickReason', 'approvals.reasonUnclear', 'approvals.reasonAmount', 'approvals.reasonItem', 'approvals.reasonDuplicate', 'approvals.reason', 'approvals.reasonHint', 'approvals.rejectSend', 'approvals.reasonRequired', 'approvals.entryNotPending', 'approvals.unknownEntry', 'approvals.originalNotApproved', 'approvals.refused', 'approvals.approvedSome', 'approvals.failedSome',
-    'expenses.keptOnPhone', 'offline.title', 'offline.empty', 'offline.waiting', 'offline.sendAgain', 'offline.sendAnyway', 'offline.discard', 'offline.discardQuestion', 'offline.discardExplain',
+    'reports.title', 'reports.periodic', 'reports.lastIssued', 'reports.noneIssued', 'reports.issue', 'reports.issueQuestion', 'reports.issueExplain', 'reports.issued', 'reports.reportNumber', 'reports.pdf', 'reports.excel', 'reports.print', 'reports.share', 'reports.earlier', 'reports.fileFailed', 'reports.previous', 'reports.current', 'reports.difference', 'reports.liquidation', 'reports.item', 'reports.contracts', 'reports.partners', 'reports.chooseItem', 'reports.loadFailed', 'reports.noConnection', 'reports.refused', 'reports.itemTotal', 'reports.generalSubgroup', 'reports.number', 'reports.description', 'reports.invoiceNumber', 'reports.date', 'reports.unitPrice', 'reports.quantity', 'reports.cost', 'reports.contractValue', 'reports.openValue', 'reports.paid', 'reports.remaining', 'reports.overrun', 'reports.outsideContract', 'reports.grandTotal', 'reports.noContracts', 'dashboard.pending', 'dashboard.pendingHint', 'dashboard.surplus', 'dashboard.surplusWithoutSales', 'dashboard.revenue', 'dashboard.expenses', 'dashboard.difference', 'dashboard.byCategory', 'dashboard.revenueByCategory', 'dashboard.completion', 'dashboard.loadFailed', 'revenue.title', 'revenue.empty', 'revenue.new', 'revenue.newSale', 'revenue.item', 'revenue.unknownItem', 'revenue.vatRefund', 'revenue.sale', 'revenue.date', 'revenue.amount', 'revenue.account', 'revenue.description', 'revenue.file', 'revenue.save', 'revenue.saved', 'revenue.buyer', 'revenue.buyerVatNumber', 'revenue.invoiceNumber', 'revenue.invoiceDate', 'revenue.loadFailed', 'revenue.noConnection', 'revenue.refused', 'revenue.invalidPeriod', 'revenue.invalidDate', 'revenue.invalidAmount', 'revenue.invalidNotes', 'revenue.unknownAccount', 'revenue.unknownAttachment', 'revenue.invoiceAlreadyAttached', 'revenue.invalidBuyerName', 'revenue.invalidVatNumber', 'revenue.invalidInvoiceNumber', 'revenue.invalidInvoiceDate', 'revenue.duplicateInvoice', 'revenue.unknownSale', 'vat.title', 'vat.quarter', 'vat.halfYear', 'vat.custom', 'vat.q1', 'vat.q2', 'vat.q3', 'vat.q4', 'vat.h1', 'vat.h2', 'vat.from', 'vat.to', 'vat.total', 'vat.pending', 'vat.invalidVatNumber', 'vat.loadFailed', 'vat.noConnection', 'vat.refused', 'vat.invalidPeriod', 'accounts.typePartnerPocket', 'accounts.invalidType', 'accounts.pocketFollowsPartner', 'accounts.transfer', 'accounts.reconcile', 'transfers.title', 'transfers.latest', 'transfers.from', 'transfers.to', 'transfers.amount', 'transfers.date', 'transfers.description', 'transfers.receipt', 'transfers.save', 'transfers.done', 'transfers.loadFailed', 'transfers.noConnection', 'transfers.refused', 'transfers.sameAccount', 'transfers.invalidDate', 'transfers.invalidAmount', 'transfers.invalidNotes', 'transfers.unknownAccount', 'transfers.unknownAttachment', 'transfers.invoiceAlreadyAttached', 'reconciliations.title', 'reconciliations.surplus', 'reconciliations.actualTotal', 'reconciliations.difference', 'reconciliations.differenceExplain', 'reconciliations.owed', 'reconciliations.lastUpdated', 'reconciliations.never', 'reconciliations.enterTitle', 'reconciliations.books', 'reconciliations.save', 'reconciliations.loadFailed', 'reconciliations.noConnection', 'reconciliations.refused', 'reconciliations.unknownAccount', 'reconciliations.invalidAmount', 'reconciliations.accountMissing', 'capital.total', 'capital.balance', 'capital.share', 'capital.active', 'capital.left', 'capital.movement', 'capital.movements', 'capital.noMovements', 'capital.moveTitle', 'capital.partner', 'capital.type', 'capital.contribution', 'capital.withdrawal', 'capital.settlementAndExit', 'capital.carryIn', 'capital.carryOut', 'capital.inKind', 'capital.refundableAdvance', 'capital.amount', 'capital.date', 'capital.account', 'capital.description', 'capital.receipt', 'capital.receiptRequiredWord', 'capital.receiptHint', 'capital.receiptAmount', 'capital.receiptDiffers', 'capital.paidInCash', 'capital.cashReason', 'capital.targetProject', 'capital.targetPartner', 'capital.targetAccount', 'capital.noTargetProject', 'capital.save', 'capital.saved', 'capital.cash', 'capital.receiptAttached', 'capital.reversed', 'capital.reverse', 'capital.loadFailed', 'capital.noConnection', 'capital.refused', 'capital.receiptRequired', 'capital.invalidReason', 'capital.useCarry', 'capital.settlementNotFull', 'capital.unknownPartner', 'capital.partnerLeft', 'capital.invalidDate', 'capital.invalidAmount', 'capital.invalidNotes', 'capital.unknownAccount', 'capital.unknownAttachment', 'capital.invoiceAlreadyAttached', 'capital.sameProject', 'capital.targetProjectRefused', 'capital.targetProjectFinished', 'entries.tiedProjectRefused', 'share.capitalReceipt', 'share.title', 'share.project', 'share.noProject', 'share.chooseItem', 'share.empty', 'share.expense', 'share.matching', 'share.attach', 'share.newExpense', 'share.attached', 'share.amountDiffers', 'share.supplierDiffers', 'share.loadFailed', 'share.noConnection', 'share.refused', 'share.notYourEntry', 'share.entryNotAttachable', 'share.unknownAttachment', 'share.invoiceAlreadyAttached', 'notifications.title', 'notifications.empty', 'notifications.loadFailed', 'notifications.noConnection', 'notifications.refused', 'notifications.entrySubmitted', 'notifications.entryApproved', 'notifications.entryRejected', 'notifications.projectApproved', 'notifications.projectRejected', 'approvals.title', 'approvals.empty', 'approvals.loadFailed', 'approvals.noConnection', 'approvals.all', 'approvals.purchases', 'approvals.contractorPayments', 'approvals.approve', 'approvals.reject', 'approvals.approveSelected', 'approvals.selectHint', 'approvals.enteredBy', 'approvals.openFile', 'approvals.fileFailed', 'approvals.rejectTitle', 'approvals.quickReason', 'approvals.reasonUnclear', 'approvals.reasonAmount', 'approvals.reasonItem', 'approvals.reasonDuplicate', 'approvals.reason', 'approvals.reasonHint', 'approvals.rejectSend', 'approvals.reasonRequired', 'approvals.entryNotPending', 'approvals.unknownEntry', 'approvals.originalNotApproved', 'approvals.refused', 'approvals.approvedSome', 'approvals.failedSome',
+    'expenses.keptOnPhone', 'offline.title', 'offline.empty', 'offline.waiting', 'offline.sendAgain', 'offline.discard', 'offline.discardQuestion', 'offline.discardExplain',
     'categories.title', 'categories.hint', 'categories.empty', 'categories.loadFailed', 'categories.noConnection', 'categories.refused', 'categories.projectFinished',
     'categories.invalidName', 'categories.invalidOrder', 'categories.generalSubgroup', 'categories.subgroupInUse', 'categories.itemHasEntries', 'categories.changeType', 'categories.tablePercentages', 'categories.tables', 'categories.tablesHint', 'categories.tablePurchases', 'categories.tableRevenue', 'categories.tableContract', 'categories.side', 'categories.sideExpenses', 'categories.sideRevenue', 'categories.typeSale', 'categories.typeVatRefund', 'categories.typeOtherRevenue', 'columns.revenueTakesNoColumns', 'subgroups.delete', 'subgroups.deleteQuestion', 'subgroups.deleteExplain', 'categories.new', 'categories.categoryName', 'categories.items', 'categories.noItems',
     'categories.addItem', 'categories.itemName', 'categories.itemType', 'categories.typePurchases', 'categories.typeContractorPayments', 'categories.typeBoth', 'categories.rename',
-    'categories.disable', 'categories.enable', 'categories.disabled', 'categories.save', 
+    'categories.disable', 'categories.enable', 'categories.disabled', 'categories.save',
     'subgroups.new', 'categories.subgroupName', 'projects.structureSource', 'projects.defaultTemplate', 'projects.unknownSource',
-    'projects.invalidVatRate', 'common.add', 'paymentMethods.title', 'paymentMethods.empty', 'paymentMethods.loadFailed', 'paymentMethods.noConnection', 'paymentMethods.refused', 'paymentMethods.projectFinished',
+    'common.add', 'paymentMethods.title', 'paymentMethods.empty', 'paymentMethods.loadFailed', 'paymentMethods.noConnection', 'paymentMethods.refused', 'paymentMethods.projectFinished',
     'paymentMethods.invalidName', 'paymentMethods.new', 'paymentMethods.name', 'paymentMethods.rename', 'paymentMethods.save', 'paymentMethods.disable', 'paymentMethods.enable', 'paymentMethods.disabled', 'paymentMethods.delete', 'paymentMethods.deleteQuestion', 'paymentMethods.deleteExplain', 'paymentMethods.paymentMethodUsed',
-    'paymentMethods.vatRate', 'paymentMethods.vatHint', 'paymentMethods.changeVatRate', 'paymentMethods.vatPercent',
     'accounts.title', 'accounts.empty', 'accounts.loadFailed', 'accounts.noConnection', 'accounts.refused', 'accounts.projectFinished', 'accounts.invalidName', 'accounts.invalidOpeningBalance',
     'accounts.custodianRequired', 'accounts.unknownCustodian', 'accounts.new', 'accounts.edit', 'accounts.save', 'accounts.type', 'accounts.typeBank', 'accounts.typeCashCustody', 'accounts.name',
     'partners.title', 'partners.empty', 'partners.loadFailed', 'partners.noConnection', 'partners.refused', 'partners.projectFinished', 'partners.invalidName', 'partners.unknownUser', 'partners.userTaken',
@@ -79,19 +78,18 @@ Map<String, String> wordsIn(String language) => {
     'contracts.filterOpenValue', 'contracts.disable', 'contracts.enable', 'contracts.disabled', 'contracts.documents', 'contracts.addDocument', 'contracts.unknownAttachment',
     'attachments.invalidFileType', 'attachments.imageTooLarge', 'attachments.projectFinished', 'attachments.noConnection', 'attachments.refused', 'attachments.cameraFailed', 'attachments.unreadable',
     'attachments.invoicePhoto', 'attachments.retake', 'attachments.takePhoto', 'attachments.pickFile', 'expenses.new',
-    'expenses.item', 'expenses.subgroup', 'expenses.generalSubgroup', 'expenses.supplier', 'expenses.invoiceNumber', 'expenses.invoiceDate', 'expenses.product', 'expenses.unitPrice', 'expenses.quantity',
-    'expenses.includingVat', 'expenses.beforeVat', 'expenses.amountIncludingVat', 'expenses.amountBeforeVat', 'expenses.discount', 'expenses.notTaxable', 'expenses.afterDiscount', 'expenses.vat', 'expenses.total',
-    'expenses.paymentMethod', 'expenses.account', 'expenses.noAccount', 'expenses.paymentDate', 'expenses.notes',
+    'expenses.item', 'expenses.subgroup', 'expenses.generalSubgroup', 'expenses.supplier', 'expenses.date', 'expenses.product', 'expenses.unitPrice', 'expenses.quantity',
+    'expenses.total',
+    'expenses.paymentMethod', 'expenses.account', 'expenses.noAccount', 'expenses.notes',
     'expenses.send', 'expenses.saveDraft', 'expenses.sent', 'expenses.saved', 'expenses.noConnection', 'expenses.refused', 'expenses.projectFinished', 'expenses.invalidEntryId',
     'expenses.entryExists', 'expenses.itemNotOffered', 'expenses.unknownSubgroup', 'expenses.unknownSupplier', 'expenses.unknownPaymentMethod', 'expenses.accountNotOffered', 'expenses.unknownAttachment',
-    'expenses.invalidInvoiceNumber', 'expenses.invalidProduct', 'expenses.invalidNotes', 'expenses.invalidUnitPrice', 'expenses.invalidQuantity', 'expenses.invalidAmount', 'expenses.invalidDiscount', 
-    'expenses.invalidInvoiceDate', 'expenses.invalidPaymentDate', 'expenses.unknownColumn', 'expenses.invalidColumnValue', 'expenses.requiredColumnMissing', 'expenses.invoiceRequired', 'expenses.qrRead',
-    'expenses.qrUnreadable', 'expenses.qrSupplierMissing', 'expenses.qrAddSupplier', 'expenses.qrVatDiffers', 'suppliers.mostUsed',
-    'expenses.duplicateInvoice', 'expenses.duplicateTitle', 'expenses.duplicateExplain', 'expenses.saveAnyway', 'expenses.invoiceAlreadyAttached',
-    'expenses.withoutInvoice', 'expenses.withoutInvoiceReason', 'expenses.invalidWithoutInvoiceReason', 'expenses.invoiceAndReason', 'expenses.amount',     'expenses.unknownContract', 'expenses.receiptRequired', 'expenses.invalidInvoiceAmount', 'contracts.pending', 'contractorPayments.new', 'contractorPayments.contract', 'contractorPayments.remainingAfter',
+    'expenses.invalidProduct', 'expenses.invalidNotes', 'expenses.invalidUnitPrice', 'expenses.invalidQuantity', 'expenses.invalidAmount',
+    'expenses.invalidPaymentDate', 'expenses.unknownColumn', 'expenses.invalidColumnValue', 'expenses.requiredColumnMissing', 'expenses.qrRead',
+    'expenses.qrUnreadable', 'expenses.qrSupplierMissing', 'expenses.qrAddSupplier', 'suppliers.mostUsed',
+    'expenses.duplicateTitle', 'expenses.duplicateExplain', 'expenses.invoiceAlreadyAttached',
+    'expenses.amount',     'expenses.unknownContract', 'contracts.pending', 'contractorPayments.new', 'contractorPayments.contract', 'contractorPayments.remainingAfter',
     'contractorPayments.overrun', 'contractorPayments.savedOverrun', 'contractorPayments.kind', 'contractorPayments.inside', 'contractorPayments.outside', 'contractorPayments.outsideExplain',
-    'contractorPayments.date', 'contractorPayments.receipt', 'contractorPayments.deductionReason', 'contractorPayments.deductionNeedsReason', 'contractorPayments.hasInvoice', 'contractorPayments.invoiceExplain',
-    
+    'contractorPayments.date', 'contractorPayments.receipt',
     'documents.title', 'documents.none', 'documents.add', 'documents.name', 'documents.group', 'documents.groupHint', 'documents.file', 'documents.fileHint', 'documents.save', 'documents.saved', 'documents.remove', 'documents.removeQuestion', 'documents.removeExplain', 'documents.removed', 'documents.loadFailed', 'documents.noConnection', 'documents.refused', 'documents.projectFinished', 'documents.invalidName', 'documents.invalidGroup', 'documents.fileRequired', 'documents.fileTooLarge', 'documents.documentAlreadyKept',
     'liquidation.late', 'liquidation.lateExplain', 'liquidation.lateExpense', 'liquidation.lateRevenue', 'liquidation.item', 'liquidation.amount', 'liquidation.description', 'liquidation.record',
     'liquidation.lateRecorded', 'liquidation.attachReceipt', 'liquidation.noReceipt', 'liquidation.receiptAttached',
@@ -99,8 +97,8 @@ Map<String, String> wordsIn(String language) => {
     'liquidation.confirm', 'liquidation.question', 'liquidation.questionExplain', 'liquidation.done', 'liquidation.distributed', 'liquidation.nothing', 'capital.pendingEntries', 'capital.incompleteLiquidation',
     'reports.save', 'reports.downloaded',
     'reports.surplus',
-    'expenses.creditNote', 'expenses.creditNoteExplain', 'expenses.originalInvoice', 'expenses.noOriginalInvoice', 'expenses.noCreditableInvoice', 'expenses.returnable', 'expenses.loadFailed',
-    'expenses.creditNoteAboveOriginal', 'expenses.unknownOriginalInvoice', 'expenses.creditNoteNeedsInvoice', 'expenses.deductionNeedsReason',
+    'expenses.creditNote', 'expenses.creditNoteExplain', 'expenses.originalInvoice', 'expenses.noCreditableInvoice', 'expenses.returnable', 'expenses.loadFailed',
+    'expenses.creditNoteAboveOriginal', 'expenses.creditNoteNeedsOriginal', 'expenses.deductionNeedsNotes', 'contractorPayments.deductionNeedsNotes', 'revenue.total', 'expenses.unknownOriginalInvoice',
     'accounts.accountHasEntries', 'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
   ])
     key: '$language $key',
@@ -499,7 +497,7 @@ class FakeApi {
   final sentRejections = <(String, String)>[];
 
   /// Adds an entry waiting for a decision.
-  Map<String, Object> addPending({String kind = 'purchase', double amount = 1150, double vat = 150, String withoutInvoiceReason = '', String attachmentId = 'attachment-1', String contentType = 'image/png', double? invoiceTotal, String sellerVatNumber = '', String supplierVatNumber = ''}) {
+  Map<String, Object> addPending({String kind = 'purchase', double amount = 1150, String notes = '', String attachmentId = 'attachment-1', String contentType = 'image/png'}) {
     final entry = <String, Object>{
       'id': 'entry-${pendingEntries.length}',
       'kind': kind,
@@ -508,16 +506,11 @@ class FakeApi {
       'itemName': 'بند اللياسة',
       'supplierName': 'شركة البواني',
       'invoiceNumber': '2617',
-      'vat': vat,
       'accountName': 'حساب المؤسسة',
-      'notes': '',
-      'withoutInvoiceReason': withoutInvoiceReason,
+      'notes': notes,
       'attachmentId': attachmentId,
       'contentType': contentType,
       'authorName': 'نواف',
-      'invoiceTotal': invoiceTotal ?? amount,
-      'sellerVatNumber': sellerVatNumber,
-      'supplierVatNumber': supplierVatNumber,
     };
     pendingEntries.add(entry);
     return entry;
@@ -564,14 +557,8 @@ class FakeApi {
   /// The revenue, newest first.
   final revenueRows = <Map<String, Object>>[];
 
-  /// The query of the last VAT statement read.
-  var vatQuery = '';
-
-  /// What the VAT statement answers.
-  var vatAnswer = <String, Object>{'from': '2026-07-01', 'to': '2026-09-30', 'quarters': <Map<String, Object>>[], 'exceptions': <Map<String, Object>>[]};
-
   /// Adds revenue.
-  void addRevenue({String type = 'otherRevenue', String itemName = 'إيرادات أخرى', double amount = 100, double statementRefund = 0, double refundDifference = 0, String buyerName = '', String invoiceNumber = ''}) {
+  void addRevenue({String type = 'otherRevenue', String itemName = 'إيرادات أخرى', double amount = 100, String buyerName = '', String invoiceNumber = ''}) {
     revenueRows.add({
       'id': 'revenue-${revenueRows.length}',
       'type': type,
@@ -585,8 +572,6 @@ class FakeApi {
       'attachmentId': '',
       'contentType': '',
       'isReversed': false,
-      'statementRefund': statementRefund,
-      'refundDifference': refundDifference,
       'buyerName': buyerName,
       'invoiceNumber': invoiceNumber,
     });
@@ -792,7 +777,6 @@ class FakeApi {
       'rejectionReason': rejectionReason,
       'units': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}],
       'permissions': permissions,
-      'vatPercent': 15.0,
     };
     projects.add(project);
     return project;
@@ -1023,7 +1007,6 @@ class FakeApi {
     String itemId = 'item-of-contract',
     String supplierId = 'supplier-of-contract',
     bool hasPayments = false,
-    String supplierVatNumber = '300000000000003',
   }) {
     final contract = <String, Object>{
       'id': 'contract-${_nextStructureId++}',
@@ -1031,7 +1014,6 @@ class FakeApi {
       'supplierId': supplierId,
       'hasPayments': hasPayments,
       'supplierName': supplierName,
-      'supplierVatNumber': supplierVatNumber,
       'pending': pending,
       'itemName': itemName,
       'value': value,
@@ -1435,7 +1417,7 @@ class FakeApi {
     if (segments.length == 5 && segments[2] == 'entries' && const ['submit', 'delete', 'reverse'].contains(segments[4])) {
       return _changeEntry(request);
     }
-    if (const ['pdf', 'xlsx', 'zip'].contains(segments.last)) {
+    if (const ['pdf', 'xlsx'].contains(segments.last)) {
       sentFileReads.add(request.url.toString().replaceFirst('${request.url.scheme}://${request.url.authority}', ''));
       return http.Response.bytes(const [37, 80, 68, 70], 200);
     }
@@ -1460,10 +1442,6 @@ class FakeApi {
     if (segments.length == 3 && segments[2] == 'revenue' && request.method == 'GET') {
       return _json(revenueRows, 200);
     }
-    if (segments.length == 3 && segments[2] == 'vat-statement') {
-      vatQuery = request.url.query;
-      return _json(vatAnswer, 200);
-    }
     if (segments.length == 3 && segments[2] == 'transfers' && request.method == 'GET') {
       return _json(transferRows, 200);
     }
@@ -1483,7 +1461,7 @@ class FakeApi {
     if (segments.length == 3 && segments[2] == 'liquidation' && request.method == 'GET') {
       return _json(liquidationAnswer, 200);
     }
-    if (segments.length >= 3 && const ['transfers', 'reconciliations', 'capital-movements', 'revenue', 'sales-invoices', 'liquidation'].contains(segments[2]) || (segments.length == 5 && segments[4] == 'vat-period')) {
+    if (segments.length >= 3 && const ['transfers', 'reconciliations', 'capital-movements', 'revenue', 'sales-invoices', 'liquidation'].contains(segments[2])) {
       sentMoney.add((request.url.path, jsonDecode(request.body) as Map<String, dynamic>));
       return _json(moneyAnswer.status < 300 ? const <String, Object>{} : {'code': moneyAnswer.code}, moneyAnswer.status);
     }
@@ -1580,8 +1558,6 @@ class FakeApi {
     final units = project['units'] as List<Map<String, String>>;
     if (path.endsWith('/close')) {
       project['status'] = 'finished';
-    } else if (path.endsWith('/vat-rate')) {
-      project['vatPercent'] = body['vatPercent'] as double;
     } else if (segments.length == 2) {
       project['name'] = body['name'] as String;
     } else if (path.endsWith('/delete')) {

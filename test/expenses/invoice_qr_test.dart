@@ -18,7 +18,6 @@ void main() {
     expect(qr.issuedAt.hour, 14);
     expect(qr.issuedAt.minute, 25);
     expect(qr.total, 6000);
-    expect(qr.vat, 782.61);
   });
 
   test('the day stays the one the invoice wrote, however late it was', () {

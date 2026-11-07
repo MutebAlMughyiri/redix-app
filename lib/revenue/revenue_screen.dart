@@ -36,9 +36,6 @@ class RevenueScreen extends StatefulWidget {
   /// The row of the revenue [id].
   static Key rowKey(String id) => Key('revenue.row.$id');
 
-  /// What the statement expected for the refund [id], and the difference.
-  static Key refundKey(String id) => Key('revenue.refund.$id');
-
   /// The button reversing the revenue [id].
   static Key reverseKey(String id) => Key('revenue.reverse.$id');
 
@@ -79,11 +76,6 @@ class _RevenueScreenState extends State<RevenueScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(details.join(' · ')),
-            if (row.isRefund)
-              Text(
-                '${words.revenueStatementRefund}: ${formatMoney(row.statementRefund)} · ${words.revenueRefundDifference}: ${formatMoney(row.refundDifference)}',
-                key: RevenueScreen.refundKey(row.id),
-              ),
           ],
         ),
         trailing: Row(

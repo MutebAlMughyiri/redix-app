@@ -17,7 +17,6 @@ import '../projects/projects.dart';
 import '../structure/category.dart';
 import '../structure/item_picker.dart';
 import '../structure/offered_items.dart';
-import '../ui/entry_field.dart';
 import '../ui/form_section.dart';
 import '../ui/labelled_chips.dart';
 import '../words/words.dart';
@@ -46,12 +45,6 @@ class ShareScreen extends StatefulWidget {
 
   /// The choice of contractor payments.
   static const contractorPaymentsKey = Key('share.contractorPayments');
-
-  /// The invoice's number.
-  static const numberKey = Key('share.number');
-
-  /// The line saying the expense goes back to approval.
-  static const goesBackKey = Key('share.goesBack');
 
   /// The line saying the amounts differ.
   static const amountDiffersKey = Key('share.amountDiffers');
@@ -106,7 +99,6 @@ class ShareScreen extends StatefulWidget {
 }
 
 class _ShareScreenState extends State<ShareScreen> {
-  final _number = TextEditingController();
   var _qr = InvoiceQr.none();
   var _projectId = '';
   var _type = ItemType.purchases;
@@ -123,12 +115,6 @@ class _ShareScreenState extends State<ShareScreen> {
     if (!widget.file.isPdf) {
       unawaited(_readQr());
     }
-  }
-
-  @override
-  void dispose() {
-    _number.dispose();
-    super.dispose();
   }
 
   Future<void> _readQr() async {
@@ -180,7 +166,7 @@ class _ShareScreenState extends State<ShareScreen> {
     final attachments = widget.attachmentsOf(_project.id);
     var refusal = await attachments.keep(widget.file);
     if (refusal.isEmpty) {
-      refusal = await entries.attach(entry, attachments.kept.id, westernDigits(_number.text), _qr.isNone ? entry.date : _qr.issuedAt, _qr);
+      refusal = await entries.attach(entry, attachments.kept.id);
     }
     if (!mounted) {
       return;
@@ -234,7 +220,6 @@ class _ShareScreenState extends State<ShareScreen> {
     final words = Words.of(context);
     final style = TextStyle(color: Theme.of(context).colorScheme.error);
     return [
-      if (entry.goesBackToApproval) Text(words.shareGoesBack, key: ShareScreen.goesBackKey, style: style),
       if (!_qr.isNone && _qr.total != entry.amount) Text(words.shareAmountDiffers.replaceFirst('{0}', formatMoney(_qr.total)).replaceFirst('{1}', formatMoney(entry.amount)), key: ShareScreen.amountDiffersKey, style: style),
       if (!_qr.isNone && _qr.vatNumber != entry.supplierVatNumber) Text(words.shareSupplierDiffers, key: ShareScreen.supplierDiffersKey, style: style),
     ];
@@ -260,7 +245,6 @@ class _ShareScreenState extends State<ShareScreen> {
               child: Column(children: [for (final entry in entries.all) _entryRow(entry)]),
             ),
             for (final entry in chosen) ..._differences(entry),
-            if (chosen.isNotEmpty) entryField(key: ShareScreen.numberKey, controller: _number, label: words.expensesInvoiceNumber, onChanged: (_) {}),
             if (_message.isNotEmpty) Text(words.text(_message), key: ShareScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
             if (chosen.isNotEmpty) FilledButton(key: ShareScreen.attachKey, onPressed: _saving ? null : _attach, child: Text(words.shareAttach)),
           ],

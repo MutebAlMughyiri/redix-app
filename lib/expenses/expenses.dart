@@ -7,7 +7,6 @@ import '../attachments/picked_file.dart';
 import '../entries/project_entries.dart';
 import '../auth/session.dart';
 import '../offline/outbox.dart';
-import 'earlier_entry.dart';
 
 /// Records a project's expenses on the API, purchases (UC-022) and contractor payments (UC-027). It sends what was typed; the API computes every figure.
 class Expenses {
@@ -27,9 +26,6 @@ class Expenses {
 
   /// The key of the column the last [record] was refused over; empty when none.
   String get refusedColumnKey => _refusedColumnKey;
-
-  /// The entry the last [record] repeated; only after the refusal `expenses.duplicateInvoice`.
-  EarlierEntry get earlier => EarlierEntry.fromJson(_lastAnswer['earlier'] as Map<String, dynamic>);
 
   /// Whether the contractor payment last recorded took its contract beyond its value.
   bool get wasOverrun => _lastAnswer['isOverrun'] == true;

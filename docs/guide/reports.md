@@ -13,7 +13,7 @@
 **Reports** holds:
 
 - **Periodic report:** issue the next number; the report keeps what is approved now and never changes. Earlier reports open as they were issued. Its PDF, Excel and Print buttons are for the owner and Finance.
-- **VAT statement**, with its Excel, PDF and invoice images.
+- **VAT statement**, as Excel, its VAT worked out from each total.
 - **Contracts and what remains**, with PDF and Excel.
 - **Partners and capital.**
 - **Item report**, a category at a time.
@@ -31,7 +31,7 @@ Print opens the phone's printer with a preview. PDF and Excel open the share she
 **التقارير** تضم:
 
 - **التقرير الدوري:** أصدِر الرقم التالي؛ يحفظ التقرير المعتمد الآن ولا يتغير. وتُفتح التقارير السابقة كما صدرت. وأزرار PDF وExcel والطباعة للمالك والمالي.
-- **كشف ضريبة القيمة المضافة** بملفات Excel وPDF وصور الفواتير.
+- **كشف ضريبة القيمة المضافة** ملفَّ Excel، تُحسب ضريبته من كل إجمالي.
 - **العقود والمتبقي** بملفي PDF وExcel.
 - **الشركاء ورأس المال.**
 - **تقرير بند**، تصنيفاً تلو الآخر.

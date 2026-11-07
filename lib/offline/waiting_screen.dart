@@ -30,9 +30,6 @@ class WaitingScreen extends StatelessWidget {
   /// The button sending the refused entry [id] again.
   static Key sendAgainKey(String id) => Key('waiting.sendAgain.$id');
 
-  /// The button sending the entry [id] though it repeats an invoice.
-  static Key sendAnywayKey(String id) => Key('waiting.sendAnyway.$id');
-
   /// The button deleting the entry [id].
   static Key discardKey(String id) => Key('waiting.discard.$id');
 
@@ -93,9 +90,7 @@ class WaitingScreen extends StatelessWidget {
                         Wrap(
                           alignment: WrapAlignment.end,
                           children: [
-                            if (entry.refusal == 'expenses.duplicateInvoice')
-                              TextButton(key: sendAnywayKey(entry.id), onPressed: () => outbox.sendAgain(entry, confirmDuplicate: true), child: Text(words.offlineSendAnyway))
-                            else if (entry.isRefused)
+                            if (entry.isRefused)
                               TextButton(key: sendAgainKey(entry.id), onPressed: () => outbox.sendAgain(entry), child: Text(words.offlineSendAgain)),
                             TextButton(key: discardKey(entry.id), onPressed: () => _askToDiscard(context, entry), child: Text(words.offlineDiscard)),
                           ],

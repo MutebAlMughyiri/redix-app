@@ -11,7 +11,6 @@ class Contract {
       supplierId = json['supplierId'] as String,
       hasPayments = json['hasPayments'] as bool,
       supplierName = json['supplierName'] as String,
-      supplierVatNumber = json['supplierVatNumber'] as String,
       itemName = json['itemName'] as String,
       value = (json['value'] as num).toDouble(),
       isOpenValue = json['isOpenValue'] as bool,
@@ -26,7 +25,7 @@ class Contract {
       documents = [for (final document in json['documents'] as List<dynamic>) Attachment.fromJson(document as Map<String, dynamic>)];
 
   /// No contract, for the dialog that adds one.
-  Contract.none() : documents = [], id = '', itemId = '', supplierId = '', hasPayments = false, supplierName = '', supplierVatNumber = '', itemName = '', value = 0, isOpenValue = false, unitPrice = 0, quantity = 0, notes = '', paid = 0, pending = 0, remaining = 0, isOverrun = false, isActive = true;
+  Contract.none() : documents = [], id = '', itemId = '', supplierId = '', hasPayments = false, supplierName = '', itemName = '', value = 0, isOpenValue = false, unitPrice = 0, quantity = 0, notes = '', paid = 0, pending = 0, remaining = 0, isOverrun = false, isActive = true;
 
   /// The contract's id; empty for a contract not added yet.
   final String id;
@@ -42,9 +41,6 @@ class Contract {
 
   /// The contractor's name.
   final String supplierName;
-
-  /// The contractor's VAT number; empty for none.
-  final String supplierVatNumber;
 
   /// The item's name.
   final String itemName;

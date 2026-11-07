@@ -18,7 +18,7 @@ enum Permission {
   /// Shape a project's expense structure: its categories, items, subgroups and columns.
   manageStructure,
 
-  /// Keep a project's payment methods, VAT rate, accounts, partners, suppliers and contracts.
+  /// Keep a project's payment methods, accounts, partners, suppliers and contracts.
   manageSettings,
 
   /// Add a supplier to a project's register; without [manageSettings] it waits for approval.
