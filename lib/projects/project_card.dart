@@ -7,7 +7,7 @@ import '../words/words.dart';
 import 'project.dart';
 import 'unit_row.dart';
 
-/// The open project: the signed-in user's roles in it, its start date, status and units, with what those roles allow: Users, Categories and items, Payment methods, Accounts, Partners, Suppliers, Contracts, and Add unit and Close project while it runs.
+/// The open project: its start date, status and units, with what the signed-in user's permissions allow: Users, Categories and items, Payment methods, Accounts, Partners, Suppliers, Contracts, and Add unit and Close project while it runs.
 class ProjectCard extends StatelessWidget {
   /// The card of [project], calling [onUsers], [onCategories], [onPaymentMethods], [onAccounts], [onPartners], [onSuppliers], [onContracts], [onLiquidate], [onDocuments], [onAddUnit], [onRename], [onRenameUnit], [onDeleteUnit] and [onClose] when those are tapped.
   const ProjectCard({
@@ -110,7 +110,6 @@ class ProjectCard extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(project.roles.map(words.text).join(' · '), key: HomeScreen.rolesKey(project.id), style: theme.textTheme.bodySmall),
                     Text(
                       project.isFinished ? '$startDate · ${words.projectsReadOnly}' : startDate,
                       key: HomeScreen.detailsKey(project.id),

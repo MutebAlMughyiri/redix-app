@@ -43,7 +43,6 @@ class Project {
       rejectionReason = json['rejectionReason'] as String,
       units = [for (final unit in json['units'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
       entryUnits = [for (final unit in json['entryUnits'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
-      roles = (json['roles'] as List<dynamic>).cast<String>(),
       _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()},
       vatPercent = (json['vatPercent'] as num).toDouble();
 
@@ -67,9 +66,6 @@ class Project {
 
   /// What an entry or a contract may name: its units, and the shared one last.
   final List<Unit> entryUnits;
-
-  /// The keys of the words naming what the signed-in user is in this project.
-  final List<String> roles;
 
   final Set<String> _permissions;
 
@@ -105,4 +101,7 @@ class Project {
 
   /// Whether the signed-in user may change the project's settings now.
   bool get mayManageSettings => !isFinished && may(Permission.manageSettings);
+
+  /// Whether the signed-in user may keep a picture or a file in the project now: an invoice, a receipt or a contract's document.
+  bool get mayAttachFiles => !isFinished && may(Permission.attachFiles);
 }

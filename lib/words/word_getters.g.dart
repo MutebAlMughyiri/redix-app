@@ -1745,6 +1745,99 @@ mixin WordGetters {
   /// The word `paymentMethods.vatRate`.
   String get paymentMethodsVatRate => text('paymentMethods.vatRate');
 
+  /// The word `permissions.addSupplier`.
+  String get permissionsAddSupplier => text('permissions.addSupplier');
+
+  /// The word `permissions.addSupplierHint`.
+  String get permissionsAddSupplierHint => text('permissions.addSupplierHint');
+
+  /// The word `permissions.approveEntries`.
+  String get permissionsApproveEntries => text('permissions.approveEntries');
+
+  /// The word `permissions.approveEntriesHint`.
+  String get permissionsApproveEntriesHint => text('permissions.approveEntriesHint');
+
+  /// The word `permissions.attachFiles`.
+  String get permissionsAttachFiles => text('permissions.attachFiles');
+
+  /// The word `permissions.attachFilesHint`.
+  String get permissionsAttachFilesHint => text('permissions.attachFilesHint');
+
+  /// The word `permissions.chargeAnyAccount`.
+  String get permissionsChargeAnyAccount => text('permissions.chargeAnyAccount');
+
+  /// The word `permissions.chargeAnyAccountHint`.
+  String get permissionsChargeAnyAccountHint => text('permissions.chargeAnyAccountHint');
+
+  /// The word `permissions.count`.
+  String get permissionsCount => text('permissions.count');
+
+  /// The word `permissions.deleteEntries`.
+  String get permissionsDeleteEntries => text('permissions.deleteEntries');
+
+  /// The word `permissions.deleteEntriesHint`.
+  String get permissionsDeleteEntriesHint => text('permissions.deleteEntriesHint');
+
+  /// The word `permissions.hint`.
+  String get permissionsHint => text('permissions.hint');
+
+  /// The word `permissions.manageAnyEntry`.
+  String get permissionsManageAnyEntry => text('permissions.manageAnyEntry');
+
+  /// The word `permissions.manageAnyEntryHint`.
+  String get permissionsManageAnyEntryHint => text('permissions.manageAnyEntryHint');
+
+  /// The word `permissions.manageProject`.
+  String get permissionsManageProject => text('permissions.manageProject');
+
+  /// The word `permissions.manageProjectHint`.
+  String get permissionsManageProjectHint => text('permissions.manageProjectHint');
+
+  /// The word `permissions.manageSettings`.
+  String get permissionsManageSettings => text('permissions.manageSettings');
+
+  /// The word `permissions.manageSettingsHint`.
+  String get permissionsManageSettingsHint => text('permissions.manageSettingsHint');
+
+  /// The word `permissions.manageStructure`.
+  String get permissionsManageStructure => text('permissions.manageStructure');
+
+  /// The word `permissions.manageStructureHint`.
+  String get permissionsManageStructureHint => text('permissions.manageStructureHint');
+
+  /// The word `permissions.manageUsers`.
+  String get permissionsManageUsers => text('permissions.manageUsers');
+
+  /// The word `permissions.manageUsersHint`.
+  String get permissionsManageUsersHint => text('permissions.manageUsersHint');
+
+  /// The word `permissions.moveMoney`.
+  String get permissionsMoveMoney => text('permissions.moveMoney');
+
+  /// The word `permissions.moveMoneyHint`.
+  String get permissionsMoveMoneyHint => text('permissions.moveMoneyHint');
+
+  /// The word `permissions.readProject`.
+  String get permissionsReadProject => text('permissions.readProject');
+
+  /// The word `permissions.readProjectHint`.
+  String get permissionsReadProjectHint => text('permissions.readProjectHint');
+
+  /// The word `permissions.recordEntries`.
+  String get permissionsRecordEntries => text('permissions.recordEntries');
+
+  /// The word `permissions.recordEntriesHint`.
+  String get permissionsRecordEntriesHint => text('permissions.recordEntriesHint');
+
+  /// The word `permissions.seeAllCapital`.
+  String get permissionsSeeAllCapital => text('permissions.seeAllCapital');
+
+  /// The word `permissions.seeAllCapitalHint`.
+  String get permissionsSeeAllCapitalHint => text('permissions.seeAllCapitalHint');
+
+  /// The word `permissions.title`.
+  String get permissionsTitle => text('permissions.title');
+
   /// The word `projects.addUnit`.
   String get projectsAddUnit => text('projects.addUnit');
 
@@ -1789,6 +1882,9 @@ mixin WordGetters {
 
   /// The word `projects.loadFailed`.
   String get projectsLoadFailed => text('projects.loadFailed');
+
+  /// The word `projects.manager`.
+  String get projectsManager => text('projects.manager');
 
   /// The word `projects.name`.
   String get projectsName => text('projects.name');
@@ -2588,8 +2684,8 @@ mixin WordGetters {
   /// The word `users.invalidName`.
   String get usersInvalidName => text('users.invalidName');
 
-  /// The word `users.invalidRole`.
-  String get usersInvalidRole => text('users.invalidRole');
+  /// The word `users.invalidPermission`.
+  String get usersInvalidPermission => text('users.invalidPermission');
 
   /// The word `users.invalidUsername`.
   String get usersInvalidUsername => text('users.invalidUsername');
@@ -2626,27 +2722,6 @@ mixin WordGetters {
 
   /// The word `users.resetPassword`.
   String get usersResetPassword => text('users.resetPassword');
-
-  /// The word `users.roleAdmin`.
-  String get usersRoleAdmin => text('users.roleAdmin');
-
-  /// The word `users.roleField`.
-  String get usersRoleField => text('users.roleField');
-
-  /// The word `users.roleFinance`.
-  String get usersRoleFinance => text('users.roleFinance');
-
-  /// The word `users.roleManager`.
-  String get usersRoleManager => text('users.roleManager');
-
-  /// The word `users.roleReader`.
-  String get usersRoleReader => text('users.roleReader');
-
-  /// The word `users.roles`.
-  String get usersRoles => text('users.roles');
-
-  /// The word `users.rolesHint`.
-  String get usersRolesHint => text('users.rolesHint');
 
   /// The word `users.save`.
   String get usersSave => text('users.save');

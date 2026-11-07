@@ -45,6 +45,7 @@ import 'payment_choice.dart';
 import 'payment_choices.dart';
 import 'qr_summary.dart';
 import 'unit_split.dart';
+import 'typed_amount.dart';
 
 /// A new purchase expense (UC-021, UC-022): the invoice first, then what it was for and how it was paid. The amounts below the fields only show what the API will compute. A draft can wait for the invoice and the required columns; sending cannot.
 class AddExpenseScreen extends StatefulWidget {
@@ -341,7 +342,10 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
     if (widget.editingId.isNotEmpty) {
       return _openEntry();
     }
-    return _takeFrom(widget.sharedFile.isNone ? widget.capture.fromCamera : () async => widget.sharedFile);
+    if (!widget.sharedFile.isNone || widget.project.mayAttachFiles) {
+      return _takeFrom(widget.sharedFile.isNone ? widget.capture.fromCamera : () async => widget.sharedFile);
+    }
+    return Future.value();
   }
 
   /// Fills the form from the entry being changed (UC-033). Figures come as they were kept, before VAT, so that the same figures come out.
@@ -379,18 +383,19 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
         _payment.source = accounts.first.type;
       }
       if ((purchase['unitPrice'] as num) != 0) {
-        _unitPrice.text = '${purchase['unitPrice']}';
-        _quantity.text = '${purchase['quantity']}';
+        _unitPrice.text = formatPlain((purchase['unitPrice'] as num).toDouble());
+        _quantity.text = formatPlain((purchase['quantity'] as num).toDouble());
       }
       if (_withoutInvoice) {
-        _amount.text = '$paid';
+        _amount.text = formatPlain(paid.toDouble());
         _paymentDate = DateTime.parse(entry['entryDate'] as String);
       } else {
         _invoiceDate = DateTime.parse(invoice['invoiceDate'] as String);
-        _amountIncludesVat = false;
-        _amount.text = '${(invoice['amountBeforeDiscount'] as num).abs()}';
+        final typed = TypedAmount.of(invoice);
+        _amountIncludesVat = typed.includesVat;
+        _amount.text = formatPlain(typed.amount);
         if ((invoice['discount'] as num) != 0) {
-          _discount.text = '${(invoice['discount'] as num).abs()}';
+          _discount.text = formatPlain((invoice['discount'] as num).abs().toDouble());
         }
         _isNotTaxable = (invoice['vat'] as num) == 0;
         _isCreditNote = invoice['isCreditNote'] as bool;
@@ -823,7 +828,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
           if (_withoutInvoice)
             _textField(AddExpenseScreen.withoutInvoiceReasonKey, _withoutInvoiceReason, words.expensesWithoutInvoiceReason, maxLines: 2)
           else ...[
-            InvoiceSection(file: _invoice, emptyLabel: words.attachmentsInvoicePhoto, message: _invoiceMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
+            InvoiceSection(project: widget.project, file: _invoice, emptyLabel: words.attachmentsInvoicePhoto, message: _invoiceMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
             if (_qrMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 8),

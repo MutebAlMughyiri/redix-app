@@ -242,7 +242,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
     final accounts = widget.accounts.all.where((account) => account.id == entry['accountId']);
     final number = invoice['number'] as String? ?? '';
     setState(() {
-      _amount.text = '${entry['amount']}';
+      _amount.text = formatPlain((entry['amount'] as num).toDouble());
       _date = DateTime.parse(entry['entryDate'] as String);
       _isOutside = payment['isOutsideContract'] as bool;
       _notes.text = entry['notes'] as String;
@@ -257,7 +257,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
         _hasInvoice = true;
         _invoiceNumber.text = number;
         _invoiceDate = DateTime.parse(invoice['invoiceDate'] as String);
-        _invoiceAmount.text = '${invoice['amountBeforeDiscount']}';
+        _invoiceAmount.text = formatPlain((invoice['amountBeforeDiscount'] as num).toDouble());
       }
       if (files.isNotEmpty) {
         _attachmentId = (files.first as Map<String, dynamic>)['attachmentId'] as String;
@@ -484,6 +484,7 @@ class _ContractorPaymentScreenState extends State<ContractorPaymentScreen> {
       : [
           Text(words.contractorPaymentsReceipt, key: ContractorPaymentScreen.receiptKey, style: Theme.of(context).textTheme.titleSmall),
           InvoiceSection(
+            project: widget.project,
             file: _receipt,
             emptyLabel: words.contractorPaymentsReceipt,
             message: _receiptMessage,

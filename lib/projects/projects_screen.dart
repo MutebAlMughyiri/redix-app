@@ -65,8 +65,6 @@ class ProjectsScreen extends StatefulWidget {
   /// The units of the project [id], or that it is read-only.
   static Key detailsKey(String id) => Key('projects.details.$id');
 
-  /// What the signed-in user is in the project [id].
-  static Key rolesKey(String id) => Key('projects.roles.$id');
 
   /// The status of the project [id].
   static Key statusKey(String id) => Key('projects.status.$id');

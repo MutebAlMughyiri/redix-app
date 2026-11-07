@@ -67,7 +67,7 @@ void main() {
   });
 
   testWidgets('a project waiting for approval says so, does not open and has no star', (tester) async {
-    final api = FakeApi()..addProject('غصون 8', status: 'pendingApproval', roles: ['users.roleManager'], permissions: []);
+    final api = FakeApi()..addProject('غصون 8', status: 'pendingApproval', permissions: []);
     await openProjects(tester, api);
 
     expect(status(tester, 'project-0'), 'en projects.pending');
@@ -78,7 +78,7 @@ void main() {
   });
 
   testWidgets('a rejected project says why, does not open and has no star', (tester) async {
-    final api = FakeApi()..addProject('غصون 9', status: 'rejected', rejectionReason: 'الاسم مكرر', roles: ['users.roleManager'], permissions: []);
+    final api = FakeApi()..addProject('غصون 9', status: 'rejected', rejectionReason: 'الاسم مكرر', permissions: []);
     await openProjects(tester, api);
 
     expect(status(tester, 'project-0'), 'en projects.rejected');
@@ -92,7 +92,7 @@ void main() {
   testWidgets('a card keeps its margins in Arabic, and on a waiting project with no star', (tester) async {
     final api = FakeApi()
       ..addProject('غصون 6')
-      ..addProject('غصون 8', status: 'pendingApproval', roles: ['users.roleManager'], permissions: []);
+      ..addProject('غصون 8', status: 'pendingApproval', permissions: []);
     await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession});
 
     final card = tester.getRect(find.byKey(ProjectsScreen.cardKey('project-0')));
@@ -100,16 +100,6 @@ void main() {
 
     final waiting = tester.getRect(find.byKey(ProjectsScreen.cardKey('project-1')));
     expect(tester.getRect(find.byKey(ProjectsScreen.statusKey('project-1'))).left - waiting.left, greaterThanOrEqualTo(16));
-  });
-
-  testWidgets('each project says what the user is in it', (tester) async {
-    final api = FakeApi()
-      ..addProject('غصون 6')
-      ..addProject('غصون 7', roles: ['users.roleReader'], permissions: ['readProject']);
-    await openProjects(tester, api);
-
-    expect(text(tester, ProjectsScreen.rolesKey('project-0')), 'en users.roleManager · en users.roleFinance');
-    expect(text(tester, ProjectsScreen.rolesKey('project-1')), 'en users.roleReader');
   });
 
   testWidgets('sign-in lands on the list, with no change buttons on it', (tester) async {

@@ -83,8 +83,7 @@ import 'structure/offered_items.dart';
 import 'suppliers/suppliers.dart';
 import 'suppliers/suppliers_screen.dart';
 import 'users/new_user_screen.dart';
-import 'users/roles.dart';
-import 'users/user_roles_screen.dart';
+import 'users/user_permissions_screen.dart';
 import 'users/users.dart';
 import 'users/users_screen.dart';
 import 'words/app_language.dart';
@@ -133,7 +132,6 @@ class _RedixAppState extends State<RedixApp> {
   late final _registered = RegisteredProjects(widget.session);
   late final _notifications = Notifications(widget.session);
   final _projectUsers = <String, Users>{};
-  final _projectRoles = <String, Roles>{};
   final _projectCategories = <String, Categories>{};
   final _columnLists = <String, Columns>{};
   final _projectPaymentMethods = <String, PaymentMethods>{};
@@ -211,11 +209,10 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _usersOf(state.pathParameters['projectId'] ?? ''))),
       GoRoute(
-        path: UserRolesScreen.path,
-        builder: (context, state) => UserRolesScreen(
+        path: UserPermissionsScreen.path,
+        builder: (context, state) => UserPermissionsScreen(
           userId: state.pathParameters['userId'] ?? '',
           users: _usersOf(state.pathParameters['projectId'] ?? ''),
-          roles: _rolesOf(state.pathParameters['projectId'] ?? ''),
           projectName: state.extra as String? ?? '',
         ),
       ),
@@ -394,7 +391,6 @@ class _RedixAppState extends State<RedixApp> {
 
   Users _usersOf(String projectId) => _projectUsers.putIfAbsent(projectId, () => Users(widget.session, projectId));
 
-  Roles _rolesOf(String projectId) => _projectRoles.putIfAbsent(projectId, () => Roles(widget.session, projectId));
 
   Categories _categoriesOf(String projectId) => _projectCategories.putIfAbsent(projectId, () => Categories(widget.session, projectId));
 

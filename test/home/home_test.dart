@@ -33,16 +33,15 @@ void main() {
     await openHome(tester, api);
 
     expect(text(tester, HomeScreen.titleKey), 'غصون 6');
-    expect(text(tester, HomeScreen.rolesKey('project-0')), 'en users.roleManager · en users.roleFinance');
 
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
 
-  testWidgets('the buttons follow the role in the open project', (tester) async {
+  testWidgets('the buttons follow the permissions in the open project', (tester) async {
     final api = FakeApi()
       ..addProject('غصون 6')
-      ..addProject('غصون 7', roles: ['users.roleField'], permissions: ['readProject']);
+      ..addProject('غصون 7', permissions: ['readProject']);
     await openHome(tester, api);
     expect(find.byKey(HomeScreen.closeKey('project-0')), findsOneWidget);
 
@@ -377,7 +376,7 @@ void main() {
   });
 
   testWidgets('a reader or a field supervisor sees the project and can change nothing', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', roles: ['users.roleReader'], permissions: ['readProject']);
+    final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
     await openHome(tester, api);
 
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsOneWidget);
@@ -386,8 +385,8 @@ void main() {
     expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
   });
 
-  testWidgets('a manager with no other role has Users, but no Add unit or Close', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', roles: ['users.roleManager'], permissions: ['manageUsers', 'readProject', 'seeAllCapital']);
+  testWidgets('whoever only manages users has Users, but no Add unit or Close', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', permissions: ['manageUsers', 'readProject', 'seeAllCapital']);
     await openHome(tester, api);
 
     expect(find.byKey(HomeScreen.usersKey('project-0')), findsOneWidget);
@@ -395,8 +394,8 @@ void main() {
     expect(find.byKey(HomeScreen.closeKey('project-0')), findsNothing);
   });
 
-  testWidgets('a financial supervisor has Add unit and Close, but no Users', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', roles: ['users.roleFinance'], permissions: ['readProject', 'seeAllCapital', 'manageProject']);
+  testWidgets('whoever manages the project but not its users has Add unit and Close, but no Users', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', permissions: ['readProject', 'seeAllCapital', 'manageProject']);
     await openHome(tester, api);
 
     expect(find.byKey(HomeScreen.usersKey('project-0')), findsNothing);
@@ -405,7 +404,7 @@ void main() {
   });
 
   testWidgets('Users stays on a finished project, and the list is read again on coming back', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', status: 'finished', roles: ['users.roleManager'], permissions: ['manageUsers', 'readProject']);
+    final api = FakeApi()..addProject('غصون 6', status: 'finished', permissions: ['manageUsers', 'readProject']);
     await openHome(tester, api);
 
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey('project-0'))));

@@ -201,6 +201,45 @@ void main() {
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
   });
 
+  for (final status in ['draft', 'pendingApproval', 'rejected']) {
+    testWidgets('a bill that is $status, not approved, is removed: Delete asks first, then it leaves the list', (tester) async {
+      final api = await openEntries(tester, (api) => api.addEntry(status: status, rejectionReason: status == 'rejected' ? 'الصورة غير واضحة' : ''), permissions: managerAndFinance);
+      await openActions(tester, api, 'entry-0');
+      expect(find.byKey(EntriesScreen.reverseKey), findsNothing);
+
+      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.deleteKey)));
+      await act(tester, api, () => tester.tap(find.text('en entries.delete').last));
+
+      expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2), ('entry-0', 'delete'));
+      expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
+    });
+  }
+
+  testWidgets('an approved bill cannot be removed, only reversed, and stays on the list said to be reversed', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: managerAndFinance);
+    await openActions(tester, api, 'entry-0');
+
+    expect(find.byKey(EntriesScreen.deleteKey), findsNothing);
+    expect(find.byKey(EntriesScreen.editKey), findsNothing);
+    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.reverseKey)));
+    await act(tester, api, () async {
+      await tester.enterText(find.byKey(EntriesScreen.reverseReasonKey), 'فاتورة مكررة');
+      await tester.tap(find.byKey(EntriesScreen.reverseSendKey));
+    });
+
+    expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2), ('entry-0', 'reverse'));
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.reversed');
+  });
+
+  testWidgets('without Delete entries a bill offers no Delete, though it can still be changed', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'), permissions: [for (final permission in field) if (permission != 'deleteEntries') permission]);
+    await openActions(tester, api, 'entry-0');
+
+    expect(find.byKey(EntriesScreen.editKey), findsOneWidget);
+    expect(find.byKey(EntriesScreen.deleteKey), findsNothing);
+  });
+
   testWidgets('a finished project changes nothing', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'), status: 'finished');
 
@@ -211,7 +250,7 @@ void main() {
   });
 
   group('AC-19.1: fixing a rejected entry', () {
-    Future<FakeApi> openRejected(WidgetTester tester) async {
+    Future<FakeApi> openRejected(WidgetTester tester, {Map<String, Object> invoice = const {'number': '2617', 'invoiceDate': '2026-11-05', 'amountBeforeDiscount': 1000, 'discount': 0, 'amountAfterDiscount': 1000, 'vat': 150, 'total': 1150, 'isCreditNote': false}}) async {
       final api = await openEntries(tester, (api) {
         final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'بند اللياسة', subgroups: ['مواد']);
         for (final key in ['product', 'notes']) {
@@ -227,7 +266,7 @@ void main() {
             'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'unitId': 'project-0-unit-0', 'paymentMethodId': method['id']!, 'bankFees': 0, 'withoutInvoiceReason': '', 'customValues': '{}'},
             'purchase': {'supplierId': supplier['id']!, 'product': 'مواد لياسة', 'unitPrice': 0, 'quantity': 0},
             'contractorPayment': {'contractId': '00000000-0000-0000-0000-000000000000', 'isOutsideContract': false},
-            'invoice': {'number': '2617', 'invoiceDate': '2026-11-05', 'amountBeforeDiscount': 1000, 'discount': 0, 'amountAfterDiscount': 1000, 'vat': 150, 'total': 1150, 'isCreditNote': false},
+            'invoice': invoice,
             'attachments': [
               {'attachmentId': 'attachment-1'},
             ],
@@ -249,6 +288,16 @@ void main() {
       expect(typed(tester, AddExpenseScreen.invoiceNumberKey), '2617');
       expect(typed(tester, AddExpenseScreen.amountKey), '1000');
       expect(typed(tester, AddExpenseScreen.notesKey), 'دفعة أولى');
+    });
+
+    testWidgets('an amount typed with VAT comes back with VAT and two decimals at most, not the four the API keeps before VAT', (tester) async {
+      await openRejected(
+        tester,
+        invoice: const {'number': '2617', 'invoiceDate': '2026-11-05', 'amountBeforeDiscount': 869.5652, 'discount': 0, 'amountAfterDiscount': 869.5652, 'vat': 130.4348, 'total': 1000, 'isCreditNote': false},
+      );
+
+      expect(typed(tester, AddExpenseScreen.amountKey), '1000');
+      expect(tester.widget<SegmentedButton<bool>>(find.ancestor(of: find.byKey(AddExpenseScreen.includingVatKey), matching: find.byType(SegmentedButton<bool>))).selected, {true});
     });
 
     testWidgets('saving goes to that entry, with its own id, file and figures', (tester) async {

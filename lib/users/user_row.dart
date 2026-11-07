@@ -4,14 +4,14 @@ import '../words/words.dart';
 import 'user.dart';
 import 'users_screen.dart';
 
-/// One user on the list: their name, username, mobile and roles, a badge when disabled, and a menu of what can be done to them.
+/// One user on the list: their name, username, mobile and how many permissions they hold, a badge when disabled, and a menu of what can be done to them.
 class UserRow extends StatelessWidget {
   /// The row of [user], calling the given callback when its menu item is chosen.
   const UserRow({
     super.key,
     required this.user,
     required this.onEdit,
-    required this.onRoles,
+    required this.onPermissions,
     required this.onResetPassword,
     required this.onDisable,
     required this.onEnable,
@@ -23,8 +23,8 @@ class UserRow extends StatelessWidget {
   /// Called when Edit is chosen.
   final VoidCallback onEdit;
 
-  /// Called when Roles is chosen.
-  final VoidCallback onRoles;
+  /// Called when Permissions is chosen.
+  final VoidCallback onPermissions;
 
   /// Called when Reset password is chosen.
   final VoidCallback onResetPassword;
@@ -67,7 +67,7 @@ class UserRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(user.mobile.isEmpty ? user.username : '${user.username} · ${user.mobile}', key: UsersScreen.detailsKey(user.id)),
-            Text(user.roles.map((role) => words.text(role.wordKey)).join(' · '), key: UsersScreen.rolesLineKey(user.id)),
+            Text(words.permissionsCount.replaceFirst('{0}', '${user.permissionCount}'), key: UsersScreen.permissionsLineKey(user.id)),
           ],
         ),
         trailing: PopupMenuButton<VoidCallback>(
@@ -75,7 +75,7 @@ class UserRow extends StatelessWidget {
           onSelected: (action) => action(),
           itemBuilder: (context) => [
             PopupMenuItem(key: UsersScreen.editKey, value: onEdit, child: Text(words.usersEdit)),
-            PopupMenuItem(key: UsersScreen.rolesKey, value: onRoles, child: Text(words.usersRoles)),
+            PopupMenuItem(key: UsersScreen.permissionsKey, value: onPermissions, child: Text(words.permissionsTitle)),
             PopupMenuItem(key: UsersScreen.resetPasswordKey, value: onResetPassword, child: Text(words.usersResetPassword)),
             if (user.isActive)
               PopupMenuItem(key: UsersScreen.disableKey, value: onDisable, child: Text(words.usersDisable))

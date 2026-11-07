@@ -44,7 +44,7 @@ import '../ui/refresh_button.dart';
 import '../users/users_screen.dart';
 import '../words/words.dart';
 
-/// The home of the open project (UC-010): the project, with what the user's roles allow in it (AC-36.2). Each later use case adds to it.
+/// The home of the open project (UC-010): the project, with what the user's permissions allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
   /// The home of the project [projectId], one of [projects], with [accounts], its accounts.
   const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.dashboard});
@@ -118,8 +118,6 @@ class HomeScreen extends StatefulWidget {
   /// The card of the project [id].
   static Key cardKey(String id) => Key('home.card.$id');
 
-  /// What the signed-in user is in the project [id].
-  static Key rolesKey(String id) => Key('home.roles.$id');
 
   /// The start date of the project [id], and whether it is read-only.
   static Key detailsKey(String id) => Key('home.details.$id');
@@ -232,7 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  /// Their last role may be taken at any time, and then the project is gone from their list.
+  /// They may be taken out of the project at any time, and then the project is gone from their list.
   void _leaveIfGone() {
     final projects = widget.projects;
     if (!projects.isLoading && projects.message.isEmpty && !projects.all.any((project) => project.id == widget.projectId && project.isApproved)) {

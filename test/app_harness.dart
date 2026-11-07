@@ -29,14 +29,15 @@ Map<String, String> wordsIn(String language) => {
     'changePassword.submit', 'changePassword.mismatch', 'changePassword.invalidCredentials', 'changePassword.accountLocked',
     'changePassword.weakPassword', 'changePassword.noConnection',
     'myAccount.title', 'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
-    'users.roles', 'users.rolesHint', 'users.roleManager', 'users.roleFinance', 'users.roleField', 'users.roleReader',
-    'users.addExisting', 'users.unknownUser', 'users.invalidRole', 'users.lastManager', 'users.otherProject',
+    'permissions.title', 'permissions.hint', 'permissions.count',
+    'permissions.readProject', 'permissions.readProjectHint', 'permissions.manageUsers', 'permissions.manageUsersHint', 'permissions.seeAllCapital', 'permissions.seeAllCapitalHint', 'permissions.manageProject', 'permissions.manageProjectHint', 'permissions.manageStructure', 'permissions.manageStructureHint', 'permissions.manageSettings', 'permissions.manageSettingsHint', 'permissions.addSupplier', 'permissions.addSupplierHint', 'permissions.chargeAnyAccount', 'permissions.chargeAnyAccountHint', 'permissions.recordEntries', 'permissions.recordEntriesHint', 'permissions.manageAnyEntry', 'permissions.manageAnyEntryHint', 'permissions.deleteEntries', 'permissions.deleteEntriesHint', 'permissions.attachFiles', 'permissions.attachFilesHint', 'permissions.approveEntries', 'permissions.approveEntriesHint', 'permissions.moveMoney', 'permissions.moveMoneyHint',
+    'users.addExisting', 'users.unknownUser', 'users.invalidPermission', 'users.lastManager', 'users.otherProject',
     'signIn.registerProject', 'register.hint', 'register.sent', 'register.tooManyTries', 'register.invalidName', 'register.invalidUsername',
     'register.invalidMobile', 'register.unitNameTaken', 'projects.unitNameTaken', 'register.weakPassword', 'register.usernameTaken', 'register.noConnection', 'register.refused',
     'projects.pending', 'projects.rejected', 'registered.title', 'registered.empty', 'registered.loadFailed', 'registered.approve', 'registered.reject',
     'registered.reason', 'registered.invalidReason', 'registered.notPending', 'registered.noConnection', 'registered.refused',
     'myAccount.changePassword', 'myAccount.signOut', 'myAccount.signOutQuestion', 'myAccount.signOutExplain',
-    'settings.title', 'projects.new', 'projects.empty', 'projects.loadFailed', 'common.retry', 'common.refresh', 'projects.running',
+    'settings.title', 'projects.new', 'projects.manager', 'projects.empty', 'projects.loadFailed', 'common.retry', 'common.refresh', 'projects.running',
     'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
     'projects.unitName', 'projects.addUnit', 'projects.removeUnit', 'projects.create', 'common.cancel', 'projects.close',
     'projects.closeQuestion', 'projects.closeExplain', 'projects.pendingEntries', 'projects.unitInUse', 'projects.sharedUnit', 'projects.rename', 'projects.renameUnit', 'projects.removeUnitQuestion', 'projects.removeUnitExplain', 'projects.save', 'projects.invalidName', 'projects.projectFinished', 'projects.noConnection',
@@ -117,10 +118,13 @@ const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "ke
 const admin = ['approveProjects'];
 
 /// What a project manager who also does the finance may do in a project.
-const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier', 'recordEntries', 'attachFiles', 'chargeAnyAccount', 'approveEntries', 'manageAnyEntry', 'moveMoney'];
+const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier', 'recordEntries', 'deleteEntries', 'attachFiles', 'chargeAnyAccount', 'approveEntries', 'manageAnyEntry', 'moveMoney'];
 
 /// What someone in the field may do in a project.
-const field = ['readProject', 'addSupplier', 'recordEntries', 'attachFiles'];
+const field = ['readProject', 'addSupplier', 'recordEntries', 'deleteEntries', 'attachFiles'];
+
+/// What someone who only reads a project may do in it.
+const reader = ['readProject'];
 
 /// A picture of one pixel, which a test can draw.
 const onePixelPng = [
@@ -338,14 +342,6 @@ class FakeApi {
 
   /// What was last sent to turn a fingerprint or face on or off.
   final sentBiometrics = <bool>[];
-
-  /// The roles a project can give, in their order.
-  final roles = <Map<String, String>>[
-    {'id': 'role-manager', 'wordKey': 'users.roleManager'},
-    {'id': 'role-finance', 'wordKey': 'users.roleFinance'},
-    {'id': 'role-field', 'wordKey': 'users.roleField'},
-    {'id': 'role-reader', 'wordKey': 'users.roleReader'},
-  ];
 
   /// The projects the API holds, as it answers them.
   final projects = <Map<String, Object>>[];
@@ -790,7 +786,6 @@ class FakeApi {
     String startDate = '2026-03-01',
     List<String> units = const [],
     String rejectionReason = '',
-    List<String> roles = const ['users.roleManager', 'users.roleFinance'],
     List<String> permissions = managerAndFinance,
   }) {
     final id = 'project-${projects.length}';
@@ -802,7 +797,6 @@ class FakeApi {
       'rejectionReason': rejectionReason,
       'units': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}],
       'entryUnits': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}, {'id': '$id-unit-shared', 'name': 'مشترك'}],
-      'roles': roles,
       'permissions': permissions,
       'vatPercent': 15.0,
     };
@@ -1269,11 +1263,15 @@ class FakeApi {
     return user;
   }
 
-  /// Gives [user], as [addUser] answered them, a role in the project [projectId].
-  void giveRole(Map<String, Object> user, String projectId, String roleId) {
+  /// Gives [user], as [addUser] answered them, [permissions] in the project [projectId], those not held already.
+  void give(Map<String, Object> user, String projectId, List<String> permissions) {
     final project = projects.singleWhere((project) => project['id'] == projectId);
-    final role = roles.singleWhere((role) => role['id'] == roleId);
-    (user['projects'] as List<Map<String, Object>>).add({'projectId': projectId, 'name': project['name'] as String, 'role': role});
+    final lines = user['projects'] as List<Map<String, Object>>;
+    if (!lines.any((line) => line['projectId'] == projectId)) {
+      lines.add({'projectId': projectId, 'name': project['name'] as String, 'permissions': <String>[]});
+    }
+    final held = lines.singleWhere((line) => line['projectId'] == projectId)['permissions']! as List<String>;
+    held.addAll(permissions.where((permission) => !held.contains(permission)));
   }
 
   /// [user] as a project's list answers them: only that project's lines.
@@ -1295,19 +1293,22 @@ class FakeApi {
     }
     if (segments.length == 3) {
       final user = addUser(body['displayName'] as String, username: body['username'] as String, mobile: body['mobile'] as String);
-      giveRole(user, projectId, roles.last['id']!);
+      give(user, projectId, ['readProject', ...(body['permissions'] as List<dynamic>).cast<String>()]);
       return _json(_inProject(user, projectId), 201);
     }
     if (segments[3] == 'existing') {
       final user = users.singleWhere((user) => user['username'] == body['username']);
-      giveRole(user, projectId, roles.last['id']!);
+      give(user, projectId, reader);
       return _json(_inProject(user, projectId), 200);
     }
     final user = users.singleWhere((user) => user['id'] == segments[3]);
-    if (segments.last == 'remove') {
-      (user['projects'] as List<Map<String, Object>>).removeWhere((line) => line['projectId'] == projectId && (line['role']! as Map<String, String>)['id'] == segments[5]);
+    final lines = user['projects'] as List<Map<String, Object>>;
+    if (segments.last != 'remove') {
+      give(user, projectId, [segments[5]]);
+    } else if (segments[5] == 'readProject') {
+      lines.removeWhere((line) => line['projectId'] == projectId);
     } else {
-      giveRole(user, projectId, segments[5]);
+      (lines.singleWhere((line) => line['projectId'] == projectId)['permissions']! as List<String>).remove(segments[5]);
     }
     return _json(_inProject(user, projectId), 200);
   }
@@ -1405,9 +1406,6 @@ class FakeApi {
     }
     if (segments.length == 2 && (segments[1] == 'register' || segments[1] == 'registered') || segments.length == 3 && (segments[2] == 'approve' || segments[2] == 'reject')) {
       return _answerRegistration(request);
-    }
-    if (segments.length >= 3 && segments[2] == 'roles') {
-      return _json(roles, 200);
     }
     if (segments.length >= 3 && segments[2] == 'users') {
       return _answerProjectUsers(request, segments[1]);

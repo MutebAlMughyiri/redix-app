@@ -11,13 +11,12 @@ void main() {
   Future<FakeApi> openProjectUsers(WidgetTester tester) async {
     final api = FakeApi()..addProject('غصون 6');
     final manager = api.addUser('متعب', username: 'muteb');
-    final field = api.addUser('نواف', username: 'nawaf', mobile: '0500000000');
+    final nawaf = api.addUser('نواف', username: 'nawaf', mobile: '0500000000');
     final disabled = api.addUser('سالم', username: 'salem', isActive: false);
     api
-      ..giveRole(manager, 'project-0', 'role-manager')
-      ..giveRole(manager, 'project-0', 'role-finance')
-      ..giveRole(field, 'project-0', 'role-field')
-      ..giveRole(disabled, 'project-0', 'role-reader');
+      ..give(manager, 'project-0', managerAndFinance)
+      ..give(nawaf, 'project-0', field)
+      ..give(disabled, 'project-0', reader);
     await openProject(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey('project-0'))));
     return api;
@@ -41,8 +40,8 @@ void main() {
 
     expect(find.text('en users.title'), findsOneWidget);
     expect(find.text('غصون 6'), findsOneWidget);
-    expect(text(tester, UsersScreen.rolesLineKey('user-0')), 'en users.roleManager · en users.roleFinance');
-    expect(text(tester, UsersScreen.rolesLineKey('user-1')), 'en users.roleField');
+    expect(text(tester, UsersScreen.permissionsLineKey('user-0')), 'en permissions.count');
+    expect(text(tester, UsersScreen.permissionsLineKey('user-1')), 'en permissions.count');
   });
 
   testWidgets('every row has the whole menu, a manager included', (tester) async {
@@ -51,7 +50,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-0'))));
 
     expect(find.byKey(UsersScreen.editKey), findsOneWidget);
-    expect(find.byKey(UsersScreen.rolesKey), findsOneWidget);
+    expect(find.byKey(UsersScreen.permissionsKey), findsOneWidget);
     expect(find.byKey(UsersScreen.resetPasswordKey), findsOneWidget);
     expect(find.byKey(UsersScreen.disableKey), findsOneWidget);
     expect(find.byKey(UsersScreen.enableKey), findsNothing);
@@ -183,7 +182,8 @@ void main() {
     expect(api.sentUserChanges.single.$1, '/projects/project-0/users/existing');
     expect(api.sentUserChanges.single.$2, {'username': 'reem'});
     expect(find.byKey(UsersScreen.saveKey), findsNothing);
-    expect(text(tester, UsersScreen.rolesLineKey('user-3')), 'en users.roleReader');
+    expect(text(tester, UsersScreen.permissionsLineKey('user-3')), 'en permissions.count');
+    expect(api.users.last['projects'], [{'projectId': 'project-0', 'name': 'غصون 6', 'permissions': ['readProject']}]);
   });
 
   testWidgets('an unknown username stays in the dialog and says so', (tester) async {
@@ -201,7 +201,7 @@ void main() {
 
   testWidgets('without a network the list says so, and Try again reads it', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
-    api.giveRole(api.addUser('متعب', username: 'muteb'), 'project-0', 'role-manager');
+    api.give(api.addUser('متعب', username: 'muteb'), 'project-0', const ['manageUsers', 'readProject', 'seeAllCapital']);
     await openProject(tester, api);
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey('project-0'))));

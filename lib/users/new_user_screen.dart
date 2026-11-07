@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../auth/permission.dart';
 import '../words/words.dart';
+import 'permission_tick.dart';
 import 'users.dart';
 
 /// The new user form (UC-007): their name, username, mobile and a temporary password they change at first sign-in (AC-02.1). A new login is born in a project.
@@ -36,6 +38,9 @@ class NewUserScreen extends StatefulWidget {
   /// The line that says why the user was refused.
   static const messageKey = Key('newUser.message');
 
+  /// The tick of [permission]; See the project is always ticked.
+  static Key permissionKey(Permission permission) => Key('newUser.${permission.name}');
+
   @override
   State<NewUserScreen> createState() => _NewUserScreenState();
 }
@@ -47,6 +52,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
   final _password = TextEditingController();
   var _message = '';
   var _saving = false;
+  final _ticked = {Permission.readProject};
 
   @override
   void dispose() {
@@ -62,7 +68,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
       _saving = true;
       _message = '';
     });
-    final refusal = await widget.users.create(_name.text, _username.text, _mobile.text, _password.text);
+    final refusal = await widget.users.create(_name.text, _username.text, _mobile.text, _password.text, _ticked);
     if (!mounted) {
       return;
     }
@@ -103,6 +109,16 @@ class _NewUserScreenState extends State<NewUserScreen> {
               autocorrect: false,
               decoration: field(words.usersTemporaryPassword, helper: words.usersTemporaryPasswordHint),
             ),
+            const SizedBox(height: 16),
+            Text(words.permissionsTitle, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            for (final permission in Permission.inAProject)
+              PermissionTick(
+                key: NewUserScreen.permissionKey(permission),
+                permission: permission,
+                value: _ticked.contains(permission),
+                onChanged: permission == Permission.readProject ? null : (ticked) => setState(() => ticked ? _ticked.add(permission) : _ticked.remove(permission)),
+              ),
             const SizedBox(height: 24),
             FilledButton(
               key: NewUserScreen.submitKey,

@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
 import '../attachments/picked_file.dart';
+import '../projects/project.dart';
 import '../words/words.dart';
 import 'add_expense_screen.dart';
 
-/// The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files.
+/// The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files. Not shown to whoever may not attach files in [project].
 class InvoiceSection extends StatelessWidget {
-  /// The section showing [file], or [emptyLabel] until there is one, with [message] saying why the last try gave none, calling [onCamera] and [onFiles].
-  const InvoiceSection({super.key, required this.file, required this.emptyLabel, required this.message, required this.onCamera, required this.onFiles});
+  /// The section of [project] showing [file], or [emptyLabel] until there is one, with [message] saying why the last try gave none, calling [onCamera] and [onFiles].
+  const InvoiceSection({super.key, required this.project, required this.file, required this.emptyLabel, required this.message, required this.onCamera, required this.onFiles});
+
+  /// The project the file goes to.
+  final Project project;
 
   /// The invoice chosen; none yet when empty.
   final PickedFile file;
@@ -47,6 +51,9 @@ class InvoiceSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!project.mayAttachFiles) {
+      return const SizedBox.shrink();
+    }
     final words = Words.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

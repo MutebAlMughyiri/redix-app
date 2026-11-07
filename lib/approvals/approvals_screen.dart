@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../attachments/attachment_screen.dart';
+import '../auth/permission.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
@@ -138,6 +139,9 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
     );
   }
 
+  /// Whether the user may decide here now: approve, reject, and say how a partner's payment counts.
+  bool get _mayDecide => !widget.project.isFinished && widget.project.may(Permission.approveEntries);
+
   Widget _details(BuildContext context, PendingApproval entry) {
     final words = Words.of(context);
     final theme = Theme.of(context);
@@ -158,13 +162,14 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
         if (entry.sellerDiffers) Text(words.approvalsSellerDiffers, key: ApprovalsScreen.sellerDiffersKey(entry.id), style: TextStyle(color: theme.colorScheme.error)),
         if (entry.partnerName.isNotEmpty) ...[
           Text('${words.approvalsPaidBy}: ${entry.partnerName}', key: ApprovalsScreen.paidByKey(entry.id), style: small),
-          Wrap(
-            spacing: 8,
-            children: [
-              ChoiceChip(key: ApprovalsScreen.capitalKey(entry.id), label: Text(words.approvalsAddToCapital), selected: entry.partnerTreatment == 'capital', onSelected: (_) => showRefusalOf(context, widget.approvals.setPartnerTreatment(entry.id, 'capital'))),
-              ChoiceChip(key: ApprovalsScreen.owedKey(entry.id), label: Text(words.approvalsOwedBack), selected: entry.partnerTreatment == 'amountDue', onSelected: (_) => showRefusalOf(context, widget.approvals.setPartnerTreatment(entry.id, 'amountDue'))),
-            ],
-          ),
+          if (_mayDecide)
+            Wrap(
+              spacing: 8,
+              children: [
+                ChoiceChip(key: ApprovalsScreen.capitalKey(entry.id), label: Text(words.approvalsAddToCapital), selected: entry.partnerTreatment == 'capital', onSelected: (_) => showRefusalOf(context, widget.approvals.setPartnerTreatment(entry.id, 'capital'))),
+                ChoiceChip(key: ApprovalsScreen.owedKey(entry.id), label: Text(words.approvalsOwedBack), selected: entry.partnerTreatment == 'amountDue', onSelected: (_) => showRefusalOf(context, widget.approvals.setPartnerTreatment(entry.id, 'amountDue'))),
+              ],
+            ),
         ],
       ],
     );
@@ -174,7 +179,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final colors = Theme.of(context).colorScheme;
-    final mayDecide = !widget.project.isFinished;
+    final mayDecide = _mayDecide;
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.approvalsTitle, subject: widget.project.name), actions: [RefreshButton(onRefresh: widget.approvals.load)]),
       bottomNavigationBar: !mayDecide || _selected.isEmpty

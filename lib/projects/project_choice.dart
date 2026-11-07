@@ -4,7 +4,7 @@ import '../words/words.dart';
 import 'project.dart';
 import 'projects_screen.dart';
 
-/// One project on the list: its name, units, the signed-in user's roles and its status. An approved one opens when tapped, and has a star that marks the default.
+/// One project on the list: its name, units and its status. An approved one opens when tapped, and has a star that marks the default.
 class ProjectChoice extends StatelessWidget {
   /// The card of [project], calling [onOpen] and [onStar] when those are tapped; [isDefault] fills the star.
   const ProjectChoice({super.key, required this.project, required this.isDefault, required this.onOpen, required this.onStar});
@@ -46,7 +46,6 @@ class ProjectChoice extends StatelessWidget {
                       children: [
                         Text(project.name, key: ProjectsScreen.nameKey(project.id), style: theme.textTheme.titleMedium),
                         Text(project.isFinished ? words.projectsReadOnly : units, key: ProjectsScreen.detailsKey(project.id), style: theme.textTheme.bodySmall),
-                        Text(project.roles.map(words.text).join(' · '), key: ProjectsScreen.rolesKey(project.id), style: theme.textTheme.bodySmall),
                         if (project.rejectionReason.isNotEmpty)
                           Text(project.rejectionReason, key: ProjectsScreen.reasonKey(project.id), style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error)),
                       ],

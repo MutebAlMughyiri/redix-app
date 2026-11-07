@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/auth/permission.dart';
 import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
@@ -34,7 +35,7 @@ import 'package:redix/suppliers/suppliers.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/users/new_user_screen.dart';
-import 'package:redix/users/user_roles_screen.dart';
+import 'package:redix/users/user_permissions_screen.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -300,10 +301,10 @@ void main() {
       final running = api.addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الجنوبية']);
       final finished = api.addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
       final manager = api.addUser('متعب', username: 'muteb');
-      final field = api.addUser('نواف', username: 'nawaf', mobile: '0500000000');
+      final field_ = api.addUser('نواف', username: 'nawaf', mobile: '0500000000');
       final disabled = api.addUser('سالم', username: 'salem', isActive: false);
-      for (final (user, role) in [(manager, 'role-manager'), (field, 'role-field'), (disabled, 'role-reader')]) {
-        api.giveRole(user, running['id'] as String, role);
+      for (final (user, permissions) in [(manager, managerAndFinance), (field_, field), (disabled, reader)]) {
+        api.give(user, running['id'] as String, permissions);
       }
       final session = await pumpRedix(tester, api, locale: Locale(language));
       [SignInScreen.logoKey, SignInScreen.titleKey, SignInScreen.usernameKey, SignInScreen.passwordKey, SignInScreen.submitKey, SignInScreen.registerKey].forEach(expectFits);
@@ -333,7 +334,6 @@ void main() {
         ProjectsScreen.newProjectKey,
         ProjectsScreen.nameKey(runningId),
         ProjectsScreen.detailsKey(runningId),
-        ProjectsScreen.rolesKey(runningId),
         ProjectsScreen.statusKey(runningId),
         ProjectsScreen.starKey(runningId),
         ProjectsScreen.statusKey(finishedId),
@@ -348,7 +348,6 @@ void main() {
       [
         HomeScreen.titleKey,
         HomeScreen.settingsKey,
-        HomeScreen.rolesKey(runningId),
         HomeScreen.detailsKey(runningId),
         HomeScreen.statusKey(runningId),
         HomeScreen.usersKey(runningId),
@@ -668,27 +667,20 @@ void main() {
         UsersScreen.nameKey('user-0'),
         UsersScreen.menuKey('user-0'),
         UsersScreen.detailsKey('user-1'),
-        UsersScreen.rolesLineKey('user-1'),
+        UsersScreen.permissionsLineKey('user-1'),
         UsersScreen.menuKey('user-1'),
         UsersScreen.statusKey('user-2'),
       ].forEach(expectFits);
 
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-1'))));
-      [UsersScreen.editKey, UsersScreen.rolesKey, UsersScreen.resetPasswordKey, UsersScreen.disableKey].forEach(expectFits);
+      [UsersScreen.editKey, UsersScreen.permissionsKey, UsersScreen.resetPasswordKey, UsersScreen.disableKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.resetPasswordKey)));
       [UsersScreen.resetExplainKey, UsersScreen.resetPasswordFieldKey, UsersScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
 
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-1'))));
-      await act(tester, api, () => tester.tap(find.byKey(UsersScreen.rolesKey)));
-      [
-        UserRolesScreen.nameKey,
-        UserRolesScreen.hintKey,
-        UserRolesScreen.roleKey('role-manager'),
-        UserRolesScreen.roleKey('role-finance'),
-        UserRolesScreen.roleKey('role-field'),
-        UserRolesScreen.roleKey('role-reader'),
-      ].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(UsersScreen.permissionsKey)));
+      [UserPermissionsScreen.nameKey, UserPermissionsScreen.hintKey, UserPermissionsScreen.permissionKey(Permission.readProject), UserPermissionsScreen.permissionKey(Permission.manageUsers)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.addExistingKey)));
@@ -697,7 +689,7 @@ void main() {
 
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.newUserKey)));
       [NewUserScreen.nameKey, NewUserScreen.usernameKey, NewUserScreen.mobileKey, NewUserScreen.passwordKey].forEach(expectFits);
-      await tester.ensureVisible(find.byKey(NewUserScreen.submitKey));
+      await tester.scrollUntilVisible(find.byKey(NewUserScreen.submitKey), 300, scrollable: find.descendant(of: find.byType(NewUserScreen), matching: find.byType(Scrollable)).first);
       expectFits(NewUserScreen.submitKey);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/auth/permission.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
@@ -9,7 +10,7 @@ import '../app_harness.dart';
 void main() {
   Future<FakeApi> openForm(WidgetTester tester) async {
     final api = FakeApi()..addProject('غصون 6');
-    api.giveRole(api.addUser('متعب', username: 'muteb'), 'project-0', 'role-manager');
+    api.give(api.addUser('متعب', username: 'muteb'), 'project-0', managerAndFinance);
     await openProject(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.usersKey('project-0'))));
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.newUserKey)));
@@ -34,9 +35,23 @@ void main() {
 
     final (path, body) = api.sentUserChanges.single;
     expect(path, '/projects/project-0/users');
-    expect(body, {'displayName': 'نواف', 'username': 'nawaf', 'mobile': '0500000000', 'temporaryPassword': 'Temporary-1'});
+    expect(body, {'displayName': 'نواف', 'username': 'nawaf', 'mobile': '0500000000', 'temporaryPassword': 'Temporary-1', 'permissions': ['readProject']});
     expect(find.byKey(NewUserScreen.submitKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(UsersScreen.nameKey('user-1'))).data, 'نواف');
+  });
+
+  testWidgets('what is ticked is sent with the new user, and See the project is always ticked', (tester) async {
+    final api = await openForm(tester);
+    Finder tick(Permission permission) => find.descendant(of: find.byKey(NewUserScreen.permissionKey(permission)), matching: find.byType(CheckboxListTile));
+
+    expect(tester.widget<CheckboxListTile>(tick(Permission.readProject)).onChanged, isNull);
+    await tester.ensureVisible(tick(Permission.recordEntries));
+    await tester.tap(tick(Permission.recordEntries));
+    await tester.pump();
+    await fillAndSubmit(tester, api);
+
+    expect(api.sentUserChanges.single.$2['permissions'], ['readProject', 'recordEntries']);
+    expect(find.byKey(NewUserScreen.permissionKey(Permission.approveProjects)), findsNothing);
   });
 
   testWidgets('a mobile typed in Arabic digits is sent in Western digits', (tester) async {

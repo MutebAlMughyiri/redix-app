@@ -176,7 +176,7 @@ class _TransferScreenState extends State<TransferScreen> {
             entryField(key: TransferScreen.amountKey, controller: _amount, label: words.transfersAmount, isNumber: true, onChanged: (_) {}),
             PickerField(key: TransferScreen.dateKey, label: words.transfersDate, value: formatDate(_date), onTap: _chooseDate),
             entryField(key: TransferScreen.descriptionKey, controller: _description, label: words.transfersDescription, onChanged: (_) {}),
-            InvoiceSection(file: _file, emptyLabel: words.transfersReceipt, message: _fileMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
+            InvoiceSection(project: widget.project, file: _file, emptyLabel: words.transfersReceipt, message: _fileMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
             if (_message.isNotEmpty) Text(words.text(_message), key: TransferScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
             FilledButton(key: TransferScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.transfersSave)),
           ],

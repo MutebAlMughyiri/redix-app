@@ -239,16 +239,15 @@ void main() {
 
       final projectUsers = $(keyStartingWith('home.users.'));
       await reach(projectUsers);
-      expect($(keyStartingWith('home.addUnit.')), findsNothing);
       await goTo(projectUsers);
       await projectUsers.tap();
       await reach($(keyStartingWith('users.menu.')));
       await $(keyStartingWith('users.menu.')).tap();
-      await $(UsersScreen.rolesKey).tap();
-      await reach($(keyStartingWith('userRoles.role.')).at(1));
-      await $(keyStartingWith('userRoles.role.')).at(1).tap();
+      await $(UsersScreen.permissionsKey).tap();
+      await reach($(keyStartingWith('userPermissions.')).at(1));
+      await $(keyStartingWith('userPermissions.')).at(1).tap();
       await $.pumpAndSettle();
-      await picture('user-roles');
+      await picture('user-permissions');
       await $(BackButton).tap();
       await $(BackButton).tap();
 
@@ -553,11 +552,11 @@ void main() {
       await $.pumpAndSettle();
 
       await newUserMenu.tap();
-      await $(UsersScreen.rolesKey).tap();
-      await reach($(keyStartingWith('userRoles.role.')).at(2));
-      await $(keyStartingWith('userRoles.role.')).at(2).tap();
+      await $(UsersScreen.permissionsKey).tap();
+      await reach($(keyStartingWith('userPermissions.')).at(2));
+      await $(keyStartingWith('userPermissions.')).at(2).tap();
       await $.pumpAndSettle();
-      await $(keyStartingWith('userRoles.role.')).at(3).tap();
+      await $(keyStartingWith('userPermissions.')).at(3).tap();
       await $.pumpAndSettle();
       await $(BackButton).tap();
       await $.pumpAndSettle();
@@ -651,7 +650,7 @@ void main() {
       await reach($(keyStartingWith('projects.card.')));
       expect($(ProjectsScreen.newProjectKey), findsOneWidget);
       await $(keyStartingWith('projects.card.')).tap();
-      await reach($(keyStartingWith('home.roles.')));
+      await reach($(keyStartingWith('home.card.')));
       expect($(keyStartingWith('home.users.')), findsNothing);
       expect($(keyStartingWith('home.addUnit.')), findsNothing);
       expect($(keyStartingWith('home.close.')), findsNothing);

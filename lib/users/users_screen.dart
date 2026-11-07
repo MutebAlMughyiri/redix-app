@@ -13,11 +13,11 @@ import 'edit_user_dialog.dart';
 import 'new_user_screen.dart';
 import 'reset_password_dialog.dart';
 import 'user.dart';
-import 'user_roles_screen.dart';
+import 'user_permissions_screen.dart';
 import 'user_row.dart';
 import 'users.dart';
 
-/// The people of one project, for its manager (UC-007, UC-008): one row per user, with a menu to edit, give roles, reset the password, and disable or enable.
+/// The people of one project, for its manager (UC-007, UC-008): one row per user, with a menu to edit, tick permissions, reset the password, and disable or enable.
 class UsersScreen extends StatefulWidget {
   /// The screen, showing and changing the [users] of the project [projectName].
   const UsersScreen({super.key, required this.users, required this.projectName});
@@ -52,8 +52,8 @@ class UsersScreen extends StatefulWidget {
   /// Edit, in a row's menu.
   static const editKey = Key('users.edit');
 
-  /// Roles, in a row's menu.
-  static const rolesKey = Key('users.roles');
+  /// Permissions, in a row's menu.
+  static const permissionsKey = Key('users.permissions');
 
   /// Reset password, in a row's menu.
   static const resetPasswordKey = Key('users.resetPassword');
@@ -106,8 +106,8 @@ class UsersScreen extends StatefulWidget {
   /// The username and mobile of the user [id].
   static Key detailsKey(String id) => Key('users.details.$id');
 
-  /// The roles of the user [id] in this project.
-  static Key rolesLineKey(String id) => Key('users.rolesLine.$id');
+  /// How many permissions the user [id] holds in this project.
+  static Key permissionsLineKey(String id) => Key('users.permissionsLine.$id');
 
   /// The badge of the user [id], when disabled.
   static Key statusKey(String id) => Key('users.status.$id');
@@ -175,7 +175,7 @@ class _UsersScreenState extends State<UsersScreen> {
             context: context,
             builder: (_) => EditUserDialog(user: user, users: widget.users),
           ),
-          onRoles: () => context.push(UserRolesScreen.pathOf(users.projectId, user.id), extra: widget.projectName),
+          onPermissions: () => context.push(UserPermissionsScreen.pathOf(users.projectId, user.id), extra: widget.projectName),
           onResetPassword: () => showDialog<void>(
             context: context,
             builder: (_) => ResetPasswordDialog(user: user, users: widget.users),

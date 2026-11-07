@@ -187,7 +187,7 @@ class _RevenueFormScreenState extends State<RevenueFormScreen> {
                 onChosen: (account) => setState(() => _accountId = account.id),
               ),
               entryField(key: RevenueFormScreen.descriptionKey, controller: _description, label: words.revenueDescription, onChanged: (_) {}),
-              InvoiceSection(file: _file, emptyLabel: words.revenueFile, message: _fileMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
+              InvoiceSection(project: widget.project, file: _file, emptyLabel: words.revenueFile, message: _fileMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
               if (_message.isNotEmpty) Text(words.text(_message), key: RevenueFormScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
               FilledButton(key: RevenueFormScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.revenueSave)),
             ],

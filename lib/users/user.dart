@@ -1,4 +1,4 @@
-import 'role.dart';
+import '../auth/permission.dart';
 
 /// A person in a project, as the API answers them. The rules live in the API; the app only draws what it is told.
 class User {
@@ -9,9 +9,9 @@ class User {
       displayName = json['displayName'] as String,
       mobile = json['mobile'] as String,
       isActive = json['isActive'] as bool,
-      roles = [
-        for (final line in (json['projects'] as List<dynamic>).cast<Map<String, dynamic>>()) Role.fromJson(line['role'] as Map<String, dynamic>),
-      ];
+      _permissions = {
+        for (final line in (json['projects'] as List<dynamic>).cast<Map<String, dynamic>>()) ...(line['permissions'] as List<dynamic>).cast<String>(),
+      };
 
   /// The user's id.
   final String id;
@@ -28,9 +28,12 @@ class User {
   /// False once disabled.
   final bool isActive;
 
-  /// Their roles in this project.
-  final List<Role> roles;
+  /// What they may do in this project, by the API's names.
+  final Set<String> _permissions;
 
-  /// Whether the user holds [role] in this project.
-  bool holds(Role role) => roles.any((held) => held.id == role.id);
+  /// Whether the user holds [permission] in this project.
+  bool holds(Permission permission) => _permissions.contains(permission.name);
+
+  /// How many permissions the user holds in this project.
+  int get permissionCount => _permissions.length;
 }

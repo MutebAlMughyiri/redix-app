@@ -219,7 +219,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
             ],
             if (widget.isPublic) ...[
               const SizedBox(height: 24),
-              Text(words.usersRoleManager, style: theme.textTheme.titleSmall),
+              Text(words.projectsManager, style: theme.textTheme.titleSmall),
               const SizedBox(height: 12),
               TextField(
                 key: NewProjectScreen.managerNameKey,

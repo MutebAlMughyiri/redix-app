@@ -138,7 +138,7 @@ class _ShareScreenState extends State<ShareScreen> {
     }
   }
 
-  List<Project> get _open => widget.projects.all.where((project) => project.mayEnterExpenses).toList();
+  List<Project> get _open => widget.projects.all.where((project) => project.mayEnterExpenses && project.mayAttachFiles).toList();
 
   Project get _project => _open.firstWhere((project) => project.id == _projectId, orElse: () => _open.first);
 

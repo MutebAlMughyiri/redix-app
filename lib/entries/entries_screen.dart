@@ -157,7 +157,8 @@ class _EntryActions extends StatelessWidget {
   final ProjectEntries entries;
   final EntryRow entry;
 
-  bool get _mayChange => !project.isFinished && !entry.isApproved && project.may(Permission.recordEntries) && (entry.isMine ? !entry.isPending || project.may(Permission.manageAnyEntry) : project.may(Permission.manageAnyEntry));
+  /// Whether [permission] lets the user act on this entry now: it is not approved, and it is theirs and not waiting, or they handle others' entries.
+  bool _may(Permission permission) => !project.isFinished && !entry.isApproved && project.may(permission) && (entry.isMine ? !entry.isPending || project.may(Permission.manageAnyEntry) : project.may(Permission.manageAnyEntry));
 
   void _askToDelete(BuildContext context) {
     final words = Words.of(context);
@@ -194,7 +195,7 @@ class _EntryActions extends StatelessWidget {
         spacing: 8,
         children: [
           EntryTile(entry: entry, onTap: () {}),
-          if (_mayChange) ...[
+          if (_may(Permission.recordEntries)) ...[
             FilledButton(
               key: EntriesScreen.editKey,
               onPressed: () {
@@ -212,8 +213,8 @@ class _EntryActions extends StatelessWidget {
                 },
                 child: Text(words.entriesSend),
               ),
-            TextButton(key: EntriesScreen.deleteKey, onPressed: () => _askToDelete(context), child: Text(words.entriesDelete)),
           ],
+          if (_may(Permission.deleteEntries)) TextButton(key: EntriesScreen.deleteKey, onPressed: () => _askToDelete(context), child: Text(words.entriesDelete)),
           if (mayReverse) OutlinedButton(key: EntriesScreen.reverseKey, onPressed: () => _askToReverse(context), child: Text(words.entriesReverse)),
         ],
       ),

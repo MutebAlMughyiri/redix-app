@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/accounts/accounts_screen.dart';
+import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/contracts/contracts_screen.dart';
@@ -11,6 +12,8 @@ import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/home/dashboard_card.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/notifications/notifications_bell.dart';
+import 'package:redix/notifications/notifications_screen.dart';
 import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
@@ -33,7 +36,7 @@ typedef Gate = ({String name, Permission permission, void Function(FakeApi api) 
 
 const _project = 'project-0';
 
-/// Every permission there is: the admin's, and all a role can hold in a project.
+/// Every permission there is: the admin's, and all a person can hold in a project.
 const _every = [...admin, ...managerAndFinance];
 
 Step _tap(Finder Function(FakeApi api) target) => (tester, api, capture) async {
@@ -152,6 +155,28 @@ final List<Gate> _gates = [
     control: _key(EntriesScreen.editKey),
   ),
   (
+    name: 'Delete on one\'s own draft',
+    permission: Permission.deleteEntries,
+    arrange: (api) => api.addEntry(status: 'draft'),
+    steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
+    control: _key(EntriesScreen.deleteKey),
+  ),
+  (
+    name: 'The camera in a new expense',
+    permission: Permission.attachFiles,
+    arrange: _nothing,
+    steps: [_openProject, _tapKey(HomeScreen.addExpenseKey(_project))],
+    control: _key(AddExpenseScreen.cameraKey),
+  ),
+  (
+    name: 'A contract\'s Add document',
+    permission: Permission.attachFiles,
+    arrange: _nothing,
+    steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project)), _tapKey(ContractsScreen.addKey)],
+    control: _key(ContractsScreen.addDocumentKey),
+  ),
+  (name: 'A shared file as a new expense', permission: Permission.attachFiles, arrange: _nothing, steps: [_shareAPicture], control: _key(ShareScreen.newExpenseKey)),
+  (
     name: 'Edit on someone else\'s entry',
     permission: Permission.manageAnyEntry,
     arrange: (api) => api.addEntry(isMine: false),
@@ -189,6 +214,24 @@ final List<Gate> _gates = [
     control: (_) => find.byType(ReportFileButtons),
   ),
   (name: 'Approvals on the project card', permission: Permission.approveEntries, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.approvalsKey(_project))),
+  (
+    name: 'Approve, reached from a notification',
+    permission: Permission.approveEntries,
+    arrange: (api) => api
+      ..addPending()
+      ..addNotification(),
+    steps: [_openProject, _tapKey(NotificationsBell.buttonKey), _tapKey(NotificationsScreen.rowKey('notification-0'))],
+    control: _key(ApprovalsScreen.approveKey('entry-0')),
+  ),
+  (
+    name: 'How a partner\'s payment counts, reached from a notification',
+    permission: Permission.approveEntries,
+    arrange: (api) => api
+      ..addPending(partnerName: 'متعب')
+      ..addNotification(),
+    steps: [_openProject, _tapKey(NotificationsBell.buttonKey), _tapKey(NotificationsScreen.rowKey('notification-0'))],
+    control: _key(ApprovalsScreen.capitalKey('entry-0')),
+  ),
   (
     name: 'What waits on the dashboard',
     permission: Permission.approveEntries,

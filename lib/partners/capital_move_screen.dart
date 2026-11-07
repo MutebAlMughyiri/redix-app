@@ -357,7 +357,7 @@ class _CapitalMoveScreenState extends State<CapitalMoveScreen> {
         SwitchListTile(key: CapitalMoveScreen.cashKey, contentPadding: EdgeInsets.zero, title: Text(words.capitalPaidInCash), value: _isCash, onChanged: (isCash) => setState(() => _isCash = isCash)),
         if (!_isCash) ...[
           Text('${words.capitalReceipt} · ${words.capitalReceiptRequiredWord}', style: theme.textTheme.titleSmall),
-          InvoiceSection(file: _file, emptyLabel: words.capitalReceiptHint, message: _fileMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
+          InvoiceSection(project: widget.project, file: _file, emptyLabel: words.capitalReceiptHint, message: _fileMessage, onCamera: () => _takeFrom(widget.capture.fromCamera), onFiles: () => _takeFrom(widget.capture.fromFiles)),
           entryField(key: CapitalMoveScreen.receiptAmountKey, controller: _receiptAmount, label: words.capitalReceiptAmount, isNumber: true, onChanged: (_) => setState(() {})),
           if (_receiptDiffers) Text(words.capitalReceiptDiffers, key: CapitalMoveScreen.receiptDiffersKey, style: TextStyle(color: theme.colorScheme.error)),
         ],

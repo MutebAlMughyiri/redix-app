@@ -118,7 +118,7 @@ class _ContractDialogState extends State<ContractDialog> {
         ),
       ),
     const SizedBox(height: 8),
-    OutlinedButton.icon(key: ContractsScreen.addDocumentKey, icon: const Icon(Icons.attach_file), label: Text(words.contractsAddDocument), onPressed: _addDocument),
+    if (widget.project.mayAttachFiles) OutlinedButton.icon(key: ContractsScreen.addDocumentKey, icon: const Icon(Icons.attach_file), label: Text(words.contractsAddDocument), onPressed: _addDocument),
     if (_documentMessage.isNotEmpty) Text(words.text(_documentMessage), key: ContractsScreen.documentMessageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
   ];
 
