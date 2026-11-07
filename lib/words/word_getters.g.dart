@@ -938,14 +938,8 @@ mixin WordGetters {
   /// The word `dashboard.expenses`.
   String get dashboardExpenses => text('dashboard.expenses');
 
-  /// The word `dashboard.invalidCompletion`.
-  String get dashboardInvalidCompletion => text('dashboard.invalidCompletion');
-
   /// The word `dashboard.loadFailed`.
   String get dashboardLoadFailed => text('dashboard.loadFailed');
-
-  /// The word `dashboard.noConnection`.
-  String get dashboardNoConnection => text('dashboard.noConnection');
 
   /// The word `dashboard.pending`.
   String get dashboardPending => text('dashboard.pending');
@@ -953,23 +947,8 @@ mixin WordGetters {
   /// The word `dashboard.pendingHint`.
   String get dashboardPendingHint => text('dashboard.pendingHint');
 
-  /// The word `dashboard.percent`.
-  String get dashboardPercent => text('dashboard.percent');
-
-  /// The word `dashboard.projectFinished`.
-  String get dashboardProjectFinished => text('dashboard.projectFinished');
-
-  /// The word `dashboard.refused`.
-  String get dashboardRefused => text('dashboard.refused');
-
   /// The word `dashboard.revenue`.
   String get dashboardRevenue => text('dashboard.revenue');
-
-  /// The word `dashboard.save`.
-  String get dashboardSave => text('dashboard.save');
-
-  /// The word `dashboard.setCompletion`.
-  String get dashboardSetCompletion => text('dashboard.setCompletion');
 
   /// The word `dashboard.surplus`.
   String get dashboardSurplus => text('dashboard.surplus');

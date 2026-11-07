@@ -5,8 +5,6 @@ import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../reports/dashboard.dart';
 import '../ui/api_object_body.dart';
-import '../ui/change_dialog.dart';
-import '../ui/entry_field.dart';
 import '../words/words.dart';
 
 /// The project's figures at a glance (UC-049): what waits for approval, the surplus, revenue and expenses, the reconciliation difference, completion and cost (UC-063), and expenses by category, each opening to its items.
@@ -31,12 +29,6 @@ class DashboardCard extends StatefulWidget {
 
   /// The completion.
   static const completionKey = Key('dashboard.completion');
-
-  /// The button setting the completion.
-  static const setCompletionKey = Key('dashboard.setCompletion');
-
-  /// The percentage, in the dialog.
-  static const percentKey = Key('dashboard.percent');
 
   /// The category [id].
   static Key categoryKey(String id) => Key('dashboard.category.$id');
@@ -67,23 +59,6 @@ class _DashboardCardState extends State<DashboardCard> {
   void initState() {
     super.initState();
     widget.dashboard.loadOnOpen();
-  }
-
-  void _askCompletion(DashboardFigures figures) {
-    final words = Words.of(context);
-    final percent = TextEditingController(text: formatPlain(figures.completionPercent));
-    showDialog<void>(
-      context: context,
-      builder: (_) => ChangeDialog(
-        title: words.dashboardSetCompletion,
-        saveLabel: words.dashboardSave,
-        onSave: () {
-          final typed = parseNumber(percent.text);
-          return typed.isNaN ? Future.value('dashboard.invalidCompletion') : widget.dashboard.setCompletion(typed);
-        },
-        children: [entryField(key: DashboardCard.percentKey, controller: percent, label: words.dashboardPercent, isNumber: true, onChanged: (_) {})],
-      ),
-    );
   }
 
   Widget _tile(String label, double amount, Key key) => Expanded(
@@ -179,13 +154,7 @@ class _DashboardCardState extends State<DashboardCard> {
               ),
             ),
           ),
-        Row(
-          children: [
-            Expanded(child: Text('${words.dashboardCompletion}: ${formatPlain(figures.completionPercent)}% · ${words.dashboardCost}: ${formatMoney(figures.expenses)}', key: DashboardCard.completionKey)),
-            if (!project.isFinished && project.may(Permission.manageProject))
-              IconButton(key: DashboardCard.setCompletionKey, icon: const Icon(Icons.edit_outlined), tooltip: words.dashboardSetCompletion, onPressed: () => _askCompletion(figures)),
-          ],
-        ),
+        Text('${words.dashboardCompletion}: ${formatPlain(figures.completionPercent)}% · ${words.dashboardCost}: ${formatMoney(figures.expenses)}', key: DashboardCard.completionKey),
         LinearProgressIndicator(value: (figures.completionPercent / 100).clamp(0, 1)),
         if (figures.categories.isNotEmpty) Text(words.dashboardByCategory, style: theme.textTheme.titleMedium),
         for (final category in figures.categories) _category(category, figures.expenses),

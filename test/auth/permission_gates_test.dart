@@ -80,7 +80,6 @@ final List<Gate> _gates = [
   (name: 'Add unit on the project card', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.addUnitKey(_project))),
   (name: 'Rename on the project card', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.renameKey(_project))),
   (name: 'A unit\'s menu on the project card', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.unitMenuKey('$_project-unit-0'))),
-  (name: 'Set completion on the dashboard', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject], control: _key(DashboardCard.setCompletionKey)),
   (
     name: 'Add a document',
     permission: Permission.manageProject,

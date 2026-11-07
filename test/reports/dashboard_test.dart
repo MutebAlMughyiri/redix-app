@@ -7,7 +7,6 @@ import 'package:redix/home/dashboard_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/reports_screen.dart';
-import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/refresh_button.dart';
 
 import '../app_harness.dart';
@@ -118,25 +117,10 @@ void main() {
     expect(find.byKey(ItemReportScreen.totalKey), findsOneWidget);
   });
 
-  testWidgets('UC-063: the manager sets the completion, and everyone sees it with the cost', (tester) async {
-    final api = await openHome(tester, (api) => api.dashboardAnswer = figures(completion: 40));
+  testWidgets('UC-063: everyone sees the completion the API computed, with the cost', (tester) async {
+    await openHome(tester, (api) => api.dashboardAnswer = figures(completion: 40), permissions: field);
 
     expect(tester.widget<Text>(find.byKey(DashboardCard.completionKey)).data, 'en dashboard.completion: 40% · en dashboard.cost: 4,000.00');
-
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.setCompletionKey)));
-    await tester.enterText(find.byKey(DashboardCard.percentKey), '٦٥');
-    await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
-
-    final (path, body) = api.sentMoney.single;
-    expect(path, '/projects/project-0/completion');
-    expect(body['percent'], 65.0);
-  });
-
-  testWidgets('UC-063: only the manager sets it', (tester) async {
-    await openHome(tester, (api) => api.dashboardAnswer = figures(), permissions: field);
-
-    expect(find.byKey(DashboardCard.completionKey), findsOneWidget);
-    expect(find.byKey(DashboardCard.setCompletionKey), findsNothing);
   });
 
   testWidgets('AC-30.1: an item report shows its total, a table per subgroup, and each contract with what remains', (tester) async {

@@ -87,14 +87,11 @@ class DashboardFigures {
   final List<CategoryTotal> categories;
 }
 
-/// A project's dashboard (UC-049), read again whenever its home comes back into view, and the way to set its completion (UC-063).
+/// A project's dashboard (UC-049), read again whenever its home comes back into view.
 class Dashboard extends ApiObject<DashboardFigures> {
   /// The dashboard of the project [projectId], seen through [session].
   Dashboard(Session session, this.projectId) : super(session, '/projects/$projectId/dashboard', 'dashboard', (json) => DashboardFigures.fromJson(json! as Map<String, dynamic>), DashboardFigures.none());
 
   /// The project.
   final String projectId;
-
-  /// Sets how far the work has come, as a percentage. Returns an empty string once set, otherwise the word key of the refusal.
-  Future<String> setCompletion(double percent) => change('/projects/$projectId/completion', {'percent': percent});
 }
