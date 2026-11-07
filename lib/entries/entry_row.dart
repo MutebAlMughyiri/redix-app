@@ -1,3 +1,6 @@
+import '../format/number_format.dart';
+import '../suppliers/arabic_spelling.dart';
+
 /// An entry on a list (UC-037).
 class EntryRow {
   /// An entry as the API answers it.
@@ -68,4 +71,7 @@ class EntryRow {
 
   /// The word key of where it stands.
   String get statusWordKey => isReversed ? 'entries.reversed' : 'entries.$status';
+
+  /// What a search matches it by (redix-app #84): its item, supplier or contractor, who entered it, an old bill's number and its amount, plain and as money, in one spelling.
+  late final searchText = sameSpelling([itemName, supplierName, authorName, invoiceNumber, formatPlain(amount), formatMoney(amount)].join(' '));
 }

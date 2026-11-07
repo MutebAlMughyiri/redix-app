@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../attachments/picked_file.dart';
 import '../projects/project.dart';
 import '../words/words.dart';
-import 'add_expense_screen.dart';
+import '../entries/add_entry_screen.dart';
 
 /// The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files. Not shown to whoever may not attach files in [project].
 class InvoiceSection extends StatelessWidget {
@@ -31,7 +31,7 @@ class InvoiceSection extends StatelessWidget {
   Widget _preview(BuildContext context, Words words) {
     final theme = Theme.of(context);
     if (!file.isNone && !file.isPdf) {
-      return Image.memory(file.bytes, key: AddExpenseScreen.invoicePictureKey, fit: BoxFit.cover);
+      return Image.memory(file.bytes, key: AddEntryScreen.invoicePictureKey, fit: BoxFit.cover);
     }
     return ColoredBox(
       color: theme.colorScheme.surfaceContainerHighest,
@@ -42,7 +42,7 @@ class InvoiceSection extends StatelessWidget {
           const SizedBox(height: 4),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(file.isNone ? emptyLabel : file.name, key: AddExpenseScreen.invoiceNameKey, style: theme.textTheme.bodySmall, textAlign: TextAlign.center, maxLines: 3, overflow: TextOverflow.ellipsis),
+            child: Text(file.isNone ? emptyLabel : file.name, key: AddEntryScreen.invoiceNameKey, style: theme.textTheme.bodySmall, textAlign: TextAlign.center, maxLines: 3, overflow: TextOverflow.ellipsis),
           ),
         ],
       ),
@@ -74,13 +74,13 @@ class InvoiceSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   OutlinedButton.icon(
-                    key: AddExpenseScreen.cameraKey,
+                    key: AddEntryScreen.cameraKey,
                     icon: const Icon(Icons.document_scanner_outlined),
                     label: Text(file.isNone ? words.attachmentsTakePhoto : words.attachmentsRetake),
                     onPressed: onCamera,
                   ),
                   const SizedBox(height: 8),
-                  OutlinedButton.icon(key: AddExpenseScreen.filesKey, icon: const Icon(Icons.folder_open_outlined), label: Text(words.attachmentsPickFile), onPressed: onFiles),
+                  OutlinedButton.icon(key: AddEntryScreen.filesKey, icon: const Icon(Icons.folder_open_outlined), label: Text(words.attachmentsPickFile), onPressed: onFiles),
                 ],
               ),
             ),
@@ -88,7 +88,7 @@ class InvoiceSection extends StatelessWidget {
         ),
         if (message.isNotEmpty) ...[
           const SizedBox(height: 8),
-          Text(words.text(message), key: AddExpenseScreen.invoiceMessageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(words.text(message), key: AddEntryScreen.invoiceMessageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
         ],
       ],
     );

@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/attachments/picked_file.dart';
-import 'package:redix/expenses/add_expense_screen.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/home_screen.dart';
 
 import '../app_harness.dart';
@@ -16,7 +16,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
     final capture = FakeCapture()..camera = camera ?? PickedFile.none();
     await openProject(tester, api, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
     return (api: api, capture: capture);
   }
 
@@ -24,48 +24,48 @@ void main() {
     final opened = await openExpense(tester, camera: picture);
 
     expect(opened.capture.cameraOpened, 1);
-    expect(find.byKey(AddExpenseScreen.invoicePictureKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
   });
 
   testWidgets('going back from the camera leaves the way to take it again', (tester) async {
     final opened = await openExpense(tester);
 
-    expect(find.byKey(AddExpenseScreen.invoicePictureKey), findsNothing);
+    expect(find.byKey(AddEntryScreen.invoicePictureKey), findsNothing);
     expect(find.text('en attachments.takePhoto'), findsOneWidget);
 
     opened.capture.camera = picture;
-    await act(tester, opened.api, () => tester.tap(find.byKey(AddExpenseScreen.cameraKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.cameraKey)));
 
-    expect(find.byKey(AddExpenseScreen.invoicePictureKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
     expect(find.text('en attachments.retake'), findsOneWidget);
   });
 
   testWidgets('no camera permission: the message says so and the files stay offered', (tester) async {
     final opened = await openExpense(tester, camera: PickedFile.failed('attachments.cameraFailed'));
 
-    expect(tester.widget<Text>(find.byKey(AddExpenseScreen.invoiceMessageKey)).data, 'en attachments.cameraFailed');
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.invoiceMessageKey)).data, 'en attachments.cameraFailed');
 
     opened.capture.files = picture;
-    await act(tester, opened.api, () => tester.tap(find.byKey(AddExpenseScreen.filesKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.filesKey)));
 
-    expect(find.byKey(AddExpenseScreen.invoicePictureKey), findsOneWidget);
-    expect(find.byKey(AddExpenseScreen.invoiceMessageKey), findsNothing);
+    expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.invoiceMessageKey), findsNothing);
   });
 
   testWidgets('a PDF picked from the files shows its name', (tester) async {
     final opened = await openExpense(tester);
 
     opened.capture.files = PickedFile('فاتورة.pdf', '/phone/فاتورة.pdf', Uint8List.fromList([1, 2, 3]));
-    await act(tester, opened.api, () => tester.tap(find.byKey(AddExpenseScreen.filesKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.filesKey)));
 
-    expect(tester.widget<Text>(find.byKey(AddExpenseScreen.invoiceNameKey)).data, 'فاتورة.pdf');
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.invoiceNameKey)).data, 'فاتورة.pdf');
   });
 
   testWidgets('going back from the files keeps the picture already taken', (tester) async {
     final opened = await openExpense(tester, camera: picture);
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(AddExpenseScreen.filesKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.filesKey)));
 
-    expect(find.byKey(AddExpenseScreen.invoicePictureKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
   });
 }

@@ -14,17 +14,17 @@ The project's home, `HomeScreen`:
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| New purchase expense | `HomeScreen.addExpenseKey(id)` | Opens the screen below, while the project runs, for whoever may enter |
+| إضافة قيد | `HomeScreen.addEntryKey(id)` | Opens the screen below, while the project runs, for whoever may enter (UC-022) |
 
-`AddExpenseScreen` at `/projects/:projectId/expenses/new`:
+`AddEntryScreen` at `/projects/:projectId/entries/new`:
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Take a picture, or Take again | `AddExpenseScreen.cameraKey` | Opens the camera, which also opens by itself when the screen does |
-| Pick from files | `AddExpenseScreen.filesKey` | Opens the phone's files for a JPEG, a PNG or a PDF |
-| The picture | `AddExpenseScreen.invoicePictureKey` | |
-| The name of a PDF, or what goes here | `AddExpenseScreen.invoiceNameKey` | |
-| Why the last try gave no file | `AddExpenseScreen.invoiceMessageKey` | |
+| Take a picture, or Take again | `AddEntryScreen.cameraKey` | Opens the camera, which also opens by itself when the screen does |
+| Pick from files | `AddEntryScreen.filesKey` | Opens the phone's files for a JPEG, a PNG or a PDF |
+| The picture | `AddEntryScreen.invoicePictureKey` | |
+| The name of a PDF, or what goes here | `AddEntryScreen.invoiceNameKey` | |
+| Why the last try gave no file | `AddEntryScreen.invoiceMessageKey` | |
 
 The contract's dialog, `ContractDialog` (UC-020):
 
@@ -47,13 +47,13 @@ The contract's dialog, `ContractDialog` (UC-020):
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| FR-10: the camera opens first, and its picture stays on the screen | `AddExpenseScreen` | `add_expense_invoice_test`: the camera opens first |
+| FR-10: the camera opens first, and its picture stays on the screen | `AddEntryScreen` | `add_entry_invoice_test`: the camera opens first |
 | FR-10: the scanner finds and crops the invoice | `InvoiceCapture.fromCamera`, by the phone's scanner | Not run: see below |
 | NFR-06, AC-10.1: the file is under 1 MB | `compressedPicture` | `picture_compression_test`: a photo comes back under 1 MB |
 | A picture at most 2000 pixels long stays readable | `compressedPicture` | `picture_compression_test`; the reading itself is not run: see below |
 | A picture already under 1 MB is untouched | `compressedPicture` | `picture_compression_test` |
-| No camera permission: the message says so, and the files stay offered | `InvoiceCapture.fromCamera`, `InvoiceSection` | `add_expense_invoice_test`: no camera permission |
-| Going back keeps what was there | `AddExpenseScreen` | `add_expense_invoice_test`: going back |
+| No camera permission: the message says so, and the files stay offered | `InvoiceCapture.fromCamera`, `InvoiceSection` | `add_entry_invoice_test`: no camera permission |
+| Going back keeps what was there | `AddEntryScreen` | `add_entry_invoice_test`: going back |
 | A contract's dialog shows its documents; a picked one is kept and named on save, and a refused one says why | `ContractDialog` | `contracts_test`: the dialog shows a contract's documents; a document the API refuses |
 
 ## Not run

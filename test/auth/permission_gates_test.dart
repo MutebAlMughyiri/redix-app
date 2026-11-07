@@ -9,7 +9,7 @@ import 'package:redix/auth/permission.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/documents/documents_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
-import 'package:redix/expenses/add_expense_screen.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/dashboard_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/notifications/notifications_bell.dart';
@@ -140,11 +140,10 @@ final List<Gate> _gates = [
     name: 'Quick add in the supplier picker',
     permission: Permission.addSupplier,
     arrange: _nothing,
-    steps: [_openProject, _tapKey(HomeScreen.addExpenseKey(_project)), _tapKey(AddExpenseScreen.supplierKey)],
+    steps: [_openProject, _tapKey(HomeScreen.addEntryKey(_project)), _tapKey(AddEntryScreen.supplierKey)],
     control: _key(SupplierPicker.quickAddKey),
   ),
-  (name: 'New expense on the home', permission: Permission.recordEntries, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.addExpenseKey(_project))),
-  (name: 'Contractor payment on the home', permission: Permission.recordEntries, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.contractorPaymentKey(_project))),
+  (name: 'إضافة قيد on the home', permission: Permission.recordEntries, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.addEntryKey(_project))),
   (
     name: 'Edit on one\'s own draft',
     permission: Permission.recordEntries,
@@ -160,11 +159,11 @@ final List<Gate> _gates = [
     control: _key(EntriesScreen.deleteKey),
   ),
   (
-    name: 'The camera in a new expense',
+    name: 'The camera in إضافة قيد',
     permission: Permission.attachFiles,
     arrange: _nothing,
-    steps: [_openProject, _tapKey(HomeScreen.addExpenseKey(_project))],
-    control: _key(AddExpenseScreen.cameraKey),
+    steps: [_openProject, _tapKey(HomeScreen.addEntryKey(_project))],
+    control: _key(AddEntryScreen.cameraKey),
   ),
   (
     name: 'A contract\'s Add document',

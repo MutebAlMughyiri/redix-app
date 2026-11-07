@@ -8,14 +8,14 @@
 
 ## Screens
 
-No screen of its own. On `AddExpenseScreen`, the canvas's **مرتجع** switch. A credit note is typed as a plain amount, and the API keeps it negative. It always names the bill it returns (D13): once a supplier is chosen, the bill is picked from a sheet that says what each has left to return, an older bill by its number and a newer one by its date. Choosing another supplier takes the link away.
+No screen of its own. On `AddEntryScreen`, the canvas's **مرتجع** switch. A credit note is typed as a plain amount, and the API keeps it negative. It always names the bill it returns (D13): once a supplier is chosen, the bill is picked from a sheet that says what each has left to return, an older bill by its number and a newer one by its date. Choosing another supplier takes the link away.
 
 A deduction needs no switch of its own: it is a negative amount, and it says why in its notes (D14). The amount's keyboard offers the minus sign, and `parseNumber` reads it with either digits.
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Credit note | `AddExpenseScreen.creditNoteKey` | The switch |
-| Original invoice | `AddExpenseScreen.originalInvoiceKey` | Opens the sheet; required for a credit note |
+| Credit note | `AddEntryScreen.creditNoteKey` | The switch |
+| Original invoice | `AddEntryScreen.originalInvoiceKey` | Opens the sheet; required for a credit note |
 | A bill | `OriginalInvoicePicker.optionKey(entryId)` | Each row of the sheet |
 
 ## API calls
@@ -24,7 +24,7 @@ A deduction needs no switch of its own: it is a negative amount, and it says why
 
 ## Rules
 
-Tests are in `test/expenses/add_expense_test.dart`.
+Tests are in `test/entries/add_entry_test.dart`. The switch shows while a purchase's table is chosen (UC-022).
 
 | Rule | Code | Test |
 | --- | --- | --- |

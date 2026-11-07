@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:redix/expenses/add_expense_screen.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/project.dart';
 import 'package:redix/projects/projects_screen.dart';
@@ -21,11 +21,11 @@ void main() {
     final supplier = api.addSupplier('project-0', 'شركة النخيل', vatNumber: '300000000000003', timesUsed: 3);
     api.addCategory('project-0', 'التشطيب');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.addExpenseKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
-    await tester.ensureVisible(find.byKey(AddExpenseScreen.supplierKey));
+    await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey('project-0')));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
+    await tester.ensureVisible(find.byKey(AddEntryScreen.supplierKey));
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.supplierKey)));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.supplierKey)));
 
     expect(tester.widget<Text>(find.byKey(SupplierPicker.mostUsedKey)).data, 'en suppliers.mostUsed');
 

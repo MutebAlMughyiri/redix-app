@@ -8,7 +8,7 @@ import 'package:redix/accounts/reconciliation_card.dart';
 import 'package:redix/accounts/transfer_screen.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/entries/reverse_sheet.dart';
-import 'package:redix/expenses/add_expense_screen.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/capital_move_screen.dart';
 import 'package:redix/partners/movements_screen.dart';
@@ -198,7 +198,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(TransferScreen.toKey(ids[1]))));
       await tester.enterText(find.byKey(TransferScreen.amountKey), '5000');
       await tester.enterText(find.byKey(TransferScreen.descriptionKey), 'تغذية العهدة');
-      await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.filesKey)));
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.filesKey)));
       await act(tester, api, () => tester.tap(find.byKey(TransferScreen.saveKey)));
 
       final (path, body) = api.sentMoney.single;
@@ -313,7 +313,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(CapitalMoveScreen.partnerKey(partnerId))));
       await act(tester, api, () => tester.tap(find.byKey(CapitalMoveScreen.accountKey(accountId))));
       await tester.enterText(find.byKey(CapitalMoveScreen.amountKey), '1000');
-      await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.filesKey)));
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.filesKey)));
       await act(tester, api, () => tester.tap(find.byKey(CapitalMoveScreen.saveKey)));
 
       final (path, body) = api.sentMoney.single;
@@ -341,7 +341,7 @@ void main() {
       await tester.enterText(find.byKey(CapitalMoveScreen.amountKey), '1000');
       await act(tester, api, () => tester.tap(find.byKey(CapitalMoveScreen.cashKey)));
 
-      expect(find.byKey(AddExpenseScreen.filesKey), findsNothing);
+      expect(find.byKey(AddEntryScreen.filesKey), findsNothing);
 
       await tester.enterText(find.byKey(CapitalMoveScreen.reasonKey), 'دفع في الموقع');
       await act(tester, api, () => tester.tap(find.byKey(CapitalMoveScreen.saveKey)));
@@ -386,7 +386,7 @@ void main() {
       await tester.enterText(find.byKey(CapitalMoveScreen.amountKey), '400');
       await act(tester, api, () => tester.tap(find.byKey(CapitalMoveScreen.typeKey(MoveType.carryOut))));
 
-      expect(find.byKey(AddExpenseScreen.filesKey), findsNothing);
+      expect(find.byKey(AddEntryScreen.filesKey), findsNothing);
 
       await act(tester, api, () => tester.tap(find.byKey(CapitalMoveScreen.targetProjectKey('project-1'))));
       await act(tester, api, () => tester.tap(find.byKey(CapitalMoveScreen.targetPartnerKey(targetPartner))));
@@ -453,8 +453,8 @@ void main() {
 
       expect(find.byKey(CapitalMoveScreen.saveKey), findsOneWidget);
       expect(capture.cameraOpened, 0);
-      await tester.scrollUntilVisible(find.byKey(AddExpenseScreen.invoicePictureKey), 100, scrollable: find.byType(Scrollable).first);
-      expect(find.byKey(AddExpenseScreen.invoicePictureKey), findsOneWidget);
+      await tester.scrollUntilVisible(find.byKey(AddEntryScreen.invoicePictureKey), 100, scrollable: find.byType(Scrollable).first);
+      expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
     });
 
     testWidgets('AC-49.4: Field sees no capital movement option', (tester) async {

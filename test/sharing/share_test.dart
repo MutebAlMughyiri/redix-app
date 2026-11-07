@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/auth/sign_in_screen.dart';
-import 'package:redix/expenses/add_expense_screen.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/sharing/share_screen.dart';
 import 'package:redix/structure/item_picker.dart';
@@ -160,7 +160,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.newExpenseKey)));
 
     expect(capture.cameraOpened, 0);
-    expect(find.byKey(AddExpenseScreen.invoicePictureKey), findsOneWidget);
-    expect(find.byKey(AddExpenseScreen.qrReadKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.qrReadKey), findsOneWidget);
   });
 }

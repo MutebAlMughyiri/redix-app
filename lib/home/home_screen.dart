@@ -7,16 +7,15 @@ import '../accounts/accounts.dart';
 import '../accounts/accounts_screen.dart';
 import '../accounts/my_custody.dart';
 import '../auth/session.dart';
-import '../contractor_payments/contractor_payment_screen.dart';
 import '../contracts/contracts_screen.dart';
 import '../documents/documents_screen.dart';
-import '../expenses/add_expense_screen.dart';
 import '../partners/partners_screen.dart';
 import '../partners/liquidation_screen.dart';
 import '../reports/reports_screen.dart';
 import '../revenue/revenue_screen.dart';
 import '../approvals/approvals_screen.dart';
-import '../entries/my_entries_summary.dart';
+import '../entries/add_entry_screen.dart';
+import '../entries/home_entries.dart';
 import '../entries/project_entries.dart';
 import '../notifications/notifications.dart';
 import '../notifications/notifications_bell.dart';
@@ -135,8 +134,11 @@ class HomeScreen extends StatefulWidget {
   /// The way into the suppliers of the project [id].
   static Key suppliersKey(String id) => Key('home.suppliers.$id');
 
-  /// The button that enters a new purchase expense in the running project [id].
-  static Key addExpenseKey(String id) => Key('home.addExpense.$id');
+  /// The button that adds an entry to any table of the running project [id] (redix-app #84).
+  static Key addEntryKey(String id) => Key('home.addEntry.$id');
+
+  /// The button beside the entries that searches them, in the project [id].
+  static Key searchEntriesKey(String id) => Key('home.searchEntries.$id');
 
   /// The way to the entries of the project [id].
   static Key entriesKey(String id) => Key('home.entries.$id');
@@ -161,9 +163,6 @@ class HomeScreen extends StatefulWidget {
 
   /// The line saying how many entries of the project [id] wait on this phone.
   static Key waitingKey(String id) => Key('home.waiting.$id');
-
-  /// The way into a new contractor payment in the project [id].
-  static Key contractorPaymentKey(String id) => Key('home.contractorPayment.$id');
 
   /// The way into the contracts of the project [id].
   static Key contractsKey(String id) => Key('home.contracts.$id');
@@ -330,26 +329,11 @@ class _HomeScreenState extends State<HomeScreen> {
               : SafeArea(
                   child: Padding(
                     padding: const EdgeInsets.all(8),
-                    child: Row(
-                      spacing: 8,
-                      children: [
-                        Expanded(
-                          child: FilledButton.icon(
-                            key: HomeScreen.addExpenseKey(widget.projectId),
-                            icon: const Icon(Icons.add),
-                            label: Text(words.expensesNew),
-                            onPressed: () => _open(AddExpenseScreen.pathOf(widget.projectId), project.single),
-                          ),
-                        ),
-                        Expanded(
-                          child: FilledButton.tonalIcon(
-                            key: HomeScreen.contractorPaymentKey(widget.projectId),
-                            icon: const Icon(Icons.handshake_outlined),
-                            label: Text(words.contractorPaymentsNew),
-                            onPressed: () => _open(ContractorPaymentScreen.pathOf(widget.projectId), project.single),
-                          ),
-                        ),
-                      ],
+                    child: FilledButton.icon(
+                      key: HomeScreen.addEntryKey(widget.projectId),
+                      icon: const Icon(Icons.add),
+                      label: Text(words.entriesNew),
+                      onPressed: () => _open(AddEntryScreen.pathOf(widget.projectId), project.single),
                     ),
                   ),
                 );
@@ -386,7 +370,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onItem: (item) => _open(ItemReportScreen.pathOf(project.id, item.id), project),
                   ),
                   MyCustody(accounts: widget.accounts),
-                  MyEntriesSummary(project: project, entries: widget.entries),
+                  HomeEntries(project: project, entries: widget.entries),
                   ProjectCard(
                     project: project,
                     onAccounts: () => _open(AccountsScreen.pathOf(project.id), project),

@@ -46,8 +46,7 @@ lib/
     invoice_capture.dart    InvoiceCapture: the one place that touches the camera and the files
     picture_compression.dart  compressedPicture: a picture under 1 MB
   expenses/
-    add_expense_screen.dart a new purchase expense
-    invoice_section.dart    its invoice: the picture, and the ways to take or pick it
+    invoice_section.dart    an entry's file: the picture, and the ways to take or pick it
     column_value_field.dart the field of one custom column, by what it holds
     expenses.dart           Expenses: the way to record a purchase or a contractor payment, and what it was refused over
     payment_choice.dart     PaymentChoice: where an entry is paid from and how, as chosen
@@ -59,9 +58,18 @@ lib/
     invoice_qr.dart         InvoiceQr: what a Saudi e-invoice's QR code carries, read from its text
     qr_summary.dart         what was read from the code, and the offer to add its seller
   contractor_payments/
-    contractor_payment_screen.dart  a payment against a contract
-    contract_picker.dart    the field that chooses the contract, from a sheet of the active ones
     contract_figures.dart   what the contract stands at with this payment, and the alert of an overrun
+  entries/
+    add_entry_screen.dart   إضافة قيد: one screen adding a purchase or a contractor payment to any table (redix-app #84)
+    entry_tables.dart       EntryTable, and EntryTables: the ApiList of every table an expense may go into; the table answers what its entries differ in
+    table_picker.dart       the field that chooses the table, from a sheet by category and item
+    project_entries.dart    ProjectEntries: the ApiList of a project's entries, and what can be done to one
+    entry_row.dart          EntryRow, as the API answers it, with what a search matches it by
+    entry_tile.dart         one entry on a list
+    entry_filter.dart       EntryFilter: what the search of the entries keeps
+    entries_screen.dart     القيود: the entries, searched and filtered, and what can be done to one
+    home_entries.dart       the latest five on the project's home, with the search beside them
+    reverse_sheet.dart      the sheet that reverses an approved entry, saying why
   contracts/
     contract.dart           Contract and ContractFilter, as the API answers them
     contracts.dart          Contracts: the ApiList of one project's contracts, and its changes

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../words/words.dart';
-import 'add_expense_screen.dart';
+import '../entries/add_entry_screen.dart';
 import 'invoice_qr.dart';
 
 /// What was read from the invoice's QR code (AC-11.1): its five fields, and an offer to add the seller when no supplier holds its number.
@@ -34,17 +34,17 @@ class QrSummary extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(words.expensesQrRead, key: AddExpenseScreen.qrReadKey, style: theme.textTheme.titleSmall),
+            Text(words.expensesQrRead, key: AddEntryScreen.qrReadKey, style: theme.textTheme.titleSmall),
             const SizedBox(height: 4),
-            Text(qr.sellerName, key: AddExpenseScreen.qrSellerKey),
-            Text(qr.vatNumber, key: AddExpenseScreen.qrVatNumberKey),
-            Text('${formatDate(qr.issuedAt)} ${_timeOf(qr.issuedAt)}', key: AddExpenseScreen.qrTimeKey),
-            Text('${words.expensesTotal} ${formatMoney(qr.total)}', key: AddExpenseScreen.qrAmountsKey),
+            Text(qr.sellerName, key: AddEntryScreen.qrSellerKey),
+            Text(qr.vatNumber, key: AddEntryScreen.qrVatNumberKey),
+            Text('${formatDate(qr.issuedAt)} ${_timeOf(qr.issuedAt)}', key: AddEntryScreen.qrTimeKey),
+            Text('${words.expensesTotal} ${formatMoney(qr.total)}', key: AddEntryScreen.qrAmountsKey),
             if (offerSupplier) ...[
               const SizedBox(height: 8),
-              Text(words.expensesQrSupplierMissing, key: AddExpenseScreen.qrSupplierMissingKey),
+              Text(words.expensesQrSupplierMissing, key: AddEntryScreen.qrSupplierMissingKey),
               const SizedBox(height: 4),
-              OutlinedButton(key: AddExpenseScreen.qrAddSupplierKey, onPressed: onAddSupplier, child: Text(words.expensesQrAddSupplier)),
+              OutlinedButton(key: AddEntryScreen.qrAddSupplierKey, onPressed: onAddSupplier, child: Text(words.expensesQrAddSupplier)),
             ],
           ],
         ),

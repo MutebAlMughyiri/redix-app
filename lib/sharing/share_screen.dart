@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../attachments/attachments.dart';
 import '../attachments/invoice_capture.dart';
 import '../attachments/picked_file.dart';
-import '../expenses/add_expense_screen.dart';
+import '../entries/add_entry_screen.dart';
 import '../expenses/invoice_qr.dart';
 import '../expenses/qr_summary.dart';
 import '../format/date_format.dart';
@@ -183,7 +183,7 @@ class _ShareScreenState extends State<ShareScreen> {
   }
 
   Future<void> _newExpense() async {
-    final saved = await context.push<bool>(AddExpenseScreen.sharedPathOf(_project.id), extra: _project);
+    final saved = await context.push<bool>(AddEntryScreen.sharedPathOf(_project.id), extra: _project);
     if (saved ?? false) {
       widget.onDone();
     }

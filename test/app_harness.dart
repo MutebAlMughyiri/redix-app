@@ -53,7 +53,7 @@ Map<String, String> wordsIn(String language) => {
     'columns.typeNumber', 'columns.typeAmount', 'columns.typeDate', 'columns.typeList', 'columns.typeFile', 'columns.choices', 'columns.newChoices', 'columns.required', 'columns.optional', 'columns.showInReports',
     'columns.inReports', 'columns.custom', 'columns.core', 'columns.edit', 'columns.delete', 'columns.save', 'columns.deleteExplain', 'columns.applyQuestion', 'columns.applyExplain',
     'columns.applyToAll', 'columns.templateOnly',
-    'entries.title', 'entries.mine', 'entries.all', 'entries.latest', 'entries.seeAll', 'entries.empty', 'entries.loadFailed', 'entries.noConnection', 'entries.refused', 'entries.draft', 'entries.pendingApproval', 'entries.approved', 'entries.rejected', 'entries.reversed', 'entries.reason', 'entries.fix', 'entries.edit', 'entries.send', 'entries.delete', 'entries.deleteQuestion', 'entries.deleteExplain', 'entries.reverse', 'entries.reverseTitle', 'entries.reverseReason', 'entries.reverseExplain', 'entries.entryApproved', 'entries.entryWaitingForDecision', 'entries.notYourEntry', 'entries.entryHasCreditNote', 'entries.reasonRequired', 'entries.entryNotApproved', 'entries.alreadyReversed', 'entries.entryIncomplete', 'entries.entryNotSubmittable', 'expenses.entryApproved', 'expenses.entryWaitingForDecision', 'expenses.notYourEntry', 'expenses.entryHasCreditNote', 'expenses.reasonRequired', 'expenses.entryNotApproved', 'expenses.alreadyReversed',
+    'entries.title', 'entries.mine', 'entries.all', 'entries.seeAll', 'entries.empty', 'entries.new', 'entries.table', 'entries.search', 'entries.searchHint', 'entries.purchases', 'entries.contractorPayments', 'entries.period', 'entries.clearFilters', 'entries.found', 'entries.enteredBy', 'entries.loadFailed', 'entries.noConnection', 'entries.refused', 'entries.draft', 'entries.pendingApproval', 'entries.approved', 'entries.rejected', 'entries.reversed', 'entries.reason', 'entries.fix', 'entries.edit', 'entries.send', 'entries.delete', 'entries.deleteQuestion', 'entries.deleteExplain', 'entries.reverse', 'entries.reverseTitle', 'entries.reverseReason', 'entries.reverseExplain', 'entries.entryApproved', 'entries.entryWaitingForDecision', 'entries.notYourEntry', 'entries.entryHasCreditNote', 'entries.reasonRequired', 'entries.entryNotApproved', 'entries.alreadyReversed', 'entries.entryIncomplete', 'entries.entryNotSubmittable', 'expenses.entryApproved', 'expenses.entryWaitingForDecision', 'expenses.notYourEntry', 'expenses.entryHasCreditNote', 'expenses.reasonRequired', 'expenses.entryNotApproved', 'expenses.alreadyReversed',
     'reports.title', 'reports.periodic', 'reports.lastIssued', 'reports.noneIssued', 'reports.issue', 'reports.issueQuestion', 'reports.issueExplain', 'reports.issued', 'reports.reportNumber', 'reports.pdf', 'reports.excel', 'reports.print', 'reports.share', 'reports.earlier', 'reports.fileFailed', 'reports.previous', 'reports.current', 'reports.difference', 'reports.liquidation', 'reports.item', 'reports.contracts', 'reports.partners', 'reports.chooseItem', 'reports.loadFailed', 'reports.noConnection', 'reports.refused', 'reports.itemTotal', 'reports.generalSubgroup', 'reports.number', 'reports.description', 'reports.invoiceNumber', 'reports.date', 'reports.unitPrice', 'reports.quantity', 'reports.cost', 'reports.contractValue', 'reports.openValue', 'reports.paid', 'reports.remaining', 'reports.overrun', 'reports.outsideContract', 'reports.grandTotal', 'reports.noContracts', 'reports.pending', 'dashboard.pending', 'dashboard.pendingHint', 'dashboard.surplus', 'dashboard.surplusWithoutSales', 'dashboard.revenue', 'dashboard.expenses', 'dashboard.difference', 'dashboard.byCategory', 'dashboard.revenueByCategory', 'dashboard.completion', 'dashboard.loadFailed', 'revenue.title', 'revenue.empty', 'revenue.new', 'revenue.newSale', 'revenue.item', 'revenue.unknownItem', 'revenue.vatRefund', 'revenue.sale', 'revenue.date', 'revenue.amount', 'revenue.account', 'revenue.description', 'revenue.file', 'revenue.save', 'revenue.saved', 'revenue.buyer', 'revenue.buyerVatNumber', 'revenue.invoiceNumber', 'revenue.invoiceDate', 'revenue.loadFailed', 'revenue.noConnection', 'revenue.refused', 'revenue.invalidPeriod', 'revenue.invalidDate', 'revenue.invalidAmount', 'revenue.invalidNotes', 'revenue.unknownAccount', 'revenue.unknownAttachment', 'revenue.invoiceAlreadyAttached', 'revenue.invalidBuyerName', 'revenue.invalidVatNumber', 'revenue.invalidInvoiceNumber', 'revenue.invalidInvoiceDate', 'revenue.duplicateInvoice', 'revenue.unknownSale', 'vat.title', 'vat.quarter', 'vat.halfYear', 'vat.custom', 'vat.q1', 'vat.q2', 'vat.q3', 'vat.q4', 'vat.h1', 'vat.h2', 'vat.from', 'vat.to', 'accounts.typePartnerPocket', 'accounts.invalidType', 'accounts.pocketFollowsPartner', 'accounts.transfer', 'accounts.reconcile', 'transfers.title', 'transfers.latest', 'transfers.from', 'transfers.to', 'transfers.amount', 'transfers.date', 'transfers.description', 'transfers.receipt', 'transfers.save', 'transfers.done', 'transfers.loadFailed', 'transfers.noConnection', 'transfers.refused', 'transfers.sameAccount', 'transfers.invalidDate', 'transfers.invalidAmount', 'transfers.invalidNotes', 'transfers.unknownAccount', 'transfers.unknownAttachment', 'transfers.invoiceAlreadyAttached', 'reconciliations.title', 'reconciliations.surplus', 'reconciliations.actualTotal', 'reconciliations.difference', 'reconciliations.differenceExplain', 'reconciliations.owed', 'reconciliations.lastUpdated', 'reconciliations.never', 'reconciliations.enterTitle', 'reconciliations.books', 'reconciliations.save', 'reconciliations.loadFailed', 'reconciliations.noConnection', 'reconciliations.refused', 'reconciliations.unknownAccount', 'reconciliations.invalidAmount', 'reconciliations.accountMissing', 'capital.total', 'capital.balance', 'capital.share', 'capital.active', 'capital.left', 'capital.movement', 'capital.movements', 'capital.noMovements', 'capital.moveTitle', 'capital.partner', 'capital.type', 'capital.contribution', 'capital.withdrawal', 'capital.settlementAndExit', 'capital.carryIn', 'capital.carryOut', 'capital.inKind', 'capital.refundableAdvance', 'capital.amount', 'capital.date', 'capital.account', 'capital.description', 'capital.receipt', 'capital.receiptRequiredWord', 'capital.receiptHint', 'capital.receiptAmount', 'capital.receiptDiffers', 'capital.paidInCash', 'capital.cashReason', 'capital.targetProject', 'capital.targetPartner', 'capital.targetAccount', 'capital.noTargetProject', 'capital.save', 'capital.saved', 'capital.cash', 'capital.receiptAttached', 'capital.reversed', 'capital.reverse', 'capital.loadFailed', 'capital.noConnection', 'capital.refused', 'capital.receiptRequired', 'capital.invalidReason', 'capital.useCarry', 'capital.settlementNotFull', 'capital.unknownPartner', 'capital.partnerLeft', 'capital.invalidDate', 'capital.invalidAmount', 'capital.invalidNotes', 'capital.unknownAccount', 'capital.unknownAttachment', 'capital.invoiceAlreadyAttached', 'capital.sameProject', 'capital.targetProjectRefused', 'capital.targetProjectFinished', 'entries.tiedProjectRefused', 'share.capitalReceipt', 'share.title', 'share.project', 'share.noProject', 'share.chooseItem', 'share.empty', 'share.expense', 'share.matching', 'share.attach', 'share.newExpense', 'share.attached', 'share.amountDiffers', 'share.supplierDiffers', 'share.loadFailed', 'share.noConnection', 'share.refused', 'share.notYourEntry', 'share.entryNotAttachable', 'share.unknownAttachment', 'share.invoiceAlreadyAttached', 'notifications.title', 'notifications.empty', 'notifications.loadFailed', 'notifications.noConnection', 'notifications.refused', 'notifications.entrySubmitted', 'notifications.entryApproved', 'notifications.entryRejected', 'notifications.projectApproved', 'notifications.projectRejected', 'approvals.title', 'approvals.empty', 'approvals.loadFailed', 'approvals.noConnection', 'approvals.all', 'approvals.purchases', 'approvals.contractorPayments', 'approvals.approve', 'approvals.reject', 'approvals.approveSelected', 'approvals.selectHint', 'approvals.enteredBy', 'approvals.openFile', 'approvals.fileFailed', 'approvals.rejectTitle', 'approvals.quickReason', 'approvals.reasonUnclear', 'approvals.reasonAmount', 'approvals.reasonItem', 'approvals.reasonDuplicate', 'approvals.reason', 'approvals.reasonHint', 'approvals.rejectSend', 'approvals.reasonRequired', 'approvals.entryNotPending', 'approvals.unknownEntry', 'approvals.originalNotApproved', 'approvals.refused', 'approvals.approvedSome', 'approvals.failedSome',
     'expenses.keptOnPhone', 'offline.title', 'offline.empty', 'offline.waiting', 'offline.sendAgain', 'offline.discard', 'offline.discardQuestion', 'offline.discardExplain',
     'categories.title', 'categories.hint', 'categories.empty', 'categories.loadFailed', 'categories.noConnection', 'categories.refused', 'categories.projectFinished',
@@ -77,8 +77,8 @@ Map<String, String> wordsIn(String language) => {
     'contracts.paid', 'contracts.remaining', 'contracts.open', 'contracts.overrun', 'contracts.notStarted', 'contracts.running', 'contracts.filterAll', 'contracts.filterOverrun',
     'contracts.filterOpenValue', 'contracts.disable', 'contracts.enable', 'contracts.disabled', 'contracts.documents', 'contracts.addDocument', 'contracts.unknownAttachment',
     'attachments.invalidFileType', 'attachments.imageTooLarge', 'attachments.projectFinished', 'attachments.noConnection', 'attachments.refused', 'attachments.cameraFailed', 'attachments.unreadable',
-    'attachments.invoicePhoto', 'attachments.retake', 'attachments.takePhoto', 'attachments.pickFile', 'expenses.new',
-    'expenses.item', 'expenses.subgroup', 'expenses.generalSubgroup', 'expenses.supplier', 'expenses.date', 'expenses.product', 'expenses.unitPrice', 'expenses.quantity',
+    'attachments.invoicePhoto', 'attachments.retake', 'attachments.takePhoto', 'attachments.pickFile',
+    'expenses.item', 'expenses.supplier', 'expenses.date', 'expenses.product', 'expenses.unitPrice', 'expenses.quantity',
     'expenses.total',
     'expenses.paymentMethod', 'expenses.account', 'expenses.noAccount', 'expenses.notes',
     'expenses.send', 'expenses.saveDraft', 'expenses.sent', 'expenses.saved', 'expenses.noConnection', 'expenses.refused', 'expenses.projectFinished', 'expenses.invalidEntryId',
@@ -87,9 +87,9 @@ Map<String, String> wordsIn(String language) => {
     'expenses.invalidPaymentDate', 'expenses.unknownColumn', 'expenses.invalidColumnValue', 'expenses.requiredColumnMissing', 'expenses.qrRead',
     'expenses.qrUnreadable', 'expenses.qrSupplierMissing', 'expenses.qrAddSupplier', 'suppliers.mostUsed',
     'expenses.duplicateTitle', 'expenses.duplicateExplain', 'expenses.invoiceAlreadyAttached',
-    'expenses.amount',     'expenses.unknownContract', 'contracts.pending', 'contractorPayments.new', 'contractorPayments.contract', 'contractorPayments.remainingAfter',
+    'expenses.amount',     'expenses.unknownContract', 'contracts.pending', 'contractorPayments.remainingAfter',
     'contractorPayments.overrun', 'contractorPayments.savedOverrun', 'contractorPayments.kind', 'contractorPayments.inside', 'contractorPayments.outside', 'contractorPayments.outsideExplain',
-    'contractorPayments.date', 'contractorPayments.receipt',
+    'contractorPayments.receipt',
     'documents.title', 'documents.none', 'documents.add', 'documents.name', 'documents.group', 'documents.groupHint', 'documents.file', 'documents.fileHint', 'documents.save', 'documents.saved', 'documents.remove', 'documents.removeQuestion', 'documents.removeExplain', 'documents.removed', 'documents.loadFailed', 'documents.noConnection', 'documents.refused', 'documents.projectFinished', 'documents.invalidName', 'documents.invalidGroup', 'documents.fileRequired', 'documents.fileTooLarge', 'documents.documentAlreadyKept',
     'liquidation.late', 'liquidation.lateExplain', 'liquidation.lateExpense', 'liquidation.lateRevenue', 'liquidation.item', 'liquidation.amount', 'liquidation.description', 'liquidation.record',
     'liquidation.lateRecorded', 'liquidation.attachReceipt', 'liquidation.noReceipt', 'liquidation.receiptAttached',
@@ -98,7 +98,7 @@ Map<String, String> wordsIn(String language) => {
     'reports.save', 'reports.downloaded',
     'reports.surplus',
     'expenses.creditNote', 'expenses.creditNoteExplain', 'expenses.originalInvoice', 'expenses.noCreditableInvoice', 'expenses.returnable', 'expenses.loadFailed',
-    'expenses.creditNoteAboveOriginal', 'expenses.creditNoteNeedsOriginal', 'expenses.deductionNeedsNotes', 'contractorPayments.deductionNeedsNotes', 'revenue.total', 'expenses.unknownOriginalInvoice',
+    'expenses.creditNoteAboveOriginal', 'expenses.creditNoteNeedsOriginal', 'expenses.deductionNeedsNotes', 'revenue.total', 'expenses.unknownOriginalInvoice',
     'accounts.accountHasEntries', 'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
   ])
     key: '$language $key',
@@ -1115,6 +1115,51 @@ class FakeApi {
     return order.isEmpty ? tables : [for (final id in order) ...tables.where((table) => table['id'] == id)];
   }
 
+  /// Every table an expense may go into, as `GET /entry-tables` answers (redix-app #84): by active category, each active item that takes purchases with its general and named
+  /// tables, and each that takes contractor payments with its active contracts. A contract on an item the test never added to a category is listed under one category of its own.
+  List<Map<String, Object>> entryTablesOf(String projectId) {
+    final active = (contracts[projectId] ?? const <Map<String, Object>>[]).where((contract) => contract['isActive']! as bool).toList();
+    List<Map<String, Object>> contractTablesOf(String itemId) => [
+      for (final contract in active.where((contract) => contract['itemId'] == itemId)) {'id': contract['id']!, 'kind': 'contract', 'name': contract['supplierName']!},
+    ];
+    Map<String, Object> itemOf(Map<String, Object> item) {
+      final type = item['type']! as String;
+      return {
+        'id': item['id']!,
+        'name': item['name']!,
+        'tables': [
+          if (type == 'purchases' || type == 'both')
+            for (final subgroup in item['subgroups']! as List<Map<String, Object>>)
+              {'id': subgroup['id']!, 'kind': (subgroup['name']! as String).isEmpty ? 'general' : 'subgroup', 'name': (subgroup['name']! as String).isEmpty ? item['name']! : subgroup['name']!},
+          if (type == 'contractorPayments' || type == 'both') ...contractTablesOf(item['id']! as String),
+        ],
+      };
+    }
+
+    final listed = categories[projectId] ?? const <Map<String, Object>>[];
+    final itemIds = {for (final category in listed) for (final item in category['items']! as List<Map<String, Object>>) item['id']};
+    final elsewhere = {for (final contract in active.where((contract) => !itemIds.contains(contract['itemId']))) contract['itemId']! as String: contract['itemName']!};
+    return [
+      for (final category in listed.where((category) => category['isActive']! as bool))
+        {
+          'id': category['id']!,
+          'name': category['name']!,
+          'items': [
+            for (final item in (category['items']! as List<Map<String, Object>>).where((item) => item['isActive']! as bool).map(itemOf))
+              if ((item['tables']! as List<Object>).isNotEmpty) item,
+          ],
+        },
+      if (elsewhere.isNotEmpty)
+        {
+          'id': 'category-of-contracts',
+          'name': 'العقود',
+          'items': [
+            for (final MapEntry(key: itemId, value: name) in elsewhere.entries) {'id': itemId, 'name': name, 'tables': contractTablesOf(itemId)},
+          ],
+        },
+    ].where((category) => (category['items']! as List<Object>).isNotEmpty).toList();
+  }
+
   http.Response _answerStructure(http.Request request) {
     final segments = request.url.pathSegments;
     final list = categories.putIfAbsent(segments[1], () => []);
@@ -1386,6 +1431,9 @@ class FakeApi {
     }
     if (segments.length >= 3 && (segments[2] == 'default-columns' || segments.length >= 5 && segments[4] == 'columns')) {
       return _answerColumns(request);
+    }
+    if (segments.length == 3 && segments[2] == 'entry-tables') {
+      return _json(entryTablesOf(segments[1]), 200);
     }
     if (segments.length >= 3 && (segments[2] == 'categories' || segments[2] == 'items')) {
       return _answerStructure(request);

@@ -3,9 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/attachments/picked_file.dart';
-import 'package:redix/contractor_payments/contract_picker.dart';
-import 'package:redix/contractor_payments/contractor_payment_screen.dart';
-import 'package:redix/expenses/add_expense_screen.dart';
+import 'package:redix/entries/table_picker.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/home/home_screen.dart';
 
@@ -20,10 +19,11 @@ void main() {
     final open = api.addContract('project-0', 'دهان داخلي', isOpenValue: true, paid: 12000);
     final method = api.addPaymentMethod('project-0', 'شبكة');
     api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
+    api.addColumn('/projects/project-0/items/item-of-contract/columns', 'notes');
     arrange?.call(api);
     final capture = FakeCapture();
     await openProject(tester, api, capture: capture);
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractorPaymentKey('project-0'))));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
     return (api: api, capture: capture, running: running['id']! as String, disabled: disabled['id']! as String, open: open['id']! as String, method: method['id']! as String);
   }
 
@@ -43,20 +43,20 @@ void main() {
   String shown(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   Future<void> pickContract(WidgetTester tester, FakeApi api, String id) async {
-    await tapVisible(tester, api, ContractorPaymentScreen.contractKey);
-    await act(tester, api, () => tester.tap(find.byKey(ContractPicker.optionKey(id))));
+    await tapVisible(tester, api, AddEntryScreen.tableKey);
+    await act(tester, api, () => tester.tap(find.byKey(TablePicker.optionKey(id))));
   }
 
   testWidgets('AC-12.1: choosing a contract shows its value, what was paid and what remains after this payment, before saving', (tester) async {
     final opened = await openPayment(tester);
 
     await pickContract(tester, opened.api, opened.running);
-    await type(tester, ContractorPaymentScreen.amountKey, '3000');
+    await type(tester, AddEntryScreen.amountKey, '3000');
 
-    expect(shown(tester, ContractorPaymentScreen.valueKey), '34,000.00');
-    expect(shown(tester, ContractorPaymentScreen.paidKey), '30,000.00');
-    expect(shown(tester, ContractorPaymentScreen.remainingKey), '1,000.00');
-    expect(find.byKey(ContractorPaymentScreen.overrunKey), findsNothing);
+    expect(shown(tester, AddEntryScreen.valueKey), '34,000.00');
+    expect(shown(tester, AddEntryScreen.paidKey), '30,000.00');
+    expect(shown(tester, AddEntryScreen.remainingKey), '1,000.00');
+    expect(find.byKey(AddEntryScreen.overrunKey), findsNothing);
   });
 
   testWidgets('AC-07.1: a payment of 5,000 on 4,000 remaining shows an overrun alert and (1,000), and is still saved', (tester) async {
@@ -64,12 +64,12 @@ void main() {
     await pickContract(tester, opened.api, opened.running);
     await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
 
-    await type(tester, ContractorPaymentScreen.amountKey, '5000');
+    await type(tester, AddEntryScreen.amountKey, '5000');
 
-    expect(shown(tester, ContractorPaymentScreen.remainingKey), '(1,000.00)');
-    expect(find.byKey(ContractorPaymentScreen.overrunKey), findsOneWidget);
+    expect(shown(tester, AddEntryScreen.remainingKey), '(1,000.00)');
+    expect(find.byKey(AddEntryScreen.overrunKey), findsOneWidget);
 
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     expect(opened.api.sentContractorPayments.single['amount'], 5000);
     expect(find.text('en contractorPayments.savedOverrun'), findsOneWidget);
@@ -79,54 +79,53 @@ void main() {
     final opened = await openPayment(tester, pending: 2000);
     await pickContract(tester, opened.api, opened.running);
 
-    await type(tester, ContractorPaymentScreen.amountKey, '3000');
+    await type(tester, AddEntryScreen.amountKey, '3000');
 
-    expect(shown(tester, ContractorPaymentScreen.paidKey), '30,000.00');
-    expect(shown(tester, ContractorPaymentScreen.pendingKey), 'en contracts.pending 2,000.00');
-    expect(shown(tester, ContractorPaymentScreen.remainingKey), '(1,000.00)');
-    expect(find.byKey(ContractorPaymentScreen.overrunKey), findsOneWidget);
+    expect(shown(tester, AddEntryScreen.paidKey), '30,000.00');
+    expect(shown(tester, AddEntryScreen.pendingKey), 'en contracts.pending 2,000.00');
+    expect(shown(tester, AddEntryScreen.remainingKey), '(1,000.00)');
+    expect(find.byKey(AddEntryScreen.overrunKey), findsOneWidget);
   });
 
   testWidgets('AC-07.2: an open-value contract has no remaining, no bar and no alert', (tester) async {
     final opened = await openPayment(tester);
     await pickContract(tester, opened.api, opened.open);
 
-    await type(tester, ContractorPaymentScreen.amountKey, '900000');
+    await type(tester, AddEntryScreen.amountKey, '900000');
 
-    expect(shown(tester, ContractorPaymentScreen.remainingKey), '—');
-    expect(find.byKey(ContractorPaymentScreen.progressKey), findsNothing);
-    expect(find.byKey(ContractorPaymentScreen.overrunKey), findsNothing);
+    expect(shown(tester, AddEntryScreen.remainingKey), '—');
+    expect(find.byKey(AddEntryScreen.progressKey), findsNothing);
+    expect(find.byKey(AddEntryScreen.overrunKey), findsNothing);
   });
 
   testWidgets('AC-13.1: outside the contract the remaining does not change', (tester) async {
     final opened = await openPayment(tester);
     await pickContract(tester, opened.api, opened.running);
-    await type(tester, ContractorPaymentScreen.amountKey, '5000');
+    await type(tester, AddEntryScreen.amountKey, '5000');
 
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.outsideKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.outsideKey);
 
-    expect(shown(tester, ContractorPaymentScreen.remainingKey), '4,000.00');
-    expect(find.byKey(ContractorPaymentScreen.overrunKey), findsNothing);
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.draftKey);
+    expect(shown(tester, AddEntryScreen.remainingKey), '4,000.00');
+    expect(find.byKey(AddEntryScreen.overrunKey), findsNothing);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
     expect(opened.api.sentContractorPayments.single['isOutsideContract'], isTrue);
   });
 
-  testWidgets('AC-14.1, D14: a deduction is a negative amount, which raises what remains, has no receipt, and says why in its notes', (tester) async {
+  testWidgets('AC-14.1, D14: a deduction is a negative amount, which raises what remains and says why in its notes', (tester) async {
     final opened = await openPayment(tester);
     await pickContract(tester, opened.api, opened.running);
 
-    await type(tester, ContractorPaymentScreen.amountKey, '-136');
+    await type(tester, AddEntryScreen.amountKey, '-136');
 
-    expect(shown(tester, ContractorPaymentScreen.remainingKey), '4,136.00');
-    expect(find.byKey(ContractorPaymentScreen.cameraKey), findsNothing);
-    expect(tester.widget<TextField>(find.byKey(ContractorPaymentScreen.amountKey)).keyboardType, const TextInputType.numberWithOptions(decimal: true, signed: true));
+    expect(shown(tester, AddEntryScreen.remainingKey), '4,136.00');
+    expect(tester.widget<TextField>(find.byKey(AddEntryScreen.amountKey)).keyboardType, const TextInputType.numberWithOptions(decimal: true, signed: true));
 
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
     expect(opened.api.sentContractorPayments, isEmpty);
-    expect(shown(tester, ContractorPaymentScreen.messageKey), 'en contractorPayments.deductionNeedsNotes');
+    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.deductionNeedsNotes');
 
-    await type(tester, ContractorPaymentScreen.notesKey, 'خصم من المبلط');
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.sendKey);
+    await type(tester, AddEntryScreen.notesKey, 'خصم من المبلط');
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     final sent = opened.api.sentContractorPayments.single;
     expect(sent['amount'], -136);
@@ -137,9 +136,9 @@ void main() {
   testWidgets('D16: a payment is sent with no receipt', (tester) async {
     final opened = await openPayment(tester);
     await pickContract(tester, opened.api, opened.running);
-    await type(tester, ContractorPaymentScreen.amountKey, '3000');
+    await type(tester, AddEntryScreen.amountKey, '3000');
 
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     final sent = opened.api.sentContractorPayments.single;
     expect((sent.containsKey('attachmentId'), sent['submit']), (false, true));
@@ -149,11 +148,11 @@ void main() {
     final opened = await openPayment(tester);
     opened.capture.camera = PickedFile('receipt.png', '/phone/receipt.png', Uint8List.fromList(onePixelPng));
     await pickContract(tester, opened.api, opened.running);
-    await type(tester, ContractorPaymentScreen.amountKey, '3000');
+    await type(tester, AddEntryScreen.amountKey, '3000');
 
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.cameraKey);
-    expect(find.byKey(AddExpenseScreen.invoicePictureKey), findsOneWidget);
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.cameraKey);
+    expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     expect(opened.api.sentContractorPayments.single['attachmentId'], startsWith('attachment-'));
   });
@@ -161,11 +160,11 @@ void main() {
   testWidgets('a draft sends what is chosen, and the date as the payment date', (tester) async {
     final opened = await openPayment(tester);
     await pickContract(tester, opened.api, opened.running);
-    await type(tester, ContractorPaymentScreen.amountKey, '٣٠٠٠');
+    await type(tester, AddEntryScreen.amountKey, '٣٠٠٠');
     await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
-    await type(tester, ContractorPaymentScreen.notesKey, 'دفعة الدور الأرضي');
+    await type(tester, AddEntryScreen.notesKey, 'دفعة الدور الأرضي');
 
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     final sent = opened.api.sentContractorPayments.single;
     expect(sent['contractId'], opened.running);
@@ -181,21 +180,21 @@ void main() {
   testWidgets('a disabled contract is not on offer', (tester) async {
     final opened = await openPayment(tester);
 
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.contractKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.tableKey);
 
-    expect(find.byKey(ContractPicker.optionKey(opened.running)), findsOneWidget);
-    expect(find.byKey(ContractPicker.optionKey(opened.disabled)), findsNothing);
+    expect(find.byKey(TablePicker.optionKey(opened.running)), findsOneWidget);
+    expect(find.byKey(TablePicker.optionKey(opened.disabled)), findsNothing);
   });
 
   testWidgets('what is no number is refused here and never sent', (tester) async {
     final opened = await openPayment(tester);
     await pickContract(tester, opened.api, opened.running);
-    await type(tester, ContractorPaymentScreen.amountKey, 'abc');
+    await type(tester, AddEntryScreen.amountKey, 'abc');
 
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     expect(opened.api.sentContractorPayments, isEmpty);
-    expect(shown(tester, ContractorPaymentScreen.messageKey), 'en expenses.invalidAmount');
+    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.invalidAmount');
   });
 
   testWidgets('FR-41: the contract\'s item asks its custom columns, and what is required is marked by the API\'s answer', (tester) async {
@@ -207,9 +206,9 @@ void main() {
     });
     final plumber = opened.api.contracts['project-0']!.last['id']! as String;
     await pickContract(tester, opened.api, plumber);
-    await type(tester, ContractorPaymentScreen.amountKey, '100');
+    await type(tester, AddEntryScreen.amountKey, '100');
 
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     expect(find.text('en expenses.requiredColumnMissing'), findsWidgets);
   });
@@ -218,47 +217,37 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject'], units: ['الفلة الغربية']);
     await openProject(tester, api);
 
-    expect(find.byKey(HomeScreen.contractorPaymentKey('project-0')), findsNothing);
+    expect(find.byKey(HomeScreen.addEntryKey('project-0')), findsNothing);
   });
 
   testWidgets('a finished project offers no new payment', (tester) async {
     final api = FakeApi()..addProject('غصون 5', status: 'finished', permissions: field, units: ['الفلة الشرقية']);
     await openProject(tester, api);
 
-    expect(find.byKey(HomeScreen.contractorPaymentKey('project-0')), findsNothing);
+    expect(find.byKey(HomeScreen.addEntryKey('project-0')), findsNothing);
   });
 
-  testWidgets('a payment goes under the subgroup chosen, when the contract\'s item has named ones', (tester) async {
+  testWidgets('R10, R11: a contract\'s table takes a contractor payment, sent with its contract and no item or subgroup, even when its item has named ones', (tester) async {
     var contractId = '';
-    var subgroupId = '';
     final opened = await openPayment(
       tester,
       arrange: (api) {
         api.expenseAnswer = (status: 201, body: const {'isOverrun': false});
         final item = api.addItem(api.addCategory('project-0', 'العظم'), 'بند الحديد', subgroups: ['الدور الأرضي']);
         contractId = api.addContract('project-0', 'مقاول الحديد', value: 1000, itemId: item['id']! as String)['id']! as String;
-        subgroupId = (item['subgroups']! as List<Map<String, Object>>).last['id']! as String;
       },
     );
     await pickContract(tester, opened.api, contractId);
     await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.subgroupKey(subgroupId));
-    await type(tester, ContractorPaymentScreen.amountKey, '500');
+    await type(tester, AddEntryScreen.amountKey, '500');
 
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(opened.api.sentContractorPayments.single['subgroupId'], subgroupId);
-  });
-
-  testWidgets('a contract whose item has no named subgroups offers none, and the payment goes under the general one', (tester) async {
-    final opened = await openPayment(tester, arrange: (api) => api.expenseAnswer = (status: 201, body: const {'isOverrun': false}));
-    await pickContract(tester, opened.api, opened.running);
-    await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
-    await type(tester, ContractorPaymentScreen.amountKey, '500');
-
-    await tapVisible(tester, opened.api, ContractorPaymentScreen.draftKey);
-
-    expect(find.byKey(ContractorPaymentScreen.subgroupKey('any')), findsNothing);
-    expect(opened.api.sentContractorPayments.single.containsKey('subgroupId'), isFalse);
+    final sent = opened.api.sentContractorPayments.single;
+    expect(sent['contractId'], contractId);
+    for (final gone in ['itemId', 'subgroupId', 'supplierId', 'product', 'isCreditNote']) {
+      expect(sent.containsKey(gone), isFalse, reason: gone);
+    }
+    expect(opened.api.sentExpenses, isEmpty);
   });
 }

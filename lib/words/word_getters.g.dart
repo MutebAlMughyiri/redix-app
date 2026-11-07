@@ -746,23 +746,11 @@ mixin WordGetters {
   /// The word `common.retry`.
   String get commonRetry => text('common.retry');
 
-  /// The word `contractorPayments.contract`.
-  String get contractorPaymentsContract => text('contractorPayments.contract');
-
-  /// The word `contractorPayments.date`.
-  String get contractorPaymentsDate => text('contractorPayments.date');
-
-  /// The word `contractorPayments.deductionNeedsNotes`.
-  String get contractorPaymentsDeductionNeedsNotes => text('contractorPayments.deductionNeedsNotes');
-
   /// The word `contractorPayments.inside`.
   String get contractorPaymentsInside => text('contractorPayments.inside');
 
   /// The word `contractorPayments.kind`.
   String get contractorPaymentsKind => text('contractorPayments.kind');
-
-  /// The word `contractorPayments.new`.
-  String get contractorPaymentsNew => text('contractorPayments.new');
 
   /// The word `contractorPayments.outside`.
   String get contractorPaymentsOutside => text('contractorPayments.outside');
@@ -1013,6 +1001,12 @@ mixin WordGetters {
   /// The word `entries.approved`.
   String get entriesApproved => text('entries.approved');
 
+  /// The word `entries.clearFilters`.
+  String get entriesClearFilters => text('entries.clearFilters');
+
+  /// The word `entries.contractorPayments`.
+  String get entriesContractorPayments => text('entries.contractorPayments');
+
   /// The word `entries.delete`.
   String get entriesDelete => text('entries.delete');
 
@@ -1030,6 +1024,9 @@ mixin WordGetters {
 
   /// The word `entries.empty`.
   String get entriesEmpty => text('entries.empty');
+
+  /// The word `entries.enteredBy`.
+  String get entriesEnteredBy => text('entries.enteredBy');
 
   /// The word `entries.entryApproved`.
   String get entriesEntryApproved => text('entries.entryApproved');
@@ -1052,14 +1049,17 @@ mixin WordGetters {
   /// The word `entries.fix`.
   String get entriesFix => text('entries.fix');
 
-  /// The word `entries.latest`.
-  String get entriesLatest => text('entries.latest');
+  /// The word `entries.found`.
+  String get entriesFound => text('entries.found');
 
   /// The word `entries.loadFailed`.
   String get entriesLoadFailed => text('entries.loadFailed');
 
   /// The word `entries.mine`.
   String get entriesMine => text('entries.mine');
+
+  /// The word `entries.new`.
+  String get entriesNew => text('entries.new');
 
   /// The word `entries.noConnection`.
   String get entriesNoConnection => text('entries.noConnection');
@@ -1069,6 +1069,12 @@ mixin WordGetters {
 
   /// The word `entries.pendingApproval`.
   String get entriesPendingApproval => text('entries.pendingApproval');
+
+  /// The word `entries.period`.
+  String get entriesPeriod => text('entries.period');
+
+  /// The word `entries.purchases`.
+  String get entriesPurchases => text('entries.purchases');
 
   /// The word `entries.reason`.
   String get entriesReason => text('entries.reason');
@@ -1097,11 +1103,20 @@ mixin WordGetters {
   /// The word `entries.reversed`.
   String get entriesReversed => text('entries.reversed');
 
+  /// The word `entries.search`.
+  String get entriesSearch => text('entries.search');
+
+  /// The word `entries.searchHint`.
+  String get entriesSearchHint => text('entries.searchHint');
+
   /// The word `entries.seeAll`.
   String get entriesSeeAll => text('entries.seeAll');
 
   /// The word `entries.send`.
   String get entriesSend => text('entries.send');
+
+  /// The word `entries.table`.
+  String get entriesTable => text('entries.table');
 
   /// The word `entries.tiedProjectRefused`.
   String get entriesTiedProjectRefused => text('entries.tiedProjectRefused');
@@ -1160,9 +1175,6 @@ mixin WordGetters {
   /// The word `expenses.entryWaitingForDecision`.
   String get expensesEntryWaitingForDecision => text('expenses.entryWaitingForDecision');
 
-  /// The word `expenses.generalSubgroup`.
-  String get expensesGeneralSubgroup => text('expenses.generalSubgroup');
-
   /// The word `expenses.invalidAmount`.
   String get expensesInvalidAmount => text('expenses.invalidAmount');
 
@@ -1201,9 +1213,6 @@ mixin WordGetters {
 
   /// The word `expenses.loadFailed`.
   String get expensesLoadFailed => text('expenses.loadFailed');
-
-  /// The word `expenses.new`.
-  String get expensesNew => text('expenses.new');
 
   /// The word `expenses.noAccount`.
   String get expensesNoAccount => text('expenses.noAccount');
@@ -1270,9 +1279,6 @@ mixin WordGetters {
 
   /// The word `expenses.sent`.
   String get expensesSent => text('expenses.sent');
-
-  /// The word `expenses.subgroup`.
-  String get expensesSubgroup => text('expenses.subgroup');
 
   /// The word `expenses.supplier`.
   String get expensesSupplier => text('expenses.supplier');

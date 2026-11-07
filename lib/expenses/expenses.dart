@@ -44,11 +44,8 @@ class Expenses {
     }
   }
 
-  /// Keeps the purchase [body] and its [file] on the phone, when the file could not reach the API; [editing] names the entry it changes.
-  Future<String> keepPurchase(Map<String, Object> body, PickedFile file, {String editing = ''}) => _keep(_routeOf('expenses', editing), body, file);
-
-  /// Keeps the contractor payment [body] and its [file] on the phone, when the file could not reach the API; [editing] names the entry it changes.
-  Future<String> keepContractorPayment(Map<String, Object> body, PickedFile file, {String editing = ''}) => _keep(_routeOf('contractor-payments', editing), body, file);
+  /// Keeps [body], for the API [route] its table names, and its [file] on the phone, when the file could not reach the API; [editing] names the entry it changes.
+  Future<String> keep(String route, Map<String, Object> body, PickedFile file, {String editing = ''}) => _keep(_routeOf(route, editing), body, file);
 
   String _routeOf(String route, String editing) => editing.isEmpty ? route : '$route/$editing';
 
@@ -58,11 +55,8 @@ class Expenses {
     return '';
   }
 
-  /// Sends the purchase [body]. Returns an empty string once recorded, otherwise the word key of the refusal.
-  Future<String> record(Map<String, Object> body, {String editing = ''}) => _send(_routeOf('expenses', editing), body);
-
-  /// Sends the contractor payment [body]. Returns an empty string once recorded, otherwise the word key of the refusal.
-  Future<String> recordContractorPayment(Map<String, Object> body, {String editing = ''}) => _send(_routeOf('contractor-payments', editing), body);
+  /// Sends [body] to the API [route] its table names (`expenses` or `contractor-payments`). Returns an empty string once recorded, otherwise the word key of the refusal.
+  Future<String> record(String route, Map<String, Object> body, {String editing = ''}) => _send(_routeOf(route, editing), body);
 
   Future<String> _send(String route, Map<String, Object> body) async {
     _refusedColumnKey = '';

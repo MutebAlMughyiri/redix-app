@@ -21,10 +21,8 @@ import 'attachments/picked_file.dart';
 import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
-import 'contractor_payments/contractor_payment_screen.dart';
 import 'contracts/contracts.dart';
 import 'contracts/contracts_screen.dart';
-import 'expenses/add_expense_screen.dart';
 import 'expenses/creditable_invoices.dart';
 import 'expenses/expenses.dart';
 import 'home/home_screen.dart';
@@ -39,7 +37,9 @@ import 'partners/partners_screen.dart';
 import 'approvals/approvals.dart';
 import 'approvals/approvals_screen.dart';
 import 'attachments/attachment_screen.dart';
+import 'entries/add_entry_screen.dart';
 import 'entries/entries_screen.dart';
+import 'entries/entry_tables.dart';
 import 'entries/project_entries.dart';
 import 'notifications/notifications.dart';
 import 'notifications/notifications_screen.dart';
@@ -144,6 +144,7 @@ class _RedixAppState extends State<RedixApp> {
   final _projectSuppliers = <String, Suppliers>{};
   final _offeredItemLists = <String, OfferedItems>{};
   final _projectContracts = <String, Contracts>{};
+  final _projectEntryTables = <String, EntryTables>{};
   final _projectAttachments = <String, Attachments>{};
   final _projectExpenses = <String, Expenses>{};
   final _projectCreditableInvoices = <String, CreditableInvoices>{};
@@ -370,11 +371,10 @@ class _RedixAppState extends State<RedixApp> {
           capture: widget.capture,
         ),
       ),
-      GoRoute(path: AddExpenseScreen.path, builder: (context, state) => _addExpenseScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project, state.uri.queryParameters)),
-      GoRoute(path: ContractorPaymentScreen.path, builder: (context, state) => _contractorPaymentScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project, state.uri.queryParameters)),
+      GoRoute(path: AddEntryScreen.path, builder: (context, state) => _addEntryScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project, state.uri.queryParameters)),
       GoRoute(
         path: EntriesScreen.path,
-        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), openEntryId: state.uri.queryParameters['entry'] ?? ''),
+        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), openEntryId: state.uri.queryParameters['entry'] ?? '', startsSearching: state.uri.queryParameters.containsKey('search')),
       ),
       GoRoute(
         path: ItemTablesScreen.path,
@@ -430,27 +430,14 @@ class _RedixAppState extends State<RedixApp> {
 
   OfferedAccounts _offeredAccountsOf(String projectId) => _projectOfferedAccounts.putIfAbsent(projectId, () => OfferedAccounts(widget.session, projectId));
 
-  ContractorPaymentScreen _contractorPaymentScreen(String projectId, Project project, Map<String, String> query) => ContractorPaymentScreen(
-    editingId: query['entry'] ?? '',
-    rejectionReason: query['reason'] ?? '',
-    items: _offeredItemsOf(projectId, ItemType.contractorPayments),
-    project: project,
-    expenses: _expensesOf(projectId),
-    contracts: _contractsOf(projectId),
-    accounts: _offeredAccountsOf(projectId),
-    paymentMethods: _paymentMethodsOf(projectId),
-    columnsOf: (itemId) => _columnsAt(Columns.itemPath(projectId, itemId)),
-    attachments: _attachmentsOf(projectId),
-    capture: widget.capture,
-  );
-
-  AddExpenseScreen _addExpenseScreen(String projectId, Project project, Map<String, String> query) => AddExpenseScreen(
+  AddEntryScreen _addEntryScreen(String projectId, Project project, Map<String, String> query) => AddEntryScreen(
     sharedFile: query.containsKey('shared') ? _shared : PickedFile.none(),
     editingId: query['entry'] ?? '',
     rejectionReason: query['reason'] ?? '',
     project: project,
     expenses: _expensesOf(projectId),
-    items: _offeredItemsOf(projectId, ItemType.purchases),
+    tables: _projectEntryTables.putIfAbsent(projectId, () => EntryTables(widget.session, projectId)),
+    contracts: _contractsOf(projectId),
     accounts: _offeredAccountsOf(projectId),
     paymentMethods: _paymentMethodsOf(projectId),
     suppliers: _suppliersOf(projectId),

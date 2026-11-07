@@ -4,7 +4,7 @@ import '../format/date_format.dart';
 import '../structure/item_column.dart';
 import '../ui/picker_field.dart';
 import '../words/words.dart';
-import 'add_expense_screen.dart';
+import '../entries/add_entry_screen.dart';
 
 /// The field of one custom column (FR-41), drawn from what the column holds: a required one is marked.
 class ColumnValueField extends StatelessWidget {
@@ -31,7 +31,7 @@ class ColumnValueField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    final fieldKey = AddExpenseScreen.columnKey(column.key);
+    final fieldKey = AddEntryScreen.columnKey(column.key);
     final label = column.isRequired ? '${column.name} *' : column.name;
     final errorText = error.isEmpty ? null : words.text(error);
     final decoration = InputDecoration(labelText: label, border: const OutlineInputBorder(), errorText: errorText);

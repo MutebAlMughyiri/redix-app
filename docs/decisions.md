@@ -6,6 +6,11 @@ Newest first. Each says what was decided and why; the code and the issues hold t
 
 | Date | Decision | Why |
 | --- | --- | --- |
+| 2026-11-07 | One إضافة قيد button, where New purchase expense and Contractor payment were, opens one screen; the table chosen says whether it is a purchase or a contractor payment, and `EntryTable` answers everything the two differ in | Muteb: "زر اضافة قيد في المكان القديم بدلاً من مصروف شراء جديد ودفعة مقاول"; redix-app #84, R5, R6, R10 |
+| 2026-11-07 | A contractor payment asks no subgroup: its contract is its table | redix-app #84, R11: no report read a payment's subgroup |
+| 2026-11-07 | The home lists the project's latest five entries by anyone under القيود; the counts stay the person's own, and a row not theirs says who entered it | Muteb's answer; redix-app #84, R1, R2, R3, R15 |
+| 2026-11-07 | The search lives in القيود, filtering on the phone the list the screen already holds, by text, whose, kind, status and period | Muteb: "an expanses search feature that can be used to search with filters"; redix-app #84, D7, D8 |
+| 2026-11-07 | A file goes with any entry, a deduction's too, and notes follow the item's columns on both kinds | redix-app #84: one screen holds one rule; the API always took a deduction's file |
 | 2026-11-07 | The app shows and sends no VAT anywhere: no VAT, discount, bill number or without-invoice reason on an expense, no tax invoice on a contractor payment, no VAT rate in Payment methods, no quarter on a refund and no tax type on a sale | Muteb: "I do not want to see or store the VAT value except when printing the VAT report"; redix-api #96, D2, D3, D4, D12, D16, D22, D23 |
 | 2026-11-07 | The VAT statement screen chooses a period and hands on its Excel, nothing else | redix-api #96, D20: the VAT is a formula in the workbook |
 | 2026-11-07 | A credit note always names its bill; the picker has no "none", and shows an older bill's number or a newer one's date | redix-api #96, D13: a new expense has no bill number |

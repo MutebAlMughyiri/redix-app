@@ -10,11 +10,10 @@ import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/sign_in_screen.dart';
-import 'package:redix/contractor_payments/contract_picker.dart';
-import 'package:redix/contractor_payments/contractor_payment_screen.dart';
+import 'package:redix/entries/table_picker.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/contracts/contract.dart';
 import 'package:redix/contracts/contracts_screen.dart';
-import 'package:redix/expenses/add_expense_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/member_picker.dart';
@@ -547,6 +546,7 @@ void main() {
 
       final overrun = api.addContract(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', itemName: 'البلاط والرخام للواجهات الداخلية', value: 999999999.99, paid: 1099999999.99, unitPrice: 380, quantity: 50, notes: 'زيادة بملحق', hasPayments: true)['id'] as String;
       final open = api.addContract(runningId, 'دهان داخلي', isOpenValue: true, paid: 12000)['id'] as String;
+      api.addColumn('/projects/$runningId/items/item-of-contract/columns', 'notes');
       await tester.ensureVisible(find.byKey(HomeScreen.contractsKey(runningId)));
       expectFits(HomeScreen.contractsKey(runningId));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey(runningId))));
@@ -574,55 +574,54 @@ void main() {
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-      await tester.ensureVisible(find.byKey(HomeScreen.addExpenseKey(runningId)));
-      expectFits(HomeScreen.addExpenseKey(runningId));
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey(runningId))));
+      await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey(runningId)));
+      expectFits(HomeScreen.addEntryKey(runningId));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey(runningId))));
       [
-        AddExpenseScreen.titleKey,
-        AddExpenseScreen.projectNameKey,
-        AddExpenseScreen.cameraKey,
-        AddExpenseScreen.filesKey,
-        AddExpenseScreen.invoiceNameKey,
-        AddExpenseScreen.itemKey,
-        AddExpenseScreen.supplierKey,
-        AddExpenseScreen.dateKey,
-        AddExpenseScreen.productKey,
-        AddExpenseScreen.unitPriceKey,
-        AddExpenseScreen.quantityKey,
-        AddExpenseScreen.amountKey,
-        AddExpenseScreen.notesKey,
-        AddExpenseScreen.sendKey,
-        AddExpenseScreen.draftKey,
+        AddEntryScreen.titleKey,
+        AddEntryScreen.projectNameKey,
+        AddEntryScreen.cameraKey,
+        AddEntryScreen.filesKey,
+        AddEntryScreen.invoiceNameKey,
+        AddEntryScreen.tableKey,
+        AddEntryScreen.supplierKey,
+        AddEntryScreen.dateKey,
+        AddEntryScreen.productKey,
+        AddEntryScreen.unitPriceKey,
+        AddEntryScreen.quantityKey,
+        AddEntryScreen.amountKey,
+        AddEntryScreen.notesKey,
+        AddEntryScreen.sendKey,
+        AddEntryScreen.draftKey,
       ].forEach(expectFits);
-      await tester.ensureVisible(find.byKey(AddExpenseScreen.creditNoteKey));
+      await tester.ensureVisible(find.byKey(AddEntryScreen.creditNoteKey));
       await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.creditNoteKey)));
-      expectFits(AddExpenseScreen.creditNoteKey);
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.creditNoteKey)));
+      expectFits(AddEntryScreen.creditNoteKey);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractorPaymentKey(runningId))));
-      await act(tester, api, () => tester.tap(find.byKey(ContractorPaymentScreen.contractKey)));
-      await act(tester, api, () => tester.tap(find.byKey(ContractPicker.optionKey(api.contracts[runningId]!.first['id']! as String))));
-      await tester.enterText(find.byKey(ContractorPaymentScreen.amountKey), '5000');
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey(runningId))));
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
+      await act(tester, api, () => tester.tap(find.byKey(TablePicker.optionKey(api.contracts[runningId]!.first['id']! as String))));
+      await tester.enterText(find.byKey(AddEntryScreen.amountKey), '5000');
       await tester.pumpAndSettle();
       [
-        ContractorPaymentScreen.titleKey,
-        ContractorPaymentScreen.projectNameKey,
-        ContractorPaymentScreen.contractKey,
-        ContractorPaymentScreen.valueKey,
-        ContractorPaymentScreen.paidKey,
-        ContractorPaymentScreen.remainingKey,
-        ContractorPaymentScreen.overrunKey,
-        ContractorPaymentScreen.amountKey,
-        ContractorPaymentScreen.dateKey,
-        ContractorPaymentScreen.insideKey,
-        ContractorPaymentScreen.outsideKey,
-        ContractorPaymentScreen.outsideExplainKey,
-        ContractorPaymentScreen.receiptKey,
-        ContractorPaymentScreen.cameraKey,
-        ContractorPaymentScreen.filesKey,
-        ContractorPaymentScreen.notesKey,
-        ContractorPaymentScreen.sendKey,
-        ContractorPaymentScreen.draftKey,
+        AddEntryScreen.titleKey,
+        AddEntryScreen.projectNameKey,
+        AddEntryScreen.tableKey,
+        AddEntryScreen.valueKey,
+        AddEntryScreen.paidKey,
+        AddEntryScreen.remainingKey,
+        AddEntryScreen.overrunKey,
+        AddEntryScreen.amountKey,
+        AddEntryScreen.dateKey,
+        AddEntryScreen.insideKey,
+        AddEntryScreen.outsideKey,
+        AddEntryScreen.outsideExplainKey,
+        AddEntryScreen.cameraKey,
+        AddEntryScreen.filesKey,
+        AddEntryScreen.notesKey,
+        AddEntryScreen.sendKey,
+        AddEntryScreen.draftKey,
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 

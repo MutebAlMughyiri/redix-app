@@ -21,4 +21,4 @@ The first screen after signing in continues with the file. The capital movement 
 | AC-49.3: choosing shows what differs from the QR code | `ShareScreen._differences` | `AC-49.3: choosing shows what differs from the QR code` |
 | D15: attaching keeps the file, puts it alone on the expense, and lets go of it | `ShareScreen._attach`, `AttachableEntries.attach` | `D15: attaching keeps the file, puts it alone on the expense, and lets go of it` |
 | BR-22: a file already on another expense is refused | `ShareScreen._attach` | `BR-22: a file already on another expense is refused, and the person stays` |
-| UC-046: a new expense opens with the shared file and its QR code | `AddExpenseScreen._start` | `UC-046: a new expense opens with the shared file and its QR code, not the camera` |
+| UC-046: a new expense opens with the shared file and its QR code | `AddEntryScreen._start` | `UC-046: a new expense opens with the shared file and its QR code, not the camera` |

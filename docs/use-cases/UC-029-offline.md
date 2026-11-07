@@ -31,9 +31,9 @@ Android's backup of the app's data is off, so none of this leaves the phone that
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| AC-16.1: five expenses with photos go within a minute of the network returning | `Outbox.tryEvery`, `Outbox.send` | `add_expense_test.dart`: AC-16.1 |
-| AC-16.3: an upload cut after its file went keeps the file's id, and the entry lands once | `Outbox._sendOne`, with the API's UC-029 | `add_expense_test.dart`: AC-16.3 |
-| Without a network the expense is kept, and the person is told | `Expenses._send`, `Expenses._keep` | `add_expense_test.dart`: without a network the expense is kept |
+| AC-16.1: five expenses with photos go within a minute of the network returning | `Outbox.tryEvery`, `Outbox.send` | `add_entry_test.dart`: AC-16.1 |
+| AC-16.3: an upload cut after its file went keeps the file's id, and the entry lands once | `Outbox._sendOne`, with the API's UC-029 | `add_entry_test.dart`: AC-16.3 |
+| Without a network the expense is kept, and the person is told | `Expenses._send`, `Expenses._keep` | `add_entry_test.dart`: without a network the expense is kept |
 | A list read once answers with no network | `Session.get` | `offline_test.dart`: a list read once |
 | Signing out forgets what was kept of the lists | `Session._end` | `offline_test.dart`: signing out forgets |
 | Opening a project keeps every list the sync answers | `ProjectSync.refresh` | `offline_test.dart`: opening a project keeps |

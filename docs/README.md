@@ -30,7 +30,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Partners](guide/partners.md) | The project's manager and whoever does its finance |
 | [Suppliers](guide/suppliers.md) | Everyone in the project; whoever does its finance changes them |
 | [Choosing a supplier](guide/supplier-picker.md) | Whoever enters an expense or a contract |
-| [New purchase expense](guide/add-expense.md) | Whoever enters expenses in the project |
+| [Add an entry · إضافة قيد](guide/add-expense.md) | Whoever enters expenses in the project |
 | [Contracts](guide/contracts.md) | Everyone in the project; whoever does its finance changes them |
 | [Contractor payment](guide/contractor-payment.md) | Whoever enters expenses in the project |
 | [Waiting to sync](guide/waiting-to-sync.md) | Whoever enters expenses in the project |
@@ -68,14 +68,14 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-019](use-cases/UC-019-quick-add-supplier.md) | Add a missing supplier without leaving what is being entered | Finance and Field |
 | [UC-020](use-cases/UC-020-contracts.md) | Record and follow what each contractor was promised | Whoever does a project's finance changes; everyone with access reads |
 | [UC-021](use-cases/UC-021-capture-invoice.md) | Photograph an invoice, cropped and under 1 MB, and keep a contract's document | Whoever may enter an expense; Finance for a contract |
-| [UC-022](use-cases/UC-022-expense-details.md) | Enter a purchase expense, and send it or save it as a draft | Finance and Field |
+| [UC-022](use-cases/UC-022-expense-details.md) | Add an entry to any table, a purchase or a contractor payment, and send it or save it as a draft (redix-app #84) | Finance and Field |
 | [UC-024](use-cases/UC-024-invoice-qr.md) | Fill an expense from the e-invoice's QR code in its picture | Whoever enters an expense |
 | [UC-025](use-cases/UC-025-expense-without-invoice.md) | Retired: every expense's file is optional (redix-api #96) | Nobody |
 | [UC-026](use-cases/UC-026-credit-note.md) | Record money coming back: a credit note, or a deduction | Whoever enters an expense |
-| [UC-027](use-cases/UC-027-contractor-payment.md) | Pay a contractor and see the effect before saving | Whoever enters an expense |
+| [UC-027](use-cases/UC-027-contractor-payment.md) | Pay a contractor from a contract's table and see the effect before saving | Whoever enters an expense |
 | [UC-029](use-cases/UC-029-offline.md) | Record entries without a network, and send them when it returns | Whoever enters expenses in the project |
 | [UC-031, UC-032](use-cases/UC-031-approvals.md) | Review what waits, and approve or reject it | Whoever does the project's finance |
-| [UC-033, UC-034, UC-035, UC-037](use-cases/UC-033-entries.md) | See entries, fix them, and reverse them | Everyone in the project |
+| [UC-033, UC-034, UC-035, UC-037](use-cases/UC-033-entries.md) | See entries, search and filter them, fix them, and reverse them | Everyone in the project |
 | [UC-036](use-cases/UC-036-notifications.md) | See what you were told, and open it | Everyone |
 | [UC-038, UC-039, UC-046](use-cases/UC-038-share.md) | Share a file to the app, and attach it or start an expense with it | Whoever enters expenses |
 | [UC-049, UC-050, UC-051, UC-063](use-cases/UC-049-dashboard-and-reports.md) | The dashboard on the home, an item's report, the contracts, completion and cost | Everyone in the project |

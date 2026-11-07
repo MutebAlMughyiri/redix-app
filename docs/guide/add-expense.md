@@ -1,18 +1,19 @@
-[Documentation](../README.md) › User guide › New purchase expense
+[Documentation](../README.md) › User guide › Add an entry
 
-# New purchase expense · مصروف شراء جديد
+# Add an entry · إضافة قيد
 
-<img src="images/add-expense.png" alt="New purchase expense" width="300"> <img src="images/add-expense-payment.png" alt="How it was paid" width="300"> <img src="images/add-expense-credit-note.png" alt="A credit note" width="300"> <img src="images/add-expense-send.png" alt="Sending it" width="300">
+<img src="images/add-expense.png" alt="Add an entry" width="300"> <img src="images/add-expense-payment.png" alt="How it was paid" width="300"> <img src="images/add-expense-credit-note.png" alt="A credit note" width="300"> <img src="images/add-expense-send.png" alt="Sending it" width="300">
 
 ## English
 
-**What it is for:** recording a purchase as what was paid: its total on its date.
-**Who sees it:** whoever enters expenses in the project, from **New purchase expense** on the project's home, while the project runs. It needs a network.
+**What it is for:** recording what was paid into one table of an item's sheet: a purchase, its total on its date, or a [contractor payment](contractor-payment.md) when you choose a contract's table.
+**Who sees it:** whoever enters expenses in the project, from **إضافة قيد** at the bottom of the project's home, while the project runs. It needs a network.
 
 | To | Do this |
 | --- | --- |
 | Photograph the invoice | The camera opens by itself. Line up the invoice and take it; it is cropped and made smaller for you. **Take again** replaces it. The picture is optional. |
 | Use a file instead | Tap **Pick from files** for a picture or a PDF. |
+| Choose the table | Tap **Table**. Each item shows by its category, with its named tables and its contracts under it. An item's own table, or a named one, takes a purchase; a contract's takes a [contractor payment](contractor-payment.md). |
 | Fill from the QR code | If the picture holds the e-invoice's QR code, the date and the total fill in, and the supplier with that VAT number is chosen. Check them. |
 | Enter the total | Type the total paid, or leave it empty and type the unit price and quantity. |
 | Record a credit note | Turn on **Credit note**, type the amount as printed, and choose the **Original invoice** it returns; the list says what each has left to return. |
@@ -36,13 +37,14 @@ No VAT is entered or kept: the VAT statement works it out of each total when the
 
 ## العربية
 
-**الغرض:** تسجيل عملية شراء كما دُفعت: إجماليها في تاريخها.
-**من يراها:** من يُدخل المصروفات في المشروع، من **مصروف شراء جديد** في رئيسية المشروع، ما دام المشروع جارياً. تحتاج إلى اتصال بالشبكة.
+**الغرض:** تسجيل ما دُفع في جدول من جداول البند: عملية شراء بإجماليها في تاريخها، أو [دفعة مقاول](contractor-payment.md) حين تختار جدول عقد.
+**من يراها:** من يُدخل المصروفات في المشروع، من **إضافة قيد** أسفل رئيسية المشروع، ما دام المشروع جارياً. تحتاج إلى اتصال بالشبكة.
 
 | لكي | افعل هذا |
 | --- | --- |
 | تصوّر الفاتورة | تفتح الكاميرا من تلقاء نفسها. وجّهها إلى الفاتورة والتقطها، فتُقص وتُصغَّر تلقائياً. **إعادة التصوير** تستبدلها. والصورة اختيارية. |
 | تستخدم ملفاً بدلاً منها | اضغط **اختيار من الملفات** لصورة أو ملف PDF. |
+| تختار الجدول | اضغط **الجدول**. يظهر كل بند تحت تصنيفه، وتحته جداوله المسماة وعقوده. جدول البند نفسه أو جدول مسمى يأخذ عملية شراء، وجدول العقد يأخذ [دفعة مقاول](contractor-payment.md). |
 | تعبّئ من رمز QR | إن كانت الصورة تحوي رمز QR للفاتورة الإلكترونية، يُعبَّأ التاريخ والإجمالي، ويُختار المورد صاحب الرقم الضريبي. راجعها. |
 | تُدخل الإجمالي | اكتب الإجمالي المدفوع، أو اتركه فارغاً واكتب سعر الوحدة والعدد. |
 | تسجّل مرتجعاً | فعّل **مرتجع (إشعار دائن)**، واكتب المبلغ كما هو مكتوب، واختر **الفاتورة الأصلية** التي يرجعها؛ وتبيّن القائمة المتبقي للإرجاع من كل فاتورة. |

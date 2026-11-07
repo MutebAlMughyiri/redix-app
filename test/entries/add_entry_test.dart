@@ -3,12 +3,12 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/attachments/picked_file.dart';
-import 'package:redix/expenses/add_expense_screen.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/expenses/original_invoice_picker.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/offline/outbox.dart';
-import 'package:redix/structure/item_picker.dart';
+import 'package:redix/entries/table_picker.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
@@ -42,8 +42,8 @@ void main() {
     arrange?.call(api);
     final capture = FakeCapture()..camera = camera ?? PickedFile.none();
     await openProject(tester, api, capture: capture);
-    await tester.ensureVisible(find.byKey(HomeScreen.addExpenseKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
+    await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey('project-0')));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
     return (
       api: api,
       capture: capture,
@@ -73,20 +73,24 @@ void main() {
   String shown(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   Future<void> pickSupplier(WidgetTester tester, FakeApi api, String id) async {
-    await tapVisible(tester, api, AddExpenseScreen.supplierKey);
+    await tapVisible(tester, api, AddEntryScreen.supplierKey);
     await act(tester, api, () => tester.tap(find.byKey(SupplierPicker.rowKey(id))));
   }
 
+  /// Chooses the general table of the item [id].
   Future<void> pickItem(WidgetTester tester, FakeApi api, String id) async {
-    await tapVisible(tester, api, AddExpenseScreen.itemKey);
-    await act(tester, api, () => tester.tap(find.byKey(ItemPicker.optionKey(id))));
+    final item = api.categories['project-0']!.expand((category) => category['items']! as List<Map<String, Object>>).singleWhere((item) => item['id'] == id);
+    await tapVisible(tester, api, AddEntryScreen.tableKey);
+    await act(tester, api, () => tester.tap(find.byKey(TablePicker.optionKey((item['subgroups']! as List<Map<String, Object>>).first['id']! as String))));
   }
+
+  String chosenTable(WidgetTester tester) => tester.widget<TablePicker>(find.byKey(AddEntryScreen.tableKey)).chosen.label;
 
   /// Fills everything an expense needs, for a test whose subject is something else.
   Future<void> fill(WidgetTester tester, ({FakeApi api, FakeCapture capture, String item, String otherItem, String supplier, String cash, String method, String custody, String bank}) opened) async {
     await pickItem(tester, opened.api, opened.item);
     await pickSupplier(tester, opened.api, opened.supplier);
-    await type(tester, AddExpenseScreen.amountKey, '6000');
+    await type(tester, AddEntryScreen.amountKey, '6000');
     await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
   }
 
@@ -94,8 +98,8 @@ void main() {
     final opened = await openExpense(tester);
     await fill(tester, opened);
 
-    await type(tester, AddExpenseScreen.amountKey, '٦٠٠٠');
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await type(tester, AddEntryScreen.amountKey, '٦٠٠٠');
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     expect(opened.api.sentExpenses.single['amount'], 6000);
   });
@@ -103,10 +107,10 @@ void main() {
   testWidgets('saving a draft sends what was typed and chosen, never a figure, with an id made on the phone', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
-    await type(tester, AddExpenseScreen.productKey, 'مواد لياسة');
-    await type(tester, AddExpenseScreen.notesKey, 'ملاحظة');
+    await type(tester, AddEntryScreen.productKey, 'مواد لياسة');
+    await type(tester, AddEntryScreen.notesKey, 'ملاحظة');
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     final body = opened.api.sentExpenses.single;
     expect(body['itemId'], opened.item);
@@ -125,20 +129,20 @@ void main() {
     for (final figure in ['vat', 'total', 'amountAfterDiscount', 'amountBeforeDiscount']) {
       expect(body.containsKey(figure), isFalse);
     }
-    expect(shown(tester, AddExpenseScreen.savedKey), 'en expenses.saved');
-    expect(find.byKey(AddExpenseScreen.sendKey), findsNothing);
+    expect(shown(tester, AddEntryScreen.savedKey), 'en expenses.saved');
+    expect(find.byKey(AddEntryScreen.sendKey), findsNothing);
   });
 
   testWidgets('FR-09: sending keeps the invoice first and names it', (tester) async {
     final opened = await openExpense(tester, camera: PickedFile('invoice.png', '/phone/invoice.png', Uint8List.fromList(onePixelPng)));
     await fill(tester, opened);
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     expect(opened.api.sentAttachments.single, contains('invoice.png'));
     expect(opened.api.sentExpenses.single['attachmentId'], startsWith('attachment-'));
     expect(opened.api.sentExpenses.single['submit'], isTrue);
-    expect(shown(tester, AddExpenseScreen.savedKey), 'en expenses.sent');
+    expect(shown(tester, AddEntryScreen.savedKey), 'en expenses.sent');
   });
 
   testWidgets('a refusal stays on the screen with what was typed, and trying again sends the file once and the same id', (tester) async {
@@ -146,12 +150,12 @@ void main() {
     await fill(tester, opened);
     opened.api.expenseAnswer = (status: 400, body: const {'code': 'invalidPaymentDate'});
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
-    expect(shown(tester, AddExpenseScreen.messageKey), 'en expenses.invalidPaymentDate');
-    expect(tester.widget<TextField>(find.byKey(AddExpenseScreen.amountKey)).controller!.text, '6000');
+    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.invalidPaymentDate');
+    expect(tester.widget<TextField>(find.byKey(AddEntryScreen.amountKey)).controller!.text, '6000');
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     expect(opened.api.sentAttachments, hasLength(1));
     expect(opened.api.sentExpenses[1]['id'], opened.api.sentExpenses[0]['id']);
@@ -163,10 +167,10 @@ void main() {
     final opened = await openExpense(tester, camera: picture);
     await fill(tester, opened);
     opened.api.expenseAnswer = (status: 400, body: const {'code': 'invalidPaymentDate'});
-    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.cameraKey);
-    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.cameraKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     expect(opened.api.sentAttachments, hasLength(2));
   });
@@ -176,20 +180,20 @@ void main() {
     await fill(tester, opened);
     opened.api.attachmentAnswer = (status: 400, code: 'imageTooLarge');
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
-    expect(shown(tester, AddExpenseScreen.messageKey), 'en attachments.imageTooLarge');
+    expect(shown(tester, AddEntryScreen.messageKey), 'en attachments.imageTooLarge');
     expect(opened.api.sentExpenses, isEmpty);
   });
 
   testWidgets('what is not a number is refused here, and nothing is sent', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
-    await type(tester, AddExpenseScreen.amountKey, 'كثير');
+    await type(tester, AddEntryScreen.amountKey, 'كثير');
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(shown(tester, AddExpenseScreen.messageKey), 'en expenses.invalidAmount');
+    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.invalidAmount');
     expect(opened.api.sentExpenses, isEmpty);
   });
 
@@ -198,9 +202,9 @@ void main() {
     await fill(tester, opened);
     opened.api.online = false;
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(shown(tester, AddExpenseScreen.savedKey), 'en expenses.keptOnPhone');
+    expect(shown(tester, AddEntryScreen.savedKey), 'en expenses.keptOnPhone');
     expect(find.byKey(HomeScreen.waitingKey('project-0')), findsOneWidget);
   });
 
@@ -209,12 +213,12 @@ void main() {
     for (var entered = 1; entered <= 5; entered++) {
       await fill(tester, opened);
       opened.api.online = false;
-      await tapVisible(tester, opened.api, AddExpenseScreen.cameraKey);
-      await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+      await tapVisible(tester, opened.api, AddEntryScreen.cameraKey);
+      await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
       expect(find.text('en offline.title · $entered'), findsOneWidget);
       if (entered < 5) {
-        await tester.ensureVisible(find.byKey(HomeScreen.addExpenseKey('project-0')));
-        await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
+        await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey('project-0')));
+        await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
       }
     }
 
@@ -231,8 +235,8 @@ void main() {
     final opened = await openExpense(tester, camera: PickedFile('invoice.png', '/phone/invoice.png', Uint8List.fromList(onePixelPng)));
     await fill(tester, opened);
     opened.api.online = false;
-    await tapVisible(tester, opened.api, AddExpenseScreen.cameraKey);
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.cameraKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     opened.api
       ..online = true
@@ -254,16 +258,16 @@ void main() {
     opened.api.addColumn('/projects/project-0/items/${opened.item}/columns', 'custom.area', dataType: 'number', isCustom: true, isRequired: true);
 
     await pickItem(tester, opened.api, opened.otherItem);
-    expect(find.byKey(AddExpenseScreen.columnKey('custom.area')), findsNothing);
+    expect(find.byKey(AddEntryScreen.columnKey('custom.area')), findsNothing);
 
     await pickItem(tester, opened.api, opened.item);
     expect(find.text('custom.area *'), findsOneWidget);
 
     await fill(tester, opened);
     opened.api.expenseAnswer = (status: 400, body: const {'code': 'requiredColumnMissing', 'columnKey': 'custom.area'});
-    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
-    expect(find.descendant(of: find.byKey(AddExpenseScreen.columnKey('custom.area')), matching: find.text('en expenses.requiredColumnMissing')), findsOneWidget);
+    expect(find.descendant(of: find.byKey(AddEntryScreen.columnKey('custom.area')), matching: find.text('en expenses.requiredColumnMissing')), findsOneWidget);
   });
 
   testWidgets('FR-41: each custom column is drawn from what it holds, and its value is sent under its key', (tester) async {
@@ -275,13 +279,13 @@ void main() {
     opened.api.addColumn(path, 'custom.day', dataType: 'date', isCustom: true);
     await fill(tester, opened);
 
-    await type(tester, AddExpenseScreen.columnKey('custom.area'), '١٢٥٫٥');
-    await type(tester, AddExpenseScreen.columnKey('custom.note'), 'نص');
-    await tapVisible(tester, opened.api, AddExpenseScreen.columnKey('custom.colour'));
+    await type(tester, AddEntryScreen.columnKey('custom.area'), '١٢٥٫٥');
+    await type(tester, AddEntryScreen.columnKey('custom.note'), 'نص');
+    await tapVisible(tester, opened.api, AddEntryScreen.columnKey('custom.colour'));
     await act(tester, opened.api, () => tester.tap(find.text('أزرق').last));
-    await tapVisible(tester, opened.api, AddExpenseScreen.columnKey('custom.day'));
+    await tapVisible(tester, opened.api, AddEntryScreen.columnKey('custom.day'));
     await act(tester, opened.api, () => tester.tap(find.text('OK')));
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     final values = opened.api.sentExpenses.single['customValues'] as Map<String, dynamic>;
     expect(values['custom.area'], '125.5');
@@ -296,43 +300,37 @@ void main() {
     columns.singleWhere((column) => column['key'] == 'product')['isRequired'] = true;
     columns.removeWhere((column) => column['key'] == 'notes');
 
-    expect(find.byKey(AddExpenseScreen.notesKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.notesKey), findsOneWidget);
     await pickItem(tester, opened.api, opened.item);
 
     expect(find.text('en expenses.product *'), findsOneWidget);
-    expect(find.byKey(AddExpenseScreen.notesKey), findsNothing);
-    expect(find.byKey(AddExpenseScreen.unitPriceKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.notesKey), findsNothing);
+    expect(find.byKey(AddEntryScreen.unitPriceKey), findsOneWidget);
   });
 
   testWidgets('choosing another item starts its fields afresh', (tester) async {
     final opened = await openExpense(tester);
     opened.api.addColumn('/projects/project-0/items/${opened.item}/columns', 'custom.area', dataType: 'number', isCustom: true);
     await fill(tester, opened);
-    await type(tester, AddExpenseScreen.columnKey('custom.area'), '12');
+    await type(tester, AddEntryScreen.columnKey('custom.area'), '12');
 
     await pickItem(tester, opened.api, opened.otherItem);
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     expect(opened.api.sentExpenses.single['customValues'], isEmpty);
   });
 
-  testWidgets('an item with named subgroups offers them, its general group first', (tester) async {
+  testWidgets('R10: an item\'s named table takes the purchase into that subgroup', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
     final subgroups = (opened.api.categories['project-0']!.single['items']! as List<Map<String, Object>>).first['subgroups']! as List<Map<String, Object>>;
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.subgroupKey(subgroups.last['id']! as String));
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.tableKey);
+    await act(tester, opened.api, () => tester.tap(find.byKey(TablePicker.optionKey(subgroups.last['id']! as String))));
+    expect(chosenTable(tester), 'البلاط › مواد');
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(opened.api.sentExpenses.single['subgroupId'], subgroups.last['id']);
-  });
-
-  testWidgets('an item with no named subgroup asks for none', (tester) async {
-    final opened = await openExpense(tester);
-
-    await pickItem(tester, opened.api, opened.otherItem);
-
-    expect(find.text('en expenses.subgroup'), findsNothing);
+    expect((opened.api.sentExpenses.single['itemId'], opened.api.sentExpenses.single['subgroupId']), (opened.item, subgroups.last['id']));
   });
 
   testWidgets('open question 4: Field is offered only what they hold, and one account is already chosen', (tester) async {
@@ -349,7 +347,7 @@ void main() {
 
     expect(find.byKey(PaymentChoices.accountKey(opened.custody)), findsOneWidget);
     await tapVisible(tester, opened.api, PaymentChoices.accountKey(opened.bank));
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     expect(opened.api.sentExpenses.single['accountId'], opened.bank);
   });
@@ -357,7 +355,7 @@ void main() {
   testWidgets('someone who holds nothing is told so, with no account to choose', (tester) async {
     await openExpense(tester, arrange: (api) => api.accounts['project-0']!.clear());
 
-    expect(find.byKey(AddExpenseScreen.noAccountKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.noAccountKey), findsOneWidget);
     expect(find.byType(RadioListTile<String>), findsNothing);
   });
 
@@ -372,26 +370,26 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
     api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
     await openProject(tester, api, capture: FakeCapture());
-    await tester.ensureVisible(find.byKey(HomeScreen.addExpenseKey('project-0')));
+    await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey('project-0')));
     api.online = false;
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addExpenseKey('project-0'))));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
 
-    await tester.ensureVisible(find.byKey(AddExpenseScreen.retryKey));
-    expect(shown(tester, AddExpenseScreen.listMessageKey), 'en accounts.loadFailed');
+    await tester.ensureVisible(find.byKey(AddEntryScreen.retryKey));
+    expect(shown(tester, AddEntryScreen.listMessageKey), 'en accounts.loadFailed');
 
     api.online = true;
-    await act(tester, api, () => tester.tap(find.byKey(AddExpenseScreen.retryKey)));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.retryKey)));
 
     expect(find.text('عهدتي'), findsOneWidget);
-    expect(find.byKey(AddExpenseScreen.listMessageKey), findsNothing);
+    expect(find.byKey(AddEntryScreen.listMessageKey), findsNothing);
   });
 
   testWidgets('D10: an expense has one date, sent as its payment date, and no payment of its own', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
-    expect(find.byKey(AddExpenseScreen.dateKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.dateKey), findsOneWidget);
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     final body = opened.api.sentExpenses.single;
     expect(body['paymentDate'], DateTime.now().toIso8601String().substring(0, 10));
@@ -402,26 +400,26 @@ void main() {
   testWidgets('findings row 79: Field reaches the supplier sheet from the expense, and goes on with a supplier quick-added', (tester) async {
     final opened = await openExpense(tester);
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.supplierKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.supplierKey);
     await tester.enterText(find.byKey(SupplierPicker.searchKey), 'مبلط الغربية');
     await act(tester, opened.api, () => tester.tap(find.byKey(SupplierPicker.quickAddKey)));
     await tester.enterText(find.byKey(SuppliersScreen.vatNumberKey), '311111111111113');
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(find.text('مبلط الغربية'), findsOneWidget);
-    expect(shown(tester, AddExpenseScreen.supplierDetailsKey), contains('311111111111113'));
+    expect(shown(tester, AddEntryScreen.supplierDetailsKey), contains('311111111111113'));
   });
 
   testWidgets('D3: an expense with no file is sent, with no reason asked', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     final body = opened.api.sentExpenses.single;
     expect(body.containsKey('attachmentId'), isFalse);
     expect(body['submit'], isTrue);
-    expect(shown(tester, AddExpenseScreen.savedKey), 'en expenses.sent');
+    expect(shown(tester, AddEntryScreen.savedKey), 'en expenses.sent');
   });
 
   Map<String, Object> creditable(String entryId, {double returnable = 1035, String number = ''}) => {'entryId': entryId, 'number': number, 'date': '2026-10-01', 'returnable': returnable};
@@ -429,14 +427,14 @@ void main() {
   testWidgets('AC-14.2, D13: a credit note names the bill it returns and sends a plain amount', (tester) async {
     final opened = await openExpense(tester, arrange: (api) => api.creditableInvoices.add(creditable('e1', returnable: 700)));
     await fill(tester, opened);
-    await tapVisible(tester, opened.api, AddExpenseScreen.creditNoteKey);
-    await type(tester, AddExpenseScreen.amountKey, '320');
+    await tapVisible(tester, opened.api, AddEntryScreen.creditNoteKey);
+    await type(tester, AddEntryScreen.amountKey, '320');
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.originalInvoiceKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.originalInvoiceKey);
     expect(find.textContaining('700.00'), findsOneWidget);
     expect(find.byKey(OriginalInvoicePicker.optionKey('')), findsNothing);
     await act(tester, opened.api, () => tester.tap(find.byKey(OriginalInvoicePicker.optionKey('e1'))));
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     final sent = opened.api.sentExpenses.single;
     expect((sent['isCreditNote'], sent['amount'], sent['originalEntryId']), (true, 320, 'e1'));
@@ -445,9 +443,9 @@ void main() {
   testWidgets('an older bill shows its number, and a new one its date', (tester) async {
     final opened = await openExpense(tester, arrange: (api) => api.creditableInvoices..add(creditable('e1', number: 'F-1'))..add(creditable('e2')));
     await fill(tester, opened);
-    await tapVisible(tester, opened.api, AddExpenseScreen.creditNoteKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.creditNoteKey);
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.originalInvoiceKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.originalInvoiceKey);
 
     expect(find.descendant(of: find.byKey(OriginalInvoicePicker.optionKey('e1')), matching: find.text('F-1')), findsOneWidget);
     expect(find.descendant(of: find.byKey(OriginalInvoicePicker.optionKey('e2')), matching: find.text('01.10.2026')), findsOneWidget);
@@ -456,12 +454,12 @@ void main() {
   testWidgets('another supplier takes the link away, because the invoice was the first one\'s', (tester) async {
     final opened = await openExpense(tester, arrange: (api) => api.creditableInvoices.add(creditable('e1')));
     await fill(tester, opened);
-    await tapVisible(tester, opened.api, AddExpenseScreen.creditNoteKey);
-    await tapVisible(tester, opened.api, AddExpenseScreen.originalInvoiceKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.creditNoteKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.originalInvoiceKey);
     await act(tester, opened.api, () => tester.tap(find.byKey(OriginalInvoicePicker.optionKey('e1'))));
 
     await pickSupplier(tester, opened.api, opened.cash);
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     expect(opened.api.sentExpenses.single.containsKey('originalEntryId'), isFalse);
   });
@@ -469,46 +467,46 @@ void main() {
   testWidgets('BR-18: a credit note above what is left of its invoice is blocked with a message', (tester) async {
     final opened = await openExpense(tester, arrange: (api) => api.expenseAnswer = (status: 400, body: const {'code': 'creditNoteAboveOriginal'}));
     await fill(tester, opened);
-    await tapVisible(tester, opened.api, AddExpenseScreen.creditNoteKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.creditNoteKey);
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(shown(tester, AddExpenseScreen.messageKey), 'en expenses.creditNoteAboveOriginal');
+    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.creditNoteAboveOriginal');
   });
 
   testWidgets('AC-14.1, D14: a deduction is a negative amount, typed in either digits, sent as it is with why in its notes', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
-    await type(tester, AddExpenseScreen.notesKey, 'خصم من المورد');
+    await type(tester, AddEntryScreen.notesKey, 'خصم من المورد');
 
-    await type(tester, AddExpenseScreen.amountKey, '-١٣٦');
+    await type(tester, AddEntryScreen.amountKey, '-١٣٦');
 
-    expect(tester.widget<TextField>(find.byKey(AddExpenseScreen.amountKey)).keyboardType, const TextInputType.numberWithOptions(decimal: true, signed: true));
-    await tapVisible(tester, opened.api, AddExpenseScreen.sendKey);
+    expect(tester.widget<TextField>(find.byKey(AddEntryScreen.amountKey)).keyboardType, const TextInputType.numberWithOptions(decimal: true, signed: true));
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
     expect((opened.api.sentExpenses.single['amount'], opened.api.sentExpenses.single['notes']), (-136, 'خصم من المورد'));
   });
 
   testWidgets('D14: a deduction with no notes is refused with the API\'s reason', (tester) async {
     final opened = await openExpense(tester, arrange: (api) => api.expenseAnswer = (status: 400, body: const {'code': 'deductionNeedsNotes'}));
     await fill(tester, opened);
-    await type(tester, AddExpenseScreen.amountKey, '-136');
+    await type(tester, AddEntryScreen.amountKey, '-136');
 
-    await tapVisible(tester, opened.api, AddExpenseScreen.draftKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(shown(tester, AddExpenseScreen.messageKey), 'en expenses.deductionNeedsNotes');
+    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.deductionNeedsNotes');
   });
 
   testWidgets('who holds no recordEntries has no way in', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject'], units: ['الفلة الغربية']);
     await openProject(tester, api);
-    expect(find.byKey(HomeScreen.addExpenseKey('project-0')), findsNothing);
+    expect(find.byKey(HomeScreen.addEntryKey('project-0')), findsNothing);
   });
 
   testWidgets('a finished project offers no new expense', (tester) async {
     final api = FakeApi()..addProject('غصون 5', status: 'finished', permissions: field, units: ['الفلة الشرقية']);
     await openProject(tester, api);
 
-    expect(find.byKey(HomeScreen.addExpenseKey('project-0')), findsNothing);
+    expect(find.byKey(HomeScreen.addEntryKey('project-0')), findsNothing);
   });
 
   testWidgets('choosing a supplier fills its usual item while none is chosen', (tester) async {
@@ -517,7 +515,7 @@ void main() {
 
     await pickSupplier(tester, opened.api, usual['id']! as String);
 
-    expect(tester.widget<ItemPicker>(find.byKey(AddExpenseScreen.itemKey)).itemName, 'الجبس');
+    expect(chosenTable(tester), 'الجبس');
   });
 
   testWidgets('an item already chosen stays when the supplier usually has another', (tester) async {
@@ -527,7 +525,7 @@ void main() {
     await pickItem(tester, opened.api, opened.item);
     await pickSupplier(tester, opened.api, usual['id']! as String);
 
-    expect(tester.widget<ItemPicker>(find.byKey(AddExpenseScreen.itemKey)).itemName, 'البلاط');
+    expect(chosenTable(tester), 'البلاط');
   });
 
   testWidgets('a usual item no longer on offer fills nothing', (tester) async {
@@ -536,6 +534,6 @@ void main() {
 
     await pickSupplier(tester, opened.api, usual['id']! as String);
 
-    expect(tester.widget<ItemPicker>(find.byKey(AddExpenseScreen.itemKey)).itemName, '');
+    expect(chosenTable(tester), '');
   });
 }

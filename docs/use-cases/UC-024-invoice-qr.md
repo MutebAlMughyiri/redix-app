@@ -12,17 +12,17 @@ No screen of its own, as the canvas draws it: the code is read from the invoice'
 
 The date stays as the invoice wrote it. A code's time usually ends in `Z` whether or not it is truly UTC, and the day a person checks is the one printed.
 
-On `AddExpenseScreen` (the rest is in UC-021 and UC-022):
+On `AddEntryScreen` (the rest is in UC-021 and UC-022):
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| QR code read | `AddExpenseScreen.qrReadKey` | A title over what was read |
-| Seller, VAT number | `AddExpenseScreen.qrSellerKey`, `qrVatNumberKey` | |
-| Date and time | `AddExpenseScreen.qrTimeKey` | Also fills the expense's date |
-| Total | `AddExpenseScreen.qrAmountsKey` | Also fills the total |
-| No supplier holds the number | `AddExpenseScreen.qrSupplierMissingKey` | |
-| Add this supplier | `AddExpenseScreen.qrAddSupplierKey` | Opens the quick add with the seller and its number filled; for whoever holds `addSupplier` |
-| No QR code could be read | `AddExpenseScreen.qrMessageKey` | The fields stay open |
+| QR code read | `AddEntryScreen.qrReadKey` | A title over what was read |
+| Seller, VAT number | `AddEntryScreen.qrSellerKey`, `qrVatNumberKey` | |
+| Date and time | `AddEntryScreen.qrTimeKey` | Also fills the expense's date |
+| Total | `AddEntryScreen.qrAmountsKey` | Also fills the total |
+| No supplier holds the number | `AddEntryScreen.qrSupplierMissingKey` | |
+| Add this supplier | `AddEntryScreen.qrAddSupplierKey` | Opens the quick add with the seller and its number filled; for whoever holds `addSupplier` |
+| No QR code could be read | `AddEntryScreen.qrMessageKey` | The fields stay open |
 
 A picture is read; a PDF is not, because the phone's reader takes only pictures.
 
@@ -32,14 +32,14 @@ A picture is read; a PDF is not, because the phone's reader takes only pictures.
 
 ## Rules
 
-Tests are in `test/expenses/invoice_qr_test.dart` and `add_expense_qr_test.dart`.
+Tests are in `test/expenses/invoice_qr_test.dart` and `test/entries/add_entry_qr_test.dart`.
 
 | Rule | Code | Test |
 | --- | --- | --- |
 | AC-11.1: a code gives the five fields | `InvoiceQr.parse` | `invoice_qr_test`: AC-11.1; a newer code; a code with no padding; the day stays |
-| AC-11.1, D21: the date, the total and the supplier fill, and the supplier with that number is chosen | `_readQr`, `QrSummary` | `add_expense_qr_test`: AC-11.1, D21 |
-| AC-11.2: anything else is no code; the message shows and the fields stay open | `InvoiceQr.parse`, `_readQr` | `invoice_qr_test`: AC-11.2, twice; `add_expense_qr_test`: AC-11.2 |
-| A supplier not in the register is offered a quick add | `_addSupplierFromQr` | `add_expense_qr_test`: supplier not in the register; who cannot add a supplier |
+| AC-11.1, D21: the date, the total and the supplier fill, and the supplier with that number is chosen | `_readQr`, `QrSummary` | `add_entry_qr_test`: AC-11.1, D21 |
+| AC-11.2: anything else is no code; the message shows and the fields stay open | `InvoiceQr.parse`, `_readQr` | `invoice_qr_test`: AC-11.2, twice; `add_entry_qr_test`: AC-11.2 |
+| A supplier not in the register is offered a quick add | `_addSupplierFromQr` | `add_entry_qr_test`: supplier not in the register; who cannot add a supplier |
 | A picture is read, from the camera or the files; a PDF is not | `_takeFrom` | a PDF is not looked at; a picture from the files is read too; a picture taken again |
 | The phone's real barcode reader reads a picture of a made-up invoice's QR code, and it reaches the API | `InvoiceCapture.qrTextOf` | `patrol_test/app_test.dart`: the journey hands the screen a picture, and the real reader reads it |
 

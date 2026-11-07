@@ -6,7 +6,13 @@
 
 **What it is for:** seeing what was entered in the project and where each entry stands.
 
-**Who sees it:** everyone in the project, from **All entries** on the project's home. **Mine** shows what you entered, and **All** everything sent in the project.
+**Who sees it:** everyone in the project, from **All entries** or the search beside **Entries** on the project's home. **Mine** shows what you entered, and **All** everything sent in the project.
+
+| To | Do this |
+| --- | --- |
+| Find an entry | Type in the search: an item, a supplier or contractor, who entered it, an old bill's number or an amount. Spelling such as أ and ا counts as one, and Arabic or Western digits both work. |
+| Narrow the list | Tap **Purchases** or **Contractor payments**, any of the statuses, and **Period** to choose a from and to date. The line under the filters says how many entries show. |
+| Show everything again | Tap **Clear filters**. Mine or All stays as you chose. |
 
 Tap an entry to see what you can do with it:
 
@@ -23,7 +29,13 @@ An approved entry never changes. Reversing it adds an opposite entry tied to it,
 
 **الغرض:** رؤية ما أُدخل في المشروع وأين يقف كل قيد.
 
-**من يراها:** كل من في المشروع، من **كل القيود** في الصفحة الرئيسية للمشروع. **قيودي** تعرض ما أدخلته، و**الكل** كل ما أُرسل في المشروع.
+**من يراها:** كل من في المشروع، من **كل القيود** أو زر البحث بجانب **القيود** في الصفحة الرئيسية للمشروع. **قيودي** تعرض ما أدخلته، و**الكل** كل ما أُرسل في المشروع.
+
+| لكي | افعل هذا |
+| --- | --- |
+| تجد قيداً | اكتب في البحث: بنداً أو مورداً أو مقاولاً أو من أدخله أو رقم فاتورة قديمة أو مبلغاً. تُعدّ الحروف مثل أ وا حرفاً واحداً، وتصلح الأرقام العربية والإنجليزية. |
+| تضيّق القائمة | اضغط **مشتريات** أو **دفعات مقاولين**، وأي حالة، و**الفترة** لتختار تاريخ البداية والنهاية. ويبيّن السطر تحت عوامل التصفية عدد القيود الظاهرة. |
+| تعرض الكل من جديد | اضغط **مسح التصفية**. ويبقى قيودي أو الكل كما اخترت. |
 
 اضغط قيداً لترى ما يمكنك فعله:
 
