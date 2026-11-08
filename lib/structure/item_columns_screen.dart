@@ -131,7 +131,7 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
   @override
   void initState() {
     super.initState();
-    _columns.load();
+    _columns.loadOnOpen();
   }
 
   void _show({required bool template}) {

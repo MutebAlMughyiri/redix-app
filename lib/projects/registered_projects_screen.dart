@@ -73,7 +73,7 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
   @override
   void initState() {
     super.initState();
-    widget.projects.load();
+    widget.projects.loadOnOpen();
   }
 
   Widget _card(Words words, ThemeData theme, RegisteredProject project) {

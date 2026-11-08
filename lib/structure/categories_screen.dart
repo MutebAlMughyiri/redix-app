@@ -143,7 +143,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   void initState() {
     super.initState();
-    widget.categories.load();
+    widget.categories.loadOnOpen();
   }
 
   @override

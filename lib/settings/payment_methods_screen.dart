@@ -79,7 +79,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
   @override
   void initState() {
     super.initState();
-    widget.paymentMethods.load();
+    widget.paymentMethods.loadOnOpen();
   }
 
   @override

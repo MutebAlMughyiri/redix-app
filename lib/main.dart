@@ -146,6 +146,12 @@ class _RedixAppState extends State<RedixApp> {
   final _projectCapital = <String, Capital>{};
   final _projectDashboards = <String, Dashboard>{};
   final _projectPeriodicReports = <String, PeriodicReports>{};
+  final _projectNextReports = <String, NextReport>{};
+  final _projectDocuments = <String, Documents>{};
+  final _periodicReports = <String, PeriodicReport>{};
+  final _itemReports = <String, ItemReport>{};
+  final _partnerMovements = <String, CapitalMovements>{};
+  final _itemTables = <String, ItemTables>{};
   late final _reportFiles = ReportFiles(widget.session, widget.capture);
 
   late final _router = GoRouter(
@@ -233,7 +239,7 @@ class _RedixAppState extends State<RedixApp> {
           project: state.extra! as Project,
           dashboard: _dashboardOf(state.pathParameters['projectId'] ?? ''),
           periodicReports: _projectPeriodicReports.putIfAbsent(state.pathParameters['projectId'] ?? '', () => PeriodicReports(widget.session, state.pathParameters['projectId'] ?? '')),
-          nextReport: NextReport(widget.session, state.pathParameters['projectId'] ?? ''),
+          nextReport: _projectNextReports.putIfAbsent(state.pathParameters['projectId'] ?? '', () => NextReport(widget.session, state.pathParameters['projectId'] ?? '')),
           files: _reportFiles,
         ),
       ),
@@ -242,7 +248,7 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => PeriodicReportScreen(
           project: state.extra! as Project,
           number: int.parse(state.pathParameters['number'] ?? '0'),
-          report: PeriodicReport(widget.session, state.pathParameters['projectId'] ?? '', int.parse(state.pathParameters['number'] ?? '0')),
+          report: _periodicReports.putIfAbsent(state.uri.path, () => PeriodicReport(widget.session, state.pathParameters['projectId'] ?? '', int.parse(state.pathParameters['number'] ?? '0'))),
           files: _reportFiles,
         ),
       ),
@@ -251,7 +257,7 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => ItemReportScreen(
           project: state.extra! as Project,
           itemId: state.pathParameters['itemId'] ?? '',
-          report: ItemReport(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? ''),
+          report: _itemReports.putIfAbsent(state.uri.path, () => ItemReport(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? '')),
           files: _reportFiles,
         ),
       ),
@@ -275,7 +281,7 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => MovementsScreen(
           project: state.extra! as Project,
           partnerName: state.uri.queryParameters['name'] ?? '',
-          movements: CapitalMovements(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['partnerId'] ?? ''),
+          movements: _partnerMovements.putIfAbsent(state.uri.path, () => CapitalMovements(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['partnerId'] ?? '')),
           capital: _capitalOf(state.pathParameters['projectId'] ?? ''),
         ),
       ),
@@ -283,7 +289,7 @@ class _RedixAppState extends State<RedixApp> {
         path: DocumentsScreen.path,
         builder: (context, state) => DocumentsScreen(
           project: state.extra! as Project,
-          documents: Documents(widget.session, state.pathParameters['projectId'] ?? ''),
+          documents: _projectDocuments.putIfAbsent(state.pathParameters['projectId'] ?? '', () => Documents(widget.session, state.pathParameters['projectId'] ?? '')),
           capture: widget.capture,
           files: _reportFiles,
         ),
@@ -318,7 +324,7 @@ class _RedixAppState extends State<RedixApp> {
           itemId: state.pathParameters['itemId'] ?? '',
           project: state.extra! as Project,
           categories: _categoriesOf(state.pathParameters['projectId'] ?? ''),
-          tables: ItemTables(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? ''),
+          tables: _itemTables.putIfAbsent(state.uri.path, () => ItemTables(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? '')),
         ),
       ),
     ],

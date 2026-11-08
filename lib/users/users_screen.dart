@@ -125,7 +125,7 @@ class _UsersScreenState extends State<UsersScreen> {
   @override
   void initState() {
     super.initState();
-    widget.users.load();
+    widget.users.loadOnOpen();
   }
 
   void _askToDisable(User user) {
