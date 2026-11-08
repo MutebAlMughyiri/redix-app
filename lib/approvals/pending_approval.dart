@@ -1,3 +1,5 @@
+import '../entries/entry_row.dart';
+
 /// An entry waiting for Finance's decision (UC-031).
 class PendingApproval {
   /// An entry as the API answers it.
@@ -59,9 +61,7 @@ class PendingApproval {
   String get title => partnerName.isEmpty ? itemName : partnerName;
 
   /// The word key saying what a capital movement or a revenue entry is; empty for an expense, which its supplier explains.
-  String get kindWordKey => _kindWords[kind] ?? '';
-
-  static const _kindWords = {'capitalIn': 'capital.contribution', 'capitalOut': 'capital.withdrawal', 'revenue': 'categories.tableRevenue'};
+  String get kindWordKey => kind == 'purchase' || kind == 'contractorPayment' ? '' : EntryRow.kindWords[kind] ?? '';
 
   /// True for a purchase.
   bool get isPurchase => kind == 'purchase';

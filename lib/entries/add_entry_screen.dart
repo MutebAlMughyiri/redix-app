@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'direct_entry_fields.dart';
-import '../revenue/revenues.dart';
+import 'project_entries.dart';
 import '../partners/capital.dart';
 import '../accounts/accounts.dart';
 import 'package:go_router/go_router.dart';
@@ -71,7 +71,7 @@ class AddEntryScreen extends StatefulWidget {
     required this.columnsOf,
     required this.attachments,
     required this.capture,
-    required this.revenues,
+    required this.entries,
     required this.capital,
     required this.projectAccounts,
   });
@@ -118,8 +118,8 @@ class AddEntryScreen extends StatefulWidget {
   /// The phone's camera and files.
   final InvoiceCapture capture;
 
-  /// The way to record revenue, for a revenue item's table (redix-api #101).
-  final Revenues revenues;
+  /// The project's entries, through which revenue is recorded, for a revenue item's table (redix-api #101).
+  final ProjectEntries entries;
 
   /// The way to record a partner's money, for a partner.
   final Capital capital;
@@ -723,7 +723,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       key: ValueKey(_table.id),
       project: widget.project,
       table: _table,
-      revenues: widget.revenues,
+      entries: widget.entries,
       capital: widget.capital,
       accounts: widget.projectAccounts,
       attachments: widget.attachments,

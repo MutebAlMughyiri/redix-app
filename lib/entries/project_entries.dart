@@ -13,6 +13,9 @@ class ProjectEntries extends ApiList<EntryRow> {
   /// Sends a draft or a rejected entry for approval. Returns an empty string once sent, otherwise the word key of the refusal.
   Future<String> send(EntryRow entry) => change('/projects/$projectId/entries/${entry.id}/submit', {});
 
+  /// Sends revenue on a revenue item's table for approval (redix-api #101), and reads the list again; answers as [change] does, in revenue's words.
+  Future<String> recordRevenue(Map<String, Object> body) => change('/projects/$projectId/revenue', body, wordPrefix: 'revenue');
+
   /// Deletes an entry never approved. Returns an empty string once deleted, otherwise the word key of the refusal.
   Future<String> delete(EntryRow entry) => change('/projects/$projectId/entries/${entry.id}/delete', {});
 

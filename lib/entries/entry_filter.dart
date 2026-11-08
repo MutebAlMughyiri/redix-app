@@ -10,7 +10,7 @@ class EntryFilter {
   static const statuses = ['entries.pendingApproval', 'entries.approved', 'entries.rejected', 'entries.reversed', 'entries.draft'];
 
   /// The kinds of entry, as the API names them, each with the word key that names it.
-  static const kinds = {'purchase': 'entries.purchases', 'contractorPayment': 'entries.contractorPayments'};
+  static const kinds = EntryRow.kindWords;
 
   /// The period that keeps every date.
   static final anyTime = DateTimeRange(start: DateTime(2000), end: DateTime(2100));
@@ -21,7 +21,7 @@ class EntryFilter {
   /// True to keep only the signed-in user's own.
   var onlyMine = true;
 
-  /// The kinds kept; none chosen keeps both.
+  /// The kinds kept; none chosen keeps every kind.
   final chosenKinds = <String>{};
 
   /// Where the kept entries stand; none chosen keeps any.

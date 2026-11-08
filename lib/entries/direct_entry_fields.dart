@@ -11,24 +11,24 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../partners/capital.dart';
 import '../projects/project.dart';
-import '../revenue/revenues.dart';
 import '../ui/entry_field.dart';
 import '../ui/labelled_chips.dart';
 import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
 import '../words/words.dart';
 import 'entry_tables.dart';
+import 'project_entries.dart';
 
 /// What Add entry asks for a revenue item's table or a partner (redix-api #101): the amount, the date, the account and a description, and for a partner whether it is a withdrawal
 /// and its bank receipt, or why it was paid in cash (AC-25.1, BR-23). One button sends it for approval at once; it is never a draft.
 class DirectEntryFields extends StatefulWidget {
-  /// The fields of [table] in [project], recorded through [revenues] or [capital], reaching one of [accounts], with its file kept through [attachments] and taken by [capture],
+  /// The fields of [table] in [project], recorded through [entries] or [capital], reaching one of [accounts], with its file kept through [attachments] and taken by [capture],
   /// starting from [file]; [onSent] runs once it is sent.
   const DirectEntryFields({
     super.key,
     required this.project,
     required this.table,
-    required this.revenues,
+    required this.entries,
     required this.capital,
     required this.accounts,
     required this.attachments,
@@ -43,8 +43,8 @@ class DirectEntryFields extends StatefulWidget {
   /// The revenue item's table, or the partner.
   final EntryTable table;
 
-  /// The way to record revenue.
-  final Revenues revenues;
+  /// The project's entries, through which revenue is recorded and then listed.
+  final ProjectEntries entries;
 
   /// The way to record a partner's money.
   final Capital capital;
@@ -182,7 +182,7 @@ class _DirectEntryFieldsState extends State<DirectEntryFields> {
     };
     return table.isPartner
         ? widget.capital.record({...body, 'partnerId': table.id, 'type': _isWithdrawal ? 'withdrawal' : 'contribution', if (_isCash) 'cashReason': _reason.text})
-        : widget.revenues.record({...body, 'itemId': table.itemId, 'subgroupId': table.id});
+        : widget.entries.recordRevenue({...body, 'itemId': table.itemId, 'subgroupId': table.id});
   }
 
   Future<void> _send() async {

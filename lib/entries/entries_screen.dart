@@ -255,7 +255,7 @@ class _EntryActions extends StatelessWidget {
         spacing: 8,
         children: [
           EntryTile(entry: entry, onTap: () {}),
-          if (entry.allows(project, Permission.recordEntries)) ...[
+          if (entry.isExpense && entry.allows(project, Permission.recordEntries)) ...[
             FilledButton(
               key: EntriesScreen.editKey,
               onPressed: () {

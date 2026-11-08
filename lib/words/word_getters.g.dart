@@ -1865,23 +1865,11 @@ mixin WordGetters {
   /// The word `revenue.amount`.
   String get revenueAmount => text('revenue.amount');
 
-  /// The word `revenue.buyer`.
-  String get revenueBuyer => text('revenue.buyer');
-
-  /// The word `revenue.buyerVatNumber`.
-  String get revenueBuyerVatNumber => text('revenue.buyerVatNumber');
-
   /// The word `revenue.date`.
   String get revenueDate => text('revenue.date');
 
   /// The word `revenue.description`.
   String get revenueDescription => text('revenue.description');
-
-  /// The word `revenue.duplicateInvoice`.
-  String get revenueDuplicateInvoice => text('revenue.duplicateInvoice');
-
-  /// The word `revenue.empty`.
-  String get revenueEmpty => text('revenue.empty');
 
   /// The word `revenue.file`.
   String get revenueFile => text('revenue.file');
@@ -1889,17 +1877,8 @@ mixin WordGetters {
   /// The word `revenue.invalidAmount`.
   String get revenueInvalidAmount => text('revenue.invalidAmount');
 
-  /// The word `revenue.invalidBuyerName`.
-  String get revenueInvalidBuyerName => text('revenue.invalidBuyerName');
-
   /// The word `revenue.invalidDate`.
   String get revenueInvalidDate => text('revenue.invalidDate');
-
-  /// The word `revenue.invalidInvoiceDate`.
-  String get revenueInvalidInvoiceDate => text('revenue.invalidInvoiceDate');
-
-  /// The word `revenue.invalidInvoiceNumber`.
-  String get revenueInvalidInvoiceNumber => text('revenue.invalidInvoiceNumber');
 
   /// The word `revenue.invalidNotes`.
   String get revenueInvalidNotes => text('revenue.invalidNotes');
@@ -1913,20 +1892,11 @@ mixin WordGetters {
   /// The word `revenue.invoiceAlreadyAttached`.
   String get revenueInvoiceAlreadyAttached => text('revenue.invoiceAlreadyAttached');
 
-  /// The word `revenue.invoiceDate`.
-  String get revenueInvoiceDate => text('revenue.invoiceDate');
-
   /// The word `revenue.invoiceNumber`.
   String get revenueInvoiceNumber => text('revenue.invoiceNumber');
 
-  /// The word `revenue.item`.
-  String get revenueItem => text('revenue.item');
-
   /// The word `revenue.loadFailed`.
   String get revenueLoadFailed => text('revenue.loadFailed');
-
-  /// The word `revenue.newSale`.
-  String get revenueNewSale => text('revenue.newSale');
 
   /// The word `revenue.noConnection`.
   String get revenueNoConnection => text('revenue.noConnection');
@@ -1936,12 +1906,6 @@ mixin WordGetters {
 
   /// The word `revenue.sale`.
   String get revenueSale => text('revenue.sale');
-
-  /// The word `revenue.save`.
-  String get revenueSave => text('revenue.save');
-
-  /// The word `revenue.saved`.
-  String get revenueSaved => text('revenue.saved');
 
   /// The word `revenue.title`.
   String get revenueTitle => text('revenue.title');
@@ -1957,9 +1921,6 @@ mixin WordGetters {
 
   /// The word `revenue.unknownItem`.
   String get revenueUnknownItem => text('revenue.unknownItem');
-
-  /// The word `revenue.unknownSale`.
-  String get revenueUnknownSale => text('revenue.unknownSale');
 
   /// The word `revenue.vatRefund`.
   String get revenueVatRefund => text('revenue.vatRefund');

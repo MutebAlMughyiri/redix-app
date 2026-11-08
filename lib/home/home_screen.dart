@@ -11,7 +11,6 @@ import '../contracts/contracts_screen.dart';
 import '../documents/documents_screen.dart';
 import '../partners/partners_screen.dart';
 import '../reports/reports_screen.dart';
-import '../revenue/revenue_screen.dart';
 import '../approvals/approvals_screen.dart';
 import '../entries/add_entry_screen.dart';
 import '../entries/home_entries.dart';
@@ -109,9 +108,6 @@ class HomeScreen extends StatefulWidget {
 
   /// The spinner under the entries' heading while they are first read.
   static const entriesLoadingKey = Key('home.entriesLoading');
-
-  /// The way to the revenue of the project [id].
-  static Key revenueKey(String id) => Key('home.revenue.$id');
 
   /// The way to the reports of the project [id].
   static Key reportsKey(String id) => Key('home.reports.$id');
@@ -265,7 +261,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     onSuppliers: () => _open(SuppliersScreen.pathOf(project.id), project),
                     onContracts: () => _open(ContractsScreen.pathOf(project.id), project),
                     onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
-                    onRevenue: () => _open(RevenueScreen.pathOf(project.id), project),
                     onReports: () => _open(ReportsScreen.pathOf(project.id), project),
                     onSettings: () => _openSettings(project),
                     onDocuments: () => _open(DocumentsScreen.pathOf(project.id), project),

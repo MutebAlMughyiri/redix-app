@@ -18,12 +18,22 @@ class EntryRow {
       invoiceNumber = json['invoiceNumber'] as String,
       authorName = json['authorName'] as String,
       isMine = json['isMine'] as bool,
-      isReversed = json['isReversed'] as bool;
+      isReversed = json['isReversed'] as bool,
+      partnerName = json['partnerName'] as String;
+
+  /// What an entry is, as the API names it, and the word key naming each: the one owner the filter, the entries list and Approvals read (Muteb, 8 Nov 2026).
+  static const kindWords = {
+    'purchase': 'entries.purchases',
+    'contractorPayment': 'entries.contractorPayments',
+    'revenue': 'categories.tableRevenue',
+    'capitalIn': 'capital.contribution',
+    'capitalOut': 'capital.withdrawal',
+  };
 
   /// The entry's id.
   final String id;
 
-  /// `purchase` or `contractorPayment`.
+  /// `purchase`, `contractorPayment`, `revenue`, `capitalIn` or `capitalOut`.
   final String kind;
 
   /// `draft`, `pendingApproval`, `approved` or `rejected`.
@@ -56,6 +66,18 @@ class EntryRow {
   /// True when it was reversed, or is itself a reversal.
   final bool isReversed;
 
+  /// A partner's money's partner; empty for any other entry.
+  final String partnerName;
+
+  /// What names it on a list: a partner's money's partner, otherwise its item.
+  String get title => partnerName.isEmpty ? itemName : partnerName;
+
+  /// True for a purchase or a contractor payment, which Add entry opens to change; revenue and a partner's money are only sent, deleted or reversed (redix-api #103).
+  bool get isExpense => kind == 'purchase' || kind == 'contractorPayment';
+
+  /// The word key of what it is.
+  String get kindWordKey => kindWords[kind] ?? '';
+
   /// True while it is not sent yet.
   bool get isDraft => status == 'draft';
 
@@ -83,5 +105,5 @@ class EntryRow {
   bool get showsStatus => statusWordKey != 'entries.approved';
 
   /// What a search matches it by (redix-app #84): its item, supplier or contractor, who entered it, an old bill's number and its amount, plain and as money, in one spelling.
-  late final searchText = sameSpelling([itemName, supplierName, authorName, invoiceNumber, formatPlain(amount), formatMoney(amount)].join(' '));
+  late final searchText = sameSpelling([itemName, partnerName, supplierName, authorName, invoiceNumber, formatPlain(amount), formatMoney(amount)].join(' '));
 }

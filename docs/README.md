@@ -80,7 +80,7 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-038, UC-039, UC-046](use-cases/UC-038-share.md) | Share a file to the app, and attach it or start an expense with it | Whoever enters expenses |
 | [UC-049, UC-050, UC-051, UC-063](use-cases/UC-049-dashboard-and-reports.md) | The dashboard on the home, an item's report, the contracts, completion and cost | Everyone in the project |
 | [UC-053, UC-059](use-cases/UC-053-reports.md) | Issue and read the periodic report; print or share any report | Everyone reads; finance issues |
-| [UC-047, UC-048, UC-056](use-cases/UC-047-revenue-and-vat.md) | Record revenue and sales invoices, take the VAT statement's workbook | Everyone reads; finance records |
+| [UC-047, UC-056](use-cases/UC-047-revenue-and-vat.md) | Take the VAT statement's workbook; revenue is entered from Add entry | Everyone reads; finance records |
 | [UC-040 to UC-044](use-cases/UC-040-money.md) | See balances, reconcile, record capital, see shares | Everyone reads; finance enters |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |

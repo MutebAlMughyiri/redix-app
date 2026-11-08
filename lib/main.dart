@@ -50,9 +50,6 @@ import 'reports/periodic_reports.dart';
 import 'reports/report_files.dart';
 import 'reports/reports_screen.dart';
 import 'reports/vat_statement_screen.dart';
-import 'revenue/revenue_screen.dart';
-import 'revenue/revenues.dart';
-import 'revenue/sales_invoice_screen.dart';
 import 'projects/new_project_screen.dart';
 import 'projects/project_info_screen.dart';
 import 'projects/projects.dart';
@@ -147,7 +144,6 @@ class _RedixAppState extends State<RedixApp> {
   final _projectAttachable = <String, AttachableEntries>{};
   final _projectReconciliations = <String, Reconciliations>{};
   final _projectCapital = <String, Capital>{};
-  final _projectRevenues = <String, Revenues>{};
   final _projectDashboards = <String, Dashboard>{};
   final _projectPeriodicReports = <String, PeriodicReports>{};
   late final _reportFiles = ReportFiles(widget.session, widget.capture);
@@ -230,11 +226,6 @@ class _RedixAppState extends State<RedixApp> {
           members: _membersOf(state.pathParameters['projectId'] ?? ''),
           reconciliations: _reconciliationsOf(state.pathParameters['projectId'] ?? ''),
         ),
-      ),
-      GoRoute(path: RevenueScreen.path, builder: (context, state) => RevenueScreen(project: state.extra! as Project, revenues: _revenuesOf(state.pathParameters['projectId'] ?? ''))),
-      GoRoute(
-        path: SalesInvoiceScreen.path,
-        builder: (context, state) => SalesInvoiceScreen(project: state.extra! as Project, revenues: _revenuesOf(state.pathParameters['projectId'] ?? ''), accounts: _accountsOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(
         path: ReportsScreen.path,
@@ -346,7 +337,6 @@ class _RedixAppState extends State<RedixApp> {
 
   Dashboard _dashboardOf(String projectId) => _projectDashboards.putIfAbsent(projectId, () => Dashboard(widget.session, projectId));
 
-  Revenues _revenuesOf(String projectId) => _projectRevenues.putIfAbsent(projectId, () => Revenues(widget.session, projectId));
 
   Capital _capitalOf(String projectId) => _projectCapital.putIfAbsent(projectId, () => Capital(widget.session, projectId));
 
@@ -386,7 +376,7 @@ class _RedixAppState extends State<RedixApp> {
     columnsOf: (itemId) => _columnsAt(Columns.itemPath(projectId, itemId)),
     attachments: _attachmentsOf(projectId),
     capture: widget.capture,
-    revenues: _revenuesOf(projectId),
+    entries: _entriesOf(projectId),
     capital: _capitalOf(projectId),
     projectAccounts: _accountsOf(projectId),
   );

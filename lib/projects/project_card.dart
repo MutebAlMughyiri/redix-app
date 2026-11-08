@@ -6,10 +6,10 @@ import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'project.dart';
 
-/// The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Revenue, Reports, Settings, Approvals and Documents.
+/// The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Settings, Approvals and Documents.
 /// A finished project says first, in one line, that it is read-only (redix-api 93).
 class ProjectCard extends StatelessWidget {
-  /// The card of [project], calling [onAccounts], [onPartners], [onSuppliers], [onContracts], [onApprovals], [onRevenue], [onReports], [onSettings] and [onDocuments] when those are tapped.
+  /// The card of [project], calling [onAccounts], [onPartners], [onSuppliers], [onContracts], [onApprovals], [onReports], [onSettings] and [onDocuments] when those are tapped.
   const ProjectCard({
     super.key,
     required this.project,
@@ -18,7 +18,6 @@ class ProjectCard extends StatelessWidget {
     required this.onSuppliers,
     required this.onContracts,
     required this.onApprovals,
-    required this.onRevenue,
     required this.onReports,
     required this.onSettings,
     required this.onDocuments,
@@ -41,9 +40,6 @@ class ProjectCard extends StatelessWidget {
 
   /// Called when Waiting for approval is tapped.
   final VoidCallback onApprovals;
-
-  /// Called when Revenue is tapped.
-  final VoidCallback onRevenue;
 
   /// Called when Reports is tapped.
   final VoidCallback onReports;
@@ -100,12 +96,6 @@ class ProjectCard extends StatelessWidget {
                   icon: Icon(Icons.description_outlined, key: HomeScreen.contractsKey(project.id).icon),
                   label: Text(words.contractsTitle, key: HomeScreen.contractsKey(project.id).label),
                   onPressed: onContracts,
-                ),
-                TextButton.icon(
-                  key: HomeScreen.revenueKey(project.id),
-                  icon: Icon(Icons.trending_up, key: HomeScreen.revenueKey(project.id).icon),
-                  label: Text(words.revenueTitle, key: HomeScreen.revenueKey(project.id).label),
-                  onPressed: onRevenue,
                 ),
                 TextButton.icon(
                   key: HomeScreen.reportsKey(project.id),

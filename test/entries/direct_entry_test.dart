@@ -8,7 +8,7 @@ import 'package:redix/entries/direct_entry_fields.dart';
 import 'package:redix/entries/table_picker.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
-import 'package:redix/revenue/revenue_screen.dart';
+import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/sharing/share_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 
@@ -202,15 +202,34 @@ void main() {
       expect(find.byKey(const Key('partners.move')), findsNothing);
     });
 
-    testWidgets('R8: Revenue has no New revenue, and keeps New sale for whoever moves money', (tester) async {
+    testWidgets('No Revenue screen: the home has no Revenue, and القيود lists revenue and a partner\'s money, each saying what it is', (tester) async {
       final (:api, capture: _, refund: _, partner: _, gone: _, account: _) = await openAddEntry(tester);
+      api
+        ..addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب', amount: 140)
+        ..addEntry(kind: 'capitalOut', status: 'pendingApproval', itemName: '', partnerName: 'نواف', amount: 300);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-      await tester.ensureVisible(find.byKey(HomeScreen.revenueKey('project-0')));
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.revenueKey('project-0'))));
+      expect(find.byKey(const Key('home.revenue.project-0')), findsNothing);
+      expect(text(tester, EntriesScreen.rowKey('entry-0').title), 'استرجاع ضرائب');
+      expect(text(tester, EntriesScreen.detailsKey('entry-0')), startsWith('en categories.tableRevenue'));
+      expect(text(tester, EntriesScreen.rowKey('entry-1').title), 'نواف');
+      expect(text(tester, EntriesScreen.detailsKey('entry-1')), startsWith('en capital.withdrawal'));
+    });
 
-      expect(find.byKey(const Key('revenue.new')), findsNothing);
-      expect(find.byKey(RevenueScreen.newSaleKey), findsOneWidget);
+    testWidgets('No Revenue screen: a revenue entry\'s sheet offers Reverse and never Edit, which only an expense has', (tester) async {
+      final (:api, capture: _, refund: _, partner: _, gone: _, account: _) = await openAddEntry(tester);
+      api
+        ..addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب', amount: 140)
+        ..addEntry(kind: 'revenue', status: 'rejected', itemName: 'استرجاع ضرائب', amount: 90, rejectionReason: 'المبلغ خطأ');
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0'))));
+      expect(find.byKey(EntriesScreen.reverseKey), findsOneWidget);
+      expect(find.byKey(EntriesScreen.editKey), findsNothing);
+      await act(tester, api, () => tester.tapAt(const Offset(10, 10)));
+
+      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-1'))));
+      expect(find.byKey(EntriesScreen.editKey), findsNothing);
     });
 
     testWidgets('R12: a shared file offers New entry and no capital receipt, and goes with a partner picked in Add entry', (tester) async {

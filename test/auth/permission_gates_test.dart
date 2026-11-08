@@ -21,7 +21,6 @@ import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
-import 'package:redix/revenue/revenue_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/sharing/share_screen.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
@@ -250,11 +249,11 @@ final List<Gate> _gates = [
     control: _key(MovementsScreen.reverseKey('movement-0')),
   ),
   (
-    name: 'Reverse revenue',
+    name: 'Reverse a revenue entry in القيود',
     permission: Permission.approveEntries,
-    arrange: (api) => api.addRevenue(),
-    steps: [_openProject, _tapKey(HomeScreen.revenueKey(_project))],
-    control: _key(RevenueScreen.reverseKey('revenue-0')),
+    arrange: (api) => api.addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب'),
+    steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
+    control: _key(EntriesScreen.reverseKey),
   ),
   (
     name: 'Reconcile on the accounts',
