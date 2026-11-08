@@ -11,10 +11,10 @@ import '../app_harness.dart';
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  Future<FakeApi> openInbox(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance, String status = 'active'}) async {
+  Future<FakeApi> openInbox(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance, String status = 'active', FakeCapture? capture}) async {
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status);
     arrange(api);
-    await openProject(tester, api);
+    await openProject(tester, api, capture: capture);
     await tester.ensureVisible(find.byKey(HomeScreen.approvalsKey('project-0')));
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.approvalsKey('project-0'))));
@@ -198,15 +198,17 @@ void main() {
     expect(find.byType(InteractiveViewer), findsOneWidget);
   });
 
-  testWidgets('a PDF is offered to the phone, and a file that cannot be read says so', (tester) async {
-    final api = await openInbox(tester, (api) {
+  testWidgets('a PDF is handed to the phone by its own name, and a file that cannot be read says so', (tester) async {
+    final capture = FakeCapture();
+    final api = await openInbox(tester, capture: capture, (api) {
       api
-        ..addPending(attachmentId: 'attachment-pdf', contentType: 'application/pdf')
+        ..addPending(attachmentId: 'attachment-pdf', contentType: 'application/pdf', fileName: 'bill-2617.pdf')
         ..addPending(attachmentId: 'attachment-gone');
     });
 
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.fileKey('entry-0'))));
-    expect(find.byKey(AttachmentScreen.openFileKey), findsOneWidget);
+    await act(tester, api, () => tester.tap(find.byKey(AttachmentScreen.openFileKey)));
+    expect(capture.sharedOut.single, ('bill-2617.pdf', 'application/pdf'));
 
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.fileKey('entry-1'))));

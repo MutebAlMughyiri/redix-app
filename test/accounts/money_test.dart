@@ -219,15 +219,6 @@ void main() {
       expect(find.byKey(PartnersScreen.totalKey), findsOneWidget);
     });
 
-    testWidgets('someone who withdrew says so', (tester) async {
-      await openPartners(tester, (api) {
-        final partner = api.addPartner('project-0', 'هيثم');
-        api.addCapitalLine(partner['id']! as String, 0, 0, isActive: false);
-      });
-
-      expect(find.textContaining('en capital.left'), findsOneWidget);
-    });
-
     testWidgets('a partner opens to their movements, each with its receipt, and Finance can reverse one', (tester) async {
       final (:api, capture: _) = await openPartners(tester, (api) {
         api

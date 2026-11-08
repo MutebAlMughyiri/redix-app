@@ -48,7 +48,7 @@ class _NameDialogState extends State<NameDialog> {
         key: NameDialog.nameKey,
         controller: _name,
         autofocus: true,
-        decoration: InputDecoration(labelText: widget.label, border: const OutlineInputBorder()),
+        decoration: InputDecoration(labelText: widget.label),
       ),
     ],
   );

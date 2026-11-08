@@ -195,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: ListenableBuilder(
           listenable: widget.projects,
           builder: (context, _) => Text(
-            widget.projects.all.where((project) => project.id == widget.projectId).map((project) => project.name).join(),
+            widget.projects.byId(widget.projectId).name,
             key: HomeScreen.titleKey,
           ),
         ),
@@ -207,10 +207,10 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: ListenableBuilder(
         listenable: widget.projects,
         builder: (context, _) {
-          final project = widget.projects.all.where((project) => project.id == widget.projectId).toList();
-          return project.isEmpty
+          final project = widget.projects.byId(widget.projectId);
+          return project.isNone
               ? const SizedBox.shrink()
-              : BottomButton(buttonKey: HomeScreen.addEntryKey(widget.projectId), label: words.entriesNew, onPressed: project.single.mayEnterExpenses ? () => _open(AddEntryScreen.pathOf(widget.projectId), project.single) : null);
+              : BottomButton(buttonKey: HomeScreen.addEntryKey(widget.projectId), label: words.entriesNew, onPressed: project.mayEnterExpenses ? () => _open(AddEntryScreen.pathOf(widget.projectId), project) : null);
         },
       ),
       body: ApiListBody(

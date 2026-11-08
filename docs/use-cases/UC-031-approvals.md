@@ -22,7 +22,7 @@
 | Only whoever decides entries has a way in | `ProjectCard`, `project.may` | `approvals_test.dart`: only whoever decides |
 | AC-18.1: what waits shows what Finance needs, in the API's order | `ApprovalsScreen._details` | `approvals_test.dart`: AC-18.1: what waits |
 | AC-18.1: a picture opens to zoom into | `AttachmentScreen` | `approvals_test.dart`: AC-18.1: a picture |
-| A PDF goes to the phone, and an unreadable file says so | `AttachmentScreen` | `approvals_test.dart`: a PDF is offered |
+| A PDF goes to the phone by its own name, and an unreadable file says so | `AttachmentScreen`, `PendingApproval.fileName` | `approvals_test.dart`: a PDF is handed to the phone by its own name |
 | A file that is not a picture, a PDF included, goes to the phone through `InvoiceCapture.shareFile` by its own name; an entry's file, whose name the app is not given, goes as invoice.pdf | `AttachmentScreen`, the attachment route | `documents_test.dart`: UC-064: a PDF is handed to the phone by its own name too |
 | A filter shows one kind | `_Filter.keeps`, `ApiListBody.keeps` | `approvals_test.dart`: a filter shows |
 | Each filter counts what it keeps, and one that keeps nothing says nothing waits rather than showing a blank page | `_Filter.keeps`, `ApiListBody.keeps` | `approvals_test.dart`: each filter counts what it keeps |

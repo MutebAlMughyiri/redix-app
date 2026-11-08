@@ -1,6 +1,7 @@
 import '../api_object.dart';
 import '../auth/session.dart';
 import '../partners/capital.dart';
+import 'waiting_figures.dart';
 
 /// One item's total (BR-02), or one partner's capital under the capital line (BR-05).
 class ItemTotal {
@@ -58,14 +59,13 @@ class DashboardFigures {
       surplus = (json['surplus'] as num).toDouble(),
       wasReconciled = json['wasReconciled'] as bool,
       reconciliationDifference = (json['reconciliationDifference'] as num).toDouble(),
-      pendingCount = json['pendingCount'] as int,
-      pendingAmount = (json['pendingAmount'] as num).toDouble(),
+      waiting = WaitingFigures.fromJson(json['waiting'] as Map<String, dynamic>),
       completionPercent = (json['completionPercent'] as num).toDouble(),
       categories = [for (final row in json['categories'] as List<dynamic>) CategoryTotal.fromJson(row as Map<String, dynamic>)],
       revenueCategories = [for (final row in json['revenueCategories'] as List<dynamic>) CategoryTotal.fromJson(row as Map<String, dynamic>)];
 
   /// Nothing yet.
-  DashboardFigures.none() : revenue = 0, capital = CapitalFigures.none(), expenses = 0, surplus = 0, wasReconciled = false, reconciliationDifference = 0, pendingCount = 0, pendingAmount = 0, completionPercent = 0, categories = const [], revenueCategories = const [];
+  DashboardFigures.none() : revenue = 0, capital = CapitalFigures.none(), expenses = 0, surplus = 0, wasReconciled = false, reconciliationDifference = 0, waiting = const WaitingFigures.none(), completionPercent = 0, categories = const [], revenueCategories = const [];
 
   /// Capital, VAT refunds and sales.
   final double revenue;
@@ -85,11 +85,8 @@ class DashboardFigures {
   /// The latest check's difference.
   final double reconciliationDifference;
 
-  /// How many entries wait for approval.
-  final int pendingCount;
-
-  /// What they come to.
-  final double pendingAmount;
+  /// What waits for approval: expenses, and revenue with partners' money.
+  final WaitingFigures waiting;
 
   /// How far the work has come.
   final double completionPercent;

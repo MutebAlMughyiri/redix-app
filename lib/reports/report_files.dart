@@ -23,7 +23,7 @@ Future<String> _print(InvoiceCapture capture, Uint8List bytes, String name, Stri
 }
 
 /// What can be done with a report's file on the phone (FR-48).
-enum FileHanding {
+enum FileHandling {
   /// Kept in the phone's Download folder, to be copied to a computer.
   save('reports.save', Icons.download_outlined, _save),
 
@@ -33,7 +33,7 @@ enum FileHanding {
   /// Sent to the phone's printer, with a preview.
   print('reports.print', Icons.print_outlined, _print);
 
-  const FileHanding(this.wordKey, this.icon, this._hand);
+  const FileHandling(this.wordKey, this.icon, this._hand);
 
   /// The key of the word that names it.
   final String wordKey;
@@ -50,13 +50,13 @@ enum FileHanding {
 /// A kind of file a report comes as, and what can be done with it.
 enum ReportFileKind {
   /// The PDF.
-  pdf('pdf', 'application/pdf', 'reports.pdf', Icons.picture_as_pdf_outlined, [FileHanding.save, FileHanding.share]),
+  pdf('pdf', 'application/pdf', 'reports.pdf', Icons.picture_as_pdf_outlined, [FileHandling.save, FileHandling.share]),
 
   /// The workbook.
-  excel('xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'reports.excel', Icons.table_chart_outlined, [FileHanding.save, FileHanding.share]),
+  excel('xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'reports.excel', Icons.table_chart_outlined, [FileHandling.save, FileHandling.share]),
 
   /// The PDF, printed.
-  print('pdf', 'application/pdf', 'reports.print', Icons.print_outlined, [FileHanding.print]);
+  print('pdf', 'application/pdf', 'reports.print', Icons.print_outlined, [FileHandling.print]);
 
   const ReportFileKind(this.extension, this.mimeType, this.wordKey, this.icon, this.handings);
 
@@ -73,7 +73,7 @@ enum ReportFileKind {
   final IconData icon;
 
   /// What its button offers; asked once when there is more than one.
-  final List<FileHanding> handings;
+  final List<FileHandling> handings;
 }
 
 /// Gets a report's or a document's file from the API and saves, shares or prints it on the phone (UC-059, redix-api #102): the one way any screen does so.
@@ -85,11 +85,11 @@ class ReportFiles {
   final InvoiceCapture _capture;
 
   /// Gets the file at [address] of [kind], named [name], and does [handing] with it. Returns the word key of what to tell the person: why it could not, or that it was saved; empty when there is nothing to say.
-  Future<String> hand(String address, String name, ReportFileKind kind, FileHanding handing) =>
+  Future<String> hand(String address, String name, ReportFileKind kind, FileHandling handing) =>
       handFile(address.contains('?') ? address.replaceFirst('?', '/${kind.extension}?') : '$address/${kind.extension}', '$name.${kind.extension}', kind.mimeType, handing);
 
   /// Gets the file at [path], named [name] and holding [mimeType], and does [handing] with it; answers as [hand] does.
-  Future<String> handFile(String path, String name, String mimeType, FileHanding handing) async {
+  Future<String> handFile(String path, String name, String mimeType, FileHandling handing) async {
     try {
       final response = await _session.read(path, file: true);
       if (response.statusCode != 200) {
@@ -112,7 +112,7 @@ class ReportFileButtons extends StatelessWidget {
   static Key buttonKey(String name, ReportFileKind kind) => Key('reportFile.$name.${kind.name}');
 
   /// The choice of [handing] for that file, once its button asks.
-  static Key handingKey(String name, ReportFileKind kind, FileHanding handing) => Key('reportFile.$name.${kind.name}.${handing.name}');
+  static Key handingKey(String name, ReportFileKind kind, FileHandling handing) => Key('reportFile.$name.${kind.name}.${handing.name}');
 
   /// The way to the files.
   final ReportFiles files;
@@ -126,7 +126,7 @@ class ReportFileButtons extends StatelessWidget {
   /// Which buttons show.
   final List<ReportFileKind> kinds;
 
-  Future<void> _run(BuildContext context, ReportFileKind kind, FileHanding handing) async {
+  Future<void> _run(BuildContext context, ReportFileKind kind, FileHandling handing) async {
     final words = Words.of(context);
     final messenger = ScaffoldMessenger.of(context);
     final said = await files.hand(address, name, kind, handing);

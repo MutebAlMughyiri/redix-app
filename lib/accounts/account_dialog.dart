@@ -79,14 +79,14 @@ class _AccountDialogState extends State<AccountDialog> {
           key: AccountsScreen.accountNameKey,
           controller: _name,
           autofocus: _isNew,
-          decoration: InputDecoration(labelText: words.accountsName, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.accountsName),
         ),
         const SizedBox(height: 16),
         TextField(
           key: AccountsScreen.openingBalanceKey,
           controller: _openingBalance,
           keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-          decoration: InputDecoration(labelText: words.accountsOpeningBalance, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.accountsOpeningBalance),
         ),
         const SizedBox(height: 16),
         MemberPicker(

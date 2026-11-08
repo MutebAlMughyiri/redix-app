@@ -84,8 +84,8 @@ class _VatStatementScreenState extends State<VatStatementScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final (first, last) = _period;
-    final from = first.toIso8601String().substring(0, 10);
-    final to = last.toIso8601String().substring(0, 10);
+    final from = apiDate(first);
+    final to = apiDate(last);
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.vatTitle, subject: widget.project.name)),
       body: ListView(

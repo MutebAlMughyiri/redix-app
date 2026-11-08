@@ -231,7 +231,7 @@ final List<Gate> _gates = [
   (
     name: 'What waits on the dashboard',
     permission: Permission.approveEntries,
-    arrange: (api) => api.dashboardAnswer = {...api.dashboardAnswer, 'pendingCount': 2, 'pendingAmount': 200},
+    arrange: (api) => api.dashboardAnswer = {...api.dashboardAnswer, 'waiting': waiting(expensesCount: 2, expensesAmount: 200)},
     steps: [_openProject],
     control: _key(DashboardCard.pendingKey),
   ),

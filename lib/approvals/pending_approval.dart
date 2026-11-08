@@ -1,11 +1,11 @@
-import '../entries/entry_row.dart';
+import '../entries/entry_kind.dart';
 
 /// An entry waiting for Finance's decision (UC-031).
 class PendingApproval {
   /// An entry as the API answers it.
   PendingApproval.fromJson(Map<String, dynamic> json)
     : id = json['id'] as String,
-      kind = json['kind'] as String,
+      kind = EntryKind.values.byName(json['kind'] as String),
       date = DateTime.parse(json['entryDate'] as String),
       amount = (json['amount'] as num).toDouble(),
       itemName = json['itemName'] as String,
@@ -15,14 +15,15 @@ class PendingApproval {
       notes = json['notes'] as String,
       attachmentId = json['attachmentId'] as String,
       contentType = json['contentType'] as String,
+      fileName = json['fileName'] as String,
       authorName = json['authorName'] as String,
       partnerName = json['partnerName'] as String;
 
   /// The entry's id.
   final String id;
 
-  /// `purchase`, `contractorPayment`, `revenue`, `capitalIn` or `capitalOut`.
-  final String kind;
+  /// What it is.
+  final EntryKind kind;
 
   /// Its date.
   final DateTime date;
@@ -51,6 +52,9 @@ class PendingApproval {
   /// What the file is; empty when it has none.
   final String contentType;
 
+  /// The file's name, which the phone shows once it is handed over; empty when it has none.
+  final String fileName;
+
   /// Who entered it.
   final String authorName;
 
@@ -61,13 +65,7 @@ class PendingApproval {
   String get title => partnerName.isEmpty ? itemName : partnerName;
 
   /// The word key saying what a capital movement or a revenue entry is; empty for an expense, which its supplier explains.
-  String get kindWordKey => kind == 'purchase' || kind == 'contractorPayment' ? '' : EntryRow.kindWords[kind] ?? '';
-
-  /// True for a purchase.
-  bool get isPurchase => kind == 'purchase';
-
-  /// True for a contractor's payment.
-  bool get isContractorPayment => kind == 'contractorPayment';
+  String get kindWordKey => kind.isExpense ? '' : kind.wordKey;
 
   /// True when it has a file to open.
   bool get hasFile => attachmentId.isNotEmpty;

@@ -79,7 +79,7 @@ class _RejectSheetState extends State<RejectSheet> {
               key: ApprovalsScreen.reasonKey,
               controller: _reason,
               maxLines: 3,
-              decoration: InputDecoration(labelText: words.approvalsReason, helperText: words.approvalsReasonHint, helperMaxLines: 3, border: const OutlineInputBorder()),
+              decoration: InputDecoration(labelText: words.approvalsReason, helperText: words.approvalsReasonHint, helperMaxLines: 3),
             ),
             if (_message.isNotEmpty) Text(words.text(_message), key: ApprovalsScreen.rejectMessageKey, style: TextStyle(color: theme.colorScheme.error)),
             FilledButton(

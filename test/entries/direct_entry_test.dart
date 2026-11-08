@@ -18,8 +18,8 @@ import '../app_harness.dart';
 void main() {
   PickedFile picture() => PickedFile('receipt.png', '', Uint8List.fromList(onePixelPng));
 
-  /// A project with an expense item, a revenue item, two partners, one of whom withdrew, and an account, opened as far as Add entry.
-  Future<({FakeApi api, FakeCapture capture, String refund, String partner, String gone, String account})> openAddEntry(WidgetTester tester, {List<String> permissions = managerAndFinance}) async {
+  /// A project with an expense item, a revenue item, a partner and an account, opened as far as Add entry.
+  Future<({FakeApi api, FakeCapture capture, String refund, String partner, String account})> openAddEntry(WidgetTester tester, {List<String> permissions = managerAndFinance}) async {
     tester.view.physicalSize = const Size(900, 2600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -27,13 +27,12 @@ void main() {
     api.addItem(api.addCategory('project-0', 'التشطيب'), 'البلاط', type: 'purchases');
     final refund = api.addItem(api.addCategory('project-0', 'الإيرادات'), 'استرداد الضريبة', type: 'vatRefund');
     final partner = api.addPartner('project-0', 'نواف');
-    final gone = api.addPartner('project-0', 'سالم')..['isActive'] = false;
     final account = api.addAccount('project-0', 'حساب المؤسسة');
     final capture = FakeCapture();
     await openProject(tester, api, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
     final general = (refund['subgroups']! as List<Map<String, Object>>).first['id']! as String;
-    return (api: api, capture: capture, refund: general, partner: partner['id']! as String, gone: gone['id']! as String, account: account['id']! as String);
+    return (api: api, capture: capture, refund: general, partner: partner['id']! as String, account: account['id']! as String);
   }
 
   Future<void> pick(WidgetTester tester, FakeApi api, String tableId) async {
@@ -44,8 +43,8 @@ void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   group('the table list', () {
-    testWidgets('R3, R5, R13: Finance finds the revenue items, and the active partners under Revenue · Capital', (tester) async {
-      final (:api, capture: _, :refund, :partner, :gone, account: _) = await openAddEntry(tester);
+    testWidgets('R3, R5, R13: Finance finds the revenue items, and the partners under Revenue · Capital', (tester) async {
+      final (:api, capture: _, :refund, :partner, account: _) = await openAddEntry(tester);
 
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
 
@@ -53,12 +52,11 @@ void main() {
       expect(find.byKey(TablePicker.categoryKey('en entries.capitalGroup')), findsOneWidget);
       expect(text(tester, TablePicker.optionKey(partner).title), 'نواف');
       expect(text(tester, TablePicker.optionKey(partner).subtitle), 'en categories.tableCapital');
-      expect(find.byKey(TablePicker.optionKey(gone)), findsNothing);
       expect(find.byKey(TablePicker.itemKey(partner)), findsNothing, reason: 'a partner shows once, as its own row');
     });
 
     testWidgets('R9: someone who moves no money finds no revenue item and no partner', (tester) async {
-      final (:api, capture: _, :refund, :partner, gone: _, account: _) = await openAddEntry(tester, permissions: field);
+      final (:api, capture: _, :refund, :partner, account: _) = await openAddEntry(tester, permissions: field);
 
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
 
@@ -70,7 +68,7 @@ void main() {
 
   group('a partner', () {
     testWidgets('R2, R7, R11: a contribution with its receipt is sent for approval, and says so', (tester) async {
-      final (:api, :capture, refund: _, :partner, gone: _, :account) = await openAddEntry(tester);
+      final (:api, :capture, refund: _, :partner, :account) = await openAddEntry(tester);
       capture.files = picture();
       await pick(tester, api, partner);
 
@@ -91,7 +89,7 @@ void main() {
     });
 
     testWidgets('R7: with سحب on it is a withdrawal', (tester) async {
-      final (:api, :capture, refund: _, :partner, gone: _, :account) = await openAddEntry(tester);
+      final (:api, :capture, refund: _, :partner, :account) = await openAddEntry(tester);
       capture.files = picture();
       await pick(tester, api, partner);
 
@@ -105,7 +103,7 @@ void main() {
     });
 
     testWidgets('AC-25.1: refused without a receipt, it says why and keeps what was typed', (tester) async {
-      final (:api, capture: _, refund: _, :partner, gone: _, account: _) = await openAddEntry(tester);
+      final (:api, capture: _, refund: _, :partner, account: _) = await openAddEntry(tester);
       api.moneyAnswer = (status: 400, code: 'receiptRequired');
       await pick(tester, api, partner);
 
@@ -118,7 +116,7 @@ void main() {
     });
 
     testWidgets('AC-25.1: paid in cash asks why instead of a receipt, and sends the reason', (tester) async {
-      final (:api, capture: _, refund: _, :partner, gone: _, account: _) = await openAddEntry(tester);
+      final (:api, capture: _, refund: _, :partner, account: _) = await openAddEntry(tester);
       await pick(tester, api, partner);
       expect(find.byKey(DirectEntryFields.receiptHeadingKey), findsOneWidget);
 
@@ -133,7 +131,7 @@ void main() {
     });
 
     testWidgets('BR-23: a receipt saying another amount warns, and the same amount does not', (tester) async {
-      final (:api, capture: _, refund: _, :partner, gone: _, account: _) = await openAddEntry(tester);
+      final (:api, capture: _, refund: _, :partner, account: _) = await openAddEntry(tester);
       await pick(tester, api, partner);
 
       await tester.enterText(find.byKey(DirectEntryFields.amountKey), '1000');
@@ -149,7 +147,7 @@ void main() {
 
   group('a revenue item', () {
     testWidgets('R3: revenue is sent for approval on its item and table, with no partner fields', (tester) async {
-      final (:api, capture: _, :refund, partner: _, gone: _, :account) = await openAddEntry(tester);
+      final (:api, capture: _, :refund, partner: _, :account) = await openAddEntry(tester);
       await pick(tester, api, refund);
 
       expect(find.byKey(DirectEntryFields.withdrawalKey), findsNothing);
@@ -166,7 +164,7 @@ void main() {
     });
 
     testWidgets('R10: an amount that is no number stops it before it is sent, and nothing is lost', (tester) async {
-      final (:api, capture: _, :refund, partner: _, gone: _, account: _) = await openAddEntry(tester);
+      final (:api, capture: _, :refund, partner: _, account: _) = await openAddEntry(tester);
       await pick(tester, api, refund);
 
       await tester.enterText(find.byKey(DirectEntryFields.descriptionKey), 'استرداد الربع الثالث');
@@ -178,7 +176,7 @@ void main() {
     });
 
     testWidgets('D9: a revenue or partner entry has one button, never a draft; an expense keeps its draft', (tester) async {
-      final (:api, capture: _, :refund, partner: _, gone: _, account: _) = await openAddEntry(tester);
+      final (:api, capture: _, :refund, partner: _, account: _) = await openAddEntry(tester);
       expect(find.byKey(AddEntryScreen.draftKey), findsOneWidget);
 
       await pick(tester, api, refund);
@@ -191,7 +189,7 @@ void main() {
 
   group('the screens that lost their buttons', () {
     testWidgets('R1: Partners has no حركة, and still shows the total and its partners', (tester) async {
-      final (:api, capture: _, refund: _, :partner, gone: _, account: _) = await openAddEntry(tester);
+      final (:api, capture: _, refund: _, :partner, account: _) = await openAddEntry(tester);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
@@ -203,7 +201,7 @@ void main() {
     });
 
     testWidgets('No Revenue screen: the home has no Revenue, and القيود lists revenue and a partner\'s money, each saying what it is', (tester) async {
-      final (:api, capture: _, refund: _, partner: _, gone: _, account: _) = await openAddEntry(tester);
+      final (:api, capture: _, refund: _, partner: _, account: _) = await openAddEntry(tester);
       api
         ..addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب', amount: 140)
         ..addEntry(kind: 'capitalOut', status: 'pendingApproval', itemName: '', partnerName: 'نواف', amount: 300);
@@ -217,7 +215,7 @@ void main() {
     });
 
     testWidgets('No Revenue screen: a revenue entry\'s sheet offers Reverse and never Edit, which only an expense has', (tester) async {
-      final (:api, capture: _, refund: _, partner: _, gone: _, account: _) = await openAddEntry(tester);
+      final (:api, capture: _, refund: _, partner: _, account: _) = await openAddEntry(tester);
       api
         ..addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب', amount: 140)
         ..addEntry(kind: 'revenue', status: 'rejected', itemName: 'استرجاع ضرائب', amount: 90, rejectionReason: 'المبلغ خطأ');

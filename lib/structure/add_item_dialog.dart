@@ -44,7 +44,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
           key: NameDialog.nameKey,
           controller: _name,
           autofocus: true,
-          decoration: InputDecoration(labelText: words.categoriesItemName, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.categoriesItemName),
         ),
         const SizedBox(height: 16),
         ItemTypeChoice(value: _type, onChanged: (type) => setState(() => _type = type)),

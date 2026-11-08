@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../api.dart';
 import '../format/number_format.dart';
 import '../config/app_config.dart';
+import '../format/date_format.dart';
 
 /// Registers a project from the sign-in page, with its [description], no session, and a new login as its manager (UC-066). Returns an empty string once sent, otherwise the word key of
 /// the refusal.
@@ -25,7 +26,7 @@ Future<String> registerProject(
       headers: jsonHeaders,
       body: jsonEncode({
         'name': name,
-        'startDate': startDate.toIso8601String().substring(0, 10),
+        'startDate': apiDate(startDate),
         'units': units,
         'description': description,
         'displayName': displayName,

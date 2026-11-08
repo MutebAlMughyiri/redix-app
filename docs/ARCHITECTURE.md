@@ -6,137 +6,217 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 
 ```
 lib/
-  main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
-  account/my_account_screen.dart  My account: the language, the way into the password change, and signing out
-  api_list.dart             ApiList: a list the API owns, and the way to change it; every settings list extends it
-  ui/                       what several screens share: ApiListBody, BottomButton, ConfirmDialog, ChangeDialog, NameDialog, PickerField, entryField, FormSection, LabelledChips, TwoFields, showRefusalOf
-  settings/
-    settings_screen.dart    Settings: the way back to the project list, My account and, for the admin, the registered projects
-    payment_method.dart     PaymentMethod, as the API answers it
-    payment_methods.dart    PaymentMethods: the ApiList of one project's methods, and its changes
-    payment_methods_screen.dart  a project's payment methods
-    payment_method_row.dart one method, with its menu
+  api.dart                  The API's address, from the environment's config file: `--dart-define-from-file=config/local.json` on the developer's machine, `config/production.json` for a release
+  api_list.dart             A list the API owns, as it last answered, and the way to change it
+  api_object.dart           Something the API owns, as it last answered, and the way to change it
+  main.dart                 The app: its theme, its languages, and its screens
+  account/
+    my_account_screen.dart  My account (حسابي): the user's own settings: the language, signing in with fingerprint or face, the way to change the password, and signing out
   accounts/
-    account.dart            Account and AccountType, as the API answers them
-    accounts.dart           Accounts: the ApiList of one project's accounts, and its changes
-    accounts_screen.dart    a project's bank accounts and cash custodies
-    account_row.dart        one account, with its menu
-    account_dialog.dart     the dialog that adds or edits an account
-    my_custody.dart         what the signed-in user holds, on the project's home
-    offered_accounts.dart   OfferedAccounts: the ApiList of what the signed-in user's entry may be paid from
-  partners/
-    partner.dart            Partner, as the API answers them
-    partners.dart           Partners: the ApiList of one project's partners, and its changes
-    partners_screen.dart    a project's partners
-    partner_dialog.dart     the dialog that adds or edits a partner
-  suppliers/
-    supplier.dart           Supplier and SupplierStatus, as the API answers them
-    suppliers.dart          Suppliers: the ApiList of one project's register, and its changes
-    suppliers_screen.dart   a project's supplier register
-    supplier_row.dart       one supplier, with its menu
-    supplier_dialog.dart    the dialog that adds or edits a supplier
-    vat_number_field.dart   the VAT number, or that there is none, and who already holds it
-    supplier_search.dart    SupplierSearch: the ApiList of what the API finds for what was typed
-    supplier_picker.dart    the sheet that picks a supplier by name or VAT number
-    quick_add_supplier_dialog.dart  the dialog that adds a missing supplier, or offers the one already holding its number
+    account.dart            What kind of account holds a project's money, as the API names it, each knowing its word
+    account_dialog.dart     Asks for an account's name, opening balance and who holds it, and for a new account its type, which is set once
+    account_row.dart        One account: its type and who holds it, or that it is disabled, what it holds and, for whoever keeps the settings, a menu of what can be done to it
+    accounts.dart           A project's accounts and cash custodies, and the one way to change them
+    accounts_screen.dart    A project's bank accounts and cash custodies: everyone with access sees them, and whoever keeps the settings adds, changes and disables them
+    my_custody.dart         What the signed-in user holds, on the project's home: one card per account, and nothing for someone who holds none
+    offered_accounts.dart   What the signed-in user's entry may be paid from
+    reconcile_screen.dart   What each account and custody really holds, with the total and the difference as they are typed
+    reconciliation.dart     One account against the books
+    reconciliation_card.dart What the accounts should hold, what they really held, and the difference, red while it is not zero
+  approvals/
+    approvals.dart          What waits for a decision in a project, and the way to decide it
+    approvals_screen.dart   Finance's inbox: what waits, oldest first, to approve one at a time or many at once, or to reject saying why
+    pending_approval.dart   An entry waiting for Finance's decision
+    reject_sheet.dart       Rejects an entry, saying why: the reason returns to who entered it
   attachments/
-    attachment.dart         Attachment: a file the API keeps, as it answers it
-    attachments.dart        Attachments: the way to keep a file on the API
-    picked_file.dart        PickedFile: what the camera or the files gave
-    invoice_capture.dart    InvoiceCapture: the one place that touches the camera and the files
-    picture_compression.dart  compressedPicture: a picture under 1 MB
-  expenses/
-    invoice_section.dart    an entry's file: the picture, and the ways to take or pick it
-    column_value_field.dart the field of one custom column, by what it holds
-    expenses.dart           Expenses: the way to record a purchase or a contractor payment, and what it was refused over
-    payment_choice.dart     PaymentChoice: where an entry is paid from and how, as chosen
-    payment_choices.dart    the choices of it, for any kind of expense
-    entry_date.dart         pickEntryDate: an entry's date, within the project's period
-    creditable_invoice.dart CreditableInvoice: a bill a credit note can return, as the API answers it
-    creditable_invoices.dart  CreditableInvoices: the ApiList of one supplier's bills to return
-    original_invoice_picker.dart  the field that links a credit note to its bill
-    invoice_qr.dart         InvoiceQr: what a Saudi e-invoice's QR code carries, read from its text
-    qr_summary.dart         what was read from the code, and the offer to add its seller
-  contractor_payments/
-    contract_figures.dart   what the contract stands at with this payment, and the alert of an overrun
-  entries/
-    add_entry_screen.dart   إضافة قيد: one screen adding any entry to any table: a purchase, a contractor payment, revenue or a partner's money (redix-app #84, redix-api #101)
-    direct_entry_fields.dart what a revenue item's table or a partner asks in Add entry, sent for approval at once
-    entry_tables.dart       EntryTable, and EntryTables: the ApiList of every table an expense may go into; the table answers what its entries differ in
-    table_picker.dart       the field that chooses the table, from a sheet by category and item, the partners last
-    project_entries.dart    ProjectEntries: the ApiList of a project's entries, and what can be done to one
-    entry_row.dart          EntryRow, as the API answers it, with what a search matches it by
-    entry_tile.dart         one entry on a list
-    entry_filter.dart       EntryFilter: what the search of the entries keeps
-    entries_screen.dart     القيود: the entries, searched and filtered, and what can be done to one
-    home_entries.dart       the latest five on the project's home, with the search beside them
-    reverse_sheet.dart      the sheet that reverses an approved entry, saying why
-  contracts/
-    contract.dart           Contract and ContractFilter, as the API answers them
-    contracts.dart          Contracts: the ApiList of one project's contracts, and its changes
-    contracts_screen.dart   a project's contracts, with their filters
-    contract_card.dart      one contract: value, paid, remaining and a bar, with its menu
-    contract_dialog.dart    the dialog that adds or amends a contract
-  projects/
-    project.dart            Project and Unit, as the API answers them
-    projects.dart           Projects: the ApiList of projects, and its changes
-    projects_screen.dart    the project list, the first screen after sign-in, and the default project
-    project_choice.dart     one project on the list
-    project_card.dart       the open project's buttons, on its home
-    project_info_screen.dart More info: the project's name, start date, status, units and description
-    add_unit_dialog.dart    the Add unit dialog
-    unit_row.dart           one unit on More info, with its menu
-    member.dart             Member: someone in a project, as a person choosing among them sees them
-    members.dart            Members: the ApiList of one project's active people
-    member_picker.dart      the field that chooses someone in a project, or nobody
-    new_project_screen.dart the new project form
-  users/
-    user.dart               User, as the API answers it
-    users.dart              Users: the ApiList of one project's people, and its changes
-    users_screen.dart       a project's people
-    user_row.dart           one user on the list, with its menu
-    role.dart               Role, as the API answers it; the app names no role
-    roles.dart              Roles: the ApiList of what a project can give
-    user_roles_screen.dart  a person's roles in a project
-    add_existing_user_dialog.dart  the Add an existing user dialog
-    edit_user_dialog.dart   the Edit dialog
-    reset_password_dialog.dart  the Reset password dialog
-    new_user_screen.dart    the new user form
-  structure/
-    category.dart           Category, Item, Subgroup and ItemType, as the API answers them
-    categories.dart         Categories: the ApiList of one project's structure, and its changes
-    categories_screen.dart  a project's categories and items, dragged into order
-    category_card.dart      one category, opening to its items
-    item_row.dart           one item, with its menu
-    add_item_dialog.dart    the Add item dialog
-    change_item_type_dialog.dart  the Change type dialog
-    item_type_choice.dart   the choice of what an item is for, in both dialogs
-    subgroups_screen.dart   an item's subgroups
-    item_column.dart        ItemColumn and ColumnDataType, as the API answers them
-    columns.dart            Columns: the ApiList of one item's columns or of a default template, and its changes
-    item_columns_screen.dart  an item's columns, or the default template for its type
-    column_row.dart         one column, with its handle and its lock or delete
-    add_column_dialog.dart  the Add column dialog
-    edit_column_dialog.dart the Edit column dialog
-    apply_to_all_dialog.dart  the question after a change to the template
-    offered_items.dart      OfferedItems: the ApiList of what an entry of one type may choose
-    item_picker.dart        the field that chooses an item, from a sheet of what is on offer
-  format/
-    date_format.dart        formatDate: the app's one date format, dd.MM.yyyy
-    number_format.dart      formatMoney (NFR-04), formatPlain, and parseNumber: what a person typed, in Arabic or Western digits
-  api.dart                  the API's address and how a reply's JSON is read, shared by every feature
+    attachment.dart         A picture or a PDF the API keeps for a project, as it answers it
+    attachment_screen.dart  Opens a file a project keeps: a picture to zoom into, or any other file, a PDF included, handed to the phone by its name to open
+    attachments.dart        Keeps a project's files on the API, for an entry or a contract to name
+    file_kind.dart          What a kept file is, by its content type, and the icon that shows it: the one owner of "is it a picture or a PDF" for whatever opens or lists a file
+    invoice_capture.dart    The phone's camera, files, printer and share sheet, as the app reaches them: the one place that touches them, so a test can stand in for hardware it does not have
+    picked_file.dart        What the camera or the files gave: a file, nothing when the person went back, or why neither
+    picture_compression.dart A picture must be smaller than this many bytes to be kept: 1 MB, as the API counts it
   auth/
-    permission.dart         Permission: what the API says a user may do, as its name in the API
-    session.dart            Session: the signed-in session, kept in the Keychain or Keystore
-    biometrics.dart         Biometrics: the fingerprint or face check, one fixed word behind the phone's prompt
-    sign_in_screen.dart     the sign-in screen
-    change_password_screen.dart  the password change, forced while the password is temporary
-  home/home_screen.dart     the home of the open project, and where a person lands
+    biometrics.dart         The fingerprint or face check
+    change_password_screen.dart The change-password screen: the current password and the new one twice
+    permission.dart         What the API says a user may do, named as the API names it
+    session.dart            The signed-in session: the tokens the API issued, kept only in the Keychain or Keystore, and the one way to call the API as the user
+    sign_in_screen.dart     The sign-in screen: username and password, or a fingerprint or face on a phone that uses them, with the language choice at the top so it can be read before signing in
+  config/
+    app_config.dart         The configurable values the API keeps: how long a request waits for its answer, and later anything else made configurable
+  contractor_payments/
+    contract_figures.dart   What the chosen contract stands at with this payment, before it is saved: its value, what was paid, what waits, what remains after it, and the alert of an overrun
+  contracts/
+    contract.dart           A contract of a project, as the API answers it
+    contract_card.dart      One contract: its contractor, item and unit, how it stands, its value, paid and remaining, with a bar of how much is paid and, for whoever keeps the settings, a menu of what can be done to it
+    contract_dialog.dart    Asks for a contract's terms, and its contractor, item and unit while no payment names it
+    contracts.dart          A project's contracts, and the one way to change them
+    contracts_screen.dart   A project's contracts: everyone with access follows each one's value, paid and remaining, and whoever keeps the settings adds, amends and disables them
+  documents/
+    documents.dart          A document kept for the project: any file under a name, in a group when one was given
+    documents_screen.dart   A project's documents: each group under its name, those in none first
+  entries/
+    add_entry_screen.dart   إضافة قيد: one screen adds an expense to any table of an item's sheet, and the table chosen says what it is
+    direct_entry_fields.dart What Add entry asks for a revenue item's table or a partner: the amount, the date, the account and a description, and for a partner whether it is a withdrawal and its bank receipt, or why it was paid in cash
+    entries_screen.dart     A project's entries: each person's own, or all of them, searched and filtered, and what can be done to one
+    entry_filter.dart       What the search of a project's entries keeps: every filter set must hold, and a filter left empty keeps everything
+    entry_kind.dart         What an entry is, named as the API names it, with the word key that names it: the one owner the filter, the entries list and Approvals read
+    entry_row.dart          An entry on a list
+    entry_status.dart       Where an entry stands, named as the API names it
+    entry_tables.dart       One table an entry may go into
+    entry_tile.dart         An entry on a list of project's entries: tapping it opens its actions, and swiping it removes it where the user may delete it
+    home_entries.dart       The project's entries on its home: the latest five by anyone, a spinner while they are first read, a search beside the heading, and the way to all of them
+    project_entries.dart    A project's entries, newest first: everyone who reads the project sees them all, and only their own drafts
+    reverse_sheet.dart      Asks why something approved is reversed, and reverses it
+    saved_entry.dart        An expense as the API keeps it, read to fill Add entry when it is changed
+    table_picker.dart       The field that chooses the table an expense goes into, opening a sheet of every table on offer: by category, each item with its general table first and its named tables and contracts under it, with a search over the items' and the tables' names
+  expenses/
+    column_value_field.dart The field of one custom column, drawn from what the column holds: a required one is marked
+    creditable_invoice.dart A bill a credit note can return, as the API answers it, or none yet chosen
+    creditable_invoices.dart What a credit note may return: one supplier's invoices, as the API finds them
+    entry_date.dart         Asks for an entry's date in project, from current: within its period and not in the future
+    expenses.dart           Records a project's expenses on the API, purchases and contractor payments
+    invoice_qr.dart         What a Saudi e-invoice's QR code carries: the text is base64 of tag, length and value, one after another, tags 1 to 5 being the seller, its VAT number, the time, the total including VAT and the VAT
+    invoice_section.dart    The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files
+    original_invoice_picker.dart The field that links a credit note to the bill it returns, which it needs (D13), opening a sheet of what that supplier's bills have left to return
+    payment_choice.dart     What a person chose to pay an entry from, and how
+    payment_choices.dart    Where an entry is paid from and how, for any kind of expense: only what the signed-in user may pay from is on offer
+    qr_summary.dart         What was read from the invoice's QR code: its five fields, and an offer to add the seller when no supplier holds its number
+  format/
+    date_format.dart        A date as the app shows it, in both languages: Gregorian dd.MM.yyyy
+    number_format.dart      A number as a person types it: no separators, and as few decimals as it needs, at most two, so 15 is 15 and 7.5 is 7.5
+  home/
+    dashboard_card.dart     The project's figures at a glance: what waits for approval, the surplus, the completion, the reconciliation difference, and revenue and expenses, each opening to its categories, each category to its items, and the capital to the partners the reader may see
+    home_screen.dart        The home of the open project: the project, with what the user's permissions allow in it
+  notifications/
+    notification_row.dart   Something a person was told: its words come from kind, in their language
+    notifications.dart      What the signed-in person was told
+    notifications_bell.dart The way to what the person was told, counting what they have not seen
+    notifications_screen.dart What the person was told, newest first
+  offline/
+    folder_store.dart       Keeps files in the app's private folder on the phone
+    local_store.dart        What this phone keeps outside the app's memory, in named files inside folders
+    outbox.dart             The entries waiting on this phone for the network
+    pending_entry.dart      An entry waiting on this phone for the network
+    project_sync.dart       Keeps on the phone what a project's screens read, so that an entry can be entered with no network
+    waiting_screen.dart     What waits on this phone for the project: an entry the network has not taken yet, or one the API refused, which waits for its author
+  partners/
+    capital.dart            One partner's capital
+    capital_movement.dart   One movement of a partner's capital
+    capital_movements.dart  One partner's movements, newest first
+    movements_screen.dart   One partner's movements, each with its receipt, and for whoever decides entries a way to reverse it
+    partner.dart            A partner in a project, as the API answers them
+    partner_dialog.dart     Asks for a partner's name and their login
+    partners.dart           A project's partners, and the one way to change them
+    partners_screen.dart    A project's partners and capital: the total, each line the user may see with its balance and share, and a way into its movements
+  projects/
+    add_unit_dialog.dart    Asks for a new unit's name and adds it to an active project
+    default_project_toggle.dart Makes project the default project of session, or clears it when it already is, the one way the star and Settings both change it
+    member.dart             Someone in a project, as a person choosing among them sees them
+    member_picker.dart      Chooses someone in a project, or nobody, as a list of choices with every name in full
+    members.dart            The active people of one project, for choosing who holds something in it
+    new_project_screen.dart The form that registers a project: its name, its start date and its units
+    project.dart            Where a project stands, as the API says it, each knowing its word so no reader needs to tell them apart
+    project_card.dart       The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Settings, Approvals and Documents
+    project_choice.dart     One project on the list: its name, units and its status
+    project_info_screen.dart More info (معلومات المشروع, redix-api 93): the project's own record on one page, its name, start date, status, units and description
+    project_registration.dart Registers a project from the sign-in page, with its description, no session, and a new login as its manager
+    projects.dart           The projects, and the one way to change them
+    projects_screen.dart    The project list, the first screen after sign-in: the projects the user has access to, one to open, and the default project
+    registered_project.dart A project waiting for the admin, as the API answers it: what is needed to decide, and nothing more
+    registered_projects.dart What is waiting for the admin, and the one way to decide it
+    registered_projects_screen.dart Registered projects: what is waiting for the admin, with the manager's details and a decision
+    reject_project_dialog.dart Refuses a registered project, saying why, which its manager sees
+    unit_row.dart           One unit on More info: its name and, for whoever manages the open project, a menu to rename it and a swipe that removes it
+  reports/
+    dashboard.dart          One item's total, or one partner's capital under the capital line
+    item_report.dart        One purchase or payment in an item's report
+    item_report_screen.dart Everything spent on one item: a table per subgroup, then each contract with its value, paid and remaining
+    periodic_report_screen.dart One periodic report as it was issued: what everyone may read, and its files for whoever may export them
+    periodic_reports.dart   A periodic report issued
+    quarter_picker.dart     A quarter chosen by its year and its number, each as chips, from the year firstYear to this one
+    report_files.dart       What can be done with a report's file on the phone
+    reports_screen.dart     A project's reports: the periodic report and those issued before, the VAT statement, an item's report, the contracts and the partners
+    vat_statement_screen.dart How a period is chosen
+    waiting_figures.dart    What waits for approval, as two figures: expenses, which lower the surplus once approved, and revenue with partners' money, which raises it
+    year_chips.dart         A year chosen as chips, from this year back to firstYear
+  settings/
+    default_project_sheet.dart The choice of the default project, from Settings: every approved project with a tick, the default one ticked
+    payment_method.dart     A way a project pays, such as شبكة, as the API answers it
+    payment_method_row.dart One payment method: its name, whether it is disabled and, for whoever keeps the settings, a menu of what can be done to it
+    payment_methods.dart    A project's payment methods, and the one way to change them
+    payment_methods_screen.dart A project's payment methods: whoever keeps its settings adds, renames, disables and deletes them; one an expense was paid with is only disabled
+    settings_screen.dart    Settings (الإعدادات): the way back to the project list, My account, the registered projects for the admin and, for the project it was opened from, More info for everyone in it, and its users, its categories and items, and its payment methods, each for whoever may change them
+  sharing/
+    attachable_entries.dart What in one item of a project can take a shared invoice, and the way to put it there
+    attachable_entry.dart   An expense entered without an invoice, which a shared file can go on
+    share_screen.dart       What opens when a picture or a PDF is shared to the app: put it on an expense entered without an invoice, or start a new expense with it
+  structure/
+    add_column_dialog.dart  Asks for a new column: its name, its type, which never changes after, the choices of a list, whether entry requires it, and whether it prints
+    add_item_dialog.dart    Asks for a new item's name and type, which is set once
+    apply_to_all_dialog.dart Asks whether a change to the default template reaches the items that already exist
+    categories.dart         A project's categories with their items and subgroups, and the one way to change them
+    categories_screen.dart  A project's categories and items: whoever shapes the structure adds, renames, drags and disables them
+    category.dart           What an item is for, as the API names it, each knowing its word
+    category_card.dart      One category of the list: its name, how many items it holds or that it is disabled, and a handle to drag it
+    change_item_type_dialog.dart Asks what an item is for now, starting from what it is
+    column_label.dart       What an entry form calls the built-in field key
+    column_row.dart         One column on the list: its name and what it is, a handle to drag it and a way to change it; a core column shows a lock, and any other is removed by a swipe
+    columns.dart            The columns of one item, or of a project's default template for one type of item, and the one way to change them
+    edit_column_dialog.dart Changes a column: its name, and unless it is core whether entry requires it and whether it prints
+    item_column.dart        What a column holds, as the API names it, each knowing its word
+    item_columns_screen.dart The fields an item asks for: this item's own, or the project's default template for its type, each added, renamed, dragged and deleted
+    item_picker.dart        The field that chooses an item, opening a sheet of what is on offer, by category, with every name in full
+    item_row.dart           One item under its category: its name and type, or that it is disabled, a handle to drag it, the way into its columns, and a menu of what can be done to it
+    item_tables.dart        What a table of an item's sheet prints, as the API names it
+    item_tables_screen.dart An item's tables, in the order its sheet prints them: its general table, each subgroup a person named, and each contract's payments, each with how many approved entries it holds
+    item_type_choice.dart   What an item is for: its side first, expenses or revenue, then one of that side's types, for the dialogs that add an item and change its type
+    offered_items.dart      What an entry of one type may choose from, by category
+  suppliers/
+    arabic_spelling.dart    The letters a person may write either way, as `ArabicSpelling` on the API treats them: what a search needs when it has no network to ask
+    quick_add_supplier_dialog.dart Asks for a missing supplier's name and VAT number, without leaving what is being entered
+    supplier.dart           Where a supplier stands, as the API names it
+    supplier_dialog.dart    Asks for a supplier's name, VAT number or that it has none, mobile and default item
+    supplier_picker.dart    Picks a supplier from a project's register: a sheet that searches by name or VAT number, so free text never names a supplier, and adds a missing one without leaving what is being entered
+    supplier_row.dart       One supplier: its name, what the register says about it and, for whoever keeps the settings, a menu of what can be done to it
+    supplier_search.dart    What an entry may pick from a project's register: what the API finds for what was typed
+    suppliers.dart          A project's supplier register, and the one way to change it
+    suppliers_screen.dart   A project's supplier register: everyone with access sees it, and whoever keeps the settings adds, changes and disables its suppliers
+    vat_number_field.dart   Asks for a supplier's VAT number, which may stay empty, and names the supplier already holding a number that was refused
+  ui/
+    api_list_body.dart      The body of a screen that shows an ApiList: why it could not load with a way to try again, loading, empty, or its items, which are read again when pulled down
+    api_object_body.dart    What shows something the API owns: why it could not load with a way to try again, or what builder draws from it
+    bottom_button.dart      A screen's main action: one full-width filled button at its bottom, the same on every screen
+    change_dialog.dart      A dialog that sends a change: it closes once saved, and a refusal stays in it with what was typed
+    confirm_dialog.dart     Asks before a change that deserves a second thought: what it applies to, what it means, and a red button to go ahead
+    entry_field.dart        One typed field of an entry's form, the same on every kind of entry: text, or a number on the phone's number keyboard, which has a minus sign when it isSigned
+    form_section.dart       One section of a long form: its children on a card, evenly spaced
+    labelled_chips.dart     A choice among a few, drawn as chips under what is being chosen
+    name_dialog.dart        Asks for one name, for adding or renaming anything in a project
+    part_keys.dart          The keys of the parts inside a keyed element: its label, icon, title, subtitle and the field it is drawn as
+    picker_field.dart       A field whose value is chosen elsewhere: it looks like a text field, shows what was chosen, and opens the choice when tapped
+    refresh_button.dart     The title bar's button that reads a screen's data again, for what changed elsewhere, such as an approval on another phone
+    refusal_snack_bar.dart  The key of the SnackBar saying the word wordKey: every message has its own key, made from what it says, so a test finds it by key
+    screen_title.dart       A screen's title in the app bar, with what it belongs to on a line beneath, so a long title on a narrow phone never cuts the name to a letter
+    swipe_to_remove.dart    The one way a row is removed: swiped from its end toward its start, which turns with the language, past 40% of its width, with no question
+    two_fields.dart         Two fields of a form, side by side and of equal width
+  users/
+    add_existing_user_dialog.dart Adds someone who already has a login to this project, by their exact username, so a manager never sees another project's people
+    edit_user_dialog.dart   Corrects a user's name and mobile
+    new_user_screen.dart    The new user form: their name, username, mobile and a temporary password they change at first sign-in
+    permission_tick.dart    One permission as a tick: its name and what it allows
+    reset_password_dialog.dart Sets a new temporary password for a user, typed by whoever manages them, who passes it on
+    user.dart               A person in a project, as the API answers them
+    user_permissions_screen.dart What one person may do in one project: a tick for each permission, saved at once
+    user_row.dart           One user on the list: their name, username, mobile and how many permissions they hold, a badge when disabled, and a menu of what can be done to them
+    users.dart              The people of one project, and the one way to change them
+    users_screen.dart       The people of one project, for its manager: one row per user, with a menu to edit, tick permissions, reset the password, and disable or enable
   words/
-    words.dart              Words: the words of the language in use, from the API
-    app_language.dart       AppLanguage: the language the user chose, kept on the phone
-    word_getters.g.dart     one typed getter per word key; generated, never edited
-    no_words_screen.dart    the word-free screen of a first start without a network
+    app_language.dart       The language the user chose, on the sign-in screen or in My account, kept on the phone; empty while the app follows the phone's language
+    language_switch.dart    The choice between Arabic and English, the same on the sign-in screen and in My account, with the line that says why it could not switch
+    no_words_screen.dart    Shown on a first start without a network, when the app has no words yet; it needs none, only an icon and a retry button
+    word_getters.g.dart     generated by tool/sync_translations.dart from the API's words; never edited by hand
+    words.dart              The words of the language in use, fetched from the API. The app's code names a word by its key; WordGetters gives one typed getter per key
 test/                       widget tests, mirroring lib/; app_harness.dart owns the fake API and storage
 patrol_test/                end-to-end tests on a real emulator, against the real API
 config/                     one file per environment, naming the API's address

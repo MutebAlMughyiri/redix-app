@@ -24,8 +24,7 @@ void main() {
     'surplus': surplus,
     'wasReconciled': wasReconciled,
     'reconciliationDifference': difference,
-    'pendingCount': pendingCount,
-    'pendingAmount': pendingCount * 100.0,
+    'waiting': waiting(expensesCount: pendingCount, expensesAmount: pendingCount * 100.0),
     'completionPercent': completion,
     'categories': [
       {
@@ -154,8 +153,8 @@ void main() {
       tester,
       (api) => api.dashboardAnswer = figures(
         partners: [
-          {'id': 'partner-1', 'name': 'متعب', 'isActive': true, 'isMine': true, 'balance': 3000, 'sharePercent': 75},
-          {'id': 'partner-2', 'name': 'نواف', 'isActive': true, 'isMine': false, 'balance': 1000, 'sharePercent': 25},
+          {'id': 'partner-1', 'name': 'متعب', 'isMine': true, 'balance': 3000, 'sharePercent': 75},
+          {'id': 'partner-2', 'name': 'نواف', 'isMine': false, 'balance': 1000, 'sharePercent': 25},
         ],
       ),
     );
@@ -210,6 +209,7 @@ void main() {
     await openHome(tester, (api) => api.dashboardAnswer = figures(completion: 40), permissions: field);
 
     expect(tester.widget<Text>(find.byKey(DashboardCard.completionKey)).data, 'en dashboard.completion: 40%');
+    expect(find.textContaining('dashboard.cost'), findsNothing, reason: 'the cost line left the dashboard on 7 Nov');
   });
 
   testWidgets('AC-30.1: an item report shows its total, a table per subgroup, and each contract with what remains', (tester) async {

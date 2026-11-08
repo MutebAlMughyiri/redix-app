@@ -1,6 +1,5 @@
 import '../api_object.dart';
 import '../auth/session.dart';
-import 'account.dart';
 
 /// One account against the books.
 class ReconciliationBalance {
@@ -8,7 +7,6 @@ class ReconciliationBalance {
   ReconciliationBalance.fromJson(Map<String, dynamic> json)
     : accountId = json['accountId'] as String,
       accountName = json['accountName'] as String,
-      type = AccountType.values.byName(json['type'] as String),
       booksBalance = (json['booksBalance'] as num).toDouble(),
       actualBalance = (json['actualBalance'] as num).toDouble();
 
@@ -17,9 +15,6 @@ class ReconciliationBalance {
 
   /// Its name.
   final String accountName;
-
-  /// What kind it is.
-  final AccountType type;
 
   /// What the books say it holds now.
   final double booksBalance;

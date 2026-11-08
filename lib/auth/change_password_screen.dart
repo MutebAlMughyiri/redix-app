@@ -81,7 +81,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final theme = Theme.of(context);
-    InputDecoration field(String label) => InputDecoration(labelText: label, border: const OutlineInputBorder());
+    InputDecoration field(String label) => InputDecoration(labelText: label);
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../auth/session.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
+import 'file_kind.dart';
 import 'invoice_capture.dart';
 import '../words/words.dart';
 
@@ -77,7 +78,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
             return Center(child: Text(words.approvalsFileFailed, key: AttachmentScreen.failedKey));
           }
           final bytes = file.requireData;
-          if (!widget.contentType.startsWith('image/')) {
+          if (FileKind.of(widget.contentType) != FileKind.picture) {
             return Center(
               child: FilledButton(key: AttachmentScreen.openFileKey, onPressed: () => widget.capture.shareFile(bytes, widget.fileName, widget.contentType), child: Text(words.approvalsOpenFile, key: AttachmentScreen.openFileKey.label)),
             );

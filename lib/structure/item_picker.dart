@@ -34,6 +34,7 @@ class ItemPicker extends StatelessWidget {
   static Key categoryKey(String id) => Key('itemPicker.category.$id');
 
   Future<void> _choose(BuildContext context) async {
+    items.loadOnOpen();
     final chosen = await showModalBottomSheet<Item>(
       context: context,
       isScrollControlled: true,

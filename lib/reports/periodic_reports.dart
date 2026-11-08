@@ -1,20 +1,18 @@
 import '../api_list.dart';
 import '../api_object.dart';
 import '../auth/session.dart';
+import 'waiting_figures.dart';
 
 /// A periodic report issued.
 class PeriodicReportRow {
   /// A row as the API answers it.
-  PeriodicReportRow.fromJson(Map<String, dynamic> json) : number = json['number'] as int, issuedAt = DateTime.parse(json['issuedAt'] as String), expenses = (json['expenses'] as num).toDouble();
+  PeriodicReportRow.fromJson(Map<String, dynamic> json) : number = json['number'] as int, issuedAt = DateTime.parse(json['issuedAt'] as String);
 
   /// Its number.
   final int number;
 
   /// When it was issued.
   final DateTime issuedAt;
-
-  /// Its expenses.
-  final double expenses;
 }
 
 /// A project's periodic reports, newest first (UC-053), and the way to issue the next.
@@ -29,22 +27,19 @@ class PeriodicReports extends ApiList<PeriodicReportRow> {
   Future<String> issue() => change('/projects/$projectId/periodic-reports', {});
 }
 
-/// What the next report takes: its number, and what waits for approval, which it shows as one line.
+/// What the next report takes: its number, and what waits for approval, which it shows as two lines.
 class NextReportFigures {
   /// The figures as the API answers them.
-  NextReportFigures.fromJson(Map<String, dynamic> json) : number = json['number'] as int, pendingCount = json['pendingCount'] as int, pendingAmount = (json['pendingAmount'] as num).toDouble();
+  NextReportFigures.fromJson(Map<String, dynamic> json) : number = json['number'] as int, waiting = WaitingFigures.fromJson(json['waiting'] as Map<String, dynamic>);
 
   /// Nothing yet.
-  NextReportFigures.none() : number = 1, pendingCount = 0, pendingAmount = 0;
+  NextReportFigures.none() : number = 1, waiting = const WaitingFigures.none();
 
   /// Its number.
   final int number;
 
-  /// How many entries wait.
-  final int pendingCount;
-
-  /// What they come to.
-  final double pendingAmount;
+  /// What waits for approval.
+  final WaitingFigures waiting;
 }
 
 /// What a project's next report takes.
@@ -102,6 +97,8 @@ class PeriodicReportFigures {
       reconciliationDifference = (json['reconciliationDifference'] as num).toDouble(),
       pendingCount = json['pendingCount'] as int,
       pendingAmount = (json['pendingAmount'] as num).toDouble(),
+      pendingRevenueCount = json['pendingRevenueCount'] as int,
+      pendingRevenueAmount = (json['pendingRevenueAmount'] as num).toDouble(),
       capitalTotal = (json['capitalTotal'] as num).toDouble(),
       partners = [for (final row in json['partners'] as List<dynamic>) ReportPartner.fromJson(row as Map<String, dynamic>)];
 
@@ -125,6 +122,8 @@ class PeriodicReportFigures {
       reconciliationDifference = 0,
       pendingCount = 0,
       pendingAmount = 0,
+      pendingRevenueCount = 0,
+      pendingRevenueAmount = 0,
       capitalTotal = 0,
       partners = const [];
 
@@ -176,11 +175,17 @@ class PeriodicReportFigures {
   /// The reconciliation difference.
   final double reconciliationDifference;
 
-  /// How many entries waited.
+  /// How many expenses waited.
   final int pendingCount;
 
   /// What they came to.
   final double pendingAmount;
+
+  /// How many revenue entries and partners' movements waited.
+  final int pendingRevenueCount;
+
+  /// What they would have added to revenue.
+  final double pendingRevenueAmount;
 
   /// All partners' capital.
   final double capitalTotal;

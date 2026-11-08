@@ -42,7 +42,7 @@ class _AddUnitDialogState extends State<AddUnitDialog> {
           key: ProjectInfoScreen.unitNameKey,
           controller: _name,
           autofocus: true,
-          decoration: InputDecoration(labelText: words.projectsUnitName, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.projectsUnitName),
         ),
       ],
     );

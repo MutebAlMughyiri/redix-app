@@ -38,7 +38,7 @@ class _AddExistingUserDialogState extends State<AddExistingUserDialog> {
           key: UsersScreen.existingUsernameKey,
           controller: _username,
           autocorrect: false,
-          decoration: InputDecoration(labelText: words.usersUsername, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.usersUsername),
         ),
       ],
     );

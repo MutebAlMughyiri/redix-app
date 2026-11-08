@@ -48,6 +48,9 @@ class Project {
   /// No project: what Settings holds when it is opened from the project list, where the signed-in user may do nothing to a project.
   Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.active, rejectionReason = '', description = '', units = const [], _permissions = const {};
 
+  /// True for no project.
+  bool get isNone => id.isEmpty;
+
   /// The longest description the API keeps (redix-api 93).
   static const descriptionMaxLength = 2000;
 
@@ -103,4 +106,7 @@ class Project {
 
   /// Whether the signed-in user may keep a picture or a file in the project now: an invoice, a receipt or a contract's document.
   bool get mayAttachFiles => !isFinished && may(Permission.attachFiles);
+
+  /// Whether the signed-in user may approve, reject or reverse entries now.
+  bool get mayApproveEntries => !isFinished && may(Permission.approveEntries);
 }

@@ -157,15 +157,22 @@ class _DashboardCardState extends State<DashboardCard> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 10,
       children: [
-        if (figures.pendingCount > 0 && project.may(Permission.approveEntries))
+        if (figures.waiting.count > 0 && project.may(Permission.approveEntries))
           Card.filled(
             key: DashboardCard.pendingKey.card,
             margin: EdgeInsets.zero,
             color: theme.colorScheme.tertiaryContainer,
             child: ListTile(
               key: DashboardCard.pendingKey,
-              title: Text(words.dashboardPending.replaceFirst('{0}', '${figures.pendingCount}'), key: DashboardCard.pendingKey.title),
-              subtitle: Text('${words.dashboardPendingHint} · ${formatMoney(figures.pendingAmount)}', key: DashboardCard.pendingKey.subtitle),
+              title: Text(words.dashboardPending.replaceFirst('{0}', '${figures.waiting.count}'), key: DashboardCard.pendingKey.title),
+              subtitle: Text(
+                [
+                  words.dashboardPendingHint,
+                  if (figures.waiting.expensesCount > 0) '${words.reportsPendingExpenses} (${figures.waiting.expensesCount}): ${formatMoney(figures.waiting.expensesAmount)}',
+                  if (figures.waiting.revenueCount > 0) '${words.reportsPendingRevenue} (${figures.waiting.revenueCount}): ${formatMoney(figures.waiting.revenueAmount)}',
+                ].join('\n'),
+                key: DashboardCard.pendingKey.subtitle,
+              ),
               trailing: Icon(Icons.chevron_right, key: DashboardCard.pendingKey.icon),
               onTap: widget.onApprovals,
             ),

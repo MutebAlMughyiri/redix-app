@@ -66,7 +66,7 @@ class _SupplierDialogState extends State<SupplierDialog> {
           key: SuppliersScreen.supplierNameKey,
           controller: _name,
           autofocus: _isNew,
-          decoration: InputDecoration(labelText: words.suppliersName, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.suppliersName),
         ),
         const SizedBox(height: 8),
         VatNumberField(controller: _vatNumber, holderName: _holderName),
@@ -75,7 +75,7 @@ class _SupplierDialogState extends State<SupplierDialog> {
           key: SuppliersScreen.mobileKey,
           controller: _mobile,
           keyboardType: TextInputType.phone,
-          decoration: InputDecoration(labelText: words.suppliersMobile, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.suppliersMobile),
         ),
         const SizedBox(height: 16),
         ItemPicker(

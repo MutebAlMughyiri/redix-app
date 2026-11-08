@@ -6,6 +6,6 @@ TextField entryField({required Key key, required TextEditingController controlle
   controller: controller,
   maxLines: maxLines,
   keyboardType: isNumber ? TextInputType.numberWithOptions(decimal: true, signed: isSigned) : null,
-  decoration: InputDecoration(labelText: label, border: const OutlineInputBorder(), errorText: errorText),
+  decoration: InputDecoration(labelText: label, errorText: errorText),
   onChanged: onChanged,
 );

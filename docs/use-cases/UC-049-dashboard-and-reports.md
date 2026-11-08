@@ -12,6 +12,7 @@ The home reads the figures again whenever it comes back into view, so an approva
 | --- | --- | --- |
 | AC-34.1: the home shows the surplus, revenue, expenses and the difference | `DashboardCard` | `AC-34.1: the home shows the surplus, revenue, expenses and the difference`, `before any reconciliation there is no difference to show` |
 | What waits opens the inbox, and coming back reads the figures again | `HomeScreen._open` | `what waits opens the inbox, and coming back reads the figures again` |
+| Findings row 147: the card counts everything waiting, and says waiting expenses and waiting revenue with capital apart, each only when something waits | `WaitingFigures`, `DashboardCard` | `dashboard_test.dart`: what waits opens the inbox |
 | Field sees the figures and no way to approve | `DashboardCard._figures` | `Field sees the figures and no way to approve` |
 | A category opens to its items, an item to its report | `DashboardCard._category` | `a category opens to its items, and an item opens its report` |
 | BR-06: the revenue side starts with رأس المال, which the app names, and its lines add up to the revenue | `DashboardFigures.revenueSide`, `CategoryTotal.capital` | `BR-06: the revenue side starts with capital, named by the app, and the lines add up to the revenue` |

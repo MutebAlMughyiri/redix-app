@@ -29,7 +29,7 @@ void main() {
 
   Future<void> takeExcel(WidgetTester tester, FakeApi api, String name) async {
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey(name, ReportFileKind.excel))));
-    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey(name, ReportFileKind.excel, FileHanding.save))));
+    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey(name, ReportFileKind.excel, FileHandling.save))));
   }
 
   group('UC-056', () {

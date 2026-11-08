@@ -152,7 +152,7 @@ void main() {
     final api = apiWithBiometrics();
     final prompt = FakePrompt();
     final session = await pumpRedix(tester, api, stored: {'session': keptBiometricSession}, prompt: prompt);
-    expect(session.accessToken, 'new-access');
+    expect(await const FlutterSecureStorage().read(key: 'session'), contains('new-access'));
 
     await act(tester, api, () => session.setDefaultProject('project-0'));
 
@@ -166,7 +166,7 @@ void main() {
     final session = await pumpRedix(tester, api, stored: {'session': keptBiometricSession}, preferences: keptWords('en'), prompt: FakePrompt());
 
     expect(session.isOpen, isTrue);
-    expect(session.accessToken, 'kept-access');
+    expect(await const FlutterSecureStorage().read(key: 'session'), contains('kept-access'));
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
 

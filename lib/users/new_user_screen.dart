@@ -91,7 +91,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     InputDecoration field(String label, {String helper = ''}) =>
-        InputDecoration(labelText: label, helperText: helper.isEmpty ? null : helper, border: const OutlineInputBorder());
+        InputDecoration(labelText: label, helperText: helper.isEmpty ? null : helper);
     return Scaffold(
       appBar: AppBar(title: Text(words.usersNew, key: ScreenTitle.titleKey)),
       body: SafeArea(

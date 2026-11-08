@@ -104,7 +104,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
       builder: (_) => ConfirmDialog(
         title: words.reportsIssueQuestion.replaceFirst('{0}', '${next.number}'),
         subject: widget.project.name,
-        explanation: words.reportsIssueExplain.replaceFirst('{1}', '${next.pendingCount}'),
+        explanation: words.reportsIssueExplain.replaceFirst('{1}', '${next.waiting.count}'),
         confirmLabel: words.reportsIssue.replaceFirst('{0}', '${next.number}'),
         onConfirm: () async {
           final refusal = await widget.periodicReports.issue();

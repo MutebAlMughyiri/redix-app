@@ -130,7 +130,6 @@ class _ShareScreenState extends State<ShareScreen> {
   var _qr = InvoiceQr.none();
   var _projectId = '';
   var _type = ItemType.purchases;
-  OfferedItems? _shownItems;
   var _item = Item.none();
   var _chosen = '';
   var _message = '';
@@ -274,15 +273,6 @@ class _ShareScreenState extends State<ShareScreen> {
     );
   }
 
-  OfferedItems _itemsOf(Project project) {
-    final items = widget.itemsOf(project.id, _type);
-    if (!identical(items, _shownItems)) {
-      _shownItems = items;
-      items.loadOnOpen();
-    }
-    return items;
-  }
-
   Widget _body() {
     final words = Words.of(context);
     final project = _project;
@@ -312,7 +302,7 @@ class _ShareScreenState extends State<ShareScreen> {
                 ChoiceChip(key: ShareScreen.contractorPaymentsKey, label: Text(words.approvalsContractorPayments, key: ShareScreen.contractorPaymentsKey.label), selected: _type == ItemType.contractorPayments, onSelected: (_) => _chooseType(ItemType.contractorPayments)),
               ],
             ),
-            ItemPicker(key: ShareScreen.itemKey, items: _itemsOf(project), label: words.expensesItem, itemName: _item.name, onChanged: _chooseItem),
+            ItemPicker(key: ShareScreen.itemKey, items: widget.itemsOf(project.id, _type), label: words.expensesItem, itemName: _item.name, onChanged: _chooseItem),
             if (_item.id.isEmpty) Text(words.shareChooseItem, key: ShareScreen.chooseItemKey) else _expenses(),
           ]),
         ],

@@ -149,7 +149,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text([if (partner.userName.isNotEmpty) partner.userName else words.partnersNoLogin, if (!line.isActive) words.capitalLeft].join(' · '), key: PartnersScreen.detailsKey(partner.id)),
+                Text(partner.userName.isNotEmpty ? partner.userName : words.partnersNoLogin, key: PartnersScreen.detailsKey(partner.id)),
                 Text('${formatShare(line.sharePercent)}%', key: PartnersScreen.shareKey(partner.id)),
               ],
             ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../attachments/attachment_screen.dart';
-import '../auth/permission.dart';
 import '../entries/reverse_sheet.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
@@ -94,9 +93,9 @@ class _MovementsScreenState extends State<MovementsScreen> {
                 key: MovementsScreen.receiptKey(movement.id),
                 icon: Icon(Icons.receipt_long_outlined, key: MovementsScreen.receiptKey(movement.id).icon),
                 tooltip: words.capitalReceiptAttached,
-                onPressed: () => context.push(AttachmentScreen.pathOf(project.id, movement.attachmentId), extra: movement.contentType),
+                onPressed: () => context.push(AttachmentScreen.pathOf(project.id, movement.attachmentId, fileName: movement.fileName), extra: movement.contentType),
               ),
-            if (!project.isFinished && !movement.isReversed && project.may(Permission.approveEntries))
+            if (project.mayApproveEntries && !movement.isReversed)
               IconButton(
                 key: MovementsScreen.reverseKey(movement.id),
                 icon: Icon(Icons.undo, key: MovementsScreen.reverseKey(movement.id).icon),

@@ -193,7 +193,7 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => AttachmentScreen(
           projectId: state.pathParameters['projectId'] ?? '',
           attachmentId: state.pathParameters['attachmentId'] ?? '',
-          fileName: state.uri.queryParameters['name'] ?? 'invoice.pdf',
+          fileName: state.uri.queryParameters['name'] ?? '',
           contentType: state.extra as String? ?? '',
           session: widget.session,
           capture: widget.capture,
@@ -467,7 +467,7 @@ class _RedixAppState extends State<RedixApp> {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: [for (final language in Words.languages) Locale(language)],
-        theme: ThemeData(colorSchemeSeed: const Color(0xFF0E6B68), fontFamily: 'IBMPlexSansArabic'),
+        theme: ThemeData(colorSchemeSeed: const Color(0xFF0E6B68), fontFamily: 'IBMPlexSansArabic', inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder())),
         builder: (context, child) => Words.of(context).isEmpty
             ? NoWordsScreen(onRetry: _reloadWords)
             : child ?? const SizedBox.shrink(),

@@ -172,7 +172,7 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
             minLines: 3,
             maxLines: 8,
             maxLength: Project.descriptionMaxLength,
-            decoration: InputDecoration(helperText: words.projectInfoDescriptionHint, border: const OutlineInputBorder()),
+            decoration: InputDecoration(helperText: words.projectInfoDescriptionHint),
           ),
           Align(
             alignment: AlignmentDirectional.centerEnd,

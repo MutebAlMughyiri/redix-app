@@ -174,7 +174,7 @@ class _DirectEntryFieldsState extends State<DirectEntryFields> {
       _attachmentId = widget.attachments.kept.id;
     }
     final body = <String, Object>{
-      'date': _date.toIso8601String().substring(0, 10),
+      'date': apiDate(_date),
       'amount': amount,
       'accountId': _accountId,
       'description': _description.text,

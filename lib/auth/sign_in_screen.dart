@@ -125,7 +125,7 @@ class _SignInScreenState extends State<SignInScreen> {
             TextField(
               key: SignInScreen.usernameKey,
               controller: _username,
-              decoration: InputDecoration(labelText: words.signInUsername, border: const OutlineInputBorder()),
+              decoration: InputDecoration(labelText: words.signInUsername),
               autofillHints: const [AutofillHints.username],
               textInputAction: TextInputAction.next,
             ),
@@ -133,7 +133,7 @@ class _SignInScreenState extends State<SignInScreen> {
             TextField(
               key: SignInScreen.passwordKey,
               controller: _password,
-              decoration: InputDecoration(labelText: words.signInPassword, border: const OutlineInputBorder()),
+              decoration: InputDecoration(labelText: words.signInPassword),
               autofillHints: const [AutofillHints.password],
               obscureText: true,
               onSubmitted: (_) => _signIn(),

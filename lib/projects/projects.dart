@@ -1,6 +1,7 @@
 import '../api_list.dart';
 import '../auth/session.dart';
 import 'project.dart';
+import '../format/date_format.dart';
 
 /// The projects (UC-006), and the one way to change them.
 class Projects extends ApiList<Project> {
@@ -14,7 +15,7 @@ class Projects extends ApiList<Project> {
   /// default template when that is empty. Returns an empty string once created, otherwise the word key of the refusal.
   Future<String> create(String name, DateTime startDate, List<String> units, String description, {String structureSourceId = ''}) => change('/projects', {
     'name': name,
-    'startDate': startDate.toIso8601String().substring(0, 10),
+    'startDate': apiDate(startDate),
     'units': units,
     'description': description,
     if (structureSourceId.isNotEmpty) 'structureSourceId': structureSourceId,
@@ -37,4 +38,7 @@ class Projects extends ApiList<Project> {
 
   /// Closes [project], which is read-only from then on. Returns an empty string once closed, otherwise the word key of the refusal.
   Future<String> close(Project project) => change('/projects/${project.id}/close', {});
+
+  /// The project [id] as last read; none when the list does not hold it (findings row 167).
+  Project byId(String id) => all.where((project) => project.id == id).firstOrNull ?? Project.none();
 }

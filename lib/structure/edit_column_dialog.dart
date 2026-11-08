@@ -60,7 +60,7 @@ class _EditColumnDialogState extends State<EditColumnDialog> {
           key: ItemColumnsScreen.columnNameKey,
           controller: _name,
           autofocus: true,
-          decoration: InputDecoration(labelText: words.columnsName, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.columnsName),
         ),
         SwitchListTile(
           key: ItemColumnsScreen.requiredKey,
@@ -83,7 +83,7 @@ class _EditColumnDialogState extends State<EditColumnDialog> {
             key: ItemColumnsScreen.newChoicesKey,
             controller: _newChoices,
             maxLines: 3,
-            decoration: InputDecoration(labelText: words.columnsNewChoices, border: const OutlineInputBorder()),
+            decoration: InputDecoration(labelText: words.columnsNewChoices),
           ),
         ],
       ],

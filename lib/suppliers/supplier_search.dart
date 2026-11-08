@@ -46,7 +46,7 @@ class SupplierSearch extends ApiList<Supplier> {
     if (kept.isEmpty) {
       return;
     }
-    final wanted = sameSpelling(westernDigits(_typed));
+    final wanted = searchable(_typed);
     final found = [for (final row in jsonDecode(kept) as List<dynamic>) Supplier.fromJson(row as Map<String, dynamic>)];
     show(found.where((supplier) => sameSpelling(supplier.name).contains(wanted) || supplier.vatNumber.contains(wanted)).toList());
   }

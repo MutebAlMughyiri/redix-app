@@ -44,7 +44,7 @@ class _RejectProjectDialogState extends State<RejectProjectDialog> {
           key: RegisteredProjectsScreen.reasonKey,
           controller: _reason,
           maxLines: 3,
-          decoration: InputDecoration(labelText: words.registeredReason, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.registeredReason),
         ),
       ],
     );

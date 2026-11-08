@@ -11,6 +11,7 @@ class CapitalMovement {
       accountName = json['accountName'] as String,
       attachmentId = json['attachmentId'] as String,
       contentType = json['contentType'] as String,
+      fileName = json['fileName'] as String,
       isReversed = json['isReversed'] as bool;
 
   /// The entry.
@@ -39,6 +40,9 @@ class CapitalMovement {
 
   /// What the receipt is; empty when none.
   final String contentType;
+
+  /// The receipt's name, which the phone shows once it is handed over; empty when none.
+  final String fileName;
 
   /// True when it was reversed, or is itself a reversal.
   final bool isReversed;

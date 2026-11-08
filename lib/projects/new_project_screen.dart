@@ -176,7 +176,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
             TextField(
               key: NewProjectScreen.nameKey,
               controller: _name,
-              decoration: InputDecoration(labelText: words.projectsName, border: const OutlineInputBorder()),
+              decoration: InputDecoration(labelText: words.projectsName),
             ),
             const SizedBox(height: 16),
             TextField(
@@ -185,7 +185,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               minLines: 2,
               maxLines: 6,
               maxLength: Project.descriptionMaxLength,
-              decoration: InputDecoration(labelText: words.projectsDescription, border: const OutlineInputBorder()),
+              decoration: InputDecoration(labelText: words.projectsDescription),
             ),
             const SizedBox(height: 16),
             InkWell(
@@ -194,7 +194,6 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               child: InputDecorator(
                 decoration: InputDecoration(
                   labelText: words.projectsStartDate,
-                  border: const OutlineInputBorder(),
                   suffixIcon: Icon(Icons.calendar_today_outlined, key: NewProjectScreen.startDateKey.icon),
                 ),
                 child: Text(formatDate(_startDate), key: NewProjectScreen.startDateKey.label),
@@ -223,7 +222,6 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               controller: _unitName,
               decoration: InputDecoration(
                 labelText: words.projectsUnitName,
-                border: const OutlineInputBorder(),
                 suffixIcon: ValueListenableBuilder(
                   valueListenable: _unitName,
                   builder: (context, name, _) => TextButton.icon(
@@ -241,7 +239,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                 key: NewProjectScreen.structureSourceKey,
                 initialValue: _structureSourceId,
                 isExpanded: true,
-                decoration: InputDecoration(labelText: words.projectsStructureSource, border: const OutlineInputBorder()),
+                decoration: InputDecoration(labelText: words.projectsStructureSource),
                 items: [
                   DropdownMenuItem(key: NewProjectScreen.structureSourceOptionKey(''), value: '', child: Text(words.projectsDefaultTemplate, key: NewProjectScreen.structureSourceOptionKey('').label)),
                   for (final project in widget.projects.all.where((project) => project.isApproved)) DropdownMenuItem(key: NewProjectScreen.structureSourceOptionKey(project.id), value: project.id, child: Text(project.name, key: NewProjectScreen.structureSourceOptionKey(project.id).label)),
@@ -256,28 +254,28 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               TextField(
                 key: NewProjectScreen.managerNameKey,
                 controller: _managerName,
-                decoration: InputDecoration(labelText: words.usersName, helperText: words.usersNameHint, border: const OutlineInputBorder()),
+                decoration: InputDecoration(labelText: words.usersName, helperText: words.usersNameHint),
               ),
               const SizedBox(height: 16),
               TextField(
                 key: NewProjectScreen.usernameKey,
                 controller: _username,
                 autocorrect: false,
-                decoration: InputDecoration(labelText: words.usersUsername, border: const OutlineInputBorder()),
+                decoration: InputDecoration(labelText: words.usersUsername),
               ),
               const SizedBox(height: 16),
               TextField(
                 key: NewProjectScreen.mobileKey,
                 controller: _mobile,
                 keyboardType: TextInputType.phone,
-                decoration: InputDecoration(labelText: words.usersMobile, border: const OutlineInputBorder()),
+                decoration: InputDecoration(labelText: words.usersMobile),
               ),
               const SizedBox(height: 16),
               TextField(
                 key: NewProjectScreen.passwordKey,
                 controller: _password,
                 obscureText: true,
-                decoration: InputDecoration(labelText: words.signInPassword, border: const OutlineInputBorder()),
+                decoration: InputDecoration(labelText: words.signInPassword),
               ),
             ],
             const SizedBox(height: 24),

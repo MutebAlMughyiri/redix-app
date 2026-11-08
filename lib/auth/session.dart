@@ -44,9 +44,6 @@ class Session extends ChangeNotifier {
   /// True from sign-in until the session ends.
   bool get isOpen => _refreshToken.isNotEmpty;
 
-  /// The token sent with each request to the API; renewed with the refresh token.
-  String get accessToken => _accessToken;
-
   /// True while the password is a temporary one that must be changed before anything else (UC-003).
   bool get mustChangePassword => _mustChangePassword;
 
@@ -63,14 +60,14 @@ class Session extends ChangeNotifier {
   bool get canUnlock => _usesBiometrics && !isOpen && _unlockAttempts < maxUnlockAttempts;
 
   /// Makes [projectId] the default project, which sign-in opens directly. Returns an empty string once made, otherwise the word key of the refusal.
-  Future<String> setDefaultProject(String projectId) => _changeDefault('/projects/$projectId/default', {});
+  Future<String> setDefaultProject(String projectId) => _changeDefault('/projects/$projectId/default');
 
   /// Clears the default project. Returns an empty string once made, otherwise the word key of the refusal.
-  Future<String> removeDefaultProject() => _changeDefault('/projects/default/remove', {});
+  Future<String> removeDefaultProject() => _changeDefault('/projects/default/remove');
 
-  Future<String> _changeDefault(String path, Map<String, Object> body) async {
+  Future<String> _changeDefault(String path) async {
     try {
-      final response = await post(path, body);
+      final response = await post(path, {});
       if (response.statusCode >= 300) {
         return refusalOf(answerOf(response), 'projects');
       }

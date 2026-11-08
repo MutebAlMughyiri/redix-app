@@ -78,7 +78,7 @@ class _QuickAddSupplierDialogState extends State<QuickAddSupplierDialog> {
           key: SuppliersScreen.supplierNameKey,
           controller: _name,
           autofocus: true,
-          decoration: InputDecoration(labelText: words.suppliersName, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.suppliersName),
         ),
         const SizedBox(height: 8),
         VatNumberField(controller: _vatNumber, holderName: _holder.name),

@@ -27,15 +27,13 @@ class ColumnValueField extends StatelessWidget {
   /// Opens a date picker from the date given, calling back with the date chosen.
   final void Function(DateTime current, ValueChanged<DateTime> onChosen) onChooseDate;
 
-  String _isoOf(DateTime date) => date.toIso8601String().substring(0, 10);
-
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final fieldKey = AddEntryScreen.columnKey(column.key);
     final label = column.isRequired ? '${column.name} *' : column.name;
     final errorText = error.isEmpty ? null : words.text(error);
-    final decoration = InputDecoration(labelText: label, border: const OutlineInputBorder(), errorText: errorText);
+    final decoration = InputDecoration(labelText: label, errorText: errorText);
     return switch (column.dataType) {
       ColumnDataType.list => DropdownButtonFormField<String>(
         key: fieldKey,
@@ -49,7 +47,7 @@ class ColumnValueField extends StatelessWidget {
         key: fieldKey,
         label: label,
         value: value.isEmpty ? '' : formatDate(DateTime.parse(value)),
-        onTap: () => onChooseDate(value.isEmpty ? DateTime.now() : DateTime.parse(value), (date) => onChanged(_isoOf(date))),
+        onTap: () => onChooseDate(value.isEmpty ? DateTime.now() : DateTime.parse(value), (date) => onChanged(apiDate(date))),
       ),
       ColumnDataType.number || ColumnDataType.amount => TextFormField(key: fieldKey, initialValue: value, keyboardType: const TextInputType.numberWithOptions(decimal: true), decoration: decoration, onChanged: onChanged),
       _ => TextFormField(key: fieldKey, initialValue: value, decoration: decoration, onChanged: onChanged),

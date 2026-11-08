@@ -22,7 +22,7 @@ class PickerField extends StatelessWidget {
     onTap: onTap,
     child: InputDecorator(
       isEmpty: value.isEmpty,
-      decoration: InputDecoration(labelText: label, border: const OutlineInputBorder(), suffixIcon: Icon(Icons.arrow_drop_down, key: key.icon)),
+      decoration: InputDecoration(labelText: label, suffixIcon: Icon(Icons.arrow_drop_down, key: key.icon)),
       child: Text(value, key: key.label),
     ),
   );

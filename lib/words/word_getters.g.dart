@@ -242,9 +242,6 @@ mixin WordGetters {
   /// The word `capital.account`.
   String get capitalAccount => text('capital.account');
 
-  /// The word `capital.active`.
-  String get capitalActive => text('capital.active');
-
   /// The word `capital.amount`.
   String get capitalAmount => text('capital.amount');
 
@@ -287,9 +284,6 @@ mixin WordGetters {
   /// The word `capital.invoiceAlreadyAttached`.
   String get capitalInvoiceAlreadyAttached => text('capital.invoiceAlreadyAttached');
 
-  /// The word `capital.left`.
-  String get capitalLeft => text('capital.left');
-
   /// The word `capital.loadFailed`.
   String get capitalLoadFailed => text('capital.loadFailed');
 
@@ -310,9 +304,6 @@ mixin WordGetters {
 
   /// The word `capital.partner`.
   String get capitalPartner => text('capital.partner');
-
-  /// The word `capital.partnerLeft`.
-  String get capitalPartnerLeft => text('capital.partnerLeft');
 
   /// The word `capital.pendingEntries`.
   String get capitalPendingEntries => text('capital.pendingEntries');
@@ -1820,8 +1811,11 @@ mixin WordGetters {
   /// The word `reports.pdf`.
   String get reportsPdf => text('reports.pdf');
 
-  /// The word `reports.pending`.
-  String get reportsPending => text('reports.pending');
+  /// The word `reports.pendingExpenses`.
+  String get reportsPendingExpenses => text('reports.pendingExpenses');
+
+  /// The word `reports.pendingRevenue`.
+  String get reportsPendingRevenue => text('reports.pendingRevenue');
 
   /// The word `reports.periodic`.
   String get reportsPeriodic => text('reports.periodic');
@@ -1883,17 +1877,8 @@ mixin WordGetters {
   /// The word `revenue.invalidNotes`.
   String get revenueInvalidNotes => text('revenue.invalidNotes');
 
-  /// The word `revenue.invalidPeriod`.
-  String get revenueInvalidPeriod => text('revenue.invalidPeriod');
-
-  /// The word `revenue.invalidVatNumber`.
-  String get revenueInvalidVatNumber => text('revenue.invalidVatNumber');
-
   /// The word `revenue.invoiceAlreadyAttached`.
   String get revenueInvoiceAlreadyAttached => text('revenue.invoiceAlreadyAttached');
-
-  /// The word `revenue.invoiceNumber`.
-  String get revenueInvoiceNumber => text('revenue.invoiceNumber');
 
   /// The word `revenue.loadFailed`.
   String get revenueLoadFailed => text('revenue.loadFailed');

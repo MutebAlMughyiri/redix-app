@@ -152,7 +152,7 @@ class _ContractDialogState extends State<ContractDialog> {
     key: key,
     controller: controller,
     keyboardType: const TextInputType.numberWithOptions(decimal: true),
-    decoration: InputDecoration(labelText: label, border: const OutlineInputBorder()),
+    decoration: InputDecoration(labelText: label),
   );
 
   @override
@@ -181,7 +181,7 @@ class _ContractDialogState extends State<ContractDialog> {
           key: ContractsScreen.notesKey,
           controller: _notes,
           maxLines: 3,
-          decoration: InputDecoration(labelText: words.contractsNotes, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.contractsNotes),
         ),
         ..._documents(words),
       ],

@@ -117,7 +117,9 @@ class _PeriodicReportScreenState extends State<PeriodicReportScreen> {
           _line(PeriodicReportScreen.surplusKey, words.reportsSurplus, report.surplus, isStrong: true),
           _line(PeriodicReportScreen.lineKey('surplus', 'withoutSales'), words.dashboardSurplusWithoutSales, report.surplusWithoutSales),
           _line(PeriodicReportScreen.lineKey('surplus', 'reconciliation'), words.reconciliationsDifference, report.reconciliationDifference),
-          if (report.pendingCount > 0) _line(PeriodicReportScreen.lineKey('surplus', 'pending'), '${words.reportsPending} (${report.pendingCount})', report.pendingAmount),
+          if (report.pendingCount > 0) _line(PeriodicReportScreen.lineKey('surplus', 'pendingExpenses'), '${words.reportsPendingExpenses} (${report.pendingCount})', report.pendingAmount),
+          if (report.pendingRevenueCount > 0)
+            _line(PeriodicReportScreen.lineKey('surplus', 'pendingRevenue'), '${words.reportsPendingRevenue} (${report.pendingRevenueCount})', report.pendingRevenueAmount),
         ]),
         _section('partners', words.reportsPartners, [
           for (final (number, partner) in report.partners.indexed) _line(PeriodicReportScreen.lineKey('partners', '$number'), '${partner.name} · ${formatShare(partner.sharePercent)}%', partner.balance),

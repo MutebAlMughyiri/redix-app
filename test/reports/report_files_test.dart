@@ -55,7 +55,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey('report-1', ReportFileKind.print))));
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey('report-1', ReportFileKind.excel))));
-    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('report-1', ReportFileKind.excel, FileHanding.share))));
+    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('report-1', ReportFileKind.excel, FileHandling.share))));
 
     expect(capture.printed, ['report-1.pdf']);
     expect(capture.sharedOut, [('report-1.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')]);
@@ -71,7 +71,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.periodicKey(1))));
 
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey('report-1', ReportFileKind.excel))));
-    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('report-1', ReportFileKind.excel, FileHanding.save))));
+    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('report-1', ReportFileKind.excel, FileHandling.save))));
 
     expect(capture.savedOut, [('report-1.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')]);
     expect(api.sentFileReads, ['/projects/project-0/periodic-reports/1/xlsx']);
@@ -100,7 +100,7 @@ void main() {
     final to = DateTime(start.year, start.month + 3, 0).toIso8601String().substring(0, 10);
 
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey('vat-$from-$to', ReportFileKind.excel))));
-    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('vat-$from-$to', ReportFileKind.excel, FileHanding.share))));
+    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('vat-$from-$to', ReportFileKind.excel, FileHandling.share))));
 
     expect(capture.sharedOut.single, ('vat-$from-$to.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
     expect(api.sentFileReads.single, '/projects/project-0/vat-statement/xlsx?from=$from&to=$to');
@@ -127,7 +127,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.itemKey('item-1'))));
 
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey('البلاط', ReportFileKind.pdf))));
-    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('البلاط', ReportFileKind.pdf, FileHanding.share))));
+    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('البلاط', ReportFileKind.pdf, FileHandling.share))));
 
     expect(find.byType(ItemReportScreen), findsOneWidget);
     expect(capture.sharedOut.single, ('البلاط.pdf', 'application/pdf'));
@@ -138,7 +138,7 @@ void main() {
     api.online = false;
 
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf))));
-    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('contracts', ReportFileKind.pdf, FileHanding.share))));
+    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('contracts', ReportFileKind.pdf, FileHandling.share))));
 
     expect(find.text('en reports.fileFailed'), findsOneWidget);
   });

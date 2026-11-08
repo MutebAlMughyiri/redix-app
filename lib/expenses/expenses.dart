@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../api.dart';
 import '../attachments/picked_file.dart';
 import '../entries/project_entries.dart';
+import '../entries/saved_entry.dart';
 import '../auth/session.dart';
 import '../offline/outbox.dart';
 
@@ -34,13 +35,13 @@ class Expenses {
   bool get wasKept => _wasKept;
 
   /// What the entry [id] holds, to change it; empty when it cannot be read.
-  Future<Map<String, dynamic>> read(String id) async {
+  Future<SavedEntry> read(String id) async {
     try {
       final response = await _session.get('/projects/$projectId/entries/$id');
-      return response.statusCode == 200 ? jsonOf(response) as Map<String, dynamic> : const {};
+      return response.statusCode == 200 ? SavedEntry.fromJson(jsonOf(response) as Map<String, dynamic>) : SavedEntry.none();
     } on Exception catch (error) {
       debugPrint('Entry not read: $error');
-      return const {};
+      return SavedEntry.none();
     }
   }
 

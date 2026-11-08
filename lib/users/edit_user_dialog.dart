@@ -43,14 +43,14 @@ class _EditUserDialogState extends State<EditUserDialog> {
         TextField(
           key: UsersScreen.editNameKey,
           controller: _name,
-          decoration: InputDecoration(labelText: words.usersName, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.usersName),
         ),
         const SizedBox(height: 16),
         TextField(
           key: UsersScreen.editMobileKey,
           controller: _mobile,
           keyboardType: TextInputType.phone,
-          decoration: InputDecoration(labelText: words.usersMobile, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.usersMobile),
         ),
       ],
     );

@@ -7,21 +7,17 @@ class PartnerCapital {
   PartnerCapital.fromJson(Map<String, dynamic> json)
     : id = json['id'] as String,
       name = json['name'] as String,
-      isActive = json['isActive'] as bool,
       balance = (json['balance'] as num).toDouble(),
       sharePercent = (json['sharePercent'] as num).toDouble();
 
   /// A partner with nothing yet.
-  PartnerCapital.none() : id = '', name = '', isActive = true, balance = 0, sharePercent = 0;
+  PartnerCapital.none() : id = '', name = '', balance = 0, sharePercent = 0;
 
   /// The partner.
   final String id;
 
   /// Their name.
   final String name;
-
-  /// False once they settled and withdrew.
-  final bool isActive;
 
   /// Their capital.
   final double balance;

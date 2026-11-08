@@ -2,6 +2,7 @@ import '../api_list.dart';
 import '../auth/session.dart';
 import '../expenses/invoice_qr.dart';
 import 'attachable_entry.dart';
+import '../format/date_format.dart';
 
 /// What in one item of a project can take a shared invoice (UC-039), and the way to put it there.
 class AttachableEntries extends ApiList<AttachableEntry> {
@@ -16,7 +17,7 @@ class AttachableEntries extends ApiList<AttachableEntry> {
     pointAt(
       Uri(
         path: '/projects/$projectId/entries/attachable',
-        queryParameters: {'itemId': itemId, 'vatNumber': qr.vatNumber, 'total': '${qr.total}', 'date': qr.issuedAt.toIso8601String().substring(0, 10)},
+        queryParameters: {'itemId': itemId, 'vatNumber': qr.vatNumber, 'total': '${qr.total}', 'date': apiDate(qr.issuedAt)},
       ).toString(),
     );
     return load();

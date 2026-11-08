@@ -120,7 +120,7 @@ class _SupplierPickerState extends State<SupplierPicker> {
                 key: SupplierPicker.searchKey,
                 controller: _typed,
                 onChanged: _search.find,
-                decoration: InputDecoration(prefixIcon: Icon(Icons.search, key: SupplierPicker.searchKey.icon), hintText: words.suppliersSearchHint, border: const OutlineInputBorder()),
+                decoration: InputDecoration(prefixIcon: Icon(Icons.search, key: SupplierPicker.searchKey.icon), hintText: words.suppliersSearchHint),
               ),
             ),
             ListenableBuilder(

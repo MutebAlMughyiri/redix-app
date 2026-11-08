@@ -13,6 +13,7 @@ import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'add_entry_screen.dart';
 import 'entry_filter.dart';
+import 'entry_kind.dart';
 import 'entry_row.dart';
 import 'entry_tile.dart';
 import 'project_entries.dart';
@@ -153,7 +154,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
     setState(_filter.clear);
   }
 
-  void _toggle(Set<String> chosen, String value, bool isOn) => setState(() => isOn ? chosen.add(value) : chosen.remove(value));
+  void _toggle<T>(Set<T> chosen, T value, bool isOn) => setState(() => isOn ? chosen.add(value) : chosen.remove(value));
 
   /// The search field, the filters, and how many entries they keep.
   Widget _filters(Words words) {
@@ -178,8 +179,8 @@ class _EntriesScreenState extends State<EntriesScreen> {
             children: [
               ChoiceChip(key: EntriesScreen.mineKey, label: Text(words.entriesMine, key: EntriesScreen.mineKey.label), selected: _filter.onlyMine, onSelected: (_) => setState(() => _filter.onlyMine = true)),
               ChoiceChip(key: EntriesScreen.allKey, label: Text(words.entriesAll, key: EntriesScreen.allKey.label), selected: !_filter.onlyMine, onSelected: (_) => setState(() => _filter.onlyMine = false)),
-              for (final MapEntry(key: kind, value: wordKey) in EntryFilter.kinds.entries)
-                FilterChip(key: EntriesScreen.kindKey(kind), label: Text(words.text(wordKey), key: EntriesScreen.kindKey(kind).label), selected: _filter.chosenKinds.contains(kind), onSelected: (isOn) => _toggle(_filter.chosenKinds, kind, isOn)),
+              for (final kind in EntryKind.values)
+                FilterChip(key: EntriesScreen.kindKey(kind.name), label: Text(words.text(kind.wordKey), key: EntriesScreen.kindKey(kind.name).label), selected: _filter.chosenKinds.contains(kind), onSelected: (isOn) => _toggle(_filter.chosenKinds, kind, isOn)),
               for (final status in EntryFilter.statuses)
                 FilterChip(key: EntriesScreen.statusFilterKey(status), label: Text(words.text(status), key: EntriesScreen.statusFilterKey(status).label), selected: _filter.chosenStatuses.contains(status), onSelected: (isOn) => _toggle(_filter.chosenStatuses, status, isOn)),
               FilterChip(
@@ -245,7 +246,7 @@ class _EntryActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    final mayReverse = !project.isFinished && entry.isApproved && !entry.isReversed && project.may(Permission.approveEntries);
+    final mayReverse = project.mayApproveEntries && entry.isApproved && !entry.isReversed;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Column(

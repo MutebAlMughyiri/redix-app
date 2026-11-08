@@ -23,7 +23,6 @@ class VatNumberField extends StatelessWidget {
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         labelText: words.suppliersVatNumber,
-        border: const OutlineInputBorder(),
         error: holderName.isEmpty ? null : Text('${words.suppliersHolder} $holderName', key: SuppliersScreen.holderKey),
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../format/number_format.dart';
 import '../suppliers/arabic_spelling.dart';
 import '../ui/api_list_body.dart';
 import '../ui/part_keys.dart';
@@ -105,8 +104,8 @@ class _TableSheetState extends State<_TableSheet> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: TextField(
                 key: TablePicker.searchKey,
-                onChanged: (text) => setState(() => _typed = sameSpelling(westernDigits(text.trim()))),
-                decoration: InputDecoration(prefixIcon: Icon(Icons.search, key: TablePicker.searchKey.icon), hintText: words.entriesTableSearchHint, border: const OutlineInputBorder()),
+                onChanged: (text) => setState(() => _typed = searchable(text)),
+                decoration: InputDecoration(prefixIcon: Icon(Icons.search, key: TablePicker.searchKey.icon), hintText: words.entriesTableSearchHint),
               ),
             ),
             ListenableBuilder(

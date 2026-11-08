@@ -50,7 +50,7 @@ class _PartnerDialogState extends State<PartnerDialog> {
           key: PartnersScreen.partnerNameKey,
           controller: _name,
           autofocus: _isNew,
-          decoration: InputDecoration(labelText: words.partnersName, border: const OutlineInputBorder()),
+          decoration: InputDecoration(labelText: words.partnersName),
         ),
         const SizedBox(height: 16),
         MemberPicker(

@@ -83,7 +83,7 @@ class _ReverseSheetState extends State<ReverseSheet> {
               key: ReverseSheet.reasonKey,
               controller: _reason,
               maxLines: 2,
-              decoration: InputDecoration(labelText: words.entriesReverseReason, border: const OutlineInputBorder()),
+              decoration: InputDecoration(labelText: words.entriesReverseReason),
             ),
             if (_message.isNotEmpty) Text(words.text(_message), key: ReverseSheet.messageKey, style: TextStyle(color: theme.colorScheme.error)),
             FilledButton(key: ReverseSheet.sendKey, onPressed: _saving ? null : _reverse, child: Text(words.entriesReverse, key: ReverseSheet.sendKey.label)),

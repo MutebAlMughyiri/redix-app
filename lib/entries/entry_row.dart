@@ -2,14 +2,16 @@ import '../auth/permission.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../suppliers/arabic_spelling.dart';
+import 'entry_kind.dart';
+import 'entry_status.dart';
 
 /// An entry on a list (UC-037).
 class EntryRow {
   /// An entry as the API answers it.
   EntryRow.fromJson(Map<String, dynamic> json)
     : id = json['id'] as String,
-      kind = json['kind'] as String,
-      status = json['status'] as String,
+      kind = EntryKind.values.byName(json['kind'] as String),
+      status = EntryStatus.values.byName(json['status'] as String),
       rejectionReason = json['rejectionReason'] as String,
       date = DateTime.parse(json['entryDate'] as String),
       amount = (json['amount'] as num).toDouble(),
@@ -21,23 +23,14 @@ class EntryRow {
       isReversed = json['isReversed'] as bool,
       partnerName = json['partnerName'] as String;
 
-  /// What an entry is, as the API names it, and the word key naming each: the one owner the filter, the entries list and Approvals read (Muteb, 8 Nov 2026).
-  static const kindWords = {
-    'purchase': 'entries.purchases',
-    'contractorPayment': 'entries.contractorPayments',
-    'revenue': 'categories.tableRevenue',
-    'capitalIn': 'capital.contribution',
-    'capitalOut': 'capital.withdrawal',
-  };
-
   /// The entry's id.
   final String id;
 
-  /// `purchase`, `contractorPayment`, `revenue`, `capitalIn` or `capitalOut`.
-  final String kind;
+  /// What it is.
+  final EntryKind kind;
 
-  /// `draft`, `pendingApproval`, `approved` or `rejected`.
-  final String status;
+  /// Where it stands.
+  final EntryStatus status;
 
   /// Why it was rejected, while it stands rejected; empty otherwise.
   final String rejectionReason;
@@ -72,14 +65,11 @@ class EntryRow {
   /// What names it on a list: a partner's money's partner, otherwise its item.
   String get title => partnerName.isEmpty ? itemName : partnerName;
 
-  /// True for a purchase or a contractor payment, which Add entry opens to change; revenue and a partner's money are only sent, deleted or reversed (redix-api #103).
-  bool get isExpense => kind == 'purchase' || kind == 'contractorPayment';
-
-  /// The word key of what it is.
-  String get kindWordKey => kindWords[kind] ?? '';
+  /// True for a purchase or a contractor payment, which Add entry opens to change.
+  bool get isExpense => kind.isExpense;
 
   /// True while it is not sent yet.
-  bool get isDraft => status == 'draft';
+  bool get isDraft => status == EntryStatus.draft;
 
   /// Whether [permission] lets the signed-in user act on this entry in [project] now: it is not approved, and it is theirs and not waiting, or they handle others' entries.
   /// The one answer for the entry's sheet and its swipe (redix-api #102).
@@ -87,19 +77,16 @@ class EntryRow {
       !project.isFinished && !isApproved && project.may(permission) && (isMine ? !isPending || project.may(Permission.manageAnyEntry) : project.may(Permission.manageAnyEntry));
 
   /// True while it waits for a decision.
-  bool get isPending => status == 'pendingApproval';
+  bool get isPending => status == EntryStatus.pendingApproval;
 
   /// True once approved.
-  bool get isApproved => status == 'approved';
+  bool get isApproved => status == EntryStatus.approved;
 
   /// True when it was rejected.
-  bool get isRejected => status == 'rejected';
-
-  /// True for a contractor's payment.
-  bool get isContractorPayment => kind == 'contractorPayment';
+  bool get isRejected => status == EntryStatus.rejected;
 
   /// The word key of where it stands.
-  String get statusWordKey => isReversed ? 'entries.reversed' : 'entries.$status';
+  String get statusWordKey => isReversed ? 'entries.reversed' : status.wordKey;
 
   /// True when a row says where it stands: an approved entry says nothing, and a reversed one says so (Muteb, 7 Nov 2026).
   bool get showsStatus => statusWordKey != 'entries.approved';

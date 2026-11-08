@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'direct_entry_fields.dart';
@@ -355,41 +354,32 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   /// Fills the form from the entry being changed (UC-033), in its table: a payment's contract, a purchase's item and subgroup. A credit note's total shows as typed, without its sign.
   Future<void> _openEntry() async {
-    final held = await widget.expenses.read(widget.editingId);
+    final saved = await widget.expenses.read(widget.editingId);
     await Future.wait([widget.tables.load(), widget.contracts.load(), widget.accounts.load(), widget.suppliers.load()]);
-    if (!mounted || held.isEmpty) {
+    if (!mounted || saved.isNone) {
       return;
     }
-    final entry = held['entry'] as Map<String, dynamic>;
-    final expense = held['expense'] as Map<String, dynamic>;
-    final purchase = held['purchase'] as Map<String, dynamic>;
-    final payment = held['contractorPayment'] as Map<String, dynamic>;
-    final files = held['attachments'] as List<dynamic>;
-    final links = held['links'] as List<dynamic>;
-    final creditNoteOf = links.cast<Map<String, dynamic>>().where((link) => link['type'] == 'creditNoteOf').map((link) => link['linkedEntryId'] as String);
-    final isPayment = entry['kind'] == 'contractorPayment';
-    final table = widget.tables.tableOf(expense['itemId'] as String, (isPayment ? payment['contractId'] : expense['subgroupId']) as String);
-    final total = (entry['amount'] as num).toDouble();
+    final table = widget.tables.tableOf(saved.itemId, saved.tableId);
     setState(() {
-      _supplier = widget.suppliers.all.where((supplier) => supplier.id == purchase['supplierId']).firstOrNull ?? Supplier.none();
-      _product.text = purchase['product'] as String;
-      if ((purchase['unitPrice'] as num) != 0) {
-        _unitPrice.text = formatPlain((purchase['unitPrice'] as num).toDouble());
-        _quantity.text = formatPlain((purchase['quantity'] as num).toDouble());
+      _supplier = widget.suppliers.all.where((supplier) => supplier.id == saved.supplierId).firstOrNull ?? Supplier.none();
+      _product.text = saved.product;
+      if (saved.unitPrice != 0) {
+        _unitPrice.text = formatPlain(saved.unitPrice);
+        _quantity.text = formatPlain(saved.quantity);
       }
-      _isOutside = payment['isOutsideContract'] as bool;
-      _notes.text = entry['notes'] as String;
+      _isOutside = saved.isOutsideContract;
+      _notes.text = saved.notes;
       _payment
-        ..accountId = entry['accountId'] as String
-        ..paymentMethodId = expense['paymentMethodId'] as String;
-      _date = DateTime.parse(entry['entryDate'] as String);
-      _isCreditNote = creditNoteOf.isNotEmpty;
-      _keptOriginalId = creditNoteOf.firstOrNull ?? '';
-      _amount.text = formatPlain(_isCreditNote ? total.abs() : total);
-      if (files.isNotEmpty) {
-        _attachmentId = (files.first as Map<String, dynamic>)['attachmentId'] as String;
+        ..accountId = saved.accountId
+        ..paymentMethodId = saved.paymentMethodId;
+      _date = saved.date;
+      _isCreditNote = saved.isCreditNote;
+      _keptOriginalId = saved.originalEntryId;
+      _amount.text = formatPlain(saved.isCreditNote ? saved.amount.abs() : saved.amount);
+      if (saved.attachmentId.isNotEmpty) {
+        _attachmentId = saved.attachmentId;
       }
-      _customValues.addAll((jsonDecode(expense['customValues'] as String) as Map<String, dynamic>).map((key, value) => MapEntry(key, '$value')));
+      _customValues.addAll(saved.customValues);
     });
     if (!table.isNone) {
       final keptValues = Map.of(_customValues);
@@ -524,8 +514,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     widget.paymentMethods.load();
   }
 
-  String _isoOf(DateTime date) => date.toIso8601String().substring(0, 10);
-
   double get _typedAmount {
     final number = parseNumber(_amount.text);
     return number.isNaN ? 0 : number;
@@ -549,7 +537,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     final accountId = _payment.chosenAccountIn(widget.accounts.all);
     return {
       'id': _entryId,
-      'paymentDate': _isoOf(_date),
+      'paymentDate': apiDate(_date),
       if (accountId.isNotEmpty) 'accountId': accountId,
       if (_payment.paymentMethodId.isNotEmpty) 'paymentMethodId': _payment.paymentMethodId,
       if (_attachmentId.isNotEmpty) 'attachmentId': _attachmentId,

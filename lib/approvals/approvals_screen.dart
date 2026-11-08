@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../attachments/attachment_screen.dart';
-import '../auth/permission.dart';
+import '../entries/entry_kind.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
@@ -117,8 +117,8 @@ enum _Filter {
 
   bool keeps(PendingApproval entry) => switch (this) {
     all => true,
-    purchases => entry.isPurchase,
-    contractorPayments => entry.isContractorPayment,
+    purchases => entry.kind == EntryKind.purchase,
+    contractorPayments => entry.kind == EntryKind.contractorPayment,
   };
 }
 
@@ -161,7 +161,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
   }
 
   /// Whether the user may decide here now: approve or reject.
-  bool get _mayDecide => !widget.project.isFinished && widget.project.may(Permission.approveEntries);
+  bool get _mayDecide => widget.project.mayApproveEntries;
 
   Widget _details(BuildContext context, PendingApproval entry) {
     final words = Words.of(context);
@@ -254,7 +254,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
                                 if (entry.hasFile)
                                   TextButton(
                                     key: ApprovalsScreen.fileKey(entry.id),
-                                    onPressed: () => context.push(AttachmentScreen.pathOf(widget.project.id, entry.attachmentId), extra: entry.contentType),
+                                    onPressed: () => context.push(AttachmentScreen.pathOf(widget.project.id, entry.attachmentId, fileName: entry.fileName), extra: entry.contentType),
                                     child: Text(words.approvalsOpenFile, key: ApprovalsScreen.fileKey(entry.id).label),
                                   ),
                                 if (mayDecide) ...[

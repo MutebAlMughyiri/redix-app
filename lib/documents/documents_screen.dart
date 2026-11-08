@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../attachments/attachment_screen.dart';
+import '../attachments/file_kind.dart';
 import '../attachments/invoice_capture.dart';
 import '../attachments/picked_file.dart';
 import '../format/date_format.dart';
@@ -83,12 +84,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   Future<void> _download(Document document) async {
     final words = Words.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final said = await widget.files.handFile(AttachmentScreen.pathOf(widget.project.id, document.attachmentId), document.fileName, document.contentType, FileHanding.save);
+    final said = await widget.files.handFile(AttachmentScreen.pathOf(widget.project.id, document.attachmentId), document.fileName, document.contentType, FileHandling.save);
     showMessage(messenger, words, said);
   }
-
-  IconData _iconOf(String contentType) =>
-      contentType == 'application/pdf' ? Icons.picture_as_pdf_outlined : (contentType.startsWith('image/') ? Icons.image_outlined : Icons.description_outlined);
 
   Widget _tile(Document document, bool startsItsGroup, Words words) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -106,7 +104,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         key: DocumentsScreen.documentKey(document.id).card,
         child: ListTile(
           key: DocumentsScreen.documentKey(document.id),
-          leading: Icon(_iconOf(document.contentType), key: DocumentsScreen.documentKey(document.id).icon),
+          leading: Icon(FileKind.of(document.contentType).icon, key: DocumentsScreen.documentKey(document.id).icon),
           title: Text(document.name, key: DocumentsScreen.documentKey(document.id).title),
           subtitle: Text('${document.fileName} · ${formatDate(document.uploadedAt)}', key: DocumentsScreen.documentKey(document.id).subtitle),
           trailing: IconButton(
@@ -211,7 +209,7 @@ class _DocumentDialogState extends State<_DocumentDialog> {
             key: DocumentsScreen.groupKey,
             controller: controller,
             focusNode: focusNode,
-            decoration: InputDecoration(labelText: words.documentsGroup, helperText: words.documentsGroupHint, helperMaxLines: 2, border: const OutlineInputBorder()),
+            decoration: InputDecoration(labelText: words.documentsGroup, helperText: words.documentsGroupHint, helperMaxLines: 2),
             onChanged: (typed) => _group = typed,
           ),
         ),

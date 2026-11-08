@@ -61,12 +61,12 @@ void main() {
 
   testWidgets('the right password opens home and keeps the session in secure storage', (tester) async {
     final api = FakeApi();
-    final session = await pumpRedix(tester, api);
+    await pumpRedix(tester, api);
 
     await signIn(tester, api);
 
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
-    expect(session.accessToken, 'new-access');
+    expect(await const FlutterSecureStorage().read(key: 'session'), contains('new-access'));
     expect(await const FlutterSecureStorage().read(key: 'session'), contains('new-refresh'));
   });
 

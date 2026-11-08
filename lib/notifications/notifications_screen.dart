@@ -47,12 +47,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   void _open(NotificationRow row) {
     unawaited(widget.notifications.markRead(row));
-    final project = widget.projects.all.where((project) => project.id == row.projectId).toList();
-    if (row.isAboutProject || project.isEmpty) {
+    final project = widget.projects.byId(row.projectId);
+    if (row.isAboutProject || project.isNone) {
       context.go(ProjectsScreen.path);
       return;
     }
-    context.push(row.asksForDecision ? ApprovalsScreen.pathOf(row.projectId) : EntriesScreen.pathOfEntry(row.projectId, row.entryId), extra: project.single);
+    context.push(row.asksForDecision ? ApprovalsScreen.pathOf(row.projectId) : EntriesScreen.pathOfEntry(row.projectId, row.entryId), extra: project);
   }
 
   @override
