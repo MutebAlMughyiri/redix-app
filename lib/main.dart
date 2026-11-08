@@ -22,7 +22,6 @@ import 'auth/sign_in_screen.dart';
 import 'contracts/contracts.dart';
 import 'contracts/contracts_screen.dart';
 import 'expenses/creditable_invoices.dart';
-import 'expenses/expenses.dart';
 import 'home/home_screen.dart';
 import 'partners/capital.dart';
 import 'partners/capital_movements.dart';
@@ -32,6 +31,7 @@ import 'partners/partners_screen.dart';
 import 'approvals/approvals.dart';
 import 'approvals/approvals_screen.dart';
 import 'attachments/attachment_screen.dart';
+import 'entries/entry_recording.dart';
 import 'entries/add_entry_screen.dart';
 import 'entries/entries_screen.dart';
 import 'entries/entry_tables.dart';
@@ -142,7 +142,7 @@ class _RedixAppState extends State<RedixApp> {
   final _projectContracts = <String, Contracts>{};
   final _projectEntryTables = <String, EntryTables>{};
   final _projectAttachments = <String, Attachments>{};
-  final _projectExpenses = <String, Expenses>{};
+  final _projectRecordings = <String, EntryRecording>{};
   final _projectCreditableInvoices = <String, CreditableInvoices>{};
   final _projectOfferedAccounts = <String, OfferedAccounts>{};
   final _projectAttachable = <String, AttachableEntries>{};
@@ -376,7 +376,7 @@ class _RedixAppState extends State<RedixApp> {
 
   Attachments _attachmentsOf(String projectId) => _projectAttachments.putIfAbsent(projectId, () => Attachments(widget.session, projectId));
 
-  Expenses _expensesOf(String projectId) => _projectExpenses.putIfAbsent(projectId, () => Expenses(widget.session, projectId, _outbox, _entriesOf(projectId)));
+  EntryRecording _recordingOf(String projectId) => _projectRecordings.putIfAbsent(projectId, () => EntryRecording(widget.session, projectId, _outbox, _entriesOf(projectId)));
 
   ProjectEntries _entriesOf(String projectId) => _projectEntries.putIfAbsent(projectId, () => ProjectEntries(widget.session, projectId));
 
@@ -389,7 +389,7 @@ class _RedixAppState extends State<RedixApp> {
     editingId: query['entry'] ?? '',
     rejectionReason: query['reason'] ?? '',
     project: project,
-    expenses: _expensesOf(projectId),
+    recording: _recordingOf(projectId),
     tables: _projectEntryTables.putIfAbsent(projectId, () => EntryTables(widget.session, projectId)),
     contracts: _contractsOf(projectId),
     accounts: _offeredAccountsOf(projectId),
@@ -400,7 +400,6 @@ class _RedixAppState extends State<RedixApp> {
     attachments: _attachmentsOf(projectId),
     capture: widget.capture,
     entries: _entriesOf(projectId),
-    capital: _capitalOf(projectId),
     projectAccounts: _accountsOf(projectId),
   );
 

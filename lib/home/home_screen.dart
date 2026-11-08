@@ -211,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
               return IconButton(
                 key: HomeScreen.settingsKey(widget.projectId),
                 tooltip: words.settingsTitle,
-                icon: Icon(Icons.precision_manufacturing_outlined, key: HomeScreen.settingsKey(widget.projectId).icon),
+                icon: Icon(Icons.settings_outlined, key: HomeScreen.settingsKey(widget.projectId).icon),
                 onPressed: project.isNone ? null : () => _openSettings(project),
               );
             },

@@ -18,13 +18,14 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
   }
 
-  testWidgets('Muteb, 8 Nov 2026: the home opens Settings from an icon in its top bar, beside Refresh, and the project card has no Settings button', (tester) async {
+  testWidgets('Muteb, 8 and 9 Nov 2026: the home opens Settings from a gear in its top bar, beside Refresh, colored by the theme, and the project card has no Settings button', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
 
     final icon = find.descendant(of: find.byType(AppBar), matching: find.byKey(HomeScreen.settingsKey('project-0')));
     expect(icon, findsOneWidget);
-    expect(tester.widget<Icon>(find.byKey(HomeScreen.settingsKey('project-0').icon)).icon, Icons.precision_manufacturing_outlined);
+    final gear = tester.widget<Icon>(find.byKey(HomeScreen.settingsKey('project-0').icon));
+    expect((gear.icon, gear.color), (Icons.settings_outlined, null), reason: 'a color of its own would not follow a light or a dark theme');
     expect(find.byKey(HomeScreen.settingsKey('project-0').label), findsNothing);
 
     await act(tester, api, () => tester.tap(icon));

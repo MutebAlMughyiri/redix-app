@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../auth/permission.dart';
 import '../format/date_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
@@ -264,7 +263,7 @@ class _EntryActions extends StatelessWidget {
         spacing: 8,
         children: [
           EntryTile(entry: entry, onTap: () {}),
-          if (entry.isExpense && entry.allows(project, Permission.recordEntries)) ...[
+          if (entry.allows(project, entry.kind.recordedWith)) ...[
             FilledButton(
               key: EntriesScreen.editKey,
               onPressed: () {

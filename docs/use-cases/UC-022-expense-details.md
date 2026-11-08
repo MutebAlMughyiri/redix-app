@@ -44,7 +44,7 @@ A purchase is a total on one date, with an optional file (redix-api #96, D3, D10
 | `GET /projects/{id}/items/{itemId}/columns` | Choosing a table of another item |
 | `GET /projects/{id}/suppliers/search`, `POST /projects/{id}/suppliers` | Choosing the supplier |
 | `POST /projects/{id}/attachments` | The first save with a file |
-| `POST /projects/{id}/expenses` or `.../contractor-payments` | Saving or sending, as the table says (`EntryTable.route`) |
+| `POST /projects/{id}/entries`, or `.../entries/{entryId}` for a change | Saving or sending, whatever the table (redix-api #110) |
 
 ## Rules
 

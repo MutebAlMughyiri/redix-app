@@ -25,7 +25,7 @@ On a contract's card: `ContractsScreen.pendingKey(id)`.
 
 ## API calls
 
-`POST /projects/{id}/contractor-payments`, through `Expenses.record` with the table's route. `GET /projects/{id}/contracts` gives the figures, and the columns of the contract's item are read once it is chosen.
+`POST /projects/{id}/entries`, through `EntryRecording.record`, the contract being the table (redix-api #110). `GET /projects/{id}/contracts` gives the figures, and the columns of the contract's item are read once it is chosen.
 
 ## Rules
 

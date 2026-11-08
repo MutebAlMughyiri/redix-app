@@ -60,7 +60,7 @@ void main() {
   });
 
   testWidgets('AC-07.1: a payment of 5,000 on 4,000 remaining shows an overrun alert and (1,000), and is still saved', (tester) async {
-    final opened = await openPayment(tester, arrange: (api) => api.expenseAnswer = (status: 201, body: const {'isOverrun': true}));
+    final opened = await openPayment(tester, arrange: (api) => api.entryAnswer = (status: 201, body: const {'isOverrun': true}));
     await pickContract(tester, opened.api, opened.running);
     await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
 
@@ -71,7 +71,7 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(opened.api.sentContractorPayments.single['amount'], 5000);
+    expect(opened.api.sentEntries.single['amount'], 5000);
     expect(find.text('en contractorPayments.savedOverrun'), findsOneWidget);
   });
 
@@ -108,7 +108,7 @@ void main() {
     expect(shown(tester, AddEntryScreen.remainingKey), '4,000.00');
     expect(find.byKey(AddEntryScreen.overrunKey), findsNothing);
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
-    expect(opened.api.sentContractorPayments.single['isOutsideContract'], isTrue);
+    expect(opened.api.sentEntries.single['isOutsideContract'], isTrue);
   });
 
   testWidgets('AC-14.1, D14: a deduction is a negative amount, which raises what remains and says why in its notes', (tester) async {
@@ -121,13 +121,13 @@ void main() {
     expect(tester.widget<TextField>(find.byKey(AddEntryScreen.amountKey)).keyboardType, const TextInputType.numberWithOptions(decimal: true, signed: true));
 
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
-    expect(opened.api.sentContractorPayments, isEmpty);
+    expect(opened.api.sentEntries, isEmpty);
     expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.deductionNeedsNotes');
 
     await type(tester, AddEntryScreen.notesKey, 'خصم من المبلط');
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
-    final sent = opened.api.sentContractorPayments.single;
+    final sent = opened.api.sentEntries.single;
     expect(sent['amount'], -136);
     expect(sent['notes'], 'خصم من المبلط');
     expect(sent.containsKey('attachmentId'), isFalse);
@@ -140,7 +140,7 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
-    final sent = opened.api.sentContractorPayments.single;
+    final sent = opened.api.sentEntries.single;
     expect((sent.containsKey('attachmentId'), sent['submit']), (false, true));
   });
 
@@ -154,7 +154,7 @@ void main() {
     expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
-    expect(opened.api.sentContractorPayments.single['attachmentId'], startsWith('attachment-'));
+    expect(opened.api.sentEntries.single['attachmentId'], startsWith('attachment-'));
   });
 
   testWidgets('a draft sends what is chosen, and the date as the payment date', (tester) async {
@@ -166,13 +166,13 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    final sent = opened.api.sentContractorPayments.single;
-    expect(sent['contractId'], opened.running);
+    final sent = opened.api.sentEntries.single;
+    expect(sent['tableId'], opened.running);
     expect(sent['amount'], 3000);
     expect(sent['paymentMethodId'], opened.method);
     expect(sent['accountId'], isNotNull);
     expect(sent['notes'], 'دفعة الدور الأرضي');
-    expect(sent['paymentDate'], DateTime.now().toIso8601String().substring(0, 10));
+    expect(sent['date'], DateTime.now().toIso8601String().substring(0, 10));
     expect(sent['submit'], isFalse);
     expect(sent.containsKey('invoiceNumber'), isFalse);
   });
@@ -193,7 +193,7 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(opened.api.sentContractorPayments, isEmpty);
+    expect(opened.api.sentEntries, isEmpty);
     expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.invalidAmount');
   });
 
@@ -201,7 +201,7 @@ void main() {
     final opened = await openPayment(tester, arrange: (api) {
       final contract = api.addContract('project-0', 'سباك', value: 500, itemId: 'item-9');
       api.addColumn('/projects/project-0/items/item-9/columns', 'custom.stage', isCustom: true, isRequired: true);
-      api.expenseAnswer = (status: 400, body: const {'code': 'requiredColumnMissing', 'columnKey': 'custom.stage'});
+      api.entryAnswer = (status: 400, body: const {'code': 'requiredColumnMissing', 'columnKey': 'custom.stage'});
       contract['supplierName'] = 'سباك';
     });
     final plumber = opened.api.contracts['project-0']!.last['id']! as String;
@@ -232,7 +232,7 @@ void main() {
     final opened = await openPayment(
       tester,
       arrange: (api) {
-        api.expenseAnswer = (status: 201, body: const {'isOverrun': false});
+        api.entryAnswer = (status: 201, body: const {'isOverrun': false});
         final item = api.addItem(api.addCategory('project-0', 'العظم'), 'بند الحديد', subgroups: ['الدور الأرضي']);
         contractId = api.addContract('project-0', 'مقاول الحديد', value: 1000, itemId: item['id']! as String)['id']! as String;
       },
@@ -243,11 +243,10 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    final sent = opened.api.sentContractorPayments.single;
-    expect(sent['contractId'], contractId);
-    for (final gone in ['itemId', 'subgroupId', 'supplierId', 'product', 'isCreditNote']) {
+    final sent = opened.api.sentEntries.single;
+    expect(sent['tableId'], contractId);
+    for (final gone in ['supplierId', 'product', 'isCreditNote', 'isWithdrawal']) {
       expect(sent.containsKey(gone), isFalse, reason: gone);
     }
-    expect(opened.api.sentExpenses, isEmpty);
   });
 }

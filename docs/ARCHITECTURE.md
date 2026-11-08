@@ -56,31 +56,30 @@ lib/
     documents.dart          A document kept for the project: any file under a name, in a group when one was given
     documents_screen.dart   A project's documents: each group under its name, those in none first
   entries/
-    add_entry_screen.dart   إضافة قيد: one screen adds an expense to any table of an item's sheet, and the table chosen says what it is
-    direct_entry_fields.dart What Add entry asks for a revenue item's table or a partner, under the file every entry shares: the amount, the date, the account and a description, and for a partner whether it is a withdrawal
+    add_entry_screen.dart   إضافة قيد: one form adds an entry to any table, an expense's, a revenue item's or a partner, asking every entry the same things and each table only its own (redix-api #110)
     entries_screen.dart     A project's entries: each person's own, or all of them, searched and filtered, and what can be done to one
     entry_filter.dart       What the search of a project's entries keeps: every filter set must hold, and a filter left empty keeps everything
+    entry_recording.dart    Records a project's entries on the API through one route, whatever their table, or keeps them in the outbox while there is no network
     entry_kind.dart         What an entry is, named as the API names it, with the word key that names it: the one owner the filter, the entries list and Approvals read
     entry_row.dart          An entry on a list
     entry_status.dart       Where an entry stands, named as the API names it
-    entry_tables.dart       One table an entry may go into
+    entry_tables.dart       One table an entry may go into, and what it asks beyond every entry
     entry_tile.dart         An entry on a list of project's entries: tapping it opens its actions, and swiping it removes it where the user may delete it
     home_entries.dart       The project's entries on its home: the latest five by anyone, a spinner while they are first read, a search beside the heading, and the way to all of them
     project_entries.dart    A project's entries, newest first: everyone who reads the project sees them all, and only their own drafts
     reverse_sheet.dart      Asks why something approved is reversed, and reverses it
-    saved_entry.dart        An expense as the API keeps it, read to fill Add entry when it is changed
+    saved_entry.dart        An entry as the API keeps it, whatever its table, read to fill Add entry when it is changed
     table_picker.dart       The field that chooses the table an expense goes into, opening a sheet of every table on offer: by category, each item with its general table first and its named tables and contracts under it, with a search over the items' and the tables' names
   expenses/
     column_value_field.dart The field of one custom column, drawn from what the column holds: a required one is marked
     creditable_invoice.dart A bill a credit note can return, as the API answers it, or none yet chosen
     creditable_invoices.dart What a credit note may return: one supplier's invoices, as the API finds them
     entry_date.dart         Asks for an entry's date in project, from current: within its period and not in the future
-    expenses.dart           Records a project's expenses on the API, purchases and contractor payments
     invoice_qr.dart         What a Saudi e-invoice's QR code carries: the text is base64 of tag, length and value, one after another, tags 1 to 5 being the seller, its VAT number, the time, the total including VAT and the VAT
     invoice_section.dart    The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files
     original_invoice_picker.dart The field that links a credit note to the bill it returns, which it needs (D13), opening a sheet of what that supplier's bills have left to return
     payment_choice.dart     What a person chose to pay an entry from, and how
-    payment_choices.dart    Where an entry is paid from and how, for any kind of expense: only what the signed-in user may pay from is on offer
+    payment_choices.dart    The account an entry moves money through, for any table, and how an expense was paid: an expense offers only what the signed-in user may pay from
     qr_summary.dart         What was read from the invoice's QR code: its five fields, and an offer to add the seller when no supplier holds its number
   format/
     date_format.dart        A date as the app shows it, in both languages: Gregorian dd.MM.yyyy

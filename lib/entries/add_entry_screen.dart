@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'direct_entry_fields.dart';
 import 'project_entries.dart';
-import '../partners/capital.dart';
+import '../accounts/account.dart';
 import '../accounts/accounts.dart';
+import '../api_list.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
@@ -19,7 +19,6 @@ import '../expenses/column_value_field.dart';
 import '../expenses/creditable_invoice.dart';
 import '../expenses/creditable_invoices.dart';
 import '../expenses/entry_date.dart';
-import '../expenses/expenses.dart';
 import '../expenses/invoice_qr.dart';
 import '../expenses/invoice_section.dart';
 import '../expenses/original_invoice_picker.dart';
@@ -48,23 +47,25 @@ import 'table_picker.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import 'entry_share.dart';
+import 'entry_recording.dart';
 import '../attachments/entry_file.dart';
 
-/// إضافة قيد (UC-022, UC-027, redix-app #84): one screen adds an expense to any table of an item's sheet, and the table chosen says what it is. An item's general or named
-/// table takes a purchase: a total spent on a day, from a supplier, with its file when there is one (redix-api #96). A contract's table takes a contractor payment: what the
-/// contract stands at with it shows before saving, and going beyond its value only warns. A negative amount is a deduction, which says why in its notes. A draft can wait for the
-/// required columns; sending cannot.
+/// إضافة قيد (UC-022, UC-027, redix-app #84, redix-api #110): one form adds an entry to any table, and the table chosen says what it is. Every entry asks the same things in the
+/// same place: its file, its table and date, its amount, its account and its notes, and is saved as a draft or sent for approval. A table adds only its own: a purchase its
+/// supplier, credit note and what was bought (redix-api #96); a contract's payment the contract's figures, where going beyond its value only warns, and whether it is inside it;
+/// a partner whether it is a withdrawal. An expense also says how it was paid and answers its item's columns, and a negative amount is a deduction, which says why in its notes.
+/// A draft can wait for the required columns; sending cannot.
 class AddEntryScreen extends StatefulWidget {
-  /// The screen entering an expense in [project], recorded through [expenses], into one of [tables], showing a contract's figures from [contracts], picking from [accounts],
-  /// [paymentMethods], [suppliers] and, for a credit note, [creditableInvoices], asking what [columnsOf] an item says, and keeping the file through [attachments] from what
-  /// [capture] gives.
+  /// The screen entering an entry in [project], recorded through [recording], into one of [tables], showing a contract's figures from [contracts], picking from [accounts] or
+  /// [projectAccounts], [paymentMethods], [suppliers] and, for a credit note, [creditableInvoices], asking what [columnsOf] an item says, keeping the file through [attachments]
+  /// from what [capture] gives, and offering to share it from [entries] once recorded.
   const AddEntryScreen({
     super.key,
     this.editingId = '',
     this.rejectionReason = '',
     required this.sharedFile,
     required this.project,
-    required this.expenses,
+    required this.recording,
     required this.tables,
     required this.contracts,
     required this.accounts,
@@ -75,7 +76,6 @@ class AddEntryScreen extends StatefulWidget {
     required this.attachments,
     required this.capture,
     required this.entries,
-    required this.capital,
     required this.projectAccounts,
   });
 
@@ -92,7 +92,7 @@ class AddEntryScreen extends StatefulWidget {
   final Project project;
 
   /// The way to record it.
-  final Expenses expenses;
+  final EntryRecording recording;
 
   /// The tables it may go into.
   final EntryTables tables;
@@ -100,7 +100,7 @@ class AddEntryScreen extends StatefulWidget {
   /// The project's contracts, for the figures of a contract's table.
   final Contracts contracts;
 
-  /// What the signed-in user may pay from.
+  /// What the signed-in user may pay an expense from.
   final OfferedAccounts accounts;
 
   /// The project's payment methods.
@@ -121,13 +121,10 @@ class AddEntryScreen extends StatefulWidget {
   /// The phone's camera and files.
   final InvoiceCapture capture;
 
-  /// The project's entries, through which revenue is recorded, for a revenue item's table (redix-api #101).
+  /// The project's entries, from which a recorded one is shared.
   final ProjectEntries entries;
 
-  /// The way to record a partner's money, for a partner.
-  final Capital capital;
-
-  /// Every active account, which revenue reaches and a partner's money moves through.
+  /// The project's accounts, any active one of which revenue reaches and a partner's money moves through.
   final Accounts projectAccounts;
 
   /// The screen's route.
@@ -287,6 +284,9 @@ class AddEntryScreen extends StatefulWidget {
   /// The choice of a contractor payment's kind: inside the contract or outside it.
   static const kindKey = Key('addEntry.kind');
 
+  /// The switch saying a partner's money is a withdrawal.
+  static const withdrawalKey = Key('addEntry.withdrawal');
+
   /// The card of what the invoice's QR code says.
   static const qrSummaryKey = Key('addEntry.qrSummary');
 
@@ -315,6 +315,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   var _isCreditNote = false;
   var _original = CreditableInvoice.none();
   var _isOutside = false;
+  var _isWithdrawal = false;
   final _payment = PaymentChoice();
   var _message = '';
   var _refusedColumn = '';
@@ -326,6 +327,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     widget.tables.loadOnOpen();
     widget.contracts.loadOnOpen();
     widget.accounts.loadOnOpen();
+    widget.projectAccounts.loadOnOpen();
     widget.paymentMethods.loadOnOpen();
     WidgetsBinding.instance.addPostFrameCallback((_) => _start());
   }
@@ -345,14 +347,14 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     return widget.sharedFile.isNone ? Future.value() : _takeFrom(() async => widget.sharedFile);
   }
 
-  /// Fills the form from the entry being changed (UC-033), in its table: a payment's contract, a purchase's item and subgroup. A credit note's total shows as typed, without its sign.
+  /// Fills the form from the entry being changed (UC-033), in its table, whatever its kind. A credit note's total shows as typed, without its sign.
   Future<void> _openEntry() async {
-    final saved = await widget.expenses.read(widget.editingId);
-    await Future.wait([widget.tables.load(), widget.contracts.load(), widget.accounts.load(), widget.suppliers.load()]);
+    final saved = await widget.recording.read(widget.editingId);
+    await Future.wait([widget.tables.load(), widget.contracts.load(), widget.accounts.load(), widget.projectAccounts.load(), widget.suppliers.load()]);
     if (!mounted || saved.isNone) {
       return;
     }
-    final table = widget.tables.tableOf(saved.itemId, saved.tableId);
+    final table = widget.tables.tableOf(saved.tableId);
     setState(() {
       _supplier = widget.suppliers.all.where((supplier) => supplier.id == saved.supplierId).firstOrNull ?? Supplier.none();
       _product.text = saved.product;
@@ -361,6 +363,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         _quantity.text = formatPlain(saved.quantity);
       }
       _isOutside = saved.isOutsideContract;
+      _isWithdrawal = saved.isWithdrawal;
       _notes.text = saved.notes;
       _payment
         ..accountId = saved.accountId
@@ -453,7 +456,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         _customValues.clear();
       }
     });
-    if (sameItem || table.isDirect) {
+    if (sameItem || !table.isExpense) {
       return;
     }
     final columns = widget.columnsOf(table.itemId);
@@ -499,9 +502,12 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   void _readListsAgain() {
     widget.tables.load();
-    widget.accounts.load();
+    _accounts.load();
     widget.paymentMethods.load();
   }
+
+  /// The accounts the table's entry may use.
+  ApiList<Account> get _accounts => _table.isExpense ? widget.accounts : widget.projectAccounts;
 
   double get _typedAmount {
     final number = parseNumber(_amount.text);
@@ -510,39 +516,41 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   bool get _isDeduction => _typedAmount < 0;
 
-  /// The contract of the table chosen; none for a purchase's table.
-  Contract get _contract => widget.contracts.all.where((contract) => _table.isContract && contract.id == _table.id).firstOrNull ?? Contract.none();
+  /// The contract of the table chosen; none for any other table.
+  Contract get _contract => widget.contracts.all.where((contract) => _table.asksContract && contract.id == _table.id).firstOrNull ?? Contract.none();
 
   /// Each number field shown, its API name and the word key of what can be wrong with it.
   List<(String, TextEditingController, String)> get _numbers => [
-    if (!_table.isContract) ...[('unitPrice', _unitPrice, 'expenses.invalidUnitPrice'), ('quantity', _quantity, 'expenses.invalidQuantity')],
+    if (_table.asksSupplier) ...[('unitPrice', _unitPrice, 'expenses.invalidUnitPrice'), ('quantity', _quantity, 'expenses.invalidQuantity')],
     ('amount', _amount, 'expenses.invalidAmount'),
   ];
 
   /// The bill a credit note returns: the one chosen, or else the one it was saved with.
   String get _originalEntryId => _original.isNone ? _keptOriginalId : _original.entryId;
 
+  /// What is sent for the entry, whatever its table (redix-api #110): what every entry has, then what only its table asks.
   Map<String, Object> _body(bool submit) {
-    final accountId = _payment.chosenAccountIn(widget.accounts.all);
+    final accountId = _payment.chosenAccountIn(_accounts.all.where((account) => account.isActive).toList());
     return {
       'id': _entryId,
-      'paymentDate': apiDate(_date),
+      if (!_table.isNone) ...{'itemId': _table.itemId, 'tableId': _table.id},
+      'date': apiDate(_date),
       if (accountId.isNotEmpty) 'accountId': accountId,
-      if (_payment.paymentMethodId.isNotEmpty) 'paymentMethodId': _payment.paymentMethodId,
+      if (_table.isExpense && _payment.paymentMethodId.isNotEmpty) 'paymentMethodId': _payment.paymentMethodId,
       if (_file.attachmentId.isNotEmpty) 'attachmentId': _file.attachmentId,
       'notes': _notes.text,
       'customValues': ItemColumn.valuesToSend(_columns, _customValues),
       'submit': submit,
       for (final (name, field, _) in _numbers)
         if (field.text.trim().isNotEmpty) name: parseNumber(field.text),
-      ...(_table.isContract ? {'contractId': _table.id, 'isOutsideContract': _isOutside} : _purchasePart),
+      if (_table.asksContract) 'isOutsideContract': _isOutside,
+      if (_table.asksWithdrawal) 'isWithdrawal': _isWithdrawal,
+      if (_table.asksSupplier) ..._purchasePart,
     };
   }
 
-  /// What only a purchase sends: its table's item and subgroup, its supplier, whether it is a credit note and of which bill, and what was bought.
+  /// What only a purchase sends: its supplier, whether it is a credit note and of which bill, and what was bought.
   Map<String, Object> get _purchasePart => {
-    if (!_table.isNone) 'itemId': _table.itemId,
-    if (!_table.isNone) 'subgroupId': _table.id,
     if (_supplier.id.isNotEmpty) 'supplierId': _supplier.id,
     if (_isCreditNote) 'isCreditNote': true,
     if (_isCreditNote && _originalEntryId.isNotEmpty) 'originalEntryId': _originalEntryId,
@@ -565,12 +573,12 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     }
     final refusal = await _file.keep(widget.attachments);
     if (refusal == 'attachments.noConnection') {
-      return widget.expenses.keep(_table.route, _body(submit), _file.picked, editing: widget.editingId);
+      return widget.recording.keep(_body(submit), _file.picked, editing: widget.editingId);
     }
     if (refusal.isNotEmpty) {
       return refusal;
     }
-    return widget.expenses.record(_table.route, _body(submit), editing: widget.editingId);
+    return widget.recording.record(_body(submit), editing: widget.editingId);
   }
 
   /// Says [wordKey] once the entry [entryId] is kept by the API, offering to share it (redix-app #83, R1). Everything the action needs is taken now, since the screen closes.
@@ -588,8 +596,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       return;
     }
     if (refusal.isEmpty) {
-      final sent = widget.expenses.wasOverrun ? 'contractorPayments.savedOverrun' : (submit ? 'expenses.sent' : 'expenses.saved');
-      if (widget.expenses.wasKept) {
+      final sent = widget.recording.wasOverrun ? 'contractorPayments.savedOverrun' : (submit ? 'expenses.sent' : 'expenses.saved');
+      if (widget.recording.wasKept) {
         showMessage(messenger, words, 'expenses.keptOnPhone');
       } else {
         _offerShare(messenger, words, sent, _entryId);
@@ -600,11 +608,12 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     setState(() {
       _saving = false;
       _message = refusal;
-      _refusedColumn = widget.expenses.refusedColumnKey;
+      _refusedColumn = widget.recording.refusedColumnKey;
     });
   }
 
-  bool _asks(String key) => _table.isNone || _columns.any((column) => column.key == key);
+  /// Whether the entry asks [key]: an expense when its item's columns hold it; revenue and a partner's money, which take no columns, always.
+  bool _asks(String key) => _table.isNone || !_table.isExpense || _columns.any((column) => column.key == key);
 
   bool _requires(String key) => _columns.any((column) => column.key == key && column.isRequired);
 
@@ -621,8 +630,10 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     if (widget.rejectionReason.isNotEmpty) Text('${words.entriesReason}: ${widget.rejectionReason}', key: AddEntryScreen.rejectionKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
     _tablePicker(),
     PickerField(key: AddEntryScreen.dateKey, label: _nameOf('date', words.expensesDate), value: formatDate(_date), onTap: () => _chooseDate(_date, (date) => _date = date)),
-    if (_table.isContract) ..._theContract(words) else ..._thePurchase(words),
-    _textField(AddEntryScreen.amountKey, _amount, _labelOf(_table.amountColumn, words.text(_table.amountWordKey)), isNumber: true, isSigned: true, errorText: _errorOf(_table.amountColumn, words)),
+    if (_table.asksContract) ..._theContract(words),
+    if (_table.asksSupplier) ..._thePurchase(words),
+    if (_table.asksWithdrawal) _theWithdrawal(words),
+    _textField(AddEntryScreen.amountKey, _amount, _labelOf(_table.amountColumn, words.text(_table.amountWordKey)), isNumber: true, isSigned: _table.isExpense, errorText: _errorOf(_table.amountColumn, words)),
   ];
 
   /// What a purchase asks: its supplier, whether it is a credit note, and what was bought where the item's columns ask for it.
@@ -681,6 +692,16 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     ),
   ];
 
+  /// What a partner asks: whether the money is a withdrawal, in the place a purchase asks whether it is a credit note.
+  Widget _theWithdrawal(Words words) => SwitchListTile(
+    key: AddEntryScreen.withdrawalKey,
+    contentPadding: EdgeInsets.zero,
+    title: Text(words.entriesWithdrawal, key: AddEntryScreen.withdrawalKey.title),
+    subtitle: Text(words.entriesWithdrawalHint, key: AddEntryScreen.withdrawalKey.subtitle),
+    value: _isWithdrawal,
+    onChanged: (isWithdrawal) => setState(() => _isWithdrawal = isWithdrawal),
+  );
+
   List<Widget> _itemsOwnFields(Words words) => [
     if (_columnsMessage.isNotEmpty) Text(words.text(_columnsMessage), key: AddEntryScreen.columnsMessageKey),
     for (final column in _columns.where((column) => column.isCustom))
@@ -694,30 +715,11 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   ];
 
   Widget _paymentSection(Words words) => FormSection(key: AddEntryScreen.paymentSectionKey, [
-    PaymentChoices(choice: _payment, accounts: widget.accounts, paymentMethods: widget.paymentMethods, onChanged: () => setState(() {}), onRetry: _readListsAgain),
+    PaymentChoices(choice: _payment, accounts: _accounts, asksPaymentMethod: _table.isExpense, paymentMethods: widget.paymentMethods, onChanged: () => setState(() {}), onRetry: _readListsAgain),
     if (_asks('notes')) _textField(AddEntryScreen.notesKey, _notes, _labelOf('notes', words.expensesNotes), maxLines: 2, errorText: _errorOf('notes', words)),
   ]);
 
   Widget _tablePicker() => TablePicker(key: AddEntryScreen.tableKey, tables: widget.tables, chosen: _table, onChanged: _chooseTable);
-
-  /// What a revenue item's table or a partner asks, under the table, sent for approval at once (redix-api #101).
-  List<Widget> _directEntry(Words words) => [
-    FormSection(key: AddEntryScreen.forSectionKey, [_tablePicker()]),
-    DirectEntryFields(
-      key: ValueKey(_table.id),
-      project: widget.project,
-      table: _table,
-      entries: widget.entries,
-      capital: widget.capital,
-      accounts: widget.projectAccounts,
-      attachments: widget.attachments,
-      file: _file,
-      onSent: (entryId) {
-        _offerShare(ScaffoldMessenger.of(context), words, 'expenses.sent', entryId);
-        context.pop(true);
-      },
-    ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -738,21 +740,21 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
               onCamera: () => _takeFrom(widget.capture.fromCamera),
               onFiles: () => _takeFrom(widget.capture.fromFiles),
             ),
-            if (_table.isDirect) ..._directEntry(words) else ..._expenseEntry(words, ownFields),
+            ..._entryFields(words, ownFields),
           ],
         ),
       ),
     );
   }
 
-  /// What an expense's table asks, under the file: the QR code's reading, what it is for, the item's own columns and how it was paid, then Send and Save draft.
-  List<Widget> _expenseEntry(Words words, List<Widget> ownFields) => [
+  /// What every table asks, under the file: the QR code's reading, what it is for, the item's own columns, the account and notes, then Send and Save draft.
+  List<Widget> _entryFields(Words words, List<Widget> ownFields) => [
             if (_qrMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(words.text(_qrMessage), key: AddEntryScreen.qrMessageKey),
               ),
-            if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: _qrSupplierMissing && !_table.isContract && widget.project.mayAddSupplier, onAddSupplier: _addSupplierFromQr),
+            if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: _qrSupplierMissing && _table.asksSupplier && widget.project.mayAddSupplier, onAddSupplier: _addSupplierFromQr),
             FormSection(key: AddEntryScreen.forSectionKey, _whatItIsFor(words)),
             if (ownFields.isNotEmpty) FormSection(key: AddEntryScreen.columnsSectionKey, ownFields),
             _paymentSection(words),

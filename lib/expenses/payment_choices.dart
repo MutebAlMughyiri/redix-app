@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
 
-import '../accounts/offered_accounts.dart';
+import '../accounts/account.dart';
+import '../api_list.dart';
 import '../settings/payment_methods.dart';
 import '../ui/labelled_chips.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'payment_choice.dart';
 
-/// Where an entry is paid from and how, for any kind of expense: only what the signed-in user may pay from is on offer (BRS open question 4).
+/// The account an entry moves money through, for any table, and how an expense was paid (redix-api #110, D10). The accounts on offer are the table's to say: for an expense
+/// only what the signed-in user may pay from (BRS open question 4).
 class PaymentChoices extends StatelessWidget {
-  /// The choices kept in [choice], among [accounts] and [paymentMethods], calling [onChanged] after each and [onRetry] to read a list again.
-  const PaymentChoices({super.key, required this.choice, required this.accounts, required this.paymentMethods, required this.onChanged, required this.onRetry});
+  /// The choices kept in [choice], among the active ones of [accounts] and, when [asksPaymentMethod], [paymentMethods], calling [onChanged] after each and [onRetry] to read a
+  /// list again.
+  const PaymentChoices({super.key, required this.choice, required this.accounts, required this.asksPaymentMethod, required this.paymentMethods, required this.onChanged, required this.onRetry});
 
   /// What was chosen.
   final PaymentChoice choice;
 
-  /// What the signed-in user may pay from.
-  final OfferedAccounts accounts;
+  /// The accounts the entry may use.
+  final ApiList<Account> accounts;
+
+  /// True when the entry says how it was paid: an expense.
+  final bool asksPaymentMethod;
 
   /// The project's payment methods.
   final PaymentMethods paymentMethods;
@@ -55,7 +61,7 @@ class PaymentChoices extends StatelessWidget {
       listenable: Listenable.merge([accounts, paymentMethods]),
       builder: (context, _) {
         final failure = [accounts.message, paymentMethods.message].firstWhere((message) => message.isNotEmpty, orElse: () => '');
-        final offered = accounts.all;
+        final offered = accounts.all.where((account) => account.isActive).toList();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 12,
@@ -71,7 +77,7 @@ class PaymentChoices extends StatelessWidget {
                 children: [
                   Text(words.expensesAccount, key: PaymentChoices.accountHeadingKey, style: Theme.of(context).textTheme.titleSmall),
                   RadioGroup<String>(
-                    groupValue: choice.chosenAccountIn(accounts.all),
+                    groupValue: choice.chosenAccountIn(offered),
                     onChanged: (accountId) {
                       choice.accountId = accountId ?? choice.accountId;
                       onChanged();
@@ -84,18 +90,19 @@ class PaymentChoices extends StatelessWidget {
                   ),
                 ],
               ),
-            LabelledChips(
-              key: PaymentChoices.methodChoiceKey,
-              label: words.expensesPaymentMethod,
-              choices: paymentMethods.all.where((method) => method.isActive),
-              keyOf: (method) => paymentMethodKey(method.id),
-              nameOf: (method) => method.name,
-              isChosen: (method) => choice.paymentMethodId == method.id,
-              onChosen: (method) {
-                choice.paymentMethodId = method.id;
-                onChanged();
-              },
-            ),
+            if (asksPaymentMethod)
+              LabelledChips(
+                key: PaymentChoices.methodChoiceKey,
+                label: words.expensesPaymentMethod,
+                choices: paymentMethods.all.where((method) => method.isActive),
+                keyOf: (method) => paymentMethodKey(method.id),
+                nameOf: (method) => method.name,
+                isChosen: (method) => choice.paymentMethodId == method.id,
+                onChosen: (method) {
+                  choice.paymentMethodId = method.id;
+                  onChanged();
+                },
+              ),
           ],
         );
       },

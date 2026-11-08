@@ -20,7 +20,6 @@ import 'package:redix/auth/session.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
-import 'package:redix/entries/direct_entry_fields.dart';
 import 'package:redix/entries/table_picker.dart';
 import 'package:redix/expenses/original_invoice_picker.dart';
 import 'package:redix/expenses/payment_choices.dart';
@@ -548,7 +547,7 @@ void main() {
       await picture('partners');
       await back();
 
-      // redix-api #101: a partner's money is entered from Add entry, picked as a table, and waits for approval.
+      // redix-api #110: a partner's money is entered in Add entry's one form, picked as a table, and waits for approval.
       await reach($(HomeScreen.addEntryKey(projectId)));
       await $(HomeScreen.addEntryKey(projectId)).tap();
       await reach($(AddEntryScreen.tableKey));
@@ -556,13 +555,13 @@ void main() {
       await $(TablePicker.searchKey).enterText('هيثم');
       await reach($(TablePicker.optionKey(haithamId)));
       await $(TablePicker.optionKey(haithamId)).tap();
-      await reach($(DirectEntryFields.amountKey));
-      await $(DirectEntryFields.amountKey).enterText('5000');
-      await goTo($(DirectEntryFields.accountKey(cashId)));
-      await $(DirectEntryFields.accountKey(cashId)).tap();
-      await goTo($(DirectEntryFields.sendKey));
+      await reach($(AddEntryScreen.amountKey));
+      await $(AddEntryScreen.amountKey).enterText('5000');
+      await goTo($(PaymentChoices.accountKey(cashId)));
+      await $(PaymentChoices.accountKey(cashId)).tap();
+      await goTo($(AddEntryScreen.sendKey));
       await picture('add-entry-partner');
-      await $(DirectEntryFields.sendKey).tap();
+      await $(AddEntryScreen.sendKey).tap();
       await reach($(HomeScreen.titleKey));
 
       await goTo($(HomeScreen.suppliersKey(projectId)));

@@ -114,7 +114,7 @@ void main() {
     await type(tester, AddEntryScreen.amountKey, '٦٠٠٠');
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(opened.api.sentExpenses.single['amount'], 6000);
+    expect(opened.api.sentEntries.single['amount'], 6000);
   });
 
   testWidgets('saving a draft sends what was typed and chosen, never a figure, with an id made on the phone', (tester) async {
@@ -125,10 +125,10 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    final body = opened.api.sentExpenses.single;
+    final body = opened.api.sentEntries.single;
     expect(body['itemId'], opened.item);
     expect(body['supplierId'], opened.supplier);
-    expect(body['paymentDate'], DateTime.now().toIso8601String().substring(0, 10));
+    expect(body['date'], DateTime.now().toIso8601String().substring(0, 10));
     expect(body['product'], 'مواد لياسة');
     expect(body['notes'], 'ملاحظة');
     expect(body['amount'], 6000);
@@ -153,15 +153,15 @@ void main() {
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     expect(opened.api.sentAttachments.single, contains('invoice.png'));
-    expect(opened.api.sentExpenses.single['attachmentId'], startsWith('attachment-'));
-    expect(opened.api.sentExpenses.single['submit'], isTrue);
+    expect(opened.api.sentEntries.single['attachmentId'], startsWith('attachment-'));
+    expect(opened.api.sentEntries.single['submit'], isTrue);
     expect(shown(tester, messageKeyOf('expenses.sent').label), 'en expenses.sent');
   });
 
   testWidgets('a refusal stays on the screen with what was typed, and trying again sends the file once and the same id', (tester) async {
     final opened = await openExpense(tester, camera: PickedFile('invoice.png', '/phone/invoice.png', Uint8List.fromList(onePixelPng)));
     await fill(tester, opened);
-    opened.api.expenseAnswer = (status: 400, body: const {'code': 'invalidPaymentDate'});
+    opened.api.entryAnswer = (status: 400, body: const {'code': 'invalidPaymentDate'});
 
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
@@ -171,15 +171,15 @@ void main() {
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     expect(opened.api.sentAttachments, hasLength(1));
-    expect(opened.api.sentExpenses[1]['id'], opened.api.sentExpenses[0]['id']);
-    expect(opened.api.sentExpenses[1]['attachmentId'], opened.api.sentExpenses[0]['attachmentId']);
+    expect(opened.api.sentEntries[1]['id'], opened.api.sentEntries[0]['id']);
+    expect(opened.api.sentEntries[1]['attachmentId'], opened.api.sentEntries[0]['attachmentId']);
   });
 
   testWidgets('a picture taken again is kept again', (tester) async {
     final picture = PickedFile('invoice.png', '/phone/invoice.png', Uint8List.fromList(onePixelPng));
     final opened = await openExpense(tester, camera: picture);
     await fill(tester, opened);
-    opened.api.expenseAnswer = (status: 400, body: const {'code': 'invalidPaymentDate'});
+    opened.api.entryAnswer = (status: 400, body: const {'code': 'invalidPaymentDate'});
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     await tapVisible(tester, opened.api, AddEntryScreen.cameraKey);
@@ -196,7 +196,7 @@ void main() {
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     expect(shown(tester, AddEntryScreen.messageKey), 'en attachments.imageTooLarge');
-    expect(opened.api.sentExpenses, isEmpty);
+    expect(opened.api.sentEntries, isEmpty);
   });
 
   testWidgets('what is not a number is refused here, and nothing is sent', (tester) async {
@@ -207,7 +207,7 @@ void main() {
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.invalidAmount');
-    expect(opened.api.sentExpenses, isEmpty);
+    expect(opened.api.sentEntries, isEmpty);
   });
 
   testWidgets('without a network the expense is kept on the phone, and the screen says so', (tester) async {
@@ -239,7 +239,7 @@ void main() {
     await fill(tester, opened);
 
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
-    final entryId = opened.api.sentExpenses.single['id']! as String;
+    final entryId = opened.api.sentEntries.single['id']! as String;
     opened.api.addEntry(id: entryId, itemName: 'البلاط', amount: 6000);
     await act(tester, opened.api, () => tester.tap(find.byKey(messageKeyOf('expenses.sent').icon)));
 
@@ -264,9 +264,9 @@ void main() {
     opened.api.online = true;
     await act(tester, opened.api, () => tester.pump(Outbox.tryEvery));
 
-    expect(opened.api.sentExpenses, hasLength(5));
+    expect(opened.api.sentEntries, hasLength(5));
     expect(opened.api.sentAttachments, hasLength(5));
-    expect(opened.api.sentExpenses.map((body) => body['id']).toSet(), hasLength(5));
+    expect(opened.api.sentEntries.map((body) => body['id']).toSet(), hasLength(5));
     expect(find.byKey(HomeScreen.waitingKey('project-0')), findsNothing);
   });
 
@@ -279,16 +279,16 @@ void main() {
 
     opened.api
       ..online = true
-      ..expenseAnswer = (status: 503, body: const <String, dynamic>{});
+      ..entryAnswer = (status: 503, body: const <String, dynamic>{});
     await act(tester, opened.api, () => tester.pump(Outbox.tryEvery));
     expect(opened.api.sentAttachments, hasLength(1));
     expect(find.byKey(HomeScreen.waitingKey('project-0')), findsOneWidget);
 
-    opened.api.expenseAnswer = (status: 201, body: const <String, dynamic>{});
+    opened.api.entryAnswer = (status: 201, body: const <String, dynamic>{});
     await act(tester, opened.api, () => tester.pump(Outbox.tryEvery));
 
     expect(opened.api.sentAttachments, hasLength(1));
-    expect(opened.api.sentExpenses.last['attachmentId'], startsWith('attachment-'));
+    expect(opened.api.sentEntries.last['attachmentId'], startsWith('attachment-'));
     expect(find.byKey(HomeScreen.waitingKey('project-0')), findsNothing);
   });
 
@@ -303,7 +303,7 @@ void main() {
     expect(find.text('custom.area *'), findsOneWidget);
 
     await fill(tester, opened);
-    opened.api.expenseAnswer = (status: 400, body: const {'code': 'requiredColumnMissing', 'columnKey': 'custom.area'});
+    opened.api.entryAnswer = (status: 400, body: const {'code': 'requiredColumnMissing', 'columnKey': 'custom.area'});
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     expect(find.descendant(of: find.byKey(AddEntryScreen.columnKey('custom.area')), matching: find.text('en expenses.requiredColumnMissing')), findsOneWidget);
@@ -326,7 +326,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.text('OK')));
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    final values = opened.api.sentExpenses.single['customValues'] as Map<String, dynamic>;
+    final values = opened.api.sentEntries.single['customValues'] as Map<String, dynamic>;
     expect(values['custom.area'], '125.5');
     expect(values['custom.note'], 'نص');
     expect(values['custom.colour'], 'أزرق');
@@ -356,7 +356,7 @@ void main() {
     await pickItem(tester, opened.api, opened.otherItem);
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(opened.api.sentExpenses.single['customValues'], isEmpty);
+    expect(opened.api.sentEntries.single['customValues'], isEmpty);
   });
 
   testWidgets('the table sheet searches the items\' and the tables\' names in one spelling, and says when nothing matches', (tester) async {
@@ -396,7 +396,7 @@ void main() {
     expect(chosenTable(tester), 'مواد (البلاط)');
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect((opened.api.sentExpenses.single['itemId'], opened.api.sentExpenses.single['subgroupId']), (opened.item, subgroups.last['id']));
+    expect((opened.api.sentEntries.single['itemId'], opened.api.sentEntries.single['tableId']), (opened.item, subgroups.last['id']));
   });
 
   testWidgets('open question 4: Field is offered only what they hold, and one account is already chosen', (tester) async {
@@ -415,7 +415,7 @@ void main() {
     await tapVisible(tester, opened.api, PaymentChoices.accountKey(opened.bank));
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(opened.api.sentExpenses.single['accountId'], opened.bank);
+    expect(opened.api.sentEntries.single['accountId'], opened.bank);
   });
 
   testWidgets('someone who holds nothing is told so, with no account to choose', (tester) async {
@@ -457,8 +457,8 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    final body = opened.api.sentExpenses.single;
-    expect(body['paymentDate'], DateTime.now().toIso8601String().substring(0, 10));
+    final body = opened.api.sentEntries.single;
+    expect(body['date'], DateTime.now().toIso8601String().substring(0, 10));
     expect(body.containsKey('paymentAmount'), isFalse);
     expect(body.containsKey('bankFees'), isFalse);
   });
@@ -482,7 +482,7 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
-    final body = opened.api.sentExpenses.single;
+    final body = opened.api.sentEntries.single;
     expect(body.containsKey('attachmentId'), isFalse);
     expect(body['submit'], isTrue);
     expect(shown(tester, messageKeyOf('expenses.sent').label), 'en expenses.sent');
@@ -502,7 +502,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(OriginalInvoicePicker.optionKey('e1'))));
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    final sent = opened.api.sentExpenses.single;
+    final sent = opened.api.sentEntries.single;
     expect((sent['isCreditNote'], sent['amount'], sent['originalEntryId']), (true, 320, 'e1'));
   });
 
@@ -527,11 +527,11 @@ void main() {
     await pickSupplier(tester, opened.api, opened.cash);
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(opened.api.sentExpenses.single.containsKey('originalEntryId'), isFalse);
+    expect(opened.api.sentEntries.single.containsKey('originalEntryId'), isFalse);
   });
 
   testWidgets('BR-18: a credit note above what is left of its invoice is blocked with a message', (tester) async {
-    final opened = await openExpense(tester, arrange: (api) => api.expenseAnswer = (status: 400, body: const {'code': 'creditNoteAboveOriginal'}));
+    final opened = await openExpense(tester, arrange: (api) => api.entryAnswer = (status: 400, body: const {'code': 'creditNoteAboveOriginal'}));
     await fill(tester, opened);
     await tapVisible(tester, opened.api, AddEntryScreen.creditNoteKey);
 
@@ -549,11 +549,11 @@ void main() {
 
     expect(tester.widget<TextField>(find.byKey(AddEntryScreen.amountKey)).keyboardType, const TextInputType.numberWithOptions(decimal: true, signed: true));
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
-    expect((opened.api.sentExpenses.single['amount'], opened.api.sentExpenses.single['notes']), (-136, 'خصم من المورد'));
+    expect((opened.api.sentEntries.single['amount'], opened.api.sentEntries.single['notes']), (-136, 'خصم من المورد'));
   });
 
   testWidgets('D14: a deduction with no notes is refused with the API\'s reason', (tester) async {
-    final opened = await openExpense(tester, arrange: (api) => api.expenseAnswer = (status: 400, body: const {'code': 'deductionNeedsNotes'}));
+    final opened = await openExpense(tester, arrange: (api) => api.entryAnswer = (status: 400, body: const {'code': 'deductionNeedsNotes'}));
     await fill(tester, opened);
     await type(tester, AddEntryScreen.amountKey, '-136');
 

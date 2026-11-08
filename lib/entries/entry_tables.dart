@@ -2,8 +2,9 @@ import '../api_list.dart';
 import '../auth/session.dart';
 import '../structure/item_tables.dart';
 
-/// One table an entry may go into (redix-app #84, redix-api #101). The table says what the entry is: an expense item's general or named table takes a purchase, a contract's a
-/// contractor payment, a revenue item's table revenue, and a partner their capital's money in or out; what differs between them is answered here and nowhere else.
+/// One table an entry may go into (redix-app #84, redix-api #110). The table says what the entry is: an expense item's general or named table takes a purchase, a contract's a
+/// contractor payment, a revenue item's table revenue, and a partner their capital's money in or out. Every entry asks the same things; what a table adds is answered here and
+/// nowhere else.
 class EntryTable {
   /// The table the API describes in [json], of the item [itemId] named [itemName], a revenue item when [isRevenue].
   EntryTable.fromJson(Map<String, dynamic> json, {required this.itemId, required this.itemName, required this.isRevenue})
@@ -14,7 +15,7 @@ class EntryTable {
   /// No table chosen yet, which asks what a purchase asks.
   EntryTable.none() : id = '', kind = ItemTableKind.general, name = '', itemId = '', itemName = '', isRevenue = false;
 
-  /// The subgroup or contract it prints.
+  /// The subgroup, contract or partner it prints.
   final String id;
 
   /// What it prints.
@@ -35,29 +36,30 @@ class EntryTable {
   /// True while none is chosen.
   bool get isNone => id.isEmpty;
 
-  /// True for a contract's payments.
-  bool get isContract => kind == ItemTableKind.contract;
+  /// True on the expense side: its entry says how it was paid, answers its item's columns, and may be a deduction, from an account the signed-in user may pay from. Revenue and
+  /// a partner's money do none of these, and use any of the project's accounts (redix-api #110, D7).
+  bool get isExpense => !isRevenue;
 
-  /// True for a partner, whose entries are their capital's money in or out.
-  bool get isPartner => kind == ItemTableKind.partner;
+  /// True for a purchase's table, which asks the supplier, whether it is a credit note, and what was bought.
+  bool get asksSupplier => isExpense && !asksContract;
 
-  /// True for revenue and a partner's money: Finance enters it and sends it for approval at once, with no draft and none of an expense's fields (redix-api #101, D9).
-  bool get isDirect => isRevenue || isPartner;
+  /// True for a contract's payments, which show the contract's figures and ask whether the payment is inside it.
+  bool get asksContract => kind == ItemTableKind.contract;
+
+  /// True for a partner, whose entry is their capital's money in, or out as a withdrawal.
+  bool get asksWithdrawal => kind == ItemTableKind.partner;
 
   /// The word key saying what its entries are, under its name in the list.
   String get kindWordKey => kind.wordKeyOf(isRevenue: isRevenue);
 
-  /// The API route its entries are recorded on.
-  String get route => isContract ? 'contractor-payments' : 'expenses';
-
   /// The column its entries' amount is in.
-  String get amountColumn => isContract ? 'amount' : 'total';
+  String get amountColumn => asksContract ? 'amount' : 'total';
 
   /// The word key naming its entries' amount.
-  String get amountWordKey => isContract ? 'expenses.amount' : 'expenses.total';
+  String get amountWordKey => asksContract ? 'expenses.amount' : 'expenses.total';
 
   /// The word key naming its entries' file.
-  String get fileWordKey => isPartner ? 'capital.receiptHint' : isRevenue ? 'revenue.file' : isContract ? 'contractorPayments.receipt' : 'attachments.invoicePhoto';
+  String get fileWordKey => asksWithdrawal ? 'capital.receiptHint' : isRevenue ? 'revenue.file' : asksContract ? 'contractorPayments.receipt' : 'attachments.invoicePhoto';
 
   /// What a field shows of it: the table, then its sheet, the item, in brackets, as الجلاي (دفعات العظم) (Muteb, 7 Nov 2026); the item's own table is its name alone.
   String get label => isNamedAfterItem ? itemName : '$name ($itemName)';
@@ -98,13 +100,13 @@ class TableCategory {
   final List<TableItem> items;
 }
 
-/// Every table an expense may go into, by category and item, as the API offers them (AC-05.3, AC-38.1).
+/// Every table an entry may go into, by category and item, as the API offers them to the signed-in user (AC-05.3, AC-38.1, redix-api #110).
 class EntryTables extends ApiList<TableCategory> {
   /// The tables of the project [projectId], seen through [session].
   EntryTables(Session session, String projectId) : super(session, '/projects/$projectId/entry-tables', 'categories', TableCategory.fromJson);
 
-  /// The table [id] of the item [itemId]; none when it is not on offer.
-  EntryTable tableOf(String itemId, String id) => _tablesOf(itemId).where((table) => table.id == id).firstOrNull ?? EntryTable.none();
+  /// The table [id], a group's, a contract's or a partner's; none when it is not on offer.
+  EntryTable tableOf(String id) => all.expand((category) => category.items).expand((item) => item.tables).where((table) => table.id == id).firstOrNull ?? EntryTable.none();
 
   /// The general table of the item [itemId]; none when it takes no purchase.
   EntryTable generalTableOf(String itemId) => _tablesOf(itemId).where((table) => table.kind == ItemTableKind.general).firstOrNull ?? EntryTable.none();

@@ -430,17 +430,14 @@ class FakeApi {
   /// The status and problem code the API answers to a file; 2xx keeps it. An empty code sends none.
   var attachmentAnswer = (status: 201, code: '');
 
-  /// The expenses the app sent, as their bodies.
-  final sentExpenses = <Map<String, dynamic>>[];
-
-  /// The contractor payments the app sent.
-  final sentContractorPayments = <Map<String, dynamic>>[];
+  /// The entries the app sent, whatever their table, as their bodies (redix-api #110).
+  final sentEntries = <Map<String, dynamic>>[];
 
   /// What the fake API offers a credit note to return, whichever supplier is asked about.
   final creditableInvoices = <Map<String, Object>>[];
 
   /// The status and answer the API gives an expense; 2xx records it.
-  var expenseAnswer = (status: 201, body: const <String, dynamic>{});
+  var entryAnswer = (status: 201, body: const <String, dynamic>{});
 
   /// The people of every project, as the API answers them.
   final members = <Map<String, String>>[];
@@ -483,8 +480,8 @@ class FakeApi {
   /// While set, the project's list of entries waits for this before it answers.
   Completer<void> heldEntries = Completer<void>()..complete();
 
-  /// The addresses expenses and payments were sent to, in order.
-  final sentExpensePaths = <String>[];
+  /// The addresses entries were sent to, in order: `entries`, or `entries/{id}` for a change.
+  final sentEntryPaths = <String>[];
 
   /// Adds an entry to the project, named [id] or else by its place.
   Map<String, Object> addEntry({
@@ -588,10 +585,10 @@ class FakeApi {
   /// The files the app asked for, by address.
   final sentFileReads = <String>[];
 
-  /// What the app sent to the money routes, by path.
+  /// What the app sent to reconcile the accounts, by path.
   final sentMoney = <(String, Map<String, dynamic>)>[];
 
-  /// What the API answers a money route.
+  /// What the API answers a reconciliation.
   var moneyAnswer = (status: 200, code: '');
 
   /// What the accounts hold against the books.
@@ -1392,6 +1389,13 @@ class FakeApi {
   }
 
   /// Answers as bytes with no character set, as a JSON reply may arrive, so reading Arabic takes UTF-8 on the app's side.
+  /// Records the entry the app sent to the one route, or the change of one, and answers as [entryAnswer] says (redix-api #110).
+  http.Response _recordEntry(http.Request request) {
+    sentEntryPaths.add(request.url.path);
+    sentEntries.add(jsonDecode(request.body) as Map<String, dynamic>);
+    return _json(entryAnswer.body, entryAnswer.status);
+  }
+
   http.Response _json(Object body, int status) => http.Response.bytes(utf8.encode(jsonEncode(body)), status);
 
   /// Adds a project waiting for the admin.
@@ -1492,6 +1496,9 @@ class FakeApi {
     if (segments.length >= 3 && segments[2] == 'contracts') {
       return _answerContracts(request);
     }
+    if (request.method == 'POST' && segments.length == 3 && segments[2] == 'entries') {
+      return _recordEntry(request);
+    }
     if (segments.length == 3 && segments[2] == 'entries') {
       return heldEntries.future.then((_) => _json(entryRows, 200));
     }
@@ -1532,7 +1539,7 @@ class FakeApi {
     if (segments.length == 4 && segments[2] == 'reconciliations' && segments[3] == 'latest') {
       return _json(reconciliationAnswer, 200);
     }
-    if (segments.length >= 3 && const ['reconciliations', 'capital-movements', 'revenue'].contains(segments[2])) {
+    if (segments.length >= 3 && segments[2] == 'reconciliations') {
       sentMoney.add((request.url.path, jsonDecode(request.body) as Map<String, dynamic>));
       return _json(moneyAnswer.status < 300 ? {'id': 'sent-${sentMoney.length}'} : {'code': moneyAnswer.code}, moneyAnswer.status);
     }
@@ -1562,18 +1569,11 @@ class FakeApi {
       pendingEntries.removeWhere((entry) => entry['id'] == segments[3]);
       return _json(const <String, Object>{}, 200);
     }
-    if (segments.length >= 3 && segments[2] == 'contractor-payments') {
-      sentExpensePaths.add(request.url.path);
-      sentContractorPayments.add(jsonDecode(request.body) as Map<String, dynamic>);
-      return _json(expenseAnswer.body, expenseAnswer.status);
+    if (request.method == 'POST' && segments.length == 4 && segments[2] == 'entries') {
+      return _recordEntry(request);
     }
     if (segments.length == 4 && segments[2] == 'expenses' && segments[3] == 'creditable') {
       return _json(creditableInvoices, 200);
-    }
-    if (segments.length >= 3 && segments[2] == 'expenses') {
-      sentExpensePaths.add(request.url.path);
-      sentExpenses.add(jsonDecode(request.body) as Map<String, dynamic>);
-      return _json(expenseAnswer.body, expenseAnswer.status);
     }
     if (segments.length >= 3 && segments[2] == 'documents') {
       if (request.method == 'GET') {

@@ -348,6 +348,7 @@ void main() {
         api
           ..addEntry(status: 'rejected', rejectionReason: 'الصورة غير واضحة')
           ..entryDetails['entry-0'] = {
+            'tableId': (item['subgroups']! as List<Map<String, Object>>).first['id']!,
             'entry': {'id': 'entry-0', 'kind': 'purchase', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 1150, 'accountId': account['id']!, 'notes': 'دفعة أولى'},
             'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!, 'customValues': '{}'},
             'purchase': {'supplierId': supplier['id']!, 'product': 'مواد لياسة', 'unitPrice': 0, 'quantity': 0},
@@ -380,14 +381,14 @@ void main() {
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendKey)));
 
-      expect(api.sentExpensePaths.single, '/projects/project-0/expenses/entry-0');
-      final body = api.sentExpenses.single;
-      expect((body['id'], body['attachmentId'], body['amount'], body['paymentDate'], body['submit']), ('entry-0', 'attachment-1', 1150, '2026-11-05', true));
+      expect(api.sentEntryPaths.single, '/projects/project-0/entries/entry-0');
+      final body = api.sentEntries.single;
+      expect((body['id'], body['attachmentId'], body['amount'], body['date'], body['submit']), ('entry-0', 'attachment-1', 1150, '2026-11-05', true));
       expect(body['supplierId'], isNotEmpty);
-      expect(body['subgroupId'], isNotEmpty);
+      expect(body['tableId'], isNotEmpty);
     });
 
-    testWidgets('R12, D10: a rejected contractor payment opens in its contract\'s table under the title تعديل, and goes back to its own route', (tester) async {
+    testWidgets('R12, D10: a rejected contractor payment opens in its contract\'s table under the title تعديل, and goes back to its own entry', (tester) async {
       final api = await openEntries(tester, (api) {
         final item = api.addItem(api.addCategory('project-0', 'العظم'), 'بند الحديد', type: 'contractorPayments');
         api.addColumn('/projects/project-0/items/${item['id']}/columns', 'notes');
@@ -397,6 +398,7 @@ void main() {
         api
           ..addEntry(kind: 'contractorPayment', status: 'rejected', rejectionReason: 'المبلغ خطأ')
           ..entryDetails['entry-0'] = {
+            'tableId': contract['id']!,
             'entry': {'id': 'entry-0', 'kind': 'contractorPayment', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 500, 'accountId': account['id']!, 'notes': 'دفعة'},
             'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!, 'customValues': '{}'},
             'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000', 'product': '', 'unitPrice': 0, 'quantity': 0},
@@ -415,9 +417,9 @@ void main() {
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendKey)));
 
-      expect(api.sentExpensePaths.single, '/projects/project-0/contractor-payments/entry-0');
-      final body = api.sentContractorPayments.single;
-      expect((body['contractId'], body['isOutsideContract'], body['amount'], body['notes']), (api.contracts['project-0']!.single['id'], true, 500, 'دفعة'));
+      expect(api.sentEntryPaths.single, '/projects/project-0/entries/entry-0');
+      final body = api.sentEntries.single;
+      expect((body['tableId'], body['isOutsideContract'], body['amount'], body['notes']), (api.contracts['project-0']!.single['id'], true, 500, 'دفعة'));
     });
   });
 
@@ -503,9 +505,9 @@ void main() {
   testWidgets('AC-16.2: an offline change that arrives after approval says it was not applied', (tester) async {
     final api = FakeApi()
       ..addProject('غصون 6', permissions: field, units: ['الفلة الغربية'])
-      ..expenseAnswer = (status: 409, body: const {'code': 'entryApproved'});
+      ..entryAnswer = (status: 409, body: const {'code': 'entryApproved'});
     final store = MemoryStore();
-    await store.write('outbox', 'entry-0', '{"ownerId":"user-signed-in","projectId":"project-0","route":"expenses/entry-0","body":{"id":"entry-0","amount":9},"fileName":"","refusal":""}');
+    await store.write('outbox', 'entry-0', '{"ownerId":"user-signed-in","projectId":"project-0","route":"entries/entry-0","body":{"id":"entry-0","amount":9},"fileName":"","refusal":""}');
     await openProject(tester, api, store: store);
     await act(tester, api, () => tester.pump(const Duration(seconds: 20)));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));

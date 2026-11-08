@@ -17,8 +17,8 @@ void main() {
   PendingEntry pending(String id, {String ownerId = 'user-signed-in', String refusal = ''}) => PendingEntry(
     ownerId: ownerId,
     projectId: 'project-0',
-    route: 'expenses',
-    body: {'id': id, 'amount': 6000, 'paymentDate': '2026-11-05'},
+    route: 'entries',
+    body: {'id': id, 'amount': 6000, 'date': '2026-11-05'},
     refusal: refusal,
   );
 
@@ -124,7 +124,7 @@ void main() {
     await act(tester, api, () => tester.pump(Outbox.tryEvery));
 
     expect(find.byKey(HomeScreen.waitingKey('project-0')), findsNothing);
-    expect(api.sentExpenses, isEmpty);
+    expect(api.sentEntries, isEmpty);
     expect(await store.namesIn('outbox'), ['entry-of-another']);
   });
 
@@ -142,16 +142,16 @@ void main() {
     final store = await storeHolding([pending('entry-1')]);
     final api = FakeApi()
       ..addProject('غصون 6')
-      ..expenseAnswer = (status: 400, body: const {'code': 'unknownSupplier'});
+      ..entryAnswer = (status: 400, body: const {'code': 'unknownSupplier'});
     await openProject(tester, api, store: store);
     await act(tester, api, () => tester.pump(Outbox.tryEvery));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
 
     expect(tester.widget<Text>(find.byKey(WaitingScreen.stateKey('entry-1'))).data, 'en expenses.unknownSupplier');
 
-    final tries = api.sentExpenses.length;
+    final tries = api.sentEntries.length;
     await act(tester, api, () => tester.pump(Outbox.tryEvery));
-    expect(api.sentExpenses, hasLength(tries));
+    expect(api.sentEntries, hasLength(tries));
   });
 
   testWidgets('a refused entry can be sent again, and leaves once it lands', (tester) async {
@@ -161,7 +161,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(WaitingScreen.sendAgainKey('entry-1'))));
 
-    expect(api.sentExpenses.single['id'], 'entry-1');
+    expect(api.sentEntries.single['id'], 'entry-1');
     expect(await store.namesIn('outbox'), isEmpty);
   });
 
@@ -185,7 +185,7 @@ void main() {
     final store = await storeHolding([pending('entry-1')]);
     final api = FakeApi()
       ..addProject('غصون 6')
-      ..expenseAnswer = (status: 503, body: const <String, dynamic>{});
+      ..entryAnswer = (status: 503, body: const <String, dynamic>{});
     await openProject(tester, api, store: store);
     await act(tester, api, () => tester.pump(Outbox.tryEvery));
 

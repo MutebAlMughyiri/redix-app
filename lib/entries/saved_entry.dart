@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'entry_kind.dart';
 
-/// An expense as the API keeps it, read to fill Add entry when it is changed (UC-033, findings row 165).
+/// An entry as the API keeps it, whatever its table, read to fill Add entry when it is changed (UC-033, findings row 165, redix-api #110).
 class SavedEntry {
   /// The entry as `GET /projects/{id}/entries/{entryId}` answers it.
   factory SavedEntry.fromJson(Map<String, dynamic> json) {
@@ -12,10 +12,9 @@ class SavedEntry {
     final payment = json['contractorPayment'] as Map<String, dynamic>;
     final files = (json['attachments'] as List<dynamic>).cast<Map<String, dynamic>>();
     final creditNoteOf = (json['links'] as List<dynamic>).cast<Map<String, dynamic>>().where((link) => link['type'] == 'creditNoteOf').map((link) => link['linkedEntryId'] as String);
-    final isPayment = EntryKind.values.byName(entry['kind'] as String) == EntryKind.contractorPayment;
     return SavedEntry._(
-      itemId: expense['itemId'] as String,
-      tableId: (isPayment ? payment['contractId'] : expense['subgroupId']) as String,
+      tableId: json['tableId'] as String,
+      isWithdrawal: EntryKind.values.byName(entry['kind'] as String) == EntryKind.capitalOut,
       amount: (entry['amount'] as num).toDouble(),
       date: DateTime.parse(entry['entryDate'] as String),
       notes: entry['notes'] as String,
@@ -34,8 +33,8 @@ class SavedEntry {
 
   /// An entry that could not be read.
   SavedEntry.none()
-    : itemId = '',
-      tableId = '',
+    : tableId = '',
+      isWithdrawal = false,
       amount = 0,
       date = DateTime(1),
       notes = '',
@@ -51,8 +50,8 @@ class SavedEntry {
       customValues = const {};
 
   SavedEntry._({
-    required this.itemId,
     required this.tableId,
+    required this.isWithdrawal,
     required this.amount,
     required this.date,
     required this.notes,
@@ -68,11 +67,11 @@ class SavedEntry {
     required this.customValues,
   });
 
-  /// Its item.
-  final String itemId;
-
-  /// The table it went into: a purchase's subgroup, a payment's contract.
+  /// The table it went into: an item's group, a contract or a partner, as the API names it (redix-api #110).
   final String tableId;
+
+  /// True for a partner's withdrawal.
+  final bool isWithdrawal;
 
   /// Its total; negative for a credit note or a deduction.
   final double amount;
@@ -114,7 +113,7 @@ class SavedEntry {
   final Map<String, String> customValues;
 
   /// True when nothing could be read.
-  bool get isNone => itemId.isEmpty;
+  bool get isNone => tableId.isEmpty;
 
   /// True for a credit note.
   bool get isCreditNote => originalEntryId.isNotEmpty;

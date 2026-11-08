@@ -53,7 +53,4 @@ class Capital extends ApiObject<CapitalFigures> {
 
   /// The project.
   final String projectId;
-
-  /// Sends a partner's money in or out for approval (redix-api #101).
-  Future<String> record(Map<String, Object> body) => change('/projects/$projectId/capital-movements', body);
 }

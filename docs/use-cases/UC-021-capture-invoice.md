@@ -47,7 +47,7 @@ The contract's dialog, `ContractDialog` (UC-020):
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| FR-10: the camera opens only when asked, and its picture stays on the screen (Muteb, 8 Nov 2026) | `AddEntryScreen`, `EntryFile` | `add_entry_invoice_test`: FR-10 (Muteb, 8 Nov 2026); `direct_entry_test`: Add entry never opens the camera by itself, and the photo stays where it was when a table is picked |
+| FR-10: the camera opens only when asked, and its picture stays on the screen (Muteb, 8 Nov 2026) | `AddEntryScreen`, `EntryFile` | `add_entry_invoice_test`: FR-10 (Muteb, 8 Nov 2026); `one_entry_test`: Add entry never opens the camera by itself, and the photo stays where it was when a table is picked |
 | FR-10: the scanner finds and crops the invoice | `InvoiceCapture.fromCamera`, by the phone's scanner | Not run: see below |
 | NFR-06, AC-10.1: the file is under 1 MB | `compressedPicture` | `picture_compression_test`: a photo comes back under 1 MB |
 | A picture at most 2000 pixels long stays readable | `compressedPicture` | `picture_compression_test`; the reading itself is not run: see below |

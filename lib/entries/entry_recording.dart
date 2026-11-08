@@ -4,21 +4,22 @@ import 'package:flutter/foundation.dart';
 
 import '../api.dart';
 import '../attachments/picked_file.dart';
-import '../entries/project_entries.dart';
-import '../entries/saved_entry.dart';
+import 'project_entries.dart';
+import 'saved_entry.dart';
 import '../auth/session.dart';
 import '../offline/outbox.dart';
 
-/// Records a project's expenses on the API, purchases (UC-022) and contractor payments (UC-027). It sends what was typed; the API computes every figure.
-class Expenses {
-  /// The expenses of the project [projectId], recorded through [_session].
-  Expenses(this._session, this.projectId, this._outbox, this._entries);
+/// Records a project's entries on the API, whatever their table (redix-api #110): a purchase, a contractor payment, revenue or a partner's money, all through one route, or
+/// kept in the outbox while there is no network. It sends what was typed; the API computes every figure.
+class EntryRecording {
+  /// The entries of the project [projectId], recorded through [_session], kept in [_outbox] while offline, and read again into [_entries] once recorded.
+  EntryRecording(this._session, this.projectId, this._outbox, this._entries);
 
   final Session _session;
   final Outbox _outbox;
   final ProjectEntries _entries;
 
-  /// The project these expenses belong to.
+  /// The project these entries belong to.
   final String projectId;
 
   var _refusedColumnKey = '';
@@ -45,10 +46,11 @@ class Expenses {
     }
   }
 
-  /// Keeps [body], for the API [route] its table names, and its [file] on the phone, when the file could not reach the API; [editing] names the entry it changes.
-  Future<String> keep(String route, Map<String, Object> body, PickedFile file, {String editing = ''}) => _keep(_routeOf(route, editing), body, file);
+  /// Keeps [body] and its [file] on the phone, when the file could not reach the API; [editing] names the entry it changes.
+  Future<String> keep(Map<String, Object> body, PickedFile file, {String editing = ''}) => _keep(_routeOf(editing), body, file);
 
-  String _routeOf(String route, String editing) => editing.isEmpty ? route : '$route/$editing';
+  /// The route that records an entry, or changes the entry [editing].
+  String _routeOf(String editing) => editing.isEmpty ? 'entries' : 'entries/$editing';
 
   Future<String> _keep(String route, Map<String, Object> body, PickedFile file) async {
     await _outbox.keep(projectId: projectId, route: route, body: body, file: file);
@@ -56,8 +58,8 @@ class Expenses {
     return '';
   }
 
-  /// Sends [body] to the API [route] its table names (`expenses` or `contractor-payments`). Returns an empty string once recorded, otherwise the word key of the refusal.
-  Future<String> record(String route, Map<String, Object> body, {String editing = ''}) => _send(_routeOf(route, editing), body);
+  /// Sends [body] to the API, as a new entry or a change of the entry [editing]. Returns an empty string once recorded, otherwise the word key of the refusal.
+  Future<String> record(Map<String, Object> body, {String editing = ''}) => _send(_routeOf(editing), body);
 
   Future<String> _send(String route, Map<String, Object> body) async {
     _refusedColumnKey = '';
@@ -72,7 +74,7 @@ class Expenses {
       _refusedColumnKey = _lastAnswer['columnKey'] as String? ?? '';
       return refusalOf(_lastAnswer, 'expenses');
     } on Exception catch (error) {
-      debugPrint('Expense kept for later: $error');
+      debugPrint('Entry kept for later: $error');
       return _keep(route, body, PickedFile.none());
     }
   }

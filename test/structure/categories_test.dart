@@ -272,8 +272,8 @@ void main() {
     await tester.ensureVisible(find.byKey(AddEntryScreen.draftKey));
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.draftKey)));
 
-    final sent = api.sentExpenses.single;
-    expect((sent['itemId'], sent['subgroupId'], sent['amount']), (item['id'], added, 500));
+    final sent = api.sentEntries.single;
+    expect((sent['itemId'], sent['tableId'], sent['amount']), (item['id'], added, 500));
   });
 
   testWidgets('an item that takes no purchases offers no sub-table to add, since a sub-table holds purchases', (tester) async {
