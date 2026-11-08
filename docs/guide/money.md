@@ -8,9 +8,9 @@
 
 **Who sees it:** everyone sees the accounts, the difference, the total capital and their own line. Whoever does the project's finance enters these, and they count at once.
 
-**Accounts.** The card at the top shows what the accounts should hold, what they really held at the last check, and the difference. A difference means an expense not recorded, or bank fees.
+**Actual balances**, from the home's buttons, shows what the accounts should hold, what they really held at the last check, and the difference. A difference means an expense not recorded, or bank fees.
 
-**Update actual balances** asks what each account really holds, and shows the difference as you type.
+**Update** asks what each account really holds, and shows the difference as you type.
 
 **Partners.** The total sits at the top, and each partner shows their balance and share. Tap a partner to see their movements, with the receipt of each.
 
@@ -28,9 +28,9 @@ To correct any of these, reverse it. What was entered together reverses together
 
 **من يراها:** يرى الجميع الحسابات والفرق وإجمالي رأس المال وسطره هو. ويُدخلها من يتولى مالية المشروع، وتُحتسب فوراً.
 
-**الحسابات.** تعرض البطاقة في الأعلى ما يفترض أن تحويه الحسابات، وما حوته فعلاً عند آخر مطابقة، والفرق. الفرق يعني مصروفاً لم يُسجَّل أو رسوماً بنكية.
+**الأرصدة الفعلية**، من أزرار الصفحة الرئيسية، تعرض ما يفترض أن تحويه الحسابات، وما حوته فعلاً عند آخر مطابقة، والفرق. الفرق يعني مصروفاً لم يُسجَّل أو رسوماً بنكية.
 
-**تحديث الأرصدة الفعلية** يسأل عما يحويه كل حساب فعلاً، ويعرض الفرق أثناء الكتابة.
+**تحديث** يسأل عما يحويه كل حساب فعلاً، ويعرض الفرق أثناء الكتابة.
 
 **الشركاء.** الإجمالي في الأعلى، ولكل شريك رصيده ونسبته. اضغط الشريك لترى حركاته، ولكلٍّ إيصالها.
 

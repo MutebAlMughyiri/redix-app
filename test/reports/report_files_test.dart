@@ -7,6 +7,7 @@ import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/reports/item_reports_screen.dart';
 
 import '../app_harness.dart';
 
@@ -94,7 +95,9 @@ void main() {
 
   testWidgets('UC-057, D20: the VAT statement hands on its workbook for the period shown', (tester) async {
     final (:api, :capture) = await openReports(tester, (api) {});
-    await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.vatKey)));
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await tester.ensureVisible(find.byKey(HomeScreen.vatKey('project-0')));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.vatKey('project-0'))));
     final start = DateTime(DateTime.now().year, (DateTime.now().month - 1) ~/ 3 * 3 + 1);
     final from = start.toIso8601String().substring(0, 10);
     final to = DateTime(start.year, start.month + 3, 0).toIso8601String().substring(0, 10);
@@ -123,8 +126,11 @@ void main() {
         ],
       };
     });
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await tester.ensureVisible(find.byKey(HomeScreen.itemReportsKey('project-0')));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.itemReportsKey('project-0'))));
     await act(tester, api, () => tester.tap(find.text('التشطيب')));
-    await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.itemKey('item-1'))));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
 
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey('البلاط', ReportFileKind.pdf))));
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('البلاط', ReportFileKind.pdf, FileHandling.share))));
@@ -135,6 +141,9 @@ void main() {
 
   testWidgets('a file that cannot be read says so', (tester) async {
     final (:api, capture: _) = await openReports(tester, (api) {});
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
     api.online = false;
 
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf))));

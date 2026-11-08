@@ -18,6 +18,7 @@ lib/
     account_row.dart        One account: its type and who holds it, or that it is disabled, what it holds and, for whoever keeps the settings, a menu of what can be done to it
     accounts.dart           A project's accounts and cash custodies, and the one way to change them
     accounts_screen.dart    A project's bank accounts and cash custodies: everyone with access sees them, and whoever keeps the settings adds, changes and disables them
+    actual_balances_screen.dart The actual balances against the books, from the home, and تحديث to enter them again
     my_custody.dart         What the signed-in user holds, on the project's home: one card per account, and nothing for someone who holds none
     offered_accounts.dart   What the signed-in user's entry may be paid from
     reconcile_screen.dart   What each account and custody really holds, with the total and the difference as they are typed
@@ -135,7 +136,8 @@ lib/
     periodic_reports.dart   A periodic report issued
     quarter_picker.dart     A quarter chosen by its year and its number, each as chips, from the year firstYear to this one
     report_files.dart       What can be done with a report's file on the phone
-    reports_screen.dart     A project's reports: the periodic report and those issued before, the VAT statement, an item's report, the contracts and the partners
+    reports_screen.dart     A project's periodic reports: the next one and those issued before
+    item_reports_screen.dart Every category with its items, each opening its report, from the home
     vat_statement_screen.dart How a period is chosen
     waiting_figures.dart    What waits for approval, as two figures: expenses, which lower the surplus once approved, and revenue with partners' money, which raises it
     year_chips.dart         A year chosen as chips, from this year back to firstYear

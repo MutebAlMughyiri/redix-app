@@ -33,6 +33,9 @@ import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
+import '../reports/vat_statement_screen.dart';
+import '../reports/item_reports_screen.dart';
+import '../accounts/actual_balances_screen.dart';
 
 /// The home of the open project (UC-010): the project, with what the user's permissions allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
@@ -112,6 +115,15 @@ class HomeScreen extends StatefulWidget {
 
   /// The way to the reports of the project [id].
   static Key reportsKey(String id) => Key('home.reports.$id');
+
+  /// The way into the item reports of the project [id] (Muteb, 9 Nov 2026).
+  static Key itemReportsKey(String id) => Key('home.itemReports.$id');
+
+  /// The way into the actual balances of the project [id] (Muteb, 9 Nov 2026).
+  static Key actualBalancesKey(String id) => Key('home.actualBalances.$id');
+
+  /// The way into the VAT refund of the project [id] (Muteb, 9 Nov 2026).
+  static Key vatKey(String id) => Key('home.vat.$id');
 
   /// The way into the settings of the project [id]: a gear in the top bar (Muteb, 8 and 9 Nov 2026).
   static Key settingsKey(String id) => Key('home.settings.$id');
@@ -263,6 +275,9 @@ class _HomeScreenState extends State<HomeScreen> {
               onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
               onReports: () => _open(ReportsScreen.pathOf(project.id), project),
               onDocuments: () => _open(DocumentsScreen.pathOf(project.id), project),
+              onVat: () => _open(VatStatementScreen.pathOf(project.id), project),
+              onItemReports: () => _open(ItemReportsScreen.pathOf(project.id), project),
+              onActualBalances: () => _open(ActualBalancesScreen.pathOf(project.id), project),
             ),
           ],
         ),

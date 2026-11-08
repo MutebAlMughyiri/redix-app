@@ -12,7 +12,7 @@ Revenue shows in **القيود** with every other entry, saying it is revenue; 
 
 - To record a VAT refund, a sale or anything else that comes in, open **Add entry** and pick the revenue item in the table list. It waits for approval like an expense, and counts once approved.
 
-**Reports › VAT statement** takes a quarter, a half-year or any period as an Excel file: a section per quarter, each purchase with its total. The VAT is worked out in the file from every total, at the configured rate, whether or not the party has a VAT number. REDIX keeps no VAT of its own.
+**VAT refund**, from the home's buttons, takes a quarter, a half-year or any period as an Excel file: a section per quarter, each purchase with its total. The VAT is worked out in the file from every total, at the configured rate, whether or not the party has a VAT number. REDIX keeps no VAT of its own.
 
 ## العربية
 
@@ -24,4 +24,4 @@ Revenue shows in **القيود** with every other entry, saying it is revenue; 
 
 - لتسجيل استرجاع ضريبة أو بيع أو غيره مما يدخل، افتح **إضافة قيد** واختر بند الإيراد من قائمة الجداول. وينتظر الاعتماد كالمصروف، ولا يُحسب إلا بعد اعتماده.
 
-**التقارير › كشف ضريبة القيمة المضافة** يأخذ ربعاً أو نصف سنة أو أي فترة ملفَّ Excel: قسماً لكل ربع، وكل شراء بإجماليه. وتُحسب الضريبة في الملف من كل إجمالي بالنسبة المضبوطة، سواء كان للطرف رقم ضريبي أم لا. ولا يحفظ REDIX أي ضريبة.
+**استرداد ضريبة القيمة المضافة**، من أزرار الصفحة الرئيسية، يأخذ ربعاً أو نصف سنة أو أي فترة ملفَّ Excel: قسماً لكل ربع، وكل شراء بإجماليه. وتُحسب الضريبة في الملف من كل إجمالي بالنسبة المضبوطة، سواء كان للطرف رقم ضريبي أم لا. ولا يحفظ REDIX أي ضريبة.

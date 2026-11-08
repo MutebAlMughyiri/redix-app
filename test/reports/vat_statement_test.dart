@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/quarter_picker.dart';
 import 'package:redix/reports/report_files.dart';
-import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
 import 'package:redix/reports/year_chips.dart';
 
@@ -22,8 +21,8 @@ void main() {
 
   Future<FakeApi> openVat(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance}) async {
     final api = await openHome(tester, arrange, permissions: permissions);
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.reportsKey('project-0'))));
-    await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.vatKey)));
+    await tester.ensureVisible(find.byKey(HomeScreen.vatKey('project-0')));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.vatKey('project-0'))));
     return api;
   }
 

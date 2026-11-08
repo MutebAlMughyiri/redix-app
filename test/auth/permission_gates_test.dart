@@ -27,6 +27,7 @@ import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/accounts/actual_balances_screen.dart';
 
 import '../app_harness.dart';
 
@@ -189,10 +190,10 @@ final List<Gate> _gates = [
     control: _enabled(AddEntryScreen.changeKey),
   ),
   (
-    name: 'The contracts report\'s files',
+    name: 'The contracts report\'s files, on Contracts',
     permission: Permission.seeAllCapital,
     arrange: _nothing,
-    steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))],
+    steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project))],
     control: _key(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)),
   ),
   (
@@ -208,7 +209,7 @@ final List<Gate> _gates = [
     name: 'The VAT statement\'s files',
     permission: Permission.seeAllCapital,
     arrange: _nothing,
-    steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project)), _tapKey(ReportsScreen.vatKey)],
+    steps: [_openProject, _tapKey(HomeScreen.vatKey(_project))],
     control: (_) => find.byType(ReportFileButtons),
   ),
   (
@@ -259,11 +260,11 @@ final List<Gate> _gates = [
     control: _key(AddEntryScreen.reverseKey),
   ),
   (
-    name: 'Reconcile on the accounts',
+    name: 'Update the actual balances',
     permission: Permission.moveMoney,
     arrange: (api) => api.addAccount(_project, 'البنك'),
-    steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))],
-    control: _key(AccountsScreen.reconcileKey),
+    steps: [_openProject, _tapKey(HomeScreen.actualBalancesKey(_project))],
+    control: _key(ActualBalancesScreen.updateKey),
   ),
   (name: 'Issue a periodic report', permission: Permission.moveMoney, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _key(ReportsScreen.issueKey)),
   (

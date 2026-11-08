@@ -45,6 +45,7 @@ import 'projects/members.dart';
 import 'reports/dashboard.dart';
 import 'reports/item_report.dart';
 import 'reports/item_report_screen.dart';
+import 'reports/item_reports_screen.dart';
 import 'reports/periodic_report_screen.dart';
 import 'reports/periodic_reports.dart';
 import 'reports/report_files.dart';
@@ -82,6 +83,7 @@ import 'words/words.dart';
 import 'config/app_config.dart';
 import 'entries/entry_link_screen.dart';
 import 'ui/app_color.dart';
+import 'accounts/actual_balances_screen.dart';
 
 /// Starts the app with the session and the language kept from an earlier start, if any. An app built without its environment's config
 /// file stops here, rather than calling an address nobody chose.
@@ -242,18 +244,23 @@ class _RedixAppState extends State<RedixApp> {
           project: state.extra! as Project,
           accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
           members: _membersOf(state.pathParameters['projectId'] ?? ''),
-          reconciliations: _reconciliationsOf(state.pathParameters['projectId'] ?? ''),
         ),
+      ),
+      GoRoute(
+        path: ActualBalancesScreen.path,
+        builder: (context, state) => ActualBalancesScreen(project: state.extra! as Project, reconciliations: _reconciliationsOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(
         path: ReportsScreen.path,
         builder: (context, state) => ReportsScreen(
           project: state.extra! as Project,
-          dashboard: _dashboardOf(state.pathParameters['projectId'] ?? ''),
           periodicReports: _projectPeriodicReports.putIfAbsent(state.pathParameters['projectId'] ?? '', () => PeriodicReports(widget.session, state.pathParameters['projectId'] ?? '')),
           nextReport: _projectNextReports.putIfAbsent(state.pathParameters['projectId'] ?? '', () => NextReport(widget.session, state.pathParameters['projectId'] ?? '')),
-          files: _reportFiles,
         ),
+      ),
+      GoRoute(
+        path: ItemReportsScreen.path,
+        builder: (context, state) => ItemReportsScreen(project: state.extra! as Project, dashboard: _dashboardOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(
         path: PeriodicReportScreen.path,
@@ -329,6 +336,7 @@ class _RedixAppState extends State<RedixApp> {
           items: _offeredItemsOf(state.pathParameters['projectId'] ?? '', ItemType.contractorPayments),
           attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
           capture: widget.capture,
+          files: _reportFiles,
         ),
       ),
       GoRoute(path: AddEntryScreen.path, builder: (context, state) => _addEntryScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project, state.uri.queryParameters)),

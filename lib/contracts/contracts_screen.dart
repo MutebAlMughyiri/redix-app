@@ -15,11 +15,13 @@ import 'contract.dart';
 import 'contract_card.dart';
 import 'contract_dialog.dart';
 import 'contracts.dart';
+import '../reports/report_files.dart';
+import '../auth/permission.dart';
 
 /// A project's contracts (UC-020): everyone with access follows each one's value, paid and remaining, and whoever keeps the settings adds, amends and disables them. Nothing is deleted.
 class ContractsScreen extends StatefulWidget {
   /// The screen, showing and changing the [contracts] of [project], picking a contractor from [suppliers] and an item from [items], and keeping a document through [attachments] from what [capture] picks.
-  const ContractsScreen({super.key, required this.project, required this.contracts, required this.suppliers, required this.items, required this.attachments, required this.capture});
+  const ContractsScreen({super.key, required this.project, required this.contracts, required this.suppliers, required this.items, required this.attachments, required this.capture, required this.files});
 
   /// The project they belong to.
   final Project project;
@@ -38,6 +40,9 @@ class ContractsScreen extends StatefulWidget {
 
   /// The phone's files.
   final InvoiceCapture capture;
+
+  /// The way to the contracts report's PDF and Excel, for whoever sees all capital (moved from Reports, Muteb, 9 Nov 2026).
+  final ReportFiles files;
 
   /// The screen's route.
   static const path = '/projects/:projectId/contracts';
@@ -193,6 +198,11 @@ class _ContractsScreenState extends State<ContractsScreen> {
               ),
             ),
           ),
+          if (project.may(Permission.seeAllCapital))
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: ReportFileButtons(files: widget.files, address: '/projects/${project.id}/reports/contracts', name: 'contracts', kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
+            ),
           Expanded(
             child: ApiListBody(
               list: contracts,

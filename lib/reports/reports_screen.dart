@@ -1,28 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../auth/permission.dart';
-import '../contracts/contracts_screen.dart';
 import '../format/date_format.dart';
-import '../partners/partners_screen.dart';
 import '../projects/project.dart';
-import '../ui/api_object_body.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
-import 'dashboard.dart';
-import 'item_report_screen.dart';
 import 'periodic_report_screen.dart';
 import 'periodic_reports.dart';
-import 'report_files.dart';
-import 'vat_statement_screen.dart';
 
-/// A project's reports (FR-29 to FR-33): the periodic report and those issued before, the VAT statement, an item's report, the contracts and the partners.
+/// A project's periodic reports (FR-29 to FR-32): the next one and those issued before. The VAT refund and the item reports open from the home, and the contracts and the
+/// partners have their own screens there (Muteb, 9 Nov 2026).
 class ReportsScreen extends StatefulWidget {
-  /// The reports of [project], whose items come from [dashboard], its periodic reports from [periodicReports] and [nextReport], and its files through [files].
-  const ReportsScreen({super.key, required this.project, required this.dashboard, required this.periodicReports, required this.nextReport, required this.files});
+  /// The periodic reports of [project], from [periodicReports] and [nextReport].
+  const ReportsScreen({super.key, required this.project, required this.periodicReports, required this.nextReport});
 
   /// The address of the screen.
   static const path = '/projects/:projectId/reports';
@@ -36,20 +29,8 @@ class ReportsScreen extends StatefulWidget {
   /// The line saying no report was issued yet.
   static const noneIssuedKey = Key('reports.noneIssued');
 
-  /// The way into the VAT statement.
-  static const vatKey = Key('reports.vat');
-
-  /// The way into the contracts.
-  static const contractsKey = Key('reports.contracts');
-
-  /// The way into the partners.
-  static const partnersKey = Key('reports.partners');
-
   /// The way into the periodic report [number].
   static Key periodicKey(int number) => Key('reports.periodic.$number');
-
-  /// The way into the report of the item [id].
-  static Key itemKey(String id) => Key('reports.item.$id');
 
   /// The card of the periodic reports.
   static const periodicCardKey = Key('reports.periodicCard');
@@ -57,26 +38,14 @@ class ReportsScreen extends StatefulWidget {
   /// The heading over the periodic reports.
   static const periodicHeadingKey = Key('reports.periodicHeading');
 
-  /// The heading over the items' reports.
-  static const itemsHeadingKey = Key('reports.itemsHeading');
-
-  /// The category [id], opening to its items.
-  static Key categoryKey(String id) => Key('reports.category.$id');
-
   /// The project.
   final Project project;
-
-  /// Its figures, which name its items.
-  final Dashboard dashboard;
 
   /// Its periodic reports.
   final PeriodicReports periodicReports;
 
   /// What the next one takes.
   final NextReport nextReport;
-
-  /// The way to its files.
-  final ReportFiles files;
 
   @override
   State<ReportsScreen> createState() => _ReportsScreenState();
@@ -86,15 +55,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
   @override
   void initState() {
     super.initState();
-    widget.dashboard.loadOnOpen();
     widget.periodicReports.loadOnOpen();
     widget.nextReport.loadOnOpen();
   }
-
-  Widget _way(Key key, IconData icon, String title, String path) => Card.outlined(
-    key: key.card,
-    child: ListTile(key: key, leading: Icon(icon, key: key.icon), title: Text(title, key: key.title), trailing: Icon(Icons.chevron_right, key: key.trailing), onTap: () => context.push(path, extra: widget.project)),
-  );
 
   void _askToIssue(NextReportFigures next) {
     final words = Words.of(context);
@@ -155,45 +118,12 @@ class _ReportsScreenState extends State<ReportsScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final project = widget.project;
-    final exports = project.may(Permission.seeAllCapital);
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.reportsTitle, subject: project.name)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           _periodic(),
-          const SizedBox(height: 8),
-          _way(ReportsScreen.vatKey, Icons.receipt_long_outlined, words.vatTitle, VatStatementScreen.pathOf(project.id)),
-          _way(ReportsScreen.contractsKey, Icons.description_outlined, words.reportsContracts, ContractsScreen.pathOf(project.id)),
-          if (exports)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: ReportFileButtons(files: widget.files, address: '/projects/${project.id}/reports/contracts', name: 'contracts', kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
-            ),
-          _way(ReportsScreen.partnersKey, Icons.handshake_outlined, words.reportsPartners, PartnersScreen.pathOf(project.id)),
-          const SizedBox(height: 12),
-          Text(words.reportsItem, key: ReportsScreen.itemsHeadingKey, style: Theme.of(context).textTheme.titleMedium),
-          ApiObjectBody(
-            object: widget.dashboard,
-            builder: (figures) => Column(
-              children: [
-                for (final category in figures.categories)
-                  ExpansionTile(
-                    key: ReportsScreen.categoryKey(category.id),
-                    title: Text(category.name, key: ReportsScreen.categoryKey(category.id).title),
-                    children: [
-                      for (final item in category.items)
-                        ListTile(
-                          key: ReportsScreen.itemKey(item.id),
-                          title: Text(item.name, key: ReportsScreen.itemKey(item.id).title),
-                          trailing: Icon(Icons.chevron_right, key: ReportsScreen.itemKey(item.id).icon),
-                          onTap: () => context.push(ItemReportScreen.pathOf(project.id, item.id), extra: project),
-                        ),
-                    ],
-                  ),
-              ],
-            ),
-          ),
         ],
       ),
     );

@@ -1,29 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
-import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'account.dart';
 import 'account_dialog.dart';
 import 'account_row.dart';
 import 'accounts.dart';
-import 'reconcile_screen.dart';
-import 'reconciliation.dart';
-import 'reconciliation_card.dart';
 
 /// A project's bank accounts and cash custodies (UC-015): everyone with access sees them, and whoever keeps the settings adds, changes and disables them (AC-22.1). Nothing is deleted (BR-15).
+/// The actual balances against the books have their own screen from the home (Muteb, 9 Nov 2026).
 class AccountsScreen extends StatefulWidget {
   /// The screen, showing and changing the [accounts] of [project], choosing a custodian among [members].
-  const AccountsScreen({super.key, required this.project, required this.accounts, required this.members, required this.reconciliations});
-
-  /// Its accounts against its books.
-  final Reconciliations reconciliations;
+  const AccountsScreen({super.key, required this.project, required this.accounts, required this.members});
 
   /// The project they belong to.
   final Project project;
@@ -33,9 +26,6 @@ class AccountsScreen extends StatefulWidget {
 
   /// The people who can hold an account.
   final Members members;
-
-  /// The button entering the actual balances.
-  static const reconcileKey = Key('accounts.reconcile');
 
   /// The screen's route.
   static const path = '/projects/:projectId/accounts';
@@ -106,20 +96,10 @@ class _AccountsScreenState extends State<AccountsScreen> {
   void initState() {
     super.initState();
     widget.accounts.loadOnOpen();
-    widget.reconciliations.loadOnOpen();
     if (widget.project.mayManageSettings) {
       widget.members.loadOnOpen();
     }
   }
-
-  List<Widget> _above(Words words) => [
-    ReconciliationCard(reconciliations: widget.reconciliations),
-    if (widget.project.mayMoveMoney)
-      Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: FilledButton(key: AccountsScreen.reconcileKey, onPressed: () => context.push(ReconcileScreen.pathOf(widget.project.id), extra: widget.project), child: Text(words.accountsReconcile, key: AccountsScreen.reconcileKey.label)),
-      ),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -136,8 +116,6 @@ class _AccountsScreenState extends State<AccountsScreen> {
       body: ApiListBody(
         list: accounts,
         emptyText: words.accountsEmpty,
-        alsoRefresh: widget.reconciliations.load,
-        listOf: (items) => ListView(padding: ApiListBody.padding, physics: ApiListBody.physics, children: [..._above(words), ...items]),
         itemBuilder: (account) => AccountRow(account: account, accounts: accounts, members: widget.members, mayChange: project.mayManageSettings),
       ),
     );

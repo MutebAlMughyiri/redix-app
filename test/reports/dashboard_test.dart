@@ -9,6 +9,8 @@ import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/app_color.dart';
+import 'package:redix/reports/item_reports_screen.dart';
+import 'package:redix/reports/report_files.dart';
 
 import '../app_harness.dart';
 
@@ -221,9 +223,10 @@ void main() {
           ],
         };
     });
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.reportsKey('project-0'))));
+    await tester.ensureVisible(find.byKey(HomeScreen.itemReportsKey('project-0')));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.itemReportsKey('project-0'))));
     await act(tester, api, () => tester.tap(find.text('التشطيب')));
-    await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.itemKey('item-1'))));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
 
     expect(tester.widget<Text>(find.byKey(ItemReportScreen.totalKey)).data, '3,000.00');
     expect(tester.widget<Text>(find.byKey(ItemReportScreen.subgroupTotalKey('subgroup-1'))).data, '1,000.00');
@@ -232,12 +235,23 @@ void main() {
     expect(find.textContaining('(500.00)'), findsOneWidget);
   });
 
-  testWidgets('AC-31.1: the reports open the contracts, with value, paid and remaining', (tester) async {
+  testWidgets('Muteb, 9 Nov 2026: Reports holds the periodic reports alone; the home opens the item reports and the VAT refund, and Contracts holds the contracts report\'s files', (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
+    expect(tester.widget<Text>(find.byKey(HomeScreen.vatKey('project-0').label)).data, 'en vat.title');
+    expect(find.byKey(HomeScreen.itemReportsKey('project-0')), findsOneWidget);
+
+    await tester.ensureVisible(find.byKey(HomeScreen.reportsKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.reportsKey('project-0'))));
+    expect(find.byKey(ReportsScreen.periodicCardKey), findsOneWidget);
+    for (final gone in ['en reports.contracts', 'en reports.partners', 'en vat.title', 'en reports.item']) {
+      expect(find.text(gone), findsNothing, reason: gone);
+    }
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-    await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.contractsKey)));
-
+    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
     expect(find.byType(ContractsScreen), findsOneWidget);
+    expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)), findsOneWidget);
+    expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.excel)), findsOneWidget);
   });
 }

@@ -10,13 +10,14 @@
 
 **The home** shows what waits for your approval, the surplus with and without sales, revenue and expenses, the reconciliation difference, completion and cost, and expenses by category. Tap a category for its items, and an item for its report. The manager sets the completion with the pencil.
 
-**Reports** holds:
+**Reports** holds the **periodic report:** issue the next number; the report keeps what is approved now and never changes. Earlier reports open as they were issued. Its PDF, Excel and Print buttons are for the owner and Finance.
 
-- **Periodic report:** issue the next number; the report keeps what is approved now and never changes. Earlier reports open as they were issued. Its PDF, Excel and Print buttons are for the owner and Finance.
-- **VAT statement**, as Excel, its VAT worked out from each total.
-- **Contracts and what remains**, with PDF and Excel.
-- **Partners and capital.**
+The home's buttons at its bottom open the rest:
+
 - **Item report**, a category at a time.
+- **Actual balances**: what the accounts should hold, what they really held at the last check, and the difference; **Update** enters them again.
+- **VAT refund**, as Excel, its VAT worked out from each total.
+- **Contracts**, whose screen holds the contracts report's PDF and Excel for the owner and Finance; and **Partners**, with the capital.
 
 Print opens the phone's printer with a preview. PDF and Excel open the share sheet, for WhatsApp or email.
 
@@ -28,12 +29,13 @@ Print opens the phone's printer with a preview. PDF and Excel open the share she
 
 **الصفحة الرئيسية** تعرض ما ينتظر اعتمادك، والفائض مع البيع وبدونه، والإيرادات والمصروفات، وفرق المطابقة، ونسبة الإنجاز والتكلفة، والمصروفات حسب التصنيف. اضغط التصنيف لبنوده، والبند لتقريره. ويحدّث المدير نسبة الإنجاز بالقلم.
 
-**التقارير** تضم:
+**التقارير** تضم **التقرير الدوري:** أصدِر الرقم التالي؛ يحفظ التقرير المعتمد الآن ولا يتغير. وتُفتح التقارير السابقة كما صدرت. وأزرار PDF وExcel والطباعة للمالك والمالي.
 
-- **التقرير الدوري:** أصدِر الرقم التالي؛ يحفظ التقرير المعتمد الآن ولا يتغير. وتُفتح التقارير السابقة كما صدرت. وأزرار PDF وExcel والطباعة للمالك والمالي.
-- **كشف ضريبة القيمة المضافة** ملفَّ Excel، تُحسب ضريبته من كل إجمالي.
-- **العقود والمتبقي** بملفي PDF وExcel.
-- **الشركاء ورأس المال.**
+وتفتح أزرار أسفل الصفحة الرئيسية الباقي:
+
 - **تقرير بند**، تصنيفاً تلو الآخر.
+- **الأرصدة الفعلية**: ما يفترض أن تحويه الحسابات، وما حوته فعلاً عند آخر مطابقة، والفرق؛ و**تحديث** يُدخلها من جديد.
+- **استرداد ضريبة القيمة المضافة** ملفَّ Excel، تُحسب ضريبته من كل إجمالي.
+- **العقود**، وفي شاشتها ملفا PDF وExcel لتقرير العقود للمالك والمالي؛ و**الشركاء** ومعهم رأس المال.
 
 الطباعة تفتح طابعة الجوال مع معاينة. وPDF وExcel يفتحان المشاركة، لواتساب أو البريد.

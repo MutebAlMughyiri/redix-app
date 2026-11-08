@@ -1697,9 +1697,6 @@ mixin WordGetters {
   /// The word `reports.contractValue`.
   String get reportsContractValue => text('reports.contractValue');
 
-  /// The word `reports.contracts`.
-  String get reportsContracts => text('reports.contracts');
-
   /// The word `reports.current`.
   String get reportsCurrent => text('reports.current');
 
