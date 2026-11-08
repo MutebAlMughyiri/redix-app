@@ -75,6 +75,17 @@ void main() {
     }
   });
 
+  testWidgets('a server answer that names no refusal says the server could not change it, never that there is no connection', (tester) async {
+    final api = FakeApi()
+      ..mustChangePassword = true
+      ..changePasswordAnswer = (status: 500, code: '');
+    await pumpRedix(tester, api, stored: {'session': keptTemporarySession});
+
+    await change(tester, api);
+
+    expect(message(tester), 'en changePassword.refused');
+  });
+
   testWidgets('an expired access token is renewed once and the change sent again', (tester) async {
     final api = FakeApi()
       ..mustChangePassword = true

@@ -25,9 +25,9 @@ class Attachments {
     _kept = Attachment.none();
     try {
       final response = await _session.postFile('/projects/$projectId/attachments', file.name, file.bytes);
-      final answer = response.body.isEmpty ? const <String, dynamic>{} : jsonOf(response) as Map<String, dynamic>;
+      final answer = answerOf(response);
       if (response.statusCode >= 300) {
-        return 'attachments.${answer['code'] as String? ?? 'refused'}';
+        return refusalOf(answer, 'attachments');
       }
       _kept = Attachment.fromJson(answer);
       return '';

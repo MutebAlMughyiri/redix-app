@@ -108,9 +108,8 @@ abstract class ApiObject<T> extends ChangeNotifier {
     try {
       final response = await send();
       await load();
-      final answer = response.body.isEmpty ? null : jsonOf(response);
-      _lastAnswer = answer is Map<String, dynamic> ? answer : const {};
-      return response.statusCode < 300 ? '' : '$prefix.${_lastAnswer['code'] as String? ?? 'refused'}';
+      _lastAnswer = answerOf(response);
+      return response.statusCode < 300 ? '' : refusalOf(_lastAnswer, prefix);
     } on Exception catch (error) {
       debugPrint('$path not changed: $error');
       return '$prefix.noConnection';

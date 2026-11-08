@@ -128,7 +128,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
     final project = widget.project;
     final accounts = widget.accounts;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.accountsTitle, subject: project.name), actions: [RefreshButton(onRefresh: accounts.load)]),
+      appBar: AppBar(title: ScreenTitle(words.accountsTitle, subject: project.name), actions: [RefreshButton(onRefresh: () => Future.wait([accounts.load(), widget.reconciliations.load()]))]),
       bottomNavigationBar: BottomButton(
         buttonKey: AccountsScreen.addKey,
         label: words.accountsNew,
@@ -137,6 +137,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
       body: ApiListBody(
         list: accounts,
         emptyText: words.accountsEmpty,
+        alsoRefresh: widget.reconciliations.load,
         listOf: (items) => ListView(padding: ApiListBody.padding, physics: ApiListBody.physics, children: [..._above(words), ...items]),
         itemBuilder: (account) => AccountRow(account: account, accounts: accounts, members: widget.members, mayChange: project.mayManageSettings),
       ),

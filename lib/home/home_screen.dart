@@ -9,6 +9,7 @@ import '../accounts/my_custody.dart';
 import '../auth/session.dart';
 import '../contracts/contracts_screen.dart';
 import '../documents/documents_screen.dart';
+import '../partners/movements_screen.dart';
 import '../partners/partners_screen.dart';
 import '../reports/reports_screen.dart';
 import '../approvals/approvals_screen.dart';
@@ -216,49 +217,49 @@ class _HomeScreenState extends State<HomeScreen> {
         list: widget.projects,
         emptyText: '',
         alsoRefresh: _readAgain,
-        itemBuilder: (project) => project.id == widget.projectId
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ListenableBuilder(
-                    listenable: widget.outbox,
-                    builder: (context, _) {
-                      final waiting = widget.outbox.of(project.id).length;
-                      return waiting == 0
-                          ? const SizedBox.shrink()
-                          : Card.filled(
-                              key: HomeScreen.waitingKey(project.id).card,
-                              child: ListTile(
-                                key: HomeScreen.waitingKey(project.id),
-                                leading: Icon(Icons.cloud_upload_outlined, key: HomeScreen.waitingKey(project.id).icon),
-                                title: Text('${words.offlineTitle} · $waiting', key: HomeScreen.waitingKey(project.id).title),
-                                onTap: () => context.push(WaitingScreen.pathOf(project.id)),
-                              ),
-                            );
-                    },
-                  ),
-                  DashboardCard(
-                    project: project,
-                    dashboard: widget.dashboard,
-                    onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
-                    onItem: (item) => _open(ItemReportScreen.pathOf(project.id, item.id), project),
-                  ),
-                  MyCustody(accounts: widget.accounts),
-                  HomeEntries(project: project, entries: widget.entries),
-                  ProjectCard(
-                    project: project,
-                    onAccounts: () => _open(AccountsScreen.pathOf(project.id), project),
-                    onPartners: () => _open(PartnersScreen.pathOf(project.id), project),
-                    onSuppliers: () => _open(SuppliersScreen.pathOf(project.id), project),
-                    onContracts: () => _open(ContractsScreen.pathOf(project.id), project),
-                    onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
-                    onReports: () => _open(ReportsScreen.pathOf(project.id), project),
-                    onSettings: () => _openSettings(project),
-                    onDocuments: () => _open(DocumentsScreen.pathOf(project.id), project),
-                  ),
-                ],
-              )
-            : const SizedBox.shrink(),
+        keeps: (project) => project.id == widget.projectId,
+        itemBuilder: (project) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            ListenableBuilder(
+              listenable: widget.outbox,
+              builder: (context, _) {
+                final waiting = widget.outbox.of(project.id).length;
+                return waiting == 0
+                    ? const SizedBox.shrink()
+                    : Card.filled(
+                        key: HomeScreen.waitingKey(project.id).card,
+                        child: ListTile(
+                          key: HomeScreen.waitingKey(project.id),
+                          leading: Icon(Icons.cloud_upload_outlined, key: HomeScreen.waitingKey(project.id).icon),
+                          title: Text('${words.offlineTitle} · $waiting', key: HomeScreen.waitingKey(project.id).title),
+                          onTap: () => context.push(WaitingScreen.pathOf(project.id)),
+                        ),
+                      );
+              },
+            ),
+            DashboardCard(
+              project: project,
+              dashboard: widget.dashboard,
+              onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
+              onItem: (item) => _open(ItemReportScreen.pathOf(project.id, item.id), project),
+              onPartner: (partner) => _open(MovementsScreen.pathOf(project.id, partner.id, partner.name), project),
+            ),
+            MyCustody(accounts: widget.accounts),
+            HomeEntries(project: project, entries: widget.entries),
+            ProjectCard(
+              project: project,
+              onAccounts: () => _open(AccountsScreen.pathOf(project.id), project),
+              onPartners: () => _open(PartnersScreen.pathOf(project.id), project),
+              onSuppliers: () => _open(SuppliersScreen.pathOf(project.id), project),
+              onContracts: () => _open(ContractsScreen.pathOf(project.id), project),
+              onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
+              onReports: () => _open(ReportsScreen.pathOf(project.id), project),
+              onSettings: () => _openSettings(project),
+              onDocuments: () => _open(DocumentsScreen.pathOf(project.id), project),
+            ),
+          ],
+        ),
       ),
     );
   }

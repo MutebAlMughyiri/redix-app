@@ -98,9 +98,9 @@ class Outbox extends ChangeNotifier {
       if (kept.statusCode >= 500) {
         return;
       }
-      final answer = jsonOf(kept) as Map<String, dynamic>;
+      final answer = answerOf(kept);
       if (kept.statusCode >= 300) {
-        return _refuse(entry, 'attachments.${answer['code'] as String? ?? 'refused'}');
+        return _refuse(entry, refusalOf(answer, 'attachments'));
       }
       entry
         ..body['attachmentId'] = answer['id'] as String
@@ -112,8 +112,7 @@ class Outbox extends ChangeNotifier {
       return;
     }
     if (sent.statusCode >= 300) {
-      final answer = sent.body.isEmpty ? const <String, dynamic>{} : jsonOf(sent) as Map<String, dynamic>;
-      return _refuse(entry, 'expenses.${answer['code'] as String? ?? 'refused'}');
+      return _refuse(entry, refusalOf(answerOf(sent), 'expenses'));
     }
     await discard(entry);
   }

@@ -63,13 +63,13 @@ class Expenses {
     _wasKept = false;
     try {
       final response = await _session.post('/projects/$projectId/$route', body);
-      _lastAnswer = response.body.isEmpty ? const <String, dynamic>{} : jsonOf(response) as Map<String, dynamic>;
+      _lastAnswer = answerOf(response);
       if (response.statusCode < 300) {
         unawaited(_entries.load());
         return '';
       }
       _refusedColumnKey = _lastAnswer['columnKey'] as String? ?? '';
-      return 'expenses.${_lastAnswer['code'] as String? ?? 'refused'}';
+      return refusalOf(_lastAnswer, 'expenses');
     } on Exception catch (error) {
       debugPrint('Expense kept for later: $error');
       return _keep(route, body, PickedFile.none());

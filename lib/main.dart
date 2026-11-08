@@ -193,7 +193,7 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => AttachmentScreen(
           projectId: state.pathParameters['projectId'] ?? '',
           attachmentId: state.pathParameters['attachmentId'] ?? '',
-          fileName: state.uri.queryParameters['name'] ?? '',
+          fileName: state.uri.queryParameters['name'] ?? 'invoice.pdf',
           contentType: state.extra as String? ?? '',
           session: widget.session,
           capture: widget.capture,

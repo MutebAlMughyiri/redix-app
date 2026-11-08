@@ -35,6 +35,7 @@
 | The session is kept only in the Keychain or Keystore (NFR-09) | `Session`, `flutter_secure_storage` | `sign_in_test.dart`: the right password |
 | A refusal shows one line that never says which field was wrong (AC-01.2) | `SignInScreen`, the API's `code` | `sign_in_test.dart`: a wrong password, a locked account |
 | Without a network, sign-in says so | `Session.signIn` | `sign_in_test.dart`: without a network |
+| A server answer that names no refusal says the server could not sign in, never that there is no connection | `refusalOf`, `answerOf` in `lib/api.dart` | `sign_in_test.dart`: a server answer that names no refusal |
 | A kept session opens home directly and is renewed in the background | `Session.restore` | `sign_in_test.dart`: a kept session |
 | Without a network a kept session stays open, so work goes on offline (FR-16) | `Session.restore` | `sign_in_test.dart`: without a network a kept session |
 | A session the API refuses ends on sign-in with a notice (AC-01.3, NFR-09) | `Session.restore` | `sign_in_test.dart`: a kept session the API refuses |

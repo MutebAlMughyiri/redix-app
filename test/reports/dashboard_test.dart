@@ -6,6 +6,7 @@ import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/home/dashboard_card.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/ui/part_keys.dart';
@@ -16,9 +17,9 @@ import '../app_harness.dart';
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  Map<String, Object> figures({int pendingCount = 0, double surplus = 1000, bool wasReconciled = false, double difference = 0, double completion = 0}) => {
+  Map<String, Object> figures({int pendingCount = 0, double surplus = 1000, bool wasReconciled = false, double difference = 0, double completion = 0, List<Map<String, Object>> partners = const []}) => {
     'revenue': 5000,
-    'capital': 4000,
+    'capital': {'total': 4000, 'partners': partners},
     'expenses': 4000,
     'surplus': surplus,
     'wasReconciled': wasReconciled,
@@ -148,7 +149,30 @@ void main() {
     expect(tester.getTopLeft(find.byKey(DashboardCard.categoryKey(''))).dy < tester.getTopLeft(find.byKey(DashboardCard.categoryKey('category-9'))).dy, isTrue);
   });
 
-  testWidgets('BR-31: the capital line holds no partner and does not open, with no arrow to tap', (tester) async {
+  testWidgets('BR-31: the capital line opens to the partners the API lets the reader see, and a partner opens their movements', (tester) async {
+    final api = await openHome(
+      tester,
+      (api) => api.dashboardAnswer = figures(
+        partners: [
+          {'id': 'partner-1', 'name': 'متعب', 'isActive': true, 'isMine': true, 'balance': 3000, 'sharePercent': 75},
+          {'id': 'partner-2', 'name': 'نواف', 'isActive': true, 'isMine': false, 'balance': 1000, 'sharePercent': 25},
+        ],
+      ),
+    );
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
+    expect(find.byKey(DashboardCard.itemKey('partner-1')), findsNothing);
+
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.categoryKey(''))));
+
+    expect(text(tester, DashboardCard.itemKey('partner-1').title), 'متعب');
+    expect(text(tester, DashboardCard.itemKey('partner-1').trailing), formatMoney(3000));
+    expect(text(tester, DashboardCard.itemKey('partner-2').trailing), formatMoney(1000));
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.itemKey('partner-2'))));
+    expect(find.byType(MovementsScreen), findsOneWidget);
+    expect(find.byType(ItemReportScreen), findsNothing);
+  });
+
+  testWidgets('BR-31: with no partner the reader may see, the capital line is a total that does not open, with no arrow to tap', (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
     await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
 

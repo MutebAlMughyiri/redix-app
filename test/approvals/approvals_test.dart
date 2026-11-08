@@ -3,10 +3,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/attachments/attachment_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 
 void main() {
+  String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
+
   Future<FakeApi> openInbox(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance, String status = 'active'}) async {
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status);
     arrange(api);
@@ -59,6 +63,23 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.purchasesKey)));
     expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsOneWidget);
     expect(find.byKey(ApprovalsScreen.cardKey('entry-1')), findsNothing);
+  });
+
+  testWidgets('each filter counts what it keeps, and one that keeps nothing says nothing waits rather than showing a blank page', (tester) async {
+    final api = await openInbox(tester, (api) {
+      api
+        ..addPending()
+        ..addPending();
+    });
+
+    expect(text(tester, ApprovalsScreen.allKey.label), 'en approvals.all · 2');
+    expect(text(tester, ApprovalsScreen.purchasesKey.label), 'en approvals.purchases · 2');
+    expect(text(tester, ApprovalsScreen.contractorPaymentsKey.label), 'en approvals.contractorPayments · 0');
+
+    await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.contractorPaymentsKey)));
+
+    expect(text(tester, ApiListBody.emptyKey), 'en approvals.empty');
+    expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsNothing);
   });
 
   testWidgets('R16: an entry of a partner waits named after the partner and its kind, and a revenue entry after its item', (tester) async {
@@ -185,7 +206,7 @@ void main() {
     });
 
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.fileKey('entry-0'))));
-    expect(find.byKey(AttachmentScreen.openPdfKey), findsOneWidget);
+    expect(find.byKey(AttachmentScreen.openFileKey), findsOneWidget);
 
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.fileKey('entry-1'))));

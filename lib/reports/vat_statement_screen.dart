@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import '../auth/permission.dart';
 import '../format/date_format.dart';
 import '../projects/project.dart';
-import '../revenue/quarter_picker.dart';
 import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
+import 'quarter_picker.dart';
 import 'report_files.dart';
+import 'year_chips.dart';
 
 /// How a period is chosen.
 enum _Mode { quarter, halfYear, custom }
@@ -104,12 +105,18 @@ class _VatStatementScreenState extends State<VatStatementScreen> {
           const SizedBox(height: 12),
           switch (_mode) {
             _Mode.quarter => QuarterPicker(start: _quarter, firstYear: widget.project.startDate.year, onChanged: (start) => setState(() => _quarter = start)),
-            _Mode.halfYear => Wrap(
-              spacing: 8,
+            _Mode.halfYear => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 4,
               children: [
-                QuarterPicker(start: _quarter, firstYear: widget.project.startDate.year, onChanged: (start) => setState(() => _quarter = start)),
-                ChoiceChip(key: VatStatementScreen.firstHalfKey, label: Text(words.vatH1, key: VatStatementScreen.firstHalfKey.label), selected: !_secondHalf, onSelected: (_) => setState(() => _secondHalf = false)),
-                ChoiceChip(key: VatStatementScreen.secondHalfKey, label: Text(words.vatH2, key: VatStatementScreen.secondHalfKey.label), selected: _secondHalf, onSelected: (_) => setState(() => _secondHalf = true)),
+                YearChips(year: _quarter.year, firstYear: widget.project.startDate.year, onChanged: (year) => setState(() => _quarter = DateTime(year, _quarter.month))),
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    ChoiceChip(key: VatStatementScreen.firstHalfKey, label: Text(words.vatH1, key: VatStatementScreen.firstHalfKey.label), selected: !_secondHalf, onSelected: (_) => setState(() => _secondHalf = false)),
+                    ChoiceChip(key: VatStatementScreen.secondHalfKey, label: Text(words.vatH2, key: VatStatementScreen.secondHalfKey.label), selected: _secondHalf, onSelected: (_) => setState(() => _secondHalf = true)),
+                  ],
+                ),
               ],
             ),
             _Mode.custom => Column(

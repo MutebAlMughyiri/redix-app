@@ -220,9 +220,8 @@ class _EntriesScreenState extends State<EntriesScreen> {
             child: ApiListBody(
               list: widget.entries,
               emptyText: words.entriesEmpty,
-              itemBuilder: (entry) => _filter.keeps(entry)
-                  ? EntryListTile(project: widget.project, entries: widget.entries, entry: entry)
-                  : const SizedBox.shrink(),
+              keeps: _filter.keeps,
+              itemBuilder: (entry) => EntryListTile(project: widget.project, entries: widget.entries, entry: entry),
             ),
           ),
         ],

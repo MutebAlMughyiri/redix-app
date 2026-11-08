@@ -15,7 +15,7 @@
 | Why it could not be approved | `ApprovalsScreen.failedKey` |
 | Approve selected | `ApprovalsScreen.approveSelectedKey` |
 | The rejection's quick reasons, reason, send and refusal | `ApprovalsScreen.quickReasonKey`, `reasonKey`, `rejectSendKey`, `rejectMessageKey` |
-| A file: picture, PDF, or failure | `AttachmentScreen.pictureKey`, `openPdfKey`, `failedKey` |
+| A file: picture, any other file, or failure | `AttachmentScreen.pictureKey`, `openFileKey`, `failedKey` |
 
 | Rule | Code | Test |
 | --- | --- | --- |
@@ -23,7 +23,9 @@
 | AC-18.1: what waits shows what Finance needs, in the API's order | `ApprovalsScreen._details` | `approvals_test.dart`: AC-18.1: what waits |
 | AC-18.1: a picture opens to zoom into | `AttachmentScreen` | `approvals_test.dart`: AC-18.1: a picture |
 | A PDF goes to the phone, and an unreadable file says so | `AttachmentScreen` | `approvals_test.dart`: a PDF is offered |
-| A filter shows one kind | `_ApprovalsScreenState._isShown` | `approvals_test.dart`: a filter shows |
+| A file that is not a picture, a PDF included, goes to the phone through `InvoiceCapture.shareFile` by its own name; an entry's file, whose name the app is not given, goes as invoice.pdf | `AttachmentScreen`, the attachment route | `documents_test.dart`: UC-064: a PDF is handed to the phone by its own name too |
+| A filter shows one kind | `_Filter.keeps`, `ApiListBody.keeps` | `approvals_test.dart`: a filter shows |
+| Each filter counts what it keeps, and one that keeps nothing says nothing waits rather than showing a blank page | `_Filter.keeps`, `ApiListBody.keeps` | `approvals_test.dart`: each filter counts what it keeps |
 | Approving one sends it, and it leaves | `Approvals.approve` | `approvals_test.dart`: approving one |
 | Approve selected sends what was ticked | `_ApprovalsScreenState._approve` | `approvals_test.dart`: Approve selected |
 | AC-19.2: what could not be approved stays, saying why | `Approvals.failed` | `approvals_test.dart`: AC-19.2 |

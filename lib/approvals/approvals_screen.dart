@@ -110,7 +110,17 @@ class ApprovalsScreen extends StatefulWidget {
   State<ApprovalsScreen> createState() => _ApprovalsScreenState();
 }
 
-enum _Filter { all, purchases, contractorPayments }
+enum _Filter {
+  all,
+  purchases,
+  contractorPayments;
+
+  bool keeps(PendingApproval entry) => switch (this) {
+    all => true,
+    purchases => entry.isPurchase,
+    contractorPayments => entry.isContractorPayment,
+  };
+}
 
 class _ApprovalsScreenState extends State<ApprovalsScreen> {
   final _selected = <String>{};
@@ -122,12 +132,6 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
     super.initState();
     widget.approvals.loadOnOpen();
   }
-
-  bool _isShown(PendingApproval entry) => switch (_filter) {
-    _Filter.all => true,
-    _Filter.purchases => entry.isPurchase,
-    _Filter.contractorPayments => entry.isContractorPayment,
-  };
 
   Future<void> _approve(Iterable<String> ids) async {
     final words = Words.of(context);
@@ -190,20 +194,28 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
           : BottomButton(buttonKey: ApprovalsScreen.approveSelectedKey, icon: Icons.done_all, label: '${words.approvalsApproveSelected} · ${_selected.length}', onPressed: () => _approve(_selected.toList())),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-            child: SizedBox(
-              width: double.infinity,
-              child: Wrap(
-                spacing: 8,
-                children: [
-                  for (final (filter, key, label) in [
-                    (_Filter.all, ApprovalsScreen.allKey, words.approvalsAll),
-                    (_Filter.purchases, ApprovalsScreen.purchasesKey, words.approvalsPurchases),
-                    (_Filter.contractorPayments, ApprovalsScreen.contractorPaymentsKey, words.approvalsContractorPayments),
-                  ])
-                    ChoiceChip(key: key, label: Text(label, key: key.label), selected: _filter == filter, onSelected: (_) => setState(() => _filter = filter)),
-                ],
+          ListenableBuilder(
+            listenable: widget.approvals,
+            builder: (context, _) => Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: SizedBox(
+                width: double.infinity,
+                child: Wrap(
+                  spacing: 8,
+                  children: [
+                    for (final (filter, key, label) in [
+                      (_Filter.all, ApprovalsScreen.allKey, words.approvalsAll),
+                      (_Filter.purchases, ApprovalsScreen.purchasesKey, words.approvalsPurchases),
+                      (_Filter.contractorPayments, ApprovalsScreen.contractorPaymentsKey, words.approvalsContractorPayments),
+                    ])
+                      ChoiceChip(
+                        key: key,
+                        label: Text('$label · ${widget.approvals.all.where(filter.keeps).length}', key: key.label),
+                        selected: _filter == filter,
+                        onSelected: (_) => setState(() => _filter = filter),
+                      ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -211,9 +223,8 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
             child: ApiListBody(
               list: widget.approvals,
               emptyText: words.approvalsEmpty,
-              itemBuilder: (entry) => !_isShown(entry)
-                  ? const SizedBox.shrink()
-                  : Card.outlined(
+              keeps: _filter.keeps,
+              itemBuilder: (entry) => Card.outlined(
                       key: ApprovalsScreen.cardKey(entry.id),
                       margin: const EdgeInsets.only(bottom: 8),
                       child: Padding(

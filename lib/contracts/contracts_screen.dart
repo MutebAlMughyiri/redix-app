@@ -198,9 +198,8 @@ class _ContractsScreenState extends State<ContractsScreen> {
             child: ApiListBody(
               list: contracts,
               emptyText: words.contractsEmpty,
-              itemBuilder: (contract) => _filter.keeps(contract)
-                  ? ContractCard(contract: contract, contracts: contracts, mayChange: project.mayManageSettings, onAmend: () => _ask(contract))
-                  : const SizedBox.shrink(),
+              keeps: _filter.keeps,
+              itemBuilder: (contract) => ContractCard(contract: contract, contracts: contracts, mayChange: project.mayManageSettings, onAmend: () => _ask(contract)),
             ),
           ),
         ],

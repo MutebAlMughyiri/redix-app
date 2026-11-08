@@ -40,7 +40,7 @@ Future<String> registerProject(
     if (response.statusCode == 429) {
       return 'register.tooManyTries';
     }
-    return 'register.${(jsonOf(response) as Map<String, dynamic>)['code'] as String? ?? 'refused'}';
+    return refusalOf(answerOf(response), 'register');
   } on Exception catch (error) {
     debugPrint('Project not registered: $error');
     return 'register.noConnection';

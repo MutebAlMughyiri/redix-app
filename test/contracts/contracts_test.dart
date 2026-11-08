@@ -9,6 +9,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/structure/item_picker.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
+import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/picker_field.dart';
 
@@ -179,6 +180,19 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.filterKey(ContractFilter.openValue))));
     expect(find.byKey(ContractsScreen.nameKey(opened.open)), findsOneWidget);
     expect(find.byKey(ContractsScreen.nameKey(opened.overrun)), findsNothing);
+  });
+
+  testWidgets('a filter that keeps no contract says there are none rather than showing a blank page', (tester) async {
+    final api = FakeApi()..addProject('غصون 6');
+    api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000);
+    await openProject(tester, api);
+    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await tester.pumpAndSettle();
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+
+    await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.filterKey(ContractFilter.overrun))));
+
+    expect(text(tester, ApiListBody.emptyKey), 'en contracts.empty');
   });
 
   testWidgets('adding sends the contractor, item and terms', (tester) async {

@@ -171,11 +171,12 @@ class _PartnersScreenState extends State<PartnersScreen> {
     final words = Words.of(context);
     final project = widget.project;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.partnersTitle, subject: project.name), actions: [RefreshButton(onRefresh: widget.partners.load)]),
+      appBar: AppBar(title: ScreenTitle(words.partnersTitle, subject: project.name), actions: [RefreshButton(onRefresh: () => Future.wait([widget.partners.load(), widget.capital.load()]))]),
       bottomNavigationBar: BottomButton(buttonKey: PartnersScreen.addKey, label: words.partnersNew, onPressed: project.mayManageSettings ? () => _ask(Partner.none()) : null),
       body: ApiListBody(
         list: widget.partners,
         emptyText: words.partnersEmpty,
+        alsoRefresh: widget.capital.load,
         listOf: (items) => ListView(padding: ApiListBody.padding, physics: ApiListBody.physics, children: [_total(words), ...items]),
         itemBuilder: _row,
       ),

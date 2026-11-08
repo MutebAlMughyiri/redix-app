@@ -114,7 +114,7 @@ class _ContractDialogState extends State<ContractDialog> {
         alignment: AlignmentDirectional.centerStart,
         child: TextButton(
           key: ContractsScreen.openDocumentKey(document.id),
-          onPressed: () => context.push(AttachmentScreen.pathOf(widget.project.id, document.id), extra: document.contentType),
+          onPressed: () => context.push(AttachmentScreen.pathOf(widget.project.id, document.id, fileName: document.fileName), extra: document.contentType),
           child: Text(document.fileName, key: ContractsScreen.documentKey(document.id)),
         ),
       ),

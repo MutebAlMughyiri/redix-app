@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:printing/printing.dart';
 
 import '../auth/session.dart';
 import '../ui/part_keys.dart';
@@ -9,7 +8,7 @@ import '../ui/screen_title.dart';
 import 'invoice_capture.dart';
 import '../words/words.dart';
 
-/// Opens a file a project keeps (row 92 of the findings, AC-18.1): a picture to zoom into, a PDF handed to the phone's own viewer, or any other file handed to the phone to open (UC-064).
+/// Opens a file a project keeps (row 92 of the findings, AC-18.1): a picture to zoom into, or any other file, a PDF included, handed to the phone by its name to open (UC-064).
 class AttachmentScreen extends StatefulWidget {
   /// The file [attachmentId] of the project [projectId], named [fileName] and holding [contentType], read through [session] and handed to the phone through [capture].
   const AttachmentScreen({super.key, required this.projectId, required this.attachmentId, required this.fileName, required this.contentType, required this.session, required this.capture});
@@ -27,10 +26,7 @@ class AttachmentScreen extends StatefulWidget {
   /// The line saying the file could not be read.
   static const failedKey = Key('attachment.failed');
 
-  /// The button handing a PDF to the phone.
-  static const openPdfKey = Key('attachment.openPdf');
-
-  /// The button handing any other file to the phone.
+  /// The button handing a file that is not a picture to the phone.
   static const openFileKey = Key('attachment.openFile');
 
   /// The spinner while the file is read.
@@ -42,7 +38,7 @@ class AttachmentScreen extends StatefulWidget {
   /// The file.
   final String attachmentId;
 
-  /// Its name; empty when it is a picture or a PDF, which need none.
+  /// Its name, which the phone shows once it is handed over.
   final String fileName;
 
   /// What it is.
@@ -81,11 +77,6 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
             return Center(child: Text(words.approvalsFileFailed, key: AttachmentScreen.failedKey));
           }
           final bytes = file.requireData;
-          if (widget.contentType == 'application/pdf') {
-            return Center(
-              child: FilledButton(key: AttachmentScreen.openPdfKey, onPressed: () => Printing.sharePdf(bytes: bytes, filename: 'invoice.pdf'), child: Text(words.approvalsOpenFile, key: AttachmentScreen.openPdfKey.label)),
-            );
-          }
           if (!widget.contentType.startsWith('image/')) {
             return Center(
               child: FilledButton(key: AttachmentScreen.openFileKey, onPressed: () => widget.capture.shareFile(bytes, widget.fileName, widget.contentType), child: Text(words.approvalsOpenFile, key: AttachmentScreen.openFileKey.label)),

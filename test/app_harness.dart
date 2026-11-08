@@ -27,10 +27,10 @@ Map<String, String> wordsIn(String language) => {
     'biometrics.signIn', 'biometrics.hint', 'biometrics.or', 'biometrics.failed', 'biometrics.usePassword', 'biometrics.promptTitle', 'biometrics.promptCancel', 'biometrics.notAvailable', 'biometrics.notChanged',
     'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.defaultSet', 'settings.defaultProject', 'settings.defaultProjectHint', 'settings.switchProject',
     'signIn.username', 'signIn.password', 'signIn.hint', 'signIn.submit', 'signIn.forgotPassword',
-    'signIn.invalidCredentials', 'signIn.accountLocked', 'signIn.sessionExpired', 'signIn.noConnection',
+    'signIn.invalidCredentials', 'signIn.accountLocked', 'signIn.sessionExpired', 'signIn.noConnection', 'signIn.refused',
     'changePassword.title', 'changePassword.hint', 'changePassword.current', 'changePassword.new', 'changePassword.confirm',
     'changePassword.submit', 'changePassword.mismatch', 'changePassword.invalidCredentials', 'changePassword.accountLocked',
-    'changePassword.weakPassword', 'changePassword.noConnection',
+    'changePassword.weakPassword', 'changePassword.noConnection', 'changePassword.refused',
     'myAccount.title', 'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
     'permissions.title', 'permissions.hint', 'permissions.count',
     'permissions.readProject', 'permissions.readProjectHint', 'permissions.manageUsers', 'permissions.manageUsersHint', 'permissions.seeAllCapital', 'permissions.seeAllCapitalHint', 'permissions.manageProject', 'permissions.manageProjectHint', 'permissions.manageStructure', 'permissions.manageStructureHint', 'permissions.manageSettings', 'permissions.manageSettingsHint', 'permissions.addSupplier', 'permissions.addSupplierHint', 'permissions.chargeAnyAccount', 'permissions.chargeAnyAccountHint', 'permissions.recordEntries', 'permissions.recordEntriesHint', 'permissions.manageAnyEntry', 'permissions.manageAnyEntryHint', 'permissions.deleteEntries', 'permissions.deleteEntriesHint', 'permissions.attachFiles', 'permissions.attachFilesHint', 'permissions.approveEntries', 'permissions.approveEntriesHint', 'permissions.moveMoney', 'permissions.moveMoneyHint',
@@ -313,7 +313,7 @@ class FakeApi {
   /// The paths whose every request fails as the network does, like a read that takes longer than the app waits.
   final unreachable = <String>{};
 
-  /// The status and problem code `POST /auth/sign-in` answers; 200 opens a session.
+  /// The status and problem code `POST /auth/sign-in` answers; 200 opens a session, and an empty code an empty body.
   var signInAnswer = (status: 200, code: '');
 
   /// Whether the user's password is temporary: sign-in and refresh report it, and a successful change clears it.
@@ -322,7 +322,7 @@ class FakeApi {
   /// The status `POST /auth/refresh` answers; 200 renews the session.
   var refreshStatus = 200;
 
-  /// The status and problem code `POST /auth/change-password` answers; 200 changes the password.
+  /// The status and problem code `POST /auth/change-password` answers; 200 changes the password, and an empty code an empty body.
   var changePasswordAnswer = (status: 200, code: '');
 
   /// What the signed-in user holds everywhere: every session says so.
@@ -522,7 +522,7 @@ class FakeApi {
   /// What the dashboard answers.
   var dashboardAnswer = <String, Object>{
     'revenue': 0,
-    'capital': 0,
+    'capital': {'total': 0, 'partners': <Map<String, Object>>[]},
     'expenses': 0,
     'surplus': 0,
     'wasReconciled': false,
@@ -727,6 +727,8 @@ class FakeApi {
     }
     final body = status == 200
         ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "usesBiometrics": $usesBiometrics, "userId": "$userId"}'
+        : code.isEmpty
+        ? ''
         : '{"code": "$code"}';
     return http.Response(body, status);
   });

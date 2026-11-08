@@ -69,6 +69,17 @@ void main() {
     expect(capture.sharedOut.single, ('quantities.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
   });
 
+  testWidgets('UC-064: a PDF is handed to the phone by its own name too, never as invoice.pdf', (tester) async {
+    final (:api, :capture) = await openDocuments(tester, arrange: (api) {
+      api.documentRows.add(document('permit', 'رخصة البناء', '', fileName: 'permit.pdf', contentType: 'application/pdf'));
+    });
+
+    await act(tester, api, () => tester.tap(find.byKey(DocumentsScreen.documentKey('permit'))));
+    await act(tester, api, () => tester.tap(find.byKey(AttachmentScreen.openFileKey)));
+
+    expect(capture.sharedOut.single, ('permit.pdf', 'application/pdf'));
+  });
+
   testWidgets('UC-064: the manager keeps any file under a name and a group, sent together', (tester) async {
     final (:api, :capture) = await openDocuments(tester);
     capture.files = PickedFile('permit.docx', '/phone/permit.docx', Uint8List.fromList([0x50, 0x4B, 0x03, 0x04]));

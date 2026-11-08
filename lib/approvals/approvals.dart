@@ -1,3 +1,4 @@
+import '../api.dart';
 import '../api_list.dart';
 import '../auth/session.dart';
 import 'pending_approval.dart';
@@ -13,7 +14,7 @@ class Approvals extends ApiList<PendingApproval> {
   /// What the last [approve] could not approve, by id, with the word key of why.
   Map<String, String> get failed => {
     for (final failure in lastAnswer['failed'] as List<dynamic>? ?? const <dynamic>[])
-      (failure as Map<String, dynamic>)['entryId'] as String: 'approvals.${failure['code'] as String}',
+      (failure as Map<String, dynamic>)['entryId'] as String: refusalOf(failure, 'approvals'),
   };
 
   /// Approves the entries [ids]. Returns an empty string once asked, otherwise the word key of the refusal; [failed] says what could not go.

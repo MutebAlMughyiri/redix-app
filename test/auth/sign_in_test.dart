@@ -89,6 +89,16 @@ void main() {
     expect(message(tester), 'en signIn.accountLocked');
   });
 
+  testWidgets('a server answer that names no refusal says the server could not sign in, never that there is no connection', (tester) async {
+    final api = FakeApi()..signInAnswer = (status: 500, code: '');
+    await pumpRedix(tester, api);
+
+    await signIn(tester, api);
+
+    expect(message(tester), 'en signIn.refused');
+    expect(find.byKey(ProjectsScreen.titleKey), findsNothing);
+  });
+
   testWidgets('without a network sign-in says there is no connection', (tester) async {
     final api = FakeApi();
     await pumpRedix(tester, api);

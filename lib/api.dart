@@ -14,3 +14,12 @@ const jsonHeaders = {'Content-Type': 'application/json'};
 
 /// The JSON [response] carries, read as UTF-8 so Arabic arrives unbroken.
 dynamic jsonOf(http.Response response) => jsonDecode(utf8.decode(response.bodyBytes));
+
+/// The JSON object [response] carries; empty when its body is empty or holds something else.
+Map<String, dynamic> answerOf(http.Response response) {
+  final answer = response.body.isEmpty ? null : jsonOf(response);
+  return answer is Map<String, dynamic> ? answer : const {};
+}
+
+/// The word key, under [prefix], of the refusal [answer] names: `prefix.code`, or `prefix.refused` when it names no code.
+String refusalOf(Map<String, dynamic> answer, String prefix) => '$prefix.${answer['code'] as String? ?? 'refused'}';

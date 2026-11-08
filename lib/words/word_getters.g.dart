@@ -530,6 +530,9 @@ mixin WordGetters {
   /// The word `changePassword.noConnection`.
   String get changePasswordNoConnection => text('changePassword.noConnection');
 
+  /// The word `changePassword.refused`.
+  String get changePasswordRefused => text('changePassword.refused');
+
   /// The word `changePassword.submit`.
   String get changePasswordSubmit => text('changePassword.submit');
 
@@ -2008,6 +2011,9 @@ mixin WordGetters {
 
   /// The word `signIn.password`.
   String get signInPassword => text('signIn.password');
+
+  /// The word `signIn.refused`.
+  String get signInRefused => text('signIn.refused');
 
   /// The word `signIn.registerProject`.
   String get signInRegisterProject => text('signIn.registerProject');

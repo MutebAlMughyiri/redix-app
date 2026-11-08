@@ -7,6 +7,7 @@ import 'package:redix/accounts/reconciliation_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
+import 'package:redix/ui/refresh_button.dart';
 
 import '../app_harness.dart';
 
@@ -99,6 +100,22 @@ void main() {
       expect(tester.widget<Text>(find.byKey(ReconciliationCard.differenceKey)).data, '(99.25)');
     });
 
+    testWidgets('refreshing, by the button or by pulling the list down, reads the card above the accounts again', (tester) async {
+      final (:api, capture: _) = await openAccounts(tester, (api) {
+        api
+          ..addAccount('project-0', 'حساب')
+          ..reconciliationAnswer = reconciled(1000, 900.75);
+      });
+
+      api.reconciliationAnswer = reconciled(1000, 950);
+      await act(tester, api, () => tester.tap(find.byKey(RefreshButton.buttonKey)));
+      expect(tester.widget<Text>(find.byKey(ReconciliationCard.actualTotalKey)).data, '950.00');
+
+      api.reconciliationAnswer = reconciled(1000, 975);
+      await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 1500)));
+      expect(tester.widget<Text>(find.byKey(ReconciliationCard.actualTotalKey)).data, '975.00');
+    });
+
     testWidgets('before any check it says so', (tester) async {
       await openAccounts(tester, (api) => api.addAccount('project-0', 'حساب'));
 
@@ -173,6 +190,24 @@ void main() {
       expect(tester.widget<Text>(find.byKey(PartnersScreen.totalKey)).data, '3,000.00');
       expect(find.text('66.6666666667%'), findsOneWidget);
       expect(find.text('2,000.00'), findsOneWidget);
+    });
+
+    testWidgets('refreshing, by the button or by pulling the list down, reads the capital above the partners again', (tester) async {
+      late String partner;
+      final (:api, capture: _) = await openPartners(tester, (api) {
+        partner = api.addPartner('project-0', 'متعب')['id']! as String;
+        api
+          ..capitalTotal = 3000
+          ..addCapitalLine(partner, 3000, 100);
+      });
+
+      api.capitalTotal = 4000;
+      await act(tester, api, () => tester.tap(find.byKey(RefreshButton.buttonKey)));
+      expect(tester.widget<Text>(find.byKey(PartnersScreen.totalKey)).data, '4,000.00');
+
+      api.capitalTotal = 5000;
+      await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 1500)));
+      expect(tester.widget<Text>(find.byKey(PartnersScreen.totalKey)).data, '5,000.00');
     });
 
     testWidgets('BR-31: a reader has a way in', (tester) async {

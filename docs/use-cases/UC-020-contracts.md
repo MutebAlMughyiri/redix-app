@@ -59,6 +59,7 @@ The project's home, `HomeScreen`:
 | An open-value contract has no remaining and no alert (AC-07.2) | `ContractCard` | `AC-07.2: an open-value contract adds up, with no remaining and no alert` |
 | Nothing paid is not started | `Contract.standingWordKey` | `a contract with nothing paid has not started` |
 | The filters count their contracts and keep only those | `ContractFilter`, `ContractsScreen` | `the filters count their contracts and keep only those` |
+| A filter that keeps no contract says there are none rather than showing a blank page | `ApiListBody.keeps` | `a filter that keeps no contract says there are none rather than showing a blank page` |
 | Adding sends the contractor, item, unit and terms | `ContractDialog`, `Contracts.add` | `adding sends the contractor, item, unit and terms` |
 | A contract may be for the shared unit (open question 3) | `Project.entryUnits` | `a contract may be for the shared unit` |
 | A missing contractor is added from the picker | `SupplierPicker` | `a contractor missing from the register is added from the picker and goes on` |

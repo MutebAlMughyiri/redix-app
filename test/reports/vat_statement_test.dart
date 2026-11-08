@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/reports/quarter_picker.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
-import 'package:redix/revenue/quarter_picker.dart';
+import 'package:redix/reports/year_chips.dart';
 
 import '../app_harness.dart';
 
@@ -35,7 +36,7 @@ void main() {
     testWidgets('AC-32.2, D20: the third quarter of 2026 takes its Excel, and nothing else, from 01.07.2026 to 30.09.2026', (tester) async {
       final api = await openVat(tester, (api) {});
 
-      await act(tester, api, () => tester.tap(find.byKey(QuarterPicker.yearKey(2026))));
+      await act(tester, api, () => tester.tap(find.byKey(YearChips.yearKey(2026))));
       await act(tester, api, () => tester.tap(find.byKey(QuarterPicker.quarterKey(3))));
       expect(find.byKey(ReportFileButtons.buttonKey('vat-2026-07-01-2026-09-30', ReportFileKind.pdf)), findsNothing);
       await takeExcel(tester, api, 'vat-2026-07-01-2026-09-30');
@@ -47,11 +48,23 @@ void main() {
       final api = await openVat(tester, (api) {});
 
       await act(tester, api, () => tester.tap(find.byKey(VatStatementScreen.halfYearKey)));
-      await act(tester, api, () => tester.tap(find.byKey(QuarterPicker.yearKey(2026))));
+      await act(tester, api, () => tester.tap(find.byKey(YearChips.yearKey(2026))));
       await act(tester, api, () => tester.tap(find.byKey(VatStatementScreen.secondHalfKey)));
       await takeExcel(tester, api, 'vat-2026-07-01-2026-12-31');
 
       expect(api.sentFileReads.single, '/projects/project-0/vat-statement/xlsx?from=2026-07-01&to=2026-12-31');
+    });
+
+    testWidgets('a half-year is chosen by its year and its half alone: no quarter is offered', (tester) async {
+      final api = await openVat(tester, (api) {});
+
+      await act(tester, api, () => tester.tap(find.byKey(VatStatementScreen.halfYearKey)));
+
+      expect(find.byKey(YearChips.yearKey(2026)), findsOneWidget);
+      expect(find.byKey(VatStatementScreen.firstHalfKey), findsOneWidget);
+      for (var quarter = 1; quarter <= 4; quarter++) {
+        expect(find.byKey(QuarterPicker.quarterKey(quarter)), findsNothing);
+      }
     });
 
     testWidgets('AC-32.2: a custom period never ends before it starts: a first day after the last moves the last day to it', (tester) async {

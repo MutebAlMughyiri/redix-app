@@ -1,12 +1,16 @@
 import '../api_object.dart';
 import '../auth/session.dart';
+import '../partners/capital.dart';
 
-/// One item's total (BR-02).
+/// One item's total (BR-02), or one partner's capital under the capital line (BR-05).
 class ItemTotal {
   /// A total as the API answers it.
   ItemTotal.fromJson(Map<String, dynamic> json) : id = json['id'] as String, name = json['name'] as String, total = (json['total'] as num).toDouble();
 
-  /// The item.
+  /// The capital of the partner on [line].
+  ItemTotal.partner(PartnerCapital line) : id = line.id, name = line.name, total = line.balance;
+
+  /// The item, or the partner.
   final String id;
 
   /// Its name.
@@ -25,8 +29,8 @@ class CategoryTotal {
       total = (json['total'] as num).toDouble(),
       items = [for (final row in json['items'] as List<dynamic>) ItemTotal.fromJson(row as Map<String, dynamic>)];
 
-  /// The capital line that opens the revenue side: a total with no partner in it (BR-06, BR-31).
-  CategoryTotal.capital(this.total) : id = '', name = '', items = const [];
+  /// The capital line that opens the revenue side (BR-06), opening to the partners the reader may see (BR-31).
+  CategoryTotal.capital(CapitalFigures capital) : id = '', name = '', total = capital.total, items = [for (final line in capital.partners) ItemTotal.partner(line)];
 
   /// The category.
   final String id;
@@ -49,7 +53,7 @@ class DashboardFigures {
   /// The figures as the API answers them.
   DashboardFigures.fromJson(Map<String, dynamic> json)
     : revenue = (json['revenue'] as num).toDouble(),
-      capital = (json['capital'] as num).toDouble(),
+      capital = CapitalFigures.fromJson(json['capital'] as Map<String, dynamic>),
       expenses = (json['expenses'] as num).toDouble(),
       surplus = (json['surplus'] as num).toDouble(),
       wasReconciled = json['wasReconciled'] as bool,
@@ -61,13 +65,13 @@ class DashboardFigures {
       revenueCategories = [for (final row in json['revenueCategories'] as List<dynamic>) CategoryTotal.fromJson(row as Map<String, dynamic>)];
 
   /// Nothing yet.
-  DashboardFigures.none() : revenue = 0, capital = 0, expenses = 0, surplus = 0, wasReconciled = false, reconciliationDifference = 0, pendingCount = 0, pendingAmount = 0, completionPercent = 0, categories = const [], revenueCategories = const [];
+  DashboardFigures.none() : revenue = 0, capital = CapitalFigures.none(), expenses = 0, surplus = 0, wasReconciled = false, reconciliationDifference = 0, pendingCount = 0, pendingAmount = 0, completionPercent = 0, categories = const [], revenueCategories = const [];
 
   /// Capital, VAT refunds and sales.
   final double revenue;
 
-  /// What the partners put in less what they took out.
-  final double capital;
+  /// What the partners put in less what they took out, with the partners' lines the signed-in user may see (BR-31).
+  final CapitalFigures capital;
 
   /// Every approved expense: the project's cost.
   final double expenses;

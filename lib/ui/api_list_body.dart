@@ -6,15 +6,18 @@ import 'part_keys.dart';
 
 /// The body of a screen that shows an [ApiList]: why it could not load with a way to try again, loading, empty, or its items, which are read again when pulled down.
 class ApiListBody<T> extends StatelessWidget {
-  /// The body of a screen showing [list], with [itemBuilder] drawing each item and [emptyText] said while it has none. A screen whose rows are dragged gives [listOf];
-  /// one that shows more than its list gives [alsoRefresh], read again with it.
-  const ApiListBody({super.key, required this.list, required this.emptyText, required this.itemBuilder, this.listOf = plainList, this.alsoRefresh = nothingMore});
+  /// The body of a screen showing [list], with [itemBuilder] drawing each item [keeps] and [emptyText] said while it keeps none. A screen whose rows are dragged gives
+  /// [listOf]; one that shows more than its list gives [alsoRefresh], read again with it.
+  const ApiListBody({super.key, required this.list, required this.emptyText, required this.itemBuilder, this.keeps = keepsAll, this.listOf = plainList, this.alsoRefresh = nothingMore});
 
   /// The list this body shows.
   final ApiList<T> list;
 
-  /// What to say while the list has no items.
+  /// What to say while the list keeps no items.
   final String emptyText;
+
+  /// Which items are shown, for a screen that filters its list.
+  final bool Function(T item) keeps;
 
   /// Draws one item.
   final Widget Function(T item) itemBuilder;
@@ -31,6 +34,9 @@ class ApiListBody<T> extends StatelessWidget {
   /// The space around the items.
   static const padding = EdgeInsets.fromLTRB(16, 8, 16, 16);
 
+  /// Every item.
+  static bool keepsAll(Object? item) => true;
+
   /// A list that only scrolls.
   static Widget plainList(List<Widget> items) => ListView(padding: padding, physics: physics, children: items);
 
@@ -46,7 +52,7 @@ class ApiListBody<T> extends StatelessWidget {
   /// The button that reads the list again.
   static const retryKey = Key('apiList.retry');
 
-  /// The line shown while the list has no items.
+  /// The line shown while the list keeps no items.
   static const emptyKey = Key('apiList.empty');
 
   /// The spinner shown while the list is first read.
@@ -69,9 +75,10 @@ class ApiListBody<T> extends StatelessWidget {
         ),
       );
     }
-    if (list.all.isEmpty) {
+    final kept = list.all.where(keeps).toList();
+    if (kept.isEmpty) {
       return Center(
-        child: list.isLoading
+        child: list.isLoading && list.all.isEmpty
             ? const CircularProgressIndicator(key: loadingKey)
             : Padding(
                 padding: const EdgeInsets.all(24),
@@ -79,7 +86,7 @@ class ApiListBody<T> extends StatelessWidget {
               ),
       );
     }
-    return RefreshIndicator(onRefresh: refresh, child: listOf([for (final item in list.all) itemBuilder(item)]));
+    return RefreshIndicator(onRefresh: refresh, child: listOf([for (final item in kept) itemBuilder(item)]));
   }
 
   @override
