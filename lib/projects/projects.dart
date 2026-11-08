@@ -11,12 +11,14 @@ class Projects extends ApiList<Project> {
   /// [project] as the list holds it now, or [project] itself when the list does not hold it.
   Project latest(Project project) => all.firstWhere((each) => each.id == project.id, orElse: () => project);
 
-  /// Creates a project with its [units] and [description], all or nothing, copying its structure when approved from the earlier project [structureSourceId], or from the
-  /// default template when that is empty. Returns an empty string once created, otherwise the word key of the refusal.
-  Future<String> create(String name, DateTime startDate, List<String> units, String description, {String structureSourceId = ''}) => change('/projects', {
+  /// Creates a project with its [units], its [partners], each a table of its رأس المال once approved (redix-api #109), and [description], all or nothing, copying its
+  /// structure when approved from the earlier project [structureSourceId], or from the default template when that is empty. Returns an empty string once created, otherwise the
+  /// word key of the refusal.
+  Future<String> create(String name, DateTime startDate, List<String> units, List<String> partners, String description, {String structureSourceId = ''}) => change('/projects', {
     'name': name,
     'startDate': apiDate(startDate),
     'units': units,
+    'partners': partners,
     'description': description,
     if (structureSourceId.isNotEmpty) 'structureSourceId': structureSourceId,
   });

@@ -368,7 +368,9 @@ void main() {
       ].forEach(expectFits);
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.newProjectKey)));
-      [NewProjectScreen.nameKey, NewProjectScreen.descriptionKey, NewProjectScreen.startDateKey, NewProjectScreen.unitNameKey, NewProjectScreen.addUnitKey, NewProjectScreen.submitKey].forEach(expectFits);
+      [NewProjectScreen.nameKey, NewProjectScreen.descriptionKey, NewProjectScreen.startDateKey, NewProjectScreen.unitNameKey, NewProjectScreen.addUnitKey].forEach(expectFits);
+      await tester.scrollUntilVisible(find.byKey(NewProjectScreen.submitKey), 200, scrollable: find.ancestor(of: find.byKey(NewProjectScreen.nameKey), matching: find.byType(Scrollable)).first);
+      [NewProjectScreen.partnerNameKey, NewProjectScreen.addPartnerKey, NewProjectScreen.submitKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey(runningId))));

@@ -105,6 +105,7 @@ All go through `Session`, which renews an expired access token once and sends ag
 | The admin reads the description before deciding; a project with none shows no line (R11) | `RegisteredProjectsScreen` | `registered_projects_test.dart`: R11, two tests |
 | A project is created with its units, at once | `Projects.create`; `ProjectsEndpoints.Create` in the API | `new_project_test.dart`: a project is created with its units; Patrol |
 | A unit typed but not yet added goes with the project | `NewProjectScreen` | `new_project_test.dart`: a unit typed but not yet added |
+| redix-api #109: the partners declared in the form, the one still typed last, go with the project, from the list and from the sign-in page; a swipe takes one off. The units and the partners are one list, `TypedNames` | `NewProjectScreen`, `TypedNames`, `Projects.create`, `registerProject` | `new_project_test.dart`: redix-api #109; `register_project_test.dart`: sending returns to sign-in |
 | A project needs no units | `NewProjectScreen` | `new_project_test.dart`: a project needs no units |
 | Add unit waits for a name | `NewProjectScreen` | `new_project_test.dart`: Add unit waits for a name |
 | A refused name shows its own line, and nothing typed is lost | `ApiList.change`, `NewProjectScreen` | `new_project_test.dart`: a refused name; `project_info_test.dart`: a refused name stays in the dialog |

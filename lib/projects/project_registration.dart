@@ -8,12 +8,13 @@ import '../format/number_format.dart';
 import '../config/app_config.dart';
 import '../format/date_format.dart';
 
-/// Registers a project from the sign-in page, with its [description], no session, and a new login as its manager (UC-066). Returns an empty string once sent, otherwise the word key of
-/// the refusal.
+/// Registers a project from the sign-in page, with its [units], its [partners] (redix-api #109) and [description], no session, and a new login as its manager (UC-066). Returns an
+/// empty string once sent, otherwise the word key of the refusal.
 Future<String> registerProject(
   String name,
   DateTime startDate,
   List<String> units,
+  List<String> partners,
   String description, {
   required String displayName,
   required String username,
@@ -28,6 +29,7 @@ Future<String> registerProject(
         'name': name,
         'startDate': apiDate(startDate),
         'units': units,
+        'partners': partners,
         'description': description,
         'displayName': displayName,
         'username': username,

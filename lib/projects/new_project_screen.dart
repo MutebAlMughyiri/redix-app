@@ -6,11 +6,11 @@ import '../auth/sign_in_screen.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
-import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'project.dart';
 import 'project_registration.dart';
 import 'projects.dart';
+import '../ui/typed_names.dart';
 
 /// The form that registers a project (UC-006, UC-066): its name, its start date and its units. From the sign-in page it also takes the details of the manager, who has
 /// no login yet. Either way the project waits for the admin.
@@ -78,6 +78,21 @@ class NewProjectScreen extends StatefulWidget {
   /// The heading over the units.
   static const unitsHeadingKey = Key('newProject.unitsHeading');
 
+  /// The next partner's name (redix-api #109).
+  static const partnerNameKey = Key('newProject.partnerName');
+
+  /// The button that adds the partner to the list.
+  static const addPartnerKey = Key('newProject.addPartner');
+
+  /// The partner added [number]th, from 0.
+  static Key partnerKey(int number) => Key('newProject.partner.$number');
+
+  /// The line saying a partner is taken off the list by a swipe.
+  static const partnersSwipeHintKey = Key('newProject.partnersSwipeHint');
+
+  /// The heading over the partners.
+  static const partnersHeadingKey = Key('newProject.partnersHeading');
+
   /// The heading over the manager.
   static const managerHeadingKey = Key('newProject.managerHeading');
 
@@ -91,13 +106,12 @@ class NewProjectScreen extends StatefulWidget {
 class _NewProjectScreenState extends State<NewProjectScreen> {
   final _name = TextEditingController();
   final _description = TextEditingController();
-  final _unitName = TextEditingController();
   final _managerName = TextEditingController();
   final _username = TextEditingController();
   final _mobile = TextEditingController();
   final _password = TextEditingController();
-  final _units = <(int, String)>[];
-  var _nextUnit = 0;
+  final _units = NameList();
+  final _partners = NameList();
   var _structureSourceId = '';
   var _startDate = DateUtils.dateOnly(DateTime.now());
   var _message = '';
@@ -107,7 +121,8 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   void dispose() {
     _name.dispose();
     _description.dispose();
-    _unitName.dispose();
+    _units.dispose();
+    _partners.dispose();
     _managerName.dispose();
     _username.dispose();
     _mobile.dispose();
@@ -122,16 +137,9 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
     }
   }
 
-  void _addUnit() {
-    setState(() {
-      _units.add((_nextUnit++, _unitName.text));
-      _unitName.clear();
-    });
-  }
-
-  Future<String> _send(List<String> units) => widget.isPublic
-      ? registerProject(_name.text, _startDate, units, _description.text, displayName: _managerName.text, username: _username.text, mobile: _mobile.text, password: _password.text)
-      : widget.projects.create(_name.text, _startDate, units, _description.text, structureSourceId: _structureSourceId);
+  Future<String> _send() => widget.isPublic
+      ? registerProject(_name.text, _startDate, _units.all, _partners.all, _description.text, displayName: _managerName.text, username: _username.text, mobile: _mobile.text, password: _password.text)
+      : widget.projects.create(_name.text, _startDate, _units.all, _partners.all, _description.text, structureSourceId: _structureSourceId);
 
   void _leave() {
     if (!widget.isPublic) {
@@ -147,7 +155,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
       _saving = true;
       _message = '';
     });
-    final refusal = await _send([for (final (_, unit) in _units) unit, if (_unitName.text.trim().isNotEmpty) _unitName.text]);
+    final refusal = await _send();
     if (!mounted) {
       return;
     }
@@ -200,38 +208,30 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            Text(words.projectsUnits, key: NewProjectScreen.unitsHeadingKey, style: theme.textTheme.titleSmall),
-            if (_units.isNotEmpty) const SwipeHint(key: NewProjectScreen.swipeHintKey),
-            for (final (number, unit) in _units)
-              SwipeToRemove(
-                rowKey: NewProjectScreen.unitKey(number),
-                mayRemove: true,
-                onRemove: () async {
-                  setState(() => _units.removeWhere((each) => each.$1 == number));
-                  return '';
-                },
-                child: ListTile(
-                  key: NewProjectScreen.unitKey(number),
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(unit, key: NewProjectScreen.unitKey(number).title),
-                ),
-              ),
-            const SizedBox(height: 12),
-            TextField(
-              key: NewProjectScreen.unitNameKey,
-              controller: _unitName,
-              decoration: InputDecoration(
-                labelText: words.projectsUnitName,
-                suffixIcon: ValueListenableBuilder(
-                  valueListenable: _unitName,
-                  builder: (context, name, _) => TextButton.icon(
-                    key: NewProjectScreen.addUnitKey,
-                    icon: Icon(Icons.add, key: NewProjectScreen.addUnitKey.icon),
-                    label: Text(words.projectsAddUnit, key: NewProjectScreen.addUnitKey.label),
-                    onPressed: name.text.trim().isEmpty ? null : _addUnit,
-                  ),
-                ),
-              ),
+            TypedNames(
+              names: _units,
+              heading: words.projectsUnits,
+              label: words.projectsUnitName,
+              addLabel: words.projectsAddUnit,
+              headingKey: NewProjectScreen.unitsHeadingKey,
+              swipeHintKey: NewProjectScreen.swipeHintKey,
+              fieldKey: NewProjectScreen.unitNameKey,
+              addKey: NewProjectScreen.addUnitKey,
+              rowKey: NewProjectScreen.unitKey,
+              onChanged: () => setState(() {}),
+            ),
+            const SizedBox(height: 24),
+            TypedNames(
+              names: _partners,
+              heading: words.partnersTitle,
+              label: words.partnersName,
+              addLabel: words.partnersNew,
+              headingKey: NewProjectScreen.partnersHeadingKey,
+              swipeHintKey: NewProjectScreen.partnersSwipeHintKey,
+              fieldKey: NewProjectScreen.partnerNameKey,
+              addKey: NewProjectScreen.addPartnerKey,
+              rowKey: NewProjectScreen.partnerKey,
+              onChanged: () => setState(() {}),
             ),
             if (!widget.isPublic) ...[
               const SizedBox(height: 24),

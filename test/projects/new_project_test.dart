@@ -40,9 +40,33 @@ void main() {
     expect(path, '/projects');
     expect(body['name'], 'غصون 7');
     expect(body['units'], ['الفلة الشرقية', 'الفلة الشمالية']);
+    expect(body['partners'], isEmpty);
     expect(find.byKey(NewProjectScreen.submitKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(ProjectsScreen.nameKey('project-0'))).data, 'غصون 7');
     expect(tester.widget<Text>(find.byKey(ProjectsScreen.detailsKey('project-0'))).data, 'الفلة الشرقية · الفلة الشمالية');
+  });
+
+  testWidgets('redix-api #109 (Muteb, 8 Nov 2026: "we can declare the partners once create the project"): the partners declared, the one still typed last, go with the project, and a swipe takes one off', (tester) async {
+    final api = FakeApi();
+    await openForm(tester, api);
+
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+    for (final partner in ['متعب', 'نواف']) {
+      await act(tester, api, () async {
+        await tester.enterText(find.byKey(NewProjectScreen.partnerNameKey), partner);
+        await tester.pump();
+        await tester.ensureVisible(find.byKey(NewProjectScreen.addPartnerKey));
+        await tester.tap(find.byKey(NewProjectScreen.addPartnerKey));
+      });
+    }
+    expect(tester.widget<Text>(find.byKey(NewProjectScreen.partnerKey(1).title)).data, 'نواف');
+    await swipeToRemove(tester, api, NewProjectScreen.partnerKey(1));
+    await tester.enterText(find.byKey(NewProjectScreen.partnerNameKey), 'ريم');
+    await submit(tester, api);
+
+    final (_, body) = api.sentProjectChanges.single;
+    expect(body['units'], isEmpty);
+    expect(body['partners'], ['متعب', 'ريم']);
   });
 
   testWidgets('a unit typed but not yet added goes with the project', (tester) async {
