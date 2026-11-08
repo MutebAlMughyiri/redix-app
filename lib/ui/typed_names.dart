@@ -20,7 +20,7 @@ class NameList {
 
 /// Names typed one at a time under a heading, each added by its button and taken off by a swipe (redix-api #102): a new project's units, and its partners (redix-api #109).
 class TypedNames extends StatelessWidget {
-  /// The list of [names] under [heading], typed in a field labelled [label] and added by a button named [addLabel]; [headingKey], [swipeHintKey], [fieldKey], [addKey] and
+  /// The list of [names] under [heading], typed in a field labelled [label] and added by a button named [addLabel]; [headingKey], [fieldKey], [addKey] and
   /// [rowKey] key its parts.
   const TypedNames({
     super.key,
@@ -29,7 +29,6 @@ class TypedNames extends StatelessWidget {
     required this.label,
     required this.addLabel,
     required this.headingKey,
-    required this.swipeHintKey,
     required this.fieldKey,
     required this.addKey,
     required this.rowKey,
@@ -51,9 +50,6 @@ class TypedNames extends StatelessWidget {
   /// The heading's key.
   final Key headingKey;
 
-  /// The key of the line saying a row is taken off by a swipe.
-  final Key swipeHintKey;
-
   /// The field's key.
   final Key fieldKey;
 
@@ -71,7 +67,6 @@ class TypedNames extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       Text(heading, key: headingKey, style: Theme.of(context).textTheme.titleSmall),
-      if (names._rows.isNotEmpty) SwipeHint(key: swipeHintKey),
       for (final (number, name) in names._rows)
         SwipeToRemove(
           rowKey: rowKey(number),
@@ -81,7 +76,7 @@ class TypedNames extends StatelessWidget {
             onChanged();
             return '';
           },
-          child: ListTile(key: rowKey(number), contentPadding: EdgeInsets.zero, title: Text(name, key: rowKey(number).title)),
+          child: ListTile(key: rowKey(number), contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: 16), title: Text(name, key: rowKey(number).title)),
         ),
       const SizedBox(height: 12),
       TextField(

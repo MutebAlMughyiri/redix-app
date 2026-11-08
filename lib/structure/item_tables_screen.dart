@@ -63,8 +63,6 @@ class ItemTablesScreen extends StatefulWidget {
   /// The button that renames the subgroup [id].
   static Key renameKey(String id) => Key('tables.rename.$id');
 
-  /// The line saying a named table is removed by a swipe (redix-api #102).
-  static const swipeHintKey = Key('tables.swipeHint');
 
   @override
   State<ItemTablesScreen> createState() => _ItemTablesScreenState();
@@ -140,7 +138,6 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(words.categoriesTablesHint, key: ItemTablesScreen.hintKey, style: Theme.of(context).textTheme.bodySmall),
-                  if (widget.project.mayChangeStructure) const SwipeHint(key: ItemTablesScreen.swipeHintKey),
                 ],
               ),
             ),

@@ -307,7 +307,7 @@ void main() {
   testWidgets('AC-46.8: dragging a table sends the order of every table, the general one and the contract too, and it stays', (tester) async {
     final opened = await openTables(tester);
 
-    await drag(tester, opened.api, ItemTablesScreen.handleKey(opened.ids[0]), 110);
+    await drag(tester, opened.api, ItemTablesScreen.handleKey(opened.ids[0]), 170);
 
     final every = [opened.general, ...opened.ids, 'contract-1'];
     final sent = [for (final id in opened.api.sentStructureChanges.single.$2['ids'] as List<dynamic>) id as String];
@@ -322,7 +322,7 @@ void main() {
     final opened = await openTables(tester);
     opened.api.structureAnswer = (status: 400, code: 'invalidOrder');
 
-    await drag(tester, opened.api, ItemTablesScreen.handleKey(opened.ids[0]), 110);
+    await drag(tester, opened.api, ItemTablesScreen.handleKey(opened.ids[0]), 170);
 
     expect(find.text('en categories.invalidOrder'), findsOneWidget);
     expect(tester.getTopLeft(find.byKey(ItemTablesScreen.tableNameKey(opened.ids[0]))).dy, lessThan(tester.getTopLeft(find.byKey(ItemTablesScreen.tableNameKey(opened.ids[1]))).dy));
@@ -330,7 +330,7 @@ void main() {
 
   testWidgets('redix-api #102: a named subgroup is removed by a swipe with no question', (tester) async {
     final opened = await openTables(tester);
-    expect(find.byKey(ItemTablesScreen.swipeHintKey), findsOneWidget);
+    expect(find.byKey(ItemTablesScreen.rowKey(opened.ids[0]).bar), findsOneWidget);
 
     await swipeToRemove(tester, opened.api, ItemTablesScreen.rowKey(opened.ids[0]));
 

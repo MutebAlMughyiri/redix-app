@@ -12,7 +12,7 @@
 | Add a document | Tap **Add a document**, type its name, choose a group if you want one, then **Choose the file** and tap **Keep**. |
 | Open a document | Tap it. A picture opens to zoom into; any other file goes to the phone's own app, under its own name. |
 | Download a document | Tap **Download** on its row; it lands in the phone's Download folder. |
-| Remove a document | Swipe its row. There is no question; the list says how it was removed. |
+| Remove a document | Swipe its row from the edge with the red bar. There is no question. A row with no red bar cannot be removed by you. |
 
 Documents in no group come first; each group follows under its name. A closed project keeps its documents to read, with nothing to add or remove.
 
@@ -32,7 +32,7 @@ Documents in no group come first; each group follows under its name. A closed pr
 | تضيف مستنداً | اضغط **إضافة مستند**، واكتب اسمه، واختر تصنيفاً إن أردت، ثم **اختر الملف** واضغط **حفظ**. |
 | تفتح مستنداً | اضغط عليه. تُفتح الصورة للتكبير، ويذهب أي ملف آخر إلى تطبيق الجوال باسمه. |
 | تنزّل مستنداً | اضغط **تنزيل** في صفه؛ فيُحفظ في مجلد التنزيلات في الجوال. |
-| تحذف مستنداً | اسحب صفه. لا سؤال، وتقول القائمة كيف حُذف. |
+| تحذف مستنداً | اسحب صفه من جهة الشريط الأحمر. لا سؤال. الصف الذي لا شريط فيه لا يمكنك حذفه. |
 
 تأتي المستندات التي بلا تصنيف أولاً، ثم كل تصنيف تحت اسمه. ويبقى للمشروع المغلق مستنداته للقراءة، بلا إضافة ولا حذف.
 

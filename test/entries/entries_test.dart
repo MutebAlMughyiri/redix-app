@@ -72,11 +72,11 @@ void main() {
     expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-3'))).data, 'en entries.reversed');
   });
 
-  testWidgets('a finished project says nothing about swiping an entry away, since nothing is deleted in it', (tester) async {
+  testWidgets('redix-app #88: in a finished project no entry shows the red bar, since nothing is deleted in it', (tester) async {
     await openEntries(tester, (api) => api.addEntry(status: 'draft'), status: 'finished');
 
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
-    expect(find.byKey(EntriesScreen.swipeHintKey), findsNothing);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').bar), findsNothing);
   });
 
   testWidgets('R3, R14: with no entries of their own the home still lists the project\'s, and with none at all says so under its heading', (tester) async {
@@ -250,9 +250,9 @@ void main() {
     expect(find.byKey(EntriesScreen.reverseKey), findsNothing);
   });
 
-  testWidgets('redix-api #102: a swipe deletes a draft with no question, and the list says how', (tester) async {
+  testWidgets('redix-api #102, redix-app #88: a swipe deletes a draft with no question, and the red bar shows it can', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'));
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.swipeHintKey.label)).data, 'en swipe.hint');
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').bar), findsOneWidget);
 
     await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
 
@@ -263,7 +263,7 @@ void main() {
 
   testWidgets('redix-api #102: the home\'s latest entries swipe away too', (tester) async {
     final api = await openHome(tester, (api) => api.addEntry(status: 'draft'));
-    expect(find.byKey(HomeScreen.entriesSwipeHintKey('project-0')), findsOneWidget);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').bar), findsOneWidget);
 
     await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
 
@@ -299,10 +299,10 @@ void main() {
     expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.reversed');
   });
 
-  testWidgets('without Delete entries a bill does not swipe and no hint shows, though it can still be changed', (tester) async {
+  testWidgets('without Delete entries a bill does not swipe and shows no red bar, though it can still be changed', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'), permissions: [for (final permission in field) if (permission != 'deleteEntries') permission]);
     expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsNothing);
-    expect(find.byKey(EntriesScreen.swipeHintKey), findsNothing);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').bar), findsNothing);
     await openActions(tester, api, 'entry-0');
 
     expect(find.byKey(EntriesScreen.editKey), findsOneWidget);

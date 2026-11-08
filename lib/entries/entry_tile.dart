@@ -53,23 +53,19 @@ class EntryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final theme = Theme.of(context);
-    return Card.outlined(
-      key: EntriesScreen.rowKey(entry.id).card,
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        key: EntriesScreen.rowKey(entry.id),
-        onTap: onTap,
-        title: Text(entry.title, key: EntriesScreen.rowKey(entry.id).title),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text([if (!entry.isExpense) words.text(entry.kind.wordKey), if (entry.supplierName.isNotEmpty) entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.replaceFirst('{0}', entry.authorName)].join(' · '), key: EntriesScreen.detailsKey(entry.id)),
-            if (entry.showsStatus) Text(words.text(entry.statusWordKey), key: EntriesScreen.statusKey(entry.id), style: TextStyle(color: entry.isRejected ? theme.colorScheme.error : null)),
-            if (entry.isRejected) Text('${words.entriesReason}: ${entry.rejectionReason}', key: EntriesScreen.reasonKey(entry.id), style: TextStyle(color: theme.colorScheme.error)),
-          ],
-        ),
-        trailing: Text(formatMoney(entry.amount), key: EntriesScreen.rowKey(entry.id).trailing, style: theme.textTheme.titleSmall),
+    return ListTile(
+      key: EntriesScreen.rowKey(entry.id),
+      onTap: onTap,
+      title: Text(entry.title, key: EntriesScreen.rowKey(entry.id).title),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text([if (!entry.isExpense) words.text(entry.kind.wordKey), if (entry.supplierName.isNotEmpty) entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.replaceFirst('{0}', entry.authorName)].join(' · '), key: EntriesScreen.detailsKey(entry.id)),
+          if (entry.showsStatus) Text(words.text(entry.statusWordKey), key: EntriesScreen.statusKey(entry.id), style: TextStyle(color: entry.isRejected ? theme.colorScheme.error : null)),
+          if (entry.isRejected) Text('${words.entriesReason}: ${entry.rejectionReason}', key: EntriesScreen.reasonKey(entry.id), style: TextStyle(color: theme.colorScheme.error)),
+        ],
       ),
+      trailing: Text(formatMoney(entry.amount), key: EntriesScreen.rowKey(entry.id).trailing, style: theme.textTheme.titleSmall),
     );
   }
 }

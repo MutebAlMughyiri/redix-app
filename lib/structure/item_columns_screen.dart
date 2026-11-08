@@ -85,8 +85,6 @@ class ItemColumnsScreen extends StatefulWidget {
   /// The line that says why a change was refused, in the dialogs that add and change.
   static const dialogMessageKey = ChangeDialog.messageKey;
 
-  /// The line saying a column is removed by a swipe (redix-api #102).
-  static const swipeHintKey = Key('columns.swipeHint');
 
   /// The line that says the list could not be read.
   static const messageKey = ApiListBody.messageKey;
@@ -204,7 +202,6 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(words.columnsHint, key: ItemColumnsScreen.hintKey, style: textTheme.bodySmall),
-                  const SwipeHint(key: ItemColumnsScreen.swipeHintKey),
                 ],
               ),
             ),

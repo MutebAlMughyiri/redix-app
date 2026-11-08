@@ -34,7 +34,7 @@
 | A unit's menu | `ProjectInfoScreen.unitMenuKey(id)` | Active projects, with `manageProject`; the shared unit is not on the list |
 | Rename unit, in the menu | `ProjectInfoScreen.renameUnitKey` | Asks for the name, starting from the current one |
 | A unit's swipe | `ProjectInfoScreen.unitRowKey(id).swipe` | Active projects, with `manageProject`: swiped from its end toward its start, it is deleted with no question; one in use comes back and the refusal says why (redix-api #102) |
-| The swipe hint | `ProjectInfoScreen.swipeHintKey` | Under the units, for whoever may delete them |
+| The red bar | `ProjectInfoScreen.unitRowKey(id).bar` | Inside each unit's card, for whoever may delete it (redix-app #88) |
 | The name, in the rename dialogs | `NameDialog.nameKey` | |
 | Save, in the rename dialogs | `ChangeDialog.saveKey` | Sends the name; a refusal stays in the dialog (`ChangeDialog.messageKey`) |
 | Description | `ProjectInfoScreen.descriptionHeadingKey` | The heading of the description |

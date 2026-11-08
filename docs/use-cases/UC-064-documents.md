@@ -17,7 +17,7 @@
 | A document | `DocumentsScreen.documentKey(id)` | Opens it: a picture to zoom into, any other file handed to the phone by its own name |
 | A group's heading | `DocumentsScreen.groupHeadingKey(group)` | Documents in no group come first, with no heading |
 | Download | `DocumentsScreen.downloadKey(id)` | Keeps the file in the phone's Download folder |
-| The swipe hint | `DocumentsScreen.swipeHintKey` | Says a document is removed by swiping it |
+| The red bar | `DocumentsScreen.documentKey(id).bar` | Inside a document's card, for whoever may remove it (redix-app #88) |
 
 ## API calls
 

@@ -51,8 +51,6 @@ class DocumentsScreen extends StatefulWidget {
   /// The button that keeps the file of the document [id] in the phone's Downloads (redix-api #102).
   static Key downloadKey(String id) => Key('documents.download.$id');
 
-  /// The line saying a document is removed by a swipe.
-  static const swipeHintKey = Key('documents.swipeHint');
 
   /// What the file field asks, or why the file was refused.
   static const fileHintKey = Key('documents.fileHint');
@@ -99,8 +97,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         rowKey: DocumentsScreen.documentKey(document.id),
         mayRemove: widget.project.mayManageProject,
         onRemove: () => widget.documents.remove(document),
-        child: Card.outlined(
-        key: DocumentsScreen.documentKey(document.id).card,
         child: ListTile(
           key: DocumentsScreen.documentKey(document.id),
           leading: Icon(FileKind.of(document.contentType).icon, key: DocumentsScreen.documentKey(document.id).icon),
@@ -114,7 +110,6 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           ),
           onTap: () => context.push(AttachmentScreen.pathOf(widget.project.id, document.attachmentId, fileName: document.fileName), extra: document.contentType),
         ),
-      ),
       ),
     ],
   );
@@ -135,7 +130,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
         listOf: (tiles) => ListView(
           padding: ApiListBody.padding,
           physics: ApiListBody.physics,
-          children: [if (widget.project.mayManageProject) const SwipeHint(key: DocumentsScreen.swipeHintKey), ...tiles],
+          children: tiles,
         ),
         itemBuilder: (document) {
           final all = widget.documents.all;

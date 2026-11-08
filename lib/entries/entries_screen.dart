@@ -7,7 +7,6 @@ import '../ui/api_list_body.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
-import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'add_entry_screen.dart';
 import 'entry_filter.dart';
@@ -90,8 +89,6 @@ class EntriesScreen extends StatefulWidget {
   /// The button sending the open entry.
   static const sendKey = Key('entries.send');
 
-  /// The line saying an entry is removed by a swipe (redix-api #102).
-  static const swipeHintKey = Key('entries.swipeHint');
 
   /// The button reversing the open entry.
   static const reverseKey = Key('entries.reverse');
@@ -222,7 +219,6 @@ class _EntriesScreenState extends State<EntriesScreen> {
       body: Column(
         children: [
           ListenableBuilder(listenable: widget.entries, builder: (_, _) => _filters(words)),
-          if (widget.project.mayDeleteEntries) const Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SwipeHint(key: EntriesScreen.swipeHintKey)),
           Expanded(
             child: ApiListBody(
               list: widget.entries,

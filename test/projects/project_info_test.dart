@@ -270,7 +270,7 @@ void main() {
     testWidgets('BR-38, redix-api #102: a unit is removed by a swipe with no question, and its menu keeps Rename only', (tester) async {
       final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الشرقية']);
       await openInfo(tester, api);
-      expect(find.byKey(ProjectInfoScreen.swipeHintKey), findsOneWidget);
+      expect(find.byKey(ProjectInfoScreen.unitRowKey('project-0-unit-0').bar), findsOneWidget);
 
       await swipeToRemove(tester, api, ProjectInfoScreen.unitRowKey('project-0-unit-0'));
 
@@ -287,7 +287,7 @@ void main() {
       expect(find.byKey(ProjectInfoScreen.unitKey('project-0-unit-0')), findsOneWidget);
       expect(find.byKey(ProjectInfoScreen.unitMenuKey('project-0-unit-0')), findsNothing);
       expect(find.byKey(ProjectInfoScreen.unitRowKey('project-0-unit-0').swipe), findsNothing);
-      expect(find.byKey(ProjectInfoScreen.swipeHintKey), findsNothing);
+      expect(find.byKey(ProjectInfoScreen.unitRowKey('project-0-unit-0').bar), findsNothing);
     });
 
     testWidgets('redix-api #102 R7: a refused unit comes back when swiped, saying why', (tester) async {

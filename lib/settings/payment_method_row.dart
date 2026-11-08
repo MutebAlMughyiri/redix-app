@@ -44,11 +44,8 @@ class PaymentMethodRow extends StatelessWidget {
       rowKey: PaymentMethodsScreen.rowKey(method.id),
       mayRemove: mayChange,
       onRemove: () => paymentMethods.delete(method),
-      child: Card.outlined(
-      key: PaymentMethodsScreen.rowKey(method.id),
-      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        key: PaymentMethodsScreen.rowKey(method.id).body,
+        key: PaymentMethodsScreen.rowKey(method.id),
         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
         title: Text(
           method.name,
@@ -77,7 +74,6 @@ class PaymentMethodRow extends StatelessWidget {
                 ],
               )
             : null,
-      ),
       ),
     );
   }

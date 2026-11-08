@@ -50,7 +50,7 @@ void main() {
     expect(tester.getTopLeft(find.byKey(DocumentsScreen.documentKey('contract'))).dy, lessThan(tester.getTopLeft(find.byKey(DocumentsScreen.groupHeadingKey('التراخيص'))).dy));
     expect(isEnabled(tester, DocumentsScreen.addKey), isFalse);
     expect(find.byKey(DocumentsScreen.documentKey('permit').swipe), findsNothing);
-    expect(find.byKey(DocumentsScreen.swipeHintKey), findsNothing);
+    expect(find.byKey(DocumentsScreen.documentKey('permit').bar), findsNothing);
     expect(find.byKey(DocumentsScreen.downloadKey('permit')), findsOneWidget);
 
     await act(tester, api, () => tester.tap(find.byKey(DocumentsScreen.documentKey('villa'))));
@@ -130,9 +130,9 @@ void main() {
     expect(api.sentDocuments, isEmpty);
   });
 
-  testWidgets('redix-api #102 R1, R4: a swipe removes a document with no question, and the list says how', (tester) async {
+  testWidgets('redix-api #102 R1, redix-app #88: a swipe removes a document with no question, and the red bar shows it can', (tester) async {
     final (:api, capture: _) = await openDocuments(tester, arrange: (api) => api.documentRows.add(document('permit', 'رخصة البناء', 'التراخيص')));
-    expect(tester.widget<Text>(find.byKey(DocumentsScreen.swipeHintKey.label)).data, 'en swipe.hint');
+    expect(find.byKey(DocumentsScreen.documentKey('permit').bar), findsOneWidget);
 
     await swipeToRemove(tester, api, DocumentsScreen.documentKey('permit'));
 

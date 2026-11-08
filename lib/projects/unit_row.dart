@@ -33,7 +33,7 @@ class UnitRow extends StatelessWidget {
       child: ListTile(
       key: ProjectInfoScreen.unitRowKey(unit.id),
       dense: true,
-      contentPadding: EdgeInsets.zero,
+      contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
       title: Text(unit.name, key: ProjectInfoScreen.unitKey(unit.id)),
       trailing: mayChange
           ? PopupMenuButton<VoidCallback>(

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/format/number_format.dart';
+import 'package:redix/ui/part_keys.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 
@@ -85,7 +86,7 @@ void main() {
 
   testWidgets('redix-api #102: a swipe deletes a method with no question, and the method leaves the list', (tester) async {
     final opened = await openMethods(tester);
-    expect(find.byKey(PaymentMethodsScreen.swipeHintKey), findsOneWidget);
+    expect(find.byKey(PaymentMethodsScreen.rowKey(opened.card).bar), findsOneWidget);
 
     await swipeToRemove(tester, opened.api, PaymentMethodsScreen.rowKey(opened.card));
 

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/ui/part_keys.dart';
 import 'package:redix/offline/folder_store.dart';
 import 'package:redix/offline/outbox.dart';
 import 'package:redix/offline/pending_entry.dart';
@@ -169,7 +170,7 @@ void main() {
     final store = await storeHolding([pending('entry-1', refusal: 'expenses.unknownSupplier')]);
     final api = await openHome(tester, store);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
-    expect(find.byKey(WaitingScreen.swipeHintKey), findsOneWidget);
+    expect(find.byKey(WaitingScreen.rowKey('entry-1').bar), findsOneWidget);
 
     await swipeToRemove(tester, api, WaitingScreen.rowKey('entry-1'), share: 0.2);
     expect(await store.namesIn('outbox'), ['entry-1']);

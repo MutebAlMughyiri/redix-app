@@ -140,8 +140,6 @@ class HomeScreen extends StatefulWidget {
   /// The heading over the entries of the project [id].
   static Key entriesHeadingKey(String id) => Key('home.entriesHeading.$id');
 
-  /// The line saying an entry of the project [id] is removed by a swipe (redix-api #102).
-  static Key entriesSwipeHintKey(String id) => Key('home.entriesSwipeHint.$id');
 
   /// The line saying the project [id] has no entries yet.
   static Key entriesEmptyKey(String id) => Key('home.entriesEmpty.$id');

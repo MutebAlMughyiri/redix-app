@@ -79,7 +79,8 @@ void main() {
     expect(find.byKey(ItemColumnsScreen.editKey(opened.date)), findsOneWidget);
     expect(find.byKey(ItemColumnsScreen.rowKey(opened.unit).swipe), findsOneWidget);
     expect(find.byKey(ItemColumnsScreen.lockKey(opened.unit)), findsNothing);
-    expect(find.byKey(ItemColumnsScreen.swipeHintKey), findsOneWidget);
+    expect(find.byKey(ItemColumnsScreen.rowKey(opened.unit).bar), findsOneWidget);
+    expect(find.byKey(ItemColumnsScreen.rowKey(opened.date).bar), findsNothing);
   });
 
   testWidgets('AC-41.1: a column is added to this item with what was chosen, asking nothing about other items', (tester) async {

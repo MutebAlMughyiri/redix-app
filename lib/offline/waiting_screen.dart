@@ -32,8 +32,6 @@ class WaitingScreen extends StatelessWidget {
   /// The button sending the refused entry [id] again.
   static Key sendAgainKey(String id) => Key('waiting.sendAgain.$id');
 
-  /// The button deleting the entry [id].
-  static const swipeHintKey = Key('waiting.swipeHint');
 
   /// What the entry [id] is.
   static Key titleKey(String id) => Key('waiting.title.$id');
@@ -64,7 +62,6 @@ class WaitingScreen extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              const SwipeHint(key: swipeHintKey),
               for (final entry in entries)
                 SwipeToRemove(
                   rowKey: rowKey(entry.id),
@@ -73,9 +70,8 @@ class WaitingScreen extends StatelessWidget {
                     await outbox.discard(entry);
                     return '';
                   },
-                  child: Card.outlined(
-                  key: rowKey(entry.id),
                   child: Padding(
+                    key: rowKey(entry.id),
                     padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,7 +92,6 @@ class WaitingScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),
                 ),
             ],
           );

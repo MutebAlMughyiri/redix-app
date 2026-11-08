@@ -447,7 +447,6 @@ void main() {
         ItemColumnsScreen.nameKey(areaColumn),
         ItemColumnsScreen.detailsKey(areaColumn),
         ItemColumnsScreen.editKey(areaColumn),
-        ItemColumnsScreen.swipeHintKey,
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.addKey)));
       [ItemColumnsScreen.columnNameKey, ItemColumnsScreen.dataTypeKey, ItemColumnsScreen.requiredKey, ItemColumnsScreen.showInReportsKey, ItemColumnsScreen.saveKey].forEach(expectFits);
@@ -467,7 +466,7 @@ void main() {
       [CategoriesScreen.renameItemKey, CategoriesScreen.tablesKey, CategoriesScreen.disableItemKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.tablesKey)));
       final subgroupId = (tiles['subgroups']! as List<Map<String, Object>>).last['id'] as String;
-      [ItemTablesScreen.hintKey, ItemTablesScreen.addKey, ItemTablesScreen.handleKey(subgroupId), ItemTablesScreen.tableNameKey(subgroupId), ItemTablesScreen.detailsKey(subgroupId), ItemTablesScreen.renameKey(subgroupId), ItemTablesScreen.swipeHintKey].forEach(expectFits);
+      [ItemTablesScreen.hintKey, ItemTablesScreen.addKey, ItemTablesScreen.handleKey(subgroupId), ItemTablesScreen.tableNameKey(subgroupId), ItemTablesScreen.detailsKey(subgroupId), ItemTablesScreen.renameKey(subgroupId)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));

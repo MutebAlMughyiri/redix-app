@@ -72,8 +72,6 @@ class NewProjectScreen extends StatefulWidget {
   /// The unit added [number]th, from 0, which keeps its key when another is swiped off.
   static Key unitKey(int number) => Key('newProject.unit.$number');
 
-  /// The line saying a unit is taken off the list by a swipe (redix-api #102).
-  static const swipeHintKey = Key('newProject.swipeHint');
 
   /// The heading over the units.
   static const unitsHeadingKey = Key('newProject.unitsHeading');
@@ -87,8 +85,6 @@ class NewProjectScreen extends StatefulWidget {
   /// The partner added [number]th, from 0.
   static Key partnerKey(int number) => Key('newProject.partner.$number');
 
-  /// The line saying a partner is taken off the list by a swipe.
-  static const partnersSwipeHintKey = Key('newProject.partnersSwipeHint');
 
   /// The heading over the partners.
   static const partnersHeadingKey = Key('newProject.partnersHeading');
@@ -214,7 +210,6 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               label: words.projectsUnitName,
               addLabel: words.projectsAddUnit,
               headingKey: NewProjectScreen.unitsHeadingKey,
-              swipeHintKey: NewProjectScreen.swipeHintKey,
               fieldKey: NewProjectScreen.unitNameKey,
               addKey: NewProjectScreen.addUnitKey,
               rowKey: NewProjectScreen.unitKey,
@@ -227,7 +222,6 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               label: words.partnersName,
               addLabel: words.partnersNew,
               headingKey: NewProjectScreen.partnersHeadingKey,
-              swipeHintKey: NewProjectScreen.partnersSwipeHintKey,
               fieldKey: NewProjectScreen.partnerNameKey,
               addKey: NewProjectScreen.addPartnerKey,
               rowKey: NewProjectScreen.partnerKey,

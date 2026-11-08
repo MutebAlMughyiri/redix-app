@@ -130,12 +130,11 @@ void main() {
   testWidgets('redix-api #102: a unit is swiped off the list until the project is created, and the next one keeps its place', (tester) async {
     final api = FakeApi();
     await openForm(tester, api);
-    expect(find.byKey(NewProjectScreen.swipeHintKey), findsNothing);
 
     await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
     await addUnit(tester, api, 'الفلة الشرقية');
     await addUnit(tester, api, 'الفلة الشمالية');
-    expect(find.byKey(NewProjectScreen.swipeHintKey), findsOneWidget);
+    expect(find.byKey(NewProjectScreen.unitKey(0).bar), findsOneWidget);
     await swipeToRemove(tester, api, NewProjectScreen.unitKey(0));
 
     expect(find.byKey(NewProjectScreen.unitKey(0)), findsNothing);

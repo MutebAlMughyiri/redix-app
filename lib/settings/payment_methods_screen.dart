@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../projects/project.dart';
 import '../ui/bottom_button.dart';
 import '../ui/screen_title.dart';
-import '../ui/swipe_to_remove.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
@@ -40,8 +39,6 @@ class PaymentMethodsScreen extends StatefulWidget {
   /// Enable, in a method's menu.
   static const enableKey = Key('paymentMethods.enable');
 
-  /// The line saying a method is removed by a swipe (redix-api #102).
-  static const swipeHintKey = Key('paymentMethods.swipeHint');
 
   /// The name, in the dialogs that add and rename.
   static const dialogNameKey = NameDialog.nameKey;
@@ -108,7 +105,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
               listOf: (rows) => ListView(
                 padding: ApiListBody.padding,
                 physics: ApiListBody.physics,
-                children: [if (project.mayManageSettings) const SwipeHint(key: PaymentMethodsScreen.swipeHintKey), ...rows],
+                children: rows,
               ),
               itemBuilder: (method) => PaymentMethodRow(method: method, paymentMethods: paymentMethods, mayChange: project.mayManageSettings),
             ),

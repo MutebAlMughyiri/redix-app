@@ -33,23 +33,20 @@ class ColumnRow extends StatelessWidget {
       if (column.isRequired) words.columnsRequired else words.columnsOptional,
       if (column.showInReports) words.columnsInReports,
     ];
-    return Card.outlined(
-      key: ItemColumnsScreen.rowKey(column.id).card,
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        key: ItemColumnsScreen.rowKey(column.id).body,
-        contentPadding: const EdgeInsetsDirectional.fromSTEB(12, 0, 4, 0),
-        leading: mayChange ? ReorderableDragStartListener(key: ItemColumnsScreen.handleKey(column.id), index: index, child: Icon(Icons.drag_indicator, key: ItemColumnsScreen.handleKey(column.id).icon)) : null,
-        title: Text(column.name, key: ItemColumnsScreen.nameKey(column.id)),
-        subtitle: Text(details.join(' · '), key: ItemColumnsScreen.detailsKey(column.id)),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (mayChange)
-              IconButton(key: ItemColumnsScreen.editKey(column.id), icon: Icon(Icons.edit_outlined, key: ItemColumnsScreen.editKey(column.id).icon), tooltip: words.columnsEdit, onPressed: onEdit),
-            if (column.isCore)
-              Tooltip(
-                key: ItemColumnsScreen.coreKey(column.id),
+    return ListTile(
+      key: ItemColumnsScreen.rowKey(column.id).body,
+      contentPadding: const EdgeInsetsDirectional.fromSTEB(12, 0, 4, 0),
+      leading: mayChange ? ReorderableDragStartListener(key: ItemColumnsScreen.handleKey(column.id), index: index, child: Icon(Icons.drag_indicator, key: ItemColumnsScreen.handleKey(column.id).icon)) : null,
+      title: Text(column.name, key: ItemColumnsScreen.nameKey(column.id)),
+      subtitle: Text(details.join(' · '), key: ItemColumnsScreen.detailsKey(column.id)),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (mayChange)
+            IconButton(key: ItemColumnsScreen.editKey(column.id), icon: Icon(Icons.edit_outlined, key: ItemColumnsScreen.editKey(column.id).icon), tooltip: words.columnsEdit, onPressed: onEdit),
+          if (column.isCore)
+            Tooltip(
+              key: ItemColumnsScreen.coreKey(column.id),
                 message: words.columnsCore,
                 child: Padding(
                   padding: const EdgeInsets.all(8),
@@ -58,7 +55,6 @@ class ColumnRow extends StatelessWidget {
               ),
           ],
         ),
-      ),
     );
   }
 }
