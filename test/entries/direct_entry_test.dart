@@ -44,13 +44,13 @@ void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   group('the table list', () {
-    testWidgets('R3, R5, R13: Finance finds the revenue items, and last the active partners under Partners', (tester) async {
+    testWidgets('R3, R5, R13: Finance finds the revenue items, and the active partners under Revenue · Capital', (tester) async {
       final (:api, capture: _, :refund, :partner, :gone, account: _) = await openAddEntry(tester);
 
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
 
       expect(text(tester, TablePicker.optionKey(refund).subtitle), 'en categories.tableRevenue');
-      expect(find.byKey(TablePicker.categoryKey('en partners.title')), findsOneWidget);
+      expect(find.byKey(TablePicker.categoryKey('en entries.capitalGroup')), findsOneWidget);
       expect(text(tester, TablePicker.optionKey(partner).title), 'نواف');
       expect(text(tester, TablePicker.optionKey(partner).subtitle), 'en categories.tableCapital');
       expect(find.byKey(TablePicker.optionKey(gone)), findsNothing);
@@ -64,7 +64,7 @@ void main() {
 
       expect(find.byKey(TablePicker.optionKey(refund)), findsNothing);
       expect(find.byKey(TablePicker.optionKey(partner)), findsNothing);
-      expect(find.byKey(TablePicker.categoryKey('en partners.title')), findsNothing);
+      expect(find.byKey(TablePicker.categoryKey('en entries.capitalGroup')), findsNothing);
     });
   });
 

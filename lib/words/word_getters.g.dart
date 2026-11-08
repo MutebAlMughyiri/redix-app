@@ -923,6 +923,9 @@ mixin WordGetters {
   /// The word `entries.approved`.
   String get entriesApproved => text('entries.approved');
 
+  /// The word `entries.capitalGroup`.
+  String get entriesCapitalGroup => text('entries.capitalGroup');
+
   /// The word `entries.clearFilters`.
   String get entriesClearFilters => text('entries.clearFilters');
 

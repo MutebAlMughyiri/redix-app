@@ -94,7 +94,7 @@ class TableCategory {
   /// The category's name; empty for the partners' group, which the API sends with no name (redix-api #101).
   final String name;
 
-  /// True for the partners' group.
+  /// True for the partners' group, which shows under the revenue as its capital (BR-06).
   bool get isPartners => name.isEmpty;
 
   /// Its items that take expenses.
