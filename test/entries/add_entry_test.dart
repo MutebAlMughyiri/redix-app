@@ -217,6 +217,18 @@ void main() {
     expect(find.byKey(HomeScreen.waitingKey('project-0')), findsOneWidget);
   });
 
+  testWidgets('redix-app #83 R1: the message offering Share goes away by itself like any message, never covering the next screen\'s button', (tester) async {
+    final opened = await openExpense(tester);
+    await fill(tester, opened);
+
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
+    expect(find.byKey(messageKeyOf('expenses.sent').icon), findsOneWidget);
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(messageKeyOf('expenses.sent')), findsNothing);
+  });
+
   testWidgets('redix-app #83 R1: once sent, the message offers Share, which hands the entry the API now lists to the share sheet', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);

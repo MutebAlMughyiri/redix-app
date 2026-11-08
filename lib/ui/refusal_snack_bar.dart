@@ -13,6 +13,7 @@ void showMessage(ScaffoldMessengerState messenger, Words words, String wordKey, 
     key: messageKeyOf(wordKey),
     content: Text(words.text(wordKey).replaceFirst('{0}', value), key: messageKeyOf(wordKey).label),
     action: actionLabel.isEmpty ? null : SnackBarAction(key: messageKeyOf(wordKey).icon, label: actionLabel, onPressed: onAction),
+    persist: false,
   ),
 );
 
