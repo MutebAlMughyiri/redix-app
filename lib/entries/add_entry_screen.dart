@@ -47,6 +47,7 @@ import 'entry_tables.dart';
 import 'table_picker.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import 'entry_share.dart';
 
 /// إضافة قيد (UC-022, UC-027, redix-app #84): one screen adds an expense to any table of an item's sheet, and the table chosen says what it is. An item's general or named
 /// table takes a purchase: a total spent on a day, from a supplier, with its file when there is one (redix-api #96). A contract's table takes a contractor payment: what the
@@ -583,6 +584,12 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     return widget.expenses.record(_table.route, _body(submit), editing: widget.editingId);
   }
 
+  /// Says [wordKey] once the entry [entryId] is kept by the API, offering to share it (redix-app #83, R1). Everything the action needs is taken now, since the screen closes.
+  void _offerShare(ScaffoldMessengerState messenger, Words words, String wordKey, String entryId) {
+    final (capture, project, entries) = (widget.capture, widget.project, widget.entries);
+    showMessage(messenger, words, wordKey, actionLabel: words.entriesShare, onAction: () => EntryShare.shareSaved(capture, project, entries, entryId, words));
+  }
+
   Future<void> _save(bool submit) async {
     final words = Words.of(context);
     final messenger = ScaffoldMessenger.of(context);
@@ -593,7 +600,11 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     }
     if (refusal.isEmpty) {
       final sent = widget.expenses.wasOverrun ? 'contractorPayments.savedOverrun' : (submit ? 'expenses.sent' : 'expenses.saved');
-      showMessage(messenger, words, widget.expenses.wasKept ? 'expenses.keptOnPhone' : sent);
+      if (widget.expenses.wasKept) {
+        showMessage(messenger, words, 'expenses.keptOnPhone');
+      } else {
+        _offerShare(messenger, words, sent, _entryId);
+      }
       context.pop(true);
       return;
     }
@@ -713,8 +724,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       attachments: widget.attachments,
       capture: widget.capture,
       file: _file,
-      onSent: () {
-        showMessage(ScaffoldMessenger.of(context), words, 'expenses.sent');
+      onSent: (entryId) {
+        _offerShare(ScaffoldMessenger.of(context), words, 'expenses.sent', entryId);
         context.pop(true);
       },
     ),

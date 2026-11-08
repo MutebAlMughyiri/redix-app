@@ -48,6 +48,9 @@ abstract class ApiObject<T> extends ChangeNotifier {
   @protected
   Map<String, dynamic> get lastAnswer => _lastAnswer;
 
+  /// The id the last change answered with, such as a new entry's; empty when it answered none.
+  String get lastId => _lastAnswer['id'] as String? ?? '';
+
   /// What one user read never shows to the next on this phone, even for the moment the next one takes to load (BR-33).
   void _forgetAtSignOut() {
     if (!_session.isOpen) {

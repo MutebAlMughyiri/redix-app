@@ -213,7 +213,21 @@ void main() {
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     expect(shown(tester, messageKeyOf('expenses.keptOnPhone').label), 'en expenses.keptOnPhone');
+    expect(find.byKey(messageKeyOf('expenses.keptOnPhone').icon), findsNothing, reason: 'redix-app #83: nothing the API has not kept is shared');
     expect(find.byKey(HomeScreen.waitingKey('project-0')), findsOneWidget);
+  });
+
+  testWidgets('redix-app #83 R1: once sent, the message offers Share, which hands the entry the API now lists to the share sheet', (tester) async {
+    final opened = await openExpense(tester);
+    await fill(tester, opened);
+
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
+    final entryId = opened.api.sentExpenses.single['id']! as String;
+    opened.api.addEntry(id: entryId, itemName: 'البلاط', amount: 6000);
+    await act(tester, opened.api, () => tester.tap(find.byKey(messageKeyOf('expenses.sent').icon)));
+
+    final lines = opened.capture.sharedTexts.single.split('\n');
+    expect((lines.first, lines[1], lines.last), ('en entries.purchases · غصون 6', 'en entryShare.item: البلاط', 'https://redix.test/projects/project-0/entries/$entryId/open'));
   });
 
   testWidgets('AC-16.1: five expenses with their photos, entered with no network, all go within a minute of it returning', (tester) async {

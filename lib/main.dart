@@ -80,6 +80,7 @@ import 'words/app_language.dart';
 import 'words/no_words_screen.dart';
 import 'words/words.dart';
 import 'config/app_config.dart';
+import 'entries/entry_link_screen.dart';
 
 /// Starts the app with the session and the language kept from an earlier start, if any. An app built without its environment's config
 /// file stops here, rather than calling an address nobody chose.
@@ -118,6 +119,9 @@ class RedixApp extends StatefulWidget {
 class _RedixAppState extends State<RedixApp> {
   var _wordsAttempt = 0;
   var _shared = PickedFile.none();
+
+  /// A shared entry's link opened before signing in, to open once signed in (redix-app #83, R8); empty for none.
+  var _afterSignIn = '';
   late final StreamSubscription<PickedFile> _sharing;
   late final _projects = Projects(widget.session);
   late final _outbox = Outbox(widget.session, widget.session.store);
@@ -182,11 +186,15 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), notifications: _notifications, dashboard: _dashboardOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), notifications: _notifications, dashboard: _dashboardOf(state.pathParameters['projectId'] ?? ''), capture: widget.capture),
       ),
       GoRoute(
         path: ApprovalsScreen.path,
-        builder: (context, state) => ApprovalsScreen(project: state.extra! as Project, approvals: _approvalsOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => ApprovalsScreen(project: state.extra! as Project, approvals: _approvalsOf(state.pathParameters['projectId'] ?? ''), focusEntryId: state.uri.queryParameters['entry'] ?? ''),
+      ),
+      GoRoute(
+        path: EntryLinkScreen.path,
+        builder: (context, state) => EntryLinkScreen(projectId: state.pathParameters['projectId'] ?? '', entryId: state.pathParameters['entryId'] ?? '', projects: _projects, entriesOf: _entriesOf),
       ),
       GoRoute(
         path: AttachmentScreen.path,
@@ -316,7 +324,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: AddEntryScreen.path, builder: (context, state) => _addEntryScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project, state.uri.queryParameters)),
       GoRoute(
         path: EntriesScreen.path,
-        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), openEntryId: state.uri.queryParameters['entry'] ?? '', startsSearching: state.uri.queryParameters.containsKey('search')),
+        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), capture: widget.capture, openEntryId: state.uri.queryParameters['entry'] ?? '', startsSearching: state.uri.queryParameters.containsKey('search')),
       ),
       GoRoute(
         path: ItemTablesScreen.path,
@@ -404,7 +412,11 @@ class _RedixAppState extends State<RedixApp> {
   String? _redirect(String location) {
     final session = widget.session;
     if (!session.isOpen) {
-      return location == SignInScreen.path || location == NewProjectScreen.registerPath ? null : SignInScreen.path;
+      if (location == SignInScreen.path || location == NewProjectScreen.registerPath) {
+        return null;
+      }
+      _afterSignIn = location;
+      return SignInScreen.path;
     }
     if (session.mustChangePassword) {
       return location == ChangePasswordScreen.path ? null : ChangePasswordScreen.path;
@@ -412,7 +424,9 @@ class _RedixAppState extends State<RedixApp> {
     if (location != SignInScreen.path) {
       return null;
     }
-    return _shared.isNone ? HomeScreen.landingOf(session) : ShareScreen.path;
+    final asked = _afterSignIn;
+    _afterSignIn = '';
+    return _shared.isNone ? (EntryLinkScreen.isLink(asked) ? asked : HomeScreen.landingOf(session)) : ShareScreen.path;
   }
 
   void _openShared(PickedFile file) {

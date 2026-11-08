@@ -89,6 +89,22 @@ void main() {
       expect(find.byKey(DirectEntryFields.sendKey), findsNothing);
     });
 
+    testWidgets('redix-app #83 R1: once sent, the message offers Share, which hands the partner\'s money the API now lists to the share sheet', (tester) async {
+      final (:api, :capture, refund: _, :partner, :account) = await openAddEntry(tester);
+      capture.files = picture();
+      await pick(tester, api, partner);
+      await tester.enterText(find.byKey(DirectEntryFields.amountKey), '1000');
+      await act(tester, api, () => tester.tap(find.byKey(DirectEntryFields.accountKey(account))));
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.filesKey)));
+
+      await act(tester, api, () => tester.tap(find.byKey(DirectEntryFields.sendKey)));
+      api.addEntry(id: 'sent-1', kind: 'capitalIn', partnerName: 'نواف', amount: 1000);
+      await act(tester, api, () => tester.tap(find.byKey(messageKeyOf('expenses.sent').icon)));
+
+      final lines = capture.sharedTexts.single.split('\n');
+      expect((lines.first, lines[1], lines.last), ('en capital.contribution · غصون 6', 'en entryShare.partner: نواف', 'https://redix.test/projects/project-0/entries/sent-1/open'));
+    });
+
     testWidgets('R7: with سحب on it is a withdrawal', (tester) async {
       final (:api, :capture, refund: _, :partner, :account) = await openAddEntry(tester);
       capture.files = picture();

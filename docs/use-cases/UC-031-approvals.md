@@ -13,6 +13,7 @@
 | An entry's card | `ApprovalsScreen.cardKey` |
 | Its selection, Approve, Reject and file | `ApprovalsScreen.selectKey`, `approveKey`, `rejectKey`, `fileKey` |
 | Why it could not be approved | `ApprovalsScreen.failedKey` |
+| Show everything waiting, when a shared link opened one entry (redix-app #83) | `ApprovalsScreen.showAllKey` |
 | Approve selected | `ApprovalsScreen.approveSelectedKey` |
 | The rejection's quick reasons, reason, send and refusal | `ApprovalsScreen.quickReasonKey`, `reasonKey`, `rejectSendKey`, `rejectMessageKey` |
 | A file: picture, any other file, or failure | `AttachmentScreen.pictureKey`, `openFileKey`, `failedKey` |
@@ -32,6 +33,7 @@
 | AC-19.1: rejecting needs a reason | `RejectSheet` | `approvals_test.dart`: AC-19.1 |
 | A quick reason fills the field, and rejecting closes | `RejectSheet` | `approvals_test.dart`: a quick reason |
 | A finished project offers no decision | `ApprovalsScreen` | `approvals_test.dart`: a finished project |
+| redix-app #83 R7, D7: for whoever decides entries, a shared link of one waiting opens Approvals on it alone, with Approve and Reject, everything waiting one tap away and the project's home behind | `EntryLinkScreen`, `ApprovalsScreen.focusEntryId` | `entry_share_test.dart`: R7, D7 |
 
 A contract's document opens the same way, from its dialog.
 

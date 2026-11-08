@@ -76,6 +76,9 @@ class InvoiceCapture {
   /// Hands the PDF [bytes], named [name], to the phone's print dialog: AirPrint on iPhone, the print service on Android and Huawei, with a preview (FR-48).
   Future<void> printPdf(Uint8List bytes, String name) => Printing.layoutPdf(onLayout: (_) async => bytes, name: name);
 
+  /// Hands [text] alone to the phone's share sheet, for WhatsApp, Telegram, Signal or any app that takes text (redix-app #83).
+  Future<void> shareText(String text) => SharePlus.instance.share(ShareParams(text: text));
+
   /// Hands [bytes], named [name], to the phone's share sheet, for WhatsApp or email with the file attached (FR-48).
   Future<void> shareFile(Uint8List bytes, String name, String mimeType) async {
     await SharePlus.instance.share(ShareParams(files: [XFile.fromData(bytes, mimeType: mimeType)], fileNameOverrides: [name]));

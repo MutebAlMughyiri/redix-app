@@ -173,6 +173,9 @@ mixin WordGetters {
   /// The word `approvals.selectHint`.
   String get approvalsSelectHint => text('approvals.selectHint');
 
+  /// The word `approvals.showAll`.
+  String get approvalsShowAll => text('approvals.showAll');
+
   /// The word `approvals.title`.
   String get approvalsTitle => text('approvals.title');
 
@@ -959,6 +962,9 @@ mixin WordGetters {
   /// The word `entries.noTableMatch`.
   String get entriesNoTableMatch => text('entries.noTableMatch');
 
+  /// The word `entries.notFound`.
+  String get entriesNotFound => text('entries.notFound');
+
   /// The word `entries.notYourEntry`.
   String get entriesNotYourEntry => text('entries.notYourEntry');
 
@@ -1010,6 +1016,9 @@ mixin WordGetters {
   /// The word `entries.send`.
   String get entriesSend => text('entries.send');
 
+  /// The word `entries.share`.
+  String get entriesShare => text('entries.share');
+
   /// The word `entries.table`.
   String get entriesTable => text('entries.table');
 
@@ -1027,6 +1036,39 @@ mixin WordGetters {
 
   /// The word `entries.withdrawalHint`.
   String get entriesWithdrawalHint => text('entries.withdrawalHint');
+
+  /// The word `entryShare.account`.
+  String get entryShareAccount => text('entryShare.account');
+
+  /// The word `entryShare.amount`.
+  String get entryShareAmount => text('entryShare.amount');
+
+  /// The word `entryShare.author`.
+  String get entryShareAuthor => text('entryShare.author');
+
+  /// The word `entryShare.contractor`.
+  String get entryShareContractor => text('entryShare.contractor');
+
+  /// The word `entryShare.date`.
+  String get entryShareDate => text('entryShare.date');
+
+  /// The word `entryShare.item`.
+  String get entryShareItem => text('entryShare.item');
+
+  /// The word `entryShare.notes`.
+  String get entryShareNotes => text('entryShare.notes');
+
+  /// The word `entryShare.partner`.
+  String get entrySharePartner => text('entryShare.partner');
+
+  /// The word `entryShare.paymentMethod`.
+  String get entrySharePaymentMethod => text('entryShare.paymentMethod');
+
+  /// The word `entryShare.status`.
+  String get entryShareStatus => text('entryShare.status');
+
+  /// The word `entryShare.supplier`.
+  String get entryShareSupplier => text('entryShare.supplier');
 
   /// The word `expenses.account`.
   String get expensesAccount => text('expenses.account');

@@ -10,12 +10,16 @@ import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_tile.dart';
 import 'project_entries.dart';
+import '../attachments/invoice_capture.dart';
 
 /// The project's entries on its home (UC-037, redix-app #84): the latest five by anyone, a spinner while they are first read, a search beside the heading, and the way to all of
 /// them. It counts nothing: each row says where it stands (Muteb, 7 Nov 2026).
 class HomeEntries extends StatelessWidget {
-  /// The entries of [project], in [entries].
-  const HomeEntries({super.key, required this.project, required this.entries});
+  /// The entries of [project], in [entries], shared through [capture].
+  const HomeEntries({super.key, required this.project, required this.entries, required this.capture});
+
+  /// The phone's share sheet.
+  final InvoiceCapture capture;
 
   /// How many of the latest show.
   static const latest = 5;
@@ -57,7 +61,7 @@ class HomeEntries extends StatelessWidget {
               ),
             if (!entries.isLoading && entries.all.isEmpty) Text(entries.message.isEmpty ? words.entriesEmpty : words.text(entries.message), key: HomeScreen.entriesEmptyKey(project.id)),
             if (entries.all.isNotEmpty && project.may(Permission.deleteEntries)) SwipeHint(key: HomeScreen.entriesSwipeHintKey(project.id)),
-            for (final entry in entries.all.take(latest)) EntryListTile(project: project, entries: entries, entry: entry),
+            for (final entry in entries.all.take(latest)) EntryListTile(project: project, entries: entries, entry: entry, capture: capture),
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: TextButton(

@@ -21,7 +21,16 @@ import 'reject_sheet.dart';
 /// Finance's inbox (UC-031, UC-032): what waits, oldest first, to approve one at a time or many at once, or to reject saying why.
 class ApprovalsScreen extends StatefulWidget {
   /// The inbox of [project], decided through [approvals].
-  const ApprovalsScreen({super.key, required this.project, required this.approvals});
+  const ApprovalsScreen({super.key, required this.project, required this.approvals, this.focusEntryId = ''});
+
+  /// The entry a shared link opened, shown alone until everything is asked for (redix-app #83); empty for everything.
+  final String focusEntryId;
+
+  /// Approvals of the project [projectId] on the entry [entryId] alone.
+  static String pathOfEntry(String projectId, String entryId) => Uri(path: pathOf(projectId), queryParameters: {'entry': entryId}).toString();
+
+  /// The button showing everything waiting, when one entry is shown alone.
+  static const showAllKey = Key('approvals.showAll');
 
   /// The address of the screen.
   static const path = '/projects/:projectId/approvals';
@@ -127,6 +136,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
   final _selected = <String>{};
   var _failed = <String, String>{};
   var _filter = _Filter.all;
+  late var _focus = widget.focusEntryId;
 
   @override
   void initState() {
@@ -187,6 +197,11 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
           : BottomButton(buttonKey: ApprovalsScreen.approveSelectedKey, icon: Icons.done_all, label: '${words.approvalsApproveSelected} · ${_selected.length}', onPressed: () => _approve(_selected.toList())),
       body: Column(
         children: [
+          if (_focus.isNotEmpty)
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: TextButton(key: ApprovalsScreen.showAllKey, onPressed: () => setState(() => _focus = ''), child: Text(words.approvalsShowAll, key: ApprovalsScreen.showAllKey.label)),
+            ),
           ListenableBuilder(
             listenable: widget.approvals,
             builder: (context, _) => Padding(
@@ -216,7 +231,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
             child: ApiListBody(
               list: widget.approvals,
               emptyText: words.approvalsEmpty,
-              keeps: _filter.keeps,
+              keeps: (entry) => (_focus.isEmpty || entry.id == _focus) && _filter.keeps(entry),
               itemBuilder: (entry) => Card.outlined(
                       key: ApprovalsScreen.cardKey(entry.id),
                       margin: const EdgeInsets.only(bottom: 8),

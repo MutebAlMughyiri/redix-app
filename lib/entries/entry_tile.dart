@@ -10,11 +10,15 @@ import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_row.dart';
 import 'project_entries.dart';
+import '../attachments/invoice_capture.dart';
 
 /// An entry on a list of [project]'s [entries]: tapping it opens its actions, and swiping it removes it where the user may delete it (redix-api #102).
 class EntryListTile extends StatelessWidget {
-  /// The tile of [entry], one of [project]'s [entries].
-  const EntryListTile({super.key, required this.project, required this.entries, required this.entry});
+  /// The tile of [entry], one of [project]'s [entries], shared through [capture].
+  const EntryListTile({super.key, required this.project, required this.entries, required this.entry, required this.capture});
+
+  /// The phone's share sheet.
+  final InvoiceCapture capture;
 
   /// The project.
   final Project project;
@@ -30,7 +34,7 @@ class EntryListTile extends StatelessWidget {
     rowKey: EntriesScreen.rowKey(entry.id),
     mayRemove: entry.allows(project, Permission.deleteEntries),
     onRemove: () => entries.delete(entry),
-    child: EntryTile(entry: entry, onTap: () => EntriesScreen.openActions(context, project, entries, entry)),
+    child: EntryTile(entry: entry, onTap: () => EntriesScreen.openActions(context, project, entries, entry, capture)),
   );
 }
 

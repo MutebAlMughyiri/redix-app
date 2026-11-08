@@ -23,7 +23,7 @@ import 'project_entries.dart';
 /// and its bank receipt, or why it was paid in cash (AC-25.1, BR-23). One button sends it for approval at once; it is never a draft.
 class DirectEntryFields extends StatefulWidget {
   /// The fields of [table] in [project], recorded through [entries] or [capital], reaching one of [accounts], with its file kept through [attachments] and taken by [capture],
-  /// starting from [file]; [onSent] runs once it is sent.
+  /// starting from [file]; [onSent] runs once it is sent, with the id the API gave it.
   const DirectEntryFields({
     super.key,
     required this.project,
@@ -62,7 +62,7 @@ class DirectEntryFields extends StatefulWidget {
   final PickedFile file;
 
   /// Runs once it is sent for approval.
-  final VoidCallback onSent;
+  final ValueChanged<String> onSent;
 
   /// The switch that makes a partner's entry a withdrawal, in the place of a purchase's credit note.
   static const withdrawalKey = Key('directEntry.withdrawal');
@@ -192,7 +192,7 @@ class _DirectEntryFieldsState extends State<DirectEntryFields> {
       return;
     }
     if (refusal.isEmpty) {
-      widget.onSent();
+      widget.onSent(widget.table.isPartner ? widget.capital.lastId : widget.entries.lastId);
       return;
     }
     setState(() {

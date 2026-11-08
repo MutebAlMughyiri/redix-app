@@ -14,6 +14,8 @@
 | What can be done to it | `EntriesScreen.editKey`, `sendKey`, `reverseKey`; a draft, waiting or rejected entry is deleted by swiping its row, `rowKey(id).swipe`, on القيود and on the home alike (redix-api #102) |
 | Reversing | `EntriesScreen.reverseReasonKey`, `reverseSendKey` |
 | The reason at the top of the form | `AddEntryScreen.rejectionKey` |
+| Share, on an entry's sheet and in the message once it is saved or sent (redix-app #83) | `EntriesScreen.shareKey`; the message's action, `messageKeyOf(wordKey).icon` |
+| Where a shared link lands: looking for the entry, and saying it cannot be found | `EntryLinkScreen.loadingKey`, `notFoundKey` |
 
 | Rule | Code | Test |
 | --- | --- | --- |
@@ -37,7 +39,15 @@
 | R12, D10: a contractor payment opens in its contract's table under the title تعديل, and goes back to its own route | `AddEntryScreen._openEntry`, `EntryTables.tableOf` | `entries_test.dart`: R12, D10 |
 | Saving goes to that entry, with its id, file and figures | `Expenses.record` | `entries_test.dart`: saving goes to that entry |
 | AC-16.2: an offline change arriving after approval says it was not applied | `Outbox`, `WaitingScreen` | `entries_test.dart`: AC-16.2 |
+| redix-app #83 R2, R4, R5, R6, R10: an entry's sheet shares it as text alone, in the app's language, each on its own line: what it is · the project; its item, or its partner; the supplier or contractor; the amount; the date; the status; the account; the payment method; who entered it; the notes; and its link last | `EntryShare.textOf`, `linkOf`, `InvoiceCapture.shareText` | `entry_share_test.dart`: R2, R4, R5, R6, R10, in en and in ar |
+| R3, R4: every kind shares the same way, a contractor named as the contractor, and a line it has nothing for is left out | `EntryShare.textOf` | `entry_share_test.dart`: R3, R4, for a contractor payment, revenue, a contribution and a withdrawal |
+| R1: once the API keeps an entry, its message offers Share, which shares the entry as the list now holds it; one kept on the phone offers nothing | `AddEntryScreen._offerShare`, `EntryShare.shareSaved`, `showMessage` | `add_entry_test.dart`: redix-app #83 R1, and without a network; `direct_entry_test.dart`: redix-app #83 R1 |
+| R8: the link of an entry the reader cannot decide, or one no longer waiting, opens its sheet in القيود, saying where it stands | `EntryLinkScreen` | `entry_share_test.dart`: the link, R8, two tests |
+| R8: the link grants nothing by itself: signed out, it asks to sign in first and then opens the entry | `RedixApp._redirect`, `EntryLinkScreen.isLink` | `entry_share_test.dart`: R8: the link grants nothing by itself |
+| R9: the link of an entry no longer listed, or of a project the reader is not in, says it cannot be found and opens nothing | `EntryLinkScreen` | `entry_share_test.dart`: R9, two tests |
 
 ## Not proved
 
 The contractor payment's form opens an entry through the same steps, with no widget test of its own. The journey does not reach these screens yet.
+
+A link tapped in WhatsApp reaches REDIX through the Android manifest's `https` intent filter for `LINK_HOST`, which no widget test runs: it is checked on the phone. On a phone without REDIX the link opens nothing until go-live (redix-app #83, D6).

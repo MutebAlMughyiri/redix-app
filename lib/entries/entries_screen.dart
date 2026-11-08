@@ -18,11 +18,16 @@ import 'entry_row.dart';
 import 'entry_tile.dart';
 import 'project_entries.dart';
 import 'reverse_sheet.dart';
+import '../attachments/invoice_capture.dart';
+import 'entry_share.dart';
 
 /// A project's entries (UC-037): each person's own, or all of them, searched and filtered (redix-app #84), and what can be done to one (UC-028, UC-033, UC-035).
 class EntriesScreen extends StatefulWidget {
-  /// The entries of [project], in [entries], opening [openEntryId] when there is one, and ready to type a search when [startsSearching].
-  const EntriesScreen({super.key, required this.project, required this.entries, this.openEntryId = '', this.startsSearching = false});
+  /// The entries of [project], in [entries], opening [openEntryId] when there is one, and ready to type a search when [startsSearching]; an entry is shared through [capture].
+  const EntriesScreen({super.key, required this.project, required this.entries, required this.capture, this.openEntryId = '', this.startsSearching = false});
+
+  /// The phone's share sheet.
+  final InvoiceCapture capture;
 
   /// True when it opens ready to type a search, as the home's search button asks.
   final bool startsSearching;
@@ -102,10 +107,13 @@ class EntriesScreen extends StatefulWidget {
   /// Its entries.
   final ProjectEntries entries;
 
-  /// Opens what can be done to [entry].
-  static void openActions(BuildContext context, Project project, ProjectEntries entries, EntryRow entry) {
-    showModalBottomSheet<void>(context: context, showDragHandle: true, useSafeArea: true, builder: (_) => _EntryActions(project: project, entries: entries, entry: entry));
+  /// Opens what can be done to [entry], sharing it through [capture].
+  static void openActions(BuildContext context, Project project, ProjectEntries entries, EntryRow entry, InvoiceCapture capture) {
+    showModalBottomSheet<void>(context: context, showDragHandle: true, useSafeArea: true, builder: (_) => _EntryActions(project: project, entries: entries, entry: entry, capture: capture));
   }
+
+  /// The button sharing an entry as text (redix-app #83).
+  static const shareKey = Key('entries.share');
 
   /// Opens [entry] in إضافة قيد, in its table, for a change.
   static void openForm(BuildContext context, Project project, EntryRow entry) {
@@ -204,7 +212,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
     }
     widget.entries.removeListener(_openAsked);
     for (final entry in widget.entries.all.where((entry) => entry.id == widget.openEntryId)) {
-      EntriesScreen.openActions(context, widget.project, widget.entries, entry);
+      EntriesScreen.openActions(context, widget.project, widget.entries, entry, widget.capture);
     }
   }
 
@@ -222,7 +230,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
               list: widget.entries,
               emptyText: words.entriesEmpty,
               keeps: _filter.keeps,
-              itemBuilder: (entry) => EntryListTile(project: widget.project, entries: widget.entries, entry: entry),
+              itemBuilder: (entry) => EntryListTile(project: widget.project, entries: widget.entries, entry: entry, capture: widget.capture),
             ),
           ),
         ],
@@ -232,11 +240,12 @@ class _EntriesScreenState extends State<EntriesScreen> {
 }
 
 class _EntryActions extends StatelessWidget {
-  const _EntryActions({required this.project, required this.entries, required this.entry});
+  const _EntryActions({required this.project, required this.entries, required this.entry, required this.capture});
 
   final Project project;
   final ProjectEntries entries;
   final EntryRow entry;
+  final InvoiceCapture capture;
 
   void _askToReverse(BuildContext context) {
     Navigator.of(context).pop();
@@ -275,6 +284,12 @@ class _EntryActions extends StatelessWidget {
               ),
           ],
           if (mayReverse) OutlinedButton(key: EntriesScreen.reverseKey, onPressed: () => _askToReverse(context), child: Text(words.entriesReverse, key: EntriesScreen.reverseKey.label)),
+          OutlinedButton.icon(
+            key: EntriesScreen.shareKey,
+            icon: Icon(Icons.share_outlined, key: EntriesScreen.shareKey.icon),
+            label: Text(words.entriesShare, key: EntriesScreen.shareKey.label),
+            onPressed: () => EntryShare.share(capture, project, entry, words),
+          ),
         ],
       ),
     );

@@ -21,7 +21,10 @@ class EntryRow {
       authorName = json['authorName'] as String,
       isMine = json['isMine'] as bool,
       isReversed = json['isReversed'] as bool,
-      partnerName = json['partnerName'] as String;
+      partnerName = json['partnerName'] as String,
+      notes = json['notes'] as String,
+      accountName = json['accountName'] as String,
+      paymentMethodName = json['paymentMethodName'] as String;
 
   /// The entry's id.
   final String id;
@@ -61,6 +64,15 @@ class EntryRow {
 
   /// A partner's money's partner; empty for any other entry.
   final String partnerName;
+
+  /// What was noted; empty for nothing.
+  final String notes;
+
+  /// The account it was paid from or reached.
+  final String accountName;
+
+  /// How an expense was paid; empty when nobody said, and for any other entry.
+  final String paymentMethodName;
 
   /// What names it on a list: a partner's money's partner, otherwise its item.
   String get title => partnerName.isEmpty ? itemName : partnerName;

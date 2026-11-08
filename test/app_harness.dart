@@ -24,6 +24,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 Map<String, String> wordsIn(String language) => {
   for (final key in [
     'app.title',
+    'entries.share', 'entries.notFound', 'approvals.showAll', 'entryShare.item', 'entryShare.partner', 'entryShare.supplier', 'entryShare.contractor', 'entryShare.amount',
+    'entryShare.date', 'entryShare.status', 'entryShare.account', 'entryShare.paymentMethod', 'entryShare.author', 'entryShare.notes',
     'biometrics.signIn', 'biometrics.hint', 'biometrics.or', 'biometrics.failed', 'biometrics.usePassword', 'biometrics.promptTitle', 'biometrics.promptCancel', 'biometrics.notAvailable', 'biometrics.notChanged',
     'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.defaultSet', 'settings.defaultProject', 'settings.defaultProjectHint', 'settings.switchProject',
     'signIn.username', 'signIn.password', 'signIn.hint', 'signIn.submit', 'signIn.forgotPassword',
@@ -189,6 +191,12 @@ class FakeCapture extends InvoiceCapture {
 
   @override
   Future<void> shareFile(Uint8List bytes, String name, String mimeType) async => sharedOut.add((name, mimeType));
+
+  /// The texts the app handed to the share sheet.
+  final sharedTexts = <String>[];
+
+  @override
+  Future<void> shareText(String text) async => sharedTexts.add(text);
 
   /// The files the app saved on the phone: their name and type.
   final savedOut = <(String, String)>[];
@@ -478,10 +486,23 @@ class FakeApi {
   /// The addresses expenses and payments were sent to, in order.
   final sentExpensePaths = <String>[];
 
-  /// Adds an entry to the project.
-  Map<String, Object> addEntry({String kind = 'purchase', String status = 'pendingApproval', String rejectionReason = '', double amount = 1150, bool isMine = true, bool isReversed = false, String itemName = 'بند اللياسة', String partnerName = ''}) {
+  /// Adds an entry to the project, named [id] or else by its place.
+  Map<String, Object> addEntry({
+    String id = '',
+    String kind = 'purchase',
+    String status = 'pendingApproval',
+    String rejectionReason = '',
+    double amount = 1150,
+    bool isMine = true,
+    bool isReversed = false,
+    String itemName = 'بند اللياسة',
+    String partnerName = '',
+    String notes = '',
+    String accountName = 'حساب المؤسسة',
+    String paymentMethodName = '',
+  }) {
     final row = <String, Object>{
-      'id': 'entry-${entryRows.length}',
+      'id': id.isEmpty ? 'entry-${entryRows.length}' : id,
       'kind': kind,
       'status': status,
       'rejectionReason': rejectionReason,
@@ -494,6 +515,9 @@ class FakeApi {
       'isMine': isMine,
       'partnerName': partnerName,
       'isReversed': isReversed,
+      'notes': notes,
+      'accountName': accountName,
+      'paymentMethodName': paymentMethodName,
     };
     entryRows.insert(0, row);
     return row;
@@ -1508,7 +1532,7 @@ class FakeApi {
     }
     if (segments.length >= 3 && const ['reconciliations', 'capital-movements', 'revenue'].contains(segments[2])) {
       sentMoney.add((request.url.path, jsonDecode(request.body) as Map<String, dynamic>));
-      return _json(moneyAnswer.status < 300 ? const <String, Object>{} : {'code': moneyAnswer.code}, moneyAnswer.status);
+      return _json(moneyAnswer.status < 300 ? {'id': 'sent-${sentMoney.length}'} : {'code': moneyAnswer.code}, moneyAnswer.status);
     }
     if (segments.length == 4 && segments[2] == 'entries' && segments[3] == 'attachable') {
       return _json(attachableEntries, 200);

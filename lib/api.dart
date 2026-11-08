@@ -6,6 +6,10 @@ import 'package:http/http.dart' as http;
 /// `config/production.json` for a release. Empty when the app was built without one.
 const apiBaseUrl = String.fromEnvironment('API_BASE_URL');
 
+/// The host a shared entry's link names (redix-app #83), from the environment's config file like [apiBaseUrl]: the go-live domain in `config/production.json`; `redix.test`
+/// until then, which Android hands to REDIX without looking it up. The Android manifest is given the same value by the build.
+const linkHost = String.fromEnvironment('LINK_HOST', defaultValue: 'redix.test');
+
 /// The address of an API [path], such as `/auth/sign-in`.
 Uri apiUri(String path) => Uri.parse('$apiBaseUrl$path');
 
