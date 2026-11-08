@@ -779,6 +779,9 @@ void main() {
 
       final addEntry = $(HomeScreen.addEntryKey(projectId));
       await addEntry.tap();
+      // Muteb, 8 Nov 2026: Add entry opens the camera only when asked.
+      await reach($(AddEntryScreen.cameraKey));
+      await $(AddEntryScreen.cameraKey).tap();
       await reach($(AddEntryScreen.qrReadKey));
       await reach($(AddEntryScreen.supplierDetailsKey));
       expect($.tester.widget<TextField>(find.byKey(AddEntryScreen.amountKey)).controller!.text, '1075');
@@ -821,6 +824,9 @@ void main() {
       await reach(addEntry);
 
       await addEntry.tap();
+      // Muteb, 8 Nov 2026: Add entry opens the camera only when asked.
+      await reach($(AddEntryScreen.cameraKey));
+      await $(AddEntryScreen.cameraKey).tap();
       await reach($(AddEntryScreen.qrReadKey));
       await reach($(AddEntryScreen.supplierDetailsKey));
       await goTo($(AddEntryScreen.tableKey));
@@ -838,6 +844,9 @@ void main() {
       await reach(addEntry);
 
       await addEntry.tap();
+      // Muteb, 8 Nov 2026: Add entry opens the camera only when asked.
+      await reach($(AddEntryScreen.cameraKey));
+      await $(AddEntryScreen.cameraKey).tap();
       await reach($(AddEntryScreen.qrReadKey));
       await reach($(AddEntryScreen.supplierDetailsKey));
       await goTo($(AddEntryScreen.tableKey));
@@ -873,6 +882,9 @@ void main() {
       await reach(addEntry);
 
       await addEntry.tap();
+      // Muteb, 8 Nov 2026: Add entry opens the camera only when asked.
+      await reach($(AddEntryScreen.cameraKey));
+      await $(AddEntryScreen.cameraKey).tap();
       await reach($(AddEntryScreen.qrReadKey));
       await goTo($(AddEntryScreen.tableKey));
       await $(AddEntryScreen.tableKey).tap();
