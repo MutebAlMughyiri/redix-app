@@ -126,14 +126,7 @@ class ReportFileButtons extends StatelessWidget {
   /// Which buttons show.
   final List<ReportFileKind> kinds;
 
-  Future<void> _run(BuildContext context, ReportFileKind kind, FileHandling handing) async {
-    final words = Words.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-    final said = await files.hand(address, name, kind, handing);
-    if (said.isNotEmpty) {
-      showMessage(messenger, words, said);
-    }
-  }
+  Future<void> _run(BuildContext context, ReportFileKind kind, FileHandling handing) => showRefusalOf(context, files.hand(address, name, kind, handing));
 
   void _ask(BuildContext context, ReportFileKind kind) {
     final words = Words.of(context);

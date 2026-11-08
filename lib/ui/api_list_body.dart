@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../api_list.dart';
-import '../words/words.dart';
-import 'part_keys.dart';
+import 'load_failure.dart';
 
 /// The body of a screen that shows an [ApiList]: why it could not load with a way to try again, loading, empty, or its items, which are read again when pulled down.
 class ApiListBody<T> extends StatelessWidget {
@@ -59,21 +58,8 @@ class ApiListBody<T> extends StatelessWidget {
   static const loadingKey = Key('apiList.loading');
 
   Widget _state(BuildContext context) {
-    final words = Words.of(context);
     if (list.message.isNotEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(words.text(list.message), key: messageKey, textAlign: TextAlign.center),
-              const SizedBox(height: 16),
-              OutlinedButton(key: retryKey, onPressed: list.load, child: Text(words.commonRetry, key: retryKey.label)),
-            ],
-          ),
-        ),
-      );
+      return Center(child: LoadFailure(message: list.message, onRetry: list.load));
     }
     final kept = list.all.where(keeps).toList();
     if (kept.isEmpty) {

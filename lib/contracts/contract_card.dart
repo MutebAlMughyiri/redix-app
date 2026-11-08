@@ -7,6 +7,7 @@ import '../words/words.dart';
 import 'contract.dart';
 import 'contracts.dart';
 import 'contracts_screen.dart';
+import '../ui/labelled_figure.dart';
 
 /// One contract: its contractor, item and unit, how it stands, its value, paid and remaining, with a bar of how much is paid and, for whoever keeps the settings, a menu of what can be done to it.
 class ContractCard extends StatelessWidget {
@@ -29,16 +30,6 @@ class ContractCard extends StatelessWidget {
     contract.itemName,
     if (contract.unitPrice > 0 && contract.quantity > 0) '${formatPlain(contract.unitPrice)} × ${formatPlain(contract.quantity)}' else if (contract.unitPrice > 0) formatPlain(contract.unitPrice),
   ].join(' · ');
-
-  Widget _figure(ThemeData theme, String label, String figure, Key key, Color color) => Expanded(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, key: key.label, style: theme.textTheme.bodySmall),
-        Text(figure, key: key, style: theme.textTheme.titleSmall?.copyWith(color: color)),
-      ],
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -102,9 +93,9 @@ class ContractCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      _figure(theme, words.contractsValue, contract.isOpenValue ? words.contractsOpen : formatMoney(contract.value), ContractsScreen.valueOfKey(contract.id), colors.onSurface),
-                      _figure(theme, words.contractsPaid, formatMoney(contract.paid), ContractsScreen.paidKey(contract.id), colors.onSurface),
-                      _figure(theme, words.contractsRemaining, contract.isOpenValue ? '—' : formatMoney(contract.remaining), ContractsScreen.remainingKey(contract.id), contract.isOverrun ? colors.error : colors.onSurface),
+                      LabelledFigure(label: words.contractsValue, figure: contract.isOpenValue ? words.contractsOpen : formatMoney(contract.value), figureKey: ContractsScreen.valueOfKey(contract.id)),
+                      LabelledFigure(label: words.contractsPaid, figure: formatMoney(contract.paid), figureKey: ContractsScreen.paidKey(contract.id)),
+                      LabelledFigure(label: words.contractsRemaining, figure: contract.isOpenValue ? '—' : formatMoney(contract.remaining), figureKey: ContractsScreen.remainingKey(contract.id), color: contract.isOverrun ? colors.error : null),
                     ],
                   ),
                   if (contract.pending != 0) Text('${words.contractsPending} ${formatMoney(contract.pending)}', key: ContractsScreen.pendingKey(contract.id), style: theme.textTheme.bodySmall),

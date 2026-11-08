@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../accounts/difference_band.dart';
 import '../auth/permission.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
@@ -181,19 +182,7 @@ class _DashboardCardState extends State<DashboardCard> {
         Text(formatMoney(figures.surplus), key: DashboardCard.surplusKey, style: theme.textTheme.headlineMedium),
         Text('${words.dashboardCompletion}: ${formatPlain(figures.completionPercent)}%', key: DashboardCard.completionKey),
         LinearProgressIndicator(key: DashboardCard.completionBarKey, value: (figures.completionPercent / 100).clamp(0, 1)),
-        if (figures.wasReconciled)
-          ColoredBox(
-            color: figures.reconciliationDifference == 0 ? theme.colorScheme.surfaceContainerHighest : theme.colorScheme.errorContainer,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
-                children: [
-                  Expanded(child: Text(words.dashboardDifference, key: DashboardCard.differenceKey.label)),
-                  Text(formatMoney(figures.reconciliationDifference), key: DashboardCard.differenceKey, style: theme.textTheme.titleSmall),
-                ],
-              ),
-            ),
-          ),
+        if (figures.wasReconciled) DifferenceBand(label: words.dashboardDifference, difference: figures.reconciliationDifference, figureKey: DashboardCard.differenceKey),
         Row(
           spacing: 8,
           children: [

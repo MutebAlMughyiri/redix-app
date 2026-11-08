@@ -13,6 +13,7 @@ import 'package:redix/sharing/share_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/refusal_snack_bar.dart';
 
 /// One way in (redix-api #101): a revenue item's table and a partner are picked from Add entry's table list, for whoever moves money, and sent for approval with one button.
 void main() {
@@ -84,7 +85,7 @@ void main() {
       expect(path, '/projects/project-0/capital-movements');
       expect((body['partnerId'], body['type'], body['amount'], body['accountId'], body.containsKey('cashReason')), (partner, 'contribution', 1000.0, account, false));
       expect(body['attachmentId'], isNotNull);
-      expect(text(tester, AddEntryScreen.savedKey), 'en expenses.sent');
+      expect(text(tester, messageKeyOf('expenses.sent').label), 'en expenses.sent');
       expect(find.byKey(DirectEntryFields.sendKey), findsNothing);
     });
 
@@ -112,7 +113,7 @@ void main() {
 
       expect(text(tester, DirectEntryFields.messageKey), 'en capital.receiptRequired');
       expect(tester.widget<TextField>(find.byKey(DirectEntryFields.amountKey)).controller!.text, '1000');
-      expect(find.byKey(AddEntryScreen.savedKey), findsNothing);
+      expect(find.byKey(messageKeyOf('expenses.sent')), findsNothing);
     });
 
     testWidgets('AC-25.1: paid in cash asks why instead of a receipt, and sends the reason', (tester) async {
@@ -160,7 +161,7 @@ void main() {
       expect(path, '/projects/project-0/revenue');
       expect((body['subgroupId'], body['amount'], body['accountId']), (refund, 140.0, account));
       expect(body['itemId'], isNotEmpty);
-      expect(text(tester, AddEntryScreen.savedKey), 'en expenses.sent');
+      expect(text(tester, messageKeyOf('expenses.sent').label), 'en expenses.sent');
     });
 
     testWidgets('R10: an amount that is no number stops it before it is sent, and nothing is lost', (tester) async {

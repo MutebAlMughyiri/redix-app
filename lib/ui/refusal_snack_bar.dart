@@ -10,12 +10,13 @@ Key messageKeyOf(String wordKey) => Key('message.$wordKey');
 void showMessage(ScaffoldMessengerState messenger, Words words, String wordKey, {String value = ''}) =>
     messenger.showSnackBar(SnackBar(key: messageKeyOf(wordKey), content: Text(words.text(wordKey).replaceFirst('{0}', value), key: messageKeyOf(wordKey).label)));
 
-/// Waits for [change], which answers an empty string once made, otherwise the word key of the refusal, and shows a refusal in a SnackBar.
-Future<void> showRefusalOf(BuildContext context, Future<String> change) async {
+/// Waits for [change], which answers an empty string once made, otherwise the word key of the refusal; shows a refusal in a SnackBar, and answers it.
+Future<String> showRefusalOf(BuildContext context, Future<String> change) async {
   final words = Words.of(context);
   final messenger = ScaffoldMessenger.of(context);
   final refusal = await change;
   if (refusal.isNotEmpty) {
     showMessage(messenger, words, refusal);
   }
+  return refusal;
 }

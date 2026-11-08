@@ -9,6 +9,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
+import '../ui/reason_sheet.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
 import '../ui/refusal_snack_bar.dart';
@@ -44,13 +45,13 @@ class ApprovalsScreen extends StatefulWidget {
   static const approveSelectedKey = Key('approvals.approveSelected');
 
   /// The field holding why an entry is rejected.
-  static const reasonKey = Key('approvals.reason');
+  static const reasonKey = ReasonSheet.reasonKey;
 
   /// The button rejecting the entry.
-  static const rejectSendKey = Key('approvals.rejectSend');
+  static const rejectSendKey = ReasonSheet.sendKey;
 
   /// The line saying why a rejection was refused.
-  static const rejectMessageKey = Key('approvals.rejectMessage');
+  static const rejectMessageKey = ReasonSheet.messageKey;
 
   /// The card of the entry [id].
   static Key cardKey(String id) => Key('approvals.card.$id');
@@ -71,7 +72,7 @@ class ApprovalsScreen extends StatefulWidget {
   static Key failedKey(String id) => Key('approvals.failed.$id');
 
   /// The quick reason at [index].
-  static Key quickReasonKey(int index) => Key('approvals.quickReason.$index');
+  static Key quickReasonKey(int index) => ReasonSheet.quickReasonKey(index);
 
   /// The item of the entry [id].
   static Key itemKey(String id) => Key('approvals.item.$id');
@@ -92,13 +93,13 @@ class ApprovalsScreen extends StatefulWidget {
   static Key amountKey(String id) => Key('approvals.amount.$id');
 
   /// The title of the reject sheet.
-  static const rejectTitleKey = Key('approvals.rejectTitle');
+  static const rejectTitleKey = ReasonSheet.titleKey;
 
   /// The entry the reject sheet is about.
-  static const rejectEntryKey = Key('approvals.rejectEntry');
+  static const rejectEntryKey = ReasonSheet.aboutKey;
 
   /// The heading over the quick reasons.
-  static const quickReasonHeadingKey = Key('approvals.quickReasonHeading');
+  static const quickReasonHeadingKey = ReasonSheet.quickReasonHeadingKey;
 
   /// The project.
   final Project project;
@@ -150,15 +151,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
     });
   }
 
-  void _askToReject(PendingApproval entry) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
-      builder: (_) => RejectSheet(entry: entry, approvals: widget.approvals),
-    );
-  }
+  void _askToReject(PendingApproval entry) => RejectSheet.show(context, entry, widget.approvals);
 
   /// Whether the user may decide here now: approve or reject.
   bool get _mayDecide => widget.project.mayApproveEntries;

@@ -23,15 +23,7 @@ class SwipeToRemove extends StatelessWidget {
   /// The row.
   final Widget child;
 
-  Future<bool> _remove(BuildContext context) async {
-    final words = Words.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-    final refusal = await onRemove();
-    if (refusal.isNotEmpty) {
-      showMessage(messenger, words, refusal);
-    }
-    return refusal.isEmpty;
-  }
+  Future<bool> _remove(BuildContext context) async => (await showRefusalOf(context, onRemove())).isEmpty;
 
   @override
   Widget build(BuildContext context) {

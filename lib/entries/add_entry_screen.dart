@@ -45,6 +45,8 @@ import '../ui/two_fields.dart';
 import '../words/words.dart';
 import 'entry_tables.dart';
 import 'table_picker.dart';
+import '../ui/refusal_snack_bar.dart';
+import '../ui/screen_title.dart';
 
 /// إضافة قيد (UC-022, UC-027, redix-app #84): one screen adds an expense to any table of an item's sheet, and the table chosen says what it is. An item's general or named
 /// table takes a purchase: a total spent on a day, from a supplier, with its file when there is one (redix-api #96). A contract's table takes a contractor payment: what the
@@ -136,10 +138,10 @@ class AddEntryScreen extends StatefulWidget {
   static String sharedPathOf(String projectId) => '/projects/$projectId/entries/new?shared=1';
 
   /// The screen's title.
-  static const titleKey = Key('addEntry.title');
+  static const titleKey = ScreenTitle.titleKey;
 
   /// The project's name, under the title.
-  static const projectNameKey = Key('addEntry.projectName');
+  static const projectNameKey = ScreenTitle.subjectKey;
 
   /// The button that opens the camera.
   static const cameraKey = Key('addEntry.camera');
@@ -255,9 +257,6 @@ class AddEntryScreen extends StatefulWidget {
   /// The line that says why it was refused.
   static const messageKey = Key('addEntry.message');
 
-  /// The line that says it was saved or sent, on the screen it goes back to.
-  static const savedKey = Key('addEntry.saved');
-
   /// The line that says the accounts or payment methods could not be read.
   static const listMessageKey = PaymentChoices.listMessageKey;
 
@@ -278,9 +277,6 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The section asking how it was paid.
   static const paymentSectionKey = Key('addEntry.paymentSection');
-
-  /// The SnackBar saying the entry was saved, sent or kept on the phone.
-  static const savedMessageKey = Key('addEntry.savedMessage');
 
 
   /// The choice [option] of the list column [key].
@@ -596,8 +592,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       return;
     }
     if (refusal.isEmpty) {
-      final sent = widget.expenses.wasOverrun ? words.contractorPaymentsSavedOverrun : (submit ? words.expensesSent : words.expensesSaved);
-      messenger.showSnackBar(SnackBar(key: AddEntryScreen.savedMessageKey, content: Text(widget.expenses.wasKept ? words.expensesKeptOnPhone : sent, key: AddEntryScreen.savedKey)));
+      final sent = widget.expenses.wasOverrun ? 'contractorPayments.savedOverrun' : (submit ? 'expenses.sent' : 'expenses.saved');
+      showMessage(messenger, words, widget.expenses.wasKept ? 'expenses.keptOnPhone' : sent);
       context.pop(true);
       return;
     }
@@ -718,7 +714,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       capture: widget.capture,
       file: _file,
       onSent: () {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(key: AddEntryScreen.savedMessageKey, content: Text(words.expensesSent, key: AddEntryScreen.savedKey)));
+        showMessage(ScaffoldMessenger.of(context), words, 'expenses.sent');
         context.pop(true);
       },
     ),
@@ -729,15 +725,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     final words = Words.of(context);
     final ownFields = _itemsOwnFields(words);
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(widget.editingId.isEmpty ? words.entriesNew : words.entriesEdit, key: AddEntryScreen.titleKey),
-            Text(widget.project.name, key: AddEntryScreen.projectNameKey, style: Theme.of(context).textTheme.bodySmall),
-          ],
-        ),
-      ),
+      appBar: AppBar(title: ScreenTitle(widget.editingId.isEmpty ? words.entriesNew : words.entriesEdit, subject: widget.project.name)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(

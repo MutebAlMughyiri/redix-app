@@ -1,95 +1,31 @@
 import 'package:flutter/material.dart';
 
-import '../ui/part_keys.dart';
+import '../ui/reason_sheet.dart';
 import '../words/words.dart';
 
-/// Asks why something approved is reversed (FR-50), and reverses it.
-class ReverseSheet extends StatefulWidget {
-  /// The sheet reversing through [onReverse], which answers an empty string once reversed, otherwise the word key of the refusal.
-  const ReverseSheet({super.key, required this.onReverse});
-
+/// Reversing something approved (FR-50): the reason sheet, with the reversal's words.
+abstract final class ReverseSheet {
   /// The field holding why.
-  static const reasonKey = Key('entries.reverseReason');
+  static const reasonKey = ReasonSheet.reasonKey;
 
   /// The button reversing it.
-  static const sendKey = Key('entries.reverseSend');
+  static const sendKey = ReasonSheet.sendKey;
 
   /// The title.
-  static const titleKey = Key('entries.reverseTitle');
+  static const titleKey = ReasonSheet.titleKey;
 
   /// What reversing does.
-  static const explainKey = Key('entries.reverseExplain');
+  static const explainKey = ReasonSheet.aboutKey;
 
   /// Why the reversal was refused.
-  static const messageKey = Key('entries.reverseMessage');
+  static const messageKey = ReasonSheet.messageKey;
 
-  /// Opens the sheet over [context].
+  /// Asks why over [context], then reverses through [onReverse], which answers an empty string once reversed, otherwise the word key of the refusal.
   static void show(BuildContext context, Future<String> Function(String reason) onReverse) {
-    showModalBottomSheet<void>(context: context, isScrollControlled: true, useSafeArea: true, showDragHandle: true, builder: (_) => ReverseSheet(onReverse: onReverse));
-  }
-
-  /// Reverses it, saying why.
-  final Future<String> Function(String reason) onReverse;
-
-  @override
-  State<ReverseSheet> createState() => _ReverseSheetState();
-}
-
-class _ReverseSheetState extends State<ReverseSheet> {
-  final _reason = TextEditingController();
-  var _message = '';
-  var _saving = false;
-
-  @override
-  void dispose() {
-    _reason.dispose();
-    super.dispose();
-  }
-
-  Future<void> _reverse() async {
-    setState(() {
-      _saving = true;
-      _message = '';
-    });
-    final refusal = await widget.onReverse(_reason.text);
-    if (!mounted) {
-      return;
-    }
-    if (refusal.isEmpty) {
-      Navigator.of(context).pop();
-      return;
-    }
-    setState(() {
-      _saving = false;
-      _message = refusal;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
     final words = Words.of(context);
-    final theme = Theme.of(context);
-    return Padding(
-      padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + MediaQuery.viewInsetsOf(context).bottom),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          spacing: 12,
-          children: [
-            Text(words.entriesReverseTitle, key: ReverseSheet.titleKey, style: theme.textTheme.titleLarge),
-            Text(words.entriesReverseExplain, key: ReverseSheet.explainKey),
-            TextField(
-              key: ReverseSheet.reasonKey,
-              controller: _reason,
-              maxLines: 2,
-              decoration: InputDecoration(labelText: words.entriesReverseReason),
-            ),
-            if (_message.isNotEmpty) Text(words.text(_message), key: ReverseSheet.messageKey, style: TextStyle(color: theme.colorScheme.error)),
-            FilledButton(key: ReverseSheet.sendKey, onPressed: _saving ? null : _reverse, child: Text(words.entriesReverse, key: ReverseSheet.sendKey.label)),
-          ],
-        ),
-      ),
+    ReasonSheet.show(
+      context,
+      ReasonSheet(title: words.entriesReverseTitle, about: words.entriesReverseExplain, reasonLabel: words.entriesReverseReason, sendLabel: words.entriesReverse, onSend: onReverse),
     );
   }
 }

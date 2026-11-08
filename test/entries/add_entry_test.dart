@@ -14,6 +14,8 @@ import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/part_keys.dart';
 
 void main() {
   /// A project with an item, a supplier, a supplier with no number, a payment method, and an account the signed-in user holds and one they do not, opened as far as a new expense.
@@ -135,7 +137,7 @@ void main() {
     for (final figure in ['vat', 'total', 'amountAfterDiscount', 'amountBeforeDiscount']) {
       expect(body.containsKey(figure), isFalse);
     }
-    expect(shown(tester, AddEntryScreen.savedKey), 'en expenses.saved');
+    expect(shown(tester, messageKeyOf('expenses.saved').label), 'en expenses.saved');
     expect(find.byKey(AddEntryScreen.sendKey), findsNothing);
   });
 
@@ -148,7 +150,7 @@ void main() {
     expect(opened.api.sentAttachments.single, contains('invoice.png'));
     expect(opened.api.sentExpenses.single['attachmentId'], startsWith('attachment-'));
     expect(opened.api.sentExpenses.single['submit'], isTrue);
-    expect(shown(tester, AddEntryScreen.savedKey), 'en expenses.sent');
+    expect(shown(tester, messageKeyOf('expenses.sent').label), 'en expenses.sent');
   });
 
   testWidgets('a refusal stays on the screen with what was typed, and trying again sends the file once and the same id', (tester) async {
@@ -210,7 +212,7 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(shown(tester, AddEntryScreen.savedKey), 'en expenses.keptOnPhone');
+    expect(shown(tester, messageKeyOf('expenses.keptOnPhone').label), 'en expenses.keptOnPhone');
     expect(find.byKey(HomeScreen.waitingKey('project-0')), findsOneWidget);
   });
 
@@ -452,7 +454,7 @@ void main() {
     final body = opened.api.sentExpenses.single;
     expect(body.containsKey('attachmentId'), isFalse);
     expect(body['submit'], isTrue);
-    expect(shown(tester, AddEntryScreen.savedKey), 'en expenses.sent');
+    expect(shown(tester, messageKeyOf('expenses.sent').label), 'en expenses.sent');
   });
 
   Map<String, Object> creditable(String entryId, {double returnable = 1035, String number = ''}) => {'entryId': entryId, 'number': number, 'date': '2026-10-01', 'returnable': returnable};

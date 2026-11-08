@@ -4,7 +4,7 @@ import '../contracts/contract.dart';
 import '../format/number_format.dart';
 import '../words/words.dart';
 import '../entries/add_entry_screen.dart';
-import '../ui/part_keys.dart';
+import '../ui/labelled_figure.dart';
 
 /// What the chosen contract stands at with this payment, before it is saved (AC-12.1): its value, what was paid, what waits, what remains after it, and the alert of an overrun.
 class ContractFigures extends StatelessWidget {
@@ -16,16 +16,6 @@ class ContractFigures extends StatelessWidget {
 
   /// What this payment adds inside the contract.
   final double counted;
-
-  Widget _figure(ThemeData theme, String label, String figure, Key key, Color? color) => Expanded(
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, key: key.label, style: theme.textTheme.bodySmall),
-        Text(figure, key: key, style: theme.textTheme.titleSmall?.copyWith(color: color)),
-      ],
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +32,9 @@ class ContractFigures extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           spacing: 8,
           children: [
-            _figure(theme, words.contractsValue, contract.isOpenValue ? words.contractsOpen : formatMoney(contract.value), AddEntryScreen.valueKey, null),
-            _figure(theme, words.contractsPaid, formatMoney(contract.paid), AddEntryScreen.paidKey, null),
-            _figure(theme, words.contractorPaymentsRemainingAfter, contract.isOpenValue ? '—' : formatMoney(contract.remainingAfter(counted)), AddEntryScreen.remainingKey, isOverrun ? error : null),
+            LabelledFigure(label: words.contractsValue, figure: contract.isOpenValue ? words.contractsOpen : formatMoney(contract.value), figureKey: AddEntryScreen.valueKey),
+            LabelledFigure(label: words.contractsPaid, figure: formatMoney(contract.paid), figureKey: AddEntryScreen.paidKey),
+            LabelledFigure(label: words.contractorPaymentsRemainingAfter, figure: contract.isOpenValue ? '—' : formatMoney(contract.remainingAfter(counted)), figureKey: AddEntryScreen.remainingKey, color: isOverrun ? error : null),
           ],
         ),
         if (contract.pending != 0) Text('${words.contractsPending} ${formatMoney(contract.pending)}', key: AddEntryScreen.pendingKey, style: theme.textTheme.bodySmall),

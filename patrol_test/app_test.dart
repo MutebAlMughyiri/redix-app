@@ -813,7 +813,7 @@ void main() {
       await goTo($(AddEntryScreen.sendKey));
       await picture('add-expense-send');
       await $(AddEntryScreen.sendKey).tap();
-      await reach($(AddEntryScreen.savedKey));
+      await reach($(messageKeyOf('expenses.sent').label));
       await reach(addEntry);
 
       await addEntry.tap();
@@ -830,7 +830,7 @@ void main() {
       await network.tap();
       await goTo($(AddEntryScreen.sendKey));
       await $(AddEntryScreen.sendKey).tap();
-      await reach($(AddEntryScreen.savedKey));
+      await reach($(messageKeyOf('expenses.sent').label));
       await reach(addEntry);
 
       await addEntry.tap();
@@ -865,7 +865,7 @@ void main() {
       await picture('add-expense-credit-note');
       await goTo($(AddEntryScreen.sendKey));
       await $(AddEntryScreen.sendKey).tap();
-      await reach($(AddEntryScreen.savedKey));
+      await reach($(messageKeyOf('expenses.sent').label));
       await reach(addEntry);
 
       await addEntry.tap();
@@ -885,7 +885,7 @@ void main() {
       await goTo($(AddEntryScreen.sendKey));
       await picture('contractor-payment-send');
       await $(AddEntryScreen.sendKey).tap();
-      await reach($(AddEntryScreen.savedKey));
+      await reach($(messageKeyOf('contractorPayments.savedOverrun').label));
       await reach(addEntry);
 
       await goTo(projectSettings);

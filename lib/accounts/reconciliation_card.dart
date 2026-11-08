@@ -6,6 +6,7 @@ import '../ui/api_object_body.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'reconciliation.dart';
+import 'difference_band.dart';
 
 /// What the accounts should hold, what they really held, and the difference, red while it is not zero (BR-08).
 class ReconciliationCard extends StatelessWidget {
@@ -49,25 +50,12 @@ class ReconciliationCard extends StatelessWidget {
   Widget _difference(BuildContext context, ReconciliationFigures figures) {
     final words = Words.of(context);
     final theme = Theme.of(context);
-    final isOff = figures.difference != 0;
-    final color = isOff ? theme.colorScheme.onErrorContainer : theme.colorScheme.onSurface;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 4,
       children: [
-        ColoredBox(
-          color: isOff ? theme.colorScheme.errorContainer : theme.colorScheme.surfaceContainerHighest,
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Row(
-              children: [
-                Expanded(child: Text(words.reconciliationsDifference, key: differenceKey.label, style: TextStyle(color: color, fontWeight: FontWeight.bold))),
-                Text(formatMoney(figures.difference), key: differenceKey, style: theme.textTheme.titleMedium?.copyWith(color: color)),
-              ],
-            ),
-          ),
-        ),
-        if (isOff) Text(words.reconciliationsDifferenceExplain, key: differenceExplainKey, style: theme.textTheme.bodySmall),
+        DifferenceBand(label: words.reconciliationsDifference, difference: figures.difference, figureKey: differenceKey),
+        if (figures.difference != 0) Text(words.reconciliationsDifferenceExplain, key: differenceExplainKey, style: theme.textTheme.bodySmall),
         Text('${words.reconciliationsLastUpdated}: ${formatDate(figures.at)}', key: lastUpdatedKey, style: theme.textTheme.bodySmall),
       ],
     );
