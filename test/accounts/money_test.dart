@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/accounts/reconcile_screen.dart';
 import 'package:redix/accounts/reconciliation_card.dart';
 import 'package:redix/home/home_screen.dart';
@@ -120,11 +121,31 @@ void main() {
       expect(tester.widget<Text>(find.byKey(ReconciliationCard.actualTotalKey)).data, '975.00');
     });
 
-    testWidgets('before any check it says so', (tester) async {
-      await openBalances(tester, (api) => api.addAccount('project-0', 'حساب'));
+    testWidgets('before any check it says so, and each account shows a dash', (tester) async {
+      late String accountId;
+      await openBalances(tester, (api) => accountId = api.addAccount('project-0', 'حساب', openingBalance: 500)['id']! as String);
 
       expect(find.byKey(ReconciliationCard.neverKey), findsOneWidget);
       expect(find.byKey(ReconciliationCard.differenceKey), findsNothing);
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(accountId))).data, '—');
+    });
+
+    testWidgets('Muteb, 9 Nov 2026: each account is listed as Accounts draws it, with what it really held at the latest check, and no menu', (tester) async {
+      late String bankId;
+      late String cashId;
+      await openBalances(tester, (api) {
+        bankId = api.addAccount('project-0', 'الراجحي', openingBalance: 800)['id']! as String;
+        cashId = api.addAccount('project-0', 'عهدة الموقع', type: 'cashCustody', openingBalance: 200)['id']! as String;
+        api.reconciliationAnswer = reconciled(1000, 900.75, balances: [balanceRow(bankId, 800, 700.75), balanceRow(cashId, 200, 200)]);
+      });
+
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.nameKey(bankId))).data, 'الراجحي');
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(bankId))).data, '700.75');
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.nameKey(cashId))).data, 'عهدة الموقع');
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(cashId))).data, '200.00');
+      expect(tester.widget<Icon>(find.byKey(AccountsScreen.rowKey(cashId).icon)).icon, Icons.payments_outlined);
+      expect(find.byKey(AccountsScreen.menuKey(bankId)), findsNothing);
+      expect(find.byKey(AccountsScreen.menuKey(cashId)), findsNothing);
     });
 
     testWidgets('typing a balance shows the total and the difference, and saving sends each', (tester) async {

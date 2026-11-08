@@ -248,7 +248,12 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(
         path: ActualBalancesScreen.path,
-        builder: (context, state) => ActualBalancesScreen(project: state.extra! as Project, reconciliations: _reconciliationsOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => ActualBalancesScreen(
+          project: state.extra! as Project,
+          reconciliations: _reconciliationsOf(state.pathParameters['projectId'] ?? ''),
+          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
+          members: _membersOf(state.pathParameters['projectId'] ?? ''),
+        ),
       ),
       GoRoute(
         path: ReportsScreen.path,

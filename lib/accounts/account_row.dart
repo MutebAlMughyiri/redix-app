@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../format/number_format.dart';
 import '../projects/members.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
@@ -13,11 +12,14 @@ import '../ui/app_color.dart';
 
 /// One account: its type and who holds it, or that it is disabled, what it holds and, for whoever keeps the settings, a menu of what can be done to it.
 class AccountRow extends StatelessWidget {
-  /// The row of [account], changed through [accounts] while [mayChange], choosing a custodian among [members].
-  const AccountRow({super.key, required this.account, required this.accounts, required this.members, required this.mayChange});
+  /// The row of [account] showing [amount], changed through [accounts] while [mayChange], choosing a custodian among [members].
+  const AccountRow({super.key, required this.account, required this.amount, required this.accounts, required this.members, required this.mayChange});
 
   /// The account this row shows.
   final Account account;
+
+  /// What it holds, as written: its balance on Accounts, what it really held at the latest check on the actual balances.
+  final String amount;
 
   /// The way to change it.
   final Accounts accounts;
@@ -49,7 +51,7 @@ class AccountRow extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(formatMoney(account.balance), key: AccountsScreen.balanceKey(account.id), style: Theme.of(context).textTheme.titleSmall),
+            Text(amount, key: AccountsScreen.balanceKey(account.id), style: Theme.of(context).textTheme.titleSmall),
             if (mayChange)
               PopupMenuButton<VoidCallback>(
                 key: AccountsScreen.menuKey(account.id),

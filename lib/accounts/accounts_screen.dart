@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../format/number_format.dart';
 import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
@@ -116,7 +117,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
       body: ApiListBody(
         list: accounts,
         emptyText: words.accountsEmpty,
-        itemBuilder: (account) => AccountRow(account: account, accounts: accounts, members: widget.members, mayChange: project.mayManageSettings),
+        itemBuilder: (account) => AccountRow(account: account, amount: formatMoney(account.balance), accounts: accounts, members: widget.members, mayChange: project.mayManageSettings),
       ),
     );
   }
