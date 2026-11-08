@@ -524,12 +524,19 @@ void main() {
 
       await $(HomeScreen.partnersKey(projectId)).tap();
       await reach($(PartnersScreen.addKey));
+      // redix-api #109: a partner is a table of the project's رأس المال, picked in the dialog.
       await $(PartnersScreen.addKey).tap();
       await $(PartnersScreen.partnerNameKey).enterText('هيثم');
+      await $(PartnersScreen.itemKey.field).tap();
+      final capitalId = await idShowing('itemPicker.option.', 'رأس المال');
+      await $(ItemPicker.optionKey(capitalId)).tap();
       await $(PartnersScreen.saveKey).tap();
       final haithamId = await idShowing('partners.name.', 'هيثم');
       await $(PartnersScreen.addKey).tap();
       await $(PartnersScreen.partnerNameKey).enterText('مدير المشروع');
+      await $(PartnersScreen.itemKey.field).tap();
+      await reach($(ItemPicker.optionKey(capitalId)));
+      await $(ItemPicker.optionKey(capitalId)).tap();
       await $.tester.ensureVisible(find.byKey(MemberPicker.optionKey(reemId)));
       await $.pumpAndSettle();
       await $(MemberPicker.optionKey(reemId)).tap();

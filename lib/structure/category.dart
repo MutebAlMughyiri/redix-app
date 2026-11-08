@@ -16,7 +16,10 @@ enum ItemType {
   vatRefund('categories.typeVatRefund'),
 
   /// Revenue: anything else that comes in.
-  otherRevenue('categories.typeOtherRevenue');
+  otherRevenue('categories.typeOtherRevenue'),
+
+  /// Revenue: what the partners put in, less what they took out; its tables are its partners, each a table as a contract is (redix-api #109).
+  capital('categories.typeCapital');
 
   const ItemType(this.wordKey);
 

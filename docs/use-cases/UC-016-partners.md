@@ -44,7 +44,7 @@ The project's home, `HomeScreen`:
 | Rule | Code | Test in `test/partners/partners_test.dart` |
 | --- | --- | --- |
 | Each partner shows their login, or that they have none | `PartnersScreen` | `each partner shows their login, or that they have none` |
-| Adding by name alone sends no login | `Partners.add` | `adding by name alone sends no login` |
+| redix-api #109: adding names the partner and the capital item whose table they are, and sends no login when none is chosen | `PartnerDialog`, `ItemPicker`, `Partners.add` | `redix-api #109: adding names the partner and the capital item` |
 | Adding with a login sends it, and says what it is for | `PartnerDialog`, `MemberPicker` | `adding with a login sends it, and says what it is for` |
 | A refusal stays in the dialog | `ChangeDialog` | `a refusal stays in the dialog with its reason` |
 | Editing starts from the partner and renames them | `PartnerDialog`, `Partners.edit` | `editing starts from the partner and renames them` |

@@ -44,16 +44,28 @@ void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   group('the table list', () {
-    testWidgets('R3, R5, R13: Finance finds the revenue items, and the partners under Revenue · Capital', (tester) async {
+    testWidgets('R3, R5, R13, redix-api #109: Finance finds the revenue items, and the partners as the tables of رأس المال', (tester) async {
       final (:api, capture: _, :refund, :partner, account: _) = await openAddEntry(tester);
 
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
 
       expect(text(tester, TablePicker.optionKey(refund).subtitle), 'en categories.tableRevenue');
-      expect(find.byKey(TablePicker.categoryKey('en entries.capitalGroup')), findsOneWidget);
+      expect(find.byKey(TablePicker.categoryKey('رأس المال')), findsOneWidget);
+      expect(text(tester, TablePicker.itemKey('item-capital').title), 'رأس المال');
       expect(text(tester, TablePicker.optionKey(partner).title), 'نواف');
       expect(text(tester, TablePicker.optionKey(partner).subtitle), 'en categories.tableCapital');
-      expect(find.byKey(TablePicker.itemKey(partner)), findsNothing, reason: 'a partner shows once, as its own row');
+    });
+
+    testWidgets('redix-api #109 (Muteb, 8 Nov 2026: "راس المال" found nothing): the search finds رأس المال by its name in either spelling, with every partner under it', (tester) async {
+      final (:api, capture: _, :refund, :partner, account: _) = await openAddEntry(tester);
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
+
+      await tester.enterText(find.byKey(TablePicker.searchKey), 'راس المال');
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(TablePicker.optionKey(partner)), findsOneWidget);
+      expect(find.byKey(TablePicker.optionKey(refund)), findsNothing);
+      expect(find.byKey(TablePicker.noMatchKey), findsNothing);
     });
 
     testWidgets('R9: someone who moves no money finds no revenue item and no partner', (tester) async {
@@ -63,7 +75,7 @@ void main() {
 
       expect(find.byKey(TablePicker.optionKey(refund)), findsNothing);
       expect(find.byKey(TablePicker.optionKey(partner)), findsNothing);
-      expect(find.byKey(TablePicker.categoryKey('en entries.capitalGroup')), findsNothing);
+      expect(find.byKey(TablePicker.categoryKey('رأس المال')), findsNothing);
     });
   });
 

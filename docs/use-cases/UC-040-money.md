@@ -22,7 +22,7 @@ A partner paying with their own money is a capital movement (redix-api #96, D27)
 | Refreshing Partners, by the button or by pulling, reads the capital above the partners again | `PartnersScreen` (`alsoRefresh`) | `refreshing, by the button or by pulling the list down, reads the capital above the partners again` |
 | BR-31: a reader has a way in | `ProjectCard`, `PartnersScreen` | `BR-31: a reader has a way in` |
 | R1: Partners has no حركة; a partner's money is entered from Add entry (redix-api #101) | `PartnersScreen` | `direct_entry_test.dart`: R1 |
-| R3, R5, R13: Finance finds the revenue items, and right after them the partners under الإيرادات · رأس المال, since capital is revenue (BR-06); R9: anyone else neither | `TablePicker`, `EntryTable`, `TableCategory.isPartners` | `direct_entry_test.dart`: R3, R5, R13; R9; `permission_gates_test.dart`: two gates |
+| R3, R5, R13, redix-api #109: Finance finds the revenue items, and the partners as the tables of رأس المال, an item like any other, since capital is revenue (BR-06); the search finds رأس المال by its name in either spelling; R9: anyone else neither | `TablePicker`, `EntryTable` | `direct_entry_test.dart`: R3, R5, R13; redix-api #109 (the search); R9; `permission_gates_test.dart`: two gates |
 | R2, R7, R11: a contribution with its receipt is sent for approval; with سحب on, a withdrawal | `DirectEntryFields` | `direct_entry_test.dart`: R2, R7, R11; R7 |
 | AC-25.1: refused without a receipt it says why and keeps what was typed; paid in cash asks why instead | `DirectEntryFields._receipt` | `direct_entry_test.dart`: two AC-25.1 tests |
 | BR-23: a receipt saying another amount warns, and the same amount does not | `DirectEntryFields._receiptDiffers` | `direct_entry_test.dart`: BR-23 |

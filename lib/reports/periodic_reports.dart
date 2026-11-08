@@ -86,9 +86,7 @@ class PeriodicReportFigures {
       previousExpenses = (json['previousExpenses'] as num).toDouble(),
       expenses = (json['expenses'] as num).toDouble(),
       expensesDifference = (json['expensesDifference'] as num).toDouble(),
-      capital = (json['capital'] as num).toDouble(),
-      vatRefunds = (json['vatRefunds'] as num).toDouble(),
-      sales = (json['sales'] as num).toDouble(),
+      revenueCategories = [for (final row in json['revenueCategories'] as List<dynamic>) ReportLine((row as Map<String, dynamic>)['name'] as String, (row['total'] as num).toDouble())],
       revenue = (json['revenue'] as num).toDouble(),
       revenueWithoutSales = (json['revenueWithoutSales'] as num).toDouble(),
       categories = [for (final row in json['categories'] as List<dynamic>) ReportLine((row as Map<String, dynamic>)['name'] as String, (row['total'] as num).toDouble())],
@@ -111,9 +109,7 @@ class PeriodicReportFigures {
       previousExpenses = 0,
       expenses = 0,
       expensesDifference = 0,
-      capital = 0,
-      vatRefunds = 0,
-      sales = 0,
+      revenueCategories = const [],
       revenue = 0,
       revenueWithoutSales = 0,
       categories = const [],
@@ -148,14 +144,8 @@ class PeriodicReportFigures {
   /// The difference (BR-09).
   final double expensesDifference;
 
-  /// Partners' capital.
-  final double capital;
-
-  /// VAT refunded.
-  final double vatRefunds;
-
-  /// Sales.
-  final double sales;
+  /// Each category holding revenue items, رأس المال first as the structure orders it (redix-api #109).
+  final List<ReportLine> revenueCategories;
 
   /// All revenue.
   final double revenue;

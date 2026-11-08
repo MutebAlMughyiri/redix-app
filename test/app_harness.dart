@@ -144,9 +144,9 @@ Map<String, Object> issuedReport() => {
   'previousExpenses': 100,
   'expenses': 140,
   'expensesDifference': 40,
-  'capital': 1000,
-  'vatRefunds': 0,
-  'sales': 0,
+  'revenueCategories': [
+    {'id': 'category-capital', 'name': 'رأس المال', 'total': 1000, 'items': <Map<String, Object>>[]},
+  ],
   'revenue': 1000,
   'revenueWithoutSales': 1000,
   'categories': [
@@ -560,7 +560,6 @@ class FakeApi {
   /// What the dashboard answers.
   var dashboardAnswer = <String, Object>{
     'revenue': 0,
-    'capital': {'total': 0, 'partners': <Map<String, Object>>[]},
     'expenses': 0,
     'surplus': 0,
     'wasReconciled': false,
@@ -901,9 +900,9 @@ class FakeApi {
     return _json({}, 200);
   }
 
-  /// Adds a partner to the project [projectId], as the API holds them.
-  Map<String, Object> addPartner(String projectId, String name, {String userId = '', String userName = ''}) {
-    final partner = <String, Object>{'id': 'partner-${_nextStructureId++}', 'name': name, 'userId': userId, 'userName': userName};
+  /// Adds a partner to the project [projectId], as the API holds them: a table of the capital item [itemId] (redix-api #109).
+  Map<String, Object> addPartner(String projectId, String name, {String userId = '', String userName = '', String itemId = 'item-capital', String itemName = 'رأس المال'}) {
+    final partner = <String, Object>{'id': 'partner-${_nextStructureId++}', 'name': name, 'userId': userId, 'userName': userName, 'itemId': itemId, 'itemName': itemName};
     partners.putIfAbsent(projectId, () => []).add(partner);
     return partner;
   }
@@ -920,13 +919,15 @@ class FakeApi {
       return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
     }
     final userId = body['userId'] as String? ?? '';
+    final itemId = body['itemId'] as String? ?? '';
     if (segments.length == 3) {
-      addPartner(segments[1], body['name'] as String, userId: userId, userName: _memberName(userId));
+      addPartner(segments[1], body['name'] as String, userId: userId, userName: _memberName(userId), itemId: itemId);
     } else {
       list.singleWhere((row) => row['id'] == segments[3])
         ..['name'] = body['name'] as String
         ..['userId'] = userId
-        ..['userName'] = _memberName(userId);
+        ..['userName'] = _memberName(userId)
+        ..['itemId'] = itemId;
     }
     return _json({}, 200);
   }
@@ -1177,16 +1178,17 @@ class FakeApi {
         },
       if (movesMoney)
         {
-          'id': '',
-          'name': '',
+          'id': 'category-capital',
+          'name': 'رأس المال',
           'items': [
-            for (final partner in partners[projectId] ?? const <Map<String, Object>>[])
+            for (final itemId in {for (final partner in partners[projectId] ?? const <Map<String, Object>>[]) partner['itemId']! as String})
               {
-                'id': partner['id']!,
-                'name': partner['name']!,
-                'isRevenue': false,
+                'id': itemId,
+                'name': 'رأس المال',
+                'isRevenue': true,
                 'tables': [
-                  {'id': partner['id']!, 'kind': 'partner', 'name': partner['name']!},
+                  for (final partner in (partners[projectId] ?? const <Map<String, Object>>[]).where((partner) => partner['itemId'] == itemId))
+                    {'id': partner['id']!, 'kind': 'partner', 'name': partner['name']!},
                 ],
               },
           ],

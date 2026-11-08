@@ -88,6 +88,9 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
     if (table.kind == ItemTableKind.contract) {
       return words.categoriesTableContract;
     }
+    if (table.kind == ItemTableKind.partner) {
+      return words.categoriesTableCapital;
+    }
     return widget.categories.itemOf(widget.itemId).type.isRevenue ? words.categoriesTableRevenue : words.categoriesTablePurchases;
   }
 

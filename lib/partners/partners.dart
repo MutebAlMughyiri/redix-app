@@ -10,9 +10,10 @@ class Partners extends ApiList<Partner> {
   /// The project these partners belong to.
   final String projectId;
 
-  /// Adds a partner named [name], whose login is [userId], or who has none when that is empty.
-  Future<String> add(String name, String userId) => change('/projects/$projectId/partners', {'name': name, if (userId.isNotEmpty) 'userId': userId});
+  /// Adds a partner named [name] as a table of the capital item [itemId] (redix-api #109), whose login is [userId], or who has none when that is empty.
+  Future<String> add(String name, String itemId, String userId) => change('/projects/$projectId/partners', {'name': name, if (itemId.isNotEmpty) 'itemId': itemId, if (userId.isNotEmpty) 'userId': userId});
 
-  /// Names [partner] [name] and sets their login: [userId], or none when that is empty.
-  Future<String> edit(Partner partner, String name, String userId) => change('/projects/$projectId/partners/${partner.id}', {'name': name, if (userId.isNotEmpty) 'userId': userId});
+  /// Names [partner] [name], makes them a table of the capital item [itemId], and sets their login: [userId], or none when that is empty.
+  Future<String> edit(Partner partner, String name, String itemId, String userId) =>
+      change('/projects/$projectId/partners/${partner.id}', {'name': name, if (itemId.isNotEmpty) 'itemId': itemId, if (userId.isNotEmpty) 'userId': userId});
 }

@@ -9,10 +9,10 @@ import '../ui/api_object_body.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 
-/// The project's figures at a glance (UC-049): what waits for approval, the surplus, the completion (UC-063), the reconciliation difference, and revenue and expenses, each opening to its categories, each category to its items, and the capital to the partners the reader may see (BR-31).
+/// The project's figures at a glance (UC-049): what waits for approval, the surplus, the completion (UC-063), the reconciliation difference, and revenue and expenses, each opening to its categories and each category to its items, رأس المال among them (redix-api #109).
 class DashboardCard extends StatefulWidget {
-  /// The card of [dashboard] in [project], calling [onApprovals] for what waits, [onItem] for an item's report and [onPartner] for a partner's movements.
-  const DashboardCard({super.key, required this.project, required this.dashboard, required this.onApprovals, required this.onItem, required this.onPartner});
+  /// The card of [dashboard] in [project], calling [onApprovals] for what waits and [onItem] for an item's report.
+  const DashboardCard({super.key, required this.project, required this.dashboard, required this.onApprovals, required this.onItem});
 
   /// The line saying how many wait for approval.
   static const pendingKey = Key('dashboard.pending');
@@ -55,9 +55,6 @@ class DashboardCard extends StatefulWidget {
 
   /// Opens an item's report.
   final void Function(ItemTotal item) onItem;
-
-  /// Opens a partner's movements.
-  final void Function(ItemTotal partner) onPartner;
 
   @override
   State<DashboardCard> createState() => _DashboardCardState();
@@ -126,7 +123,7 @@ class _DashboardCardState extends State<DashboardCard> {
               children: [
                 Row(
                   children: [
-                    Expanded(child: Text(category.isCapital ? Words.of(context).categoriesTableCapital : category.name, key: DashboardCard.categoryKey(category.id).title)),
+                    Expanded(child: Text(category.name, key: DashboardCard.categoryKey(category.id).title)),
                     Text(formatMoney(category.total), key: DashboardCard.categoryKey(category.id).trailing),
                     if (opens) Icon(isOpen ? Icons.expand_less : Icons.expand_more, key: DashboardCard.categoryKey(category.id).icon, size: 18),
                   ],
@@ -144,7 +141,7 @@ class _DashboardCardState extends State<DashboardCard> {
               contentPadding: const EdgeInsetsDirectional.only(start: 16),
               title: Text(item.name, key: DashboardCard.itemKey(item.id).title),
               trailing: Text(formatMoney(item.total), key: DashboardCard.itemKey(item.id).trailing),
-              onTap: () => category.isCapital ? widget.onPartner(item) : widget.onItem(item),
+              onTap: () => widget.onItem(item),
             ),
       ],
     );
@@ -190,7 +187,7 @@ class _DashboardCardState extends State<DashboardCard> {
             _tile(words.dashboardExpenses, figures.expenses, DashboardCard.expensesKey, _Side.expenses),
           ],
         ),
-        if (_side == _Side.revenue) _categories(figures.revenueSide, figures.revenue),
+        if (_side == _Side.revenue) _categories(figures.revenueCategories, figures.revenue),
         if (_side == _Side.expenses) _categories(figures.categories, figures.expenses),
       ],
     );

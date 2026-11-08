@@ -103,9 +103,7 @@ class _PeriodicReportScreenState extends State<PeriodicReportScreen> {
           _line(PeriodicReportScreen.differenceKey, words.reportsDifference, report.expensesDifference, isStrong: true),
         ]),
         _section('revenue', words.dashboardRevenue, [
-          _line(PeriodicReportScreen.lineKey('revenue', 'capital'), words.capitalTotal, report.capital),
-          _line(PeriodicReportScreen.lineKey('revenue', 'vatRefunds'), words.revenueVatRefund, report.vatRefunds),
-          _line(PeriodicReportScreen.lineKey('revenue', 'sales'), words.revenueSale, report.sales),
+          for (final (number, category) in report.revenueCategories.indexed) _line(PeriodicReportScreen.lineKey('revenue', '$number'), category.label, category.amount),
           _line(PeriodicReportScreen.lineKey('revenue', 'total'), words.dashboardRevenue, report.revenue, isStrong: true),
           _line(PeriodicReportScreen.lineKey('revenue', 'withoutSales'), words.dashboardSurplusWithoutSales, report.revenueWithoutSales),
         ]),

@@ -123,7 +123,7 @@ class _TableSheetState extends State<_TableSheet> {
                 emptyText: words.categoriesEmpty,
                 itemBuilder: (category) {
                   final items = [for (final item in category.items) (item, _keptOf(item))].where((pair) => pair.$2.isNotEmpty).toList();
-                  final title = category.isPartners ? words.entriesCapitalGroup : category.name;
+                  final title = category.name;
                   return items.isEmpty
                       ? const SizedBox.shrink()
                       : Column(

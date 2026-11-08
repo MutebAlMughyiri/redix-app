@@ -407,6 +407,9 @@ mixin WordGetters {
   /// The word `categories.itemHasEntries`.
   String get categoriesItemHasEntries => text('categories.itemHasEntries');
 
+  /// The word `categories.itemHasPartners`.
+  String get categoriesItemHasPartners => text('categories.itemHasPartners');
+
   /// The word `categories.itemName`.
   String get categoriesItemName => text('categories.itemName');
 
@@ -484,6 +487,9 @@ mixin WordGetters {
 
   /// The word `categories.typeBoth`.
   String get categoriesTypeBoth => text('categories.typeBoth');
+
+  /// The word `categories.typeCapital`.
+  String get categoriesTypeCapital => text('categories.typeCapital');
 
   /// The word `categories.typeContractorPayments`.
   String get categoriesTypeContractorPayments => text('categories.typeContractorPayments');
@@ -901,9 +907,6 @@ mixin WordGetters {
 
   /// The word `entries.approved`.
   String get entriesApproved => text('entries.approved');
-
-  /// The word `entries.capitalGroup`.
-  String get entriesCapitalGroup => text('entries.capitalGroup');
 
   /// The word `entries.clearFilters`.
   String get entriesClearFilters => text('entries.clearFilters');
@@ -1333,6 +1336,12 @@ mixin WordGetters {
 
   /// The word `partners.invalidName`.
   String get partnersInvalidName => text('partners.invalidName');
+
+  /// The word `partners.item`.
+  String get partnersItem => text('partners.item');
+
+  /// The word `partners.itemNotOffered`.
+  String get partnersItemNotOffered => text('partners.itemNotOffered');
 
   /// The word `partners.loadFailed`.
   String get partnersLoadFailed => text('partners.loadFailed');

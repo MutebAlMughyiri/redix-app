@@ -129,7 +129,7 @@ lib/
     reject_project_dialog.dart Refuses a registered project, saying why, which its manager sees
     unit_row.dart           One unit on More info: its name and, for whoever manages the open project, a menu to rename it and a swipe that removes it
   reports/
-    dashboard.dart          One item's total, or one partner's capital under the capital line
+    dashboard.dart          One item's total, one category's, and the project's figures
     item_report.dart        One purchase or payment in an item's report
     item_report_screen.dart Everything spent on one item: a table per subgroup, then each contract with its value, paid and remaining
     periodic_report_screen.dart One periodic report as it was issued: what everyone may read, and its files for whoever may export them

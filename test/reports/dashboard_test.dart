@@ -6,7 +6,6 @@ import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/home/dashboard_card.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/ui/part_keys.dart';
@@ -17,9 +16,8 @@ import '../app_harness.dart';
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  Map<String, Object> figures({int pendingCount = 0, double surplus = 1000, bool wasReconciled = false, double difference = 0, double completion = 0, List<Map<String, Object>> partners = const []}) => {
+  Map<String, Object> figures({int pendingCount = 0, double surplus = 1000, bool wasReconciled = false, double difference = 0, double completion = 0}) => {
     'revenue': 5000,
-    'capital': {'total': 4000, 'partners': partners},
     'expenses': 4000,
     'surplus': surplus,
     'wasReconciled': wasReconciled,
@@ -38,6 +36,14 @@ void main() {
       },
     ],
     'revenueCategories': [
+      {
+        'id': 'category-capital',
+        'name': 'رأس المال',
+        'total': 4000,
+        'items': [
+          {'id': 'item-capital', 'name': 'رأس المال', 'total': 4000},
+        ],
+      },
       {
         'id': 'category-9',
         'name': 'الإيرادات',
@@ -137,49 +143,28 @@ void main() {
     expect(find.byKey(DashboardCard.categoryKey('category-9')), findsNothing);
   });
 
-  testWidgets('BR-06: the revenue side starts with capital, named by the app, and the lines add up to the revenue', (tester) async {
+  testWidgets('BR-06, redix-api #109: the revenue side is its categories in the structure\'s order, رأس المال first like any other, adding up to the revenue', (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
 
     await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
 
-    expect(text(tester, DashboardCard.categoryKey('').title), 'en categories.tableCapital');
-    expect(text(tester, DashboardCard.categoryKey('').trailing), formatMoney(4000));
+    expect(text(tester, DashboardCard.categoryKey('category-capital').title), 'رأس المال');
+    expect(text(tester, DashboardCard.categoryKey('category-capital').trailing), formatMoney(4000));
     expect(text(tester, DashboardCard.categoryKey('category-9').trailing), formatMoney(1000));
-    expect(tester.getTopLeft(find.byKey(DashboardCard.categoryKey(''))).dy < tester.getTopLeft(find.byKey(DashboardCard.categoryKey('category-9'))).dy, isTrue);
+    expect(tester.getTopLeft(find.byKey(DashboardCard.categoryKey('category-capital'))).dy < tester.getTopLeft(find.byKey(DashboardCard.categoryKey('category-9'))).dy, isTrue);
   });
 
-  testWidgets('BR-31: the capital line opens to the partners the API lets the reader see, and a partner opens their movements', (tester) async {
-    final api = await openHome(
-      tester,
-      (api) => api.dashboardAnswer = figures(
-        partners: [
-          {'id': 'partner-1', 'name': 'متعب', 'isMine': true, 'balance': 3000, 'sharePercent': 75},
-          {'id': 'partner-2', 'name': 'نواف', 'isMine': false, 'balance': 1000, 'sharePercent': 25},
-        ],
-      ),
-    );
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
-    expect(find.byKey(DashboardCard.itemKey('partner-1')), findsNothing);
-
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.categoryKey(''))));
-
-    expect(text(tester, DashboardCard.itemKey('partner-1').title), 'متعب');
-    expect(text(tester, DashboardCard.itemKey('partner-1').trailing), formatMoney(3000));
-    expect(text(tester, DashboardCard.itemKey('partner-2').trailing), formatMoney(1000));
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.itemKey('partner-2'))));
-    expect(find.byType(MovementsScreen), findsOneWidget);
-    expect(find.byType(ItemReportScreen), findsNothing);
-  });
-
-  testWidgets('BR-31: with no partner the reader may see, the capital line is a total that does not open, with no arrow to tap', (tester) async {
+  testWidgets('redix-api #109: رأس المال opens to its item like any category, and the item to its report, whose tables are its partners', (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
     await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
+    expect(find.byKey(DashboardCard.itemKey('item-capital')), findsNothing);
 
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.categoryKey(''))));
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.categoryKey('category-capital'))));
 
-    expect(find.byKey(DashboardCard.categoryKey('').icon), findsNothing);
-    expect(find.byKey(DashboardCard.categoryKey('category-9').icon), findsOneWidget);
-    expect(find.byType(ListTile), findsNothing);
+    expect(text(tester, DashboardCard.itemKey('item-capital').title), 'رأس المال');
+    expect(text(tester, DashboardCard.itemKey('item-capital').trailing), formatMoney(4000));
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.itemKey('item-capital'))));
+    expect(find.byType(ItemReportScreen), findsOneWidget);
   });
 
   testWidgets('the surplus comes first, then the completion, then the difference, and nothing without sales', (tester) async {

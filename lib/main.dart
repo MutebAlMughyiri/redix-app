@@ -285,7 +285,13 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(
         path: PartnersScreen.path,
-        builder: (context, state) => PartnersScreen(project: state.extra! as Project, partners: _partnersOf(state.pathParameters['projectId'] ?? ''), members: _membersOf(state.pathParameters['projectId'] ?? ''), capital: _capitalOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => PartnersScreen(
+          project: state.extra! as Project,
+          partners: _partnersOf(state.pathParameters['projectId'] ?? ''),
+          items: _offeredItemsOf(state.pathParameters['projectId'] ?? '', ItemType.capital),
+          members: _membersOf(state.pathParameters['projectId'] ?? ''),
+          capital: _capitalOf(state.pathParameters['projectId'] ?? ''),
+        ),
       ),
       GoRoute(
         path: MovementsScreen.path,

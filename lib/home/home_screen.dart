@@ -9,7 +9,6 @@ import '../accounts/my_custody.dart';
 import '../auth/session.dart';
 import '../contracts/contracts_screen.dart';
 import '../documents/documents_screen.dart';
-import '../partners/movements_screen.dart';
 import '../partners/partners_screen.dart';
 import '../reports/reports_screen.dart';
 import '../approvals/approvals_screen.dart';
@@ -259,7 +258,6 @@ class _HomeScreenState extends State<HomeScreen> {
               dashboard: widget.dashboard,
               onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
               onItem: (item) => _open(ItemReportScreen.pathOf(project.id, item.id), project),
-              onPartner: (partner) => _open(MovementsScreen.pathOf(project.id, partner.id, partner.name), project),
             ),
             MyCustody(accounts: widget.accounts),
             HomeEntries(project: project, entries: widget.entries, capture: widget.capture),

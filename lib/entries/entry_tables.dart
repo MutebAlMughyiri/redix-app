@@ -62,8 +62,8 @@ class EntryTable {
   /// What a field shows of it: the table, then its sheet, the item, in brackets, as الجلاي (دفعات العظم) (Muteb, 7 Nov 2026); the item's own table is its name alone.
   String get label => isNamedAfterItem ? itemName : '$name ($itemName)';
 
-  /// True for the item's own table, named after it, and for a partner: each shows as its item's row.
-  bool get isNamedAfterItem => kind == ItemTableKind.general || isPartner;
+  /// True for the item's own table, named after it, which shows as its item's row; a partner's table shows under رأس المال as a contract's does under its item (redix-api #109).
+  bool get isNamedAfterItem => kind == ItemTableKind.general;
 }
 
 /// An item and the tables of it an expense may go into, in the order its sheet prints them.
@@ -91,11 +91,8 @@ class TableCategory {
     : name = json['name'] as String,
       items = [for (final item in json['items'] as List<dynamic>) TableItem.fromJson(item as Map<String, dynamic>)];
 
-  /// The category's name; empty for the partners' group, which the API sends with no name (redix-api #101).
+  /// The category's name.
   final String name;
-
-  /// True for the partners' group, which shows under the revenue as its capital (BR-06).
-  bool get isPartners => name.isEmpty;
 
   /// Its items that take expenses.
   final List<TableItem> items;

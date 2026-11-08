@@ -3,23 +3,31 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/member_picker.dart';
+import 'package:redix/structure/item_picker.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  /// A project with متعب, who has a login, and هيثم, who has none, opened as far as its partners.
-  Future<({FakeApi api, String mutab, String haitham})> openPartners(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
+  /// A project with its رأس المال, and متعب, who has a login, and هيثم, who has none, each a table of it, opened as far as its partners.
+  Future<({FakeApi api, String mutab, String haitham, String capital})> openPartners(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
     final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions);
+    final capital = api.addItem(api.addCategory('project-0', 'رأس المال'), 'رأس المال', type: 'capital')['id']! as String;
     api.addMember('user-mutab', 'متعب المغيري');
     api.addMember('user-nawaf', 'نواف');
-    final mutab = api.addPartner('project-0', 'متعب', userId: 'user-mutab', userName: 'متعب المغيري');
-    final haitham = api.addPartner('project-0', 'هيثم');
+    final mutab = api.addPartner('project-0', 'متعب', userId: 'user-mutab', userName: 'متعب المغيري', itemId: capital);
+    final haitham = api.addPartner('project-0', 'هيثم', itemId: capital);
     await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
-    return (api: api, mutab: mutab['id'] as String, haitham: haitham['id'] as String);
+    return (api: api, mutab: mutab['id'] as String, haitham: haitham['id'] as String, capital: capital);
+  }
+
+  Future<void> chooseItem(WidgetTester tester, FakeApi api, String itemId) async {
+    await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.itemKey.field)));
+    await act(tester, api, () => tester.tap(find.byKey(ItemPicker.optionKey(itemId))));
   }
 
   Future<void> chooseLogin(WidgetTester tester, FakeApi api, String userId) async {
@@ -41,14 +49,15 @@ void main() {
     expect(text(tester, PartnersScreen.detailsKey(opened.haitham)), 'en partners.noLogin');
   });
 
-  testWidgets('adding by name alone sends no login', (tester) async {
+  testWidgets('redix-api #109: adding names the partner and the capital item whose table they are, and sends no login when none is chosen', (tester) async {
     final opened = await openPartners(tester);
 
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.addKey)));
+    await chooseItem(tester, opened.api, opened.capital);
     await save(tester, opened.api, 'نوف');
 
     expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/partners');
-    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'نوف'});
+    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'نوف', 'itemId': opened.capital});
     expect(find.text('نوف'), findsOneWidget);
     expect(find.byKey(PartnersScreen.partnerNameKey), findsNothing);
   });
@@ -58,10 +67,11 @@ void main() {
 
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.addKey)));
     expect(text(tester, PartnersScreen.loginHintKey), 'en partners.loginHint');
+    await chooseItem(tester, opened.api, opened.capital);
     await chooseLogin(tester, opened.api, 'user-nawaf');
     await save(tester, opened.api, 'نواف');
 
-    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'نواف', 'userId': 'user-nawaf'});
+    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'نواف', 'itemId': opened.capital, 'userId': 'user-nawaf'});
   });
 
   testWidgets('a refusal stays in the dialog with its reason', (tester) async {
@@ -84,7 +94,7 @@ void main() {
     await save(tester, opened.api, 'متعب المغيري');
 
     expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/partners/${opened.mutab}');
-    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'متعب المغيري', 'userId': 'user-mutab'});
+    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'متعب المغيري', 'itemId': opened.capital, 'userId': 'user-mutab'});
     expect(text(tester, PartnersScreen.nameKey(opened.mutab)), 'متعب المغيري');
   });
 
@@ -100,7 +110,7 @@ void main() {
     await chooseLogin(tester, opened.api, '');
     await save(tester, opened.api, 'هيثم');
 
-    expect(opened.api.sentSettingsChanges.last.$2, {'name': 'هيثم'});
+    expect(opened.api.sentSettingsChanges.last.$2, {'name': 'هيثم', 'itemId': opened.capital});
     expect(text(tester, PartnersScreen.detailsKey(opened.haitham)), 'en partners.noLogin');
   });
 

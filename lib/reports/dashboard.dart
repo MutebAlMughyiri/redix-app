@@ -1,23 +1,19 @@
 import '../api_object.dart';
 import '../auth/session.dart';
-import '../partners/capital.dart';
 import 'waiting_figures.dart';
 
-/// One item's total (BR-02), or one partner's capital under the capital line (BR-05).
+/// One item's total (BR-02).
 class ItemTotal {
   /// A total as the API answers it.
   ItemTotal.fromJson(Map<String, dynamic> json) : id = json['id'] as String, name = json['name'] as String, total = (json['total'] as num).toDouble();
 
-  /// The capital of the partner on [line].
-  ItemTotal.partner(PartnerCapital line) : id = line.id, name = line.name, total = line.balance;
-
-  /// The item, or the partner.
+  /// The item.
   final String id;
 
   /// Its name.
   final String name;
 
-  /// Its purchases and contractor payments.
+  /// Its purchases and contractor payments, its revenue, or for رأس المال what the partners put in less what they took out.
   final double total;
 }
 
@@ -30,9 +26,6 @@ class CategoryTotal {
       total = (json['total'] as num).toDouble(),
       items = [for (final row in json['items'] as List<dynamic>) ItemTotal.fromJson(row as Map<String, dynamic>)];
 
-  /// The capital line that opens the revenue side (BR-06), opening to the partners the reader may see (BR-31).
-  CategoryTotal.capital(CapitalFigures capital) : id = '', name = '', total = capital.total, items = [for (final line in capital.partners) ItemTotal.partner(line)];
-
   /// The category.
   final String id;
 
@@ -44,9 +37,6 @@ class CategoryTotal {
 
   /// Each item's total.
   final List<ItemTotal> items;
-
-  /// True for the capital line, which the app names.
-  bool get isCapital => id.isEmpty;
 }
 
 /// A project's figures at a glance (UC-049, UC-063).
@@ -54,7 +44,6 @@ class DashboardFigures {
   /// The figures as the API answers them.
   DashboardFigures.fromJson(Map<String, dynamic> json)
     : revenue = (json['revenue'] as num).toDouble(),
-      capital = CapitalFigures.fromJson(json['capital'] as Map<String, dynamic>),
       expenses = (json['expenses'] as num).toDouble(),
       surplus = (json['surplus'] as num).toDouble(),
       wasReconciled = json['wasReconciled'] as bool,
@@ -65,13 +54,10 @@ class DashboardFigures {
       revenueCategories = [for (final row in json['revenueCategories'] as List<dynamic>) CategoryTotal.fromJson(row as Map<String, dynamic>)];
 
   /// Nothing yet.
-  DashboardFigures.none() : revenue = 0, capital = CapitalFigures.none(), expenses = 0, surplus = 0, wasReconciled = false, reconciliationDifference = 0, waiting = const WaitingFigures.none(), completionPercent = 0, categories = const [], revenueCategories = const [];
+  DashboardFigures.none() : revenue = 0, expenses = 0, surplus = 0, wasReconciled = false, reconciliationDifference = 0, waiting = const WaitingFigures.none(), completionPercent = 0, categories = const [], revenueCategories = const [];
 
   /// Capital, VAT refunds and sales.
   final double revenue;
-
-  /// What the partners put in less what they took out, with the partners' lines the signed-in user may see (BR-31).
-  final CapitalFigures capital;
 
   /// Every approved expense: the project's cost.
   final double expenses;
@@ -94,11 +80,8 @@ class DashboardFigures {
   /// Each category's total.
   final List<CategoryTotal> categories;
 
-  /// Each category holding revenue items, its total with those items'.
+  /// Each category holding revenue items, رأس المال first as the structure orders it, adding up to [revenue] (BR-06, AC-46.7, redix-api #109).
   final List<CategoryTotal> revenueCategories;
-
-  /// The revenue side as the periodic report lays it out: capital, then each revenue category, adding up to [revenue] (BR-06, AC-46.7).
-  List<CategoryTotal> get revenueSide => [CategoryTotal.capital(capital), ...revenueCategories];
 }
 
 /// A project's dashboard (UC-049), read again whenever its home comes back into view.
