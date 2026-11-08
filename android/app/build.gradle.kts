@@ -1,3 +1,5 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -29,7 +31,7 @@ android {
         versionName = flutter.versionName
         // The host a shared entry's link names (redix-app #83): LINK_HOST from the --dart-define the app is built with, so the manifest and the app's linkHost agree.
         val dartDefines = (project.findProperty("dart-defines") as String? ?: "").split(",").filter { it.isNotEmpty() }
-            .map { String(java.util.Base64.getDecoder().decode(it)) }
+            .map { String(Base64.getDecoder().decode(it)) }
             .associate { it.substringBefore("=") to it.substringAfter("=") }
         manifestPlaceholders["linkHost"] = dartDefines["LINK_HOST"] ?: "redix.test"
         testInstrumentationRunner = "pl.leancode.patrol.PatrolJUnitRunner"

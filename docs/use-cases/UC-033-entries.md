@@ -50,4 +50,4 @@
 
 The contractor payment's form opens an entry through the same steps, with no widget test of its own. The journey does not reach these screens yet.
 
-A link tapped in WhatsApp reaches REDIX through the Android manifest's `https` intent filter for `LINK_HOST`, which no widget test runs: it is checked on the phone. On a phone without REDIX the link opens nothing until go-live (redix-app #83, D6).
+A link tapped in WhatsApp reaches REDIX through the Android manifest's `https` intent filter for `LINK_HOST`, which no widget test runs. It was checked on the HUAWEI on 8 Nov 2026: a link to a made-up entry, opened as a browser opens it, reached REDIX, which said the entry cannot be found. On a phone without REDIX the link opens nothing until go-live (redix-app #83, D6).
