@@ -544,7 +544,8 @@ void main() {
       await $(HomeScreen.addEntryKey(projectId)).tap();
       await reach($(AddEntryScreen.tableKey));
       await $(AddEntryScreen.tableKey).tap();
-      await goTo($(TablePicker.optionKey(haithamId)));
+      await $(TablePicker.searchKey).enterText('هيثم');
+      await reach($(TablePicker.optionKey(haithamId)));
       await $(TablePicker.optionKey(haithamId)).tap();
       await reach($(DirectEntryFields.amountKey));
       await $(DirectEntryFields.amountKey).enterText('5000');
