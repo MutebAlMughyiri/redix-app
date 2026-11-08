@@ -55,7 +55,7 @@ class HomeEntries extends StatelessWidget {
                 padding: EdgeInsets.all(16),
                 child: Center(child: CircularProgressIndicator(key: HomeScreen.entriesLoadingKey)),
               ),
-            if (!entries.isLoading && entries.all.isEmpty) Text(words.entriesEmpty, key: HomeScreen.entriesEmptyKey(project.id)),
+            if (!entries.isLoading && entries.all.isEmpty) Text(entries.message.isEmpty ? words.entriesEmpty : words.text(entries.message), key: HomeScreen.entriesEmptyKey(project.id)),
             if (entries.all.isNotEmpty && project.may(Permission.deleteEntries)) SwipeHint(key: HomeScreen.entriesSwipeHintKey(project.id)),
             for (final entry in entries.all.take(latest)) EntryListTile(project: project, entries: entries, entry: entry),
             Align(

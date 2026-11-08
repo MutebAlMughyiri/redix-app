@@ -310,6 +310,9 @@ class FakeApi {
   /// Whether the network is up; when false every request fails like a phone without signal.
   var online = true;
 
+  /// The paths whose every request fails as the network does, like a read that takes longer than the app waits.
+  final unreachable = <String>{};
+
   /// The status and problem code `POST /auth/sign-in` answers; 200 opens a session.
   var signInAnswer = (status: 200, code: '');
 
@@ -654,10 +657,10 @@ class FakeApi {
 
   /// The client the app's requests reach.
   late final client = MockClient((request) async {
-    if (!online) {
+    final path = request.url.path;
+    if (!online || unreachable.contains(path)) {
       throw http.ClientException('offline');
     }
-    final path = request.url.path;
     if (request.method == 'GET') {
       sentReads.add(path);
     } else if (!path.startsWith('/auth')) {

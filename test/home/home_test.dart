@@ -109,6 +109,23 @@ void main() {
     expect(find.byKey(HomeScreen.settingsKey('project-0')), findsOneWidget);
   });
 
+  testWidgets('entries that cannot be read say so on the home, never that there are none', (tester) async {
+    final api = FakeApi()
+      ..addProject('غصون 6')
+      ..addEntry(status: 'approved')
+      ..unreachable.add('/projects/project-0/entries');
+
+    await openProject(tester, api);
+
+    expect(text(tester, HomeScreen.entriesEmptyKey('project-0')), 'en entries.loadFailed');
+  });
+
+  testWidgets('a project with no entries says so on the home', (tester) async {
+    await openProject(tester, FakeApi()..addProject('غصون 6'));
+
+    expect(text(tester, HomeScreen.entriesEmptyKey('project-0')), 'en entries.empty');
+  });
+
   testWidgets('R13: a finished project stays listed, and its home says in one line that it is finished and read-only', (tester) async {
     final api = FakeApi()..addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
     await openHome(tester, api);
