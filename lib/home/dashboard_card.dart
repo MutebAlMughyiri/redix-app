@@ -107,12 +107,13 @@ class _DashboardCardState extends State<DashboardCard> {
 
   Widget _category(CategoryTotal category, double total) {
     final isOpen = _openCategories.contains(category.id);
+    final opens = category.items.isNotEmpty;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         InkWell(
           key: DashboardCard.categoryKey(category.id),
-          onTap: () => setState(() => isOpen ? _openCategories.remove(category.id) : _openCategories.add(category.id)),
+          onTap: opens ? () => setState(() => isOpen ? _openCategories.remove(category.id) : _openCategories.add(category.id)) : null,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 6),
             child: Column(
@@ -121,9 +122,9 @@ class _DashboardCardState extends State<DashboardCard> {
               children: [
                 Row(
                   children: [
-                    Expanded(child: Text(category.name, key: DashboardCard.categoryKey(category.id).title)),
+                    Expanded(child: Text(category.isCapital ? Words.of(context).categoriesTableCapital : category.name, key: DashboardCard.categoryKey(category.id).title)),
                     Text(formatMoney(category.total), key: DashboardCard.categoryKey(category.id).trailing),
-                    Icon(isOpen ? Icons.expand_less : Icons.expand_more, key: DashboardCard.categoryKey(category.id).icon, size: 18),
+                    if (opens) Icon(isOpen ? Icons.expand_less : Icons.expand_more, key: DashboardCard.categoryKey(category.id).icon, size: 18),
                   ],
                 ),
                 LinearProgressIndicator(key: DashboardCard.categoryKey(category.id).bar, value: total <= 0 ? 0 : (category.total / total).clamp(0, 1)),
@@ -190,7 +191,7 @@ class _DashboardCardState extends State<DashboardCard> {
             _tile(words.dashboardExpenses, figures.expenses, DashboardCard.expensesKey, _Side.expenses),
           ],
         ),
-        if (_side == _Side.revenue) _categories(figures.revenueCategories, figures.revenue),
+        if (_side == _Side.revenue) _categories(figures.revenueSide, figures.revenue),
         if (_side == _Side.expenses) _categories(figures.categories, figures.expenses),
       ],
     );

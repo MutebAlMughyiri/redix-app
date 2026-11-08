@@ -519,6 +519,7 @@ class FakeApi {
   /// What the dashboard answers.
   var dashboardAnswer = <String, Object>{
     'revenue': 0,
+    'capital': 0,
     'expenses': 0,
     'surplus': 0,
     'wasReconciled': false,

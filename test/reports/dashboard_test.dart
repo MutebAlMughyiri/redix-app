@@ -3,17 +3,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
+import 'package:redix/format/number_format.dart';
 import 'package:redix/home/dashboard_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/reports_screen.dart';
+import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/refresh_button.dart';
 
 import '../app_harness.dart';
 
 void main() {
+  String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
+
   Map<String, Object> figures({int pendingCount = 0, double surplus = 1000, bool wasReconciled = false, double difference = 0, double completion = 0}) => {
     'revenue': 5000,
+    'capital': 4000,
     'expenses': 4000,
     'surplus': surplus,
     'wasReconciled': wasReconciled,
@@ -36,9 +41,9 @@ void main() {
       {
         'id': 'category-9',
         'name': 'الإيرادات',
-        'total': 5000,
+        'total': 1000,
         'items': [
-          {'id': 'item-9', 'name': 'رأس المال', 'total': 5000},
+          {'id': 'item-9', 'name': 'استرجاع ضرائب', 'total': 1000},
         ],
       },
     ],
@@ -130,6 +135,28 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
     expect(find.byKey(DashboardCard.categoryKey('category-9')), findsNothing);
+  });
+
+  testWidgets('BR-06: the revenue side starts with capital, named by the app, and the lines add up to the revenue', (tester) async {
+    final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
+
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
+
+    expect(text(tester, DashboardCard.categoryKey('').title), 'en categories.tableCapital');
+    expect(text(tester, DashboardCard.categoryKey('').trailing), formatMoney(4000));
+    expect(text(tester, DashboardCard.categoryKey('category-9').trailing), formatMoney(1000));
+    expect(tester.getTopLeft(find.byKey(DashboardCard.categoryKey(''))).dy < tester.getTopLeft(find.byKey(DashboardCard.categoryKey('category-9'))).dy, isTrue);
+  });
+
+  testWidgets('BR-31: the capital line holds no partner and does not open, with no arrow to tap', (tester) async {
+    final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
+
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.categoryKey(''))));
+
+    expect(find.byKey(DashboardCard.categoryKey('').icon), findsNothing);
+    expect(find.byKey(DashboardCard.categoryKey('category-9').icon), findsOneWidget);
+    expect(find.byType(ListTile), findsNothing);
   });
 
   testWidgets('the surplus comes first, then the completion, then the difference, and nothing without sales', (tester) async {
