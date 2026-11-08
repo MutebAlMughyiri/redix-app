@@ -23,6 +23,7 @@ description: How REDIX app code is written - best practice of Flutter, simple, c
 
 - The smallest code that does the job: no dead code, no speculative helper, no comment that repeats the code.
 - Every shared thing has one owner. Words come only from the API through `Words.of(context)`: the code holds a word's key, never its value, and no string is typed into a widget. The supported languages are `Words.languages`.
+- Colors come only from `AppColor` (`lib/ui/app_color.dart`), named for what they are for: no screen reads the theme's color scheme, names a Material color or types one, and a new color is a new `AppColor` (Muteb, 9 Nov 2026).
 - Every element a user sees or acts on has a `Key`, declared as a constant on its own screen (`HomeScreen.titleKey`), and so does every label, icon, title, subtitle, card and message: a part inside a keyed element takes the element's key and its part (`HomeScreen.accountsKey(id).label`, from `PartKeys`), a SnackBar its word (`messageKeyOf`). Tests find elements by those keys, never by typed text, by type or by position (`.at(n)`, `.first`, `.last`) (Muteb, 7 Nov 2026).
 - Names come from the translations glossary (issue "Translations: English terms and their Arabic"). Its "In code" column is the Dart name.
 - No null where a value can stand in: an empty value of its own type, not `?` and a check at every reader.

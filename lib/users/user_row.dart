@@ -4,6 +4,7 @@ import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'user.dart';
 import 'users_screen.dart';
+import '../ui/app_color.dart';
 
 /// One user on the list: their name, username, mobile and how many permissions they hold, a badge when disabled, and a menu of what can be done to them.
 class UserRow extends StatelessWidget {
@@ -39,7 +40,6 @@ class UserRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    final colors = Theme.of(context).colorScheme;
     return Card.outlined(
       key: UsersScreen.rowKey(user.id),
       margin: const EdgeInsets.only(bottom: 8),
@@ -53,13 +53,13 @@ class UserRow extends StatelessWidget {
             Text(
               user.displayName,
               key: UsersScreen.nameKey(user.id),
-              style: user.isActive ? null : TextStyle(color: colors.onSurfaceVariant),
+              style: user.isActive ? null : TextStyle(color: AppColor.quiet.of(context)),
             ),
             if (!user.isActive)
               Chip(
                 key: UsersScreen.statusKey(user.id),
                 label: Text(words.usersDisabled, key: UsersScreen.statusKey(user.id).label),
-                backgroundColor: colors.surfaceContainerHighest,
+                backgroundColor: AppColor.mutedSurface.of(context),
                 side: BorderSide.none,
                 visualDensity: VisualDensity.compact,
               ),

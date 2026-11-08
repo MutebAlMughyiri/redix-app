@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../words/words.dart';
 import 'part_keys.dart';
+import 'app_color.dart';
 
 /// Asks why, then does what needs a reason: rejecting an entry (AC-19.1) or reversing one (FR-50). The one owner of that sheet: its quick reasons, its saving, and the refusal it keeps
 /// on screen (findings row 166).
@@ -129,10 +130,10 @@ class _ReasonSheetState extends State<ReasonSheet> {
               maxLines: 3,
               decoration: InputDecoration(labelText: widget.reasonLabel, helperText: widget.reasonHint.isEmpty ? null : widget.reasonHint, helperMaxLines: 3),
             ),
-            if (_message.isNotEmpty) Text(words.text(_message), key: ReasonSheet.messageKey, style: TextStyle(color: theme.colorScheme.error)),
+            if (_message.isNotEmpty) Text(words.text(_message), key: ReasonSheet.messageKey, style: TextStyle(color: AppColor.refusal.of(context))),
             FilledButton(
               key: ReasonSheet.sendKey,
-              style: FilledButton.styleFrom(backgroundColor: theme.colorScheme.error, foregroundColor: theme.colorScheme.onError),
+              style: FilledButton.styleFrom(backgroundColor: AppColor.refusal.of(context), foregroundColor: AppColor.onRefusal.of(context)),
               onPressed: _saving ? null : _send,
               child: Text(widget.sendLabel, key: ReasonSheet.sendKey.label),
             ),

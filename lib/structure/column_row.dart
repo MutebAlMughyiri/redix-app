@@ -4,6 +4,7 @@ import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'item_column.dart';
 import 'item_columns_screen.dart';
+import '../ui/app_color.dart';
 
 /// One column on the list: its name and what it is, a handle to drag it and a way to change it; a core column shows a lock, and any other is removed by a swipe (redix-api #102).
 class ColumnRow extends StatelessWidget {
@@ -26,7 +27,6 @@ class ColumnRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    final colors = Theme.of(context).colorScheme;
     final details = [
       if (column.isCustom) words.columnsCustom,
       words.text(column.dataType.wordKey),
@@ -50,7 +50,7 @@ class ColumnRow extends StatelessWidget {
                 message: words.columnsCore,
                 child: Padding(
                   padding: const EdgeInsets.all(8),
-                  child: Icon(Icons.lock_outline, key: ItemColumnsScreen.lockKey(column.id), color: colors.onSurfaceVariant),
+                  child: Icon(Icons.lock_outline, key: ItemColumnsScreen.lockKey(column.id), color: AppColor.quiet.of(context)),
                 ),
               ),
           ],

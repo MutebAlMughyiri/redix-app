@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'app_language.dart';
 import 'words.dart';
 import 'language_tile.dart';
+import '../ui/app_color.dart';
 
 /// The choice between Arabic and English on the sign-in screen (UC-004), with the line that says why it could not switch; once signed in, the language is chosen in Settings
 /// through [LanguageTile].
@@ -60,7 +61,7 @@ class _LanguageSwitchState extends State<LanguageSwitch> {
           selected: {Localizations.localeOf(context).languageCode},
           onSelectionChanged: _switching ? null : (selection) => _choose(selection.single),
         ),
-        if (_message.isNotEmpty) Text(words.text(_message), key: LanguageSwitch.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+        if (_message.isNotEmpty) Text(words.text(_message), key: LanguageSwitch.messageKey, style: TextStyle(color: AppColor.refusal.of(context))),
       ],
     );
   }

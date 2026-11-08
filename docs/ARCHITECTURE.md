@@ -183,6 +183,7 @@ lib/
     suppliers_screen.dart   A project's supplier register: everyone with access sees it, and whoever keeps the settings adds, changes and disables its suppliers
     vat_number_field.dart   Asks for a supplier's VAT number, which may stay empty, and names the supplier already holding a number that was refused
   ui/
+    app_color.dart          Every color the app shows, named for what it is for (a refusal, something quiet, a card's frame, an entry waiting) and taken from the theme; the one place a color is chosen
     api_list_body.dart      The body of a screen that shows an ApiList: why it could not load with a way to try again, loading, empty, or its items, which are read again when pulled down
     api_object_body.dart    What shows something the API owns: why it could not load with a way to try again, or what builder draws from it
     bottom_button.dart      A screen's main action: one full-width filled button at its bottom, the same on every screen
@@ -249,6 +250,7 @@ Settings such as projects keep nothing on the phone: the API owns every rule, th
 | Rule | Where it lives |
 | --- | --- |
 | No word value in the code; words come from the API | `lib/words/` |
+| No color in a screen: every color is an `AppColor`, named for what it is for and read from the theme, so a design change or a dark mode is made in one file (Muteb, 9 Nov 2026) | `lib/ui/app_color.dart`; `app_color_test` fails on any other file that picks a color |
 | Every element a user sees or acts on has a `Key` constant on its screen, and every label, icon, title, subtitle, card and message has one too: a part inside a keyed element takes its element's key and the part's name (`HomeScreen.accountsKey(id).label`), and a message its word (`messageKeyOf('projects.pendingEntries')`). A test finds an element by its key, never by its text or its place | Each screen, `PartKeys`, `messageKeyOf` |
 | A screen's main action is `BottomButton`: one full-width filled button in the `Scaffold`'s `bottomNavigationBar`, a plus unless the action says otherwise; no screen draws a floating button. Without the permission it shows grayed, never hidden | `lib/ui/bottom_button.dart` |
 | One class to a file: a screen's card, row and dialogs are files of their own | Each feature folder |

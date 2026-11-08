@@ -8,6 +8,7 @@ import '../words/words.dart';
 import 'payment_method.dart';
 import 'payment_methods.dart';
 import 'payment_methods_screen.dart';
+import '../ui/app_color.dart';
 
 /// One payment method: its name, whether it is disabled and, for whoever keeps the settings, a menu of what can be done to it.
 class PaymentMethodRow extends StatelessWidget {
@@ -50,7 +51,7 @@ class PaymentMethodRow extends StatelessWidget {
         title: Text(
           method.name,
           key: PaymentMethodsScreen.nameKey(method.id),
-          style: method.isActive ? null : TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: method.isActive ? null : TextStyle(color: AppColor.quiet.of(context)),
         ),
         subtitle: method.isActive ? null : Text(words.paymentMethodsDisabled, key: PaymentMethodsScreen.disabledKey(method.id)),
         trailing: mayChange

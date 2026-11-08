@@ -12,6 +12,7 @@ import 'category.dart';
 import 'change_item_type_dialog.dart';
 import 'item_columns_screen.dart';
 import 'item_tables_screen.dart';
+import '../ui/app_color.dart';
 
 /// One item under its category: its name and type, or that it is disabled, a handle to drag it, the way into its columns, and a menu of what can be done to it.
 class ItemRow extends StatelessWidget {
@@ -55,7 +56,7 @@ class ItemRow extends StatelessWidget {
       title: Text(
         item.name,
         key: CategoriesScreen.itemNameKey(item.id),
-        style: item.isActive ? null : TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+        style: item.isActive ? null : TextStyle(color: AppColor.quiet.of(context)),
       ),
       subtitle: Text(item.isActive ? words.text(item.type.wordKey) : words.categoriesDisabled, key: CategoriesScreen.itemDetailsKey(item.id)),
       trailing: Row(

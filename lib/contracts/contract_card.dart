@@ -8,6 +8,7 @@ import 'contract.dart';
 import 'contracts.dart';
 import 'contracts_screen.dart';
 import '../ui/labelled_figure.dart';
+import '../ui/app_color.dart';
 
 /// One contract: its contractor, item and unit, how it stands, its value, paid and remaining, with a bar of how much is paid and, for whoever keeps the settings, a menu of what can be done to it.
 class ContractCard extends StatelessWidget {
@@ -35,11 +36,10 @@ class ContractCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
     return Card.outlined(
       key: ContractsScreen.nameKey(contract.id).card,
       margin: const EdgeInsets.only(bottom: 8),
-      shape: contract.isOverrun ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: colors.error)) : null,
+      shape: contract.isOverrun ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: AppColor.refusal.of(context))) : null,
       child: Padding(
         padding: EdgeInsetsDirectional.fromSTEB(16, 8, mayChange ? 4 : 16, 16),
         child: Column(
@@ -64,7 +64,7 @@ class ContractCard extends StatelessWidget {
                       Chip(
                         key: ContractsScreen.standingKey(contract.id),
                         label: Text(words.text(contract.standingWordKey), key: ContractsScreen.standingKey(contract.id).label),
-                        backgroundColor: contract.isOverrun ? colors.errorContainer : colors.surfaceContainerHighest,
+                        backgroundColor: contract.isOverrun ? AppColor.refusalSurface.of(context) : AppColor.mutedSurface.of(context),
                         side: BorderSide.none,
                         visualDensity: VisualDensity.compact,
                       ),
@@ -95,7 +95,7 @@ class ContractCard extends StatelessWidget {
                     children: [
                       LabelledFigure(label: words.contractsValue, figure: contract.isOpenValue ? words.contractsOpen : formatMoney(contract.value), figureKey: ContractsScreen.valueOfKey(contract.id)),
                       LabelledFigure(label: words.contractsPaid, figure: formatMoney(contract.paid), figureKey: ContractsScreen.paidKey(contract.id)),
-                      LabelledFigure(label: words.contractsRemaining, figure: contract.isOpenValue ? '—' : formatMoney(contract.remaining), figureKey: ContractsScreen.remainingKey(contract.id), color: contract.isOverrun ? colors.error : null),
+                      LabelledFigure(label: words.contractsRemaining, figure: contract.isOpenValue ? '—' : formatMoney(contract.remaining), figureKey: ContractsScreen.remainingKey(contract.id), color: contract.isOverrun ? AppColor.refusal.of(context) : null),
                     ],
                   ),
                   if (contract.pending != 0) Text('${words.contractsPending} ${formatMoney(contract.pending)}', key: ContractsScreen.pendingKey(contract.id), style: theme.textTheme.bodySmall),
@@ -103,7 +103,7 @@ class ContractCard extends StatelessWidget {
                   LinearProgressIndicator(
                     key: ContractsScreen.progressKey(contract.id),
                     value: contract.progress,
-                    color: contract.isOverrun ? colors.error : (contract.isOpenValue ? colors.outline : null),
+                    color: contract.isOverrun ? AppColor.refusal.of(context) : (contract.isOpenValue ? AppColor.outline.of(context) : null),
                   ),
                 ],
               ),

@@ -18,6 +18,7 @@ import '../words/words.dart';
 import 'approvals.dart';
 import 'pending_approval.dart';
 import 'reject_sheet.dart';
+import '../ui/app_color.dart';
 
 /// Finance's inbox (UC-031, UC-032): what waits, oldest first, to approve one at a time or many at once, or to reject saying why.
 class ApprovalsScreen extends StatefulWidget {
@@ -181,7 +182,6 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    final colors = Theme.of(context).colorScheme;
     final mayDecide = _mayDecide;
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.approvalsTitle, subject: widget.project.name)),
@@ -228,7 +228,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
               itemBuilder: (entry) => Card.outlined(
                       key: ApprovalsScreen.cardKey(entry.id),
                       margin: const EdgeInsets.only(bottom: 8),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: EntryStatus.pendingApproval.sideIn(Theme.of(context).colorScheme)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: EntryStatus.pendingApproval.sideIn(context)),
                       child: Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(4, 8, 12, 8),
                         child: Column(
@@ -247,7 +247,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
                             ),
                             if (_failed.containsKey(entry.id)) Padding(
                               padding: const EdgeInsetsDirectional.only(start: 12, top: 4),
-                              child: Text(words.text(_failed[entry.id]!), key: ApprovalsScreen.failedKey(entry.id), style: TextStyle(color: colors.error)),
+                              child: Text(words.text(_failed[entry.id]!), key: ApprovalsScreen.failedKey(entry.id), style: TextStyle(color: AppColor.refusal.of(context))),
                             ),
                             Wrap(
                               alignment: WrapAlignment.end,
@@ -262,7 +262,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
                                 if (mayDecide) ...[
                                   OutlinedButton(
                                     key: ApprovalsScreen.rejectKey(entry.id),
-                                    style: OutlinedButton.styleFrom(foregroundColor: colors.error),
+                                    style: OutlinedButton.styleFrom(foregroundColor: AppColor.refusal.of(context)),
                                     onPressed: () => _askToReject(entry),
                                     child: Text(words.approvalsReject, key: ApprovalsScreen.rejectKey(entry.id).label),
                                   ),

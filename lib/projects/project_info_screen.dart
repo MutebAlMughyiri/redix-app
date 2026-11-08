@@ -12,6 +12,7 @@ import 'add_unit_dialog.dart';
 import 'project.dart';
 import 'projects.dart';
 import 'unit_row.dart';
+import '../ui/app_color.dart';
 
 /// More info (معلومات المشروع, redix-api 93): the project's own record on one page, its name, start date, status, units and description. Everyone in the project reads it;
 /// whoever manages it renames it, adds, renames and deletes units, keeps its description and closes it, while it is open (AC-04.1).
@@ -217,7 +218,7 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
                   Chip(
                     key: ProjectInfoScreen.statusKey,
                     label: Text(words.text(project.status.wordKey), key: ProjectInfoScreen.statusKey.label),
-                    backgroundColor: project.status == ProjectStatus.active ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest,
+                    backgroundColor: project.status == ProjectStatus.active ? AppColor.activeSurface.of(context) : AppColor.mutedSurface.of(context),
                     side: BorderSide.none,
                     visualDensity: VisualDensity.compact,
                   ),
@@ -248,7 +249,7 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
                 const Divider(height: 32),
                 OutlinedButton.icon(
                   key: ProjectInfoScreen.closeKey,
-                  style: OutlinedButton.styleFrom(foregroundColor: theme.colorScheme.error),
+                  style: OutlinedButton.styleFrom(foregroundColor: AppColor.refusal.of(context)),
                   icon: Icon(Icons.lock_outline, key: ProjectInfoScreen.closeKey.icon),
                   label: Text(words.projectsClose, key: ProjectInfoScreen.closeKey.label),
                   onPressed: () => _askToClose(project),

@@ -5,6 +5,7 @@ import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'session.dart';
 import 'sign_in_screen.dart';
+import '../ui/app_color.dart';
 
 /// The change-password screen (UC-003, غيّر كلمة المرور): the current password and the new one twice. While the password is temporary the
 /// router keeps the user here, so the change cannot be skipped (AC-02.1).
@@ -112,7 +113,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             ),
             if (_message.isNotEmpty) ...[
               const SizedBox(height: 16),
-              Text(words.text(_message), key: ChangePasswordScreen.messageKey, style: TextStyle(color: theme.colorScheme.error)),
+              Text(words.text(_message), key: ChangePasswordScreen.messageKey, style: TextStyle(color: AppColor.refusal.of(context))),
             ],
           ],
         ),

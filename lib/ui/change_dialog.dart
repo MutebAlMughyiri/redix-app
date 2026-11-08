@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../words/words.dart';
 import 'part_keys.dart';
+import 'app_color.dart';
 
 /// A dialog that sends a change: it closes once saved, and a refusal stays in it with what was typed.
 class ChangeDialog extends StatefulWidget {
@@ -77,7 +78,7 @@ class _ChangeDialogState extends State<ChangeDialog> {
               Text(
                 words.text(_message),
                 key: ChangeDialog.messageKey,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+                style: TextStyle(color: AppColor.refusal.of(context)),
               ),
             ],
           ],

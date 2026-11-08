@@ -10,6 +10,7 @@ import 'categories.dart';
 import 'categories_screen.dart';
 import 'category.dart';
 import 'item_row.dart';
+import '../ui/app_color.dart';
 
 /// One category of the list: its name, how many items it holds or that it is disabled, and a handle to drag it. Opened, it shows what can be done to it, and its items.
 class CategoryCard extends StatelessWidget {
@@ -80,7 +81,6 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final mayChange = project.mayChangeStructure;
-    final colors = Theme.of(context).colorScheme;
     return Card.outlined(
       key: CategoriesScreen.cardKey(category.id).card,
       margin: const EdgeInsets.only(bottom: 12),
@@ -94,7 +94,7 @@ class CategoryCard extends StatelessWidget {
         title: Text(
           category.name,
           key: CategoriesScreen.categoryNameKey(category.id),
-          style: TextStyle(fontWeight: FontWeight.w700, color: category.isActive ? null : colors.onSurfaceVariant),
+          style: TextStyle(fontWeight: FontWeight.w700, color: category.isActive ? null : AppColor.quiet.of(context)),
         ),
         subtitle: Text(
           category.isActive ? '${words.categoriesItems}: ${category.items.length}' : words.categoriesDisabled,

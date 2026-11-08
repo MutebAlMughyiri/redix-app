@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../ui/app_color.dart';
+
 /// Where an entry stands, named as the API names it (findings row 163).
 enum EntryStatus {
   /// Saved by who entered it, and seen by nobody's inbox.
@@ -20,9 +22,9 @@ enum EntryStatus {
   /// Whether its color marks an entry's frame and words: while it waits for a decision, and once it is rejected (redix-app #90).
   bool get isMarked => this == pendingApproval || this == rejected;
 
-  /// Its color: orange while it waits, the theme's error color once rejected, and the theme's outline otherwise (redix-app #90, D1).
-  Color colorIn(ColorScheme colors) => this == pendingApproval ? Colors.orange.shade700 : this == rejected ? colors.error : colors.outlineVariant;
+  /// Its color: waiting while it waits, refusal once rejected, and a card's frame otherwise (redix-app #90, D1).
+  AppColor get color => this == pendingApproval ? AppColor.waiting : this == rejected ? AppColor.refusal : AppColor.frame;
 
-  /// The side of an entry's frame: its color, a little heavier where it marks the entry (D5); [BorderSide.none], the frame's own outline, otherwise.
-  BorderSide sideIn(ColorScheme colors) => isMarked ? BorderSide(color: colorIn(colors), width: 1.5) : BorderSide.none;
+  /// The side of an entry's frame in the theme of [context]: its color, a little heavier where it marks the entry (D5); [BorderSide.none], the frame's own outline, otherwise.
+  BorderSide sideIn(BuildContext context) => isMarked ? BorderSide(color: color.of(context), width: 1.5) : BorderSide.none;
 }

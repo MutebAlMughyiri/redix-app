@@ -81,6 +81,7 @@ import 'words/no_words_screen.dart';
 import 'words/words.dart';
 import 'config/app_config.dart';
 import 'entries/entry_link_screen.dart';
+import 'ui/app_color.dart';
 
 /// Starts the app with the session and the language kept from an earlier start, if any. An app built without its environment's config
 /// file stops here, rather than calling an address nobody chose.
@@ -490,7 +491,7 @@ class _RedixAppState extends State<RedixApp> {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: [for (final language in Words.languages) Locale(language)],
-        theme: ThemeData(colorSchemeSeed: const Color(0xFF0E6B68), fontFamily: 'IBMPlexSansArabic', inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder())),
+        theme: ThemeData(colorSchemeSeed: AppColor.seed, fontFamily: 'IBMPlexSansArabic', inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder())),
         builder: (context, child) => Words.of(context).isEmpty
             ? NoWordsScreen(onRetry: _reloadWords)
             : child ?? const SizedBox.shrink(),

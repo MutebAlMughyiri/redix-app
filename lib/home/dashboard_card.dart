@@ -8,6 +8,7 @@ import '../reports/dashboard.dart';
 import '../ui/api_object_body.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
+import '../ui/app_color.dart';
 
 /// The project's figures at a glance (UC-049): what waits for approval, the surplus, the completion (UC-063), the reconciliation difference, and revenue and expenses, each opening to its categories and each category to its items, رأس المال among them (redix-api #109).
 class DashboardCard extends StatefulWidget {
@@ -159,7 +160,7 @@ class _DashboardCardState extends State<DashboardCard> {
           Card.filled(
             key: DashboardCard.pendingKey.card,
             margin: EdgeInsets.zero,
-            color: theme.colorScheme.tertiaryContainer,
+            color: AppColor.noticeSurface.of(context),
             child: ListTile(
               key: DashboardCard.pendingKey,
               title: Text(words.dashboardPending.replaceFirst('{0}', '${figures.waiting.count}'), key: DashboardCard.pendingKey.title),

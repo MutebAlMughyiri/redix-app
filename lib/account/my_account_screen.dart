@@ -7,6 +7,7 @@ import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
+import '../ui/app_color.dart';
 
 /// My account (حسابي): the user's own settings: signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out (UC-062). The language
 /// is chosen in Settings (UC-004).
@@ -72,7 +73,6 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(words.myAccountTitle, key: ScreenTitle.titleKey)),
       body: ListView(
@@ -91,7 +91,7 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
             ),
           ),
           if (_biometricsMessage.isNotEmpty)
-            Text(words.text(_biometricsMessage), key: MyAccountScreen.biometricsMessageKey, style: TextStyle(color: theme.colorScheme.error)),
+            Text(words.text(_biometricsMessage), key: MyAccountScreen.biometricsMessageKey, style: TextStyle(color: AppColor.refusal.of(context))),
           ListTile(
             key: MyAccountScreen.changePasswordKey,
             contentPadding: EdgeInsets.zero,
@@ -103,8 +103,8 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
           ListTile(
             key: MyAccountScreen.signOutKey,
             contentPadding: EdgeInsets.zero,
-            iconColor: theme.colorScheme.error,
-            textColor: theme.colorScheme.error,
+            iconColor: AppColor.refusal.of(context),
+            textColor: AppColor.refusal.of(context),
             leading: Icon(Icons.logout, key: MyAccountScreen.signOutKey.icon),
             title: Text(words.myAccountSignOut, key: MyAccountScreen.signOutKey.title),
             onTap: _askToSignOut,

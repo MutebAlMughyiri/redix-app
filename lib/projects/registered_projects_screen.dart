@@ -10,6 +10,7 @@ import '../words/words.dart';
 import 'registered_project.dart';
 import 'registered_projects.dart';
 import 'reject_project_dialog.dart';
+import '../ui/app_color.dart';
 
 /// Registered projects (UC-066): what is waiting for the admin, with the manager's details and a decision. This is all the admin can do (BR-29).
 class RegisteredProjectsScreen extends StatefulWidget {
@@ -113,7 +114,7 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
                 ),
                 TextButton(
                   key: RegisteredProjectsScreen.rejectKey(project.id),
-                  style: TextButton.styleFrom(foregroundColor: theme.colorScheme.error),
+                  style: TextButton.styleFrom(foregroundColor: AppColor.refusal.of(context)),
                   onPressed: () => showDialog<void>(
                     context: context,
                     builder: (_) => RejectProjectDialog(project: project, projects: widget.projects),

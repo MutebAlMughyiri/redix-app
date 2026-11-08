@@ -8,6 +8,7 @@ import 'supplier.dart';
 import 'supplier_dialog.dart';
 import 'suppliers.dart';
 import 'suppliers_screen.dart';
+import '../ui/app_color.dart';
 
 /// One supplier: its name, what the register says about it and, for whoever keeps the settings, a menu of what can be done to it.
 class SupplierRow extends StatelessWidget {
@@ -38,7 +39,7 @@ class SupplierRow extends StatelessWidget {
         title: Text(
           supplier.name,
           key: SuppliersScreen.nameKey(supplier.id),
-          style: supplier.isActive ? null : TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: supplier.isActive ? null : TextStyle(color: AppColor.quiet.of(context)),
         ),
         subtitle: Text(supplier.detailsIn(words), key: SuppliersScreen.detailsKey(supplier.id)),
         trailing: mayChange

@@ -51,6 +51,7 @@ import 'entry_share.dart';
 import 'reverse_sheet.dart';
 import 'entry_recording.dart';
 import '../attachments/entry_file.dart';
+import '../ui/app_color.dart';
 
 /// إضافة قيد (UC-022, UC-027, redix-app #84, redix-api #110): one form adds an entry to any table, and the table chosen says what it is. Every entry asks the same things in the
 /// same place: its file, its table and date, its amount, its account and its notes, and is saved as a draft or sent for approval. A table adds only its own: a purchase its
@@ -658,7 +659,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       entryField(key: key, controller: controller, label: label, isNumber: isNumber, isSigned: isSigned, maxLines: maxLines, errorText: errorText, onChanged: (_) => setState(() {}));
 
   List<Widget> _whatItIsFor(Words words) => [
-    if (widget.rejectionReason.isNotEmpty) Text('${words.entriesReason}: ${widget.rejectionReason}', key: AddEntryScreen.rejectionKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+    if (widget.rejectionReason.isNotEmpty) Text('${words.entriesReason}: ${widget.rejectionReason}', key: AddEntryScreen.rejectionKey, style: TextStyle(color: AppColor.refusal.of(context))),
     _tablePicker(),
     PickerField(key: AddEntryScreen.dateKey, label: _nameOf('date', words.expensesDate), value: formatDate(_date), onTap: () => _chooseDate(_date, (date) => _date = date)),
     if (_table.asksContract) ..._theContract(words),
@@ -792,7 +793,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
             IgnorePointer(ignoring: _reading, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: _entryFields(words, ownFields))),
             const SizedBox(height: 16),
             if (_message.isNotEmpty) ...[
-              Text(words.text(_message), key: AddEntryScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              Text(words.text(_message), key: AddEntryScreen.messageKey, style: TextStyle(color: AppColor.refusal.of(context))),
               const SizedBox(height: 8),
             ],
             if (_reading) _readingActions(words) else _formActions(words),
@@ -808,7 +809,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     final status = _row.status;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: Text(words.text(_row.statusWordKey), key: AddEntryScreen.statusKey, style: TextStyle(color: status.isMarked ? status.colorIn(Theme.of(context).colorScheme) : null, fontWeight: FontWeight.w600)),
+      child: Text(words.text(_row.statusWordKey), key: AddEntryScreen.statusKey, style: TextStyle(color: status.isMarked ? status.color.of(context) : null, fontWeight: FontWeight.w600)),
     );
   }
 

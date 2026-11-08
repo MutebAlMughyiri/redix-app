@@ -8,6 +8,7 @@ import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'reconciliation.dart';
+import '../ui/app_color.dart';
 
 /// What each account and custody really holds (UC-041), with the total and the difference as they are typed.
 class ReconcileScreen extends StatefulWidget {
@@ -109,7 +110,7 @@ class _ReconcileScreenState extends State<ReconcileScreen> {
               ),
             Text('${words.reconciliationsActualTotal}: ${formatMoney(_total)}', key: ReconcileScreen.totalKey),
             Text('${words.reconciliationsDifference}: ${formatMoney(_total - figures.surplus)}', key: ReconcileScreen.differenceKey, style: theme.textTheme.titleMedium),
-            if (_message.isNotEmpty) Text(words.text(_message), key: ReconcileScreen.messageKey, style: TextStyle(color: theme.colorScheme.error)),
+            if (_message.isNotEmpty) Text(words.text(_message), key: ReconcileScreen.messageKey, style: TextStyle(color: AppColor.refusal.of(context))),
             FilledButton(key: ReconcileScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.reconciliationsSave, key: ReconcileScreen.saveKey.label)),
           ],
         ),

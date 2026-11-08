@@ -10,6 +10,7 @@ import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_row.dart';
 import 'project_entries.dart';
+import '../ui/app_color.dart';
 
 /// An entry on a list of [project]'s [entries], framed in its status's color: tapping it opens it read only (redix-app #90), and swiping it removes it where the user may delete it (redix-api #102).
 class EntryListTile extends StatelessWidget {
@@ -30,7 +31,7 @@ class EntryListTile extends StatelessWidget {
     rowKey: EntriesScreen.rowKey(entry.id),
     mayRemove: entry.allows(project, Permission.deleteEntries),
     onRemove: () => entries.delete(entry),
-    side: entry.status.sideIn(Theme.of(context).colorScheme),
+    side: entry.status.sideIn(context),
     child: EntryTile(entry: entry, onTap: () => EntriesScreen.openEntry(context, project, entry)),
   );
 }
@@ -58,8 +59,8 @@ class EntryTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text([if (!entry.isExpense) words.text(entry.kind.wordKey), if (entry.supplierName.isNotEmpty) entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.replaceFirst('{0}', entry.authorName)].join(' · '), key: EntriesScreen.detailsKey(entry.id)),
-          if (entry.showsStatus) Text(words.text(entry.statusWordKey), key: EntriesScreen.statusKey(entry.id), style: TextStyle(color: entry.status.isMarked ? entry.status.colorIn(theme.colorScheme) : null)),
-          if (entry.isRejected) Text('${words.entriesReason}: ${entry.rejectionReason}', key: EntriesScreen.reasonKey(entry.id), style: TextStyle(color: theme.colorScheme.error)),
+          if (entry.showsStatus) Text(words.text(entry.statusWordKey), key: EntriesScreen.statusKey(entry.id), style: TextStyle(color: entry.status.isMarked ? entry.status.color.of(context) : null)),
+          if (entry.isRejected) Text('${words.entriesReason}: ${entry.rejectionReason}', key: EntriesScreen.reasonKey(entry.id), style: TextStyle(color: AppColor.refusal.of(context))),
         ],
       ),
       trailing: Text(formatMoney(entry.amount), key: EntriesScreen.rowKey(entry.id).trailing, style: theme.textTheme.titleSmall),

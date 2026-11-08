@@ -5,6 +5,7 @@ import '../home/home_screen.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'accounts.dart';
+import '../ui/app_color.dart';
 
 /// What the signed-in user holds, on the project's home (AC-22.1): one card per account, and nothing for someone who holds none.
 class MyCustody extends StatelessWidget {
@@ -27,7 +28,7 @@ class MyCustody extends StatelessWidget {
             Card.filled(
               key: HomeScreen.custodyKey(account.id),
               margin: const EdgeInsets.only(bottom: 12),
-              color: theme.colorScheme.primaryContainer,
+              color: AppColor.activeSurface.of(context),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(

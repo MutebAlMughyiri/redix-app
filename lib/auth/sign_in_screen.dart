@@ -7,6 +7,7 @@ import '../words/app_language.dart';
 import '../words/language_switch.dart';
 import '../words/words.dart';
 import 'session.dart';
+import '../ui/app_color.dart';
 
 /// The sign-in screen (UC-002, تسجيل الدخول): username and password, or a fingerprint or face on a phone that uses them (UC-011), with the language choice at the top so it can be read before signing in (UC-004). A refusal shows as one line that never says which field was wrong (AC-01.2).
 class SignInScreen extends StatefulWidget {
@@ -153,7 +154,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     ? const SizedBox.shrink()
                     : Padding(
                         padding: const EdgeInsets.only(top: 16),
-                        child: Text(words.text(message), key: SignInScreen.messageKey, style: TextStyle(color: theme.colorScheme.error)),
+                        child: Text(words.text(message), key: SignInScreen.messageKey, style: TextStyle(color: AppColor.refusal.of(context))),
                       );
               },
             ),

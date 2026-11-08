@@ -8,6 +8,7 @@ import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'outbox.dart';
 import 'pending_entry.dart';
+import '../ui/app_color.dart';
 
 /// What waits on this phone for the project (UC-029): an entry the network has not taken yet, or one the API refused, which waits for its author.
 class WaitingScreen extends StatelessWidget {
@@ -80,7 +81,7 @@ class WaitingScreen extends StatelessWidget {
                         Text(
                           entry.isRefused ? words.text(entry.refusal) : words.offlineWaiting,
                           key: stateKey(entry.id),
-                          style: TextStyle(color: entry.isRefused ? Theme.of(context).colorScheme.error : null),
+                          style: TextStyle(color: entry.isRefused ? AppColor.refusal.of(context) : null),
                         ),
                         Wrap(
                           alignment: WrapAlignment.end,

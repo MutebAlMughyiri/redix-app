@@ -5,6 +5,7 @@ import '../projects/project.dart';
 import '../words/words.dart';
 import '../entries/add_entry_screen.dart';
 import '../ui/part_keys.dart';
+import '../ui/app_color.dart';
 
 /// The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files. Not shown to whoever may not attach files in [project].
 class InvoiceSection extends StatelessWidget {
@@ -38,7 +39,7 @@ class InvoiceSection extends StatelessWidget {
       return Image.memory(file.bytes, key: AddEntryScreen.invoicePictureKey, fit: BoxFit.cover);
     }
     return ColoredBox(
-      color: theme.colorScheme.surfaceContainerHighest,
+      color: AppColor.mutedSurface.of(context),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -95,7 +96,7 @@ class InvoiceSection extends StatelessWidget {
         ),
         if (message.isNotEmpty) ...[
           const SizedBox(height: 8),
-          Text(words.text(message), key: AddEntryScreen.invoiceMessageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(words.text(message), key: AddEntryScreen.invoiceMessageKey, style: TextStyle(color: AppColor.refusal.of(context))),
         ],
       ],
     );

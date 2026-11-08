@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../words/words.dart';
 import 'part_keys.dart';
 import 'refusal_snack_bar.dart';
+import 'app_color.dart';
 
 /// The one way a row is removed (Muteb, 8 Nov 2026, redix-api #102), and the one frame of a row that can be: an outlined card. Where [mayRemove] is true a red bar lies inside
 /// the card along its end edge (redix-app #88), and the row is swiped from that edge toward its start, which turns with the language, past 40% of its width, with no question;
@@ -34,17 +35,16 @@ class SwipeToRemove extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
     final swipe = rowKey.swipe;
     final framed = Card.outlined(
       key: rowKey.card,
       margin: const EdgeInsets.only(bottom: 8),
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: side == BorderSide.none ? BorderSide(color: colors.outlineVariant) : side),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: side == BorderSide.none ? BorderSide(color: AppColor.frame.of(context)) : side),
       child: Stack(
         children: [
           child,
-          if (mayRemove) PositionedDirectional(key: rowKey.bar, end: 0, top: 0, bottom: 0, width: barWidth, child: ColoredBox(color: colors.error)),
+          if (mayRemove) PositionedDirectional(key: rowKey.bar, end: 0, top: 0, bottom: 0, width: barWidth, child: ColoredBox(color: AppColor.refusal.of(context))),
         ],
       ),
     );
@@ -57,15 +57,15 @@ class SwipeToRemove extends StatelessWidget {
       dismissThresholds: const {DismissDirection.endToStart: 0.4},
       confirmDismiss: (_) => _remove(context),
       background: Container(
-        color: colors.errorContainer,
+        color: AppColor.refusalSurface.of(context),
         padding: const EdgeInsets.symmetric(horizontal: 16),
         alignment: AlignmentDirectional.centerEnd,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           spacing: 6,
           children: [
-            Icon(Icons.delete_outline, key: swipe.icon, color: colors.onErrorContainer),
-            Text(Words.of(context).swipeRemove, key: swipe.label, style: TextStyle(color: colors.onErrorContainer, fontWeight: FontWeight.w600)),
+            Icon(Icons.delete_outline, key: swipe.icon, color: AppColor.onRefusalSurface.of(context)),
+            Text(Words.of(context).swipeRemove, key: swipe.label, style: TextStyle(color: AppColor.onRefusalSurface.of(context), fontWeight: FontWeight.w600)),
           ],
         ),
       ),

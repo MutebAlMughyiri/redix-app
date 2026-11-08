@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../format/number_format.dart';
 import '../ui/part_keys.dart';
+import '../ui/app_color.dart';
 
 /// The reconciliation difference as a band, red while it is not zero (BR-08): the one look the dashboard and Accounts both show (findings row 166).
 class DifferenceBand extends StatelessWidget {
@@ -21,9 +22,9 @@ class DifferenceBand extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isOff = difference != 0;
-    final color = isOff ? theme.colorScheme.onErrorContainer : theme.colorScheme.onSurface;
+    final color = isOff ? AppColor.onRefusalSurface.of(context) : AppColor.text.of(context);
     return ColoredBox(
-      color: isOff ? theme.colorScheme.errorContainer : theme.colorScheme.surfaceContainerHighest,
+      color: isOff ? AppColor.refusalSurface.of(context) : AppColor.mutedSurface.of(context),
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Row(

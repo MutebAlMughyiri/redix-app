@@ -25,6 +25,7 @@ import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'attachable_entries.dart';
 import 'attachable_entry.dart';
+import '../ui/app_color.dart';
 
 /// What opens when a picture or a PDF is shared to the app (UC-038, FR-49): put it on an expense entered without an invoice (UC-039), or start a new expense with it (UC-046).
 class ShareScreen extends StatefulWidget {
@@ -230,7 +231,7 @@ class _ShareScreenState extends State<ShareScreen> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Text(formatMoney(entry.amount), key: ShareScreen.entryKey(entry.id).trailing),
-          if (entry.isMatching) Text(words.shareMatching, key: ShareScreen.matchingKey(entry.id), style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+          if (entry.isMatching) Text(words.shareMatching, key: ShareScreen.matchingKey(entry.id), style: TextStyle(color: AppColor.brand.of(context))),
         ],
       ),
     );
@@ -238,7 +239,7 @@ class _ShareScreenState extends State<ShareScreen> {
 
   List<Widget> _differences(AttachableEntry entry) {
     final words = Words.of(context);
-    final style = TextStyle(color: Theme.of(context).colorScheme.error);
+    final style = TextStyle(color: AppColor.refusal.of(context));
     return [
       if (!_qr.isNone && _qr.total != entry.amount) Text(words.shareAmountDiffers.replaceFirst('{0}', formatMoney(_qr.total)).replaceFirst('{1}', formatMoney(entry.amount)), key: ShareScreen.amountDiffersKey, style: style),
       if (!_qr.isNone && _qr.vatNumber != entry.supplierVatNumber) Text(words.shareSupplierDiffers, key: ShareScreen.supplierDiffersKey, style: style),
@@ -265,7 +266,7 @@ class _ShareScreenState extends State<ShareScreen> {
               child: Column(children: [for (final entry in entries.all) _entryRow(entry)]),
             ),
             for (final entry in chosen) ..._differences(entry),
-            if (_message.isNotEmpty) Text(words.text(_message), key: ShareScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            if (_message.isNotEmpty) Text(words.text(_message), key: ShareScreen.messageKey, style: TextStyle(color: AppColor.refusal.of(context))),
             if (chosen.isNotEmpty) FilledButton(key: ShareScreen.attachKey, onPressed: _saving ? null : _attach, child: Text(words.shareAttach, key: ShareScreen.attachKey.label)),
           ],
         );

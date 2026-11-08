@@ -5,6 +5,7 @@ import '../format/number_format.dart';
 import '../words/words.dart';
 import '../entries/add_entry_screen.dart';
 import '../ui/labelled_figure.dart';
+import '../ui/app_color.dart';
 
 /// What the chosen contract stands at with this payment, before it is saved (AC-12.1): its value, what was paid, what waits, what remains after it, and the alert of an overrun.
 class ContractFigures extends StatelessWidget {
@@ -21,7 +22,7 @@ class ContractFigures extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final theme = Theme.of(context);
-    final error = theme.colorScheme.error;
+    final error = AppColor.refusal.of(context);
     final isOverrun = contract.isOverrunBy(counted);
     final reached = contract.paid + contract.pending + counted;
     return Column(

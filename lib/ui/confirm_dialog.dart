@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../words/words.dart';
 import 'part_keys.dart';
+import 'app_color.dart';
 
 /// Asks before a change that deserves a second thought: what it applies to, what it means, and a red button to go ahead.
 class ConfirmDialog extends StatelessWidget {
@@ -69,7 +70,7 @@ class ConfirmDialog extends StatelessWidget {
         TextButton(key: cancelKey, onPressed: navigator.pop, child: Text(Words.of(context).commonCancel, key: cancelKey.label)),
         FilledButton(
           key: confirmKey,
-          style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+          style: FilledButton.styleFrom(backgroundColor: AppColor.refusal.of(context)),
           onPressed: () {
             navigator.pop();
             onConfirm();

@@ -9,6 +9,7 @@ import 'account.dart';
 import 'account_dialog.dart';
 import 'accounts.dart';
 import 'accounts_screen.dart';
+import '../ui/app_color.dart';
 
 /// One account: its type and who holds it, or that it is disabled, what it holds and, for whoever keeps the settings, a menu of what can be done to it.
 class AccountRow extends StatelessWidget {
@@ -42,7 +43,7 @@ class AccountRow extends StatelessWidget {
         title: Text(
           account.name,
           key: AccountsScreen.nameKey(account.id),
-          style: account.isActive ? null : TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: account.isActive ? null : TextStyle(color: AppColor.quiet.of(context)),
         ),
         subtitle: Text(_details(words), key: AccountsScreen.detailsKey(account.id)),
         trailing: Row(

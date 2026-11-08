@@ -4,6 +4,7 @@ import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'project.dart';
 import 'projects_screen.dart';
+import '../ui/app_color.dart';
 
 /// One project on the list: its name, units and its status. An approved one opens when tapped, and has a star that marks the default.
 class ProjectChoice extends StatelessWidget {
@@ -49,13 +50,13 @@ class ProjectChoice extends StatelessWidget {
                         Text(project.name, key: ProjectsScreen.nameKey(project.id), style: theme.textTheme.titleMedium),
                         Text(project.isFinished ? words.projectsReadOnly : units, key: ProjectsScreen.detailsKey(project.id), style: theme.textTheme.bodySmall),
                         if (project.rejectionReason.isNotEmpty)
-                          Text(project.rejectionReason, key: ProjectsScreen.reasonKey(project.id), style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.error)),
+                          Text(project.rejectionReason, key: ProjectsScreen.reasonKey(project.id), style: theme.textTheme.bodySmall?.copyWith(color: AppColor.refusal.of(context))),
                       ],
                     ),
                     Chip(
                       key: ProjectsScreen.statusKey(project.id),
                       label: Text(words.text(project.status.wordKey), key: ProjectsScreen.statusKey(project.id).label),
-                      backgroundColor: project.status == ProjectStatus.active ? theme.colorScheme.primaryContainer : theme.colorScheme.surfaceContainerHighest,
+                      backgroundColor: project.status == ProjectStatus.active ? AppColor.activeSurface.of(context) : AppColor.mutedSurface.of(context),
                       side: BorderSide.none,
                       visualDensity: VisualDensity.compact,
                     ),
@@ -65,7 +66,7 @@ class ProjectChoice extends StatelessWidget {
               if (project.isApproved)
                 IconButton(
                   key: ProjectsScreen.starKey(project.id),
-                  icon: Icon(isDefault ? Icons.star : Icons.star_border, key: ProjectsScreen.starKey(project.id).icon, color: isDefault ? theme.colorScheme.primary : null),
+                  icon: Icon(isDefault ? Icons.star : Icons.star_border, key: ProjectsScreen.starKey(project.id).icon, color: isDefault ? AppColor.brand.of(context) : null),
                   tooltip: words.projectsDefaultProject,
                   onPressed: onStar,
                 ),
