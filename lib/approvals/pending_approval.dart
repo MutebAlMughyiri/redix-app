@@ -13,12 +13,13 @@ class PendingApproval {
       notes = json['notes'] as String,
       attachmentId = json['attachmentId'] as String,
       contentType = json['contentType'] as String,
-      authorName = json['authorName'] as String;
+      authorName = json['authorName'] as String,
+      partnerName = json['partnerName'] as String;
 
   /// The entry's id.
   final String id;
 
-  /// `purchase` or `contractorPayment`.
+  /// `purchase`, `contractorPayment`, `revenue`, `capitalIn` or `capitalOut`.
   final String kind;
 
   /// Its date.
@@ -50,6 +51,20 @@ class PendingApproval {
 
   /// Who entered it.
   final String authorName;
+
+  /// A capital movement's partner; empty for any other entry (redix-api #101).
+  final String partnerName;
+
+  /// What names it on its card: a capital movement's partner, otherwise its item.
+  String get title => partnerName.isEmpty ? itemName : partnerName;
+
+  /// The word key saying what a capital movement or a revenue entry is; empty for an expense, which its supplier explains.
+  String get kindWordKey => _kindWords[kind] ?? '';
+
+  static const _kindWords = {'capitalIn': 'capital.contribution', 'capitalOut': 'capital.withdrawal', 'revenue': 'categories.tableRevenue'};
+
+  /// True for a purchase.
+  bool get isPurchase => kind == 'purchase';
 
   /// True for a contractor's payment.
   bool get isContractorPayment => kind == 'contractorPayment';

@@ -61,6 +61,35 @@ void main() {
     expect(find.byKey(ApprovalsScreen.cardKey('entry-1')), findsNothing);
   });
 
+  testWidgets('R16: an entry of a partner waits named after the partner and its kind, and a revenue entry after its item', (tester) async {
+    await openInbox(tester, (api) {
+      api
+        ..addPending(kind: 'capitalOut', amount: 300, partnerName: 'نواف')
+        ..addPending(kind: 'revenue', amount: 140);
+    });
+
+    expect(tester.widget<Text>(find.byKey(ApprovalsScreen.itemKey('entry-0'))).data, 'نواف');
+    expect(tester.widget<Text>(find.byKey(ApprovalsScreen.kindKey('entry-0'))).data, 'en capital.withdrawal');
+    expect(tester.widget<Text>(find.byKey(ApprovalsScreen.itemKey('entry-1'))).data, 'بند اللياسة');
+    expect(tester.widget<Text>(find.byKey(ApprovalsScreen.kindKey('entry-1'))).data, 'en categories.tableRevenue');
+  });
+
+  testWidgets('R16: an expense shows no kind line, and the purchases filter leaves out entries of partners and revenue', (tester) async {
+    final api = await openInbox(tester, (api) {
+      api
+        ..addPending()
+        ..addPending(kind: 'capitalIn', partnerName: 'نواف')
+        ..addPending(kind: 'revenue');
+    });
+    expect(find.byKey(ApprovalsScreen.kindKey('entry-0')), findsNothing);
+
+    await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.purchasesKey)));
+
+    expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsOneWidget);
+    expect(find.byKey(ApprovalsScreen.cardKey('entry-1')), findsNothing);
+    expect(find.byKey(ApprovalsScreen.cardKey('entry-2')), findsNothing);
+  });
+
   testWidgets('approving one sends it, and it leaves the inbox', (tester) async {
     final api = await openInbox(tester, (api) => api.addPending());
 

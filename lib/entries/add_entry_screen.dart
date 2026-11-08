@@ -2,6 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'direct_entry_fields.dart';
+import '../revenue/revenues.dart';
+import '../partners/capital.dart';
+import '../accounts/accounts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
@@ -67,6 +71,9 @@ class AddEntryScreen extends StatefulWidget {
     required this.columnsOf,
     required this.attachments,
     required this.capture,
+    required this.revenues,
+    required this.capital,
+    required this.projectAccounts,
   });
 
   /// The entry being changed; empty for a new one.
@@ -110,6 +117,15 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The phone's camera and files.
   final InvoiceCapture capture;
+
+  /// The way to record revenue, for a revenue item's table (redix-api #101).
+  final Revenues revenues;
+
+  /// The way to record a partner's money, for a partner.
+  final Capital capital;
+
+  /// Every active account, which revenue reaches and a partner's money moves through.
+  final Accounts projectAccounts;
 
   /// The screen's route.
   static const path = '/projects/:projectId/entries/new';
@@ -458,7 +474,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         _customValues.clear();
       }
     });
-    if (sameItem) {
+    if (sameItem || table.isDirect) {
       return;
     }
     final columns = widget.columnsOf(table.itemId);
@@ -619,7 +635,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   List<Widget> _whatItIsFor(Words words) => [
     if (widget.rejectionReason.isNotEmpty) Text('${words.entriesReason}: ${widget.rejectionReason}', key: AddEntryScreen.rejectionKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-    TablePicker(key: AddEntryScreen.tableKey, tables: widget.tables, chosen: _table, onChanged: _chooseTable),
+    _tablePicker(),
     PickerField(key: AddEntryScreen.dateKey, label: _nameOf('date', words.expensesDate), value: formatDate(_date), onTap: () => _chooseDate(_date, (date) => _date = date)),
     if (_table.isContract) ..._theContract(words) else ..._thePurchase(words),
     _textField(AddEntryScreen.amountKey, _amount, _labelOf(_table.amountColumn, words.text(_table.amountWordKey)), isNumber: true, isSigned: true, errorText: _errorOf(_table.amountColumn, words)),
@@ -698,6 +714,28 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     if (_asks('notes')) _textField(AddEntryScreen.notesKey, _notes, _labelOf('notes', words.expensesNotes), maxLines: 2, errorText: _errorOf('notes', words)),
   ]);
 
+  Widget _tablePicker() => TablePicker(key: AddEntryScreen.tableKey, tables: widget.tables, chosen: _table, onChanged: _chooseTable);
+
+  /// What a revenue item's table or a partner asks, under the table, sent for approval at once (redix-api #101).
+  List<Widget> _directEntry(Words words) => [
+    FormSection(key: AddEntryScreen.forSectionKey, [_tablePicker()]),
+    DirectEntryFields(
+      key: ValueKey(_table.id),
+      project: widget.project,
+      table: _table,
+      revenues: widget.revenues,
+      capital: widget.capital,
+      accounts: widget.projectAccounts,
+      attachments: widget.attachments,
+      capture: widget.capture,
+      file: _file,
+      onSent: () {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(key: AddEntryScreen.savedMessageKey, content: Text(words.expensesSent, key: AddEntryScreen.savedKey)));
+        context.pop(true);
+      },
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
@@ -716,7 +754,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+          children: _table.isDirect ? _directEntry(words) : [
             InvoiceSection(
               project: widget.project,
               file: _file,

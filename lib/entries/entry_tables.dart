@@ -2,17 +2,17 @@ import '../api_list.dart';
 import '../auth/session.dart';
 import '../structure/item_tables.dart';
 
-/// One table of an item's sheet an expense may go into (redix-app #84). The table says what the entry is: its general or a named one takes a purchase, a contract's a contractor
-/// payment, so what differs between the two is answered here and nowhere else.
+/// One table an entry may go into (redix-app #84, redix-api #101). The table says what the entry is: an expense item's general or named table takes a purchase, a contract's a
+/// contractor payment, a revenue item's table revenue, and a partner their capital's money in or out; what differs between them is answered here and nowhere else.
 class EntryTable {
-  /// The table the API describes in [json], of the item [itemId] named [itemName].
-  EntryTable.fromJson(Map<String, dynamic> json, {required this.itemId, required this.itemName})
+  /// The table the API describes in [json], of the item [itemId] named [itemName], a revenue item when [isRevenue].
+  EntryTable.fromJson(Map<String, dynamic> json, {required this.itemId, required this.itemName, required this.isRevenue})
     : id = json['id'] as String,
       kind = ItemTableKind.values.byName(json['kind'] as String),
       name = json['name'] as String;
 
   /// No table chosen yet, which asks what a purchase asks.
-  EntryTable.none() : id = '', kind = ItemTableKind.general, name = '', itemId = '', itemName = '';
+  EntryTable.none() : id = '', kind = ItemTableKind.general, name = '', itemId = '', itemName = '', isRevenue = false;
 
   /// The subgroup or contract it prints.
   final String id;
@@ -29,11 +29,23 @@ class EntryTable {
   /// Its item's name.
   final String itemName;
 
+  /// True for a revenue item's table, whose entries are revenue.
+  final bool isRevenue;
+
   /// True while none is chosen.
   bool get isNone => id.isEmpty;
 
   /// True for a contract's payments.
   bool get isContract => kind == ItemTableKind.contract;
+
+  /// True for a partner, whose entries are their capital's money in or out.
+  bool get isPartner => kind == ItemTableKind.partner;
+
+  /// True for revenue and a partner's money: Finance enters it and sends it for approval at once, with no draft and none of an expense's fields (redix-api #101, D9).
+  bool get isDirect => isRevenue || isPartner;
+
+  /// The word key saying what its entries are, under its name in the list.
+  String get kindWordKey => isPartner ? 'categories.tableCapital' : isRevenue ? 'categories.tableRevenue' : isContract ? 'categories.tableContract' : 'categories.tablePurchases';
 
   /// The API route its entries are recorded on.
   String get route => isContract ? 'contractor-payments' : 'expenses';
@@ -48,15 +60,19 @@ class EntryTable {
   String get fileWordKey => isContract ? 'contractorPayments.receipt' : 'attachments.invoicePhoto';
 
   /// What a field shows of it: the table, then its sheet, the item, in brackets, as الجلاي (دفعات العظم) (Muteb, 7 Nov 2026); the item's own table is its name alone.
-  String get label => kind == ItemTableKind.general ? itemName : '$name ($itemName)';
+  String get label => isNamedAfterItem ? itemName : '$name ($itemName)';
+
+  /// True for the item's own table, named after it, and for a partner: each shows as its item's row.
+  bool get isNamedAfterItem => kind == ItemTableKind.general || isPartner;
 }
 
 /// An item and the tables of it an expense may go into, in the order its sheet prints them.
 class TableItem {
   /// The item the API describes in [json].
-  TableItem.fromJson(Map<String, dynamic> json) : this._(json['id'] as String, json['name'] as String, json['tables'] as List<dynamic>);
+  TableItem.fromJson(Map<String, dynamic> json) : this._(json['id'] as String, json['name'] as String, json['tables'] as List<dynamic>, json['isRevenue'] as bool);
 
-  TableItem._(this.id, this.name, List<dynamic> tables) : tables = [for (final table in tables) EntryTable.fromJson(table as Map<String, dynamic>, itemId: id, itemName: name)];
+  TableItem._(this.id, this.name, List<dynamic> tables, bool isRevenue)
+    : tables = [for (final table in tables) EntryTable.fromJson(table as Map<String, dynamic>, itemId: id, itemName: name, isRevenue: isRevenue)];
 
   /// The item's id.
   final String id;
@@ -75,8 +91,11 @@ class TableCategory {
     : name = json['name'] as String,
       items = [for (final item in json['items'] as List<dynamic>) TableItem.fromJson(item as Map<String, dynamic>)];
 
-  /// The category's name.
+  /// The category's name; empty for the partners' group, which the API sends with no name (redix-api #101).
   final String name;
+
+  /// True for the partners' group.
+  bool get isPartners => name.isEmpty;
 
   /// Its items that take expenses.
   final List<TableItem> items;

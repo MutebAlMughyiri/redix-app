@@ -10,8 +10,8 @@
 
 **Revenue** lists VAT refunds, sales and other revenue.
 
-- **Revenue** records a VAT refund, a sale or anything else, into an account.
-- **Sales invoice** records the invoice of a sale: the buyer, the buyer's VAT number, its number, date and total. Choose a sale already recorded so its amount counts once, or record it now into an account.
+- To record a VAT refund, a sale or anything else that comes in, open **Add entry** and pick the revenue item in the table list. It waits for approval like an expense, and counts once approved.
+- **Sales invoice** records the invoice of a sale: the buyer, the buyer's VAT number, its number, date and total. Choose a sale already recorded so its amount counts once, or record it now into an account. It waits for approval too.
 
 **Reports › VAT statement** takes a quarter, a half-year or any period as an Excel file: a section per quarter, each purchase and sale with its total. The VAT is worked out in the file from every total, at the configured rate, whether or not the party has a VAT number. REDIX keeps no VAT of its own.
 
@@ -23,7 +23,7 @@
 
 **الإيرادات** تعرض استرجاع الضريبة والبيع والإيرادات الأخرى.
 
-- **إيراد** يسجّل استرجاع ضريبة، أو بيعاً، أو غيره، في حساب.
-- **فاتورة مبيعات** تسجّل فاتورة بيع: المشتري ورقمه الضريبي ورقمها وتاريخها وإجماليها. اختر بيعاً مسجلاً ليُحسب مبلغه مرة واحدة، أو سجّله الآن في حساب.
+- لتسجيل استرجاع ضريبة أو بيع أو غيره مما يدخل، افتح **إضافة قيد** واختر بند الإيراد من قائمة الجداول. وينتظر الاعتماد كالمصروف، ولا يُحسب إلا بعد اعتماده.
+- **فاتورة مبيعات** تسجّل فاتورة بيع: المشتري ورقمه الضريبي ورقمها وتاريخها وإجماليها. اختر بيعاً مسجلاً ليُحسب مبلغه مرة واحدة، أو سجّله الآن في حساب. وتنتظر الاعتماد أيضاً.
 
 **التقارير › كشف ضريبة القيمة المضافة** يأخذ ربعاً أو نصف سنة أو أي فترة ملفَّ Excel: قسماً لكل ربع، وكل شراء وبيع بإجماليه. وتُحسب الضريبة في الملف من كل إجمالي بالنسبة المضبوطة، سواء كان للطرف رقم ضريبي أم لا. ولا يحفظ REDIX أي ضريبة.

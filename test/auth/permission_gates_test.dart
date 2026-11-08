@@ -10,6 +10,7 @@ import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/documents/documents_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
+import 'package:redix/entries/table_picker.dart';
 import 'package:redix/home/dashboard_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/notifications/notifications_bell.dart';
@@ -260,16 +261,21 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))],
     control: _key(AccountsScreen.reconcileKey),
   ),
+  (name: 'Issue a periodic report', permission: Permission.moveMoney, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _key(ReportsScreen.issueKey)),
   (
-    name: 'A capital movement on the partners',
+    name: 'A partner in Add entry\'s table list',
     permission: Permission.moveMoney,
     arrange: (api) => api.addPartner(_project, 'متعب'),
-    steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project))],
-    control: _key(PartnersScreen.moveKey),
+    steps: [_openProject, _tapKey(HomeScreen.addEntryKey(_project)), _tapKey(AddEntryScreen.tableKey)],
+    control: (api) => find.byKey(TablePicker.optionKey(api.partners[_project]!.single['id']! as String)),
   ),
-  (name: 'Issue a periodic report', permission: Permission.moveMoney, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _key(ReportsScreen.issueKey)),
-  (name: 'New revenue', permission: Permission.moveMoney, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.revenueKey(_project))], control: _key(RevenueScreen.newKey)),
-  (name: 'A shared file as a capital receipt', permission: Permission.moveMoney, arrange: _nothing, steps: [_shareAPicture], control: _key(ShareScreen.capitalReceiptKey)),
+  (
+    name: 'A revenue item in Add entry\'s table list',
+    permission: Permission.moveMoney,
+    arrange: (api) => api.addItem(api.addCategory(_project, 'الإيرادات'), 'إيرادات أخرى', type: 'otherRevenue'),
+    steps: [_openProject, _tapKey(HomeScreen.addEntryKey(_project)), _tapKey(AddEntryScreen.tableKey)],
+    control: (api) => find.byKey(TablePicker.categoryKey('الإيرادات')),
+  ),
 ];
 
 void main() {

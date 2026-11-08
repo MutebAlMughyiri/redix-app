@@ -12,7 +12,6 @@ import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
-import 'revenue_form_screen.dart';
 import 'revenue_row.dart';
 import 'revenues.dart';
 import 'sales_invoice_screen.dart';
@@ -28,8 +27,6 @@ class RevenueScreen extends StatefulWidget {
   /// The address of the screen for the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId/revenue';
 
-  /// The button recording revenue.
-  static const newKey = Key('revenue.new');
 
   /// The button recording a sales invoice.
   static const newSaleKey = Key('revenue.newSale');
@@ -112,13 +109,7 @@ class _RevenueScreenState extends State<RevenueScreen> {
           ? SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(8),
-                child: Row(
-                  spacing: 8,
-                  children: [
-                    Expanded(child: FilledButton.icon(key: RevenueScreen.newKey, icon: Icon(Icons.add, key: RevenueScreen.newKey.icon), label: Text(words.revenueNew, key: RevenueScreen.newKey.label), onPressed: () => context.push(RevenueFormScreen.pathOf(project.id), extra: project))),
-                    Expanded(child: FilledButton.tonalIcon(key: RevenueScreen.newSaleKey, icon: Icon(Icons.receipt_outlined, key: RevenueScreen.newSaleKey.icon), label: Text(words.revenueNewSale, key: RevenueScreen.newSaleKey.label), onPressed: () => context.push(SalesInvoiceScreen.pathOf(project.id), extra: project))),
-                  ],
-                ),
+                child: FilledButton.tonalIcon(key: RevenueScreen.newSaleKey, icon: Icon(Icons.receipt_outlined, key: RevenueScreen.newSaleKey.icon), label: Text(words.revenueNewSale, key: RevenueScreen.newSaleKey.label), onPressed: () => context.push(SalesInvoiceScreen.pathOf(project.id), extra: project)),
               ),
             )
           : null,

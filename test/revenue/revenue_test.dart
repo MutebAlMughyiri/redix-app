@@ -5,10 +5,8 @@ import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
 import 'package:redix/revenue/quarter_picker.dart';
-import 'package:redix/revenue/revenue_form_screen.dart';
 import 'package:redix/revenue/revenue_screen.dart';
 import 'package:redix/revenue/sales_invoice_screen.dart';
-import 'package:redix/structure/item_picker.dart';
 
 import '../app_harness.dart';
 
@@ -42,56 +40,11 @@ void main() {
   }
 
   group('UC-047', () {
-    testWidgets('D23: a refund is plain revenue: it goes on its item with its amount and account, and no quarter', (tester) async {
-      late String refunds;
-      final api = await openRevenue(tester, (api) {
-        api.addAccount('project-0', 'البنك');
-        refunds = api.addItem(api.addCategory('project-0', 'استرجاع ضرائب'), 'استرجاع الضرائب', type: 'vatRefund')['id']! as String;
-      });
-      final accountId = api.accounts['project-0']!.single['id']! as String;
-      await act(tester, api, () => tester.tap(find.byKey(RevenueScreen.newKey)));
-
-      await act(tester, api, () => tester.tap(find.byKey(RevenueFormScreen.itemKey)));
-      await act(tester, api, () => tester.tap(find.byKey(ItemPicker.optionKey(refunds))));
-      expect(find.byKey(QuarterPicker.yearKey(2026)), findsNothing);
-      await tester.enterText(find.byKey(RevenueFormScreen.amountKey), '140');
-      await act(tester, api, () => tester.tap(find.byKey(RevenueFormScreen.accountKey(accountId))));
-      await act(tester, api, () => tester.tap(find.byKey(RevenueFormScreen.saveKey)));
-
-      final (path, body) = api.sentMoney.single;
-      expect(path, '/projects/project-0/revenue');
-      expect((body['itemId'], body['amount'], body['accountId'], body.containsKey('periodStart')), (refunds, 140.0, accountId, false));
-    });
-
-    testWidgets('other revenue goes on its item and sends no quarter', (tester) async {
-      late String other;
-      final api = await openRevenue(tester, (api) => other = api.addItem(api.addCategory('project-0', 'إيرادات أخرى'), 'إيرادات أخرى', type: 'otherRevenue')['id']! as String);
-      await act(tester, api, () => tester.tap(find.byKey(RevenueScreen.newKey)));
-
-      await act(tester, api, () => tester.tap(find.byKey(RevenueFormScreen.itemKey)));
-      await act(tester, api, () => tester.tap(find.byKey(ItemPicker.optionKey(other))));
-      await tester.enterText(find.byKey(RevenueFormScreen.amountKey), '70');
-      await act(tester, api, () => tester.tap(find.byKey(RevenueFormScreen.saveKey)));
-
-      expect(api.sentMoney.single.$2.containsKey('periodStart'), isFalse);
-      expect(api.sentMoney.single.$2['itemId'], other);
-    });
-
-    testWidgets('a refused entry says why and stays', (tester) async {
-      final api = await openRevenue(tester, (api) => api.moneyAnswer = (status: 400, code: 'unknownAccount'));
-      await act(tester, api, () => tester.tap(find.byKey(RevenueScreen.newKey)));
-
-      await tester.enterText(find.byKey(RevenueFormScreen.amountKey), '70');
-      await act(tester, api, () => tester.tap(find.byKey(RevenueFormScreen.saveKey)));
-
-      expect(find.text('en revenue.unknownAccount'), findsOneWidget);
-    });
-
-    testWidgets('everyone sees revenue, and only whoever moves money records it', (tester) async {
+    testWidgets('everyone sees revenue, and only whoever moves money issues a sales invoice', (tester) async {
       await openRevenue(tester, (api) => api.addRevenue(), permissions: field);
 
       expect(find.byKey(RevenueScreen.rowKey('revenue-0')), findsOneWidget);
-      expect(find.byKey(RevenueScreen.newKey), findsNothing);
+      expect(find.byKey(RevenueScreen.newSaleKey), findsNothing);
     });
   });
 

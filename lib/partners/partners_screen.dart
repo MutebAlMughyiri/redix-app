@@ -12,7 +12,6 @@ import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'capital.dart';
-import 'capital_move_screen.dart';
 import 'movements_screen.dart';
 import 'partner.dart';
 import 'partner_dialog.dart';
@@ -44,8 +43,6 @@ class PartnersScreen extends StatefulWidget {
   /// The total capital.
   static const totalKey = Key('partners.total');
 
-  /// The button that enters a capital movement.
-  static const moveKey = Key('partners.move');
 
   /// The balance of the partner [id].
   static Key balanceKey(String id) => Key('partners.balance.$id');
@@ -128,8 +125,6 @@ class _PartnersScreenState extends State<PartnersScreen> {
                 Text(formatMoney(figures.total), key: PartnersScreen.totalKey, style: Theme.of(context).textTheme.titleLarge),
               ],
             ),
-            if (widget.project.mayMoveMoney)
-              FilledButton.icon(key: PartnersScreen.moveKey, icon: Icon(Icons.add, key: PartnersScreen.moveKey.icon), label: Text(words.capitalMovement, key: PartnersScreen.moveKey.label), onPressed: () => context.push(CapitalMoveScreen.pathOf(widget.project.id), extra: widget.project)),
           ],
         ),
       ),

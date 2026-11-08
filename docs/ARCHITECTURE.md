@@ -60,9 +60,10 @@ lib/
   contractor_payments/
     contract_figures.dart   what the contract stands at with this payment, and the alert of an overrun
   entries/
-    add_entry_screen.dart   إضافة قيد: one screen adding a purchase or a contractor payment to any table (redix-app #84)
+    add_entry_screen.dart   إضافة قيد: one screen adding any entry to any table: a purchase, a contractor payment, revenue or a partner's money (redix-app #84, redix-api #101)
+    direct_entry_fields.dart what a revenue item's table or a partner asks in Add entry, sent for approval at once
     entry_tables.dart       EntryTable, and EntryTables: the ApiList of every table an expense may go into; the table answers what its entries differ in
-    table_picker.dart       the field that chooses the table, from a sheet by category and item
+    table_picker.dart       the field that chooses the table, from a sheet by category and item, the partners last
     project_entries.dart    ProjectEntries: the ApiList of a project's entries, and what can be done to one
     entry_row.dart          EntryRow, as the API answers it, with what a search matches it by
     entry_tile.dart         one entry on a list

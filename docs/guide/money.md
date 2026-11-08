@@ -14,7 +14,9 @@
 
 **Partners.** The total sits at the top, and each partner shows their balance and share. Tap a partner to see their movements, with the receipt of each.
 
-**Movement** enters what a partner put in or took out. It needs the bank receipt, unless it was paid in cash and you say why. A settlement takes all the partner holds, and they stop being active. Carrying to or from a project asks for that project, its partner and its account, and no receipt.
+**A partner's money in or out** is entered from **Add entry**: pick the partner at the end of the table list, under **Partners**. Off, it is money the partner put in; turn on **Withdrawal** for money they took out. It needs the bank receipt, unless it was paid in cash and you say why. It waits for approval like an expense, and counts in the capital once approved.
+
+<img src="images/add-entry-partner.png" alt="A partner's money in Add entry" width="300">
 
 **A partner who pays with their own money.** Record it in **Partners** as a contribution to their capital, then pay the expense from the account the money went into. An expense is paid only from an account added in **Accounts**.
 
@@ -32,7 +34,7 @@ To correct any of these, reverse it. What was entered together reverses together
 
 **الشركاء.** الإجمالي في الأعلى، ولكل شريك رصيده ونسبته. اضغط الشريك لترى حركاته، ولكلٍّ إيصالها.
 
-**حركة** تُدخل ما أضافه الشريك أو سحبه. تحتاج الإيصال البنكي، إلا إن دُفعت نقداً وذكرت السبب. والتصفية تشمل كل رصيد الشريك، ثم يصبح غير نشط. والترحيل من مشروع أو إليه يسأل عن ذلك المشروع وشريكه وحسابه، بلا إيصال.
+**مال الشريك الداخل أو الخارج** يُدخل من **إضافة قيد**: اختر الشريك في آخر قائمة الجداول، تحت **الشركاء**. وهو مال أضافه الشريك، وفعّل **سحب** لمال سحبه. ويحتاج الإيصال البنكي، إلا إن دُفع نقداً وذكرت السبب. وينتظر الاعتماد كالمصروف، ولا يُحسب في رأس المال إلا بعد اعتماده.
 
 **شريك يدفع من ماله.** سجّل ذلك في **الشركاء** مساهمةً في رأس ماله، ثم ادفع المصروف من الحساب الذي دخله المال. لا يُدفع المصروف إلا من حساب أُضيف في **الحسابات**.
 

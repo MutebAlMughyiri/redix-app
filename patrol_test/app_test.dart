@@ -20,6 +20,7 @@ import 'package:redix/auth/session.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
+import 'package:redix/entries/direct_entry_fields.dart';
 import 'package:redix/entries/table_picker.dart';
 import 'package:redix/expenses/original_invoice_picker.dart';
 import 'package:redix/expenses/payment_choices.dart';
@@ -524,7 +525,7 @@ void main() {
       await $(PartnersScreen.addKey).tap();
       await $(PartnersScreen.partnerNameKey).enterText('هيثم');
       await $(PartnersScreen.saveKey).tap();
-      await idShowing('partners.name.', 'هيثم');
+      final haithamId = await idShowing('partners.name.', 'هيثم');
       await $(PartnersScreen.addKey).tap();
       await $(PartnersScreen.partnerNameKey).enterText('مدير المشروع');
       await $.tester.ensureVisible(find.byKey(MemberPicker.optionKey(reemId)));
@@ -537,6 +538,26 @@ void main() {
       await $.pumpAndSettle();
       await picture('partners');
       await back();
+
+      // redix-api #101: a partner's money is entered from Add entry, picked as a table, and waits for approval.
+      await reach($(HomeScreen.addEntryKey(projectId)));
+      await $(HomeScreen.addEntryKey(projectId)).tap();
+      await reach($(AddEntryScreen.tableKey));
+      await $(AddEntryScreen.tableKey).tap();
+      await goTo($(TablePicker.optionKey(haithamId)));
+      await $(TablePicker.optionKey(haithamId)).tap();
+      await reach($(DirectEntryFields.amountKey));
+      await $(DirectEntryFields.amountKey).enterText('5000');
+      await goTo($(DirectEntryFields.accountKey(cashId)));
+      await $(DirectEntryFields.accountKey(cashId)).tap();
+      await goTo($(DirectEntryFields.cashKey));
+      await $(DirectEntryFields.cashKey).tap();
+      await reach($(DirectEntryFields.reasonKey));
+      await $(DirectEntryFields.reasonKey).enterText('دفعها نقداً في الموقع');
+      await goTo($(DirectEntryFields.sendKey));
+      await picture('add-entry-partner');
+      await $(DirectEntryFields.sendKey).tap();
+      await reach($(HomeScreen.titleKey));
 
       await goTo($(HomeScreen.suppliersKey(projectId)));
 
@@ -900,7 +921,7 @@ void main() {
 
       final words = Words.of($.tester.element(find.byKey(HomeScreen.titleKey)));
       await goTo($(DashboardCard.pendingKey.title));
-      await says(DashboardCard.pendingKey.title, words.dashboardPending.replaceFirst('{0}', '4'));
+      await says(DashboardCard.pendingKey.title, words.dashboardPending.replaceFirst('{0}', '5'));
 
       await goTo($(HomeScreen.approvalsKey(projectId)));
       await $(HomeScreen.approvalsKey(projectId)).tap();

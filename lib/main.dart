@@ -25,7 +25,6 @@ import 'expenses/creditable_invoices.dart';
 import 'expenses/expenses.dart';
 import 'home/home_screen.dart';
 import 'partners/capital.dart';
-import 'partners/capital_move_screen.dart';
 import 'partners/capital_movements.dart';
 import 'partners/movements_screen.dart';
 import 'partners/partners.dart';
@@ -51,7 +50,6 @@ import 'reports/periodic_reports.dart';
 import 'reports/report_files.dart';
 import 'reports/reports_screen.dart';
 import 'reports/vat_statement_screen.dart';
-import 'revenue/revenue_form_screen.dart';
 import 'revenue/revenue_screen.dart';
 import 'revenue/revenues.dart';
 import 'revenue/sales_invoice_screen.dart';
@@ -235,17 +233,6 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(path: RevenueScreen.path, builder: (context, state) => RevenueScreen(project: state.extra! as Project, revenues: _revenuesOf(state.pathParameters['projectId'] ?? ''))),
       GoRoute(
-        path: RevenueFormScreen.path,
-        builder: (context, state) => RevenueFormScreen(
-          project: state.extra! as Project,
-          revenues: _revenuesOf(state.pathParameters['projectId'] ?? ''),
-          items: _revenueItemsOf(state.pathParameters['projectId'] ?? ''),
-          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
-          attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
-          capture: widget.capture,
-        ),
-      ),
-      GoRoute(
         path: SalesInvoiceScreen.path,
         builder: (context, state) => SalesInvoiceScreen(project: state.extra! as Project, revenues: _revenuesOf(state.pathParameters['projectId'] ?? ''), accounts: _accountsOf(state.pathParameters['projectId'] ?? '')),
       ),
@@ -310,21 +297,6 @@ class _RedixAppState extends State<RedixApp> {
         ),
       ),
       GoRoute(
-        path: CapitalMoveScreen.path,
-        builder: (context, state) => CapitalMoveScreen(
-          project: state.extra! as Project,
-          projects: _projects,
-          capital: _capitalOf(state.pathParameters['projectId'] ?? ''),
-          partners: _partnersOf(state.pathParameters['projectId'] ?? ''),
-          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
-          partnersOf: _partnersOf,
-          accountsOf: _accountsOf,
-          attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
-          capture: widget.capture,
-          sharedFile: state.uri.queryParameters.containsKey('shared') ? _shared : PickedFile.none(),
-        ),
-      ),
-      GoRoute(
         path: SuppliersScreen.path,
         builder: (context, state) => SuppliersScreen(
           project: state.extra! as Project,
@@ -384,8 +356,6 @@ class _RedixAppState extends State<RedixApp> {
   Suppliers _suppliersOf(String projectId) => _projectSuppliers.putIfAbsent(projectId, () => Suppliers(widget.session, projectId));
 
   /// Every revenue item of [projectId]: entering revenue of any kind offers them all, and the item chosen says which kind it is.
-  OfferedItems _revenueItemsOf(String projectId) => _offeredItemsOf(projectId, ItemType.otherRevenue);
-
   OfferedItems _offeredItemsOf(String projectId, ItemType type) => _offeredItemLists.putIfAbsent('$projectId/${type.name}', () => OfferedItems(widget.session, projectId, type));
 
   Contracts _contractsOf(String projectId) => _projectContracts.putIfAbsent(projectId, () => Contracts(widget.session, projectId));
@@ -415,6 +385,9 @@ class _RedixAppState extends State<RedixApp> {
     columnsOf: (itemId) => _columnsAt(Columns.itemPath(projectId, itemId)),
     attachments: _attachmentsOf(projectId),
     capture: widget.capture,
+    revenues: _revenuesOf(projectId),
+    capital: _capitalOf(projectId),
+    projectAccounts: _accountsOf(projectId),
   );
 
   Columns _columnsAt(String path) => _columnLists.putIfAbsent(path, () => Columns(widget.session, path));

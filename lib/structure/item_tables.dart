@@ -11,6 +11,9 @@ enum ItemTableKind {
 
   /// A contract's payments, named after its contractor.
   contract,
+
+  /// A partner, whose entries are their capital's money in and out (redix-api #101).
+  partner,
 }
 
 /// One table of an item's sheet (AC-46.8), as the API answers it.

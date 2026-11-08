@@ -251,12 +251,6 @@ mixin WordGetters {
   /// The word `capital.balance`.
   String get capitalBalance => text('capital.balance');
 
-  /// The word `capital.carryIn`.
-  String get capitalCarryIn => text('capital.carryIn');
-
-  /// The word `capital.carryOut`.
-  String get capitalCarryOut => text('capital.carryOut');
-
   /// The word `capital.cash`.
   String get capitalCash => text('capital.cash');
 
@@ -274,9 +268,6 @@ mixin WordGetters {
 
   /// The word `capital.imageTooLarge`.
   String get capitalImageTooLarge => text('capital.imageTooLarge');
-
-  /// The word `capital.inKind`.
-  String get capitalInKind => text('capital.inKind');
 
   /// The word `capital.invalidAmount`.
   String get capitalInvalidAmount => text('capital.invalidAmount');
@@ -302,12 +293,6 @@ mixin WordGetters {
   /// The word `capital.loadFailed`.
   String get capitalLoadFailed => text('capital.loadFailed');
 
-  /// The word `capital.moveTitle`.
-  String get capitalMoveTitle => text('capital.moveTitle');
-
-  /// The word `capital.movement`.
-  String get capitalMovement => text('capital.movement');
-
   /// The word `capital.movements`.
   String get capitalMovements => text('capital.movements');
 
@@ -319,9 +304,6 @@ mixin WordGetters {
 
   /// The word `capital.noPartners`.
   String get capitalNoPartners => text('capital.noPartners');
-
-  /// The word `capital.noTargetProject`.
-  String get capitalNoTargetProject => text('capital.noTargetProject');
 
   /// The word `capital.paidInCash`.
   String get capitalPaidInCash => text('capital.paidInCash');
@@ -359,9 +341,6 @@ mixin WordGetters {
   /// The word `capital.receiptRequiredWord`.
   String get capitalReceiptRequiredWord => text('capital.receiptRequiredWord');
 
-  /// The word `capital.refundableAdvance`.
-  String get capitalRefundableAdvance => text('capital.refundableAdvance');
-
   /// The word `capital.refused`.
   String get capitalRefused => text('capital.refused');
 
@@ -371,38 +350,11 @@ mixin WordGetters {
   /// The word `capital.reversed`.
   String get capitalReversed => text('capital.reversed');
 
-  /// The word `capital.sameProject`.
-  String get capitalSameProject => text('capital.sameProject');
-
   /// The word `capital.save`.
   String get capitalSave => text('capital.save');
 
-  /// The word `capital.saved`.
-  String get capitalSaved => text('capital.saved');
-
-  /// The word `capital.settlementAndExit`.
-  String get capitalSettlementAndExit => text('capital.settlementAndExit');
-
-  /// The word `capital.settlementNotFull`.
-  String get capitalSettlementNotFull => text('capital.settlementNotFull');
-
   /// The word `capital.share`.
   String get capitalShare => text('capital.share');
-
-  /// The word `capital.targetAccount`.
-  String get capitalTargetAccount => text('capital.targetAccount');
-
-  /// The word `capital.targetPartner`.
-  String get capitalTargetPartner => text('capital.targetPartner');
-
-  /// The word `capital.targetProject`.
-  String get capitalTargetProject => text('capital.targetProject');
-
-  /// The word `capital.targetProjectFinished`.
-  String get capitalTargetProjectFinished => text('capital.targetProjectFinished');
-
-  /// The word `capital.targetProjectRefused`.
-  String get capitalTargetProjectRefused => text('capital.targetProjectRefused');
 
   /// The word `capital.total`.
   String get capitalTotal => text('capital.total');
@@ -418,9 +370,6 @@ mixin WordGetters {
 
   /// The word `capital.unknownPartner`.
   String get capitalUnknownPartner => text('capital.unknownPartner');
-
-  /// The word `capital.useCarry`.
-  String get capitalUseCarry => text('capital.useCarry');
 
   /// The word `capital.withdrawal`.
   String get capitalWithdrawal => text('capital.withdrawal');
@@ -514,6 +463,9 @@ mixin WordGetters {
 
   /// The word `categories.subgroupName`.
   String get categoriesSubgroupName => text('categories.subgroupName');
+
+  /// The word `categories.tableCapital`.
+  String get categoriesTableCapital => text('categories.tableCapital');
 
   /// The word `categories.tableContract`.
   String get categoriesTableContract => text('categories.tableContract');
@@ -1099,6 +1051,12 @@ mixin WordGetters {
 
   /// The word `entries.title`.
   String get entriesTitle => text('entries.title');
+
+  /// The word `entries.withdrawal`.
+  String get entriesWithdrawal => text('entries.withdrawal');
+
+  /// The word `entries.withdrawalHint`.
+  String get entriesWithdrawalHint => text('entries.withdrawalHint');
 
   /// The word `expenses.account`.
   String get expensesAccount => text('expenses.account');
@@ -2015,9 +1973,6 @@ mixin WordGetters {
   /// The word `revenue.loadFailed`.
   String get revenueLoadFailed => text('revenue.loadFailed');
 
-  /// The word `revenue.new`.
-  String get revenueNew => text('revenue.new');
-
   /// The word `revenue.newSale`.
   String get revenueNewSale => text('revenue.newSale');
 
@@ -2077,9 +2032,6 @@ mixin WordGetters {
 
   /// The word `share.attached`.
   String get shareAttached => text('share.attached');
-
-  /// The word `share.capitalReceipt`.
-  String get shareCapitalReceipt => text('share.capitalReceipt');
 
   /// The word `share.chooseItem`.
   String get shareChooseItem => text('share.chooseItem');

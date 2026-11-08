@@ -15,7 +15,7 @@
 
 Only the file goes on the expense: an approved one stays approved. The screen says if the amount or the supplier differs from the QR code. The same file cannot go on two expenses.
 
-**New expense with this invoice** opens the expense form with the file and what its QR code says.
+**New entry with this file** opens **Add entry** with the file: an expense takes what its QR code says, and for a partner's bank receipt, pick the partner in the table list.
 
 ## العربية
 
@@ -30,4 +30,4 @@ Only the file goes on the expense: an approved one stays approved. The screen sa
 
 لا يُضاف إلى المصروف إلا الملف: ويبقى المعتمد معتمداً. وتقول الشاشة إن اختلف المبلغ أو المورد عمّا في رمز QR. ولا يُرفق الملف نفسه بمصروفين.
 
-**مصروف جديد بهذه الفاتورة** يفتح نموذج المصروف بالملف وبما في رمز QR.
+**قيد جديد بهذا الملف** يفتح **إضافة قيد** بالملف: يأخذ المصروف ما في رمز QR، ولإيصال بنكي لشريك اختر الشريك من قائمة الجداول.

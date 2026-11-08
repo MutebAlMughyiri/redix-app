@@ -66,7 +66,7 @@ class _RejectSheetState extends State<RejectSheet> {
           spacing: 12,
           children: [
             Text(words.approvalsRejectTitle, key: ApprovalsScreen.rejectTitleKey, style: theme.textTheme.titleLarge),
-            Text('${entry.itemName} · ${entry.supplierName} · ${formatMoney(entry.amount)}', key: ApprovalsScreen.rejectEntryKey),
+            Text([entry.title, if (entry.supplierName.isNotEmpty) entry.supplierName, formatMoney(entry.amount)].join(' · '), key: ApprovalsScreen.rejectEntryKey),
             Text(words.approvalsQuickReason, key: ApprovalsScreen.quickReasonHeadingKey, style: theme.textTheme.titleSmall),
             Wrap(
               spacing: 8,

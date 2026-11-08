@@ -8,7 +8,7 @@
 
 **Who sees it:** whoever does the project's finance, from **Waiting for approval** on the project's home.
 
-Entries show oldest first. **Open the file** shows the invoice; pinch to zoom in.
+Entries show oldest first: expenses, revenue and partners' money alike, each named by its item, or by its partner and whether it is money in or out. **Open the file** shows the invoice; pinch to zoom in.
 
 - **Approve** approves one. To approve many, tick them and tap **Approve selected**. What could not be approved stays, saying why.
 - **Reject** asks why. Pick a quick reason or type one. The reason returns to who entered it, to fix and send again.
@@ -21,7 +21,7 @@ A credit note goes only with or after the invoice it returns. Approving the firs
 
 **من يراها:** من يتولى مالية المشروع، من **بانتظار الاعتماد** في الصفحة الرئيسية للمشروع.
 
-تظهر القيود بالأقدم أولاً. **فتح الملف** يعرض الفاتورة؛ قرّب بإصبعين للتكبير.
+تظهر القيود بالأقدم أولاً: المصروفات والإيرادات ومال الشركاء معاً، وكل قيد باسم بنده، أو باسم شريكه ونوع حركته. **فتح الملف** يعرض الفاتورة؛ قرّب بإصبعين للتكبير.
 
 - **اعتماد** يعتمد قيداً واحداً. لاعتماد عدة قيود، حدّدها واضغط **اعتماد المحدد**. ما تعذر اعتماده يبقى مع سببه.
 - **رفض** يسأل عن السبب. اختر سبباً سريعاً أو اكتبه. يعود السبب لمن أدخله ليعدّل ويعيد الإرسال.

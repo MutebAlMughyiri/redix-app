@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../format/number_format.dart';
-import '../structure/item_tables.dart';
 import '../suppliers/arabic_spelling.dart';
 import '../ui/api_list_body.dart';
 import '../ui/part_keys.dart';
@@ -78,17 +77,17 @@ class _TableSheetState extends State<_TableSheet> {
   /// The item's general table, or its name when it takes no purchase, and under it each of its other [kept] tables.
   List<Widget> _rowsOf(TableItem item, List<EntryTable> kept) {
     final words = Words.of(context);
-    final general = kept.where((table) => table.kind == ItemTableKind.general);
+    final general = kept.where((table) => table.isNamedAfterItem);
     ListTile row(EntryTable table, String title, {double indent = 16}) => ListTile(
       key: TablePicker.optionKey(table.id),
       contentPadding: EdgeInsetsDirectional.only(start: indent, end: 16),
       title: Text(title, key: TablePicker.optionKey(table.id).title),
-      subtitle: Text(table.isContract ? words.categoriesTableContract : words.categoriesTablePurchases, key: TablePicker.optionKey(table.id).subtitle),
+      subtitle: Text(words.text(table.kindWordKey), key: TablePicker.optionKey(table.id).subtitle),
       onTap: () => Navigator.of(context).pop(table),
     );
     return [
       if (general.isEmpty) ListTile(key: TablePicker.itemKey(item.id), title: Text(item.name, key: TablePicker.itemKey(item.id).title), enabled: false) else row(general.first, item.name),
-      for (final table in kept.where((table) => table.kind != ItemTableKind.general)) row(table, table.name, indent: 40),
+      for (final table in kept.where((table) => !table.isNamedAfterItem)) row(table, table.name, indent: 40),
     ];
   }
 
@@ -125,12 +124,13 @@ class _TableSheetState extends State<_TableSheet> {
                 emptyText: words.categoriesEmpty,
                 itemBuilder: (category) {
                   final items = [for (final item in category.items) (item, _keptOf(item))].where((pair) => pair.$2.isNotEmpty).toList();
+                  final title = category.isPartners ? words.partnersTitle : category.name;
                   return items.isEmpty
                       ? const SizedBox.shrink()
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(category.name, key: TablePicker.categoryKey(category.name), style: Theme.of(context).textTheme.titleSmall),
+                            Text(title, key: TablePicker.categoryKey(title), style: Theme.of(context).textTheme.titleSmall),
                             for (final (item, kept) in items) ..._rowsOf(item, kept),
                           ],
                         );

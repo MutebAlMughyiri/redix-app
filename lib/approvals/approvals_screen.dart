@@ -30,6 +30,9 @@ class ApprovalsScreen extends StatefulWidget {
   /// The filter showing everything.
   static const allKey = Key('approvals.all');
 
+  /// What a capital movement or a revenue entry is, on the card of the entry [id] (redix-api #101).
+  static Key kindKey(String id) => Key('approvals.kind.$id');
+
   /// The filter showing purchases.
   static const purchasesKey = Key('approvals.purchases');
 
@@ -121,7 +124,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
 
   bool _isShown(PendingApproval entry) => switch (_filter) {
     _Filter.all => true,
-    _Filter.purchases => !entry.isContractorPayment,
+    _Filter.purchases => entry.isPurchase,
     _Filter.contractorPayments => entry.isContractorPayment,
   };
 
@@ -163,8 +166,9 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 2,
       children: [
-        Text(entry.itemName, key: ApprovalsScreen.itemKey(entry.id), style: theme.textTheme.titleSmall),
+        Text(entry.title, key: ApprovalsScreen.itemKey(entry.id), style: theme.textTheme.titleSmall),
         if (entry.supplierName.isNotEmpty) Text(entry.supplierName, key: ApprovalsScreen.supplierKey(entry.id)),
+        if (entry.kindWordKey.isNotEmpty) Text(words.text(entry.kindWordKey), key: ApprovalsScreen.kindKey(entry.id)),
         Text([if (entry.invoiceNumber.isNotEmpty) entry.invoiceNumber, formatDate(entry.date)].join(' · '), key: ApprovalsScreen.dateKey(entry.id), style: small),
         Text('${words.approvalsEnteredBy}: ${entry.authorName} · ${entry.accountName}', key: ApprovalsScreen.enteredByKey(entry.id), style: small),
         if (entry.notes.isNotEmpty) Text(entry.notes, key: ApprovalsScreen.notesKey(entry.id), style: small),
