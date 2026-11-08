@@ -140,6 +140,47 @@ void main() {
     expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.reversed');
   });
 
+  testWidgets('Muteb, 9 Nov 2026: whoever approves finds اعتماد beside Edit on a waiting entry read only, and approving it there approves it and goes back to the list', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(), permissions: managerAndFinance);
+    await openActions(tester, api, 'entry-0');
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.approveKey.label)).data, 'en approvals.approve');
+    expect(find.byKey(AddEntryScreen.changeKey), findsOneWidget);
+
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.approveKey)));
+
+    expect(api.sentApprovals.single, ['entry-0']);
+    expect(find.byKey(AddEntryScreen.approveKey), findsNothing);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
+  });
+
+  testWidgets('Muteb, 9 Nov 2026: without Approve entries, اعتماد on a waiting entry shows grayed', (tester) async {
+    final field_ = await openEntries(tester, (api) => api.addEntry());
+    await openActions(tester, field_, 'entry-0');
+
+    expect(isEnabled(tester, AddEntryScreen.approveKey), isFalse);
+    expect(field_.sentApprovals, isEmpty);
+  });
+
+  testWidgets('Muteb, 9 Nov 2026: اعتماد on a draft or an approved entry is not offered, even to whoever approves', (tester) async {
+    final api = await openEntries(tester, (api) => api..addEntry(status: 'draft')..addEntry(status: 'approved'), permissions: managerAndFinance);
+    await openActions(tester, api, 'entry-0');
+    expect(find.byKey(AddEntryScreen.approveKey), findsNothing);
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+    await openActions(tester, api, 'entry-1');
+    expect(find.byKey(AddEntryScreen.approveKey), findsNothing);
+  });
+
+  testWidgets('Muteb, 9 Nov 2026: an approval the API refuses for that entry says why, and the entry stays open', (tester) async {
+    final api = await openEntries(tester, (api) => api..addEntry()..approvalFailures['entry-0'] = 'entryNotPending', permissions: managerAndFinance);
+    await openActions(tester, api, 'entry-0');
+
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.approveKey)));
+
+    expect(find.text('en approvals.entryNotPending'), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.approveKey), findsOneWidget);
+  });
+
   testWidgets('a draft of their own can be changed, sent or swiped away', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'));
     expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsOneWidget);

@@ -21,7 +21,7 @@ Tap an entry to open it as it was filled, its photo included, and see what you c
 | It is | Who | What they can do |
 | --- | --- | --- |
 | A draft | Who entered it | **Edit**, **Send for approval**; swipe its row to delete |
-| Waiting for approval | Finance | **Edit**; swipe its row to delete |
+| Waiting for approval | Finance | **Edit**, and **Approve** for whoever approves entries; swipe its row to delete |
 | Rejected | Who entered it, and Finance | **Fix and send again**; swipe its row to delete. The reason shows at the top |
 | Approved | Finance | **Remove**, saying why: it reverses the entry. **Edit** is grayed |
 
@@ -46,7 +46,7 @@ An approved entry never changes. Reversing it adds an opposite entry tied to it,
 | حالته | من | ما يمكنه |
 | --- | --- | --- |
 | مسودة | من أدخله | **تعديل**، **إرسال للاعتماد**؛ واسحب السطر لحذفه |
-| بانتظار الاعتماد | المالي | **تعديل**؛ واسحب السطر لحذفه |
+| بانتظار الاعتماد | المالي | **تعديل**، و**اعتماد** لمن يعتمد القيود؛ واسحب السطر لحذفه |
 | مرفوض | من أدخله والمالي | **تعديل وإعادة إرسال**؛ واسحب السطر لحذفه. يظهر السبب أعلى النموذج |
 | معتمد | المالي | **حذف** مع ذكر السبب، فيُعكس القيد. و**تعديل** رمادي |
 

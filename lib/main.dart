@@ -402,6 +402,7 @@ class _RedixAppState extends State<RedixApp> {
     attachments: _attachmentsOf(projectId),
     capture: widget.capture,
     entries: _entriesOf(projectId),
+    approvals: _approvalsOf(projectId),
     projectAccounts: _accountsOf(projectId),
   );
 

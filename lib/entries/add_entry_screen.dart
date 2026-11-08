@@ -47,6 +47,7 @@ import 'table_picker.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import 'entry_row.dart';
+import '../approvals/approvals.dart';
 import 'entry_share.dart';
 import 'reverse_sheet.dart';
 import 'entry_recording.dart';
@@ -80,6 +81,7 @@ class AddEntryScreen extends StatefulWidget {
     required this.attachments,
     required this.capture,
     required this.entries,
+    required this.approvals,
     required this.projectAccounts,
   });
 
@@ -130,6 +132,9 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The project's entries, from which a recorded one is shared.
   final ProjectEntries entries;
+
+  /// The entries waiting for a decision, through which an entry read only is approved (Muteb, 9 Nov 2026).
+  final Approvals approvals;
 
   /// The project's accounts, any active one of which revenue reaches and a partner's money moves through.
   final Accounts projectAccounts;
@@ -305,6 +310,9 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The button reversing an approved entry, which reads حذف (Muteb, 9 Nov 2026).
   static const reverseKey = Key('addEntry.reverse');
+
+  /// The button approving an entry read only that waits, beside تعديل; grayed for whoever may not approve (Muteb, 9 Nov 2026).
+  static const approveKey = Key('addEntry.approve');
 
   /// The title bar's button sharing an entry read only (redix-app #83).
   static const shareKey = Key('addEntry.share');
@@ -813,8 +821,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     );
   }
 
-  /// What an entry read only offers at its bottom (redix-app #90, D3, D4): تعديل, grayed with the reason where it cannot work; a draft's إرسال للاعتماد; and حذف, which
-  /// reverses an approved entry, for whoever approves.
+  /// What an entry read only offers at its bottom (redix-app #90, D3, D4): تعديل, grayed with the reason where it cannot work; اعتماد beside it on a waiting entry, grayed
+  /// for whoever may not approve (Muteb, 9 Nov 2026); a draft's إرسال للاعتماد; and حذف, which reverses an approved entry, for whoever approves.
   Widget _readingActions(Words words) {
     final row = _row;
     final mayChange = row.allows(widget.project, row.kind.recordedWith);
@@ -834,6 +842,10 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                 child: Text(row.isRejected ? words.entriesFix : words.entriesEdit, key: AddEntryScreen.changeKey.label),
               ),
             ),
+            if (row.isPending)
+              Expanded(
+                child: FilledButton.tonal(key: AddEntryScreen.approveKey, onPressed: widget.project.mayApproveEntries ? () => _approve(row) : null, child: Text(words.approvalsApprove, key: AddEntryScreen.approveKey.label)),
+              ),
             if (row.isDraft && mayChange) Expanded(child: OutlinedButton(key: AddEntryScreen.sendDraftKey, onPressed: () => _sendDraft(row), child: Text(words.entriesSend, key: AddEntryScreen.sendDraftKey.label))),
             if (mayReverse)
               Expanded(
@@ -844,6 +856,23 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         if (!mayChange) Text(words.text(row.isApproved ? 'entries.approvedCannotChange' : 'entries.notYours'), key: AddEntryScreen.cannotChangeKey, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
+  }
+
+  /// Approves [row] as Approvals does, then reads the entries again and goes back to them; what the API could not approve shows why, and the page stays.
+  Future<void> _approve(EntryRow row) async {
+    final refusal = await showRefusalOf(context, widget.approvals.approve([row.id]));
+    if (refusal.isNotEmpty || !mounted) {
+      return;
+    }
+    final failed = widget.approvals.failed[row.id] ?? '';
+    if (failed.isNotEmpty) {
+      showMessage(ScaffoldMessenger.of(context), Words.of(context), failed);
+      return;
+    }
+    await widget.entries.load();
+    if (mounted) {
+      context.pop(true);
+    }
   }
 
   Future<void> _sendDraft(EntryRow row) async {
