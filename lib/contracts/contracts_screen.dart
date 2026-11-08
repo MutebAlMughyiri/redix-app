@@ -10,7 +10,6 @@ import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
-import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'contract.dart';
 import 'contract_card.dart';
@@ -171,7 +170,7 @@ class _ContractsScreenState extends State<ContractsScreen> {
     final project = widget.project;
     final contracts = widget.contracts;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.contractsTitle, subject: project.name), actions: [RefreshButton(onRefresh: contracts.load)]),
+      appBar: AppBar(title: ScreenTitle(words.contractsTitle, subject: project.name)),
       bottomNavigationBar: BottomButton(buttonKey: ContractsScreen.addKey, label: words.contractsNew, onPressed: project.mayManageSettings ? () => _ask(Contract.none()) : null),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

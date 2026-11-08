@@ -8,7 +8,6 @@ import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../ui/swipe_to_remove.dart';
-import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'add_entry_screen.dart';
 import 'entry_filter.dart';
@@ -219,7 +218,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.entriesTitle, subject: widget.project.name), actions: [RefreshButton(onRefresh: widget.entries.load)]),
+      appBar: AppBar(title: ScreenTitle(words.entriesTitle, subject: widget.project.name)),
       body: Column(
         children: [
           ListenableBuilder(listenable: widget.entries, builder: (_, _) => _filters(words)),

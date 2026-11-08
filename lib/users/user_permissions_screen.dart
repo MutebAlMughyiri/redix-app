@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../auth/permission.dart';
-import '../ui/refresh_button.dart';
+import '../ui/api_list_body.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
@@ -43,7 +43,7 @@ class UserPermissionsScreen extends StatelessWidget {
     final words = Words.of(context);
     final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.permissionsTitle, subject: projectName), actions: [RefreshButton(onRefresh: users.load)]),
+      appBar: AppBar(title: ScreenTitle(words.permissionsTitle, subject: projectName)),
       body: ListenableBuilder(
         listenable: users,
         builder: (context, _) {
@@ -52,20 +52,24 @@ class UserPermissionsScreen extends StatelessWidget {
             return const SizedBox.shrink();
           }
           final User user = matching.first;
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-            children: [
-              Text(user.displayName, key: nameKey, style: theme.textTheme.titleMedium),
-              Text(words.permissionsHint, key: hintKey, style: theme.textTheme.bodySmall),
-              const SizedBox(height: 12),
-              for (final permission in Permission.inAProject)
-                PermissionTick(
-                  key: permissionKey(permission),
-                  permission: permission,
-                  value: user.holds(permission),
-                  onChanged: (ticked) => showRefusalOf(context, ticked ? users.give(user, permission) : users.take(user, permission)),
-                ),
-            ],
+          return RefreshIndicator(
+            onRefresh: users.load,
+            child: ListView(
+              physics: ApiListBody.physics,
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+              children: [
+                Text(user.displayName, key: nameKey, style: theme.textTheme.titleMedium),
+                Text(words.permissionsHint, key: hintKey, style: theme.textTheme.bodySmall),
+                const SizedBox(height: 12),
+                for (final permission in Permission.inAProject)
+                  PermissionTick(
+                    key: permissionKey(permission),
+                    permission: permission,
+                    value: user.holds(permission),
+                    onChanged: (ticked) => showRefusalOf(context, ticked ? users.give(user, permission) : users.take(user, permission)),
+                  ),
+              ],
+            ),
           );
         },
       ),

@@ -11,7 +11,6 @@ import 'package:redix/entries/entry_row.dart';
 import 'package:redix/entries/table_picker.dart';
 import 'package:redix/home/home_screen.dart';
 
-import 'package:redix/ui/refresh_button.dart';
 
 import 'package:redix/ui/part_keys.dart';
 
@@ -197,11 +196,12 @@ void main() {
     expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.reversed');
   });
 
-  testWidgets('the refresh button and pulling the list down each read the entries again', (tester) async {
+  testWidgets('Muteb, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the entries again', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry());
+    expect(find.byIcon(Icons.refresh), findsNothing);
 
     api.entryRows.single['status'] = 'approved';
-    await act(tester, api, () => tester.tap(find.byKey(RefreshButton.buttonKey)));
+    await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 500)));
     expect(find.byKey(EntriesScreen.statusKey('entry-0')), findsNothing);
 
     api.entryRows.single['status'] = 'draft';

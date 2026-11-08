@@ -15,7 +15,6 @@ import '../ui/entry_field.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/swipe_to_remove.dart';
-import '../ui/refresh_button.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'documents.dart';
@@ -124,7 +123,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.documentsTitle, subject: widget.project.name), actions: [RefreshButton(onRefresh: widget.documents.load)]),
+      appBar: AppBar(title: ScreenTitle(words.documentsTitle, subject: widget.project.name)),
       bottomNavigationBar: BottomButton(
         buttonKey: DocumentsScreen.addKey,
         label: words.documentsAdd,

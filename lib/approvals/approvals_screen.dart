@@ -11,7 +11,6 @@ import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../ui/reason_sheet.dart';
 import '../ui/screen_title.dart';
-import '../ui/refresh_button.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'approvals.dart';
@@ -183,7 +182,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
     final colors = Theme.of(context).colorScheme;
     final mayDecide = _mayDecide;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.approvalsTitle, subject: widget.project.name), actions: [RefreshButton(onRefresh: widget.approvals.load)]),
+      appBar: AppBar(title: ScreenTitle(words.approvalsTitle, subject: widget.project.name)),
       bottomNavigationBar: !mayDecide || _selected.isEmpty
           ? null
           : BottomButton(buttonKey: ApprovalsScreen.approveSelectedKey, icon: Icons.done_all, label: '${words.approvalsApproveSelected} · ${_selected.length}', onPressed: () => _approve(_selected.toList())),

@@ -18,7 +18,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
   }
 
-  testWidgets('Muteb, 8 and 9 Nov 2026: the home opens Settings from a gear in its top bar, beside Refresh, colored by the theme, and the project card has no Settings button', (tester) async {
+  testWidgets('Muteb, 8 and 9 Nov 2026: the home opens Settings from a gear in its top bar, colored by the theme, and the project card has no Settings button', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
 

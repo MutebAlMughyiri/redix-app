@@ -32,7 +32,6 @@ import '../suppliers/suppliers_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
-import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import '../attachments/invoice_capture.dart';
 
@@ -117,7 +116,7 @@ class HomeScreen extends StatefulWidget {
   /// The way to the reports of the project [id].
   static Key reportsKey(String id) => Key('home.reports.$id');
 
-  /// The way into the settings of the project [id]: an icon beside Refresh (Muteb, 8 Nov 2026).
+  /// The way into the settings of the project [id]: a gear in the top bar (Muteb, 8 and 9 Nov 2026).
   static Key settingsKey(String id) => Key('home.settings.$id');
 
   /// The way to what waits for a decision in the project [id].
@@ -203,7 +202,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          RefreshButton(onRefresh: () => Future.wait([widget.projects.load(), _readAgain()])),
           ListenableBuilder(
             listenable: widget.projects,
             builder: (context, _) {

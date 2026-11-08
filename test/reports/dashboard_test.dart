@@ -9,7 +9,6 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/ui/refresh_button.dart';
 
 import '../app_harness.dart';
 
@@ -106,14 +105,15 @@ void main() {
     expect(find.byKey(EntriesScreen.statusKey('entry-0')), findsNothing);
   });
 
-  testWidgets('the refresh button on home reads the latest entries again', (tester) async {
+  testWidgets('Muteb, 9 Nov 2026: the home has no Refresh button, and pulling it down reads the latest entries again', (tester) async {
     final api = await openHome(tester, (api) {
       api.dashboardAnswer = figures();
       api.addEntry();
     });
 
     api.entryRows.single['status'] = 'approved';
-    await act(tester, api, () => tester.tap(find.byKey(RefreshButton.buttonKey)));
+    expect(find.byIcon(Icons.refresh), findsNothing);
+    await act(tester, api, () => tester.drag(find.byType(ListView).first, const Offset(0, 1500)));
 
     expect(find.byKey(EntriesScreen.statusKey('entry-0')), findsNothing);
   });

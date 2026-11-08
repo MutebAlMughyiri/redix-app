@@ -7,7 +7,7 @@
 ## English
 
 **What it is for:** the way back to your project list, your account and the app's language.
-**Who sees it:** everyone signed in. Open it with the settings button at the top of the project list, or the machine icon beside Refresh at the top of a project's home.
+**Who sees it:** everyone signed in. Open it with the settings button at the top of the project list, or the gear at the top of a project's home.
 
 | Row | Who sees it | Opens |
 | --- | --- | --- |
@@ -20,7 +20,7 @@
 ## العربية
 
 **الغرض:** الرجوع إلى قائمة مشاريعك، والوصول إلى حسابك ولغة التطبيق.
-**من يراها:** كل من سجّل الدخول. افتحها من زر الإعدادات أعلى قائمة المشاريع، أو من أيقونة الآلة بجانب التحديث أعلى الشاشة الرئيسية للمشروع.
+**من يراها:** كل من سجّل الدخول. افتحها من زر الإعدادات أعلى قائمة المشاريع، أو من أيقونة الترس أعلى الشاشة الرئيسية للمشروع.
 
 | الصف | من يراه | يفتح |
 | --- | --- | --- |

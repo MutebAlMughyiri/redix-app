@@ -6,7 +6,6 @@ import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
 import '../ui/screen_title.dart';
-import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'supplier.dart';
 import 'supplier_dialog.dart';
@@ -104,7 +103,7 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
     final project = widget.project;
     final suppliers = widget.suppliers;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.suppliersTitle, subject: project.name), actions: [RefreshButton(onRefresh: suppliers.load)]),
+      appBar: AppBar(title: ScreenTitle(words.suppliersTitle, subject: project.name)),
       bottomNavigationBar: BottomButton(
         buttonKey: SuppliersScreen.addKey,
         label: words.suppliersNew,

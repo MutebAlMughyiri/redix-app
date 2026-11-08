@@ -7,7 +7,6 @@ import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
-import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'categories.dart';
 import 'category.dart';
@@ -152,7 +151,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final categories = widget.categories;
     final project = widget.project;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.categoriesTitle, subject: project.name), actions: [RefreshButton(onRefresh: categories.load)]),
+      appBar: AppBar(title: ScreenTitle(words.categoriesTitle, subject: project.name)),
       bottomNavigationBar: BottomButton(
         buttonKey: CategoriesScreen.addCategoryKey,
         label: words.categoriesNew,

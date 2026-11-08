@@ -10,7 +10,6 @@ import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
-import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'capital.dart';
 import 'movements_screen.dart';
@@ -178,7 +177,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
     final words = Words.of(context);
     final project = widget.project;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.partnersTitle, subject: project.name), actions: [RefreshButton(onRefresh: () => Future.wait([widget.partners.load(), widget.capital.load()]))]),
+      appBar: AppBar(title: ScreenTitle(words.partnersTitle, subject: project.name)),
       bottomNavigationBar: BottomButton(buttonKey: PartnersScreen.addKey, label: words.partnersNew, onPressed: project.mayManageSettings ? () => _ask(Partner.none()) : null),
       body: ApiListBody(
         list: widget.partners,

@@ -194,7 +194,6 @@ lib/
     name_dialog.dart        Asks for one name, for adding or renaming anything in a project
     part_keys.dart          The keys of the parts inside a keyed element: its label, icon, title, subtitle and the field it is drawn as
     picker_field.dart       A field whose value is chosen elsewhere: it looks like a text field, shows what was chosen, and opens the choice when tapped
-    refresh_button.dart     The title bar's button that reads a screen's data again, for what changed elsewhere, such as an approval on another phone
     refusal_snack_bar.dart  The key of the SnackBar saying the word wordKey: every message has its own key, made from what it says, so a test finds it by key
     screen_title.dart       A screen's title in the app bar, with what it belongs to on a line beneath, so a long title on a narrow phone never cuts the name to a letter
     swipe_to_remove.dart    The one way a row is removed: swiped from its end toward its start, which turns with the language, past 40% of its width, with no question

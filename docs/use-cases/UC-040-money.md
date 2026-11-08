@@ -13,13 +13,13 @@ A partner paying with their own money is a capital movement (redix-api #96, D27)
 | Rule | Code | Test |
 | --- | --- | --- |
 | AC-24.1: the card shows the surplus, the total, and the difference in brackets | `ReconciliationCard` | `AC-24.1: the card shows the surplus, the total, and the difference in brackets` |
-| Refreshing Accounts, by the button or by pulling, reads the card above the accounts again | `AccountsScreen` (`alsoRefresh`) | `refreshing, by the button or by pulling the list down, reads the card above the accounts again` |
+| Pulling Accounts down reads the card above the accounts again; there is no Refresh button (Muteb, 9 Nov 2026) | `AccountsScreen` (`alsoRefresh`) | `Muteb, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the card above the accounts again` |
 | Typing a balance shows the total and the difference, and saving sends each | `ReconcileScreen` | `typing a balance shows the total and the difference, and saving sends each` |
 | A balance left empty stops it before it is sent | `ReconcileScreen._save` | `a balance left empty stops it before it is sent` |
 | Only whoever moves money enters balances; everyone sees the card | `AccountsScreen._above`, `Project.mayMoveMoney` | `only whoever moves money enters balances, and everyone sees the card` |
 | Transfers between accounts are gone: FR-23 and AC-23.1 are retired (Muteb, 8 Nov 2026) | `AccountsScreen` | `transfers between accounts are gone: Accounts offers only the actual balances` |
 | AC-27.1: a balance and a share with ten decimals, under the total | `PartnersScreen._row`, `formatShare` | `AC-27.1: each partner shows their balance and a share with ten decimals, under the total` |
-| Refreshing Partners, by the button or by pulling, reads the capital above the partners again | `PartnersScreen` (`alsoRefresh`) | `refreshing, by the button or by pulling the list down, reads the capital above the partners again` |
+| Pulling Partners down reads the capital above the partners again; there is no Refresh button (Muteb, 9 Nov 2026) | `PartnersScreen` (`alsoRefresh`) | `Muteb, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the capital above the partners again` |
 | BR-31: a reader has a way in | `ProjectCard`, `PartnersScreen` | `BR-31: a reader has a way in` |
 | R1: Partners has no حركة; a partner's money is entered from Add entry (redix-api #101) | `PartnersScreen` | `one_entry_test.dart`: R1 |
 | R3, R5, R13, redix-api #109: Finance finds the revenue items, and the partners as the tables of رأس المال, an item like any other, since capital is revenue (BR-06); the search finds رأس المال by its name in either spelling; R9: anyone else neither | `TablePicker`, `EntryTable` | `one_entry_test.dart`: R3, R5, R13; redix-api #109 (the search); R9; `permission_gates_test.dart`: two gates |

@@ -7,7 +7,6 @@ import 'package:redix/accounts/reconciliation_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
-import 'package:redix/ui/refresh_button.dart';
 
 import '../app_harness.dart';
 
@@ -100,7 +99,7 @@ void main() {
       expect(tester.widget<Text>(find.byKey(ReconciliationCard.differenceKey)).data, '(99.25)');
     });
 
-    testWidgets('refreshing, by the button or by pulling the list down, reads the card above the accounts again', (tester) async {
+    testWidgets('Muteb, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the card above the accounts again', (tester) async {
       final (:api, capture: _) = await openAccounts(tester, (api) {
         api
           ..addAccount('project-0', 'حساب')
@@ -108,7 +107,8 @@ void main() {
       });
 
       api.reconciliationAnswer = reconciled(1000, 950);
-      await act(tester, api, () => tester.tap(find.byKey(RefreshButton.buttonKey)));
+      expect(find.byIcon(Icons.refresh), findsNothing);
+      await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 1500)));
       expect(tester.widget<Text>(find.byKey(ReconciliationCard.actualTotalKey)).data, '950.00');
 
       api.reconciliationAnswer = reconciled(1000, 975);
@@ -192,7 +192,7 @@ void main() {
       expect(find.text('2,000.00'), findsOneWidget);
     });
 
-    testWidgets('refreshing, by the button or by pulling the list down, reads the capital above the partners again', (tester) async {
+    testWidgets('Muteb, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the capital above the partners again', (tester) async {
       late String partner;
       final (:api, capture: _) = await openPartners(tester, (api) {
         partner = api.addPartner('project-0', 'متعب')['id']! as String;
@@ -202,7 +202,8 @@ void main() {
       });
 
       api.capitalTotal = 4000;
-      await act(tester, api, () => tester.tap(find.byKey(RefreshButton.buttonKey)));
+      expect(find.byIcon(Icons.refresh), findsNothing);
+      await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 1500)));
       expect(tester.widget<Text>(find.byKey(PartnersScreen.totalKey)).data, '4,000.00');
 
       api.capitalTotal = 5000;

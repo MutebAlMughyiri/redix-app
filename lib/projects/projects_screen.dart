@@ -9,7 +9,6 @@ import '../settings/settings_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
-import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'default_project_toggle.dart';
 import 'new_project_screen.dart';
@@ -93,7 +92,6 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         actions: [
-          RefreshButton(onRefresh: widget.projects.load),
           NotificationsBell(notifications: widget.notifications),
           IconButton(
             key: ProjectsScreen.settingsKey,

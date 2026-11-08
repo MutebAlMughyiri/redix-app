@@ -7,7 +7,6 @@ import '../ui/swipe_to_remove.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
-import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'payment_method_row.dart';
 import 'payment_methods.dart';
@@ -88,7 +87,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     final project = widget.project;
     final paymentMethods = widget.paymentMethods;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.paymentMethodsTitle, subject: widget.project.name), actions: [RefreshButton(onRefresh: paymentMethods.load)]),
+      appBar: AppBar(title: ScreenTitle(words.paymentMethodsTitle, subject: widget.project.name)),
       bottomNavigationBar: BottomButton(
         buttonKey: PaymentMethodsScreen.addKey,
         label: words.paymentMethodsNew,
