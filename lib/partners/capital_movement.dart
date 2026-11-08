@@ -7,7 +7,6 @@ class CapitalMovement {
       date = DateTime.parse(json['date'] as String),
       amount = (json['amount'] as num).toDouble(),
       description = json['description'] as String,
-      cashReason = json['cashReason'] as String,
       accountName = json['accountName'] as String,
       attachmentId = json['attachmentId'] as String,
       contentType = json['contentType'] as String,
@@ -28,9 +27,6 @@ class CapitalMovement {
 
   /// What was said about it.
   final String description;
-
-  /// Why it has no receipt; empty when it has one.
-  final String cashReason;
 
   /// The account it moved through.
   final String accountName;

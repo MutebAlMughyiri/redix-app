@@ -24,8 +24,7 @@ A partner paying with their own money is a capital movement (redix-api #96, D27)
 | R1: Partners has no حركة; a partner's money is entered from Add entry (redix-api #101) | `PartnersScreen` | `direct_entry_test.dart`: R1 |
 | R3, R5, R13, redix-api #109: Finance finds the revenue items, and the partners as the tables of رأس المال, an item like any other, since capital is revenue (BR-06); the search finds رأس المال by its name in either spelling; R9: anyone else neither | `TablePicker`, `EntryTable` | `direct_entry_test.dart`: R3, R5, R13; redix-api #109 (the search); R9; `permission_gates_test.dart`: two gates |
 | R2, R7, R11: a contribution with its receipt is sent for approval; with سحب on, a withdrawal | `DirectEntryFields` | `direct_entry_test.dart`: R2, R7, R11; R7 |
-| AC-25.1: refused without a receipt it says why and keeps what was typed; paid in cash asks why instead | `DirectEntryFields._receipt` | `direct_entry_test.dart`: two AC-25.1 tests |
-| BR-23: a receipt saying another amount warns, and the same amount does not | `DirectEntryFields._receiptDiffers` | `direct_entry_test.dart`: BR-23 |
+| A contribution is one amount, sent as it is, its receipt optional like every entry's: no "paid in cash", no reason, no second amount and no warning (Muteb, 8 Nov 2026; AC-25.1 and BR-23 retired) | `DirectEntryFields`, `EntryFile` | `direct_entry_test.dart`: Muteb, 8 Nov 2026: a contribution is one amount |
 | R3: revenue is sent for approval on its item and table; an amount that is no number stops it | `DirectEntryFields._record` | `direct_entry_test.dart`: R3; R10 |
 | D9: a revenue or partner entry has one button, never a draft | `AddEntryScreen._directEntry` | `direct_entry_test.dart`: D9 |
 | R12, AC-49.4: a shared file offers New entry and no capital receipt, and goes with a partner picked in Add entry | `ShareScreen`, `AddEntryScreen` | `direct_entry_test.dart`: R12 |

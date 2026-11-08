@@ -8,7 +8,7 @@
 
 ## Screens
 
-The picture sits at the top of the new expense, as the canvas's `AddExpense.dc.html` draws it. The camera opens first. The phone's own document scanner (`cunning_document_scanner`) finds the invoice's edges and crops it, so the app draws no camera and no crop of its own. A picture of 1 MB or more is made smaller in `compressedPicture`, and one already smaller stays as it is. The rest of the screen is UC-022 "Enter the expense details".
+The picture sits at the top of every new entry, whatever its table, as the canvas's `AddExpense.dc.html` draws it, and stays there when a table is picked. The camera opens only when asked (Muteb, 8 Nov 2026). The phone's own document scanner (`cunning_document_scanner`) finds the invoice's edges and crops it, so the app draws no camera and no crop of its own. A picture of 1 MB or more is made smaller in `compressedPicture`, and one already smaller stays as it is. The rest of the screen is UC-022 "Enter the expense details".
 
 The project's home, `HomeScreen`:
 
@@ -47,7 +47,7 @@ The contract's dialog, `ContractDialog` (UC-020):
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| FR-10: the camera opens first, and its picture stays on the screen | `AddEntryScreen` | `add_entry_invoice_test`: the camera opens first |
+| FR-10: the camera opens only when asked, and its picture stays on the screen (Muteb, 8 Nov 2026) | `AddEntryScreen`, `EntryFile` | `add_entry_invoice_test`: FR-10 (Muteb, 8 Nov 2026); `direct_entry_test`: Add entry never opens the camera by itself, and the photo stays where it was when a table is picked |
 | FR-10: the scanner finds and crops the invoice | `InvoiceCapture.fromCamera`, by the phone's scanner | Not run: see below |
 | NFR-06, AC-10.1: the file is under 1 MB | `compressedPicture` | `picture_compression_test`: a photo comes back under 1 MB |
 | A picture at most 2000 pixels long stays readable | `compressedPicture` | `picture_compression_test`; the reading itself is not run: see below |

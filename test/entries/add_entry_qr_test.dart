@@ -25,6 +25,7 @@ void main() {
       ..qrText = qrText;
     await openProject(tester, api, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.cameraKey)));
     return (api: api, capture: capture);
   }
 

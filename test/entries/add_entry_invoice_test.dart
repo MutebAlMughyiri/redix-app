@@ -17,11 +17,18 @@ void main() {
     final capture = FakeCapture()..camera = camera ?? PickedFile.none();
     await openProject(tester, api, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
+    if (camera != null) {
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.cameraKey)));
+    }
     return (api: api, capture: capture);
   }
 
-  testWidgets('FR-10: the camera opens first, and the picture it gives stays on the screen', (tester) async {
-    final opened = await openExpense(tester, camera: picture);
+  testWidgets('FR-10 (Muteb, 8 Nov 2026): the camera opens only when asked, and the picture it gives stays on the screen', (tester) async {
+    final opened = await openExpense(tester);
+    expect(opened.capture.cameraOpened, 0);
+
+    opened.capture.camera = picture;
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.cameraKey)));
 
     expect(opened.capture.cameraOpened, 1);
     expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);

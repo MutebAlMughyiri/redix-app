@@ -57,7 +57,7 @@ class EntryTable {
   String get amountWordKey => isContract ? 'expenses.amount' : 'expenses.total';
 
   /// The word key naming its entries' file.
-  String get fileWordKey => isContract ? 'contractorPayments.receipt' : 'attachments.invoicePhoto';
+  String get fileWordKey => isPartner ? 'capital.receiptHint' : isRevenue ? 'revenue.file' : isContract ? 'contractorPayments.receipt' : 'attachments.invoicePhoto';
 
   /// What a field shows of it: the table, then its sheet, the item, in brackets, as الجلاي (دفعات العظم) (Muteb, 7 Nov 2026); the item's own table is its name alone.
   String get label => isNamedAfterItem ? itemName : '$name ($itemName)';

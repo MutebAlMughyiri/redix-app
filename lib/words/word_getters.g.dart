@@ -242,12 +242,6 @@ mixin WordGetters {
   /// The word `capital.balance`.
   String get capitalBalance => text('capital.balance');
 
-  /// The word `capital.cash`.
-  String get capitalCash => text('capital.cash');
-
-  /// The word `capital.cashReason`.
-  String get capitalCashReason => text('capital.cashReason');
-
   /// The word `capital.contribution`.
   String get capitalContribution => text('capital.contribution');
 
@@ -272,9 +266,6 @@ mixin WordGetters {
   /// The word `capital.invalidNotes`.
   String get capitalInvalidNotes => text('capital.invalidNotes');
 
-  /// The word `capital.invalidReason`.
-  String get capitalInvalidReason => text('capital.invalidReason');
-
   /// The word `capital.invoiceAlreadyAttached`.
   String get capitalInvoiceAlreadyAttached => text('capital.invoiceAlreadyAttached');
 
@@ -293,9 +284,6 @@ mixin WordGetters {
   /// The word `capital.noPartners`.
   String get capitalNoPartners => text('capital.noPartners');
 
-  /// The word `capital.paidInCash`.
-  String get capitalPaidInCash => text('capital.paidInCash');
-
   /// The word `capital.partner`.
   String get capitalPartner => text('capital.partner');
 
@@ -305,26 +293,11 @@ mixin WordGetters {
   /// The word `capital.projectFinished`.
   String get capitalProjectFinished => text('capital.projectFinished');
 
-  /// The word `capital.receipt`.
-  String get capitalReceipt => text('capital.receipt');
-
-  /// The word `capital.receiptAmount`.
-  String get capitalReceiptAmount => text('capital.receiptAmount');
-
   /// The word `capital.receiptAttached`.
   String get capitalReceiptAttached => text('capital.receiptAttached');
 
-  /// The word `capital.receiptDiffers`.
-  String get capitalReceiptDiffers => text('capital.receiptDiffers');
-
   /// The word `capital.receiptHint`.
   String get capitalReceiptHint => text('capital.receiptHint');
-
-  /// The word `capital.receiptRequired`.
-  String get capitalReceiptRequired => text('capital.receiptRequired');
-
-  /// The word `capital.receiptRequiredWord`.
-  String get capitalReceiptRequiredWord => text('capital.receiptRequiredWord');
 
   /// The word `capital.refused`.
   String get capitalRefused => text('capital.refused');

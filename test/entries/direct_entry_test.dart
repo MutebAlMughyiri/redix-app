@@ -131,46 +131,33 @@ void main() {
       expect(api.sentMoney.single.$2['type'], 'withdrawal');
     });
 
-    testWidgets('AC-25.1: refused without a receipt, it says why and keeps what was typed', (tester) async {
-      final (:api, capture: _, refund: _, :partner, account: _) = await openAddEntry(tester);
-      api.moneyAnswer = (status: 400, code: 'receiptRequired');
+    testWidgets('Muteb, 8 Nov 2026: a contribution is one amount and is sent as it is, its receipt optional like every entry\'s, with no cash switch and no second amount', (tester) async {
+      final (:api, capture: _, refund: _, :partner, :account) = await openAddEntry(tester);
       await pick(tester, api, partner);
 
+      expect(find.byType(SwitchListTile), findsOneWidget, reason: 'only سحب; no "paid in cash"');
+      expect(find.byKey(DirectEntryFields.amountKey), findsOneWidget);
       await tester.enterText(find.byKey(DirectEntryFields.amountKey), '1000');
+      await act(tester, api, () => tester.tap(find.byKey(DirectEntryFields.accountKey(account))));
       await act(tester, api, () => tester.tap(find.byKey(DirectEntryFields.sendKey)));
 
-      expect(text(tester, DirectEntryFields.messageKey), 'en capital.receiptRequired');
-      expect(tester.widget<TextField>(find.byKey(DirectEntryFields.amountKey)).controller!.text, '1000');
-      expect(find.byKey(messageKeyOf('expenses.sent')), findsNothing);
+      final body = api.sentMoney.single.$2;
+      expect((body['amount'], body.containsKey('attachmentId'), body.containsKey('cashReason')), (1000.0, false, false));
+      expect(text(tester, messageKeyOf('expenses.sent').label), 'en expenses.sent');
     });
 
-    testWidgets('AC-25.1: paid in cash asks why instead of a receipt, and sends the reason', (tester) async {
-      final (:api, capture: _, refund: _, :partner, account: _) = await openAddEntry(tester);
-      await pick(tester, api, partner);
-      expect(find.byKey(DirectEntryFields.receiptHeadingKey), findsOneWidget);
+    testWidgets('Muteb, 8 Nov 2026: Add entry never opens the camera by itself, and the photo stays where it was when a table is picked', (tester) async {
+      final (:api, :capture, refund: _, :partner, account: _) = await openAddEntry(tester);
+      expect(capture.cameraOpened, 0);
+      capture.camera = picture();
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.cameraKey)));
+      final before = tester.getTopLeft(find.byKey(AddEntryScreen.cameraKey));
 
-      await act(tester, api, () => tester.tap(find.byKey(DirectEntryFields.cashKey)));
-
-      expect(find.byKey(DirectEntryFields.receiptHeadingKey), findsNothing);
-      expect(find.byKey(AddEntryScreen.filesKey), findsNothing);
-      await tester.enterText(find.byKey(DirectEntryFields.amountKey), '1000');
-      await tester.enterText(find.byKey(DirectEntryFields.reasonKey), 'دفع في الموقع');
-      await act(tester, api, () => tester.tap(find.byKey(DirectEntryFields.sendKey)));
-      expect((api.sentMoney.single.$2['cashReason'], api.sentMoney.single.$2.containsKey('attachmentId')), ('دفع في الموقع', false));
-    });
-
-    testWidgets('BR-23: a receipt saying another amount warns, and the same amount does not', (tester) async {
-      final (:api, capture: _, refund: _, :partner, account: _) = await openAddEntry(tester);
       await pick(tester, api, partner);
 
-      await tester.enterText(find.byKey(DirectEntryFields.amountKey), '1000');
-      await tester.enterText(find.byKey(DirectEntryFields.receiptAmountKey), '1000');
-      await tester.pump();
-      expect(find.byKey(DirectEntryFields.receiptDiffersKey), findsNothing);
-
-      await tester.enterText(find.byKey(DirectEntryFields.receiptAmountKey), '900');
-      await tester.pump();
-      expect(find.byKey(DirectEntryFields.receiptDiffersKey), findsOneWidget);
+      expect(capture.cameraOpened, 1);
+      expect(tester.getTopLeft(find.byKey(AddEntryScreen.cameraKey)), before);
+      expect(tester.getTopLeft(find.byKey(AddEntryScreen.cameraKey)).dy < tester.getTopLeft(find.byKey(DirectEntryFields.amountKey)).dy, isTrue);
     });
   });
 
@@ -180,7 +167,6 @@ void main() {
       await pick(tester, api, refund);
 
       expect(find.byKey(DirectEntryFields.withdrawalKey), findsNothing);
-      expect(find.byKey(DirectEntryFields.receiptHeadingKey), findsNothing);
       await tester.enterText(find.byKey(DirectEntryFields.amountKey), '140');
       await act(tester, api, () => tester.tap(find.byKey(DirectEntryFields.accountKey(account))));
       await act(tester, api, () => tester.tap(find.byKey(DirectEntryFields.sendKey)));

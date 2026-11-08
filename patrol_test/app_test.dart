@@ -560,10 +560,6 @@ void main() {
       await $(DirectEntryFields.amountKey).enterText('5000');
       await goTo($(DirectEntryFields.accountKey(cashId)));
       await $(DirectEntryFields.accountKey(cashId)).tap();
-      await goTo($(DirectEntryFields.cashKey));
-      await $(DirectEntryFields.cashKey).tap();
-      await reach($(DirectEntryFields.reasonKey));
-      await $(DirectEntryFields.reasonKey).enterText('دفعها نقداً في الموقع');
       await goTo($(DirectEntryFields.sendKey));
       await picture('add-entry-partner');
       await $(DirectEntryFields.sendKey).tap();

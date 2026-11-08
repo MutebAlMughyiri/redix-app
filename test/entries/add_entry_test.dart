@@ -46,6 +46,11 @@ void main() {
     await openProject(tester, api, capture: capture);
     await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
+    if (camera != null) {
+      await tester.ensureVisible(find.byKey(AddEntryScreen.cameraKey));
+      await tester.pumpAndSettle();
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.cameraKey)));
+    }
     return (
       api: api,
       capture: capture,

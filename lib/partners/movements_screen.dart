@@ -73,7 +73,6 @@ class _MovementsScreenState extends State<MovementsScreen> {
       words.text('capital.${movement.type}'),
       formatDate(movement.date),
       movement.accountName,
-      if (movement.cashReason.isNotEmpty) '${words.capitalCash}: ${movement.cashReason}',
       if (movement.isReversed) words.capitalReversed,
     ];
     return Card.outlined(

@@ -48,6 +48,7 @@ import 'table_picker.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import 'entry_share.dart';
+import '../attachments/entry_file.dart';
 
 /// إضافة قيد (UC-022, UC-027, redix-app #84): one screen adds an expense to any table of an item's sheet, and the table chosen says what it is. An item's general or named
 /// table takes a purchase: a total spent on a day, from a supplier, with its file when there is one (redix-api #96). A contract's table takes a contractor payment: what the
@@ -81,7 +82,7 @@ class AddEntryScreen extends StatefulWidget {
   /// The entry being changed; empty for a new one.
   final String editingId;
 
-  /// The file it starts with, shared from another app (UC-046); none otherwise, and then the camera opens.
+  /// The file it starts with, shared from another app (UC-046); none otherwise. The camera opens only when asked (Muteb, 8 Nov 2026).
   final PickedFile sharedFile;
 
   /// Why it was rejected; empty otherwise.
@@ -302,9 +303,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   final _amount = TextEditingController();
   final _notes = TextEditingController();
   final _customValues = <String, String>{};
-  var _file = PickedFile.none();
-  var _fileMessage = '';
-  var _attachmentId = '';
+  final _file = EntryFile();
   var _qr = InvoiceQr.none();
   var _qrMessage = '';
   var _qrSupplierMissing = false;
@@ -343,10 +342,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     if (widget.editingId.isNotEmpty) {
       return _openEntry();
     }
-    if (!widget.sharedFile.isNone || widget.project.mayAttachFiles) {
-      return _takeFrom(widget.sharedFile.isNone ? widget.capture.fromCamera : () async => widget.sharedFile);
-    }
-    return Future.value();
+    return widget.sharedFile.isNone ? Future.value() : _takeFrom(() async => widget.sharedFile);
   }
 
   /// Fills the form from the entry being changed (UC-033), in its table: a payment's contract, a purchase's item and subgroup. A credit note's total shows as typed, without its sign.
@@ -373,9 +369,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       _isCreditNote = saved.isCreditNote;
       _keptOriginalId = saved.originalEntryId;
       _amount.text = formatPlain(saved.isCreditNote ? saved.amount.abs() : saved.amount);
-      if (saved.attachmentId.isNotEmpty) {
-        _attachmentId = saved.attachmentId;
-      }
+      _file.attachmentId = saved.attachmentId;
       _customValues.addAll(saved.customValues);
     });
     if (!table.isNone) {
@@ -393,10 +387,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       return;
     }
     setState(() {
-      _fileMessage = file.failure;
+      _file.take(file);
       if (!file.isNone) {
-        _file = file;
-        _attachmentId = '';
         _qr = InvoiceQr.none();
         _qrMessage = '';
         _qrSupplierMissing = false;
@@ -537,7 +529,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       'paymentDate': apiDate(_date),
       if (accountId.isNotEmpty) 'accountId': accountId,
       if (_payment.paymentMethodId.isNotEmpty) 'paymentMethodId': _payment.paymentMethodId,
-      if (_attachmentId.isNotEmpty) 'attachmentId': _attachmentId,
+      if (_file.attachmentId.isNotEmpty) 'attachmentId': _file.attachmentId,
       'notes': _notes.text,
       'customValues': ItemColumn.valuesToSend(_columns, _customValues),
       'submit': submit,
@@ -571,15 +563,12 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     if (_whatIsWrong.isNotEmpty) {
       return _whatIsWrong;
     }
-    if (!_file.isNone && _attachmentId.isEmpty) {
-      final refusal = await widget.attachments.keep(_file);
-      if (refusal == 'attachments.noConnection') {
-        return widget.expenses.keep(_table.route, _body(submit), _file, editing: widget.editingId);
-      }
-      if (refusal.isNotEmpty) {
-        return refusal;
-      }
-      _attachmentId = widget.attachments.kept.id;
+    final refusal = await _file.keep(widget.attachments);
+    if (refusal == 'attachments.noConnection') {
+      return widget.expenses.keep(_table.route, _body(submit), _file.picked, editing: widget.editingId);
+    }
+    if (refusal.isNotEmpty) {
+      return refusal;
     }
     return widget.expenses.record(_table.route, _body(submit), editing: widget.editingId);
   }
@@ -722,7 +711,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       capital: widget.capital,
       accounts: widget.projectAccounts,
       attachments: widget.attachments,
-      capture: widget.capture,
       file: _file,
       onSent: (entryId) {
         _offerShare(ScaffoldMessenger.of(context), words, 'expenses.sent', entryId);
@@ -741,15 +729,24 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: _table.isDirect ? _directEntry(words) : [
+          children: [
             InvoiceSection(
               project: widget.project,
-              file: _file,
+              file: _file.picked,
               emptyLabel: words.text(_table.fileWordKey),
-              message: _fileMessage,
+              message: _file.message,
               onCamera: () => _takeFrom(widget.capture.fromCamera),
               onFiles: () => _takeFrom(widget.capture.fromFiles),
             ),
+            if (_table.isDirect) ..._directEntry(words) else ..._expenseEntry(words, ownFields),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// What an expense's table asks, under the file: the QR code's reading, what it is for, the item's own columns and how it was paid, then Send and Save draft.
+  List<Widget> _expenseEntry(Words words, List<Widget> ownFields) => [
             if (_qrMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -776,9 +773,5 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
+  ];
 }

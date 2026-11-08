@@ -57,7 +57,7 @@ lib/
     documents_screen.dart   A project's documents: each group under its name, those in none first
   entries/
     add_entry_screen.dart   إضافة قيد: one screen adds an expense to any table of an item's sheet, and the table chosen says what it is
-    direct_entry_fields.dart What Add entry asks for a revenue item's table or a partner: the amount, the date, the account and a description, and for a partner whether it is a withdrawal and its bank receipt, or why it was paid in cash
+    direct_entry_fields.dart What Add entry asks for a revenue item's table or a partner, under the file every entry shares: the amount, the date, the account and a description, and for a partner whether it is a withdrawal
     entries_screen.dart     A project's entries: each person's own, or all of them, searched and filtered, and what can be done to one
     entry_filter.dart       What the search of a project's entries keeps: every filter set must hold, and a filter left empty keeps everything
     entry_kind.dart         What an entry is, named as the API names it, with the word key that names it: the one owner the filter, the entries list and Approvals read
