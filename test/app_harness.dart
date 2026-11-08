@@ -18,6 +18,8 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/words/app_language.dart';
+import 'package:redix/ui/app_color.dart';
+import 'package:redix/entries/entries_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// The words the fake API serves: each key's value names its language and key, so a test reads which word is shown.
@@ -1731,3 +1733,10 @@ Future<void> act(WidgetTester tester, FakeApi api, Future<void> Function() actio
   await action();
   await tester.pumpAndSettle();
 }, () => api.client);
+
+/// The color the frame of the entry [id]'s row is drawn in, which alone says where the entry stands (Muteb, 9 Nov 2026).
+AppColor frameOf(WidgetTester tester, String id) {
+  final card = find.byKey(EntriesScreen.rowKey(id).card);
+  final side = (tester.widget<Card>(card).shape! as RoundedRectangleBorder).side.color;
+  return AppColor.values.firstWhere((role) => role.of(tester.element(card)) == side);
+}

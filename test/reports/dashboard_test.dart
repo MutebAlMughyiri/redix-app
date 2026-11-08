@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/contracts/contracts_screen.dart';
-import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/home/dashboard_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/app_color.dart';
 
 import '../app_harness.dart';
 
@@ -102,7 +102,7 @@ void main() {
     api.entryRows.single['status'] = 'approved';
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-    expect(find.byKey(EntriesScreen.statusKey('entry-0')), findsNothing);
+    expect(frameOf(tester, 'entry-0'), AppColor.frame);
   });
 
   testWidgets('Muteb, 9 Nov 2026: the home has no Refresh button, and pulling it down reads the latest entries again', (tester) async {
@@ -115,7 +115,7 @@ void main() {
     expect(find.byIcon(Icons.refresh), findsNothing);
     await act(tester, api, () => tester.drag(find.byType(ListView).first, const Offset(0, 1500)));
 
-    expect(find.byKey(EntriesScreen.statusKey('entry-0')), findsNothing);
+    expect(frameOf(tester, 'entry-0'), AppColor.frame);
   });
 
   testWidgets('Field sees the figures and no way to approve', (tester) async {

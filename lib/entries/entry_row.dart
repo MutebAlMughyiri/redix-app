@@ -119,9 +119,6 @@ class EntryRow {
   /// The word key of where it stands.
   String get statusWordKey => isReversed ? 'entries.reversed' : status.wordKey;
 
-  /// True when a row says where it stands: an approved entry says nothing, and a reversed one says so (Muteb, 7 Nov 2026).
-  bool get showsStatus => statusWordKey != 'entries.approved';
-
   /// What a search matches it by (redix-app #84): its item, supplier or contractor, who entered it, an old bill's number and its amount, plain and as money, in one spelling.
   late final searchText = sameSpelling([itemName, partnerName, supplierName, authorName, invoiceNumber, formatPlain(amount), formatMoney(amount)].join(' '));
 }

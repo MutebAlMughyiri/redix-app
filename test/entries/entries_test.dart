@@ -13,6 +13,7 @@ import 'package:redix/home/home_screen.dart';
 
 
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/app_color.dart';
 
 import '../app_harness.dart';
 
@@ -54,22 +55,24 @@ void main() {
     }
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
     expect(find.textContaining('en entries.enteredBy'), findsNWidgets(2));
-    expect(find.text('en entries.reason: الصورة غير واضحة'), findsOneWidget);
+    expect(find.text('en entries.reason: الصورة غير واضحة'), findsNothing, reason: 'Muteb, 9 Nov 2026: the reason shows once the entry is opened');
   });
 
-  testWidgets('a row says whether it waits or was rejected, and an approved one says nothing (Muteb, 7 Nov 2026)', (tester) async {
+  testWidgets('Muteb, 9 Nov 2026: a row says where it stands by its frame alone, orange waiting, red rejected, teal a draft and plain once approved, with no status words and no reason', (tester) async {
     await openHome(tester, (api) {
       api
         ..addEntry()
         ..addEntry(status: 'rejected', rejectionReason: 'الصورة غير واضحة')
         ..addEntry(status: 'approved')
-        ..addEntry(status: 'approved', isReversed: true);
+        ..addEntry(status: 'approved', isReversed: true)
+        ..addEntry(status: 'draft');
     });
 
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.pendingApproval');
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-1'))).data, 'en entries.rejected');
-    expect(find.byKey(EntriesScreen.statusKey('entry-2')), findsNothing);
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-3'))).data, 'en entries.reversed');
+    expect([for (final id in ['entry-0', 'entry-1', 'entry-2', 'entry-3', 'entry-4']) frameOf(tester, id)], [AppColor.waiting, AppColor.refusal, AppColor.frame, AppColor.frame, AppColor.brand]);
+    for (final word in ['en entries.pendingApproval', 'en entries.rejected', 'en entries.reversed', 'en entries.draft']) {
+      expect(find.text(word), findsNothing, reason: word);
+    }
+    expect(find.textContaining('الصورة غير واضحة'), findsNothing);
   });
 
   testWidgets('redix-app #88: in a finished project no entry shows the red bar, since nothing is deleted in it', (tester) async {
@@ -128,10 +131,13 @@ void main() {
     expect(find.byKey(EntriesScreen.rowKey('entry-1')), findsOneWidget);
   });
 
-  testWidgets('a reversed entry says so', (tester) async {
-    await openEntries(tester, (api) => api.addEntry(status: 'approved', isReversed: true));
+  testWidgets('a reversed entry says so on its page, and its row keeps the plain frame', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved', isReversed: true));
+    expect(frameOf(tester, 'entry-0'), AppColor.frame);
 
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.reversed');
+    await openActions(tester, api, 'entry-0');
+
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.reversed');
   });
 
   testWidgets('a draft of their own can be changed, sent or swiped away', (tester) async {
@@ -143,7 +149,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendDraftKey)));
 
     expect(api.sentEntryChanges.single.$2, 'submit');
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.pendingApproval');
+    expect(frameOf(tester, 'entry-0'), AppColor.waiting);
   });
 
   testWidgets('redix-app #90 D4: what waits for a decision offers the field Edit grayed, saying why', (tester) async {
@@ -205,11 +211,11 @@ void main() {
 
     api.entryRows.single['status'] = 'approved';
     await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 500)));
-    expect(find.byKey(EntriesScreen.statusKey('entry-0')), findsNothing);
+    expect(frameOf(tester, 'entry-0'), AppColor.frame);
 
     api.entryRows.single['status'] = 'draft';
     await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 500)));
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.draft');
+    expect(frameOf(tester, 'entry-0'), AppColor.brand);
   });
 
   testWidgets('a reversal being sent cannot be sent again: its button is disabled until the answer comes', (tester) async {
@@ -301,7 +307,7 @@ void main() {
 
     expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2), ('entry-0', 'reverse'));
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.reversed');
+    expect(frameOf(tester, 'entry-0'), AppColor.frame);
   });
 
   testWidgets('without Delete entries a bill does not swipe and shows no red bar, though it can still be changed', (tester) async {

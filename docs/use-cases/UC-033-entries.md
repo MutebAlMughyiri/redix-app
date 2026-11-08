@@ -10,7 +10,7 @@
 | --- | --- |
 | On the home, under القيود: the search, the way to all | `HomeScreen.searchEntriesKey`, `entriesKey` |
 | The search, and the filters: whose, kind, status, period, clearing them, how many show | `EntriesScreen.searchKey`, `mineKey`, `allKey`, `kindKey(kind)`, `statusFilterKey(wordKey)`, `periodKey`, `clearKey`, `foundKey` |
-| A row, where it stands unless approved, and why it was rejected, its frame and words orange while waiting and red once rejected (redix-app #90) | `EntriesScreen.rowKey`, `statusKey`, `reasonKey` |
+| A row, where it stands by its frame's color alone: teal a draft, orange waiting, red rejected, plain once approved (redix-app #90; Muteb, 9 Nov 2026) | `EntriesScreen.rowKey`, `rowKey(id).card` |
 | An entry read only (redix-app #90): where it stands, and what can be done to it | `AddEntryScreen.statusKey`, `changeKey`, `cannotChangeKey`, `sendDraftKey`, `reverseKey`; a draft, waiting or rejected entry is deleted by swiping its row, `rowKey(id).swipe`, on القيود and on the home alike (redix-api #102) |
 | Reversing | `EntriesScreen.reverseReasonKey`, `reverseSendKey` |
 | The reason at the top of the form | `AddEntryScreen.rejectionKey` |
@@ -20,7 +20,7 @@
 | Rule | Code | Test |
 | --- | --- | --- |
 | AC-22.1, R1, R2, R3, R15: the home lists the project's latest five by anyone under القيود, someone else's saying who entered it; it counts none of mine waiting or rejected (Muteb, 7 Nov 2026) | `HomeEntries`, `EntryTile` | `entries_test.dart`: AC-22.1, R1, R2, R3, R15 |
-| A row says whether it waits, was rejected, is a draft or was reversed; an approved one says nothing (Muteb, 7 Nov 2026) | `EntryRow.showsStatus`, `EntryTile` | `entries_test.dart`: a row says whether it waits or was rejected |
+| A row says where it stands by its frame's color alone, with no status words and no reason: teal a draft, orange waiting, red rejected, plain once approved or reversed; the entry's page says the status and the reason (Muteb, 9 Nov 2026) | `EntryStatus.color`, `SwipeToRemove.side` | `entries_test.dart`: Muteb, 9 Nov 2026: a row says where it stands by its frame alone; a reversed entry says so on its page |
 | While the entries are first read, the home shows a spinner under القيود, and the rows once they come | `HomeEntries`, `HomeScreen.entriesLoadingKey` | `entries_test.dart`: the home shows a spinner under القيود |
 | R3, R14: with none of mine the home still lists the project's; with none at all it keeps its heading, search and the way to all | `HomeEntries` | `entries_test.dart`: R3, R14; R14 |
 | R4: the search beside القيود opens the list ready to type | `HomeEntries`, `EntriesScreen.startsSearching` | `entries_test.dart`: search, R4 |

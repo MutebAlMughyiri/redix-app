@@ -71,11 +71,7 @@ class EntriesScreen extends StatefulWidget {
   /// The row of the entry [id].
   static Key rowKey(String id) => Key('entries.row.$id');
 
-  /// Where the entry [id] stands.
-  static Key statusKey(String id) => Key('entries.status.$id');
 
-  /// Why the entry [id] was rejected.
-  static Key reasonKey(String id) => Key('entries.reason.$id');
 
   /// Who supplied the entry [id], when, and who entered it.
   static Key detailsKey(String id) => Key('entries.details.$id');

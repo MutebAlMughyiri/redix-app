@@ -14,9 +14,9 @@
 | Narrow the list | Tap **Purchases** or **Contractor payments**, any of the statuses, and **Period** to choose a from and to date. The line under the filters says how many entries show. |
 | Show everything again | Tap **Clear filters**. Mine or All stays as you chose. |
 
-Each entry says where it stands: waiting for approval, rejected with the reason, a draft, or reversed. An approved entry says nothing.
+Each entry's frame says where it stands: teal for a draft, orange while it waits for approval, red once rejected, and plain once approved. Open it to read its status and, if rejected, why.
 
-Waiting entries have an orange frame and rejected ones a red frame. Tap an entry to open it as it was filled, its photo included, and see what you can do with it at the bottom; Share is at the top:
+Tap an entry to open it as it was filled, its photo included, and see what you can do with it at the bottom; Share is at the top:
 
 | It is | Who | What they can do |
 | --- | --- | --- |
@@ -39,9 +39,9 @@ An approved entry never changes. Reversing it adds an opposite entry tied to it,
 | تضيّق القائمة | اضغط **مشتريات** أو **دفعات مقاولين**، وأي حالة، و**الفترة** لتختار تاريخ البداية والنهاية. ويبيّن السطر تحت عوامل التصفية عدد القيود الظاهرة. |
 | تعرض الكل من جديد | اضغط **مسح التصفية**. ويبقى قيودي أو الكل كما اخترت. |
 
-ويقول كل قيد أين يقف: بانتظار الاعتماد، أو مرفوض مع السبب، أو مسودة، أو معكوس. والقيد المعتمد لا يقول شيئاً.
+ويقول إطار كل قيد أين يقف: أخضر مزرق للمسودة، وبرتقالي بانتظار الاعتماد، وأحمر للمرفوض، وعادي بعد الاعتماد. افتحه لترى حالته، وسبب رفضه إن رُفض.
 
-إطار القيد بانتظار الاعتماد برتقالي، والمرفوض أحمر. اضغط قيداً لتفتحه كما أُدخل، بصورته، وترى في أسفله ما يمكنك فعله؛ والمشاركة في أعلاه:
+اضغط قيداً لتفتحه كما أُدخل، بصورته، وترى في أسفله ما يمكنك فعله؛ والمشاركة في أعلاه:
 
 | حالته | من | ما يمكنه |
 | --- | --- | --- |
