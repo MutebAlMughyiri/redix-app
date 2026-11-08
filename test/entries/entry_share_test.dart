@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:redix/approvals/approvals_screen.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/entries/entry_link_screen.dart';
@@ -36,7 +37,7 @@ void main() {
   /// Shares the entry [entryId] from its sheet, and gives the text the share sheet was handed.
   Future<String> share(WidgetTester tester, ({FakeApi api, FakeCapture capture}) opened, String entryId) async {
     await act(tester, opened.api, () => tester.tap(find.byKey(EntriesScreen.rowKey(entryId))));
-    await act(tester, opened.api, () => tester.tap(find.byKey(EntriesScreen.shareKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.shareKey)));
     return opened.capture.sharedTexts.single;
   }
 
@@ -98,7 +99,6 @@ void main() {
       return api;
     }
 
-    Finder onTheSheet(Key key) => find.descendant(of: find.byType(BottomSheet), matching: find.byKey(key));
 
     testWidgets('R7, D7: for whoever decides entries, the link of one waiting opens Approvals on it alone, with Approve and Reject, everything waiting a tap away and the home behind', (tester) async {
       final api = await follow(tester, (api) {
@@ -123,18 +123,17 @@ void main() {
       expect(find.byKey(HomeScreen.entriesKey('project-0')), findsOneWidget);
     });
 
-    testWidgets('R8: for someone who cannot decide it, the link opens the entry\'s sheet in القيود, saying it waits, and never Approvals', (tester) async {
+    testWidgets('R8: for someone who cannot decide it, the link opens the entry read only, saying it waits, and never Approvals', (tester) async {
       await follow(tester, (api) => api.addEntry(isMine: false), permissions: reader);
 
-      expect(onTheSheet(EntriesScreen.statusKey('entry-0')), findsOneWidget);
-      expect(tester.widget<Text>(onTheSheet(EntriesScreen.statusKey('entry-0'))).data, 'en entries.pendingApproval');
+      expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.pendingApproval');
       expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsNothing);
     });
 
-    testWidgets('R8: an entry no longer waiting opens on its sheet in القيود even for whoever decides entries, saying where it stands', (tester) async {
+    testWidgets('R8: an entry no longer waiting opens read only even for whoever decides entries, saying where it stands', (tester) async {
       await follow(tester, (api) => api.addEntry(status: 'rejected', rejectionReason: 'الصورة غير واضحة'));
 
-      expect(tester.widget<Text>(onTheSheet(EntriesScreen.statusKey('entry-0'))).data, 'en entries.rejected');
+      expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.rejected');
       expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsNothing);
     });
 

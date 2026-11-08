@@ -259,12 +259,12 @@ void main() {
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0'))));
-      expect(find.byKey(EntriesScreen.reverseKey), findsOneWidget);
-      expect(find.byKey(EntriesScreen.editKey), findsNothing);
-      await act(tester, api, () => tester.tapAt(const Offset(10, 10)));
+      expect(text(tester, AddEntryScreen.reverseKey.label), 'en entries.reverse');
+      expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-1'))));
-      expect(text(tester, EntriesScreen.editKey.label), 'en entries.fix');
+      expect(text(tester, AddEntryScreen.changeKey.label), 'en entries.fix');
     });
 
     testWidgets('R12: a shared file offers New entry and no capital receipt, and goes with a partner picked in Add entry', (tester) async {
@@ -313,7 +313,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.entriesKey('project-0'))));
     await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0'))));
 
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.editKey)));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.changeKey)));
 
     expect(tester.widget<TablePicker>(find.byKey(AddEntryScreen.tableKey)).chosen.id, partner);
     expect(tester.widget<SwitchListTile>(find.byKey(AddEntryScreen.withdrawalKey)).value, isTrue);

@@ -22,6 +22,11 @@ class EntryFile {
     }
   }
 
+  /// Shows [file], the one the entry already holds, without sending it again.
+  void showKept(PickedFile file) {
+    picked = file;
+  }
+
   /// Keeps the file through [attachments] once; an empty string when kept or when there is none, otherwise the word key of the refusal.
   Future<String> keep(Attachments attachments) async {
     if (picked.isNone || attachmentId.isNotEmpty) {

@@ -10,11 +10,11 @@
 | --- | --- |
 | On the home, under القيود: the search, the way to all | `HomeScreen.searchEntriesKey`, `entriesKey` |
 | The search, and the filters: whose, kind, status, period, clearing them, how many show | `EntriesScreen.searchKey`, `mineKey`, `allKey`, `kindKey(kind)`, `statusFilterKey(wordKey)`, `periodKey`, `clearKey`, `foundKey` |
-| A row, where it stands unless approved, and why it was rejected | `EntriesScreen.rowKey`, `statusKey`, `reasonKey` |
-| What can be done to it | `EntriesScreen.editKey`, `sendKey`, `reverseKey`; a draft, waiting or rejected entry is deleted by swiping its row, `rowKey(id).swipe`, on القيود and on the home alike (redix-api #102) |
+| A row, where it stands unless approved, and why it was rejected, its frame and words orange while waiting and red once rejected (redix-app #90) | `EntriesScreen.rowKey`, `statusKey`, `reasonKey` |
+| An entry read only (redix-app #90): where it stands, and what can be done to it | `AddEntryScreen.statusKey`, `changeKey`, `cannotChangeKey`, `sendDraftKey`, `reverseKey`; a draft, waiting or rejected entry is deleted by swiping its row, `rowKey(id).swipe`, on القيود and on the home alike (redix-api #102) |
 | Reversing | `EntriesScreen.reverseReasonKey`, `reverseSendKey` |
 | The reason at the top of the form | `AddEntryScreen.rejectionKey` |
-| Share, on an entry's sheet and in the message once it is saved or sent (redix-app #83) | `EntriesScreen.shareKey`; the message's action, `messageKeyOf(wordKey).icon` |
+| Share, in an entry's title bar read only and in the message once it is saved or sent (redix-app #83) | `AddEntryScreen.shareKey`; the message's action, `messageKeyOf(wordKey).icon` |
 | Where a shared link lands: looking for the entry, and saying it cannot be found | `EntryLinkScreen.loadingKey`, `notFoundKey` |
 
 | Rule | Code | Test |
@@ -28,11 +28,12 @@
 | R8: a kind and a status keep what holds both; mine keeps mine; clearing shows all | `EntryFilter` | `entries_test.dart`: search, R8: a kind and a status |
 | R8: a period keeps the entries dated inside it, both ends included | `EntryFilter.keeps` | `entries_test.dart`: search, R8: a period |
 | Everyone sees all entries, and starts on their own | `EntriesScreen` | `entries_test.dart`: everyone sees |
-| A draft of their own can be changed, sent or deleted | `_EntryActions` | `entries_test.dart`: a draft of their own |
-| What waits offers the field nothing to change, and someone else's neither | `EntryRow.allows` | `entries_test.dart`: what waits for a decision offers the field nothing to change |
+| Tapping an entry opens it read only, its photo and every value as it was filled, with no way to type or take another file; تعديل turns it into the form, keeping the photo, and saving sends the file it holds no second time (redix-app #90) | `AddEntryScreen` (`isReading`), `Attachments.read`, `EntryFile.showKept`, `InvoiceSection.isReading` | `entries_test.dart`: redix-app #90: a tap opens the entry read only; the reason shows at the top; saving goes to that entry |
+| A draft of their own can be changed, sent or deleted | `AddEntryScreen._readingActions` | `entries_test.dart`: a draft of their own |
+| What waits offers the field تعديل grayed, saying why, and someone else's too (redix-app #90, D4) | `EntryRow.allows`, `AddEntryScreen._readingActions` | `entries_test.dart`: redix-app #90 D4, two tests |
 | Finance can change what waits, and what someone else entered | `EntryRow.allows` | `entries_test.dart`: Finance can change |
-| What is approved is only reversed, and only by whoever decides | `_EntryActions` | `entries_test.dart`: what is approved |
-| AC-50.1: reversing asks why, and the entry says it was reversed | `ReverseSheet`, `ProjectEntries.reverse` | `entries_test.dart`: AC-50.1 |
+| What is approved is only reversed, by حذف, and only by whoever decides; its تعديل is grayed, saying an approved entry does not change | `AddEntryScreen._readingActions` | `entries_test.dart`: what is approved; an approved bill |
+| AC-50.1: reversing asks why, and the entry's page then says it was reversed | `ReverseSheet`, `ProjectEntries.reverse` | `entries_test.dart`: AC-50.1 |
 | القيود lists every kind of entry: expenses, revenue and partners' money, each named by its item or partner and saying what it is; any of them opens in Add entry to change or fix, for whoever may enter its table (redix-api #110) | `EntryRow.title`, `kindWordKey`, `EntryKind.recordedWith` | `one_entry_test.dart`: No Revenue screen; R14, two tests |
 | A swipe deletes an entry with no question, where `EntryRow.allows` lets the user delete it | `EntryListTile`, `SwipeToRemove` | `entries_test.dart`: redix-api #102: a swipe deletes a draft with no question; without Delete entries a bill does not swipe |
 | AC-19.1: a rejected entry opens with its reason, and holds what it held | `AddEntryScreen._openEntry` | `entries_test.dart`: the reason shows at the top |
@@ -43,7 +44,7 @@
 | R3, R4: every kind shares the same way, a contractor named as the contractor, and a line it has nothing for is left out | `EntryShare.textOf` | `entry_share_test.dart`: R3, R4, for a contractor payment, revenue, a contribution and a withdrawal |
 | A row that a swipe would remove shows a red bar inside its frame, along the edge the swipe starts from; a row that would not move shows none, and every removable row has the same frame (redix-app #88) | `SwipeToRemove` | `swipe_to_remove_test`: the bar shows only where it may be removed, inside the card, on the side the language puts it; `entries_test`: a draft has the bar, a finished project none |
 | R1: once the API keeps an entry, its message offers Share, which shares the entry as the list now holds it; one kept on the phone offers nothing | `AddEntryScreen._offerShare`, `EntryShare.shareSaved`, `showMessage` | `add_entry_test.dart`: redix-app #83 R1, and without a network; `one_entry_test.dart`: redix-app #83 R1 |
-| R8: the link of an entry the reader cannot decide, or one no longer waiting, opens its sheet in القيود, saying where it stands | `EntryLinkScreen` | `entry_share_test.dart`: the link, R8, two tests |
+| R8: the link of an entry the reader cannot decide, or one no longer waiting, opens it read only, saying where it stands | `EntryLinkScreen` | `entry_share_test.dart`: the link, R8, two tests |
 | R8: the link grants nothing by itself: signed out, it asks to sign in first and then opens the entry | `RedixApp._redirect`, `EntryLinkScreen.isLink` | `entry_share_test.dart`: R8: the link grants nothing by itself |
 | R9: the link of an entry no longer listed, or of a project the reader is not in, says it cannot be found and opens nothing | `EntryLinkScreen` | `entry_share_test.dart`: R9, two tests |
 | R9: a link that cannot be read says why and offers to try again, never that the entry is gone | `EntryLinkScreen`, `LoadFailure` | `entry_share_test.dart`: R9: a link that cannot be read |

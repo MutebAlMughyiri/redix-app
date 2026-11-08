@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import '../entries/entry_status.dart';
 import 'package:go_router/go_router.dart';
 
 import '../attachments/attachment_screen.dart';
@@ -226,6 +228,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
               itemBuilder: (entry) => Card.outlined(
                       key: ApprovalsScreen.cardKey(entry.id),
                       margin: const EdgeInsets.only(bottom: 8),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: EntryStatus.pendingApproval.sideIn(Theme.of(context).colorScheme)),
                       child: Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(4, 8, 12, 8),
                         child: Column(

@@ -56,13 +56,13 @@ lib/
     documents.dart          A document kept for the project: any file under a name, in a group when one was given
     documents_screen.dart   A project's documents: each group under its name, those in none first
   entries/
-    add_entry_screen.dart   إضافة قيد: one form adds an entry to any table, an expense's, a revenue item's or a partner, asking every entry the same things and each table only its own (redix-api #110)
+    add_entry_screen.dart   إضافة قيد: one form adds an entry to any table, an expense's, a revenue item's or a partner, asking every entry the same things and each table only its own (redix-api #110); it also opens an entry read only, as it was filled, with what can be done to it (redix-app #90)
     entries_screen.dart     A project's entries: each person's own, or all of them, searched and filtered, and what can be done to one
     entry_filter.dart       What the search of a project's entries keeps: every filter set must hold, and a filter left empty keeps everything
     entry_recording.dart    Records a project's entries on the API through one route, whatever their table, or keeps them in the outbox while there is no network
     entry_kind.dart         What an entry is, named as the API names it, with the word key that names it: the one owner the filter, the entries list and Approvals read
     entry_row.dart          An entry on a list
-    entry_status.dart       Where an entry stands, named as the API names it
+    entry_status.dart       Where an entry stands, named as the API names it, and the color that marks it (redix-app #90)
     entry_tables.dart       One table an entry may go into, and what it asks beyond every entry
     entry_tile.dart         An entry on a list of project's entries: tapping it opens its actions, and swiping it removes it where the user may delete it
     home_entries.dart       The project's entries on its home: the latest five by anyone, a spinner while they are first read, a search beside the heading, and the way to all of them

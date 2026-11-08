@@ -7,6 +7,25 @@ import 'entry_status.dart';
 
 /// An entry on a list (UC-037).
 class EntryRow {
+  /// No entry: approved and nobody's, so nothing may be done to it.
+  EntryRow.none()
+    : id = '',
+      kind = EntryKind.purchase,
+      status = EntryStatus.approved,
+      rejectionReason = '',
+      date = DateTime(1),
+      amount = 0,
+      itemName = '',
+      supplierName = '',
+      invoiceNumber = '',
+      authorName = '',
+      isMine = false,
+      isReversed = false,
+      partnerName = '',
+      notes = '',
+      accountName = '',
+      paymentMethodName = '';
+
   /// An entry as the API answers it.
   EntryRow.fromJson(Map<String, dynamic> json)
     : id = json['id'] as String,

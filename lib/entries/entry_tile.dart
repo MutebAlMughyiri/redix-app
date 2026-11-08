@@ -10,15 +10,11 @@ import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_row.dart';
 import 'project_entries.dart';
-import '../attachments/invoice_capture.dart';
 
-/// An entry on a list of [project]'s [entries]: tapping it opens its actions, and swiping it removes it where the user may delete it (redix-api #102).
+/// An entry on a list of [project]'s [entries], framed in its status's color: tapping it opens it read only (redix-app #90), and swiping it removes it where the user may delete it (redix-api #102).
 class EntryListTile extends StatelessWidget {
-  /// The tile of [entry], one of [project]'s [entries], shared through [capture].
-  const EntryListTile({super.key, required this.project, required this.entries, required this.entry, required this.capture});
-
-  /// The phone's share sheet.
-  final InvoiceCapture capture;
+  /// The tile of [entry], one of [project]'s [entries].
+  const EntryListTile({super.key, required this.project, required this.entries, required this.entry});
 
   /// The project.
   final Project project;
@@ -34,7 +30,8 @@ class EntryListTile extends StatelessWidget {
     rowKey: EntriesScreen.rowKey(entry.id),
     mayRemove: entry.allows(project, Permission.deleteEntries),
     onRemove: () => entries.delete(entry),
-    child: EntryTile(entry: entry, onTap: () => EntriesScreen.openActions(context, project, entries, entry, capture)),
+    side: entry.status.sideIn(Theme.of(context).colorScheme),
+    child: EntryTile(entry: entry, onTap: () => EntriesScreen.openEntry(context, project, entry)),
   );
 }
 
@@ -61,7 +58,7 @@ class EntryTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text([if (!entry.isExpense) words.text(entry.kind.wordKey), if (entry.supplierName.isNotEmpty) entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.replaceFirst('{0}', entry.authorName)].join(' · '), key: EntriesScreen.detailsKey(entry.id)),
-          if (entry.showsStatus) Text(words.text(entry.statusWordKey), key: EntriesScreen.statusKey(entry.id), style: TextStyle(color: entry.isRejected ? theme.colorScheme.error : null)),
+          if (entry.showsStatus) Text(words.text(entry.statusWordKey), key: EntriesScreen.statusKey(entry.id), style: TextStyle(color: entry.status.isMarked ? entry.status.colorIn(theme.colorScheme) : null)),
           if (entry.isRejected) Text('${words.entriesReason}: ${entry.rejectionReason}', key: EntriesScreen.reasonKey(entry.id), style: TextStyle(color: theme.colorScheme.error)),
         ],
       ),

@@ -20,6 +20,18 @@ class Attachments {
   /// The attachment the last [keep] made; none when it made none.
   Attachment get kept => _kept;
 
+  /// The file [attachmentId] as it was kept, to show an entry as it was filled (redix-app #90); none when it cannot be read.
+  Future<PickedFile> read(String attachmentId) async {
+    try {
+      final response = await _session.read('/projects/$projectId/attachments/$attachmentId', file: true);
+      final isPdf = (response.headers['content-type'] ?? '').contains('pdf');
+      return response.statusCode == 200 ? PickedFile(isPdf ? 'file.pdf' : 'file.jpg', '', response.bodyBytes) : PickedFile.none();
+    } on Exception catch (error) {
+      debugPrint('File not read: $error');
+      return PickedFile.none();
+    }
+  }
+
   /// Sends an entry's [file], a picture or a PDF, to the API. Returns an empty string once kept, otherwise the word key of the refusal.
   Future<String> keep(PickedFile file) => _keep('/projects/$projectId/attachments', file);
 

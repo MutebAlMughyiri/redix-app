@@ -5,7 +5,6 @@ import '../format/date_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'add_entry_screen.dart';
@@ -15,16 +14,11 @@ import 'entry_row.dart';
 import 'entry_tile.dart';
 import 'project_entries.dart';
 import 'reverse_sheet.dart';
-import '../attachments/invoice_capture.dart';
-import 'entry_share.dart';
 
-/// A project's entries (UC-037): each person's own, or all of them, searched and filtered (redix-app #84), and what can be done to one (UC-028, UC-033, UC-035).
+/// A project's entries (UC-037): each person's own, or all of them, searched and filtered (redix-app #84); tapping one opens it read only (redix-app #90).
 class EntriesScreen extends StatefulWidget {
-  /// The entries of [project], in [entries], opening [openEntryId] when there is one, and ready to type a search when [startsSearching]; an entry is shared through [capture].
-  const EntriesScreen({super.key, required this.project, required this.entries, required this.capture, this.openEntryId = '', this.startsSearching = false});
-
-  /// The phone's share sheet.
-  final InvoiceCapture capture;
+  /// The entries of [project], in [entries], opening [openEntryId] when there is one, and ready to type a search when [startsSearching].
+  const EntriesScreen({super.key, required this.project, required this.entries, this.openEntryId = '', this.startsSearching = false});
 
   /// True when it opens ready to type a search, as the home's search button asks.
   final bool startsSearching;
@@ -83,16 +77,6 @@ class EntriesScreen extends StatefulWidget {
   /// Why the entry [id] was rejected.
   static Key reasonKey(String id) => Key('entries.reason.$id');
 
-  /// The button fixing or changing the open entry.
-  static const editKey = Key('entries.edit');
-
-  /// The button sending the open entry.
-  static const sendKey = Key('entries.send');
-
-
-  /// The button reversing the open entry.
-  static const reverseKey = Key('entries.reverse');
-
   /// Who supplied the entry [id], when, and who entered it.
   static Key detailsKey(String id) => Key('entries.details.$id');
 
@@ -102,17 +86,9 @@ class EntriesScreen extends StatefulWidget {
   /// Its entries.
   final ProjectEntries entries;
 
-  /// Opens what can be done to [entry], sharing it through [capture].
-  static void openActions(BuildContext context, Project project, ProjectEntries entries, EntryRow entry, InvoiceCapture capture) {
-    showModalBottomSheet<void>(context: context, showDragHandle: true, useSafeArea: true, builder: (_) => _EntryActions(project: project, entries: entries, entry: entry, capture: capture));
-  }
-
-  /// The button sharing an entry as text (redix-app #83).
-  static const shareKey = Key('entries.share');
-
-  /// Opens [entry] in إضافة قيد, in its table, for a change.
-  static void openForm(BuildContext context, Project project, EntryRow entry) {
-    context.push(Uri(path: AddEntryScreen.pathOf(project.id), queryParameters: {'entry': entry.id, if (entry.isRejected) 'reason': entry.rejectionReason}).toString(), extra: project);
+  /// Opens [entry] in إضافة قيد, in its table, read only as it was filled, with what can be done to it at its bottom (redix-app #90).
+  static void openEntry(BuildContext context, Project project, EntryRow entry) {
+    context.push(Uri(path: AddEntryScreen.pathOf(project.id), queryParameters: {'entry': entry.id, 'read': '1', if (entry.isRejected) 'reason': entry.rejectionReason}).toString(), extra: project);
   }
 
   @override
@@ -207,7 +183,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
     }
     widget.entries.removeListener(_openAsked);
     for (final entry in widget.entries.all.where((entry) => entry.id == widget.openEntryId)) {
-      EntriesScreen.openActions(context, widget.project, widget.entries, entry, widget.capture);
+      EntriesScreen.openEntry(context, widget.project, entry);
     }
   }
 
@@ -224,65 +200,8 @@ class _EntriesScreenState extends State<EntriesScreen> {
               list: widget.entries,
               emptyText: words.entriesEmpty,
               keeps: _filter.keeps,
-              itemBuilder: (entry) => EntryListTile(project: widget.project, entries: widget.entries, entry: entry, capture: widget.capture),
+              itemBuilder: (entry) => EntryListTile(project: widget.project, entries: widget.entries, entry: entry),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EntryActions extends StatelessWidget {
-  const _EntryActions({required this.project, required this.entries, required this.entry, required this.capture});
-
-  final Project project;
-  final ProjectEntries entries;
-  final EntryRow entry;
-  final InvoiceCapture capture;
-
-  void _askToReverse(BuildContext context) {
-    Navigator.of(context).pop();
-    ReverseSheet.show(context, (reason) => entries.reverse(entry, reason));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final words = Words.of(context);
-    final mayReverse = project.mayApproveEntries && entry.isApproved && !entry.isReversed;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        spacing: 8,
-        children: [
-          EntryTile(entry: entry, onTap: () {}),
-          if (entry.allows(project, entry.kind.recordedWith)) ...[
-            FilledButton(
-              key: EntriesScreen.editKey,
-              onPressed: () {
-                Navigator.of(context).pop();
-                EntriesScreen.openForm(context, project, entry);
-              },
-              child: Text(entry.isRejected ? words.entriesFix : words.entriesEdit, key: EntriesScreen.editKey.label),
-            ),
-            if (entry.isDraft)
-              OutlinedButton(
-                key: EntriesScreen.sendKey,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  showRefusalOf(context, entries.send(entry));
-                },
-                child: Text(words.entriesSend, key: EntriesScreen.sendKey.label),
-              ),
-          ],
-          if (mayReverse) OutlinedButton(key: EntriesScreen.reverseKey, onPressed: () => _askToReverse(context), child: Text(words.entriesReverse, key: EntriesScreen.reverseKey.label)),
-          OutlinedButton.icon(
-            key: EntriesScreen.shareKey,
-            icon: Icon(Icons.share_outlined, key: EntriesScreen.shareKey.icon),
-            label: Text(words.entriesShare, key: EntriesScreen.shareKey.label),
-            onPressed: () => EntryShare.share(capture, project, entry, words),
           ),
         ],
       ),

@@ -9,7 +9,7 @@ import '../ui/part_keys.dart';
 /// The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files. Not shown to whoever may not attach files in [project].
 class InvoiceSection extends StatelessWidget {
   /// The section of [project] showing [file], or [emptyLabel] until there is one, with [message] saying why the last try gave none, calling [onCamera] and [onFiles].
-  const InvoiceSection({super.key, required this.project, required this.file, required this.emptyLabel, required this.message, required this.onCamera, required this.onFiles});
+  const InvoiceSection({super.key, required this.project, required this.file, required this.emptyLabel, required this.message, required this.onCamera, required this.onFiles, this.isReading = false});
 
   /// The project the file goes to.
   final Project project;
@@ -28,6 +28,9 @@ class InvoiceSection extends StatelessWidget {
 
   /// Opens the phone's files.
   final VoidCallback onFiles;
+
+  /// True to show the file alone, with no way to take another, as an entry read only shows what it was filled with (redix-app #90); nothing when it has none.
+  final bool isReading;
 
   Widget _preview(BuildContext context, Words words) {
     final theme = Theme.of(context);
@@ -52,7 +55,7 @@ class InvoiceSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!project.mayAttachFiles) {
+    if (isReading ? file.isNone : !project.mayAttachFiles) {
       return const SizedBox.shrink();
     }
     final words = Words.of(context);
@@ -69,22 +72,25 @@ class InvoiceSection extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            Expanded(
-              flex: 2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  OutlinedButton.icon(
-                    key: AddEntryScreen.cameraKey,
-                    icon: Icon(Icons.document_scanner_outlined, key: AddEntryScreen.cameraKey.icon),
-                    label: Text(file.isNone ? words.attachmentsTakePhoto : words.attachmentsRetake, key: AddEntryScreen.cameraKey.label),
-                    onPressed: onCamera,
-                  ),
-                  const SizedBox(height: 8),
-                  OutlinedButton.icon(key: AddEntryScreen.filesKey, icon: Icon(Icons.folder_open_outlined, key: AddEntryScreen.filesKey.icon), label: Text(words.attachmentsPickFile, key: AddEntryScreen.filesKey.label), onPressed: onFiles),
-                ],
+            if (isReading)
+              const Spacer(flex: 2)
+            else
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    OutlinedButton.icon(
+                      key: AddEntryScreen.cameraKey,
+                      icon: Icon(Icons.document_scanner_outlined, key: AddEntryScreen.cameraKey.icon),
+                      label: Text(file.isNone ? words.attachmentsTakePhoto : words.attachmentsRetake, key: AddEntryScreen.cameraKey.label),
+                      onPressed: onCamera,
+                    ),
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(key: AddEntryScreen.filesKey, icon: Icon(Icons.folder_open_outlined, key: AddEntryScreen.filesKey.icon), label: Text(words.attachmentsPickFile, key: AddEntryScreen.filesKey.label), onPressed: onFiles),
+                  ],
+                ),
               ),
-            ),
           ],
         ),
         if (message.isNotEmpty) ...[

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/approvals/approvals_screen.dart';
-import 'package:redix/entries/entries_screen.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/notifications/notifications_bell.dart';
 import 'package:redix/notifications/notifications_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
@@ -48,7 +48,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(NotificationsScreen.rowKey('notification-0'))));
 
-    expect(find.byKey(EntriesScreen.editKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.changeKey), findsOneWidget);
     expect(api.notificationRows.single['isRead'], isTrue);
   });
 

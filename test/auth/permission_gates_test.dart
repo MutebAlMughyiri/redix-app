@@ -153,11 +153,11 @@ final List<Gate> _gates = [
   ),
   (name: 'An enabled إضافة قيد on the home', permission: Permission.recordEntries, arrange: _nothing, steps: [_openProject], control: _enabled(HomeScreen.addEntryKey(_project))),
   (
-    name: 'Edit on one\'s own draft',
+    name: 'An enabled Edit on one\'s own draft',
     permission: Permission.recordEntries,
     arrange: (api) => api.addEntry(status: 'draft'),
     steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
-    control: _key(EntriesScreen.editKey),
+    control: _enabled(AddEntryScreen.changeKey),
   ),
   (
     name: 'The swipe that deletes one\'s own draft',
@@ -182,11 +182,11 @@ final List<Gate> _gates = [
   ),
   (name: 'A shared file as a new expense', permission: Permission.attachFiles, arrange: _nothing, steps: [_shareAPicture], control: _key(ShareScreen.newExpenseKey)),
   (
-    name: 'Edit on someone else\'s entry',
+    name: 'An enabled Edit on someone else\'s entry',
     permission: Permission.manageAnyEntry,
     arrange: (api) => api.addEntry(isMine: false),
     steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project)), _tapKey(EntriesScreen.allKey), _tapKey(EntriesScreen.rowKey('entry-0'))],
-    control: _key(EntriesScreen.editKey),
+    control: _enabled(AddEntryScreen.changeKey),
   ),
   (
     name: 'The contracts report\'s files',
@@ -240,7 +240,7 @@ final List<Gate> _gates = [
     permission: Permission.approveEntries,
     arrange: (api) => api.addEntry(status: 'approved'),
     steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
-    control: _key(EntriesScreen.reverseKey),
+    control: _key(AddEntryScreen.reverseKey),
   ),
   (
     name: 'Reverse a capital movement',
@@ -256,7 +256,7 @@ final List<Gate> _gates = [
     permission: Permission.approveEntries,
     arrange: (api) => api.addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب'),
     steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
-    control: _key(EntriesScreen.reverseKey),
+    control: _key(AddEntryScreen.reverseKey),
   ),
   (
     name: 'Reconcile on the accounts',

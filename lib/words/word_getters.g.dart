@@ -254,29 +254,14 @@ mixin WordGetters {
   /// The word `capital.imageTooLarge`.
   String get capitalImageTooLarge => text('capital.imageTooLarge');
 
-  /// The word `capital.invalidAmount`.
-  String get capitalInvalidAmount => text('capital.invalidAmount');
-
-  /// The word `capital.invalidDate`.
-  String get capitalInvalidDate => text('capital.invalidDate');
-
   /// The word `capital.invalidFileType`.
   String get capitalInvalidFileType => text('capital.invalidFileType');
-
-  /// The word `capital.invalidNotes`.
-  String get capitalInvalidNotes => text('capital.invalidNotes');
-
-  /// The word `capital.invoiceAlreadyAttached`.
-  String get capitalInvoiceAlreadyAttached => text('capital.invoiceAlreadyAttached');
 
   /// The word `capital.loadFailed`.
   String get capitalLoadFailed => text('capital.loadFailed');
 
   /// The word `capital.movements`.
   String get capitalMovements => text('capital.movements');
-
-  /// The word `capital.noConnection`.
-  String get capitalNoConnection => text('capital.noConnection');
 
   /// The word `capital.noMovements`.
   String get capitalNoMovements => text('capital.noMovements');
@@ -290,17 +275,11 @@ mixin WordGetters {
   /// The word `capital.pendingEntries`.
   String get capitalPendingEntries => text('capital.pendingEntries');
 
-  /// The word `capital.projectFinished`.
-  String get capitalProjectFinished => text('capital.projectFinished');
-
   /// The word `capital.receiptAttached`.
   String get capitalReceiptAttached => text('capital.receiptAttached');
 
   /// The word `capital.receiptHint`.
   String get capitalReceiptHint => text('capital.receiptHint');
-
-  /// The word `capital.refused`.
-  String get capitalRefused => text('capital.refused');
 
   /// The word `capital.reverse`.
   String get capitalReverse => text('capital.reverse');
@@ -319,15 +298,6 @@ mixin WordGetters {
 
   /// The word `capital.type`.
   String get capitalType => text('capital.type');
-
-  /// The word `capital.unknownAccount`.
-  String get capitalUnknownAccount => text('capital.unknownAccount');
-
-  /// The word `capital.unknownAttachment`.
-  String get capitalUnknownAttachment => text('capital.unknownAttachment');
-
-  /// The word `capital.unknownPartner`.
-  String get capitalUnknownPartner => text('capital.unknownPartner');
 
   /// The word `capital.withdrawal`.
   String get capitalWithdrawal => text('capital.withdrawal');
@@ -626,9 +596,6 @@ mixin WordGetters {
   /// The word `common.cancel`.
   String get commonCancel => text('common.cancel');
 
-  /// The word `common.refresh`.
-  String get commonRefresh => text('common.refresh');
-
   /// The word `common.retry`.
   String get commonRetry => text('common.retry');
 
@@ -875,6 +842,9 @@ mixin WordGetters {
   /// The word `entries.approved`.
   String get entriesApproved => text('entries.approved');
 
+  /// The word `entries.approvedCannotChange`.
+  String get entriesApprovedCannotChange => text('entries.approvedCannotChange');
+
   /// The word `entries.clearFilters`.
   String get entriesClearFilters => text('entries.clearFilters');
 
@@ -938,6 +908,9 @@ mixin WordGetters {
   /// The word `entries.notYourEntry`.
   String get entriesNotYourEntry => text('entries.notYourEntry');
 
+  /// The word `entries.notYours`.
+  String get entriesNotYours => text('entries.notYours');
+
   /// The word `entries.pendingApproval`.
   String get entriesPendingApproval => text('entries.pendingApproval');
 
@@ -1000,6 +973,9 @@ mixin WordGetters {
 
   /// The word `entries.title`.
   String get entriesTitle => text('entries.title');
+
+  /// The word `entries.view`.
+  String get entriesView => text('entries.view');
 
   /// The word `entries.withdrawal`.
   String get entriesWithdrawal => text('entries.withdrawal');
@@ -1091,14 +1067,14 @@ mixin WordGetters {
   /// The word `expenses.invalidColumnValue`.
   String get expensesInvalidColumnValue => text('expenses.invalidColumnValue');
 
+  /// The word `expenses.invalidDate`.
+  String get expensesInvalidDate => text('expenses.invalidDate');
+
   /// The word `expenses.invalidEntryId`.
   String get expensesInvalidEntryId => text('expenses.invalidEntryId');
 
   /// The word `expenses.invalidNotes`.
   String get expensesInvalidNotes => text('expenses.invalidNotes');
-
-  /// The word `expenses.invalidPaymentDate`.
-  String get expensesInvalidPaymentDate => text('expenses.invalidPaymentDate');
 
   /// The word `expenses.invalidProduct`.
   String get expensesInvalidProduct => text('expenses.invalidProduct');
@@ -1114,9 +1090,6 @@ mixin WordGetters {
 
   /// The word `expenses.item`.
   String get expensesItem => text('expenses.item');
-
-  /// The word `expenses.itemNotOffered`.
-  String get expensesItemNotOffered => text('expenses.itemNotOffered');
 
   /// The word `expenses.keptOnPhone`.
   String get expensesKeptOnPhone => text('expenses.keptOnPhone');
@@ -1205,20 +1178,17 @@ mixin WordGetters {
   /// The word `expenses.unknownColumn`.
   String get expensesUnknownColumn => text('expenses.unknownColumn');
 
-  /// The word `expenses.unknownContract`.
-  String get expensesUnknownContract => text('expenses.unknownContract');
-
   /// The word `expenses.unknownOriginalInvoice`.
   String get expensesUnknownOriginalInvoice => text('expenses.unknownOriginalInvoice');
 
   /// The word `expenses.unknownPaymentMethod`.
   String get expensesUnknownPaymentMethod => text('expenses.unknownPaymentMethod');
 
-  /// The word `expenses.unknownSubgroup`.
-  String get expensesUnknownSubgroup => text('expenses.unknownSubgroup');
-
   /// The word `expenses.unknownSupplier`.
   String get expensesUnknownSupplier => text('expenses.unknownSupplier');
+
+  /// The word `expenses.unknownTable`.
+  String get expensesUnknownTable => text('expenses.unknownTable');
 
   /// The word `myAccount.arabic`.
   String get myAccountArabic => text('myAccount.arabic');
@@ -1850,56 +1820,23 @@ mixin WordGetters {
   /// The word `reports.unitPrice`.
   String get reportsUnitPrice => text('reports.unitPrice');
 
-  /// The word `revenue.account`.
-  String get revenueAccount => text('revenue.account');
-
   /// The word `revenue.amount`.
   String get revenueAmount => text('revenue.amount');
 
   /// The word `revenue.date`.
   String get revenueDate => text('revenue.date');
 
-  /// The word `revenue.description`.
-  String get revenueDescription => text('revenue.description');
-
   /// The word `revenue.file`.
   String get revenueFile => text('revenue.file');
 
-  /// The word `revenue.invalidAmount`.
-  String get revenueInvalidAmount => text('revenue.invalidAmount');
-
-  /// The word `revenue.invalidDate`.
-  String get revenueInvalidDate => text('revenue.invalidDate');
-
-  /// The word `revenue.invalidNotes`.
-  String get revenueInvalidNotes => text('revenue.invalidNotes');
-
-  /// The word `revenue.invoiceAlreadyAttached`.
-  String get revenueInvoiceAlreadyAttached => text('revenue.invoiceAlreadyAttached');
-
   /// The word `revenue.loadFailed`.
   String get revenueLoadFailed => text('revenue.loadFailed');
-
-  /// The word `revenue.noConnection`.
-  String get revenueNoConnection => text('revenue.noConnection');
-
-  /// The word `revenue.refused`.
-  String get revenueRefused => text('revenue.refused');
 
   /// The word `revenue.title`.
   String get revenueTitle => text('revenue.title');
 
   /// The word `revenue.total`.
   String get revenueTotal => text('revenue.total');
-
-  /// The word `revenue.unknownAccount`.
-  String get revenueUnknownAccount => text('revenue.unknownAccount');
-
-  /// The word `revenue.unknownAttachment`.
-  String get revenueUnknownAttachment => text('revenue.unknownAttachment');
-
-  /// The word `revenue.unknownItem`.
-  String get revenueUnknownItem => text('revenue.unknownItem');
 
   /// The word `settings.defaultProject`.
   String get settingsDefaultProject => text('settings.defaultProject');
@@ -2104,9 +2041,6 @@ mixin WordGetters {
 
   /// The word `suppliers.vatNumberTaken`.
   String get suppliersVatNumberTaken => text('suppliers.vatNumberTaken');
-
-  /// The word `swipe.hint`.
-  String get swipeHint => text('swipe.hint');
 
   /// The word `swipe.remove`.
   String get swipeRemove => text('swipe.remove');

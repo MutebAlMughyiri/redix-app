@@ -16,14 +16,14 @@
 
 Each entry says where it stands: waiting for approval, rejected with the reason, a draft, or reversed. An approved entry says nothing.
 
-Tap an entry to see what you can do with it:
+Waiting entries have an orange frame and rejected ones a red frame. Tap an entry to open it as it was filled, its photo included, and see what you can do with it at the bottom; Share is at the top:
 
 | It is | Who | What they can do |
 | --- | --- | --- |
-| A draft | Who entered it | **Edit**, **Send for approval**; swipe to delete |
-| Waiting for approval | Finance | **Edit**; swipe to delete |
-| Rejected | Who entered it, and Finance | **Fix and send again**; swipe to delete. The reason shows at the top of the form |
-| Approved | Finance | **Reverse**, saying why |
+| A draft | Who entered it | **Edit**, **Send for approval**; swipe its row to delete |
+| Waiting for approval | Finance | **Edit**; swipe its row to delete |
+| Rejected | Who entered it, and Finance | **Fix and send again**; swipe its row to delete. The reason shows at the top |
+| Approved | Finance | **Remove**, saying why: it reverses the entry. **Edit** is grayed |
 
 An approved entry never changes. Reversing it adds an opposite entry tied to it, approved at once: both show in the reports, and their net is zero.
 
@@ -41,13 +41,13 @@ An approved entry never changes. Reversing it adds an opposite entry tied to it,
 
 ويقول كل قيد أين يقف: بانتظار الاعتماد، أو مرفوض مع السبب، أو مسودة، أو معكوس. والقيد المعتمد لا يقول شيئاً.
 
-اضغط قيداً لترى ما يمكنك فعله:
+إطار القيد بانتظار الاعتماد برتقالي، والمرفوض أحمر. اضغط قيداً لتفتحه كما أُدخل، بصورته، وترى في أسفله ما يمكنك فعله؛ والمشاركة في أعلاه:
 
 | حالته | من | ما يمكنه |
 | --- | --- | --- |
 | مسودة | من أدخله | **تعديل**، **إرسال للاعتماد**؛ واسحب السطر لحذفه |
 | بانتظار الاعتماد | المالي | **تعديل**؛ واسحب السطر لحذفه |
 | مرفوض | من أدخله والمالي | **تعديل وإعادة إرسال**؛ واسحب السطر لحذفه. يظهر السبب أعلى النموذج |
-| معتمد | المالي | **عكس القيد** مع ذكر السبب |
+| معتمد | المالي | **حذف** مع ذكر السبب، فيُعكس القيد. و**تعديل** رمادي |
 
 القيد المعتمد لا يتغيّر. عكسه يضيف قيداً مقابلاً مرتبطاً به ومعتمداً فوراً: يظهران في التقارير وصافيهما صفر.

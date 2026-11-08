@@ -139,19 +139,20 @@ void main() {
     expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsOneWidget);
 
     await openActions(tester, api, 'entry-0');
-    expect(find.byKey(EntriesScreen.editKey), findsOneWidget);
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.sendKey)));
+    expect(find.byKey(AddEntryScreen.changeKey), findsOneWidget);
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendDraftKey)));
 
     expect(api.sentEntryChanges.single.$2, 'submit');
     expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.pendingApproval');
   });
 
-  testWidgets('what waits for a decision offers the field nothing to change', (tester) async {
+  testWidgets('redix-app #90 D4: what waits for a decision offers the field Edit grayed, saying why', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry());
 
     await openActions(tester, api, 'entry-0');
 
-    expect(find.byKey(EntriesScreen.editKey), findsNothing);
+    expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.cannotChangeKey)).data, 'en entries.notYours');
     expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsNothing);
   });
 
@@ -161,31 +162,32 @@ void main() {
 
     await openActions(tester, api, 'entry-0');
 
-    expect(find.byKey(EntriesScreen.editKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.changeKey), findsOneWidget);
   });
 
-  testWidgets('someone else\'s entry offers the field nothing', (tester) async {
+  testWidgets('redix-app #90 D4: someone else\'s entry offers the field Edit grayed', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft', isMine: false));
     await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.allKey)));
 
     await openActions(tester, api, 'entry-0');
 
-    expect(find.byKey(EntriesScreen.editKey), findsNothing);
+    expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
   });
 
   testWidgets('what is approved cannot be changed, only reversed, and only by whoever decides', (tester) async {
     final field_ = await openEntries(tester, (api) => api.addEntry(status: 'approved'));
     await openActions(tester, field_, 'entry-0');
 
-    expect(find.byKey(EntriesScreen.editKey), findsNothing);
-    expect(find.byKey(EntriesScreen.reverseKey), findsNothing);
+    expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.cannotChangeKey)).data, 'en entries.approvedCannotChange');
+    expect(find.byKey(AddEntryScreen.reverseKey), findsNothing);
   });
 
   testWidgets('AC-50.1: reversing asks why, and the entry then says it was reversed', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: managerAndFinance);
     await openActions(tester, api, 'entry-0');
 
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.reverseKey)));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
     await act(tester, api, () async {
       await tester.enterText(find.byKey(EntriesScreen.reverseReasonKey), 'إدخال خاطئ');
       await tester.tap(find.byKey(EntriesScreen.reverseSendKey));
@@ -193,7 +195,8 @@ void main() {
 
     expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2, api.sentEntryChanges.single.$3['reason']), ('entry-0', 'reverse', 'إدخال خاطئ'));
     expect(find.byKey(EntriesScreen.reverseSendKey), findsNothing);
-    expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.reversed');
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.reversed');
+    expect(find.byKey(AddEntryScreen.reverseKey), findsNothing);
   });
 
   testWidgets('Muteb, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the entries again', (tester) async {
@@ -212,7 +215,7 @@ void main() {
   testWidgets('a reversal being sent cannot be sent again: its button is disabled until the answer comes', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: managerAndFinance);
     await openActions(tester, api, 'entry-0');
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.reverseKey)));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
     await tester.enterText(find.byKey(EntriesScreen.reverseReasonKey), 'إدخال خاطئ');
     api.heldEntryChange = Completer<void>();
 
@@ -234,7 +237,7 @@ void main() {
         ..entryChangeAnswer = (status: 400, code: 'reasonRequired');
     }, permissions: managerAndFinance);
     await openActions(tester, api, 'entry-0');
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.reverseKey)));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
 
     await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.reverseSendKey)));
 
@@ -247,7 +250,7 @@ void main() {
 
     await openActions(tester, api, 'entry-0');
 
-    expect(find.byKey(EntriesScreen.reverseKey), findsNothing);
+    expect(find.byKey(AddEntryScreen.reverseKey), findsNothing);
   });
 
   testWidgets('redix-api #102, redix-app #88: a swipe deletes a draft with no question, and the red bar shows it can', (tester) async {
@@ -287,12 +290,14 @@ void main() {
     expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsNothing);
     await openActions(tester, api, 'entry-0');
 
-    expect(find.byKey(EntriesScreen.editKey), findsNothing);
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.reverseKey)));
+    expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.reverseKey.label)).data, 'en entries.reverse');
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
     await act(tester, api, () async {
       await tester.enterText(find.byKey(EntriesScreen.reverseReasonKey), 'فاتورة مكررة');
       await tester.tap(find.byKey(EntriesScreen.reverseSendKey));
     });
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
     expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2), ('entry-0', 'reverse'));
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
@@ -305,7 +310,7 @@ void main() {
     expect(find.byKey(EntriesScreen.rowKey('entry-0').bar), findsNothing);
     await openActions(tester, api, 'entry-0');
 
-    expect(find.byKey(EntriesScreen.editKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.changeKey), findsOneWidget);
   });
 
   testWidgets('UC-070: a change with no answer within the configured time ends as no connection, and the bill stays', (tester) async {
@@ -332,11 +337,11 @@ void main() {
     expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsNothing);
     await openActions(tester, api, 'entry-0');
 
-    expect(find.byKey(EntriesScreen.editKey), findsNothing);
+    expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
   });
 
   group('AC-19.1: fixing a rejected entry', () {
-    Future<FakeApi> openRejected(WidgetTester tester) async {
+    Future<FakeApi> openRejected(WidgetTester tester, {bool change = true}) async {
       final api = await openEntries(tester, (api) {
         final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'بند اللياسة', subgroups: ['مواد']);
         for (final key in ['product', 'notes']) {
@@ -360,11 +365,26 @@ void main() {
           };
       });
       await openActions(tester, api, 'entry-0');
-      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.editKey)));
+      if (change) {
+        await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.changeKey)));
+      }
       return api;
     }
 
     String typed(WidgetTester tester, Key key) => tester.widget<TextField>(find.descendant(of: find.byKey(key), matching: find.byType(TextField), matchRoot: true)).controller!.text;
+
+    testWidgets('redix-app #90 (Muteb, 9 Nov 2026: "let me show all entered details en read mode"): a tap opens the entry read only, its photo and every value as it was filled, with no way to type or take another file', (tester) async {
+      await openRejected(tester, change: false);
+
+      expect(tester.widget<Text>(find.byKey(AddEntryScreen.titleKey)).data, 'en entries.view');
+      expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.rejected');
+      expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
+      expect(find.byKey(AddEntryScreen.cameraKey), findsNothing);
+      expect(find.byKey(AddEntryScreen.filesKey), findsNothing);
+      expect(find.ancestor(of: find.byKey(AddEntryScreen.amountKey), matching: find.byWidgetPredicate((widget) => widget is IgnorePointer && widget.ignoring)), findsWidgets);
+      expect(typed(tester, AddEntryScreen.amountKey), '1150');
+      expect(typed(tester, AddEntryScreen.notesKey), 'دفعة أولى');
+    });
 
     testWidgets('the reason shows at the top, and the form holds what it held', (tester) async {
       await openRejected(tester);
@@ -372,6 +392,8 @@ void main() {
       expect(tester.widget<Text>(find.byKey(AddEntryScreen.rejectionKey)).data, 'en entries.reason: الصورة غير واضحة');
       expect(typed(tester, AddEntryScreen.amountKey), '1150');
       expect(typed(tester, AddEntryScreen.notesKey), 'دفعة أولى');
+      expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget, reason: 'redix-app #90: the photo it was filled with stays after Edit');
+      expect(find.byKey(AddEntryScreen.cameraKey), findsOneWidget);
     });
 
     testWidgets('saving goes to that entry, with its own id, file and figures', (tester) async {
@@ -385,6 +407,7 @@ void main() {
       final body = api.sentEntries.single;
       expect((body['id'], body['attachmentId'], body['amount'], body['date'], body['submit']), ('entry-0', 'attachment-1', 1150, '2026-11-05', true));
       expect(body['supplierId'], isNotEmpty);
+      expect(api.sentAttachments, isEmpty, reason: 'redix-app #90: the file it holds is not sent again');
       expect(body['tableId'], isNotEmpty);
     });
 
@@ -408,7 +431,7 @@ void main() {
           };
       });
       await openActions(tester, api, 'entry-0');
-      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.editKey)));
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.changeKey)));
 
       expect(tester.widget<Text>(find.byKey(AddEntryScreen.titleKey)).data, 'en entries.edit');
       expect(tester.widget<TablePicker>(find.byKey(AddEntryScreen.tableKey)).chosen.label, 'مقاول الحديد (بند الحديد)');

@@ -10,7 +10,7 @@ import 'refusal_snack_bar.dart';
 /// the card has no bar and does not move.
 class SwipeToRemove extends StatelessWidget {
   /// The swipe of the row keyed [rowKey], removing it through [onRemove] while [mayRemove].
-  const SwipeToRemove({super.key, required this.rowKey, required this.mayRemove, required this.onRemove, required this.child});
+  const SwipeToRemove({super.key, required this.rowKey, required this.mayRemove, required this.onRemove, this.side = BorderSide.none, required this.child});
 
   /// The row's own key; the swipe's is its `swipe` part, and what shows behind it is that part's icon and label.
   final Key rowKey;
@@ -23,6 +23,9 @@ class SwipeToRemove extends StatelessWidget {
 
   /// The row.
   final Widget child;
+
+  /// The side of the row's card: [BorderSide.none] for the card's own outline, or the color its row stands in, as an entry's status (redix-app #90).
+  final BorderSide side;
 
   /// The red bar's width, in logical pixels (redix-app #88, D2).
   static const barWidth = 4.0;
@@ -37,6 +40,7 @@ class SwipeToRemove extends StatelessWidget {
       key: rowKey.card,
       margin: const EdgeInsets.only(bottom: 8),
       clipBehavior: Clip.antiAlias,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: side == BorderSide.none ? BorderSide(color: colors.outlineVariant) : side),
       child: Stack(
         children: [
           child,

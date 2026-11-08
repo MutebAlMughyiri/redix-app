@@ -46,7 +46,9 @@ import 'entry_tables.dart';
 import 'table_picker.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import 'entry_row.dart';
 import 'entry_share.dart';
+import 'reverse_sheet.dart';
 import 'entry_recording.dart';
 import '../attachments/entry_file.dart';
 
@@ -62,6 +64,7 @@ class AddEntryScreen extends StatefulWidget {
   const AddEntryScreen({
     super.key,
     this.editingId = '',
+    this.isReading = false,
     this.rejectionReason = '',
     required this.sharedFile,
     required this.project,
@@ -81,6 +84,9 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The entry being changed; empty for a new one.
   final String editingId;
+
+  /// True to open [editingId] read only, as it was filled, until تعديل turns it into the form (redix-app #90).
+  final bool isReading;
 
   /// The file it starts with, shared from another app (UC-046); none otherwise. The camera opens only when asked (Muteb, 8 Nov 2026).
   final PickedFile sharedFile;
@@ -284,6 +290,24 @@ class AddEntryScreen extends StatefulWidget {
   /// The choice of a contractor payment's kind: inside the contract or outside it.
   static const kindKey = Key('addEntry.kind');
 
+  /// Where an entry read only stands, in its status's color (redix-app #90).
+  static const statusKey = Key('addEntry.status');
+
+  /// The button turning an entry read only into the form: تعديل, or تصحيح once rejected.
+  static const changeKey = Key('addEntry.change');
+
+  /// The line saying why an entry read only cannot be changed.
+  static const cannotChangeKey = Key('addEntry.cannotChange');
+
+  /// The button sending a draft read only for approval.
+  static const sendDraftKey = Key('addEntry.sendDraft');
+
+  /// The button reversing an approved entry, which reads حذف (Muteb, 9 Nov 2026).
+  static const reverseKey = Key('addEntry.reverse');
+
+  /// The title bar's button sharing an entry read only (redix-app #83).
+  static const shareKey = Key('addEntry.share');
+
   /// The switch saying a partner's money is a withdrawal.
   static const withdrawalKey = Key('addEntry.withdrawal');
 
@@ -320,6 +344,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   var _message = '';
   var _refusedColumn = '';
   var _saving = false;
+  late var _reading = widget.isReading;
 
   @override
   void initState() {
@@ -375,6 +400,12 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       _file.attachmentId = saved.attachmentId;
       _customValues.addAll(saved.customValues);
     });
+    if (saved.attachmentId.isNotEmpty) {
+      final kept = await widget.attachments.read(saved.attachmentId);
+      if (mounted) {
+        setState(() => _file.showKept(kept));
+      }
+    }
     if (!table.isNone) {
       final keptValues = Map.of(_customValues);
       await _chooseTable(table);
@@ -721,17 +752,34 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   Widget _tablePicker() => TablePicker(key: AddEntryScreen.tableKey, tables: widget.tables, chosen: _table, onChanged: _chooseTable);
 
+  /// The entry read only, as the project's entries list it; none until they are read.
+  EntryRow get _row => widget.entries.all.where((row) => row.id == widget.editingId).firstOrNull ?? EntryRow.none();
+
+  String get _title {
+    final words = Words.of(context);
+    return _reading ? words.entriesView : (widget.editingId.isEmpty ? words.entriesNew : words.entriesEdit);
+  }
+
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final ownFields = _itemsOwnFields(words);
-    return Scaffold(
-      appBar: AppBar(title: ScreenTitle(widget.editingId.isEmpty ? words.entriesNew : words.entriesEdit, subject: widget.project.name)),
+    return ListenableBuilder(
+      listenable: widget.entries,
+      builder: (context, _) => Scaffold(
+      appBar: AppBar(
+        title: ScreenTitle(_title, subject: widget.project.name),
+        actions: [
+          if (_reading)
+            IconButton(key: AddEntryScreen.shareKey, tooltip: words.entriesShare, icon: Icon(Icons.share_outlined, key: AddEntryScreen.shareKey.icon), onPressed: () => EntryShare.share(widget.capture, widget.project, _row, words)),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (_reading) _standing(words),
             InvoiceSection(
               project: widget.project,
               file: _file.picked,
@@ -739,15 +787,86 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
               message: _file.message,
               onCamera: () => _takeFrom(widget.capture.fromCamera),
               onFiles: () => _takeFrom(widget.capture.fromFiles),
+              isReading: _reading,
             ),
-            ..._entryFields(words, ownFields),
+            IgnorePointer(ignoring: _reading, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: _entryFields(words, ownFields))),
+            const SizedBox(height: 16),
+            if (_message.isNotEmpty) ...[
+              Text(words.text(_message), key: AddEntryScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+              const SizedBox(height: 8),
+            ],
+            if (_reading) _readingActions(words) else _formActions(words),
           ],
         ),
+      ),
       ),
     );
   }
 
-  /// What every table asks, under the file: the QR code's reading, what it is for, the item's own columns, the account and notes, then Send and Save draft.
+  /// Where an entry read only stands, in its status's color (redix-app #90).
+  Widget _standing(Words words) {
+    final status = _row.status;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(words.text(_row.statusWordKey), key: AddEntryScreen.statusKey, style: TextStyle(color: status.isMarked ? status.colorIn(Theme.of(context).colorScheme) : null, fontWeight: FontWeight.w600)),
+    );
+  }
+
+  /// What an entry read only offers at its bottom (redix-app #90, D3, D4): تعديل, grayed with the reason where it cannot work; a draft's إرسال للاعتماد; and حذف, which
+  /// reverses an approved entry, for whoever approves.
+  Widget _readingActions(Words words) {
+    final row = _row;
+    final mayChange = row.allows(widget.project, row.kind.recordedWith);
+    final mayReverse = widget.project.mayApproveEntries && row.isApproved && !row.isReversed;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: 8,
+      children: [
+        Row(
+          spacing: 8,
+          children: [
+            Expanded(
+              flex: 2,
+              child: FilledButton(
+                key: AddEntryScreen.changeKey,
+                onPressed: mayChange ? () => setState(() => _reading = false) : null,
+                child: Text(row.isRejected ? words.entriesFix : words.entriesEdit, key: AddEntryScreen.changeKey.label),
+              ),
+            ),
+            if (row.isDraft && mayChange) Expanded(child: OutlinedButton(key: AddEntryScreen.sendDraftKey, onPressed: () => _sendDraft(row), child: Text(words.entriesSend, key: AddEntryScreen.sendDraftKey.label))),
+            if (mayReverse)
+              Expanded(
+                child: OutlinedButton(key: AddEntryScreen.reverseKey, onPressed: () => ReverseSheet.show(context, (reason) => widget.entries.reverse(row, reason)), child: Text(words.entriesReverse, key: AddEntryScreen.reverseKey.label)),
+              ),
+          ],
+        ),
+        if (!mayChange) Text(words.text(row.isApproved ? 'entries.approvedCannotChange' : 'entries.notYours'), key: AddEntryScreen.cannotChangeKey, style: Theme.of(context).textTheme.bodySmall),
+      ],
+    );
+  }
+
+  Future<void> _sendDraft(EntryRow row) async {
+    final refusal = await showRefusalOf(context, widget.entries.send(row));
+    if (refusal.isEmpty && mounted) {
+      context.pop(true);
+    }
+  }
+
+  /// Send and Save draft, under the form.
+  Widget _formActions(Words words) => Row(
+    spacing: 8,
+    children: [
+      Expanded(
+        flex: 2,
+        child: FilledButton(key: AddEntryScreen.sendKey, onPressed: _saving ? null : () => _save(true), child: Text(words.expensesSend, key: AddEntryScreen.sendKey.label)),
+      ),
+      Expanded(
+        child: OutlinedButton(key: AddEntryScreen.draftKey, onPressed: _saving ? null : () => _save(false), child: Text(words.expensesSaveDraft, key: AddEntryScreen.draftKey.label)),
+      ),
+    ],
+  );
+
+  /// What every table asks, under the file: the QR code's reading, what it is for, the item's own columns, the account and notes.
   List<Widget> _entryFields(Words words, List<Widget> ownFields) => [
             if (_qrMessage.isNotEmpty)
               Padding(
@@ -758,22 +877,5 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
             FormSection(key: AddEntryScreen.forSectionKey, _whatItIsFor(words)),
             if (ownFields.isNotEmpty) FormSection(key: AddEntryScreen.columnsSectionKey, ownFields),
             _paymentSection(words),
-            const SizedBox(height: 16),
-            if (_message.isNotEmpty) ...[
-              Text(words.text(_message), key: AddEntryScreen.messageKey, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-              const SizedBox(height: 8),
-            ],
-            Row(
-              spacing: 8,
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: FilledButton(key: AddEntryScreen.sendKey, onPressed: _saving ? null : () => _save(true), child: Text(words.expensesSend, key: AddEntryScreen.sendKey.label)),
-                ),
-                Expanded(
-                  child: OutlinedButton(key: AddEntryScreen.draftKey, onPressed: _saving ? null : () => _save(false), child: Text(words.expensesSaveDraft, key: AddEntryScreen.draftKey.label)),
-                ),
-              ],
-            ),
   ];
 }

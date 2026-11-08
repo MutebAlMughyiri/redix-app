@@ -33,15 +33,12 @@ import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
-import '../attachments/invoice_capture.dart';
 
 /// The home of the open project (UC-010): the project, with what the user's permissions allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
   /// The home of the project [projectId], one of [projects], with [accounts], its accounts.
-  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.dashboard, required this.capture});
+  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.dashboard});
 
-  /// The phone's share sheet, for sharing an entry.
-  final InvoiceCapture capture;
 
   /// Its figures at a glance.
   final Dashboard dashboard;
@@ -256,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onItem: (item) => _open(ItemReportScreen.pathOf(project.id, item.id), project),
             ),
             MyCustody(accounts: widget.accounts),
-            HomeEntries(project: project, entries: widget.entries, capture: widget.capture),
+            HomeEntries(project: project, entries: widget.entries),
             ProjectCard(
               project: project,
               onAccounts: () => _open(AccountsScreen.pathOf(project.id), project),

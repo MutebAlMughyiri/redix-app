@@ -189,7 +189,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), notifications: _notifications, dashboard: _dashboardOf(state.pathParameters['projectId'] ?? ''), capture: widget.capture),
+        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), notifications: _notifications, dashboard: _dashboardOf(state.pathParameters['projectId'] ?? '')),
       ),
       GoRoute(
         path: ApprovalsScreen.path,
@@ -333,7 +333,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: AddEntryScreen.path, builder: (context, state) => _addEntryScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project, state.uri.queryParameters)),
       GoRoute(
         path: EntriesScreen.path,
-        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), capture: widget.capture, openEntryId: state.uri.queryParameters['entry'] ?? '', startsSearching: state.uri.queryParameters.containsKey('search')),
+        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), openEntryId: state.uri.queryParameters['entry'] ?? '', startsSearching: state.uri.queryParameters.containsKey('search')),
       ),
       GoRoute(
         path: ItemTablesScreen.path,
@@ -387,6 +387,7 @@ class _RedixAppState extends State<RedixApp> {
   AddEntryScreen _addEntryScreen(String projectId, Project project, Map<String, String> query) => AddEntryScreen(
     sharedFile: query.containsKey('shared') ? _shared : PickedFile.none(),
     editingId: query['entry'] ?? '',
+    isReading: query.containsKey('read'),
     rejectionReason: query['reason'] ?? '',
     project: project,
     recording: _recordingOf(projectId),
