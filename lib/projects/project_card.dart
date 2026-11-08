@@ -9,7 +9,7 @@ import 'project.dart';
 /// The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Settings, Approvals and Documents.
 /// A finished project says first, in one line, that it is read-only (redix-api 93).
 class ProjectCard extends StatelessWidget {
-  /// The card of [project], calling [onAccounts], [onPartners], [onSuppliers], [onContracts], [onApprovals], [onReports], [onSettings] and [onDocuments] when those are tapped.
+  /// The card of [project], calling [onAccounts], [onPartners], [onSuppliers], [onContracts], [onApprovals], [onReports] and [onDocuments] when those are tapped.
   const ProjectCard({
     super.key,
     required this.project,
@@ -19,7 +19,6 @@ class ProjectCard extends StatelessWidget {
     required this.onContracts,
     required this.onApprovals,
     required this.onReports,
-    required this.onSettings,
     required this.onDocuments,
   });
 
@@ -43,9 +42,6 @@ class ProjectCard extends StatelessWidget {
 
   /// Called when Reports is tapped.
   final VoidCallback onReports;
-
-  /// Opens Settings, which holds the users, the categories and items, and the payment methods.
-  final VoidCallback onSettings;
 
   /// Called when Documents is tapped.
   final VoidCallback onDocuments;
@@ -102,12 +98,6 @@ class ProjectCard extends StatelessWidget {
                   icon: Icon(Icons.summarize_outlined, key: HomeScreen.reportsKey(project.id).icon),
                   label: Text(words.reportsTitle, key: HomeScreen.reportsKey(project.id).label),
                   onPressed: onReports,
-                ),
-                TextButton.icon(
-                  key: HomeScreen.settingsKey(project.id),
-                  icon: Icon(Icons.tune, key: HomeScreen.settingsKey(project.id).icon),
-                  label: Text(words.settingsTitle, key: HomeScreen.settingsKey(project.id).label),
-                  onPressed: onSettings,
                 ),
                 if (project.may(Permission.approveEntries))
                   TextButton.icon(

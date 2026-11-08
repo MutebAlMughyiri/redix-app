@@ -18,6 +18,20 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
   }
 
+  testWidgets('Muteb, 8 Nov 2026: the home opens Settings from an icon in its top bar, beside Refresh, and the project card has no Settings button', (tester) async {
+    final api = FakeApi()..addProject('غصون 6');
+    await openProject(tester, api);
+
+    final icon = find.descendant(of: find.byType(AppBar), matching: find.byKey(HomeScreen.settingsKey('project-0')));
+    expect(icon, findsOneWidget);
+    expect(tester.widget<Icon>(find.byKey(HomeScreen.settingsKey('project-0').icon)).icon, Icons.precision_manufacturing_outlined);
+    expect(find.byKey(HomeScreen.settingsKey('project-0').label), findsNothing);
+
+    await act(tester, api, () => tester.tap(icon));
+
+    expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
+  });
+
   testWidgets('the admin sees Switch project, Registered projects and My account', (tester) async {
     await openSettings(tester, FakeApi()..permissions = admin);
 
@@ -119,12 +133,10 @@ void main() {
     expect(find.byKey(SettingsScreen.paymentMethodsKey), findsNothing);
   });
 
-  testWidgets('from a project Settings opens after Reports and holds More info, its users, categories and items, and payment methods', (tester) async {
+  testWidgets('from a project Settings holds More info, its users, categories and items, and payment methods', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
 
-    final buttons = tester.widget<OverflowBar>(find.ancestor(of: find.byKey(HomeScreen.settingsKey('project-0')), matching: find.byType(OverflowBar)).first).children.map((button) => button.key).toList();
-    expect(buttons.indexOf(HomeScreen.settingsKey('project-0')), buttons.indexOf(HomeScreen.reportsKey('project-0')) + 1);
     await harness.openSettings(tester, api);
 
     expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);

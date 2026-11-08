@@ -6,33 +6,19 @@ import '../auth/session.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
-import '../words/app_language.dart';
-import '../words/language_switch.dart';
 import '../words/words.dart';
 
-/// My account (حسابي): the user's own settings: the language (UC-004), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out
-/// (UC-062).
+/// My account (حسابي): the user's own settings: signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out (UC-062). The language
+/// is chosen in Settings (UC-004).
 class MyAccountScreen extends StatefulWidget {
-  /// The screen, switching [language] and signing out of [session].
-  const MyAccountScreen({super.key, required this.language, required this.session});
-
-  /// The language choice this screen changes.
-  final AppLanguage language;
+  /// The screen, signing out of [session].
+  const MyAccountScreen({super.key, required this.session});
 
   /// The session this screen signs out of.
   final Session session;
 
   /// The screen's route.
   static const path = '/my-account';
-
-  /// The Arabic choice.
-  static const arabicKey = LanguageSwitch.arabicKey;
-
-  /// The English choice.
-  static const englishKey = LanguageSwitch.englishKey;
-
-  /// The line that says why the language could not be switched.
-  static const messageKey = LanguageSwitch.messageKey;
 
   /// The switch that turns fingerprint or face on and off for this phone.
   static const biometricsKey = Key('myAccount.biometrics');
@@ -45,9 +31,6 @@ class MyAccountScreen extends StatefulWidget {
 
   /// The row that signs out, after asking.
   static const signOutKey = Key('myAccount.signOut');
-
-  /// The heading over the language choice.
-  static const languageHeadingKey = Key('myAccount.languageHeading');
 
   /// What signing out means, in the question.
   static const signOutExplainKey = ConfirmDialog.explanationKey;
@@ -95,10 +78,6 @@ class _MyAccountScreenState extends State<MyAccountScreen> {
       body: ListView(
         padding: const EdgeInsets.all(24),
         children: [
-          Text(words.myAccountLanguage, key: MyAccountScreen.languageHeadingKey, style: theme.textTheme.titleMedium),
-          const SizedBox(height: 12),
-          LanguageSwitch(language: widget.language),
-          const SizedBox(height: 32),
           ListenableBuilder(
             listenable: widget.session,
             builder: (context, _) => SwitchListTile(

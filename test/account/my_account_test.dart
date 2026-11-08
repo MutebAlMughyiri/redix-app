@@ -40,6 +40,10 @@ import 'package:redix/users/users_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../app_harness.dart';
+import 'package:redix/words/language_tile.dart';
+import 'package:redix/words/language_switch.dart';
+import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/part_keys.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -131,18 +135,43 @@ void main() {
     expect(biometricsSwitch(tester).value, isFalse);
   });
 
-  Future<void> choose(WidgetTester tester, FakeApi api, Key language) => act(tester, api, () => tester.tap(find.byKey(language)));
+  /// Chooses [language] through Settings' language row, from the project list.
+  Future<void> choose(WidgetTester tester, FakeApi api, String language) async {
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(LanguageTile.tileKey)));
+    await act(tester, api, () => tester.tap(find.byKey(LanguageTile.optionKey(language))));
+  }
+
+  testWidgets('UC-004 (Muteb, 8 Nov 2026): Settings has a language row naming the language in use, which opens one radio button per language, the one in use chosen', (tester) async {
+    final api = FakeApi();
+    await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession});
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
+
+    expect(text(tester, LanguageTile.tileKey.subtitle), 'ar myAccount.arabic');
+    await act(tester, api, () => tester.tap(find.byKey(LanguageTile.tileKey)));
+
+    expect(text(tester, LanguageTile.optionKey('ar').title), 'ar myAccount.arabic');
+    expect(text(tester, LanguageTile.optionKey('en').title), 'ar myAccount.english');
+    expect(tester.widget<RadioGroup<String>>(find.byKey(LanguageTile.tileKey.body)).groupValue, 'ar');
+  });
+
+  testWidgets('UC-004: My account no longer holds the language', (tester) async {
+    final api = FakeApi();
+    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await openMyAccount(tester, api);
+
+    expect(find.byKey(LanguageSwitch.choiceKey), findsNothing);
+    expect(find.byKey(LanguageTile.tileKey), findsNothing);
+  });
 
   testWidgets('choosing English on an Arabic phone switches every screen to English, left to right', (tester) async {
     final api = FakeApi();
     await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession});
-    await openMyAccount(tester, api);
 
-    await choose(tester, api, MyAccountScreen.englishKey);
+    await choose(tester, api, 'en');
 
-    expect(text(tester, MyAccountScreen.englishKey), 'en myAccount.english');
-    expect(direction(tester, MyAccountScreen.englishKey), TextDirection.ltr);
-    await act(tester, api, tester.pageBack);
+    expect(text(tester, LanguageTile.tileKey.subtitle), 'en myAccount.english');
+    expect(direction(tester, LanguageTile.tileKey.subtitle), TextDirection.ltr);
     await act(tester, api, tester.pageBack);
     expect(text(tester, ProjectsScreen.titleKey), 'en projects.choose');
     expect(direction(tester, ProjectsScreen.titleKey), TextDirection.ltr);
@@ -151,8 +180,7 @@ void main() {
   testWidgets('the chosen language is kept on the phone and used at the next start', (tester) async {
     final api = FakeApi();
     await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession});
-    await openMyAccount(tester, api);
-    await choose(tester, api, MyAccountScreen.englishKey);
+    await choose(tester, api, 'en');
     final preferences = await SharedPreferences.getInstance();
     final kept = {for (final key in preferences.getKeys()) key: preferences.get(key) ?? ''};
 
@@ -165,13 +193,13 @@ void main() {
   testWidgets('without a network the language stays and the app says switching needs a network', (tester) async {
     final api = FakeApi();
     await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession});
-    await openMyAccount(tester, api);
 
     api.online = false;
-    await choose(tester, api, MyAccountScreen.englishKey);
+    await choose(tester, api, 'en');
 
-    expect(text(tester, MyAccountScreen.messageKey), 'ar myAccount.languageNeedsNetwork');
-    expect(direction(tester, MyAccountScreen.messageKey), TextDirection.rtl);
+    expect(text(tester, messageKeyOf('myAccount.languageNeedsNetwork').label), 'ar myAccount.languageNeedsNetwork');
+    expect(direction(tester, messageKeyOf('myAccount.languageNeedsNetwork').label), TextDirection.rtl);
+    expect(text(tester, LanguageTile.tileKey.subtitle), 'ar myAccount.arabic');
     expect((await SharedPreferences.getInstance()).containsKey('language'), isFalse);
   });
 
@@ -236,8 +264,8 @@ void main() {
   testWidgets('the chosen language stays after signing out', (tester) async {
     final api = FakeApi();
     await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession});
-    await openMyAccount(tester, api);
-    await choose(tester, api, MyAccountScreen.englishKey);
+    await choose(tester, api, 'en');
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
 
     await signOut(tester, api);
 
@@ -446,6 +474,8 @@ void main() {
       final longMethod = api.addPaymentMethod(runningId, 'تحويل بنكي عن طريق الحساب الجاري للمؤسسة', isActive: false)['id'] as String;
       await openSettings(tester, api, projectId: runningId);
       [SettingsScreen.usersKey, SettingsScreen.categoriesKey, SettingsScreen.paymentMethodsKey].forEach(expectFits);
+      await tester.ensureVisible(find.byKey(SettingsScreen.paymentMethodsKey));
+      await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.paymentMethodsKey)));
       [
         PaymentMethodsScreen.addKey,
@@ -671,8 +701,12 @@ void main() {
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
+      expectFits(LanguageTile.tileKey);
+      await act(tester, api, () => tester.tap(find.byKey(LanguageTile.tileKey)));
+      [LanguageTile.optionKey('ar'), LanguageTile.optionKey('en')].forEach(expectFits);
+      await act(tester, api, () => tester.tapAt(const Offset(4, 4)));
       await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
-      [MyAccountScreen.arabicKey, MyAccountScreen.englishKey, MyAccountScreen.changePasswordKey, MyAccountScreen.signOutKey].forEach(expectFits);
+      [MyAccountScreen.changePasswordKey, MyAccountScreen.signOutKey].forEach(expectFits);
     });
   }
 }

@@ -16,11 +16,16 @@ import '../users/users_screen.dart';
 import '../words/words.dart';
 import 'default_project_sheet.dart';
 import 'payment_methods_screen.dart';
+import '../words/app_language.dart';
+import '../words/language_tile.dart';
 
-/// Settings (الإعدادات): the way back to the project list, My account, the registered projects for the admin and, for the project it was opened from, More info for everyone in it, and its users, its categories and items, and its payment methods, each for whoever may change them.
+/// Settings (الإعدادات): the way back to the project list, My account, the language, the registered projects for the admin and, for the project it was opened from, More info for everyone in it, and its users, its categories and items, and its payment methods, each for whoever may change them.
 class SettingsScreen extends StatelessWidget {
-  /// The screen of [project], for the user signed in through [session], whose [projects] the default is chosen among.
-  const SettingsScreen({super.key, required this.session, required this.projects, required this.project});
+  /// The screen of [project], for the user signed in through [session], whose [projects] the default is chosen among, switching [language].
+  const SettingsScreen({super.key, required this.session, required this.projects, required this.project, required this.language});
+
+  /// The language choice its language row changes.
+  final AppLanguage language;
 
   /// The session that says what the user may do.
   final Session session;
@@ -83,6 +88,7 @@ class SettingsScreen extends StatelessWidget {
               _row(registeredKey, Icons.approval_outlined, words.registeredTitle, () => context.push(RegisteredProjectsScreen.path)),
             _row(defaultProjectKey, Icons.star_outline, words.settingsDefaultProject, () => DefaultProjectSheet.show(context, session, projects)),
             _row(myAccountKey, Icons.account_circle_outlined, words.myAccountTitle, () => context.push(MyAccountScreen.path)),
+            LanguageTile(language: language),
             if (current.may(Permission.readProject))
               _row(projectInfoKey, Icons.info_outline, words.projectInfoTitle, () => context.push(ProjectInfoScreen.pathOf(current.id), extra: current)),
             if (current.may(Permission.manageUsers))

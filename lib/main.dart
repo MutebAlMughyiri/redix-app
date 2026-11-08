@@ -179,9 +179,12 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session, language: widget.language)),
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
-      GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(language: widget.language, session: widget.session)),
-      GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session, projects: _projects, project: Project.none())),
-      GoRoute(path: SettingsScreen.projectPath, builder: (context, state) => SettingsScreen(session: widget.session, projects: _projects, project: state.extra! as Project)),
+      GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(session: widget.session)),
+      GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session, projects: _projects, project: Project.none(), language: widget.language)),
+      GoRoute(
+        path: SettingsScreen.projectPath,
+        builder: (context, state) => SettingsScreen(session: widget.session, projects: _projects, project: state.extra! as Project, language: widget.language),
+      ),
       GoRoute(path: ProjectInfoScreen.path, builder: (context, state) => ProjectInfoScreen(project: state.extra! as Project, projects: _projects)),
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(

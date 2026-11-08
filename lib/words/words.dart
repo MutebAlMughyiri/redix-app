@@ -19,6 +19,8 @@ class Words with WordGetters {
 
   /// The languages the app supports, Arabic first so it is the fallback for any other phone language.
   static const languages = ['ar', 'en'];
+
+  static const _languageNames = {'ar': 'myAccount.arabic', 'en': 'myAccount.english'};
   static const _keptKey = 'words';
 
   /// True when the phone has no words yet: a first start without a network.
@@ -29,6 +31,9 @@ class Words with WordGetters {
 
   @override
   String text(String key) => _values[key] ?? key;
+
+  /// The name of [language], one of [languages], in the language in use.
+  String languageName(String language) => text(_languageNames[language] ?? language);
 
   /// The words of [language]. Kept words show at once and are refreshed in the background, calling [onRefreshed] when what arrived differs from what is shown, so the app loads
   /// them at once rather than at the next start; another language is fetched first and replaces the kept one, since the phone keeps one language only. Empty when there is no

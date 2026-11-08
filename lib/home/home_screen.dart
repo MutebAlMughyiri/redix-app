@@ -118,7 +118,7 @@ class HomeScreen extends StatefulWidget {
   /// The way to the reports of the project [id].
   static Key reportsKey(String id) => Key('home.reports.$id');
 
-  /// The way into the settings of the project [id].
+  /// The way into the settings of the project [id]: an icon beside Refresh (Muteb, 8 Nov 2026).
   static Key settingsKey(String id) => Key('home.settings.$id');
 
   /// The way to what waits for a decision in the project [id].
@@ -205,6 +205,18 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         actions: [
           RefreshButton(onRefresh: () => Future.wait([widget.projects.load(), _readAgain()])),
+          ListenableBuilder(
+            listenable: widget.projects,
+            builder: (context, _) {
+              final project = widget.projects.byId(widget.projectId);
+              return IconButton(
+                key: HomeScreen.settingsKey(widget.projectId),
+                tooltip: words.settingsTitle,
+                icon: Icon(Icons.precision_manufacturing_outlined, key: HomeScreen.settingsKey(widget.projectId).icon),
+                onPressed: project.isNone ? null : () => _openSettings(project),
+              );
+            },
+          ),
           NotificationsBell(notifications: widget.notifications),
         ],
       ),
@@ -259,7 +271,6 @@ class _HomeScreenState extends State<HomeScreen> {
               onContracts: () => _open(ContractsScreen.pathOf(project.id), project),
               onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
               onReports: () => _open(ReportsScreen.pathOf(project.id), project),
-              onSettings: () => _openSettings(project),
               onDocuments: () => _open(DocumentsScreen.pathOf(project.id), project),
             ),
           ],

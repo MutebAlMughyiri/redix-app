@@ -55,6 +55,7 @@ import 'package:redix/users/user_permissions_screen.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:redix/words/app_language.dart';
 import 'package:redix/words/words.dart';
+import 'package:redix/words/language_tile.dart';
 
 /// The test's admin, created by the API with a temporary password.
 const username = String.fromEnvironment('TEST_USERNAME');
@@ -683,15 +684,17 @@ void main() {
       await picture('default-project');
       await back();
       await $(SettingsScreen.myAccountKey).tap();
-      await reach($(MyAccountScreen.arabicKey));
+      await reach($(MyAccountScreen.signOutKey));
       await picture('my-account');
-
-      await $(MyAccountScreen.arabicKey).tap();
-      await $.pumpAndSettle();
-      expect(Directionality.of($.tester.element(find.byKey(MyAccountScreen.arabicKey))), TextDirection.rtl);
-      await picture('my-account-arabic');
-
       await back();
+
+      await $(LanguageTile.tileKey).tap();
+      await reach($(LanguageTile.optionKey('ar')));
+      await picture('language');
+      await $(LanguageTile.optionKey('ar')).tap();
+      await $.pumpAndSettle();
+      expect(Directionality.of($.tester.element(find.byKey(LanguageTile.tileKey))), TextDirection.rtl);
+
       await $(SettingsScreen.switchProjectKey).tap();
       await reach($(ProjectsScreen.statusKey(projectId)));
       expect(Directionality.of($.tester.element(find.byKey(ProjectsScreen.statusKey(projectId)))), TextDirection.rtl);
@@ -724,12 +727,11 @@ void main() {
       await reach(projectSettings);
       await back();
       await $(ProjectsScreen.settingsKey).tap();
-      await $(SettingsScreen.myAccountKey).tap();
-      await reach($(MyAccountScreen.englishKey));
-
-      await $(MyAccountScreen.englishKey).tap();
+      await $(LanguageTile.tileKey).tap();
+      await $(LanguageTile.optionKey('en')).tap();
       await $.pumpAndSettle();
-      expect(Directionality.of($.tester.element(find.byKey(MyAccountScreen.englishKey))), TextDirection.ltr);
+      expect(Directionality.of($.tester.element(find.byKey(LanguageTile.tileKey))), TextDirection.ltr);
+      await $(SettingsScreen.myAccountKey).tap();
 
       if (!const bool.fromEnvironment('TEST_HAS_FINGERPRINT')) {
         await goTo($(MyAccountScreen.biometricsKey));

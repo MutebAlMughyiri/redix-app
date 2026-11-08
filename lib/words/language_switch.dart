@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'app_language.dart';
 import 'words.dart';
+import 'language_tile.dart';
 
-/// The choice between Arabic and English (UC-004), the same on the sign-in screen and in My account, with the line that says why it could not switch.
+/// The choice between Arabic and English on the sign-in screen (UC-004), with the line that says why it could not switch; once signed in, the language is chosen in Settings
+/// through [LanguageTile].
 class LanguageSwitch extends StatefulWidget {
   /// The switch that changes [language].
   const LanguageSwitch({super.key, required this.language});
@@ -52,8 +54,8 @@ class _LanguageSwitchState extends State<LanguageSwitch> {
         SegmentedButton<String>(
           key: LanguageSwitch.choiceKey,
           segments: [
-            ButtonSegment(value: 'ar', label: Text(words.myAccountArabic, key: LanguageSwitch.arabicKey)),
-            ButtonSegment(value: 'en', label: Text(words.myAccountEnglish, key: LanguageSwitch.englishKey)),
+            ButtonSegment(value: 'ar', label: Text(words.languageName('ar'), key: LanguageSwitch.arabicKey)),
+            ButtonSegment(value: 'en', label: Text(words.languageName('en'), key: LanguageSwitch.englishKey)),
           ],
           selected: {Localizations.localeOf(context).languageCode},
           onSelectionChanged: _switching ? null : (selection) => _choose(selection.single),

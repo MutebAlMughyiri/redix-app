@@ -8,14 +8,13 @@
 
 ## Screen
 
-[My account](../guide/my-account.md) (حسابي), `MyAccountScreen` at `/my-account`, opened from [Settings](../guide/settings.md) (`SettingsScreen.myAccountKey`):
+The language row of [Settings](../guide/settings.md) (`SettingsScreen`), `LanguageTile`. It moved there from My account on 8 Nov 2026 (Muteb: "move language to be as a button that once clicked then show radio button selection"). The sign-in screen keeps its own switch, `LanguageSwitch`.
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| العربية | `MyAccountScreen.arabicKey` | Switches the app to Arabic, right to left |
-| English | `MyAccountScreen.englishKey` | Switches the app to English, left to right |
-| Message | `MyAccountScreen.messageKey` | Says switching needs a network, when it failed for that |
-| Change password | `MyAccountScreen.changePasswordKey` | Opens [Change password](../guide/change-password.md), with a way back |
+| The language row, naming the language in use | `LanguageTile.tileKey`, `tileKey.subtitle` | Opens the choice |
+| A radio button per language in `Words.languages`, the one in use chosen | `LanguageTile.optionKey(language)`, the group `tileKey.body` | Switches the app to that language: Arabic right to left, English left to right |
+| Message | `messageKeyOf('myAccount.languageNeedsNetwork')` | Says switching needs a network, when it failed for that |
 
 ## API calls
 
@@ -27,6 +26,7 @@
 
 | Rule | Code | Test |
 | --- | --- | --- |
+| Settings has a language row naming the language in use, opening one radio button per language with the one in use chosen; My account no longer holds it | `LanguageTile`, `Words.languageName` | `my_account_test.dart`: UC-004 (Muteb, 8 Nov 2026); UC-004: My account no longer holds the language |
 | Choosing a language switches every screen to its words and direction | `AppLanguage.choose`, `RedixApp` (`locale`) | `my_account_test.dart`: choosing English on an Arabic phone; `patrol_test/app_test.dart` against the real API |
 | The choice is kept on the phone and used at the next start | `AppLanguage.restore` | `my_account_test.dart`: the chosen language is kept |
 | The phone keeps the words of one language only: the new one replaces the old | `Words.load` | `words_test.dart`: the phone keeps only the language in use |
