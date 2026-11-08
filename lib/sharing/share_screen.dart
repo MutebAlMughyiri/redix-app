@@ -16,6 +16,7 @@ import '../projects/projects.dart';
 import '../structure/category.dart';
 import '../structure/item_picker.dart';
 import '../structure/offered_items.dart';
+import '../ui/bottom_button.dart';
 import '../ui/form_section.dart';
 import '../ui/labelled_chips.dart';
 import '../ui/part_keys.dart';
@@ -314,7 +315,6 @@ class _ShareScreenState extends State<ShareScreen> {
             ItemPicker(key: ShareScreen.itemKey, items: _itemsOf(project), label: words.expensesItem, itemName: _item.name, onChanged: _chooseItem),
             if (_item.id.isEmpty) Text(words.shareChooseItem, key: ShareScreen.chooseItemKey) else _expenses(),
           ]),
-          OutlinedButton(key: ShareScreen.newExpenseKey, onPressed: _newExpense, child: Text(words.shareNewExpense, key: ShareScreen.newExpenseKey.label)),
         ],
       ),
     );
@@ -328,6 +328,10 @@ class _ShareScreenState extends State<ShareScreen> {
         automaticallyImplyLeading: false,
         leading: IconButton(key: ShareScreen.closeKey, icon: Icon(Icons.close, key: ShareScreen.closeKey.icon), onPressed: widget.onDone),
         title: Text(words.shareTitle, key: ScreenTitle.titleKey),
+      ),
+      bottomNavigationBar: ListenableBuilder(
+        listenable: widget.projects,
+        builder: (context, _) => _open.isEmpty ? const SizedBox.shrink() : BottomButton(buttonKey: ShareScreen.newExpenseKey, label: words.shareNewExpense, onPressed: _newExpense),
       ),
       body: ListenableBuilder(
         listenable: widget.projects,

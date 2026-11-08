@@ -7,6 +7,7 @@ import '../notifications/notifications.dart';
 import '../notifications/notifications_bell.dart';
 import '../settings/settings_screen.dart';
 import '../ui/api_list_body.dart';
+import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
@@ -102,10 +103,9 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        key: ProjectsScreen.newProjectKey,
-        icon: Icon(Icons.add, key: ProjectsScreen.newProjectKey.icon),
-        label: Text(words.projectsNew, key: ProjectsScreen.newProjectKey.label),
+      bottomNavigationBar: BottomButton(
+        buttonKey: ProjectsScreen.newProjectKey,
+        label: words.projectsNew,
         onPressed: () => context.push(NewProjectScreen.path),
       ),
       body: Column(

@@ -160,7 +160,7 @@ void main() {
 
     expect(text(tester, AccountsScreen.balanceKey(opened.bank)), '64,250.75');
     expect(text(tester, AccountsScreen.balanceKey(opened.custody)), '2,750.00');
-    expect(find.byKey(AccountsScreen.addKey), findsNothing);
+    expect(isEnabled(tester, AccountsScreen.addKey), isFalse);
     expect(find.byKey(AccountsScreen.menuKey(opened.bank)), findsNothing);
     expect(find.byKey(AccountsScreen.menuKey(opened.custody)), findsNothing);
   });
@@ -169,7 +169,7 @@ void main() {
     final opened = await openAccounts(tester, status: 'finished');
 
     expect(find.byKey(AccountsScreen.nameKey(opened.bank)), findsOneWidget);
-    expect(find.byKey(AccountsScreen.addKey), findsNothing);
+    expect(isEnabled(tester, AccountsScreen.addKey), isFalse);
     expect(find.byKey(AccountsScreen.menuKey(opened.bank)), findsNothing);
   });
 

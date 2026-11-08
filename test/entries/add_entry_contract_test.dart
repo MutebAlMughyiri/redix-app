@@ -217,14 +217,14 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject'], units: ['الفلة الغربية']);
     await openProject(tester, api);
 
-    expect(find.byKey(HomeScreen.addEntryKey('project-0')), findsNothing);
+    expect(isEnabled(tester, HomeScreen.addEntryKey('project-0')), isFalse);
   });
 
   testWidgets('a finished project offers no new payment', (tester) async {
     final api = FakeApi()..addProject('غصون 5', status: 'finished', permissions: field, units: ['الفلة الشرقية']);
     await openProject(tester, api);
 
-    expect(find.byKey(HomeScreen.addEntryKey('project-0')), findsNothing);
+    expect(isEnabled(tester, HomeScreen.addEntryKey('project-0')), isFalse);
   });
 
   testWidgets('R10, R11: a contract\'s table takes a contractor payment, sent with its contract and no item or subgroup, even when its item has named ones', (tester) async {

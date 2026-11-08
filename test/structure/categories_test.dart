@@ -287,7 +287,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(item['id'] as String))));
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.tablesKey)));
 
-    expect(find.byKey(ItemTablesScreen.addKey), findsNothing);
+    expect(isEnabled(tester, ItemTablesScreen.addKey), isFalse);
   });
 
   testWidgets('a subgroup is added to the tables and renamed there', (tester) async {
@@ -432,7 +432,7 @@ void main() {
     await open(tester, opened.api, opened.bone);
 
     expect(text(tester, CategoriesScreen.itemNameKey(opened.digging)), 'الحفر');
-    expect(find.byKey(CategoriesScreen.addCategoryKey), findsNothing);
+    expect(isEnabled(tester, CategoriesScreen.addCategoryKey), isFalse);
     expect(find.byKey(CategoriesScreen.hintKey), findsNothing);
     expect(find.byKey(CategoriesScreen.categoryHandleKey(opened.bone)), findsNothing);
     expect(find.byKey(CategoriesScreen.addItemKey(opened.bone)), findsNothing);

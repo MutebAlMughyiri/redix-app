@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
+import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
@@ -128,14 +129,13 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
       listenable: widget.tables,
       builder: (context, _) => Scaffold(
         appBar: AppBar(title: ScreenTitle(words.categoriesTables, subject: widget.categories.itemOf(widget.itemId).name)),
-        floatingActionButton: widget.project.mayChangeStructure && widget.categories.itemOf(widget.itemId).type.takesPurchases
-            ? FloatingActionButton.extended(
-                key: ItemTablesScreen.addKey,
-                icon: Icon(Icons.add, key: ItemTablesScreen.addKey.icon),
-                label: Text(words.subgroupsNew, key: ItemTablesScreen.addKey.label),
-                onPressed: () => _ask(title: words.subgroupsNew, saveLabel: words.subgroupsNew, onSave: widget.tables.addSubgroup),
-              )
-            : null,
+        bottomNavigationBar: BottomButton(
+          buttonKey: ItemTablesScreen.addKey,
+          label: words.subgroupsNew,
+          onPressed: widget.project.mayChangeStructure && widget.categories.itemOf(widget.itemId).type.takesPurchases
+              ? () => _ask(title: words.subgroupsNew, saveLabel: words.subgroupsNew, onSave: widget.tables.addSubgroup)
+              : null,
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

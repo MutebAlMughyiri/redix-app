@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
+import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
-import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
@@ -153,22 +153,16 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final project = widget.project;
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.categoriesTitle, subject: project.name), actions: [RefreshButton(onRefresh: categories.load)]),
-      floatingActionButton: project.mayChangeStructure
-          ? FloatingActionButton.extended(
-              key: CategoriesScreen.addCategoryKey,
-              icon: Icon(Icons.add, key: CategoriesScreen.addCategoryKey.icon),
-              label: Text(words.categoriesNew, key: CategoriesScreen.addCategoryKey.label),
-              onPressed: () => showDialog<void>(
+      bottomNavigationBar: BottomButton(
+        buttonKey: CategoriesScreen.addCategoryKey,
+        label: words.categoriesNew,
+        onPressed: project.mayChangeStructure
+            ? () => showDialog<void>(
                 context: context,
-                builder: (_) => NameDialog(
-                  title: words.categoriesNew,
-                  label: words.categoriesCategoryName,
-                  saveLabel: words.categoriesNew,
-                  onSave: categories.addCategory,
-                ),
-              ),
-            )
-          : null,
+                builder: (_) => NameDialog(title: words.categoriesNew, label: words.categoriesCategoryName, saveLabel: words.categoriesNew, onSave: categories.addCategory),
+              )
+            : null,
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

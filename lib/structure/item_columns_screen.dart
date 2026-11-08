@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
+import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
-import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../ui/swipe_to_remove.dart';
@@ -169,20 +169,11 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
     final mayChange = widget.project.mayChangeStructure;
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.columnsTitle, subject: widget.item.name), actions: [RefreshButton(onRefresh: _columns.load)]),
-      floatingActionButton: mayChange
-          ? FloatingActionButton.extended(
-              key: ItemColumnsScreen.addKey,
-              icon: Icon(Icons.add, key: ItemColumnsScreen.addKey.icon),
-              label: Text(words.columnsNew, key: ItemColumnsScreen.addKey.label),
-              tooltip: widget.item.type.isRevenue ? words.columnsRevenueTakesNoColumns : words.columnsNew,
-              onPressed: widget.item.type.isRevenue
-                  ? null
-                  : () => showDialog<void>(
-                      context: context,
-                      builder: (_) => AddColumnDialog(columns: _columns, applyToAll: _applyToAll),
-                    ),
-            )
-          : null,
+      bottomNavigationBar: BottomButton(
+        buttonKey: ItemColumnsScreen.addKey,
+        label: words.columnsNew,
+        onPressed: mayChange && !widget.item.type.isRevenue ? () => showDialog<void>(context: context, builder: (_) => AddColumnDialog(columns: _columns, applyToAll: _applyToAll)) : null,
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

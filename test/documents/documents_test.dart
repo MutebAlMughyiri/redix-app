@@ -48,7 +48,7 @@ void main() {
     expect(find.byKey(DocumentsScreen.groupHeadingKey('مخططات')), findsOneWidget);
     expect(find.byKey(DocumentsScreen.groupHeadingKey('')), findsNothing);
     expect(tester.getTopLeft(find.byKey(DocumentsScreen.documentKey('contract'))).dy, lessThan(tester.getTopLeft(find.byKey(DocumentsScreen.groupHeadingKey('التراخيص'))).dy));
-    expect(find.byKey(DocumentsScreen.addKey), findsNothing);
+    expect(isEnabled(tester, DocumentsScreen.addKey), isFalse);
     expect(find.byKey(DocumentsScreen.documentKey('permit').swipe), findsNothing);
     expect(find.byKey(DocumentsScreen.swipeHintKey), findsNothing);
     expect(find.byKey(DocumentsScreen.downloadKey('permit')), findsOneWidget);
@@ -157,7 +157,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.documentsKey('project-0'))));
 
     expect(find.byKey(DocumentsScreen.documentKey('permit')), findsOneWidget);
-    expect(find.byKey(DocumentsScreen.addKey), findsNothing);
+    expect(isEnabled(tester, DocumentsScreen.addKey), isFalse);
     expect(find.byKey(DocumentsScreen.documentKey('permit').swipe), findsNothing);
   });
 }

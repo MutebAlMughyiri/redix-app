@@ -532,14 +532,14 @@ void main() {
   testWidgets('who holds no recordEntries has no way in', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject'], units: ['الفلة الغربية']);
     await openProject(tester, api);
-    expect(find.byKey(HomeScreen.addEntryKey('project-0')), findsNothing);
+    expect(isEnabled(tester, HomeScreen.addEntryKey('project-0')), isFalse);
   });
 
   testWidgets('a finished project offers no new expense', (tester) async {
     final api = FakeApi()..addProject('غصون 5', status: 'finished', permissions: field, units: ['الفلة الشرقية']);
     await openProject(tester, api);
 
-    expect(find.byKey(HomeScreen.addEntryKey('project-0')), findsNothing);
+    expect(isEnabled(tester, HomeScreen.addEntryKey('project-0')), isFalse);
   });
 
   testWidgets('choosing a supplier fills its usual item while none is chosen', (tester) async {

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
+import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
@@ -128,17 +129,11 @@ class _AccountsScreenState extends State<AccountsScreen> {
     final accounts = widget.accounts;
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.accountsTitle, subject: project.name), actions: [RefreshButton(onRefresh: accounts.load)]),
-      floatingActionButton: project.mayManageSettings
-          ? FloatingActionButton.extended(
-              key: AccountsScreen.addKey,
-              icon: Icon(Icons.add, key: AccountsScreen.addKey.icon),
-              label: Text(words.accountsNew, key: AccountsScreen.addKey.label),
-              onPressed: () => showDialog<void>(
-                context: context,
-                builder: (_) => AccountDialog(account: Account.none(), accounts: accounts, members: widget.members),
-              ),
-            )
-          : null,
+      bottomNavigationBar: BottomButton(
+        buttonKey: AccountsScreen.addKey,
+        label: words.accountsNew,
+        onPressed: project.mayManageSettings ? () => showDialog<void>(context: context, builder: (_) => AccountDialog(account: Account.none(), accounts: accounts, members: widget.members)) : null,
+      ),
       body: ApiListBody(
         list: accounts,
         emptyText: words.accountsEmpty,

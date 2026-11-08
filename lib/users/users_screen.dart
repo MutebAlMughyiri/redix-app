@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../ui/api_list_body.dart';
+import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
@@ -161,10 +162,9 @@ class _UsersScreenState extends State<UsersScreen> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        key: UsersScreen.newUserKey,
-        icon: Icon(Icons.add, key: UsersScreen.newUserKey.icon),
-        label: Text(words.usersNew, key: UsersScreen.newUserKey.label),
+      bottomNavigationBar: BottomButton(
+        buttonKey: UsersScreen.newUserKey,
+        label: words.usersNew,
         onPressed: () => context.push(NewUserScreen.pathOf(users.projectId)),
       ),
       body: ApiListBody(

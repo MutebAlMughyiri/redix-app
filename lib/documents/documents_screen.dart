@@ -8,6 +8,7 @@ import '../format/date_format.dart';
 import '../projects/project.dart';
 import '../reports/report_files.dart';
 import '../ui/api_list_body.dart';
+import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
 import '../ui/entry_field.dart';
 import '../ui/part_keys.dart';
@@ -126,14 +127,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     final words = Words.of(context);
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.documentsTitle, subject: widget.project.name), actions: [RefreshButton(onRefresh: widget.documents.load)]),
-      floatingActionButton: widget.project.mayManageProject
-          ? FloatingActionButton.extended(
-              key: DocumentsScreen.addKey,
-              icon: Icon(Icons.add, key: DocumentsScreen.addKey.icon),
-              label: Text(words.documentsAdd, key: DocumentsScreen.addKey.label),
-              onPressed: () => showDialog<void>(context: context, builder: (_) => _DocumentDialog(documents: widget.documents, capture: widget.capture)),
-            )
-          : null,
+      bottomNavigationBar: BottomButton(
+        buttonKey: DocumentsScreen.addKey,
+        label: words.documentsAdd,
+        onPressed: widget.project.mayManageProject ? () => showDialog<void>(context: context, builder: (_) => _DocumentDialog(documents: widget.documents, capture: widget.capture)) : null,
+      ),
       body: ApiListBody<Document>(
         list: widget.documents,
         emptyText: words.documentsNone,

@@ -118,11 +118,8 @@ void main() {
     final opened = await openMethods(tester, status: 'finished');
 
     expect(find.byKey(PaymentMethodsScreen.nameKey(opened.card)), findsOneWidget);
-    for (final key in [
-      PaymentMethodsScreen.addKey,
-      PaymentMethodsScreen.menuKey(opened.card),
-      PaymentMethodsScreen.menuKey(opened.sadad),
-    ]) {
+    expect(isEnabled(tester, PaymentMethodsScreen.addKey), isFalse);
+    for (final key in [PaymentMethodsScreen.menuKey(opened.card), PaymentMethodsScreen.menuKey(opened.sadad)]) {
       expect(find.byKey(key), findsNothing);
     }
   });

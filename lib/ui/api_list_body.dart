@@ -28,8 +28,8 @@ class ApiListBody<T> extends StatelessWidget {
   /// How every list scrolls: always, so a list shorter than the screen can still be pulled down.
   static const physics = AlwaysScrollableScrollPhysics();
 
-  /// The space around the items, leaving room for a floating button.
-  static const padding = EdgeInsets.fromLTRB(16, 8, 16, 96);
+  /// The space around the items.
+  static const padding = EdgeInsets.fromLTRB(16, 8, 16, 16);
 
   /// A list that only scrolls.
   static Widget plainList(List<Widget> items) => ListView(padding: padding, physics: physics, children: items);

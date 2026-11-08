@@ -6,6 +6,7 @@ import '../projects/project.dart';
 import '../structure/offered_items.dart';
 import '../suppliers/suppliers.dart';
 import '../ui/api_list_body.dart';
+import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
@@ -171,9 +172,7 @@ class _ContractsScreenState extends State<ContractsScreen> {
     final contracts = widget.contracts;
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.contractsTitle, subject: project.name), actions: [RefreshButton(onRefresh: contracts.load)]),
-      floatingActionButton: project.mayManageSettings
-          ? FloatingActionButton.extended(key: ContractsScreen.addKey, icon: Icon(Icons.add, key: ContractsScreen.addKey.icon), label: Text(words.contractsNew, key: ContractsScreen.addKey.label), onPressed: () => _ask(Contract.none()))
-          : null,
+      bottomNavigationBar: BottomButton(buttonKey: ContractsScreen.addKey, label: words.contractsNew, onPressed: project.mayManageSettings ? () => _ask(Contract.none()) : null),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

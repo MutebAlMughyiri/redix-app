@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
+import '../ui/bottom_button.dart';
 import '../ui/screen_title.dart';
 import '../ui/swipe_to_remove.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
-import '../ui/part_keys.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'payment_method_row.dart';
@@ -89,18 +89,16 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
     final paymentMethods = widget.paymentMethods;
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.paymentMethodsTitle, subject: widget.project.name), actions: [RefreshButton(onRefresh: paymentMethods.load)]),
-      floatingActionButton: project.mayManageSettings
-          ? FloatingActionButton.extended(
-              key: PaymentMethodsScreen.addKey,
-              icon: Icon(Icons.add, key: PaymentMethodsScreen.addKey.icon),
-              tooltip: words.paymentMethodsNew,
-              label: Text(words.commonAdd, key: PaymentMethodsScreen.addKey.label),
-              onPressed: () => showDialog<void>(
+      bottomNavigationBar: BottomButton(
+        buttonKey: PaymentMethodsScreen.addKey,
+        label: words.paymentMethodsNew,
+        onPressed: project.mayManageSettings
+            ? () => showDialog<void>(
                 context: context,
                 builder: (_) => NameDialog(title: words.paymentMethodsNew, label: words.paymentMethodsName, saveLabel: words.paymentMethodsNew, onSave: paymentMethods.add),
-              ),
-            )
-          : null,
+              )
+            : null,
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

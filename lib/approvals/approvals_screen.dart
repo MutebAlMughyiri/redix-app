@@ -7,6 +7,7 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
+import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
@@ -186,12 +187,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
       appBar: AppBar(title: ScreenTitle(words.approvalsTitle, subject: widget.project.name), actions: [RefreshButton(onRefresh: widget.approvals.load)]),
       bottomNavigationBar: !mayDecide || _selected.isEmpty
           ? null
-          : SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: FilledButton(key: ApprovalsScreen.approveSelectedKey, onPressed: () => _approve(_selected.toList()), child: Text('${words.approvalsApproveSelected} · ${_selected.length}', key: ApprovalsScreen.approveSelectedKey.label)),
-              ),
-            ),
+          : BottomButton(buttonKey: ApprovalsScreen.approveSelectedKey, icon: Icons.done_all, label: '${words.approvalsApproveSelected} · ${_selected.length}', onPressed: () => _approve(_selected.toList())),
       body: Column(
         children: [
           Padding(

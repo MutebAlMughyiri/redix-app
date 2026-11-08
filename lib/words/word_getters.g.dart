@@ -653,9 +653,6 @@ mixin WordGetters {
   /// The word `columns.typeText`.
   String get columnsTypeText => text('columns.typeText');
 
-  /// The word `common.add`.
-  String get commonAdd => text('common.add');
-
   /// The word `common.cancel`.
   String get commonCancel => text('common.cancel');
 

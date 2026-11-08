@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../projects/project.dart';
 import '../structure/offered_items.dart';
 import '../ui/api_list_body.dart';
+import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
-import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
@@ -105,17 +105,11 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
     final suppliers = widget.suppliers;
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.suppliersTitle, subject: project.name), actions: [RefreshButton(onRefresh: suppliers.load)]),
-      floatingActionButton: project.mayManageSettings
-          ? FloatingActionButton.extended(
-              key: SuppliersScreen.addKey,
-              icon: Icon(Icons.add, key: SuppliersScreen.addKey.icon),
-              label: Text(words.suppliersNew, key: SuppliersScreen.addKey.label),
-              onPressed: () => showDialog<void>(
-                context: context,
-                builder: (_) => SupplierDialog(supplier: Supplier.none(), suppliers: suppliers, items: widget.items),
-              ),
-            )
-          : null,
+      bottomNavigationBar: BottomButton(
+        buttonKey: SuppliersScreen.addKey,
+        label: words.suppliersNew,
+        onPressed: project.mayManageSettings ? () => showDialog<void>(context: context, builder: (_) => SupplierDialog(supplier: Supplier.none(), suppliers: suppliers, items: widget.items)) : null,
+      ),
       body: ApiListBody(
         list: suppliers,
         emptyText: words.suppliersEmpty,

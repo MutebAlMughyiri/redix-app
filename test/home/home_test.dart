@@ -114,7 +114,7 @@ void main() {
     await openHome(tester, api);
 
     expect(tester.widget<Text>(find.byKey(HomeScreen.finishedKey('project-0').title)).data, 'en projects.finished · en projects.readOnly');
-    expect(find.byKey(HomeScreen.addEntryKey('project-0')), findsNothing);
+    expect(isEnabled(tester, HomeScreen.addEntryKey('project-0')), isFalse);
   });
 
   testWidgets('a reader or a field supervisor has More info in Settings, and nothing that changes the project', (tester) async {

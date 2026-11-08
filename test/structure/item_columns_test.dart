@@ -312,7 +312,7 @@ void main() {
 
     expect(text(tester, ItemColumnsScreen.nameKey(opened.date)), 'التاريخ');
     expect(find.byKey(ItemColumnsScreen.lockKey(opened.date)), findsOneWidget);
-    expect(find.byKey(ItemColumnsScreen.addKey), findsNothing);
+    expect(isEnabled(tester, ItemColumnsScreen.addKey), isFalse);
     expect(find.byKey(ItemColumnsScreen.hintKey), findsNothing);
     expect(find.byKey(ItemColumnsScreen.handleKey(opened.date)), findsNothing);
     expect(find.byKey(ItemColumnsScreen.editKey(opened.date)), findsNothing);

@@ -30,6 +30,7 @@ import '../projects/projects_screen.dart';
 import '../settings/settings_screen.dart';
 import '../suppliers/suppliers_screen.dart';
 import '../ui/api_list_body.dart';
+import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
@@ -205,20 +206,10 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: ListenableBuilder(
         listenable: widget.projects,
         builder: (context, _) {
-          final project = widget.projects.all.where((project) => project.id == widget.projectId && project.mayEnterExpenses).toList();
+          final project = widget.projects.all.where((project) => project.id == widget.projectId).toList();
           return project.isEmpty
               ? const SizedBox.shrink()
-              : SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: FilledButton.icon(
-                      key: HomeScreen.addEntryKey(widget.projectId),
-                      icon: Icon(Icons.add, key: HomeScreen.addEntryKey(widget.projectId).icon),
-                      label: Text(words.entriesNew, key: HomeScreen.addEntryKey(widget.projectId).label),
-                      onPressed: () => _open(AddEntryScreen.pathOf(widget.projectId), project.single),
-                    ),
-                  ),
-                );
+              : BottomButton(buttonKey: HomeScreen.addEntryKey(widget.projectId), label: words.entriesNew, onPressed: project.single.mayEnterExpenses ? () => _open(AddEntryScreen.pathOf(widget.projectId), project.single) : null);
         },
       ),
       body: ApiListBody(

@@ -9,7 +9,7 @@ lib/
   main.dart                 the app: theme, languages, and the router that sends anyone without a session to sign-in
   account/my_account_screen.dart  My account: the language, the way into the password change, and signing out
   api_list.dart             ApiList: a list the API owns, and the way to change it; every settings list extends it
-  ui/                       what several screens share: ApiListBody, ConfirmDialog, ChangeDialog, NameDialog, PickerField, entryField, FormSection, LabelledChips, TwoFields, showRefusalOf
+  ui/                       what several screens share: ApiListBody, BottomButton, ConfirmDialog, ChangeDialog, NameDialog, PickerField, entryField, FormSection, LabelledChips, TwoFields, showRefusalOf
   settings/
     settings_screen.dart    Settings: the way back to the project list, My account and, for the admin, the registered projects
     payment_method.dart     PaymentMethod, as the API answers it
@@ -172,6 +172,7 @@ Settings such as projects keep nothing on the phone: the API owns every rule, th
 | --- | --- |
 | No word value in the code; words come from the API | `lib/words/` |
 | Every element a user sees or acts on has a `Key` constant on its screen, and every label, icon, title, subtitle, card and message has one too: a part inside a keyed element takes its element's key and the part's name (`HomeScreen.accountsKey(id).label`), and a message its word (`messageKeyOf('projects.pendingEntries')`). A test finds an element by its key, never by its text or its place | Each screen, `PartKeys`, `messageKeyOf` |
+| A screen's main action is `BottomButton`: one full-width filled button in the `Scaffold`'s `bottomNavigationBar`, a plus unless the action says otherwise; no screen draws a floating button. Without the permission it shows grayed, never hidden | `lib/ui/bottom_button.dart` |
 | One class to a file: a screen's card, row and dialogs are files of their own | Each feature folder |
 | Every public class and member has a doc comment | The lint `public_member_api_docs` |
 | The API's address comes from the environment's config file (`--dart-define-from-file=config/local.json`); none is built in | `apiBaseUrl`, `config/` |

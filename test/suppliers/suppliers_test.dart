@@ -189,14 +189,14 @@ void main() {
     final opened = await openSuppliers(tester, permissions: ['readProject']);
 
     expect(text(tester, SuppliersScreen.nameKey(opened.approved)), 'شركة النخيل');
-    expect(find.byKey(SuppliersScreen.addKey), findsNothing);
+    expect(isEnabled(tester, SuppliersScreen.addKey), isFalse);
     expect(find.byKey(SuppliersScreen.menuKey(opened.approved)), findsNothing);
   });
 
   testWidgets('a finished project shows its register with nothing to change', (tester) async {
     final opened = await openSuppliers(tester, status: 'finished');
 
-    expect(find.byKey(SuppliersScreen.addKey), findsNothing);
+    expect(isEnabled(tester, SuppliersScreen.addKey), isFalse);
     expect(find.byKey(SuppliersScreen.menuKey(opened.approved)), findsNothing);
   });
 

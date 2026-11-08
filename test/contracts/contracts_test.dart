@@ -357,14 +357,14 @@ void main() {
     final opened = await openContracts(tester, permissions: field);
 
     expect(text(tester, ContractsScreen.remainingKey(opened.running)), '4,000.00');
-    expect(find.byKey(ContractsScreen.addKey), findsNothing);
+    expect(isEnabled(tester, ContractsScreen.addKey), isFalse);
     expect(find.byKey(ContractsScreen.menuKey(opened.running)), findsNothing);
   });
 
   testWidgets('a finished project shows its contracts with nothing to change', (tester) async {
     final opened = await openContracts(tester, status: 'finished');
 
-    expect(find.byKey(ContractsScreen.addKey), findsNothing);
+    expect(isEnabled(tester, ContractsScreen.addKey), isFalse);
     expect(find.byKey(ContractsScreen.menuKey(opened.running)), findsNothing);
   });
 

@@ -545,20 +545,17 @@ void main() {
       await tester.ensureVisible(find.byKey(HomeScreen.contractsKey(runningId)));
       expectFits(HomeScreen.contractsKey(runningId));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey(runningId))));
-      [
-        ContractsScreen.addKey,
-        for (final filter in ContractFilter.values) ContractsScreen.filterKey(filter),
-        for (final id in [overrun, open]) ...[
-          ContractsScreen.nameKey(id),
-          ContractsScreen.termsKey(id),
-          ContractsScreen.standingKey(id),
-          ContractsScreen.valueOfKey(id),
-          ContractsScreen.paidKey(id),
-          ContractsScreen.remainingKey(id),
-          ContractsScreen.progressKey(id),
-          ContractsScreen.menuKey(id),
-        ],
-      ].forEach(expectFits);
+      List<Key> contractKeys(String id) => [
+        ContractsScreen.nameKey(id),
+        ContractsScreen.termsKey(id),
+        ContractsScreen.standingKey(id),
+        ContractsScreen.valueOfKey(id),
+        ContractsScreen.paidKey(id),
+        ContractsScreen.remainingKey(id),
+        ContractsScreen.progressKey(id),
+        ContractsScreen.menuKey(id),
+      ];
+      [ContractsScreen.addKey, for (final filter in ContractFilter.values) ContractsScreen.filterKey(filter), ...contractKeys(overrun)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
       [ContractsScreen.contractorKey, ContractsScreen.itemKey, ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.unitPriceKey, ContractsScreen.quantityKey, ContractsScreen.notesKey, ContractsScreen.addDocumentKey, ContractsScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
@@ -567,6 +564,8 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
       [ContractsScreen.partiesKey, ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await tester.scrollUntilVisible(find.byKey(ContractsScreen.menuKey(open)), 200);
+      contractKeys(open).forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey(runningId)));

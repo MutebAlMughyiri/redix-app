@@ -60,6 +60,9 @@ void _nothing(FakeApi api) {}
 
 Finder Function(FakeApi api) _key(Key key) => (_) => find.byKey(key);
 
+/// The button keyed [key] in its working state: a screen's add button shows grayed without the permission rather than hidden (Muteb, 8 Nov 2026; issue #85).
+Finder Function(FakeApi api) _enabled(Key key) => (_) => find.byWidgetPredicate((widget) => widget.key == key && widget is ButtonStyleButton && widget.enabled);
+
 String _first(List<Map<String, Object>>? rows) => rows!.first['id']! as String;
 
 final _dashboardWithAnItem = <String, Object>{
@@ -85,11 +88,11 @@ final List<Gate> _gates = [
   (name: 'A unit\'s menu in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.unitMenuKey('$_project-unit-0'))),
   (name: 'The description in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.saveDescriptionKey)),
   (
-    name: 'Add a document',
+    name: 'An enabled Add a document',
     permission: Permission.manageProject,
     arrange: _nothing,
     steps: [_openProject, _tapKey(HomeScreen.documentsKey(_project))],
-    control: _key(DocumentsScreen.addKey),
+    control: _enabled(DocumentsScreen.addKey),
   ),
   (
     name: 'Remove a document',
@@ -109,7 +112,7 @@ final List<Gate> _gates = [
   ),
   (name: 'Categories and items in the settings', permission: Permission.manageStructure, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.categoriesKey)),
   (name: 'Payment methods in the settings', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.paymentMethodsKey)),
-  (name: 'Add an account', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))], control: _key(AccountsScreen.addKey)),
+  (name: 'An enabled Add an account', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))], control: _enabled(AccountsScreen.addKey)),
   (
     name: 'An account\'s menu',
     permission: Permission.manageSettings,
@@ -117,7 +120,7 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))],
     control: (api) => find.byKey(AccountsScreen.menuKey(_first(api.accounts[_project]))),
   ),
-  (name: 'Add a partner', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project))], control: _key(PartnersScreen.addKey)),
+  (name: 'An enabled Add a partner', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project))], control: _enabled(PartnersScreen.addKey)),
   (
     name: 'Edit a partner',
     permission: Permission.manageSettings,
@@ -125,7 +128,7 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project))],
     control: (api) => find.byKey(PartnersScreen.editKey(_first(api.partners[_project]))),
   ),
-  (name: 'Add a supplier', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.suppliersKey(_project))], control: _key(SuppliersScreen.addKey)),
+  (name: 'An enabled Add a supplier', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.suppliersKey(_project))], control: _enabled(SuppliersScreen.addKey)),
   (
     name: 'A supplier\'s menu',
     permission: Permission.manageSettings,
@@ -133,7 +136,7 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.suppliersKey(_project))],
     control: (api) => find.byKey(SuppliersScreen.menuKey(_first(api.suppliers[_project]))),
   ),
-  (name: 'Add a contract', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project))], control: _key(ContractsScreen.addKey)),
+  (name: 'An enabled Add a contract', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project))], control: _enabled(ContractsScreen.addKey)),
   (
     name: 'A contract\'s menu',
     permission: Permission.manageSettings,
@@ -148,7 +151,7 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.addEntryKey(_project)), _tapKey(AddEntryScreen.supplierKey)],
     control: _key(SupplierPicker.quickAddKey),
   ),
-  (name: 'إضافة قيد on the home', permission: Permission.recordEntries, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.addEntryKey(_project))),
+  (name: 'An enabled إضافة قيد on the home', permission: Permission.recordEntries, arrange: _nothing, steps: [_openProject], control: _enabled(HomeScreen.addEntryKey(_project))),
   (
     name: 'Edit on one\'s own draft',
     permission: Permission.recordEntries,

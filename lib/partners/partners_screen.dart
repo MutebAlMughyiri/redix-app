@@ -6,6 +6,7 @@ import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/api_object_body.dart';
+import '../ui/bottom_button.dart';
 import '../ui/change_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
@@ -171,9 +172,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
     final project = widget.project;
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.partnersTitle, subject: project.name), actions: [RefreshButton(onRefresh: widget.partners.load)]),
-      floatingActionButton: project.mayManageSettings
-          ? FloatingActionButton.extended(key: PartnersScreen.addKey, icon: Icon(Icons.add, key: PartnersScreen.addKey.icon), label: Text(words.partnersNew, key: PartnersScreen.addKey.label), onPressed: () => _ask(Partner.none()))
-          : null,
+      bottomNavigationBar: BottomButton(buttonKey: PartnersScreen.addKey, label: words.partnersNew, onPressed: project.mayManageSettings ? () => _ask(Partner.none()) : null),
       body: ApiListBody(
         list: widget.partners,
         emptyText: words.partnersEmpty,

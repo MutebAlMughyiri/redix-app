@@ -64,7 +64,7 @@ Map<String, String> wordsIn(String language) => {
     'categories.addItem', 'categories.itemName', 'categories.itemType', 'categories.typePurchases', 'categories.typeContractorPayments', 'categories.typeBoth', 'categories.rename',
     'categories.disable', 'categories.enable', 'categories.disabled', 'categories.save',
     'subgroups.new', 'categories.subgroupName', 'projects.structureSource', 'projects.defaultTemplate', 'projects.unknownSource',
-    'common.add', 'paymentMethods.title', 'paymentMethods.empty', 'paymentMethods.loadFailed', 'paymentMethods.noConnection', 'paymentMethods.refused', 'paymentMethods.projectFinished',
+    'paymentMethods.title', 'paymentMethods.empty', 'paymentMethods.loadFailed', 'paymentMethods.noConnection', 'paymentMethods.refused', 'paymentMethods.projectFinished',
     'paymentMethods.invalidName', 'paymentMethods.new', 'paymentMethods.name', 'paymentMethods.rename', 'paymentMethods.save', 'paymentMethods.disable', 'paymentMethods.enable', 'paymentMethods.disabled', 'paymentMethods.paymentMethodUsed',
     'accounts.title', 'accounts.empty', 'accounts.loadFailed', 'accounts.noConnection', 'accounts.refused', 'accounts.projectFinished', 'accounts.invalidName', 'accounts.invalidOpeningBalance',
     'accounts.custodianRequired', 'accounts.unknownCustodian', 'accounts.new', 'accounts.edit', 'accounts.save', 'accounts.type', 'accounts.typeBank', 'accounts.typeCashCustody', 'accounts.name',
@@ -1635,6 +1635,9 @@ Future<Session> pumpRedix(
   }, () => api.client);
   return session;
 }
+
+/// True when the button keyed [key] works; a screen's add button shows grayed without the permission rather than hidden (issue #85).
+bool isEnabled(WidgetTester tester, Key key) => tester.widget<ButtonStyleButton>(find.byKey(key)).enabled;
 
 /// Starts the app signed in, with [capture] as the phone's camera and files and [store] as its storage, and opens the first project from the list.
 Future<void> openProject(WidgetTester tester, FakeApi api, {InvoiceCapture? capture, LocalStore? store}) async {

@@ -117,7 +117,7 @@ void main() {
     final opened = await openPartners(tester, permissions: ['readProject', 'seeAllCapital']);
 
     expect(find.byKey(PartnersScreen.nameKey(opened.mutab)), findsOneWidget);
-    expect(find.byKey(PartnersScreen.addKey), findsNothing);
+    expect(isEnabled(tester, PartnersScreen.addKey), isFalse);
     expect(find.byKey(PartnersScreen.editKey(opened.mutab)), findsNothing);
   });
 
@@ -125,7 +125,7 @@ void main() {
     final opened = await openPartners(tester, status: 'finished');
 
     expect(find.byKey(PartnersScreen.nameKey(opened.mutab)), findsOneWidget);
-    expect(find.byKey(PartnersScreen.addKey), findsNothing);
+    expect(isEnabled(tester, PartnersScreen.addKey), isFalse);
     expect(find.byKey(PartnersScreen.editKey(opened.mutab)), findsNothing);
   });
 
