@@ -28,8 +28,6 @@ A partner paying with their own money is a capital movement (redix-api #96, D27)
 | BR-23: a receipt saying another amount warns, and the same amount does not | `DirectEntryFields._receiptDiffers` | `direct_entry_test.dart`: BR-23 |
 | R3: revenue is sent for approval on its item and table; an amount that is no number stops it | `DirectEntryFields._record` | `direct_entry_test.dart`: R3; R10 |
 | D9: a revenue or partner entry has one button, never a draft | `AddEntryScreen._directEntry` | `direct_entry_test.dart`: D9 |
-| R8: Revenue has no New revenue, and keeps New sale | `RevenueScreen` | `direct_entry_test.dart`: R8 |
 | R12, AC-49.4: a shared file offers New entry and no capital receipt, and goes with a partner picked in Add entry | `ShareScreen`, `AddEntryScreen` | `direct_entry_test.dart`: R12 |
 | R16: Approvals names a partner's entry and its kind, and a revenue entry's item; Purchases leaves them out | `PendingApproval.title`, `kindWordKey` | `approvals_test.dart`: two R16 tests |
 | A partner opens to their movements, with receipts and a way to reverse | `MovementsScreen` | `a partner opens to their movements, each with its receipt, and Finance can reverse one` |
-| AC-25.3: Finance chooses what becomes of what a partner paid | `ApprovalsScreen._details` | `AC-25.3: Finance chooses what becomes of what a partner paid` |

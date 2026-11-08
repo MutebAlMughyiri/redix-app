@@ -100,6 +100,16 @@ void main() {
     expect((body['attachmentIds'] as List<dynamic>).single, startsWith('attachment-'));
   });
 
+  testWidgets("findings row 138: a contract's document may be any file, and goes up as a document, as the project's Documents do", (tester) async {
+    await openAmendWithFiles(tester, PickedFile('quantities.xlsx', '/phone/quantities.xlsx', Uint8List.fromList([0x50, 0x4B, 0x03, 0x04])));
+    final api = apiOfDocuments;
+
+    await tapVisible(tester, api, ContractsScreen.addDocumentKey);
+
+    expect(api.sentAttachmentPaths.single, '/projects/project-0/attachments/document');
+    expect(find.text('quantities.xlsx'), findsOneWidget);
+  });
+
   testWidgets('a document the API refuses says why, and nothing is named on save', (tester) async {
     await openAmendWithFiles(tester, pdf);
     final api = apiOfDocuments..attachmentAnswer = (status: 400, code: 'invalidFileType');

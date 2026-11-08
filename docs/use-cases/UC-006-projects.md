@@ -94,7 +94,7 @@ All go through `Session`, which renews an expired access token once and sends ag
 | Rule | Code | Test |
 | --- | --- | --- |
 | Everyone sees Switch project | `SettingsScreen` | `settings_test.dart`: anyone else sees Switch project and My account |
-| More info is in Settings only when it is opened from a project, for everyone in it | `SettingsScreen` | `settings_test.dart`: from the project list Settings holds nothing of a project; from a project Settings holds More info; `home_test.dart`: a reader or a field supervisor has More info |
+| More info is in Settings only when it is opened from a project, for everyone in it | `SettingsScreen` | `settings_test.dart`: anyone else sees Switch project and My account, and not the registered projects; from a project Settings opens after Reports and holds More info; `home_test.dart`: a reader or a field supervisor has More info |
 | The home shows no start date, status or units; More info shows them, the units in order (redix-api #93 R1) | `ProjectCard`, `ProjectInfoScreen` | `home_test.dart`: R1; `project_info_test.dart`: R1 |
 | A finished project's home says in one line that it is finished and read-only (R13) | `ProjectCard` | `home_test.dart`: R13; `project_info_test.dart`: closing makes it finished |
 | Everyone in the project reads More info and its description; only `manageProject` changes it, and only while it is open (R8, AC-04.1) | `Project.mayManageProject`, `ProjectInfoScreen` | `project_info_test.dart`: R8; a finished project shows read-only; whoever manages an open project has Rename, Add unit…; `permission_gates_test.dart`: More info's five gates |
@@ -110,9 +110,9 @@ All go through `Session`, which renews an expired access token once and sends ag
 | A refused name shows its own line, and nothing typed is lost | `ApiList.change`, `NewProjectScreen` | `new_project_test.dart`: a refused name; `project_info_test.dart`: a refused name stays in the dialog |
 | Without a network the form and the close say so, and nothing changes | `ApiList.change` | `new_project_test.dart`: without a network; `project_info_test.dart`: closing without a network |
 | A refusal with no code shows the general word | `ApiList.change` | `project_info_test.dart`: a refusal with no code |
-| A read waits for the changes sent before it, so going back while a role is being saved still shows the new role on the home | `Session.get`, `Session._remember` | `user_roles_test.dart`: going back while a role is being saved |
+| A read waits for the changes sent before it, so going back while a permission is being saved still shows it on the home | `Session.get`, `Session._remember` | `user_permissions_test.dart`: going back while a permission is being saved |
 | An expired access token is renewed once for each read, one renewal after another, so reads at once keep the session open | `Session._send`, `Session._renew` | `projects_test.dart`: an expired access token |
-| A unit can be removed until the project is created | `NewProjectScreen` | `new_project_test.dart`: a unit can be removed |
+| A unit is swiped off the list until the project is created (redix-api #102) | `NewProjectScreen` | `new_project_test.dart`: redix-api #102: a unit is swiped off the list until the project is created |
 | The start date is today until changed, and shows as dd.MM.yyyy (NFR-04) | `NewProjectScreen`, `formatDate` | `new_project_test.dart`: the start date; `date_format_test.dart` |
 | Closing asks first and says what it means; Cancel changes nothing | `ProjectInfoScreen`, `ConfirmDialog` | `project_info_test.dart`: closing asks first |
 | A finished project is read-only and stays listed (AC-04.1) | `Project.isFinished`, `ProjectInfoScreen`; `Project.IsReadOnly` in the API | `project_info_test.dart`: a finished project shows read-only; `home_test.dart`: R13; Patrol |

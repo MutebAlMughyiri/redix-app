@@ -29,10 +29,10 @@ A new person starts at the last project role the API lists. The app names no rol
 | Anyone signed in can register a project | `projects_test.dart` |
 | Users on a project's home shows only with `manageUsers` | `home_test.dart` |
 | Rename, Add unit, the unit menus, the description and Close show only with `manageProject` | `project_info_test.dart`, `permission_gates_test.dart` |
-| A project's roles show under its name | `projects_test.dart` |
+| A project shows under its name what the signed-in user may do in it | `projects_test.dart` |
 | Settings shows Registered projects only with `approveProjects` | `settings_test.dart` |
-| A project's Users lists only its people | `project_users_test.dart` |
-| An existing user is added by username, and an unknown one says so | `project_users_test.dart` |
-| Roles come from the API, a new one included | `user_roles_test.dart` |
-| Several roles can be held; the last manager's refusal shows its word | `user_roles_test.dart` |
+| A project's Users lists only its people | `users_test.dart` |
+| An existing user is added by username, and an unknown one says so | `users_test.dart` |
+| Every permission a project can give is ticked one by one, at once (redix-api #89) | `user_permissions_test.dart` |
+| A refusal shows its word, and nothing changes | `user_permissions_test.dart` |
 | A journey on a real phone | `patrol_test/app_test.dart` |

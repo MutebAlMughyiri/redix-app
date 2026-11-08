@@ -7,7 +7,7 @@
 ## English
 
 **What it is for:** the partners in this project, and which login belongs to each.
-**Who sees it:** the project's manager and whoever does its finance, from **Partners** on the project's home. Only whoever does the finance can change it. It needs a network.
+**Who sees it:** everyone in the project, from **Partners** on the project's home: each sees their own line, and whoever may see all capital sees every partner (BR-31). Only whoever does the finance can change it. It needs a network.
 
 A partner's login decides whose capital is theirs: with a login, a partner sees their own capital in this project and nobody else's. A partner with no login, such as someone who withdrew, stays on the list.
 
@@ -28,7 +28,7 @@ The login must belong to someone in this project, so add them under **Users** fi
 ## العربية
 
 **الغرض:** شركاء هذا المشروع، وحساب الدخول الخاص بكل منهم.
-**من يراها:** مدير المشروع ومن يتولى ماليته، من **الشركاء** في رئيسية المشروع. ولا يغيّرها إلا من يتولى المالية. تحتاج إلى اتصال بالشبكة.
+**من يراها:** كل من في المشروع، من **الشركاء** في رئيسية المشروع: يرى كلٌّ سطره، ويرى من يحق له رؤية رأس المال كله كل الشركاء. ولا يغيّرها إلا من يتولى المالية. تحتاج إلى اتصال بالشبكة.
 
 حساب دخول الشريك يحدد رأس المال الخاص به: بحساب الدخول يرى الشريك رأس ماله في هذا المشروع دون غيره. والشريك بلا حساب دخول، كمن انسحب، يبقى في القائمة.
 

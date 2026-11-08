@@ -7,7 +7,7 @@
 ## English
 
 **What it is for:** paying a contractor against a contract, and seeing what it leaves before you save.
-**Who sees it:** whoever enters expenses in the project, from **[إضافة قيد](add-expense.md)** at the bottom of the project's home, choosing the contract's table, while the project runs. It needs a network.
+**Who sees it:** whoever enters expenses in the project, from **[إضافة قيد](add-expense.md)** at the bottom of the project's home, choosing the contract's table, while the project runs. Without a network the payment waits on the phone and is sent when the network returns ([Waiting to sync](waiting-to-sync.md)).
 
 | To | Do this |
 | --- | --- |
@@ -31,7 +31,7 @@ What was paid counts only once approved; until then a payment shows as waiting f
 ## العربية
 
 **الغرض:** الدفع لمقاول على عقد، ورؤية ما يبقى قبل الحفظ.
-**من يراها:** من يُدخل المصروفات في المشروع، من **[إضافة قيد](add-expense.md)** أسفل رئيسية المشروع باختيار جدول العقد، ما دام المشروع قائماً. تحتاج إلى اتصال بالشبكة.
+**من يراها:** من يُدخل المصروفات في المشروع، من **[إضافة قيد](add-expense.md)** أسفل رئيسية المشروع باختيار جدول العقد، ما دام المشروع قائماً. وبلا شبكة تنتظر الدفعة في الجوال وتُرسل حين تعود الشبكة ([بانتظار المزامنة](waiting-to-sync.md)).
 
 | لكي | افعل هذا |
 | --- | --- |

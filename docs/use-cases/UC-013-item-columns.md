@@ -70,7 +70,7 @@ The question after a change to the template, `ApplyToAllDialog`:
 | A list a person added gains choices, one a line, and those it has stay and show; no other column offers it | `EditColumnDialog`, `ItemColumn.gainsChoices`, `Columns.edit` | `item_columns_test.dart`: a list a person added gains choices; only a list a person added |
 | A swipe deletes a column with no question; a short one deletes nothing; a core one does not swipe (redix-api #102) | `SwipeToRemove` | `item_columns_test.dart`: a swipe deletes a column; AC-41.2 |
 | Dragging sends the new order; on an item it asks nothing | `Columns.move`, `ReorderableListView` | `item_columns_test.dart`: dragging a column sends |
-| AC-41.3: every change to the template asks whether it reaches existing items | `_applyToAll`, `ApplyToAllDialog` | `item_columns_test.dart`: AC-41.3 group |
+| AC-41.3: every change to the template asks whether it reaches existing items | `_applyToAll`, `ApplyToAllDialog` | `item_columns_test.dart`: AC-41.3: a change to the default template |
 | A finished project shows its columns with nothing to change | `Project.mayChangeStructure` | `item_columns_test.dart`: a finished project |
 | AC-N03: nothing off a screen 360 points wide, in both languages | Each screen | `my_account_test.dart`: AC-N03 |
 

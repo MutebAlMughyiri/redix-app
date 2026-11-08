@@ -7,7 +7,7 @@
 ## English
 
 **What it is for:** recording what was paid into one table of an item's sheet: a purchase, its total on its date, or a [contractor payment](contractor-payment.md) when you choose a contract's table.
-**Who sees it:** whoever enters expenses in the project, from **إضافة قيد** at the bottom of the project's home, while the project runs. It needs a network.
+**Who sees it:** whoever enters expenses in the project, from **إضافة قيد** at the bottom of the project's home, while the project runs; anyone else sees the button gray. Without a network the entry waits on the phone and is sent when the network returns ([Waiting to sync](waiting-to-sync.md)).
 
 | To | Do this |
 | --- | --- |
@@ -38,7 +38,7 @@ No VAT is entered or kept: the VAT statement works it out of each total when the
 ## العربية
 
 **الغرض:** تسجيل ما دُفع في جدول من جداول البند: عملية شراء بإجماليها في تاريخها، أو [دفعة مقاول](contractor-payment.md) حين تختار جدول عقد.
-**من يراها:** من يُدخل المصروفات في المشروع، من **إضافة قيد** أسفل رئيسية المشروع، ما دام المشروع جارياً. تحتاج إلى اتصال بالشبكة.
+**من يراها:** من يُدخل المصروفات في المشروع، من **إضافة قيد** أسفل رئيسية المشروع، ما دام المشروع جارياً؛ ويراه غيره رمادياً. وبلا شبكة ينتظر القيد في الجوال ويُرسل حين تعود الشبكة ([بانتظار المزامنة](waiting-to-sync.md)).
 
 | لكي | افعل هذا |
 | --- | --- |

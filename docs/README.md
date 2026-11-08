@@ -27,7 +27,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Item columns](guide/item-columns.md) | Whoever does a project's finance |
 | [Payment methods](guide/payment-methods.md) | Whoever does a project's finance |
 | [Accounts](guide/accounts.md) | Everyone in the project; whoever does its finance changes them |
-| [Partners](guide/partners.md) | The project's manager and whoever does its finance |
+| [Partners](guide/partners.md) | Everyone in the project, each their own line |
 | [Suppliers](guide/suppliers.md) | Everyone in the project; whoever does its finance changes them |
 | [Choosing a supplier](guide/supplier-picker.md) | Whoever enters an expense or a contract |
 | [Add an entry · إضافة قيد](guide/add-expense.md) | Whoever enters expenses in the project |
@@ -38,6 +38,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Entries](guide/entries.md) | Everyone in the project |
 | [Notifications](guide/notifications.md) | Everyone |
 | [Sharing an invoice](guide/share-invoice.md) | Whoever enters expenses |
+| [Documents](guide/documents.md) | Everyone in the project; whoever manages it keeps them |
 | [Reconciliation and capital](guide/money.md) | Everyone reads; finance enters |
 | [Revenue and the VAT statement](guide/revenue-and-vat.md) | Everyone reads; finance records |
 | [The dashboard and the reports](guide/reports.md) | Everyone reads; finance issues; owner and finance export |
@@ -54,7 +55,7 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-004](use-cases/UC-004-language.md) | Switch the app between Arabic and English in My account | Every signed-in user |
 | [UC-006](use-cases/UC-006-projects.md) | A project and its units: rename them, delete a unit nothing uses, and close the project when finished | Whoever does the project's finance |
 | [UC-007](use-cases/UC-007-users.md) | Correct logins, disable them, and reset a forgotten password | Project managers |
-| [UC-008](use-cases/UC-008-project-roles.md) | Add people to a project and give their roles | Project managers |
+| [UC-008](use-cases/UC-008-project-roles.md) | Add people to a project and tick what each may do | Project managers |
 | [UC-009](use-cases/UC-009-follow-permissions.md) | Show each person the controls their role allows in each project | Everyone |
 | [UC-010](use-cases/UC-010-projects-and-default.md) | Choose a project after sign-in, see it by your role in it, and set a default | Everyone |
 | [UC-011](use-cases/UC-011-biometrics.md) | Sign in with a fingerprint or face instead of the password | Everyone, for this phone |
@@ -84,3 +85,5 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-040 to UC-044](use-cases/UC-040-money.md) | See balances, reconcile, record capital, see shares | Everyone reads; finance enters |
 | [UC-066](use-cases/UC-066-register-a-project.md) | Register a project from the sign-in page, and approve it | Anyone registers; only the admin approves |
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |
+| [UC-064](use-cases/UC-064-documents.md) | Keep a project's documents, any file, in optional groups | Everyone reads; whoever manages the project keeps and removes |
+| [UC-070](use-cases/UC-070-timeouts.md) | Give up on a request with no answer after the time the API decides | Nobody chooses it |

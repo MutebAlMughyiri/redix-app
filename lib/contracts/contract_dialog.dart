@@ -93,8 +93,8 @@ class _ContractDialogState extends State<ContractDialog> {
   }
 
   Future<void> _addDocument() async {
-    final file = await widget.capture.fromFiles();
-    final refusal = file.isNone ? file.failure : await widget.attachments.keep(file);
+    final file = await widget.capture.fromAnyFile();
+    final refusal = file.isNone ? file.failure : await widget.attachments.keepDocument(file);
     if (!mounted) {
       return;
     }

@@ -10,7 +10,7 @@
 **What it is for:** adding the people of a project, giving their roles, and looking after their accounts.
 **Who sees it:** each project's project manager, from **Users** on the project's card. It needs a network.
 
-Each project has its own project manager, who manages its users and roles. Open **Users** on the project's card. Add a new user, or add someone who already has a login by their exact username. To change what someone does, open their menu, choose **Roles** and tick what applies; someone can hold more than one. A project needs at least one project manager, and a manager changes the project itself only if also given Finance. If a person also works in a project you do not manage, you cannot reset their password or disable them, but you can take their roles here. If a project's only manager forgets their password, nobody in the app can reset it, so keep a second manager.
+Each project has its own project manager, who manages its users. Open **Settings** on the project's card, then **Users**. Add a new user, or add someone who already has a login by their exact username. To change what someone may do, open their menu, choose **Permissions** and tick each permission they need; there are no roles. A project needs at least one person who manages its users. If a person also works in a project you do not manage, you cannot reset their password or disable them, but you can untick their permissions here. If a project's only manager forgets their password, nobody in the app can reset it, so keep a second manager.
 
 **Add a user**
 
@@ -19,14 +19,14 @@ Each project has its own project manager, who manages its users and roles. Open 
 3. Type a temporary password of at least 8 characters.
 4. Tap **Add user**, then give them their username and temporary password. At their first sign-in, the app makes them choose their own.
 
-**Change what someone does:** tap the three dots on their row, then **Roles**, and tick what applies. It is saved at once.
+**Change what someone may do:** tap the three dots on their row, then **Permissions**, and tick each one they need. It is saved at once. Unticking **See the project** takes them out of the project.
 
 **Look after a user:** tap the three dots on their row.
 
 | Choice | What it does |
 | --- | --- |
 | Edit | Corrects their name and mobile. A username never changes. |
-| Roles | Says what they do in this project, as above. |
+| Permissions | Says what they may do in this project, as above. |
 | Reset password | For a forgotten password. Type a new temporary one and pass it on. They are signed out, and choose their own at their next sign-in. |
 | Disable | They are signed out at their next action and cannot sign in. They stay in the list, and their entries are kept. |
 | Enable | Lets a disabled user sign in again. |
@@ -50,7 +50,7 @@ Each project has its own project manager, who manages its users and roles. Open 
 **الغرض:** إنشاء حسابات مستخدمي REDIX والعناية بها.
 **من يراها:** مدير كل مشروع، من **المستخدمون** في بطاقة المشروع. تحتاج إلى شبكة.
 
-لكل مشروع مدير مشروع خاص به يدير مستخدميه وأدوارهم. افتح **المستخدمون** من بطاقة المشروع. أضف مستخدماً جديداً، أو من له حساب باسم مستخدمه بالضبط. لتغيير ما يقوم به شخص، افتح قائمته واختر **الأدوار** وحدد ما ينطبق؛ ويمكن أن يجمع أكثر من دور. يحتاج المشروع إلى مدير مشروع واحد على الأقل، ولا يغيّر المدير المشروع نفسه إلا إذا أُسند إليه دور «مالي». وإذا كان الشخص يعمل في مشروع لا تديره، فلا يمكنك إعادة تعيين كلمة مروره أو تعطيله، لكن يمكنك إلغاء أدواره هنا. وإذا نسي مدير المشروع الوحيد كلمة مروره فلا أحد في التطبيق يستطيع إعادة تعيينها، فاحرص على مدير ثانٍ.
+لكل مشروع مدير مشروع خاص به يدير مستخدميه. افتح **الإعدادات** من بطاقة المشروع، ثم **المستخدمون**. أضف مستخدماً جديداً، أو من له حساب باسم مستخدمه بالضبط. لتغيير ما يستطيعه شخص، افتح قائمته واختر **الصلاحيات** وحدد كل صلاحية يحتاجها؛ فلا أدوار. ويحتاج المشروع إلى شخص واحد على الأقل يدير مستخدميه. وإذا كان الشخص يعمل في مشروع لا تديره، فلا يمكنك إعادة تعيين كلمة مروره أو تعطيله، لكن يمكنك إلغاء صلاحياته هنا. وإذا نسي مدير المشروع الوحيد كلمة مروره فلا أحد في التطبيق يستطيع إعادة تعيينها، فاحرص على مدير ثانٍ.
 
 **إضافة مستخدم**
 
@@ -59,14 +59,14 @@ Each project has its own project manager, who manages its users and roles. Open 
 3. اكتب كلمة مرور مؤقتة من 8 أحرف على الأقل.
 4. اضغط **إضافة المستخدم**، ثم أعطه اسم المستخدم وكلمة المرور المؤقتة. عند أول دخول، يطلب منه التطبيق اختيار كلمة مروره.
 
-**لتغيير ما يقوم به شخص:** اضغط النقاط الثلاث في صفه، ثم **الأدوار**، وحدد ما ينطبق. يُحفظ فوراً.
+**لتغيير ما يستطيعه شخص:** اضغط النقاط الثلاث في صفه، ثم **الصلاحيات**، وحدد كل صلاحية يحتاجها. يُحفظ فوراً. وإلغاء **يرى المشروع** يُخرجه من المشروع.
 
 **العناية بمستخدم:** اضغط النقاط الثلاث في صفه.
 
 | الخيار | ماذا يفعل |
 | --- | --- |
 | تعديل | يصحح اسمه وجواله. اسم المستخدم لا يتغير. |
-| الأدوار | يحدد ما يقوم به في هذا المشروع، كما سبق. |
+| الصلاحيات | يحدد ما يستطيعه في هذا المشروع، كما سبق. |
 | إعادة تعيين كلمة المرور | عند نسيان كلمة المرور. اكتب كلمة مؤقتة جديدة وأعطه إياها. يُسجَّل خروجه، ويختار كلمة مروره عند دخوله التالي. |
 | تعطيل | يُسجَّل خروجه عند أول إجراء تالٍ ولا يستطيع الدخول. يبقى في القائمة، وتبقى قيوده. |
 | تفعيل | يسمح لمستخدم معطّل بالدخول مرة أخرى. |

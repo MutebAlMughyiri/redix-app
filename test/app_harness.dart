@@ -416,6 +416,9 @@ class FakeApi {
   /// The files the app sent, as the bytes of each request read as text, which name each file.
   final sentAttachments = <String>[];
 
+  /// Where each file was sent: an entry's file, or a document's.
+  final sentAttachmentPaths = <String>[];
+
   /// The status and problem code the API answers to a file; 2xx keeps it. An empty code sends none.
   var attachmentAnswer = (status: 201, code: '');
 
@@ -1576,6 +1579,7 @@ class FakeApi {
     }
     if (segments.length >= 3 && segments[2] == 'attachments') {
       sentAttachments.add(latin1.decode(request.bodyBytes));
+      sentAttachmentPaths.add(request.url.path);
       if (attachmentAnswer.status >= 300) {
         return _json({if (attachmentAnswer.code.isNotEmpty) 'code': attachmentAnswer.code}, attachmentAnswer.status);
       }

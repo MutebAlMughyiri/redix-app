@@ -20,11 +20,16 @@ class Attachments {
   /// The attachment the last [keep] made; none when it made none.
   Attachment get kept => _kept;
 
-  /// Sends [file] to the API. Returns an empty string once kept, otherwise the word key of the refusal.
-  Future<String> keep(PickedFile file) async {
+  /// Sends an entry's [file], a picture or a PDF, to the API. Returns an empty string once kept, otherwise the word key of the refusal.
+  Future<String> keep(PickedFile file) => _keep('/projects/$projectId/attachments', file);
+
+  /// Sends a document's [file], any file, to the API (findings row 138). Returns an empty string once kept, otherwise the word key of the refusal.
+  Future<String> keepDocument(PickedFile file) => _keep('/projects/$projectId/attachments/document', file);
+
+  Future<String> _keep(String path, PickedFile file) async {
     _kept = Attachment.none();
     try {
-      final response = await _session.postFile('/projects/$projectId/attachments', file.name, file.bytes);
+      final response = await _session.postFile(path, file.name, file.bytes);
       final answer = answerOf(response);
       if (response.statusCode >= 300) {
         return refusalOf(answer, 'attachments');

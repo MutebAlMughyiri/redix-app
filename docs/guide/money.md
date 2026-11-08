@@ -18,7 +18,7 @@
 
 <img src="images/add-entry-partner.png" alt="A partner's money in Add entry" width="300">
 
-**A partner who pays with their own money.** Record it in **Partners** as a contribution to their capital, then pay the expense from the account the money went into. An expense is paid only from an account added in **Accounts**.
+**A partner who pays with their own money.** Enter it from **Add entry** as a contribution to their capital, then pay the expense from the account the money went into. An expense is paid only from an account added in **Accounts**.
 
 To correct any of these, reverse it. What was entered together reverses together.
 
@@ -36,6 +36,6 @@ To correct any of these, reverse it. What was entered together reverses together
 
 **مال الشريك الداخل أو الخارج** يُدخل من **إضافة قيد**: اختر الشريك في آخر قائمة الجداول، تحت **الشركاء**. وهو مال أضافه الشريك، وفعّل **سحب** لمال سحبه. ويحتاج الإيصال البنكي، إلا إن دُفع نقداً وذكرت السبب. وينتظر الاعتماد كالمصروف، ولا يُحسب في رأس المال إلا بعد اعتماده.
 
-**شريك يدفع من ماله.** سجّل ذلك في **الشركاء** مساهمةً في رأس ماله، ثم ادفع المصروف من الحساب الذي دخله المال. لا يُدفع المصروف إلا من حساب أُضيف في **الحسابات**.
+**شريك يدفع من ماله.** أدخل ذلك من **إضافة قيد** مساهمةً في رأس ماله، ثم ادفع المصروف من الحساب الذي دخله المال. لا يُدفع المصروف إلا من حساب أُضيف في **الحسابات**.
 
 لتصحيح أي منها، اعكسه. وما أُدخل معاً يُعكس معاً.

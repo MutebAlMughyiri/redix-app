@@ -53,21 +53,20 @@ The project's home, `HomeScreen`:
 
 | Rule | Code | Test in `test/contracts/contracts_test.dart` |
 | --- | --- | --- |
-| Each contract shows its contractor, item, unit and figures (FR-07) | `ContractCard` | `each contract shows its contractor, item, unit and figures` |
+| Each contract shows its contractor, item and figures (FR-07); a contract belongs to the project, not a unit (redix-api #96) | `ContractCard` | `each contract shows its contractor, item and figures` |
 | It shows what remains, and how it stands (AC-07.1) | `ContractCard`, `Contract.standingWordKey` | `AC-07.1: a contract shows what remains of it, and how it stands` |
 | An overrun shows in brackets, with an alert (AC-07.1) | `ContractCard`, `formatMoney` | `AC-07.1: an overrun shows its remaining in brackets, with an alert` |
 | An open-value contract has no remaining and no alert (AC-07.2) | `ContractCard` | `AC-07.2: an open-value contract adds up, with no remaining and no alert` |
 | Nothing paid is not started | `Contract.standingWordKey` | `a contract with nothing paid has not started` |
 | The filters count their contracts and keep only those | `ContractFilter`, `ContractsScreen` | `the filters count their contracts and keep only those` |
 | A filter that keeps no contract says there are none rather than showing a blank page | `ApiListBody.keeps` | `a filter that keeps no contract says there are none rather than showing a blank page` |
-| Adding sends the contractor, item, unit and terms | `ContractDialog`, `Contracts.add` | `adding sends the contractor, item, unit and terms` |
-| A contract may be for the shared unit (open question 3) | `Project.entryUnits` | `a contract may be for the shared unit` |
+| Adding sends the contractor, item and terms | `ContractDialog`, `Contracts.add` | `adding sends the contractor, item and terms` |
 | A missing contractor is added from the picker | `SupplierPicker` | `a contractor missing from the register is added from the picker and goes on` |
 | Nothing chosen is left for the API to refuse | `Contracts.add` | `nothing chosen is left for the API to refuse, and stays in the dialog` |
 | An open-value contract asks no value | `ContractDialog` | `an open-value contract asks no value and sends the mark` |
 | Figures that are not numbers are refused before sending | `ContractDialog` | `figures that are not numbers are refused before anything is sent` |
 | A contract with no payments offers its contractor, item and unit, starting from what it has, and sends them; a refusal stays in the dialog | `ContractDialog`, `Contracts.amend`, `Contract.hasPayments` | `a contract with no payments offers its contractor, item and unit, starting from what it has, and sends them`, `another unit chosen is what is sent`, `a refused change of contractor stays in the dialog and says why` |
-| Amending a contract with payments starts from it, whose contractor, item and unit stay and are not sent | `ContractDialog`, `Contracts.amend` | `amending a contract with payments starts from it, whose contractor, item and unit stay` |
+| Amending a contract with payments starts from it, whose contractor and item stay and are not sent | `ContractDialog`, `Contracts.amend` | `amending a contract with payments starts from it, whose contractor and item stay` |
 | Saving with the keyboard up closes it with the dialog | `ChangeDialog` | `saving with the keyboard up closes it with the dialog` |
 | Disabled, it stays on the list, marked, and can be enabled | `ContractCard` | `a disabled contract stays on the list, marked, and can be enabled` |
 | A project with no contracts says so | `ApiListBody` | `a project with no contracts says so` |

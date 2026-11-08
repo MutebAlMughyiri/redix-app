@@ -64,7 +64,7 @@ Tests are in `test/entries/add_entry_test.dart`, with the payment's in `add_entr
 | Arabic digits count | `parseNumber` | what a person types in Arabic digits counts |
 | What was typed is sent, never a figure, with an id made here | `_body` | saving a draft sends what was typed and chosen, never a figure |
 | What is not a number is refused here | `_numbers` | what is not a number is refused here |
-| D14: a deduction, on either kind, is refused here until its notes say why | `_whatIsWrong` | AC-14.1, D14 on a purchase and on a payment |
+| D14: a deduction, on either kind, is refused here until its notes say why | `_whatIsWrong` | `add_entry_test.dart`: AC-14.1, D14: a deduction is a negative amount, typed in either digits; `add_entry_contract_test.dart`: AC-14.1, D14: a deduction is a negative amount, which raises what remains |
 | FR-09: a file is kept first and named | `_record` | FR-09; a refusal stays on the screen; a picture taken again; a file the API refuses |
 | AC-41.1, FR-41: custom columns are drawn, marked and sent | `ColumnValueField`, `ItemColumn.valueToSend` | AC-41.1; FR-41; choosing another item |
 | A built-in column follows what Finance made of it | `_asks`, `_requires` | a built-in field Finance made required |

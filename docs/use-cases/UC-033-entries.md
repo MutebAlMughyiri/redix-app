@@ -27,12 +27,12 @@
 | R8: a period keeps the entries dated inside it, both ends included | `EntryFilter.keeps` | `entries_test.dart`: search, R8: a period |
 | Everyone sees all entries, and starts on their own | `EntriesScreen` | `entries_test.dart`: everyone sees |
 | A draft of their own can be changed, sent or deleted | `_EntryActions` | `entries_test.dart`: a draft of their own |
-| What waits offers the field nothing to change, and someone else's neither | `_EntryActions._mayChange` | `entries_test.dart`: what waits, someone else's |
-| Finance can change what waits, and what someone else entered | `_EntryActions._mayChange` | `entries_test.dart`: Finance can change |
+| What waits offers the field nothing to change, and someone else's neither | `EntryRow.allows` | `entries_test.dart`: what waits for a decision offers the field nothing to change |
+| Finance can change what waits, and what someone else entered | `EntryRow.allows` | `entries_test.dart`: Finance can change |
 | What is approved is only reversed, and only by whoever decides | `_EntryActions` | `entries_test.dart`: what is approved |
-| AC-50.1: reversing asks why, and the entry says it was reversed | `_ReverseSheet`, `ProjectEntries.reverse` | `entries_test.dart`: AC-50.1 |
+| AC-50.1: reversing asks why, and the entry says it was reversed | `ReverseSheet`, `ProjectEntries.reverse` | `entries_test.dart`: AC-50.1 |
 | القيود lists every kind of entry: expenses, revenue and partners' money, each named by its item or partner and saying what it is; only an expense opens in Add entry to change (Muteb, 8 Nov 2026) | `EntryRow.title`, `kindWordKey`, `isExpense` | `direct_entry_test.dart`: No Revenue screen, two tests |
-| A swipe deletes an entry with no question, where `EntryRow.allows` lets the user delete it | `EntryListTile`, `SwipeToRemove` | `entries_test.dart`: a swipe deletes a draft; the home's latest entries swipe away too; without Delete entries a bill does not swipe |
+| A swipe deletes an entry with no question, where `EntryRow.allows` lets the user delete it | `EntryListTile`, `SwipeToRemove` | `entries_test.dart`: redix-api #102: a swipe deletes a draft with no question; without Delete entries a bill does not swipe |
 | AC-19.1: a rejected entry opens with its reason, and holds what it held | `AddEntryScreen._openEntry` | `entries_test.dart`: the reason shows at the top |
 | R12, D10: a contractor payment opens in its contract's table under the title تعديل, and goes back to its own route | `AddEntryScreen._openEntry`, `EntryTables.tableOf` | `entries_test.dart`: R12, D10 |
 | Saving goes to that entry, with its id, file and figures | `Expenses.record` | `entries_test.dart`: saving goes to that entry |

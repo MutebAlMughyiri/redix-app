@@ -47,7 +47,7 @@ The project's home, `HomeScreen`:
 | Rule | Code | Test in `test/suppliers/suppliers_test.dart` |
 | --- | --- | --- |
 | Each supplier shows its VAT number and default item | `Supplier.detailsIn` | `each supplier shows its VAT number and default item` |
-| A supplier pending approval is marked, and one with no number says so | `Supplier.detailsIn` | `a supplier pending approval is marked, and one with no number says so` |
+| A supplier pending approval is marked, and one with no number shows none | `Supplier.detailsIn` | `a supplier pending approval is marked, and one with no number shows none` |
 | Adding sends only what was filled in | `Suppliers.add` | `adding sends the name and the VAT number, and only what was filled in` |
 | Arabic digits are sent as Western ones | `westernDigits`, `Suppliers` | `a VAT number and a mobile typed in Arabic digits are sent in Western ones` |
 | BR-16: the VAT number may stay empty, which is no number, and there is no switch for it (AC-06.2) | `VatNumberField`, `Suppliers` | `BR-16: a supplier is sent with its VAT number left empty` |
