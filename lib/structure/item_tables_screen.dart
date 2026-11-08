@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
 import '../ui/change_dialog.dart';
-import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'categories.dart';
 import 'item_tables.dart';
@@ -62,8 +62,8 @@ class ItemTablesScreen extends StatefulWidget {
   /// The button that renames the subgroup [id].
   static Key renameKey(String id) => Key('tables.rename.$id');
 
-  /// The button that removes the subgroup [id].
-  static Key deleteKey(String id) => Key('tables.delete.$id');
+  /// The line saying a named table is removed by a swipe (redix-api #102).
+  static const swipeHintKey = Key('tables.swipeHint');
 
   @override
   State<ItemTablesScreen> createState() => _ItemTablesScreenState();
@@ -83,20 +83,6 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
     );
   }
 
-  void _askToRemove(ItemTable table) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => ConfirmDialog(
-        title: words.subgroupsDeleteQuestion,
-        subject: table.name,
-        explanation: words.subgroupsDeleteExplain,
-        confirmLabel: words.subgroupsDelete,
-        onConfirm: () => showRefusalOf(context, widget.tables.deleteSubgroup(table)),
-      ),
-    );
-  }
-
   String _kindOf(ItemTable table, Words words) {
     if (table.kind == ItemTableKind.contract) {
       return words.categoriesTableContract;
@@ -107,8 +93,13 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
   Widget _row(ItemTable table, int index) {
     final words = Words.of(context);
     final mayChange = widget.project.mayChangeStructure;
-    return ListTile(
+    return SwipeToRemove(
       key: ItemTablesScreen.rowKey(table.id),
+      rowKey: ItemTablesScreen.rowKey(table.id),
+      mayRemove: mayChange && table.isNamedSubgroup,
+      onRemove: () => widget.tables.deleteSubgroup(table),
+      child: ListTile(
+      key: ItemTablesScreen.rowKey(table.id).body,
       contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
       leading: mayChange ? ReorderableDragStartListener(key: ItemTablesScreen.handleKey(table.id), index: index, child: Icon(Icons.drag_indicator, key: ItemTablesScreen.handleKey(table.id).icon)) : null,
       title: Text(table.name, key: ItemTablesScreen.tableNameKey(table.id)),
@@ -123,10 +114,10 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
                   tooltip: words.categoriesRename,
                   onPressed: () => _ask(title: words.categoriesRename, saveLabel: words.categoriesSave, name: table.name, onSave: (name) => widget.tables.renameSubgroup(table, name)),
                 ),
-                IconButton(key: ItemTablesScreen.deleteKey(table.id), icon: Icon(Icons.delete_outline, key: ItemTablesScreen.deleteKey(table.id).icon), tooltip: words.subgroupsDelete, onPressed: () => _askToRemove(table)),
               ],
             )
           : null,
+      ),
     );
   }
 
@@ -150,7 +141,13 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Text(words.categoriesTablesHint, key: ItemTablesScreen.hintKey, style: Theme.of(context).textTheme.bodySmall),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(words.categoriesTablesHint, key: ItemTablesScreen.hintKey, style: Theme.of(context).textTheme.bodySmall),
+                  if (widget.project.mayChangeStructure) const SwipeHint(key: ItemTablesScreen.swipeHintKey),
+                ],
+              ),
             ),
             Expanded(
               child: ReorderableListView(

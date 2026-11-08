@@ -5,10 +5,10 @@ import '../auth/permission.dart';
 import '../format/date_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
-import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/swipe_to_remove.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'add_entry_screen.dart';
@@ -86,8 +86,8 @@ class EntriesScreen extends StatefulWidget {
   /// The button sending the open entry.
   static const sendKey = Key('entries.send');
 
-  /// The button deleting the open entry.
-  static const deleteKey = Key('entries.delete');
+  /// The line saying an entry is removed by a swipe (redix-api #102).
+  static const swipeHintKey = Key('entries.swipeHint');
 
   /// The button reversing the open entry.
   static const reverseKey = Key('entries.reverse');
@@ -215,12 +215,13 @@ class _EntriesScreenState extends State<EntriesScreen> {
       body: Column(
         children: [
           ListenableBuilder(listenable: widget.entries, builder: (_, _) => _filters(words)),
+          if (widget.project.may(Permission.deleteEntries)) const Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SwipeHint(key: EntriesScreen.swipeHintKey)),
           Expanded(
             child: ApiListBody(
               list: widget.entries,
               emptyText: words.entriesEmpty,
               itemBuilder: (entry) => _filter.keeps(entry)
-                  ? EntryTile(entry: entry, onTap: () => EntriesScreen.openActions(context, widget.project, widget.entries, entry))
+                  ? EntryListTile(project: widget.project, entries: widget.entries, entry: entry)
                   : const SizedBox.shrink(),
             ),
           ),
@@ -236,27 +237,6 @@ class _EntryActions extends StatelessWidget {
   final Project project;
   final ProjectEntries entries;
   final EntryRow entry;
-
-  /// Whether [permission] lets the user act on this entry now: it is not approved, and it is theirs and not waiting, or they handle others' entries.
-  bool _may(Permission permission) => !project.isFinished && !entry.isApproved && project.may(permission) && (entry.isMine ? !entry.isPending || project.may(Permission.manageAnyEntry) : project.may(Permission.manageAnyEntry));
-
-  void _askToDelete(BuildContext context) {
-    final words = Words.of(context);
-    final navigator = Navigator.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (dialog) => ConfirmDialog(
-        title: words.entriesDeleteQuestion,
-        subject: entry.itemName,
-        explanation: words.entriesDeleteExplain,
-        confirmLabel: words.entriesDelete,
-        onConfirm: () {
-          navigator.pop();
-          showRefusalOf(context, entries.delete(entry));
-        },
-      ),
-    );
-  }
 
   void _askToReverse(BuildContext context) {
     Navigator.of(context).pop();
@@ -275,7 +255,7 @@ class _EntryActions extends StatelessWidget {
         spacing: 8,
         children: [
           EntryTile(entry: entry, onTap: () {}),
-          if (_may(Permission.recordEntries)) ...[
+          if (entry.allows(project, Permission.recordEntries)) ...[
             FilledButton(
               key: EntriesScreen.editKey,
               onPressed: () {
@@ -294,7 +274,6 @@ class _EntryActions extends StatelessWidget {
                 child: Text(words.entriesSend, key: EntriesScreen.sendKey.label),
               ),
           ],
-          if (_may(Permission.deleteEntries)) TextButton(key: EntriesScreen.deleteKey, onPressed: () => _askToDelete(context), child: Text(words.entriesDelete, key: EntriesScreen.deleteKey.label)),
           if (mayReverse) OutlinedButton(key: EntriesScreen.reverseKey, onPressed: () => _askToReverse(context), child: Text(words.entriesReverse, key: EntriesScreen.reverseKey.label)),
         ],
       ),

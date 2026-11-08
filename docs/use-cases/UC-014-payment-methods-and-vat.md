@@ -23,7 +23,7 @@ Settings, `SettingsScreen`, reached from the project's card:
 | Add | `PaymentMethodsScreen.addKey` | Opens the name dialog |
 | A method's name | `PaymentMethodsScreen.nameKey(id)` | |
 | That it is disabled | `PaymentMethodsScreen.disabledKey(id)` | |
-| Its menu | `PaymentMethodsScreen.menuKey(id)` | Rename `renameKey`, Disable `disableKey` or Enable `enableKey`, Delete `deleteKey` |
+| Its menu | `PaymentMethodsScreen.menuKey(id)` | Rename `renameKey`, Disable `disableKey` or Enable `enableKey`; a method is deleted by swiping its row, `rowKey(id).swipe` (redix-api #102) |
 | The name, in a dialog | `PaymentMethodsScreen.dialogNameKey` | |
 | Save, in a dialog | `PaymentMethodsScreen.saveKey` | |
 | Why refused, in a dialog | `PaymentMethodsScreen.dialogMessageKey` | |
@@ -45,7 +45,7 @@ Settings, `SettingsScreen`, reached from the project's card:
 | A refused name stays in the dialog with its reason | `ChangeDialog` | `a refused name stays in the dialog with its reason` |
 | Renaming starts from the name | `PaymentMethodRow`, `NameDialog` | `renaming starts from the name and sends the new one` |
 | A disabled method stays on the list, and Enable brings it back (AC-40.1) | `PaymentMethods.disable`, `enable` | `disabling keeps the method on the list, and enable brings it back` |
-| Deleting asks first; a method an expense was paid with is not deleted, and the refusal says to disable it | `PaymentMethods.delete` | `deleting asks first, then sends the delete and the method leaves the list`, `a method an expense was paid with is not deleted, and the refusal says to disable it` |
+| A swipe deletes a method with no question; a method an expense was paid with is not deleted, and the refusal says to disable it | `PaymentMethods.delete`, `SwipeToRemove` | `redix-api #102: a swipe deletes a method with no question, and the method leaves the list`, `a method an expense was paid with is not deleted, and the refusal says to disable it` |
 | A refused change says why | `showRefusalOf` | `a refused disable says why` |
 | A number may be typed in Arabic digits, since the app is Arabic first | `parseNumber` | `a typed number reads Western and Arabic digits and thousands separators` |
 | A finished project shows them with nothing to change (AC-04.1) | `Project.mayManageSettings` | `a finished project shows its methods with nothing to change` |

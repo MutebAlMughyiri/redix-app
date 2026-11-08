@@ -20,9 +20,9 @@ Tap an entry to see what you can do with it:
 
 | It is | Who | What they can do |
 | --- | --- | --- |
-| A draft | Who entered it | **Edit**, **Send for approval**, **Delete** |
-| Waiting for approval | Finance | **Edit**, **Delete** |
-| Rejected | Who entered it, and Finance | **Fix and send again**, **Delete**. The reason shows at the top of the form |
+| A draft | Who entered it | **Edit**, **Send for approval**; swipe to delete |
+| Waiting for approval | Finance | **Edit**; swipe to delete |
+| Rejected | Who entered it, and Finance | **Fix and send again**; swipe to delete. The reason shows at the top of the form |
 | Approved | Finance | **Reverse**, saying why |
 
 An approved entry never changes. Reversing it adds an opposite entry tied to it, approved at once: both show in the reports, and their net is zero.
@@ -45,9 +45,9 @@ An approved entry never changes. Reversing it adds an opposite entry tied to it,
 
 | حالته | من | ما يمكنه |
 | --- | --- | --- |
-| مسودة | من أدخله | **تعديل**، **إرسال للاعتماد**، **حذف** |
-| بانتظار الاعتماد | المالي | **تعديل**، **حذف** |
-| مرفوض | من أدخله والمالي | **تعديل وإعادة إرسال**، **حذف**. يظهر السبب أعلى النموذج |
+| مسودة | من أدخله | **تعديل**، **إرسال للاعتماد**؛ واسحب السطر لحذفه |
+| بانتظار الاعتماد | المالي | **تعديل**؛ واسحب السطر لحذفه |
+| مرفوض | من أدخله والمالي | **تعديل وإعادة إرسال**؛ واسحب السطر لحذفه. يظهر السبب أعلى النموذج |
 | معتمد | المالي | **عكس القيد** مع ذكر السبب |
 
 القيد المعتمد لا يتغيّر. عكسه يضيف قيداً مقابلاً مرتبطاً به ومعتمداً فوراً: يظهران في التقارير وصافيهما صفر.

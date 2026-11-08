@@ -6,6 +6,7 @@ import '../auth/sign_in_screen.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'project.dart';
 import 'project_registration.dart';
@@ -68,11 +69,11 @@ class NewProjectScreen extends StatefulWidget {
   /// The line that says why the project was refused.
   static const messageKey = Key('newProject.message');
 
-  /// The unit at [index] of the list.
-  static Key unitKey(int index) => Key('newProject.unit.$index');
+  /// The unit added [number]th, from 0, which keeps its key when another is swiped off.
+  static Key unitKey(int number) => Key('newProject.unit.$number');
 
-  /// The button that takes the unit at [index] off the list.
-  static Key removeUnitKey(int index) => Key('newProject.removeUnit.$index');
+  /// The line saying a unit is taken off the list by a swipe (redix-api #102).
+  static const swipeHintKey = Key('newProject.swipeHint');
 
   /// The heading over the units.
   static const unitsHeadingKey = Key('newProject.unitsHeading');
@@ -95,7 +96,8 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   final _username = TextEditingController();
   final _mobile = TextEditingController();
   final _password = TextEditingController();
-  final _units = <String>[];
+  final _units = <(int, String)>[];
+  var _nextUnit = 0;
   var _structureSourceId = '';
   var _startDate = DateUtils.dateOnly(DateTime.now());
   var _message = '';
@@ -122,7 +124,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
 
   void _addUnit() {
     setState(() {
-      _units.add(_unitName.text);
+      _units.add((_nextUnit++, _unitName.text));
       _unitName.clear();
     });
   }
@@ -145,7 +147,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
       _saving = true;
       _message = '';
     });
-    final refusal = await _send([..._units, if (_unitName.text.trim().isNotEmpty) _unitName.text]);
+    final refusal = await _send([for (final (_, unit) in _units) unit, if (_unitName.text.trim().isNotEmpty) _unitName.text]);
     if (!mounted) {
       return;
     }
@@ -200,16 +202,19 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
             ),
             const SizedBox(height: 24),
             Text(words.projectsUnits, key: NewProjectScreen.unitsHeadingKey, style: theme.textTheme.titleSmall),
-            for (final (index, unit) in _units.indexed)
-              ListTile(
-                key: NewProjectScreen.unitKey(index),
-                contentPadding: EdgeInsets.zero,
-                title: Text(unit, key: NewProjectScreen.unitKey(index).title),
-                trailing: IconButton(
-                  key: NewProjectScreen.removeUnitKey(index),
-                  icon: Icon(Icons.close, key: NewProjectScreen.removeUnitKey(index).icon),
-                  tooltip: words.projectsRemoveUnit,
-                  onPressed: () => setState(() => _units.removeAt(index)),
+            if (_units.isNotEmpty) const SwipeHint(key: NewProjectScreen.swipeHintKey),
+            for (final (number, unit) in _units)
+              SwipeToRemove(
+                rowKey: NewProjectScreen.unitKey(number),
+                mayRemove: true,
+                onRemove: () async {
+                  setState(() => _units.removeWhere((each) => each.$1 == number));
+                  return '';
+                },
+                child: ListTile(
+                  key: NewProjectScreen.unitKey(number),
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(unit, key: NewProjectScreen.unitKey(number).title),
                 ),
               ),
             const SizedBox(height: 12),

@@ -76,7 +76,7 @@ enum ReportFileKind {
   final List<FileHanding> handings;
 }
 
-/// Gets a report's file from the API and saves, shares or prints it on the phone (UC-059): the one way any report screen does so.
+/// Gets a report's or a document's file from the API and saves, shares or prints it on the phone (UC-059, redix-api #102): the one way any screen does so.
 class ReportFiles {
   /// The files read through [_session], handed to the phone through [_capture].
   ReportFiles(this._session, this._capture);
@@ -85,16 +85,19 @@ class ReportFiles {
   final InvoiceCapture _capture;
 
   /// Gets the file at [address] of [kind], named [name], and does [handing] with it. Returns the word key of what to tell the person: why it could not, or that it was saved; empty when there is nothing to say.
-  Future<String> hand(String address, String name, ReportFileKind kind, FileHanding handing) async {
+  Future<String> hand(String address, String name, ReportFileKind kind, FileHanding handing) =>
+      handFile(address.contains('?') ? address.replaceFirst('?', '/${kind.extension}?') : '$address/${kind.extension}', '$name.${kind.extension}', kind.mimeType, handing);
+
+  /// Gets the file at [path], named [name] and holding [mimeType], and does [handing] with it; answers as [hand] does.
+  Future<String> handFile(String path, String name, String mimeType, FileHanding handing) async {
     try {
-      final path = address.contains('?') ? address.replaceFirst('?', '/${kind.extension}?') : '$address/${kind.extension}';
       final response = await _session.read(path, file: true);
       if (response.statusCode != 200) {
         return 'reports.fileFailed';
       }
-      return await handing.handTo(_capture, response.bodyBytes, '$name.${kind.extension}', kind.mimeType);
+      return await handing.handTo(_capture, response.bodyBytes, name, mimeType);
     } on Exception catch (error) {
-      debugPrint('$address not handed: $error');
+      debugPrint('$path not handed: $error');
       return 'reports.fileFailed';
     }
   }

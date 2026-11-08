@@ -13,7 +13,7 @@ With no network, enter expenses as usual. **Saved on this phone. It will be sent
 | It says | What it means | What you do |
 | --- | --- | --- |
 | Waiting for the network | It has not been sent yet | Nothing |
-| The server's reason | The server refused it | **Send again**, or **Delete** |
+| The server's reason | The server refused it | **Send again**, or swipe it away |
 
 Signing out keeps what waits on this phone. It goes when you sign in again, and nobody else who signs in here sees it.
 
@@ -28,6 +28,6 @@ Signing out keeps what waits on this phone. It goes when you sign in again, and 
 | ما يظهر | معناه | ما تفعله |
 | --- | --- | --- |
 | بانتظار الشبكة | لم يُرسل بعد | لا شيء |
-| سبب من الخادم | رفضه الخادم | **إعادة الإرسال** أو **حذف** |
+| سبب من الخادم | رفضه الخادم | **إعادة الإرسال** أو اسحبه لحذفه |
 
 تسجيل الخروج يبقي ما ينتظر على هذا الجهاز. يُرسل حين تسجّل الدخول مجدداً، ولا يراه غيرك ممن يدخل هنا.

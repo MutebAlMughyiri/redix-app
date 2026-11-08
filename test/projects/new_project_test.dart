@@ -4,6 +4,8 @@ import 'package:redix/format/date_format.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 
+import 'package:redix/ui/part_keys.dart';
+
 import '../app_harness.dart';
 
 void main() {
@@ -101,16 +103,20 @@ void main() {
     expect(tester.widget<Text>(find.byKey(ProjectsScreen.detailsKey('project-0'))).data, 'en projects.noUnits');
   });
 
-  testWidgets('a unit can be removed until the project is created', (tester) async {
+  testWidgets('redix-api #102: a unit is swiped off the list until the project is created, and the next one keeps its place', (tester) async {
     final api = FakeApi();
     await openForm(tester, api);
+    expect(find.byKey(NewProjectScreen.swipeHintKey), findsNothing);
 
     await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
     await addUnit(tester, api, 'الفلة الشرقية');
     await addUnit(tester, api, 'الفلة الشمالية');
-    await act(tester, api, () => tester.tap(find.byKey(NewProjectScreen.removeUnitKey(0))));
-    await submit(tester, api);
+    expect(find.byKey(NewProjectScreen.swipeHintKey), findsOneWidget);
+    await swipeToRemove(tester, api, NewProjectScreen.unitKey(0));
 
+    expect(find.byKey(NewProjectScreen.unitKey(0)), findsNothing);
+    expect(tester.widget<Text>(find.byKey(NewProjectScreen.unitKey(1).title)).data, 'الفلة الشمالية');
+    await submit(tester, api);
     expect(api.sentProjectChanges.single.$2['units'], ['الفلة الشمالية']);
   });
 

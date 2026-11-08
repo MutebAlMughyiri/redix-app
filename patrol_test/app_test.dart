@@ -47,7 +47,6 @@ import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/change_dialog.dart';
-import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/name_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/refusal_snack_bar.dart';
@@ -185,6 +184,15 @@ void main() {
         await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
         await $.pumpAndSettle();
         await $.platform.android.pressBack();
+        await $.pumpAndSettle();
+      }
+
+      /// Swipes the row keyed [rowKey] from its end toward its start, as removing it does (redix-api #102), in whichever language the phone reads.
+      Future<void> swipeAway(Key rowKey) async {
+        final row = find.byKey(rowKey.swipe);
+        await goTo($(row));
+        final width = $.tester.getSize(row).width * 0.8;
+        await $.tester.drag(row, Offset(Directionality.of($.tester.element(row)) == TextDirection.rtl ? width : -width, 0));
         await $.pumpAndSettle();
       }
 
@@ -363,9 +371,7 @@ void main() {
       await $(NameDialog.nameKey).enterText('ملحق الفلة');
       await $(ChangeDialog.saveKey).tap();
       await says(ProjectInfoScreen.unitKey(annexId), 'ملحق الفلة');
-      await $(ProjectInfoScreen.unitMenuKey(annexId)).tap();
-      await $(ProjectInfoScreen.deleteUnitKey).tap();
-      await $(ConfirmDialog.confirmKey).tap();
+      await swipeAway(ProjectInfoScreen.unitRowKey(annexId));
       await gone($(ProjectInfoScreen.unitKey(annexId)));
       await back();
       await back();
@@ -410,8 +416,7 @@ void main() {
       await $(ItemTablesScreen.nameKey).enterText('دفان');
       await $(ItemTablesScreen.saveKey).tap();
       final dafanId = await idShowing('tables.name.', 'دفان');
-      await $(ItemTablesScreen.deleteKey(dafanId)).tap();
-      await $(ConfirmDialog.confirmKey).tap();
+      await swipeAway(ItemTablesScreen.rowKey(dafanId));
       await gone($(ItemTablesScreen.tableNameKey(dafanId)));
       await back();
 
@@ -435,9 +440,7 @@ void main() {
       final areaId = await idShowing('columns.name.', 'المساحة م²');
       await goTo($(ItemColumnsScreen.nameKey(areaId)));
       await picture('item-columns');
-      await goTo($(ItemColumnsScreen.deleteKey(areaId)));
-      await $(ItemColumnsScreen.deleteKey(areaId)).tap();
-      await $(ItemColumnsScreen.confirmDeleteKey).tap();
+      await swipeAway(ItemColumnsScreen.rowKey(areaId));
       await gone($(ItemColumnsScreen.nameKey(areaId)));
 
       await $(ItemColumnsScreen.addKey).tap();
@@ -455,9 +458,7 @@ void main() {
       await $(ItemColumnsScreen.editKey(sideId)).tap();
       await $(ItemColumnsScreen.newChoicesKey).enterText('غرب');
       await $(ItemColumnsScreen.saveKey).tap();
-      await goTo($(ItemColumnsScreen.deleteKey(sideId)));
-      await $(ItemColumnsScreen.deleteKey(sideId)).tap();
-      await $(ItemColumnsScreen.confirmDeleteKey).tap();
+      await swipeAway(ItemColumnsScreen.rowKey(sideId));
       await gone($(ItemColumnsScreen.nameKey(sideId)));
 
       await $(ItemColumnsScreen.templateKey).tap();

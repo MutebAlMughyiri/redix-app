@@ -7,7 +7,7 @@ import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/documents/documents_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
-import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 
@@ -49,7 +49,9 @@ void main() {
     expect(find.byKey(DocumentsScreen.groupHeadingKey('')), findsNothing);
     expect(tester.getTopLeft(find.byKey(DocumentsScreen.documentKey('contract'))).dy, lessThan(tester.getTopLeft(find.byKey(DocumentsScreen.groupHeadingKey('التراخيص'))).dy));
     expect(find.byKey(DocumentsScreen.addKey), findsNothing);
-    expect(find.byKey(DocumentsScreen.removeKey('permit')), findsNothing);
+    expect(find.byKey(DocumentsScreen.documentKey('permit').swipe), findsNothing);
+    expect(find.byKey(DocumentsScreen.swipeHintKey), findsNothing);
+    expect(find.byKey(DocumentsScreen.downloadKey('permit')), findsOneWidget);
 
     await act(tester, api, () => tester.tap(find.byKey(DocumentsScreen.documentKey('villa'))));
 
@@ -117,14 +119,33 @@ void main() {
     expect(api.sentDocuments, isEmpty);
   });
 
-  testWidgets('removing asks first, and the document leaves the list', (tester) async {
+  testWidgets('redix-api #102 R1, R4: a swipe removes a document with no question, and the list says how', (tester) async {
     final (:api, capture: _) = await openDocuments(tester, arrange: (api) => api.documentRows.add(document('permit', 'رخصة البناء', 'التراخيص')));
+    expect(tester.widget<Text>(find.byKey(DocumentsScreen.swipeHintKey.label)).data, 'en swipe.hint');
 
-    await act(tester, api, () => tester.tap(find.byKey(DocumentsScreen.removeKey('permit'))));
-    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
+    await swipeToRemove(tester, api, DocumentsScreen.documentKey('permit'));
 
+    expect(find.byType(AlertDialog), findsNothing);
     expect(api.sentDocuments.single.$1, '/projects/project-0/documents/permit/delete');
     expect(find.byKey(DocumentsScreen.documentKey('permit')), findsNothing);
+  });
+
+  testWidgets('redix-api #102 R5: a swipe shorter than 40% springs back and removes nothing', (tester) async {
+    final (:api, capture: _) = await openDocuments(tester, arrange: (api) => api.documentRows.add(document('permit', 'رخصة البناء', 'التراخيص')));
+
+    await swipeToRemove(tester, api, DocumentsScreen.documentKey('permit'), share: 0.2);
+
+    expect(api.sentDocuments, isEmpty);
+    expect(find.byKey(DocumentsScreen.documentKey('permit')), findsOneWidget);
+  });
+
+  testWidgets('redix-api #102 R2: Download keeps the document\'s file in the phone\'s Downloads under its own name', (tester) async {
+    final (:api, :capture) = await openDocuments(tester, permissions: field, arrange: (api) => api.documentRows.add(document('permit', 'رخصة البناء', 'التراخيص', fileName: 'permit.pdf', contentType: 'application/pdf')));
+
+    await act(tester, api, () => tester.tap(find.byKey(DocumentsScreen.downloadKey('permit'))));
+
+    expect(capture.savedOut.single, ('permit.pdf', 'application/pdf'));
+    expect(find.text('en reports.downloaded'), findsOneWidget);
   });
 
   testWidgets('AC-04.1: a closed project shows its documents with no Add and no Remove', (tester) async {
@@ -137,6 +158,6 @@ void main() {
 
     expect(find.byKey(DocumentsScreen.documentKey('permit')), findsOneWidget);
     expect(find.byKey(DocumentsScreen.addKey), findsNothing);
-    expect(find.byKey(DocumentsScreen.removeKey('permit')), findsNothing);
+    expect(find.byKey(DocumentsScreen.documentKey('permit').swipe), findsNothing);
   });
 }

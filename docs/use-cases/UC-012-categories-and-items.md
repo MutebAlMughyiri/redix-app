@@ -56,7 +56,7 @@ New project, `NewProjectScreen`, signed in:
 | What it prints | `ItemTablesScreen.detailsKey(id)` | Its kind and how many entries it holds |
 | Handle | `ItemTablesScreen.handleKey(id)` | Drags the table; the order is the sheet's |
 | Rename | `ItemTablesScreen.renameKey(id)` | A subgroup only; opens the name dialog |
-| Remove | `ItemTablesScreen.deleteKey(id)` | A subgroup only; asks first, naming it, through `ConfirmDialog`; one that entries use stays and the refusal says why |
+| A subgroup's swipe | `ItemTablesScreen.rowKey(id).swipe` | A named subgroup only: swiped from its end toward its start, it is removed with no question; one that entries use comes back and the refusal says why (redix-api #102) |
 
 ## API calls
 
@@ -81,7 +81,7 @@ New project, `NewProjectScreen`, signed in:
 | A sub-table holds purchases: only an item that takes purchases offers one to add (Muteb, 7 Nov 2026) | `ItemType.takesPurchases`, `ItemTablesScreen` | `categories_test.dart`: an item that takes no purchases offers no sub-table |
 | A sub-table added here is offered in إضافة قيد as its table and sheet, الجلاي (دفعات العظم), and takes a purchase | `ItemTablesScreen`, `EntryTable.label` | `categories_test.dart`: a sub-table added here is offered in إضافة قيد |
 | AC-46.8: dragging a table sends the order of every table and stays; a refused order goes back and says why | `ItemTables.move`, `ApiList.reorder` | `categories_test.dart`: AC-46.8: dragging a table; a refused order of tables |
-| A subgroup is removed only after asking; one that entries use stays and the refusal says why | `ItemTables.deleteSubgroup`, `ConfirmDialog`, `showRefusalOf` | `categories_test.dart`: a subgroup is removed; a subgroup that entries use |
+| A named subgroup is removed by a swipe with no question; the general table and a contract do not swipe; one that entries use comes back and the refusal says why (redix-api #102) | `ItemTables.deleteSubgroup`, `SwipeToRemove` | `categories_test.dart`: a named subgroup is removed by a swipe; AC-46.8; a subgroup that entries use |
 | An item's type changes from its menu, starting from the one it has; one with entries keeps it and the dialog says why | `ChangeItemTypeDialog`, `ItemTypeChoice`, `Categories.changeItemType` | `categories_test.dart`: an item's type changes; an item with entries keeps its type |
 | A finished project shows its structure with nothing to change (AC-04.1) | `Project.mayChangeStructure` | `categories_test.dart`: a finished project |
 | AC-05.2: a new project can copy an approved earlier one, and the sign-in page offers none | `NewProjectScreen` | `categories_test.dart`: a new project |

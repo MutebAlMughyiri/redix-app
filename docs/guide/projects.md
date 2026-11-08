@@ -16,7 +16,7 @@ After you sign in, REDIX lists the projects you have access to. Tap one to open 
 
 1. Tap **Register new project**.
 2. Type the project's name and, if you like, a short description of it, up to 2,000 characters. The start date is today; tap it to choose another.
-3. For each unit, type its name and tap **Add unit**. Tap the cross beside a unit to take it off.
+3. For each unit, type its name and tap **Add unit**. Swipe a unit's row to take it off.
 4. Choose where its [categories and items](categories.md) come from: the default template, or a project you already have. They are copied when the project is approved.
 5. Tap **Send for approval**. You return to the list, where it waits for approval.
 
@@ -25,7 +25,7 @@ After you sign in, REDIX lists the projects you have access to. Tap one to open 
 On a project's home, open **Settings**, then **More info**. It shows the project's name, start date, status, units and description to everyone in the project. Whoever does the project's finance also changes them there, while the project is active:
 
 - **Rename:** tap the pencil beside the name.
-- **Add a unit:** tap **Add unit**, type its name, and tap **Add unit**. To rename or delete a unit, use the menu on its row; a unit that entries or contracts use cannot be deleted.
+- **Add a unit:** tap **Add unit**, type its name, and tap **Add unit**. To rename a unit, use the menu on its row; to delete it, swipe its row. A unit that entries or contracts use cannot be deleted.
 - **Description:** write what the project is, up to 2,000 characters, and tap **Save description**. "Description saved." confirms it. Saving it empty clears it.
 
 **Close a finished project**
@@ -56,7 +56,7 @@ A closed project shows **Finished · Read-only** on its home, stays in the list,
 
 1. اضغط **تسجيل مشروع جديد**.
 2. اكتب اسم المشروع، وإن شئت وصفاً قصيراً له حتى 2000 حرف. تاريخ البدء هو اليوم؛ اضغطه لاختيار غيره.
-3. لكل وحدة، اكتب اسمها واضغط **إضافة وحدة**. اضغط العلامة بجانب الوحدة لحذفها.
+3. لكل وحدة، اكتب اسمها واضغط **إضافة وحدة**. واسحب سطر الوحدة لحذفها.
 4. اضغط **إرسال للاعتماد**، فتعود إلى القائمة، وينتظر فيها الاعتماد.
 
 **معلومات المشروع**
@@ -64,7 +64,7 @@ A closed project shows **Finished · Read-only** on its home, stays in the list,
 في الشاشة الرئيسية للمشروع، افتح **الإعدادات** ثم **معلومات المشروع**. تعرض اسم المشروع وتاريخ بدئه وحالته ووحداته ووصفه لكل من في المشروع. ويغيّرها منها من يتولى مالية المشروع، ما دام نشطاً:
 
 - **تعديل الاسم:** اضغط القلم بجانب الاسم.
-- **إضافة وحدة:** اضغط **إضافة وحدة**، واكتب اسمها، ثم اضغط **إضافة وحدة**. ولتعديل اسم وحدة أو حذفها استخدم القائمة في سطرها؛ ولا تُحذف وحدة عليها قيود أو عقود.
+- **إضافة وحدة:** اضغط **إضافة وحدة**، واكتب اسمها، ثم اضغط **إضافة وحدة**. ولتعديل اسم وحدة استخدم القائمة في سطرها، ولحذفها اسحب سطرها؛ ولا تُحذف وحدة عليها قيود أو عقود.
 - **الوصف:** اكتب ما هو المشروع، حتى 2000 حرف، واضغط **حفظ الوصف**، فتظهر "تم حفظ الوصف.". وحفظه فارغاً يمسحه.
 
 **إغلاق مشروع منتهٍ**

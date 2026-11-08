@@ -16,7 +16,7 @@ A project starts with شبكة, تحويل and كاش. From then on they are thi
 | Add a payment method | Tap **Add** and type its name. |
 | Rename a method | Tap the three dots on its row, then **Rename**. |
 | Stop using a method | Tap the three dots, then **Disable**: it disappears from entry and stays on the entries that used it. **Enable** brings it back. |
-| Delete a method | Tap the three dots, then **Delete**. Only a method no expense was paid with is deleted. |
+| Delete a method | Swipe its row from its end toward its start (right to left in English, left to right in Arabic). Only a method no expense was paid with is deleted. |
 
 | Message | Meaning |
 | --- | --- |
@@ -36,7 +36,7 @@ A project starts with شبكة, تحويل and كاش. From then on they are thi
 | تضيف طريقة دفع | اضغط **إضافة** واكتب اسمها. |
 | تعيد تسمية طريقة | اضغط النقاط الثلاث في صفها، ثم **إعادة تسمية**. |
 | توقف استخدام طريقة | اضغط النقاط الثلاث، ثم **تعطيل**: تختفي من الإدخال وتبقى في القيود التي استخدمتها. و**تفعيل** يعيدها. |
-| تحذف طريقة | اضغط النقاط الثلاث، ثم **حذف**. لا تُحذف إلا طريقة لم يُدفع بها أي مصروف. |
+| تحذف طريقة | اسحب سطره من نهايته نحو بدايته (من اليسار إلى اليمين بالعربية). لا تُحذف إلا طريقة لم يُدفع بها أي مصروف. |
 
 | الرسالة | معناها |
 | --- | --- |

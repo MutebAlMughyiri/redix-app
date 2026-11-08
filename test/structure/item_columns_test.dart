@@ -7,6 +7,8 @@ import 'package:redix/structure/columns.dart';
 import 'package:redix/structure/item_columns_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 
+import 'package:redix/ui/part_keys.dart';
+
 import '../app_harness.dart';
 
 void main() {
@@ -69,14 +71,15 @@ void main() {
     expect(text(tester, ItemColumnsScreen.detailsKey(opened.area)), 'en columns.custom · en columns.typeNumber · en columns.required · en columns.inReports');
   });
 
-  testWidgets('AC-41.2: a core column has a lock and no delete; any other has a delete and no lock', (tester) async {
+  testWidgets('AC-41.2: a core column has a lock and does not swipe; any other swipes and has no lock', (tester) async {
     final opened = await openColumns(tester);
 
     expect(find.byKey(ItemColumnsScreen.lockKey(opened.date)), findsOneWidget);
-    expect(find.byKey(ItemColumnsScreen.deleteKey(opened.date)), findsNothing);
+    expect(find.byKey(ItemColumnsScreen.rowKey(opened.date).swipe), findsNothing);
     expect(find.byKey(ItemColumnsScreen.editKey(opened.date)), findsOneWidget);
-    expect(find.byKey(ItemColumnsScreen.deleteKey(opened.unit)), findsOneWidget);
+    expect(find.byKey(ItemColumnsScreen.rowKey(opened.unit).swipe), findsOneWidget);
     expect(find.byKey(ItemColumnsScreen.lockKey(opened.unit)), findsNothing);
+    expect(find.byKey(ItemColumnsScreen.swipeHintKey), findsOneWidget);
   });
 
   testWidgets('AC-41.1: a column is added to this item with what was chosen, asking nothing about other items', (tester) async {
@@ -180,16 +183,15 @@ void main() {
     expect(opened.api.sentStructureChanges.single.$2.containsKey('newOptions'), isFalse);
   });
 
-  testWidgets('deleting asks first and says values stay; Cancel changes nothing', (tester) async {
+  testWidgets('redix-api #102: a swipe deletes a column with no question; a short one deletes nothing', (tester) async {
     final opened = await openColumns(tester);
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.deleteKey(opened.area))));
-    expect(text(tester, ItemColumnsScreen.deleteExplainKey), 'en columns.deleteExplain');
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.cancelDeleteKey)));
+    await swipeToRemove(tester, opened.api, ItemColumnsScreen.rowKey(opened.area), share: 0.2);
     expect(opened.api.sentStructureChanges, isEmpty);
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.deleteKey(opened.area))));
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.confirmDeleteKey)));
+    await swipeToRemove(tester, opened.api, ItemColumnsScreen.rowKey(opened.area));
+
+    expect(find.byType(AlertDialog), findsNothing);
 
     expect(opened.api.sentStructureChanges.single.$1, '$itemPath/${opened.area}/delete');
     expect(find.byKey(ItemColumnsScreen.nameKey(opened.area)), findsNothing);
@@ -199,8 +201,7 @@ void main() {
     final opened = await openColumns(tester);
     opened.api.structureAnswer = (status: 409, code: 'coreColumn');
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.deleteKey(opened.unit))));
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.confirmDeleteKey)));
+    await swipeToRemove(tester, opened.api, ItemColumnsScreen.rowKey(opened.unit));
 
     expect(find.text('en columns.coreColumn'), findsOneWidget);
     expect(find.byKey(ItemColumnsScreen.nameKey(opened.unit)), findsOneWidget);
@@ -267,13 +268,12 @@ void main() {
       expect(opened.api.sentStructureChanges.single.$2['applyToAllItems'], isTrue);
     });
 
-    testWidgets('deleting a column asks', (tester) async {
+    testWidgets('deleting a template column by a swipe still asks whether every item takes it', (tester) async {
       final opened = await openColumns(tester);
       await showTemplate(tester, opened.api);
       final unit = templateColumn(opened.api, 1);
 
-      await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.deleteKey(unit))));
-      await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.confirmDeleteKey)));
+      await swipeToRemove(tester, opened.api, ItemColumnsScreen.rowKey(unit));
       await act(tester, opened.api, () => tester.tap(find.byKey(ApplyToAllDialog.templateOnlyKey)));
 
       expect(opened.api.sentStructureChanges.single.$1, '$templatePath/$unit/delete');
@@ -316,6 +316,6 @@ void main() {
     expect(find.byKey(ItemColumnsScreen.hintKey), findsNothing);
     expect(find.byKey(ItemColumnsScreen.handleKey(opened.date)), findsNothing);
     expect(find.byKey(ItemColumnsScreen.editKey(opened.date)), findsNothing);
-    expect(find.byKey(ItemColumnsScreen.deleteKey(opened.unit)), findsNothing);
+    expect(find.byKey(ItemColumnsScreen.rowKey(opened.unit).swipe), findsNothing);
   });
 }

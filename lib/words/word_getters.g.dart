@@ -560,12 +560,6 @@ mixin WordGetters {
   /// The word `columns.custom`.
   String get columnsCustom => text('columns.custom');
 
-  /// The word `columns.delete`.
-  String get columnsDelete => text('columns.delete');
-
-  /// The word `columns.deleteExplain`.
-  String get columnsDeleteExplain => text('columns.deleteExplain');
-
   /// The word `columns.edit`.
   String get columnsEdit => text('columns.edit');
 
@@ -851,6 +845,9 @@ mixin WordGetters {
   /// The word `documents.documentAlreadyKept`.
   String get documentsDocumentAlreadyKept => text('documents.documentAlreadyKept');
 
+  /// The word `documents.download`.
+  String get documentsDownload => text('documents.download');
+
   /// The word `documents.file`.
   String get documentsFile => text('documents.file');
 
@@ -893,18 +890,6 @@ mixin WordGetters {
   /// The word `documents.refused`.
   String get documentsRefused => text('documents.refused');
 
-  /// The word `documents.remove`.
-  String get documentsRemove => text('documents.remove');
-
-  /// The word `documents.removeExplain`.
-  String get documentsRemoveExplain => text('documents.removeExplain');
-
-  /// The word `documents.removeQuestion`.
-  String get documentsRemoveQuestion => text('documents.removeQuestion');
-
-  /// The word `documents.removed`.
-  String get documentsRemoved => text('documents.removed');
-
   /// The word `documents.save`.
   String get documentsSave => text('documents.save');
 
@@ -931,15 +916,6 @@ mixin WordGetters {
 
   /// The word `entries.contractorPayments`.
   String get entriesContractorPayments => text('entries.contractorPayments');
-
-  /// The word `entries.delete`.
-  String get entriesDelete => text('entries.delete');
-
-  /// The word `entries.deleteExplain`.
-  String get entriesDeleteExplain => text('entries.deleteExplain');
-
-  /// The word `entries.deleteQuestion`.
-  String get entriesDeleteQuestion => text('entries.deleteQuestion');
 
   /// The word `entries.draft`.
   String get entriesDraft => text('entries.draft');
@@ -1304,15 +1280,6 @@ mixin WordGetters {
   /// The word `notifications.title`.
   String get notificationsTitle => text('notifications.title');
 
-  /// The word `offline.discard`.
-  String get offlineDiscard => text('offline.discard');
-
-  /// The word `offline.discardExplain`.
-  String get offlineDiscardExplain => text('offline.discardExplain');
-
-  /// The word `offline.discardQuestion`.
-  String get offlineDiscardQuestion => text('offline.discardQuestion');
-
   /// The word `offline.empty`.
   String get offlineEmpty => text('offline.empty');
 
@@ -1372,15 +1339,6 @@ mixin WordGetters {
 
   /// The word `partners.userTaken`.
   String get partnersUserTaken => text('partners.userTaken');
-
-  /// The word `paymentMethods.delete`.
-  String get paymentMethodsDelete => text('paymentMethods.delete');
-
-  /// The word `paymentMethods.deleteExplain`.
-  String get paymentMethodsDeleteExplain => text('paymentMethods.deleteExplain');
-
-  /// The word `paymentMethods.deleteQuestion`.
-  String get paymentMethodsDeleteQuestion => text('paymentMethods.deleteQuestion');
 
   /// The word `paymentMethods.disable`.
   String get paymentMethodsDisable => text('paymentMethods.disable');
@@ -1621,15 +1579,6 @@ mixin WordGetters {
 
   /// The word `projects.rejected`.
   String get projectsRejected => text('projects.rejected');
-
-  /// The word `projects.removeUnit`.
-  String get projectsRemoveUnit => text('projects.removeUnit');
-
-  /// The word `projects.removeUnitExplain`.
-  String get projectsRemoveUnitExplain => text('projects.removeUnitExplain');
-
-  /// The word `projects.removeUnitQuestion`.
-  String get projectsRemoveUnitQuestion => text('projects.removeUnitQuestion');
 
   /// The word `projects.rename`.
   String get projectsRename => text('projects.rename');
@@ -2114,15 +2063,6 @@ mixin WordGetters {
   /// The word `signIn.username`.
   String get signInUsername => text('signIn.username');
 
-  /// The word `subgroups.delete`.
-  String get subgroupsDelete => text('subgroups.delete');
-
-  /// The word `subgroups.deleteExplain`.
-  String get subgroupsDeleteExplain => text('subgroups.deleteExplain');
-
-  /// The word `subgroups.deleteQuestion`.
-  String get subgroupsDeleteQuestion => text('subgroups.deleteQuestion');
-
   /// The word `subgroups.new`.
   String get subgroupsNew => text('subgroups.new');
 
@@ -2224,6 +2164,12 @@ mixin WordGetters {
 
   /// The word `suppliers.vatNumberTaken`.
   String get suppliersVatNumberTaken => text('suppliers.vatNumberTaken');
+
+  /// The word `swipe.hint`.
+  String get swipeHint => text('swipe.hint');
+
+  /// The word `swipe.remove`.
+  String get swipeRemove => text('swipe.remove');
 
   /// The word `users.add`.
   String get usersAdd => text('users.add');

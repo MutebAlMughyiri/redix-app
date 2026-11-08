@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
+import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'payment_method.dart';
 import 'payment_methods.dart';
@@ -37,24 +37,14 @@ class PaymentMethodRow extends StatelessWidget {
     );
   }
 
-  void _askToDelete(BuildContext context) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => ConfirmDialog(
-        title: words.paymentMethodsDeleteQuestion,
-        subject: method.name,
-        explanation: words.paymentMethodsDeleteExplain,
-        confirmLabel: words.paymentMethodsDelete,
-        onConfirm: () => showRefusalOf(context, paymentMethods.delete(method)),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    return Card.outlined(
+    return SwipeToRemove(
+      rowKey: PaymentMethodsScreen.rowKey(method.id),
+      mayRemove: mayChange,
+      onRemove: () => paymentMethods.delete(method),
+      child: Card.outlined(
       key: PaymentMethodsScreen.rowKey(method.id),
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
@@ -84,10 +74,10 @@ class PaymentMethodRow extends StatelessWidget {
                       value: () => showRefusalOf(context, paymentMethods.enable(method)),
                       child: Text(words.paymentMethodsEnable, key: PaymentMethodsScreen.enableKey.label),
                     ),
-                  PopupMenuItem(key: PaymentMethodsScreen.deleteKey, value: () => _askToDelete(context), child: Text(words.paymentMethodsDelete, key: PaymentMethodsScreen.deleteKey.label)),
                 ],
               )
             : null,
+      ),
       ),
     );
   }

@@ -83,12 +83,13 @@ void main() {
     expect(find.byKey(PaymentMethodsScreen.disabledKey(opened.card)), findsNothing);
   });
 
-  testWidgets('deleting asks first, then sends the delete and the method leaves the list', (tester) async {
+  testWidgets('redix-api #102: a swipe deletes a method with no question, and the method leaves the list', (tester) async {
     final opened = await openMethods(tester);
+    expect(find.byKey(PaymentMethodsScreen.swipeHintKey), findsOneWidget);
 
-    await chooseInMenu(tester, opened.api, opened.card, PaymentMethodsScreen.deleteKey);
-    expect(find.text('en paymentMethods.deleteQuestion'), findsOneWidget);
-    await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.deleteConfirmKey)));
+    await swipeToRemove(tester, opened.api, PaymentMethodsScreen.rowKey(opened.card));
+
+    expect(find.byType(AlertDialog), findsNothing);
 
     expect(opened.api.sentSettingsChanges.last.$1, '/projects/project-0/payment-methods/${opened.card}/delete');
     expect(find.byKey(PaymentMethodsScreen.nameKey(opened.card)), findsNothing);
@@ -98,8 +99,7 @@ void main() {
     final opened = await openMethods(tester);
     opened.api.settingsAnswer = (status: 409, code: 'paymentMethodUsed');
 
-    await chooseInMenu(tester, opened.api, opened.card, PaymentMethodsScreen.deleteKey);
-    await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.deleteConfirmKey)));
+    await swipeToRemove(tester, opened.api, PaymentMethodsScreen.rowKey(opened.card));
 
     expect(find.text('en paymentMethods.paymentMethodUsed'), findsOneWidget);
     expect(find.byKey(PaymentMethodsScreen.nameKey(opened.card)), findsOneWidget);

@@ -13,6 +13,8 @@ import 'package:redix/home/home_screen.dart';
 
 import 'package:redix/ui/refresh_button.dart';
 
+import 'package:redix/ui/part_keys.dart';
+
 import '../app_harness.dart';
 
 void main() {
@@ -126,12 +128,12 @@ void main() {
     expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.reversed');
   });
 
-  testWidgets('a draft of their own can be changed, sent or deleted', (tester) async {
+  testWidgets('a draft of their own can be changed, sent or swiped away', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'));
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsOneWidget);
 
     await openActions(tester, api, 'entry-0');
     expect(find.byKey(EntriesScreen.editKey), findsOneWidget);
-    expect(find.byKey(EntriesScreen.deleteKey), findsOneWidget);
     await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.sendKey)));
 
     expect(api.sentEntryChanges.single.$2, 'submit');
@@ -144,7 +146,7 @@ void main() {
     await openActions(tester, api, 'entry-0');
 
     expect(find.byKey(EntriesScreen.editKey), findsNothing);
-    expect(find.byKey(EntriesScreen.deleteKey), findsNothing);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsNothing);
   });
 
   testWidgets('Finance can change what waits, and what someone else entered', (tester) async {
@@ -241,26 +243,32 @@ void main() {
     expect(find.byKey(EntriesScreen.reverseKey), findsNothing);
   });
 
-  testWidgets('deleting asks first, and it leaves the list', (tester) async {
+  testWidgets('redix-api #102: a swipe deletes a draft with no question, and the list says how', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'));
-    await openActions(tester, api, 'entry-0');
+    expect(tester.widget<Text>(find.byKey(EntriesScreen.swipeHintKey.label)).data, 'en swipe.hint');
 
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.deleteKey)));
-    expect(api.sentEntryChanges, isEmpty);
-    await act(tester, api, () => tester.tap(find.text('en entries.delete').last));
+    await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
+
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(api.sentEntryChanges.single.$2, 'delete');
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
+  });
+
+  testWidgets('redix-api #102: the home\'s latest entries swipe away too', (tester) async {
+    final api = await openHome(tester, (api) => api.addEntry(status: 'draft'));
+    expect(find.byKey(HomeScreen.entriesSwipeHintKey('project-0')), findsOneWidget);
+
+    await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
 
     expect(api.sentEntryChanges.single.$2, 'delete');
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
   });
 
   for (final status in ['draft', 'pendingApproval', 'rejected']) {
-    testWidgets('a bill that is $status, not approved, is removed: Delete asks first, then it leaves the list', (tester) async {
+    testWidgets('a bill that is $status, not approved, is removed by a swipe, then it leaves the list', (tester) async {
       final api = await openEntries(tester, (api) => api.addEntry(status: status, rejectionReason: status == 'rejected' ? 'الصورة غير واضحة' : ''), permissions: managerAndFinance);
-      await openActions(tester, api, 'entry-0');
-      expect(find.byKey(EntriesScreen.reverseKey), findsNothing);
 
-      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.deleteKey)));
-      await act(tester, api, () => tester.tap(find.text('en entries.delete').last));
+      await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
 
       expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2), ('entry-0', 'delete'));
       expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
@@ -269,9 +277,9 @@ void main() {
 
   testWidgets('an approved bill cannot be removed, only reversed, and stays on the list said to be reversed', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: managerAndFinance);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsNothing);
     await openActions(tester, api, 'entry-0');
 
-    expect(find.byKey(EntriesScreen.deleteKey), findsNothing);
     expect(find.byKey(EntriesScreen.editKey), findsNothing);
     await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.reverseKey)));
     await act(tester, api, () async {
@@ -284,26 +292,26 @@ void main() {
     expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-0'))).data, 'en entries.reversed');
   });
 
-  testWidgets('without Delete entries a bill offers no Delete, though it can still be changed', (tester) async {
+  testWidgets('without Delete entries a bill does not swipe and no hint shows, though it can still be changed', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'), permissions: [for (final permission in field) if (permission != 'deleteEntries') permission]);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsNothing);
+    expect(find.byKey(EntriesScreen.swipeHintKey), findsNothing);
     await openActions(tester, api, 'entry-0');
 
     expect(find.byKey(EntriesScreen.editKey), findsOneWidget);
-    expect(find.byKey(EntriesScreen.deleteKey), findsNothing);
   });
 
   testWidgets('UC-070: a change with no answer within the configured time ends as no connection, and the bill stays', (tester) async {
     config.apply({'requestTimeoutSeconds': '10', 'fileTimeoutSeconds': '120'});
     addTearDown(() => config.apply({}));
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'));
-    await openActions(tester, api, 'entry-0');
     api.heldEntryChange = Completer<void>();
 
     await act(tester, api, () async {
-      await tester.tap(find.byKey(EntriesScreen.deleteKey));
+      await tester.drag(find.byKey(EntriesScreen.rowKey('entry-0').swipe), const Offset(-600, 0));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('en entries.delete').last);
       await tester.pump(const Duration(seconds: 11));
+      await tester.pumpAndSettle();
     });
 
     expect(find.text('en entries.noConnection'), findsOneWidget);
@@ -314,10 +322,10 @@ void main() {
   testWidgets('a finished project changes nothing', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'), status: 'finished');
 
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsNothing);
     await openActions(tester, api, 'entry-0');
 
     expect(find.byKey(EntriesScreen.editKey), findsNothing);
-    expect(find.byKey(EntriesScreen.deleteKey), findsNothing);
   });
 
   group('AC-19.1: fixing a rejected entry', () {

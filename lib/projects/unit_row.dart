@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../ui/part_keys.dart';
+import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'project.dart';
 import 'project_info_screen.dart';
 
-/// One unit on More info: its name and, for whoever manages the open project, a menu to rename or delete it.
+/// One unit on More info: its name and, for whoever manages the open project, a menu to rename it and a swipe that removes it (redix-api #102).
 class UnitRow extends StatelessWidget {
-  /// The row of [unit], offering [onRename] and [onDelete] while [mayChange].
-  const UnitRow({super.key, required this.unit, required this.mayChange, required this.onRename, required this.onDelete});
+  /// The row of [unit], offering [onRename] and [onRemove] while [mayChange].
+  const UnitRow({super.key, required this.unit, required this.mayChange, required this.onRename, required this.onRemove});
 
   /// The unit this row shows.
   final Unit unit;
@@ -19,13 +20,17 @@ class UnitRow extends StatelessWidget {
   /// Asks for its new name.
   final VoidCallback onRename;
 
-  /// Asks whether to delete it.
-  final VoidCallback onDelete;
+  /// Removes it; answers an empty string once removed, otherwise the word key of the refusal, such as a unit in use.
+  final Future<String> Function() onRemove;
 
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    return ListTile(
+    return SwipeToRemove(
+      rowKey: ProjectInfoScreen.unitRowKey(unit.id),
+      mayRemove: mayChange,
+      onRemove: onRemove,
+      child: ListTile(
       key: ProjectInfoScreen.unitRowKey(unit.id),
       dense: true,
       contentPadding: EdgeInsets.zero,
@@ -36,10 +41,10 @@ class UnitRow extends StatelessWidget {
               onSelected: (action) => action(),
               itemBuilder: (_) => [
                 PopupMenuItem(key: ProjectInfoScreen.renameUnitKey, value: onRename, child: Text(words.projectsRenameUnit, key: ProjectInfoScreen.renameUnitKey.label)),
-                PopupMenuItem(key: ProjectInfoScreen.deleteUnitKey, value: onDelete, child: Text(words.projectsRemoveUnit, key: ProjectInfoScreen.deleteUnitKey.label)),
               ],
             )
           : null,
+      ),
     );
   }
 }

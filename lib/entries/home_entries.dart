@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../auth/permission.dart';
 import '../home/home_screen.dart';
 import '../projects/project.dart';
 import '../ui/part_keys.dart';
+import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_tile.dart';
@@ -54,7 +56,8 @@ class HomeEntries extends StatelessWidget {
                 child: Center(child: CircularProgressIndicator(key: HomeScreen.entriesLoadingKey)),
               ),
             if (!entries.isLoading && entries.all.isEmpty) Text(words.entriesEmpty, key: HomeScreen.entriesEmptyKey(project.id)),
-            for (final entry in entries.all.take(latest)) EntryTile(entry: entry, onTap: () => EntriesScreen.openActions(context, project, entries, entry)),
+            if (entries.all.isNotEmpty && project.may(Permission.deleteEntries)) SwipeHint(key: HomeScreen.entriesSwipeHintKey(project.id)),
+            for (final entry in entries.all.take(latest)) EntryListTile(project: project, entries: entries, entry: entry),
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: TextButton(

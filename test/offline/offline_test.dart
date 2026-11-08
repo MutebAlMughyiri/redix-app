@@ -165,16 +165,18 @@ void main() {
     expect(await store.namesIn('outbox'), isEmpty);
   });
 
-  testWidgets('deleting one asks first, and forgets it', (tester) async {
+  testWidgets('redix-api #102: a swipe forgets one with no question, and a short one forgets nothing', (tester) async {
     final store = await storeHolding([pending('entry-1', refusal: 'expenses.unknownSupplier')]);
     final api = await openHome(tester, store);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
+    expect(find.byKey(WaitingScreen.swipeHintKey), findsOneWidget);
 
-    await act(tester, api, () => tester.tap(find.byKey(WaitingScreen.discardKey('entry-1'))));
+    await swipeToRemove(tester, api, WaitingScreen.rowKey('entry-1'), share: 0.2);
     expect(await store.namesIn('outbox'), ['entry-1']);
 
-    await act(tester, api, () => tester.tap(find.text('en offline.discard').last));
+    await swipeToRemove(tester, api, WaitingScreen.rowKey('entry-1'));
 
+    expect(find.byType(AlertDialog), findsNothing);
     expect(await store.namesIn('outbox'), isEmpty);
     expect(find.byKey(WaitingScreen.emptyKey), findsOneWidget);
   });

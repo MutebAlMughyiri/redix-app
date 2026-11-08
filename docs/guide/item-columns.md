@@ -23,7 +23,7 @@ Each project has its own default template: changing it touches no other project.
 | Add a column | Tap **Add column**. Type its name, choose its type, and say whether entry requires it and whether it prints in reports. For a pick list, type the choices, one on each line. The type cannot change later. |
 | Change a column | Tap the pencil on its row. A pick list you added can gain choices; those it has stay, because entries hold them. |
 | Change the order | Drag the handle on its row. It is saved as you drop it. |
-| Delete a column | Tap the bin on its row. It leaves entry, and values already recorded stay on their entries and in the audit trail. |
+| Delete a column | Swipe its row from its end toward its start (right to left in English, left to right in Arabic). It leaves entry with no question, and values already recorded stay on their entries and in the audit trail. |
 
 A **lock** marks a core column: the calculations and the tax statement rely on it, so it can be renamed and moved, but not deleted, and it stays required or optional as it is.
 
@@ -53,7 +53,7 @@ A **lock** marks a core column: the calculations and the tax statement rely on i
 | تضيف عموداً | اضغط **إضافة عمود**. اكتب اسمه، واختر نوعه، وحدد هل هو إلزامي عند الإدخال وهل يظهر في التقارير. وفي قائمة الاختيار اكتب الخيارات، كل خيار في سطر. لا يتغير النوع لاحقاً. |
 | تغيّر عموداً | اضغط القلم في صفه. ويمكن أن تكسب قائمة الاختيار التي أضفتها خيارات جديدة؛ وتبقى خياراتها لأن القيود تحملها. |
 | تغيّر الترتيب | اسحب المقبض في صفه. يُحفظ عند الإفلات. |
-| تحذف عموداً | اضغط سلة المهملات في صفه. يختفي من الإدخال، وتبقى قيمه المسجلة في القيود السابقة وسجل التدقيق. |
+| تحذف عموداً | اسحب سطره من نهايته نحو بدايته (من اليسار إلى اليمين بالعربية)، فيُحذف دون سؤال. يختفي من الإدخال، وتبقى قيمه المسجلة في القيود السابقة وسجل التدقيق. |
 
 **القفل** يميز العمود الأساسي: تعتمد عليه الحسابات والكشف الضريبي، فتُعاد تسميته ويُنقل ولا يُحذف، ويبقى إلزامياً أو اختيارياً كما هو.
 

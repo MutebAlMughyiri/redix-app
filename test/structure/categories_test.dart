@@ -10,8 +10,9 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/category.dart';
 import 'package:redix/structure/item_tables_screen.dart';
-import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/settings/settings_screen.dart';
+
+import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 
@@ -234,7 +235,9 @@ void main() {
     expect(text(tester, ItemTablesScreen.detailsKey(opened.general)), 'en categories.tablePurchases · 0');
     expect(text(tester, ItemTablesScreen.detailsKey('contract-1')), 'en categories.tableContract · 27');
     expect(find.byKey(ItemTablesScreen.renameKey(opened.general)), findsNothing);
-    expect(find.byKey(ItemTablesScreen.deleteKey('contract-1')), findsNothing);
+    expect(find.byKey(ItemTablesScreen.rowKey('contract-1').swipe), findsNothing);
+    expect(find.byKey(ItemTablesScreen.rowKey(opened.general).swipe), findsNothing);
+    expect(find.byKey(ItemTablesScreen.rowKey(opened.ids[0]).swipe), findsOneWidget);
     expect(find.byKey(ItemTablesScreen.renameKey(opened.ids[0])), findsOneWidget);
   });
 
@@ -325,14 +328,13 @@ void main() {
     expect(tester.getTopLeft(find.byKey(ItemTablesScreen.tableNameKey(opened.ids[0]))).dy, lessThan(tester.getTopLeft(find.byKey(ItemTablesScreen.tableNameKey(opened.ids[1]))).dy));
   });
 
-  testWidgets('a subgroup is removed only after asking, naming it', (tester) async {
+  testWidgets('redix-api #102: a named subgroup is removed by a swipe with no question', (tester) async {
     final opened = await openTables(tester);
+    expect(find.byKey(ItemTablesScreen.swipeHintKey), findsOneWidget);
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemTablesScreen.deleteKey(opened.ids[0]))));
-    expect(text(tester, ConfirmDialog.subjectKey), 'مواد');
-    expect(text(tester, ConfirmDialog.explanationKey), 'en subgroups.deleteExplain');
-    expect(opened.api.sentStructureChanges, isEmpty);
-    await act(tester, opened.api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
+    await swipeToRemove(tester, opened.api, ItemTablesScreen.rowKey(opened.ids[0]));
+
+    expect(find.byType(AlertDialog), findsNothing);
 
     expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/items/${opened.item}/subgroups/${opened.ids[0]}/delete');
     expect(find.text('مواد'), findsNothing);
@@ -343,8 +345,7 @@ void main() {
     final opened = await openTables(tester);
     opened.api.structureAnswer = (status: 409, code: 'subgroupInUse');
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemTablesScreen.deleteKey(opened.ids[0]))));
-    await act(tester, opened.api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
+    await swipeToRemove(tester, opened.api, ItemTablesScreen.rowKey(opened.ids[0]));
 
     expect(find.text('en categories.subgroupInUse'), findsOneWidget);
     expect(find.text('مواد'), findsOneWidget);

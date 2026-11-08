@@ -24,7 +24,7 @@ Android's backup of the app's data is off, so none of this leaves the phone that
 | A row on **Waiting to sync** | `WaitingScreen.rowKey` |
 | Where it stands | `WaitingScreen.stateKey` |
 | Send again, for a refused entry | `WaitingScreen.sendAgainKey` |
-| Delete | `WaitingScreen.discardKey` |
+| A waiting entry's swipe, which forgets it with no question (redix-api #102) | `WaitingScreen.rowKey(id).swipe` |
 | Nothing waits | `WaitingScreen.emptyKey` |
 
 ## Rules

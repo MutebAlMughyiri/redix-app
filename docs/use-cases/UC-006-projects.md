@@ -33,11 +33,10 @@
 | No units yet | `ProjectInfoScreen.noUnitsKey` | Shown while the project has no units |
 | A unit's menu | `ProjectInfoScreen.unitMenuKey(id)` | Active projects, with `manageProject`; the shared unit is not on the list |
 | Rename unit, in the menu | `ProjectInfoScreen.renameUnitKey` | Asks for the name, starting from the current one |
-| Delete unit, in the menu | `ProjectInfoScreen.deleteUnitKey` | Asks first, naming the unit; a unit in use stays and the refusal says why |
+| A unit's swipe | `ProjectInfoScreen.unitRowKey(id).swipe` | Active projects, with `manageProject`: swiped from its end toward its start, it is deleted with no question; one in use comes back and the refusal says why (redix-api #102) |
+| The swipe hint | `ProjectInfoScreen.swipeHintKey` | Under the units, for whoever may delete them |
 | The name, in the rename dialogs | `NameDialog.nameKey` | |
 | Save, in the rename dialogs | `ChangeDialog.saveKey` | Sends the name; a refusal stays in the dialog (`ChangeDialog.messageKey`) |
-| The unit's name, in the delete question | `ConfirmDialog.subjectKey` | Which unit is being deleted |
-| Delete unit, in the question | `ConfirmDialog.confirmKey` | Deletes the unit |
 | Description | `ProjectInfoScreen.descriptionHeadingKey` | The heading of the description |
 | The description's field | `ProjectInfoScreen.descriptionKey` | Active projects, with `manageProject`: up to 2,000 characters, counted; starts from the kept description, and reading the project again never replaces what is typed |
 | Save description | `ProjectInfoScreen.saveDescriptionKey` | Sends it; says "Description saved." (`messageKeyOf('projectInfo.saved')`), or why it was refused, keeping what was typed |
@@ -71,7 +70,7 @@ New project, `NewProjectScreen` at `/projects/new`:
 | Unit name | `NewProjectScreen.unitNameKey` | The next unit to add |
 | Add unit | `NewProjectScreen.addUnitKey` | Adds it to the list below; disabled while the name is empty |
 | A unit | `NewProjectScreen.unitKey(index)` | A unit to be created with the project |
-| Remove unit | `NewProjectScreen.removeUnitKey(index)` | Takes it off the list |
+| A unit's swipe | `NewProjectScreen.unitKey(number).swipe` | Takes it off the list; each unit keeps the number it was added with, so the next keeps its place (redix-api #102) |
 | Create project | `NewProjectScreen.submitKey` | Sends everything at once; disabled while waiting |
 | Message | `NewProjectScreen.messageKey` | One line saying why it was refused |
 
@@ -121,7 +120,7 @@ All go through `Session`, which renews an expired access token once and sends ag
 | The list is read again after every answer, so someone else's change shows | `ApiList.change` | `project_info_test.dart`: a project someone else closed |
 | A unit's name that repeats is refused with its own word, on the form and in Add unit (BR-37) | The API; the words `projects.unitNameTaken`, `register.unitNameTaken` | `new_project_test.dart`: a unit name the project already has; `project_info_test.dart`: BR-37, two tests |
 | Whoever holds `manageProject` renames the open project and its units, each starting from the current name; More info and the home follow (BR-38) | `Projects.rename`, `Projects.renameUnit`, `NameDialog` | `project_info_test.dart`: whoever manages the project renames it; a unit is renamed from its menu |
-| A unit is deleted only after asking, naming it; one in use stays and the refusal says why (BR-38) | `Projects.deleteUnit`, `ConfirmDialog`, `showRefusalOf` | `project_info_test.dart`: a unit is deleted from its menu |
+| A unit is deleted by a swipe with no question; a refused one comes back and the refusal says why (BR-38, redix-api #102) | `Projects.deleteUnit`, `SwipeToRemove` | `project_info_test.dart`: a unit is removed by a swipe; a refused unit comes back |
 | Nothing offers a unit change without `manageProject` or in a finished project | `UnitRow` | `project_info_test.dart`: without manageProject; a finished project shows read-only |
 | More info shows the project it was opened from | `Projects.latest` | `project_info_test.dart`: More info of a second project |
 | A project with entries waiting for approval stays open, and the refusal says why (BR-35) | `showRefusalOf`, the word `projects.pendingEntries` | `project_info_test.dart`: BR-35; Patrol |

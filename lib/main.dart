@@ -294,6 +294,7 @@ class _RedixAppState extends State<RedixApp> {
           project: state.extra! as Project,
           documents: Documents(widget.session, state.pathParameters['projectId'] ?? ''),
           capture: widget.capture,
+          files: _reportFiles,
         ),
       ),
       GoRoute(

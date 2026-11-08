@@ -417,16 +417,11 @@ void main() {
         ItemColumnsScreen.nameKey(areaColumn),
         ItemColumnsScreen.detailsKey(areaColumn),
         ItemColumnsScreen.editKey(areaColumn),
-        ItemColumnsScreen.deleteKey(areaColumn),
+        ItemColumnsScreen.swipeHintKey,
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.addKey)));
       [ItemColumnsScreen.columnNameKey, ItemColumnsScreen.dataTypeKey, ItemColumnsScreen.requiredKey, ItemColumnsScreen.showInReportsKey, ItemColumnsScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
-      await tester.ensureVisible(find.byKey(ItemColumnsScreen.deleteKey(areaColumn)));
-      await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.deleteKey(areaColumn))));
-      [ItemColumnsScreen.deleteExplainKey, ItemColumnsScreen.confirmDeleteKey, ItemColumnsScreen.cancelDeleteKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.cancelDeleteKey)));
       await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.templateKey)));
       await tester.ensureVisible(find.byKey(ItemColumnsScreen.editKey(templateDate)));
       await tester.pumpAndSettle();
@@ -442,7 +437,7 @@ void main() {
       [CategoriesScreen.renameItemKey, CategoriesScreen.tablesKey, CategoriesScreen.disableItemKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.tablesKey)));
       final subgroupId = (tiles['subgroups']! as List<Map<String, Object>>).last['id'] as String;
-      [ItemTablesScreen.hintKey, ItemTablesScreen.addKey, ItemTablesScreen.handleKey(subgroupId), ItemTablesScreen.tableNameKey(subgroupId), ItemTablesScreen.detailsKey(subgroupId), ItemTablesScreen.renameKey(subgroupId), ItemTablesScreen.deleteKey(subgroupId)].forEach(expectFits);
+      [ItemTablesScreen.hintKey, ItemTablesScreen.addKey, ItemTablesScreen.handleKey(subgroupId), ItemTablesScreen.tableNameKey(subgroupId), ItemTablesScreen.detailsKey(subgroupId), ItemTablesScreen.renameKey(subgroupId), ItemTablesScreen.swipeHintKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));

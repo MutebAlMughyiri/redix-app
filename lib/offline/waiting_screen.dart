@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../format/date_format.dart';
 import '../format/number_format.dart';
-import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
+import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'outbox.dart';
 import 'pending_entry.dart';
@@ -33,7 +33,7 @@ class WaitingScreen extends StatelessWidget {
   static Key sendAgainKey(String id) => Key('waiting.sendAgain.$id');
 
   /// The button deleting the entry [id].
-  static Key discardKey(String id) => Key('waiting.discard.$id');
+  static const swipeHintKey = Key('waiting.swipeHint');
 
   /// What the entry [id] is.
   static Key titleKey(String id) => Key('waiting.title.$id');
@@ -43,20 +43,6 @@ class WaitingScreen extends StatelessWidget {
 
   /// Where they wait.
   final Outbox outbox;
-
-  void _askToDiscard(BuildContext context, PendingEntry entry) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => ConfirmDialog(
-        title: words.offlineDiscardQuestion,
-        subject: _titleOf(entry),
-        explanation: words.offlineDiscardExplain,
-        confirmLabel: words.offlineDiscard,
-        onConfirm: () => outbox.discard(entry),
-      ),
-    );
-  }
 
   String _titleOf(PendingEntry entry) {
     final date = DateTime.tryParse(entry.date);
@@ -78,8 +64,16 @@ class WaitingScreen extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
+              const SwipeHint(key: swipeHintKey),
               for (final entry in entries)
-                Card.outlined(
+                SwipeToRemove(
+                  rowKey: rowKey(entry.id),
+                  mayRemove: true,
+                  onRemove: () async {
+                    await outbox.discard(entry);
+                    return '';
+                  },
+                  child: Card.outlined(
                   key: rowKey(entry.id),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
@@ -97,12 +91,12 @@ class WaitingScreen extends StatelessWidget {
                           children: [
                             if (entry.isRefused)
                               TextButton(key: sendAgainKey(entry.id), onPressed: () => outbox.sendAgain(entry), child: Text(words.offlineSendAgain, key: sendAgainKey(entry.id).label)),
-                            TextButton(key: discardKey(entry.id), onPressed: () => _askToDiscard(context, entry), child: Text(words.offlineDiscard, key: discardKey(entry.id).label)),
                           ],
                         ),
                       ],
                     ),
                   ),
+                ),
                 ),
             ],
           );

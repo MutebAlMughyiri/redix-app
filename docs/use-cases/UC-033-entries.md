@@ -11,7 +11,7 @@
 | On the home, under القيود: the search, the way to all | `HomeScreen.searchEntriesKey`, `entriesKey` |
 | The search, and the filters: whose, kind, status, period, clearing them, how many show | `EntriesScreen.searchKey`, `mineKey`, `allKey`, `kindKey(kind)`, `statusFilterKey(wordKey)`, `periodKey`, `clearKey`, `foundKey` |
 | A row, where it stands unless approved, and why it was rejected | `EntriesScreen.rowKey`, `statusKey`, `reasonKey` |
-| What can be done to it | `EntriesScreen.editKey`, `sendKey`, `deleteKey`, `reverseKey` |
+| What can be done to it | `EntriesScreen.editKey`, `sendKey`, `reverseKey`; a draft, waiting or rejected entry is deleted by swiping its row, `rowKey(id).swipe`, on القيود and on the home alike (redix-api #102) |
 | Reversing | `EntriesScreen.reverseReasonKey`, `reverseSendKey` |
 | The reason at the top of the form | `AddEntryScreen.rejectionKey` |
 
@@ -31,7 +31,7 @@
 | Finance can change what waits, and what someone else entered | `_EntryActions._mayChange` | `entries_test.dart`: Finance can change |
 | What is approved is only reversed, and only by whoever decides | `_EntryActions` | `entries_test.dart`: what is approved |
 | AC-50.1: reversing asks why, and the entry says it was reversed | `_ReverseSheet`, `ProjectEntries.reverse` | `entries_test.dart`: AC-50.1 |
-| Deleting asks first | `_EntryActions._askToDelete` | `entries_test.dart`: deleting asks first |
+| A swipe deletes an entry with no question, where `EntryRow.allows` lets the user delete it | `EntryListTile`, `SwipeToRemove` | `entries_test.dart`: a swipe deletes a draft; the home's latest entries swipe away too; without Delete entries a bill does not swipe |
 | AC-19.1: a rejected entry opens with its reason, and holds what it held | `AddEntryScreen._openEntry` | `entries_test.dart`: the reason shows at the top |
 | R12, D10: a contractor payment opens in its contract's table under the title تعديل, and goes back to its own route | `AddEntryScreen._openEntry`, `EntryTables.tableOf` | `entries_test.dart`: R12, D10 |
 | Saving goes to that entry, with its id, file and figures | `Expenses.record` | `entries_test.dart`: saving goes to that entry |

@@ -30,4 +30,7 @@ extension PartKeys on Key? {
 
   /// The key of the bar that draws the element's share.
   Key get bar => ValueKey((this, 'bar'));
+
+  /// The key of the swipe that removes the element (redix-api #102).
+  Key get swipe => ValueKey((this, 'swipe'));
 }

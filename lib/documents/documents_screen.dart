@@ -6,12 +6,13 @@ import '../attachments/invoice_capture.dart';
 import '../attachments/picked_file.dart';
 import '../format/date_format.dart';
 import '../projects/project.dart';
+import '../reports/report_files.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
-import '../ui/confirm_dialog.dart';
 import '../ui/entry_field.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
+import '../ui/swipe_to_remove.dart';
 import '../ui/refresh_button.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
@@ -20,7 +21,7 @@ import 'documents.dart';
 /// A project's documents (UC-064): each group under its name, those in none first. Everyone opens them; whoever manages the project keeps and removes them.
 class DocumentsScreen extends StatefulWidget {
   /// The documents of [project], kept through [documents], with files chosen through [capture].
-  const DocumentsScreen({super.key, required this.project, required this.documents, required this.capture});
+  const DocumentsScreen({super.key, required this.project, required this.documents, required this.capture, required this.files});
 
   /// The address of the screen.
   static const path = '/projects/:projectId/documents';
@@ -46,8 +47,11 @@ class DocumentsScreen extends StatefulWidget {
   /// The heading of the group [group].
   static Key groupHeadingKey(String group) => Key('documents.groupHeading.$group');
 
-  /// The button that removes the document [id].
-  static Key removeKey(String id) => Key('documents.remove.$id');
+  /// The button that keeps the file of the document [id] in the phone's Downloads (redix-api #102).
+  static Key downloadKey(String id) => Key('documents.download.$id');
+
+  /// The line saying a document is removed by a swipe.
+  static const swipeHintKey = Key('documents.swipeHint');
 
   /// What the file field asks, or why the file was refused.
   static const fileHintKey = Key('documents.fileHint');
@@ -61,6 +65,9 @@ class DocumentsScreen extends StatefulWidget {
   /// The phone's files.
   final InvoiceCapture capture;
 
+  /// The way a document's file reaches the phone's Downloads.
+  final ReportFiles files;
+
   @override
   State<DocumentsScreen> createState() => _DocumentsScreenState();
 }
@@ -72,22 +79,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     widget.documents.loadOnOpen();
   }
 
-  void _askToRemove(Document document) {
+  Future<void> _download(Document document) async {
     final words = Words.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => ConfirmDialog(
-        title: words.documentsRemoveQuestion,
-        subject: document.name,
-        explanation: words.documentsRemoveExplain,
-        confirmLabel: words.documentsRemove,
-        onConfirm: () async {
-          final refusal = await widget.documents.remove(document);
-          showMessage(messenger, words, refusal.isEmpty ? 'documents.removed' : refusal);
-        },
-      ),
-    );
+    final said = await widget.files.handFile(AttachmentScreen.pathOf(widget.project.id, document.attachmentId), document.fileName, document.contentType, FileHanding.save);
+    showMessage(messenger, words, said);
   }
 
   IconData _iconOf(String contentType) =>
@@ -101,18 +97,26 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           padding: const EdgeInsets.only(top: 12, bottom: 4),
           child: Text(document.group, key: DocumentsScreen.groupHeadingKey(document.group), style: Theme.of(context).textTheme.titleSmall),
         ),
-      Card.outlined(
+      SwipeToRemove(
+        rowKey: DocumentsScreen.documentKey(document.id),
+        mayRemove: widget.project.mayManageProject,
+        onRemove: () => widget.documents.remove(document),
+        child: Card.outlined(
         key: DocumentsScreen.documentKey(document.id).card,
         child: ListTile(
           key: DocumentsScreen.documentKey(document.id),
           leading: Icon(_iconOf(document.contentType), key: DocumentsScreen.documentKey(document.id).icon),
           title: Text(document.name, key: DocumentsScreen.documentKey(document.id).title),
           subtitle: Text('${document.fileName} · ${formatDate(document.uploadedAt)}', key: DocumentsScreen.documentKey(document.id).subtitle),
-          trailing: widget.project.mayManageProject
-              ? IconButton(key: DocumentsScreen.removeKey(document.id), tooltip: words.documentsRemove, icon: Icon(Icons.delete_outline, key: DocumentsScreen.removeKey(document.id).icon), onPressed: () => _askToRemove(document))
-              : null,
+          trailing: IconButton(
+            key: DocumentsScreen.downloadKey(document.id),
+            tooltip: words.documentsDownload,
+            icon: Icon(Icons.download_outlined, key: DocumentsScreen.downloadKey(document.id).icon),
+            onPressed: () => _download(document),
+          ),
           onTap: () => context.push(AttachmentScreen.pathOf(widget.project.id, document.attachmentId, fileName: document.fileName), extra: document.contentType),
         ),
+      ),
       ),
     ],
   );
@@ -133,6 +137,11 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       body: ApiListBody<Document>(
         list: widget.documents,
         emptyText: words.documentsNone,
+        listOf: (tiles) => ListView(
+          padding: ApiListBody.padding,
+          physics: ApiListBody.physics,
+          children: [if (widget.project.mayManageProject) const SwipeHint(key: DocumentsScreen.swipeHintKey), ...tiles],
+        ),
         itemBuilder: (document) {
           final all = widget.documents.all;
           final index = all.indexOf(document);

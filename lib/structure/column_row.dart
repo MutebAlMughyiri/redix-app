@@ -5,10 +5,10 @@ import '../words/words.dart';
 import 'item_column.dart';
 import 'item_columns_screen.dart';
 
-/// One column on the list: its name and what it is, a handle to drag it, a way to change it, and a way to delete it unless it is core, when a lock says so instead.
+/// One column on the list: its name and what it is, a handle to drag it and a way to change it; a core column shows a lock, and any other is removed by a swipe (redix-api #102).
 class ColumnRow extends StatelessWidget {
-  /// The row of [column], at [index] of the list, with its controls when [mayChange], calling [onEdit] and [onDelete].
-  const ColumnRow({super.key, required this.column, required this.index, required this.mayChange, required this.onEdit, required this.onDelete});
+  /// The row of [column], at [index] of the list, with its controls when [mayChange], calling [onEdit].
+  const ColumnRow({super.key, required this.column, required this.index, required this.mayChange, required this.onEdit});
 
   /// The column this row shows.
   final ItemColumn column;
@@ -22,8 +22,6 @@ class ColumnRow extends StatelessWidget {
   /// Called when Edit is tapped.
   final VoidCallback onEdit;
 
-  /// Called when Delete is tapped.
-  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -57,13 +55,6 @@ class ColumnRow extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   child: Icon(Icons.lock_outline, key: ItemColumnsScreen.lockKey(column.id), color: colors.onSurfaceVariant),
                 ),
-              )
-            else if (mayChange)
-              IconButton(
-                key: ItemColumnsScreen.deleteKey(column.id),
-                icon: Icon(Icons.delete_outline, key: ItemColumnsScreen.deleteKey(column.id).icon, color: colors.error),
-                tooltip: words.columnsDelete,
-                onPressed: onDelete,
               ),
           ],
         ),

@@ -27,6 +27,8 @@ import 'package:redix/sharing/share_screen.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 
+import 'package:redix/ui/part_keys.dart';
+
 import '../app_harness.dart';
 
 /// A step from the projects list towards where a control shows.
@@ -104,7 +106,7 @@ final List<Gate> _gates = [
       'uploadedAt': '2026-11-07T20:00:00Z',
     }),
     steps: [_openProject, _tapKey(HomeScreen.documentsKey(_project))],
-    control: _key(DocumentsScreen.removeKey('permit')),
+    control: _key(DocumentsScreen.documentKey('permit').swipe),
   ),
   (name: 'Categories and items in the settings', permission: Permission.manageStructure, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.categoriesKey)),
   (name: 'Payment methods in the settings', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.paymentMethodsKey)),
@@ -156,11 +158,11 @@ final List<Gate> _gates = [
     control: _key(EntriesScreen.editKey),
   ),
   (
-    name: 'Delete on one\'s own draft',
+    name: 'The swipe that deletes one\'s own draft',
     permission: Permission.deleteEntries,
     arrange: (api) => api.addEntry(status: 'draft'),
-    steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
-    control: _key(EntriesScreen.deleteKey),
+    steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project))],
+    control: _key(EntriesScreen.rowKey('entry-0').swipe),
   ),
   (
     name: 'The camera in إضافة قيد',

@@ -2,10 +2,37 @@ import 'package:flutter/material.dart';
 
 import '../format/date_format.dart';
 import '../format/number_format.dart';
+import '../auth/permission.dart';
+import '../projects/project.dart';
 import '../ui/part_keys.dart';
+import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_row.dart';
+import 'project_entries.dart';
+
+/// An entry on a list of [project]'s [entries]: tapping it opens its actions, and swiping it removes it where the user may delete it (redix-api #102).
+class EntryListTile extends StatelessWidget {
+  /// The tile of [entry], one of [project]'s [entries].
+  const EntryListTile({super.key, required this.project, required this.entries, required this.entry});
+
+  /// The project.
+  final Project project;
+
+  /// Its entries.
+  final ProjectEntries entries;
+
+  /// The entry.
+  final EntryRow entry;
+
+  @override
+  Widget build(BuildContext context) => SwipeToRemove(
+    rowKey: EntriesScreen.rowKey(entry.id),
+    mayRemove: entry.allows(project, Permission.deleteEntries),
+    onRemove: () => entries.delete(entry),
+    child: EntryTile(entry: entry, onTap: () => EntriesScreen.openActions(context, project, entries, entry)),
+  );
+}
 
 /// An entry on a list: what it was for, how much, who entered it when someone else did, and where it stands unless approved, with why it was rejected.
 class EntryTile extends StatelessWidget {

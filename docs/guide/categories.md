@@ -28,7 +28,7 @@ An item's type says what it can be used for: **Purchases**, **Contractor payment
 
 ### Tables
 
-Tap the three dots on an item, then **Tables**, to see every table its sheet prints: its general one, its subgroups and its contracts. A subgroup splits an item's purchases, as البلاط splits into مواد and دفان, so only an item of purchases, or of both, has **Add subgroup**. In إضافة قيد a subgroup shows as its name and then its item, مواد (البلاط). An entry with no subgroup goes to the item's general table, which needs nothing from you. Drag a table by its handle to change its place in the sheet, and tap the bin to remove a subgroup that no entry uses.
+Tap the three dots on an item, then **Tables**, to see every table its sheet prints: its general one, its subgroups and its contracts. A subgroup splits an item's purchases, as البلاط splits into مواد and دفان, so only an item of purchases, or of both, has **Add subgroup**. In إضافة قيد a subgroup shows as its name and then its item, مواد (البلاط). An entry with no subgroup goes to the item's general table, which needs nothing from you. Drag a table by its handle to change its place in the sheet, and swipe a subgroup's row from its end toward its start to remove it, if no entry uses it.
 
 | Message | Meaning |
 | --- | --- |

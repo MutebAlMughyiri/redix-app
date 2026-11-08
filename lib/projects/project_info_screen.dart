@@ -7,6 +7,7 @@ import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'add_unit_dialog.dart';
 import 'project.dart';
@@ -64,8 +65,8 @@ class ProjectInfoScreen extends StatefulWidget {
   /// Rename, in a unit's menu.
   static const renameUnitKey = Key('projectInfo.renameUnit');
 
-  /// Delete, in a unit's menu.
-  static const deleteUnitKey = Key('projectInfo.deleteUnit');
+  /// The line saying a unit is removed by a swipe (redix-api #102).
+  static const swipeHintKey = Key('projectInfo.swipeHint');
 
   /// The unit's name, in the Add unit dialog.
   static const unitNameKey = Key('projectInfo.unitName');
@@ -138,20 +139,6 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
         saveLabel: words.projectsSave,
         name: unit.name,
         onSave: (name) => widget.projects.renameUnit(project, unit, name),
-      ),
-    );
-  }
-
-  void _askToDeleteUnit(Project project, Unit unit) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => ConfirmDialog(
-        title: words.projectsRemoveUnitQuestion,
-        subject: unit.name,
-        explanation: words.projectsRemoveUnitExplain,
-        confirmLabel: words.projectsRemoveUnit,
-        onConfirm: () => showRefusalOf(context, widget.projects.deleteUnit(project, unit)),
       ),
     );
   }
@@ -254,8 +241,9 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
                 ],
               ),
               if (project.units.isEmpty) Text(words.projectsNoUnits, key: ProjectInfoScreen.noUnitsKey, style: theme.textTheme.bodyMedium),
+              if (mayChange && project.units.isNotEmpty) const SwipeHint(key: ProjectInfoScreen.swipeHintKey),
               for (final unit in project.units)
-                UnitRow(unit: unit, mayChange: mayChange, onRename: () => _askToRenameUnit(project, unit), onDelete: () => _askToDeleteUnit(project, unit)),
+                UnitRow(unit: unit, mayChange: mayChange, onRename: () => _askToRenameUnit(project, unit), onRemove: () => widget.projects.deleteUnit(project, unit)),
               const Divider(height: 24),
               Text(words.projectInfoDescription, key: ProjectInfoScreen.descriptionHeadingKey, style: theme.textTheme.titleSmall),
               const SizedBox(height: 8),

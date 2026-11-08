@@ -4,7 +4,6 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
-import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/name_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/refusal_snack_bar.dart';
@@ -268,16 +267,14 @@ void main() {
       expect(text(tester, ChangeDialog.messageKey), 'en projects.unitNameTaken');
     });
 
-    testWidgets('BR-38: a unit is deleted from its menu only after asking, naming it', (tester) async {
+    testWidgets('BR-38, redix-api #102: a unit is removed by a swipe with no question, and its menu keeps Rename only', (tester) async {
       final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الشرقية']);
       await openInfo(tester, api);
+      expect(find.byKey(ProjectInfoScreen.swipeHintKey), findsOneWidget);
 
-      await chooseInUnitMenu(tester, api, 'project-0-unit-0', ProjectInfoScreen.deleteUnitKey);
-      expect(text(tester, ConfirmDialog.subjectKey), 'الفلة الغربية');
-      expect(text(tester, ConfirmDialog.explanationKey), 'en projects.removeUnitExplain');
-      expect(api.sentProjectChanges, isEmpty);
-      await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
+      await swipeToRemove(tester, api, ProjectInfoScreen.unitRowKey('project-0-unit-0'));
 
+      expect(find.byType(AlertDialog), findsNothing);
       expect(api.sentProjectChanges.single.$1, '/projects/project-0/units/project-0-unit-0/delete');
       expect(find.byKey(ProjectInfoScreen.unitKey('project-0-unit-0')), findsNothing);
       expect(find.byKey(ProjectInfoScreen.unitKey('project-0-unit-1')), findsOneWidget);
@@ -289,6 +286,19 @@ void main() {
 
       expect(find.byKey(ProjectInfoScreen.unitKey('project-0-unit-0')), findsOneWidget);
       expect(find.byKey(ProjectInfoScreen.unitMenuKey('project-0-unit-0')), findsNothing);
+      expect(find.byKey(ProjectInfoScreen.unitRowKey('project-0-unit-0').swipe), findsNothing);
+      expect(find.byKey(ProjectInfoScreen.swipeHintKey), findsNothing);
+    });
+
+    testWidgets('redix-api #102 R7: a refused unit comes back when swiped, saying why', (tester) async {
+      final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
+      await openInfo(tester, api);
+      api.projectAnswer = (status: 409, code: 'projectFinished');
+
+      await swipeToRemove(tester, api, ProjectInfoScreen.unitRowKey('project-0-unit-0'));
+
+      expect(text(tester, messageKeyOf('projects.projectFinished').label), 'en projects.projectFinished');
+      expect(find.byKey(ProjectInfoScreen.unitKey('project-0-unit-0')), findsOneWidget);
     });
   });
 

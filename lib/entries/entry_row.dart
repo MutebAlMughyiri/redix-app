@@ -1,4 +1,6 @@
+import '../auth/permission.dart';
 import '../format/number_format.dart';
+import '../projects/project.dart';
 import '../suppliers/arabic_spelling.dart';
 
 /// An entry on a list (UC-037).
@@ -56,6 +58,11 @@ class EntryRow {
 
   /// True while it is not sent yet.
   bool get isDraft => status == 'draft';
+
+  /// Whether [permission] lets the signed-in user act on this entry in [project] now: it is not approved, and it is theirs and not waiting, or they handle others' entries.
+  /// The one answer for the entry's sheet and its swipe (redix-api #102).
+  bool allows(Project project, Permission permission) =>
+      !project.isFinished && !isApproved && project.may(permission) && (isMine ? !isPending || project.may(Permission.manageAnyEntry) : project.may(Permission.manageAnyEntry));
 
   /// True while it waits for a decision.
   bool get isPending => status == 'pendingApproval';

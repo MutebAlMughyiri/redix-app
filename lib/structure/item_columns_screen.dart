@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
-import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/swipe_to_remove.dart';
 import '../ui/refresh_button.dart';
 import '../words/words.dart';
 import 'add_column_dialog.dart';
@@ -86,14 +86,8 @@ class ItemColumnsScreen extends StatefulWidget {
   /// The line that says why a change was refused, in the dialogs that add and change.
   static const dialogMessageKey = ChangeDialog.messageKey;
 
-  /// What deleting means, in the delete question.
-  static const deleteExplainKey = ConfirmDialog.explanationKey;
-
-  /// The button that deletes, in the delete question.
-  static const confirmDeleteKey = ConfirmDialog.confirmKey;
-
-  /// The button that changes nothing, in the delete question.
-  static const cancelDeleteKey = ConfirmDialog.cancelKey;
+  /// The line saying a column is removed by a swipe (redix-api #102).
+  static const swipeHintKey = Key('columns.swipeHint');
 
   /// The line that says the list could not be read.
   static const messageKey = ApiListBody.messageKey;
@@ -115,9 +109,6 @@ class ItemColumnsScreen extends StatefulWidget {
 
   /// The lock on the core column [id].
   static Key lockKey(String id) => Key('columns.lock.$id');
-
-  /// The button that deletes the column [id].
-  static Key deleteKey(String id) => Key('columns.delete.$id');
 
   /// The choice of the data type [dataType], in the add dialog.
   static Key dataTypeOptionKey(ColumnDataType dataType) => Key('columns.dataTypeOption.${dataType.name}');
@@ -152,32 +143,22 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
   Future<bool> _applyToAll() async =>
       _showsTemplate && (await showDialog<bool>(context: context, barrierDismissible: false, builder: (_) => const ApplyToAllDialog()) ?? false);
 
-  void _askToDelete(ItemColumn column) {
-    final words = Words.of(context);
-    showDialog<void>(
-      context: context,
-      builder: (_) => ConfirmDialog(
-        title: words.columnsDelete,
-        subject: column.name,
-        explanation: words.columnsDeleteExplain,
-        confirmLabel: words.columnsDelete,
-        onConfirm: () => showRefusalOf(context, _applyToAll().then((applyToAll) => _columns.delete(column, applyToAll: applyToAll))),
-      ),
-    );
-  }
-
   Widget _row(ItemColumn column) {
     final columns = _columns;
-    return ColumnRow(
+    return SwipeToRemove(
       key: ItemColumnsScreen.rowKey(column.id),
-      column: column,
-      index: columns.all.indexOf(column),
-      mayChange: widget.project.mayChangeStructure,
-      onEdit: () => showDialog<void>(
-        context: context,
-        builder: (_) => EditColumnDialog(column: column, columns: columns, applyToAll: _applyToAll),
+      rowKey: ItemColumnsScreen.rowKey(column.id),
+      mayRemove: widget.project.mayChangeStructure && !column.isCore,
+      onRemove: () => _applyToAll().then((applyToAll) => columns.delete(column, applyToAll: applyToAll)),
+      child: ColumnRow(
+        column: column,
+        index: columns.all.indexOf(column),
+        mayChange: widget.project.mayChangeStructure,
+        onEdit: () => showDialog<void>(
+          context: context,
+          builder: (_) => EditColumnDialog(column: column, columns: columns, applyToAll: _applyToAll),
+        ),
       ),
-      onDelete: () => _askToDelete(column),
     );
   }
 
@@ -229,7 +210,13 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
           if (mayChange)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Text(words.columnsHint, key: ItemColumnsScreen.hintKey, style: textTheme.bodySmall),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(words.columnsHint, key: ItemColumnsScreen.hintKey, style: textTheme.bodySmall),
+                  const SwipeHint(key: ItemColumnsScreen.swipeHintKey),
+                ],
+              ),
             ),
           Expanded(
             child: ApiListBody(
