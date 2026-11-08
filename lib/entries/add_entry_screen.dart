@@ -493,7 +493,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   Future<void> _pickSupplier() async {
     final picked = await SupplierPicker.show(context, widget.project, widget.suppliers);
-    if (picked.id.isNotEmpty) {
+    if (picked.id.isNotEmpty && mounted) {
       setState(() => _useSupplier(picked));
     }
   }

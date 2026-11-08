@@ -11,15 +11,6 @@ abstract final class ReverseSheet {
   /// The button reversing it.
   static const sendKey = ReasonSheet.sendKey;
 
-  /// The title.
-  static const titleKey = ReasonSheet.titleKey;
-
-  /// What reversing does.
-  static const explainKey = ReasonSheet.aboutKey;
-
-  /// Why the reversal was refused.
-  static const messageKey = ReasonSheet.messageKey;
-
   /// Asks why over [context], then reverses through [onReverse], which answers an empty string once reversed, otherwise the word key of the refusal.
   static void show(BuildContext context, Future<String> Function(String reason) onReverse) {
     final words = Words.of(context);

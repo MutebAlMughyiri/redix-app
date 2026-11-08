@@ -369,7 +369,7 @@ class _RedixAppState extends State<RedixApp> {
 
   Suppliers _suppliersOf(String projectId) => _projectSuppliers.putIfAbsent(projectId, () => Suppliers(widget.session, projectId));
 
-  /// Every revenue item of [projectId]: entering revenue of any kind offers them all, and the item chosen says which kind it is.
+  /// The items of [projectId] offered for [type]: an expense of that type, revenue of any kind, or a partner's capital item.
   OfferedItems _offeredItemsOf(String projectId, ItemType type) => _offeredItemLists.putIfAbsent('$projectId/${type.name}', () => OfferedItems(widget.session, projectId, type));
 
   Contracts _contractsOf(String projectId) => _projectContracts.putIfAbsent(projectId, () => Contracts(widget.session, projectId));

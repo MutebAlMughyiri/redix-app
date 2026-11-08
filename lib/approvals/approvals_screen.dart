@@ -101,14 +101,6 @@ class ApprovalsScreen extends StatefulWidget {
   /// The amount of the entry [id].
   static Key amountKey(String id) => Key('approvals.amount.$id');
 
-  /// The title of the reject sheet.
-  static const rejectTitleKey = ReasonSheet.titleKey;
-
-  /// The entry the reject sheet is about.
-  static const rejectEntryKey = ReasonSheet.aboutKey;
-
-  /// The heading over the quick reasons.
-  static const quickReasonHeadingKey = ReasonSheet.quickReasonHeadingKey;
 
   /// The project.
   final Project project;

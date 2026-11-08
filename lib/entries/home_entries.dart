@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../auth/permission.dart';
 import '../home/home_screen.dart';
 import '../projects/project.dart';
 import '../ui/part_keys.dart';
@@ -60,7 +59,7 @@ class HomeEntries extends StatelessWidget {
                 child: Center(child: CircularProgressIndicator(key: HomeScreen.entriesLoadingKey)),
               ),
             if (!entries.isLoading && entries.all.isEmpty) Text(entries.message.isEmpty ? words.entriesEmpty : words.text(entries.message), key: HomeScreen.entriesEmptyKey(project.id)),
-            if (entries.all.isNotEmpty && project.may(Permission.deleteEntries)) SwipeHint(key: HomeScreen.entriesSwipeHintKey(project.id)),
+            if (entries.all.isNotEmpty && project.mayDeleteEntries) SwipeHint(key: HomeScreen.entriesSwipeHintKey(project.id)),
             for (final entry in entries.all.take(latest)) EntryListTile(project: project, entries: entries, entry: entry, capture: capture),
             Align(
               alignment: AlignmentDirectional.centerEnd,

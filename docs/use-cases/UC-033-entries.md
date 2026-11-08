@@ -45,6 +45,9 @@
 | R8: the link of an entry the reader cannot decide, or one no longer waiting, opens its sheet in القيود, saying where it stands | `EntryLinkScreen` | `entry_share_test.dart`: the link, R8, two tests |
 | R8: the link grants nothing by itself: signed out, it asks to sign in first and then opens the entry | `RedixApp._redirect`, `EntryLinkScreen.isLink` | `entry_share_test.dart`: R8: the link grants nothing by itself |
 | R9: the link of an entry no longer listed, or of a project the reader is not in, says it cannot be found and opens nothing | `EntryLinkScreen` | `entry_share_test.dart`: R9, two tests |
+| R9: a link that cannot be read says why and offers to try again, never that the entry is gone | `EntryLinkScreen`, `LoadFailure` | `entry_share_test.dart`: R9: a link that cannot be read |
+| R8: signed out with a temporary password, the link opens once the password is changed, since the change returns to sign-in, which decides where a person lands | `ChangePasswordScreen._save`, `RedixApp._redirect` | `entry_share_test.dart`: R8: signed out with a temporary password |
+| A finished project says nothing about swiping an entry away | `Project.mayDeleteEntries` | `entries_test.dart`: a finished project says nothing about swiping |
 
 ## Not proved
 

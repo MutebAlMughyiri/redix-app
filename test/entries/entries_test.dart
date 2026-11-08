@@ -73,6 +73,13 @@ void main() {
     expect(tester.widget<Text>(find.byKey(EntriesScreen.statusKey('entry-3'))).data, 'en entries.reversed');
   });
 
+  testWidgets('a finished project says nothing about swiping an entry away, since nothing is deleted in it', (tester) async {
+    await openEntries(tester, (api) => api.addEntry(status: 'draft'), status: 'finished');
+
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
+    expect(find.byKey(EntriesScreen.swipeHintKey), findsNothing);
+  });
+
   testWidgets('R3, R14: with no entries of their own the home still lists the project\'s, and with none at all says so under its heading', (tester) async {
     await openHome(tester, (api) => api.addEntry(isMine: false));
 

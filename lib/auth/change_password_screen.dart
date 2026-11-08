@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../home/home_screen.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'session.dart';
+import 'sign_in_screen.dart';
 
 /// The change-password screen (UC-003, غيّر كلمة المرور): the current password and the new one twice. While the password is temporary the
 /// router keeps the user here, so the change cannot be skipped (AC-02.1).
@@ -73,7 +73,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       _message = refusal;
     });
     if (refusal.isEmpty) {
-      context.go(HomeScreen.landingOf(widget.session));
+      context.go(SignInScreen.path);
     }
   }
 

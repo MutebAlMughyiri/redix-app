@@ -125,7 +125,7 @@ class _ContractDialogState extends State<ContractDialog> {
 
   Future<void> _pickContractor() async {
     final picked = await SupplierPicker.show(context, widget.project, widget.suppliers);
-    if (picked.id.isNotEmpty) {
+    if (picked.id.isNotEmpty && mounted) {
       setState(() {
         _contractorId = picked.id;
         _contractorName = picked.name;

@@ -6,7 +6,7 @@ import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'project.dart';
 
-/// The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Settings, Approvals and Documents.
+/// The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Approvals and Documents; Settings is an icon in the home's top bar.
 /// A finished project says first, in one line, that it is read-only (redix-api 93).
 class ProjectCard extends StatelessWidget {
   /// The card of [project], calling [onAccounts], [onPartners], [onSuppliers], [onContracts], [onApprovals], [onReports] and [onDocuments] when those are tapped.

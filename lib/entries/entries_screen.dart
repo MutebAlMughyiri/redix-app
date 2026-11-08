@@ -224,7 +224,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
       body: Column(
         children: [
           ListenableBuilder(listenable: widget.entries, builder: (_, _) => _filters(words)),
-          if (widget.project.may(Permission.deleteEntries)) const Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SwipeHint(key: EntriesScreen.swipeHintKey)),
+          if (widget.project.mayDeleteEntries) const Padding(padding: EdgeInsets.symmetric(horizontal: 16), child: SwipeHint(key: EntriesScreen.swipeHintKey)),
           Expanded(
             child: ApiListBody(
               list: widget.entries,

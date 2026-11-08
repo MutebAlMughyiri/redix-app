@@ -4,16 +4,24 @@ import '../auth/session.dart';
 /// What a table of an item's sheet prints, as the API names it.
 enum ItemTableKind {
   /// The item's general group, named after the item.
-  general,
+  general('categories.tablePurchases', 'categories.tableRevenue'),
 
   /// A named subgroup.
-  subgroup,
+  subgroup('categories.tablePurchases', 'categories.tableRevenue'),
 
   /// A contract's payments, named after its contractor.
-  contract,
+  contract('categories.tableContract', 'categories.tableContract'),
 
   /// A partner, whose entries are their capital's money in and out (redix-api #101).
-  partner,
+  partner('categories.tableCapital', 'categories.tableCapital');
+
+  const ItemTableKind(this._expenseWordKey, this._revenueWordKey);
+
+  final String _expenseWordKey;
+  final String _revenueWordKey;
+
+  /// The word key saying what a table of this kind holds, of a revenue item when [isRevenue]: the one owner the table list and the item tables screen read.
+  String wordKeyOf({required bool isRevenue}) => isRevenue ? _revenueWordKey : _expenseWordKey;
 }
 
 /// One table of an item's sheet (AC-46.8), as the API answers it.

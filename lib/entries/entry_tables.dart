@@ -45,7 +45,7 @@ class EntryTable {
   bool get isDirect => isRevenue || isPartner;
 
   /// The word key saying what its entries are, under its name in the list.
-  String get kindWordKey => isPartner ? 'categories.tableCapital' : isRevenue ? 'categories.tableRevenue' : isContract ? 'categories.tableContract' : 'categories.tablePurchases';
+  String get kindWordKey => kind.wordKeyOf(isRevenue: isRevenue);
 
   /// The API route its entries are recorded on.
   String get route => isContract ? 'contractor-payments' : 'expenses';

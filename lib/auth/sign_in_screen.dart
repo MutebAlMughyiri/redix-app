@@ -16,7 +16,7 @@ class SignInScreen extends StatefulWidget {
   /// The session this screen opens.
   final Session session;
 
-  /// The language choice, the same as My account's.
+  /// The language choice; once signed in, the language is chosen in Settings.
   final AppLanguage language;
 
   /// The screen's route.

@@ -84,15 +84,7 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
     );
   }
 
-  String _kindOf(ItemTable table, Words words) {
-    if (table.kind == ItemTableKind.contract) {
-      return words.categoriesTableContract;
-    }
-    if (table.kind == ItemTableKind.partner) {
-      return words.categoriesTableCapital;
-    }
-    return widget.categories.itemOf(widget.itemId).type.isRevenue ? words.categoriesTableRevenue : words.categoriesTablePurchases;
-  }
+  String _kindOf(ItemTable table, Words words) => words.text(table.kind.wordKeyOf(isRevenue: widget.categories.itemOf(widget.itemId).type.isRevenue));
 
   Widget _row(ItemTable table, int index) {
     final words = Words.of(context);

@@ -98,9 +98,6 @@ mixin WordGetters {
   /// The word `approvals.approveSelected`.
   String get approvalsApproveSelected => text('approvals.approveSelected');
 
-  /// The word `approvals.approvedSome`.
-  String get approvalsApprovedSome => text('approvals.approvedSome');
-
   /// The word `approvals.contractorPayments`.
   String get approvalsContractorPayments => text('approvals.contractorPayments');
 
@@ -112,9 +109,6 @@ mixin WordGetters {
 
   /// The word `approvals.entryNotPending`.
   String get approvalsEntryNotPending => text('approvals.entryNotPending');
-
-  /// The word `approvals.failedSome`.
-  String get approvalsFailedSome => text('approvals.failedSome');
 
   /// The word `approvals.fileFailed`.
   String get approvalsFileFailed => text('approvals.fileFailed');
@@ -169,9 +163,6 @@ mixin WordGetters {
 
   /// The word `approvals.rejectTitle`.
   String get approvalsRejectTitle => text('approvals.rejectTitle');
-
-  /// The word `approvals.selectHint`.
-  String get approvalsSelectHint => text('approvals.selectHint');
 
   /// The word `approvals.showAll`.
   String get approvalsShowAll => text('approvals.showAll');
@@ -370,6 +361,9 @@ mixin WordGetters {
 
   /// The word `categories.addItem`.
   String get categoriesAddItem => text('categories.addItem');
+
+  /// The word `categories.capitalItemExists`.
+  String get categoriesCapitalItemExists => text('categories.capitalItemExists');
 
   /// The word `categories.categoryName`.
   String get categoriesCategoryName => text('categories.categoryName');
@@ -1103,12 +1097,6 @@ mixin WordGetters {
   /// The word `expenses.deductionNeedsNotes`.
   String get expensesDeductionNeedsNotes => text('expenses.deductionNeedsNotes');
 
-  /// The word `expenses.duplicateExplain`.
-  String get expensesDuplicateExplain => text('expenses.duplicateExplain');
-
-  /// The word `expenses.duplicateTitle`.
-  String get expensesDuplicateTitle => text('expenses.duplicateTitle');
-
   /// The word `expenses.entryApproved`.
   String get expensesEntryApproved => text('expenses.entryApproved');
 
@@ -1763,17 +1751,11 @@ mixin WordGetters {
   /// The word `registered.title`.
   String get registeredTitle => text('registered.title');
 
-  /// The word `reports.chooseItem`.
-  String get reportsChooseItem => text('reports.chooseItem');
-
   /// The word `reports.contractValue`.
   String get reportsContractValue => text('reports.contractValue');
 
   /// The word `reports.contracts`.
   String get reportsContracts => text('reports.contracts');
-
-  /// The word `reports.cost`.
-  String get reportsCost => text('reports.cost');
 
   /// The word `reports.current`.
   String get reportsCurrent => text('reports.current');
@@ -1789,9 +1771,6 @@ mixin WordGetters {
 
   /// The word `reports.downloaded`.
   String get reportsDownloaded => text('reports.downloaded');
-
-  /// The word `reports.earlier`.
-  String get reportsEarlier => text('reports.earlier');
 
   /// The word `reports.excel`.
   String get reportsExcel => text('reports.excel');
@@ -1826,17 +1805,11 @@ mixin WordGetters {
   /// The word `reports.itemTotal`.
   String get reportsItemTotal => text('reports.itemTotal');
 
-  /// The word `reports.lastIssued`.
-  String get reportsLastIssued => text('reports.lastIssued');
-
   /// The word `reports.loadFailed`.
   String get reportsLoadFailed => text('reports.loadFailed');
 
   /// The word `reports.noConnection`.
   String get reportsNoConnection => text('reports.noConnection');
-
-  /// The word `reports.noContracts`.
-  String get reportsNoContracts => text('reports.noContracts');
 
   /// The word `reports.noneIssued`.
   String get reportsNoneIssued => text('reports.noneIssued');
@@ -1940,9 +1913,6 @@ mixin WordGetters {
   /// The word `revenue.refused`.
   String get revenueRefused => text('revenue.refused');
 
-  /// The word `revenue.sale`.
-  String get revenueSale => text('revenue.sale');
-
   /// The word `revenue.title`.
   String get revenueTitle => text('revenue.title');
 
@@ -1957,9 +1927,6 @@ mixin WordGetters {
 
   /// The word `revenue.unknownItem`.
   String get revenueUnknownItem => text('revenue.unknownItem');
-
-  /// The word `revenue.vatRefund`.
-  String get revenueVatRefund => text('revenue.vatRefund');
 
   /// The word `settings.defaultProject`.
   String get settingsDefaultProject => text('settings.defaultProject');

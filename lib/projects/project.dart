@@ -109,4 +109,7 @@ class Project {
 
   /// Whether the signed-in user may approve, reject or reverse entries now.
   bool get mayApproveEntries => !isFinished && may(Permission.approveEntries);
+
+  /// True when the user may delete an entry in this project, which a finished project allows nobody.
+  bool get mayDeleteEntries => !isFinished && may(Permission.deleteEntries);
 }

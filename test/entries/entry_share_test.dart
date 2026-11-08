@@ -10,6 +10,8 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 
 import '../app_harness.dart';
+import 'package:redix/auth/change_password_screen.dart';
+import 'package:redix/ui/api_list_body.dart';
 
 /// Sharing an entry as text, with a link that opens it for approval (redix-app #83).
 void main() {
@@ -150,6 +152,46 @@ void main() {
         await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
         await tester.enterText(find.byKey(SignInScreen.passwordKey), 'secret');
         await tester.tap(find.byKey(SignInScreen.submitKey));
+      });
+
+      expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsOneWidget);
+    });
+
+    testWidgets('R9: a link that cannot be read says why and offers to try again, never that the entry is gone, and trying again opens it', (tester) async {
+      final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance);
+      api
+        ..addEntry()
+        ..addPending();
+      await pumpRedix(tester, api, stored: {'session': keptSession});
+      api.online = false;
+
+      await act(tester, api, () async => GoRouter.of(tester.element(find.byType(Scaffold).first)).go(EntryLinkScreen.pathOf('project-0', 'entry-0')));
+
+      expect(find.byKey(EntryLinkScreen.notFoundKey), findsNothing);
+      expect(find.byKey(ApiListBody.retryKey), findsOneWidget);
+      api.online = true;
+      await act(tester, api, () => tester.tap(find.byKey(ApiListBody.retryKey)));
+      expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsOneWidget);
+    });
+
+    testWidgets('R8: signed out with a temporary password, the link opens once the password is changed', (tester) async {
+      final api = await follow(tester, (api) {
+        api
+          ..mustChangePassword = true
+          ..addEntry()
+          ..addPending();
+      }, isSignedIn: false);
+
+      await act(tester, api, () async {
+        await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+        await tester.enterText(find.byKey(SignInScreen.passwordKey), 'temporary');
+        await tester.tap(find.byKey(SignInScreen.submitKey));
+      });
+      await act(tester, api, () async {
+        await tester.enterText(find.byKey(ChangePasswordScreen.currentKey), 'temporary');
+        await tester.enterText(find.byKey(ChangePasswordScreen.newKey), 'chosen-pass');
+        await tester.enterText(find.byKey(ChangePasswordScreen.confirmKey), 'chosen-pass');
+        await tester.tap(find.byKey(ChangePasswordScreen.submitKey));
       });
 
       expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsOneWidget);
