@@ -44,6 +44,7 @@ import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/name_dialog.dart';
 import 'package:redix/ui/screen_title.dart';
+import 'package:redix/ui/reason_sheet.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -686,8 +687,8 @@ void main() {
         RegisteredProjectsScreen.rejectKey('registered-0'),
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(RegisteredProjectsScreen.rejectKey('registered-0'))));
-      [RegisteredProjectsScreen.reasonKey, ChangeDialog.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      [ReasonSheet.reasonKey, ReasonSheet.sendKey].forEach(expectFits);
+      await act(tester, api, () => tester.tapAt(const Offset(4, 4)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       [SettingsScreen.languageKey, LanguageSwitch.arabicKey, LanguageSwitch.englishKey].forEach(expectFits);

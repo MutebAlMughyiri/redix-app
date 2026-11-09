@@ -8,9 +8,9 @@ import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'registered_project.dart';
 import 'registered_projects.dart';
-import 'reject_project_dialog.dart';
 import '../ui/app_color.dart';
 import '../format/parts_line.dart';
+import '../ui/reason_sheet.dart';
 
 /// Registered projects (UC-066): what is waiting for the admin, with the manager's details and a decision. This is all the admin can do (BR-29).
 class RegisteredProjectsScreen extends StatefulWidget {
@@ -22,12 +22,6 @@ class RegisteredProjectsScreen extends StatefulWidget {
 
   /// The screen's route.
   static const path = '/registered-projects';
-
-  /// Which project, in the Reject dialog.
-  static const rejectNameKey = Key('registered.rejectName');
-
-  /// Why it is rejected, in the Reject dialog.
-  static const reasonKey = Key('registered.reason');
 
   /// The card of the project [id].
   static Key cardKey(String id) => Key('registered.card.$id');
@@ -100,9 +94,9 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
                 TextButton(
                   key: RegisteredProjectsScreen.rejectKey(project.id),
                   style: TextButton.styleFrom(foregroundColor: AppColor.refusal.of(context)),
-                  onPressed: () => showDialog<void>(
-                    context: context,
-                    builder: (_) => RejectProjectDialog(project: project, projects: widget.projects),
+                  onPressed: () => ReasonSheet.show(
+                    context,
+                    ReasonSheet(title: words.registeredReject, about: project.name, reasonLabel: words.registeredReason, sendLabel: words.registeredReject, onSend: (reason) => widget.projects.reject(project, reason)),
                   ),
                   child: Text(words.registeredReject, key: RegisteredProjectsScreen.rejectKey(project.id).label),
                 ),

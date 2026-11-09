@@ -5,8 +5,8 @@ import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 
 import '../app_harness.dart';
-import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/reason_sheet.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -77,10 +77,10 @@ void main() {
     final api = await openList(tester);
 
     await act(tester, api, () => tester.tap(find.byKey(RegisteredProjectsScreen.rejectKey('registered-0'))));
-    expect(text(tester, RegisteredProjectsScreen.rejectNameKey), 'غصون 8');
+    expect(text(tester, ReasonSheet.aboutKey), 'غصون 8');
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(RegisteredProjectsScreen.reasonKey), 'الاسم مكرر');
-      await tester.tap(find.byKey(ChangeDialog.saveKey));
+      await tester.enterText(find.byKey(ReasonSheet.reasonKey), 'الاسم مكرر');
+      await tester.tap(find.byKey(ReasonSheet.sendKey));
     });
 
     final (path, body) = api.sentRegistrations.single;
@@ -94,9 +94,9 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(RegisteredProjectsScreen.rejectKey('registered-0'))));
 
     api.registrationAnswer = (status: 400, code: 'invalidReason');
-    await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ReasonSheet.sendKey)));
 
-    expect(text(tester, ChangeDialog.messageKey), 'en registered.invalidReason');
+    expect(text(tester, ReasonSheet.messageKey), 'en registered.invalidReason');
   });
 
   testWidgets('without a network the list says so, and Try again reads it', (tester) async {
