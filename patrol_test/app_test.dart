@@ -943,6 +943,7 @@ void main() {
       await reach($(messageKeyOf('expenses.saved').label));
       await reach(addEntry);
       final draftId = await idShowing('entries.row.', '700.00');
+      await goTo($(EntriesScreen.rowKey(draftId)));
       await $(EntriesScreen.rowKey(draftId)).tap();
       await goTo($(AddEntryScreen.sendDraftKey));
       await $(AddEntryScreen.sendDraftKey).tap();
@@ -978,6 +979,7 @@ void main() {
       await back();
       await reach(addEntry);
       final rejectedId = await idShowing('entries.row.', '300.00');
+      await goTo($(EntriesScreen.rowKey(rejectedId)));
       await $(EntriesScreen.rowKey(rejectedId)).tap();
       await goTo($(AddEntryScreen.changeKey));
       await $(AddEntryScreen.changeKey).tap();
