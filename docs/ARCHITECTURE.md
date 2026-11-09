@@ -126,7 +126,6 @@ lib/
     registered_project.dart A project waiting for the admin, as the API answers it: what is needed to decide, and nothing more
     registered_projects.dart What is waiting for the admin, and the one way to decide it
     registered_projects_screen.dart Registered projects: what is waiting for the admin, with the manager's details and a decision
-    reject_project_dialog.dart Refuses a registered project, saying why, which its manager sees
     unit_row.dart           One unit on More info: its name and, for whoever manages the open project, a menu to rename it and a swipe that removes it
   reports/
     dashboard.dart          One item's total, one category's, and the project's figures
@@ -194,6 +193,7 @@ lib/
     change_dialog.dart      A dialog that sends a change: it closes once saved, and a refusal stays in it with what was typed
     confirm_dialog.dart     Asks before a change that deserves a second thought: what it applies to, what it means, and a red button to go ahead
     entry_field.dart        One typed field of an entry's form, the same on every kind of entry: text, or a number on the phone's number keyboard, which has a minus sign when it isSigned
+    form_button_style.dart  The one style of a form's full-width main button, which stays inside the form
     form_section.dart       One section of a long form: its children on a card, evenly spaced
     labelled_chips.dart     A choice among a few, drawn as chips under what is being chosen
     name_dialog.dart        Asks for one name, for adding or renaming anything in a project

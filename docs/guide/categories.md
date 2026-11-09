@@ -18,11 +18,11 @@ Tap a category to open it.
 | Add a category | Tap **New category** and type its name. |
 | Add an item | Open the category, tap **Add item**, type its name and choose its type. |
 | Change the order | Drag the handle beside a category or an item. It is saved as you drop it, and it is the order of the periodic report. |
-| Rename a category | Open it and tap **Rename**. |
+| Rename a category | Open it, tap the three dots, then **Rename**. |
 | Rename an item | Tap the three dots on its row, then **Rename**. |
 | Change what an item asks for | Tap **Columns** on its row. See [Item columns](item-columns.md). |
 | Change what an item is for | Tap the three dots on its row, then **Change type**. An item with entries keeps its type. |
-| Stop using something | Tap **Disable**: it disappears from entry and stays in the reports, and **Enable** brings it back. No category or item is ever deleted. |
+| Stop using something | Tap the three dots, then **Disable**: it disappears from entry and stays in the reports, and **Enable** brings it back. No category or item is ever deleted. |
 
 An item's type says what it can be used for: **Purchases**, **Contractor payments**, or both. A purchases item is not offered when entering a contractor payment.
 
@@ -51,10 +51,10 @@ Tap the three dots on an item, then **Tables**, to see every table its sheet pri
 | تضيف بنداً | افتح التصنيف، واضغط **إضافة بند**، واكتب اسمه واختر نوعه. |
 | تغيّر نوع بند | اضغط النقاط الثلاث في صفه، ثم **تغيير النوع**. ولا يتغير نوع بند عليه قيود. |
 | تغيّر الترتيب | اسحب المقبض بجانب التصنيف أو البند. يُحفظ عند الإفلات، وهو ترتيب التقرير الدوري. |
-| تعيد تسمية تصنيف | افتحه واضغط **إعادة تسمية**. |
+| تعيد تسمية تصنيف | افتحه، واضغط النقاط الثلاث، ثم **إعادة تسمية**. |
 | تعيد تسمية بند | اضغط النقاط الثلاث في صفه، ثم **إعادة تسمية**. |
 | تغيّر ما يطلبه البند | اضغط **الأعمدة** في صفه. انظر [أعمدة البند](item-columns.md). |
-| توقف استخدام شيء | اضغط **تعطيل**: يختفي من الإدخال ويبقى في التقارير، و**تفعيل** يعيده. ولا يُحذف تصنيف أو بند أبداً. |
+| توقف استخدام شيء | اضغط النقاط الثلاث، ثم **تعطيل**: يختفي من الإدخال ويبقى في التقارير، و**تفعيل** يعيده. ولا يُحذف تصنيف أو بند أبداً. |
 
 نوع البند يحدد ما يُستخدم له: **مشتريات**، أو **دفعات مقاولين**، أو الاثنان. بند المشتريات لا يظهر عند إدخال دفعة مقاول.
 
