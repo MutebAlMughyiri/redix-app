@@ -10,6 +10,7 @@ import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'periodic_reports.dart';
 import 'report_files.dart';
+import '../ui/amount_line.dart';
 
 /// One periodic report as it was issued (UC-053): what everyone may read, and its files for whoever may export them (BR-31).
 class PeriodicReportScreen extends StatefulWidget {
@@ -61,15 +62,13 @@ class _PeriodicReportScreenState extends State<PeriodicReportScreen> {
     widget.report.loadOnOpen();
   }
 
-  Widget _line(Key key, String label, double amount, {bool isStrong = false}) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 2),
-    child: Row(
-      children: [
-        Expanded(child: Text(label, key: key.label, style: isStrong ? const TextStyle(fontWeight: FontWeight.bold) : null)),
-        Text(formatMoney(amount), key: key, style: isStrong ? const TextStyle(fontWeight: FontWeight.bold) : null),
-      ],
-    ),
-  );
+  Widget _line(Key key, String label, double amount, {bool isStrong = false}) {
+    final style = isStrong ? const TextStyle(fontWeight: FontWeight.bold) : null;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: amountLine(key, label, amount, labelStyle: style, amountStyle: style),
+    );
+  }
 
   Widget _section(String name, String title, List<Widget> lines) => Card.outlined(
     key: PeriodicReportScreen.sectionKey(name),

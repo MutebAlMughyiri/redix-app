@@ -12,6 +12,7 @@ import 'project.dart';
 import 'projects.dart';
 import 'unit_row.dart';
 import '../ui/app_color.dart';
+import 'project_status_chip.dart';
 
 /// More info (معلومات المشروع, redix-api 93): the project's own record on one page, its name, start date, status, units and description. Everyone in the project reads it;
 /// whoever manages it renames it, adds, renames and deletes units, keeps its description and closes it, while it is open (AC-04.1).
@@ -211,13 +212,7 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
                 overflowSpacing: 4,
                 children: [
                   Text(project.isFinished ? '$startDate · ${words.projectsReadOnly}' : startDate, key: ProjectInfoScreen.detailsKey, style: theme.textTheme.bodySmall),
-                  Chip(
-                    key: ProjectInfoScreen.statusKey,
-                    label: Text(words.text(project.status.wordKey), key: ProjectInfoScreen.statusKey.label),
-                    backgroundColor: project.status == ProjectStatus.active ? AppColor.activeSurface.of(context) : AppColor.mutedSurface.of(context),
-                    side: BorderSide.none,
-                    visualDensity: VisualDensity.compact,
-                  ),
+                  projectStatusChip(context, project, ProjectInfoScreen.statusKey),
                 ],
               ),
               const Divider(height: 24),

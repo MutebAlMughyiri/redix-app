@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../format/date_format.dart';
-import '../format/number_format.dart';
 import '../ui/api_object_body.dart';
-import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'reconciliation.dart';
 import 'difference_band.dart';
+import '../ui/amount_line.dart';
 
 /// What the accounts should hold, what they really held, and the difference, red while it is not zero (BR-08).
 class ReconciliationCard extends StatelessWidget {
@@ -39,12 +38,7 @@ class ReconciliationCard extends StatelessWidget {
 
   Widget _line(BuildContext context, Key key, String label, double amount) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 2),
-    child: Row(
-      children: [
-        Expanded(child: Text(label, key: key.label)),
-        Text(formatMoney(amount), key: key, style: Theme.of(context).textTheme.titleSmall),
-      ],
-    ),
+    child: amountLine(key, label, amount, amountStyle: Theme.of(context).textTheme.titleSmall),
   );
 
   Widget _difference(BuildContext context, ReconciliationFigures figures) {

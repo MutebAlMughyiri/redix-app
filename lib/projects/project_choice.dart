@@ -5,6 +5,7 @@ import '../words/words.dart';
 import 'project.dart';
 import 'projects_screen.dart';
 import '../ui/app_color.dart';
+import 'project_status_chip.dart';
 
 /// One project on the list: its name, units and its status. An approved one opens when tapped, and has a star that marks the default.
 class ProjectChoice extends StatelessWidget {
@@ -53,13 +54,7 @@ class ProjectChoice extends StatelessWidget {
                           Text(project.rejectionReason, key: ProjectsScreen.reasonKey(project.id), style: theme.textTheme.bodySmall?.copyWith(color: AppColor.refusal.of(context))),
                       ],
                     ),
-                    Chip(
-                      key: ProjectsScreen.statusKey(project.id),
-                      label: Text(words.text(project.status.wordKey), key: ProjectsScreen.statusKey(project.id).label),
-                      backgroundColor: project.status == ProjectStatus.active ? AppColor.activeSurface.of(context) : AppColor.mutedSurface.of(context),
-                      side: BorderSide.none,
-                      visualDensity: VisualDensity.compact,
-                    ),
+                    projectStatusChip(context, project, ProjectsScreen.statusKey(project.id)),
                   ],
                 ),
               ),

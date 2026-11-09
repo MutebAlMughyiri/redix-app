@@ -17,6 +17,7 @@ import 'partner.dart';
 import 'partner_dialog.dart';
 import 'partners.dart';
 import '../structure/offered_items.dart';
+import '../ui/amount_line.dart';
 
 /// A project's partners and capital (UC-016, UC-044): the total, each line the user may see with its balance and share, and a way into its movements. Whoever keeps the settings adds and renames them, and links each to their login, so they see their own capital (BR-31). Nothing is deleted.
 class PartnersScreen extends StatefulWidget {
@@ -126,12 +127,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 8,
           children: [
-            Row(
-              children: [
-                Expanded(child: Text(words.capitalTotal, key: PartnersScreen.totalKey.label)),
-                Text(formatMoney(figures.total), key: PartnersScreen.totalKey, style: Theme.of(context).textTheme.titleLarge),
-              ],
-            ),
+            amountLine(PartnersScreen.totalKey, words.capitalTotal, figures.total, amountStyle: Theme.of(context).textTheme.titleLarge),
           ],
         ),
       ),

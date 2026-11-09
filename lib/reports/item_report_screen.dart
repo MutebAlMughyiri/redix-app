@@ -11,6 +11,7 @@ import '../words/words.dart';
 import 'item_report.dart';
 import 'report_files.dart';
 import '../ui/refusal_text.dart';
+import '../ui/amount_line.dart';
 
 /// Everything spent on one item (UC-050): a table per subgroup, then each contract with its value, paid and remaining.
 class ItemReportScreen extends StatefulWidget {
@@ -163,12 +164,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
                 builder: (report) => Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(child: Text(words.reportsItemTotal, key: ItemReportScreen.totalKey.label, style: Theme.of(context).textTheme.titleMedium)),
-                        Text(formatMoney(report.total), key: ItemReportScreen.totalKey, style: Theme.of(context).textTheme.titleLarge),
-                      ],
-                    ),
+                    amountLine(ItemReportScreen.totalKey, words.reportsItemTotal, report.total, labelStyle: Theme.of(context).textTheme.titleMedium, amountStyle: Theme.of(context).textTheme.titleLarge),
                     const SizedBox(height: 12),
                     if (widget.project.may(Permission.seeAllCapital))
                       Padding(
