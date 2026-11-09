@@ -260,13 +260,13 @@ final List<Gate> _gates = [
     control: _key(AddEntryScreen.reverseKey),
   ),
   (
-    name: 'Update the actual balances',
+    name: 'An enabled تحديث on the actual balances',
     permission: Permission.moveMoney,
     arrange: (api) => api.addAccount(_project, 'البنك'),
     steps: [_openProject, _tapKey(HomeScreen.actualBalancesKey(_project))],
-    control: _key(ActualBalancesScreen.updateKey),
+    control: _enabled(ActualBalancesScreen.updateKey),
   ),
-  (name: 'Issue a periodic report', permission: Permission.moveMoney, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _key(ReportsScreen.issueKey)),
+  (name: 'An enabled Issue a periodic report', permission: Permission.moveMoney, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _enabled(ReportsScreen.issueKey)),
   (
     name: 'A partner in Add entry\'s table list',
     permission: Permission.moveMoney,

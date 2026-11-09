@@ -6,6 +6,7 @@ import 'package:redix/reports/periodic_report_screen.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
+import 'package:redix/ui/bottom_button.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/reports/item_reports_screen.dart';
 
@@ -25,6 +26,7 @@ void main() {
     final (:api, capture: _) = await openReports(tester, (api) {});
 
     expect(find.byKey(ReportsScreen.noneIssuedKey), findsOneWidget);
+    expect(find.ancestor(of: find.byKey(ReportsScreen.issueKey), matching: find.byType(BottomButton)), findsOneWidget, reason: 'Muteb, 9 Nov 2026: issuing is the bottom button of the screen');
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.issueKey)));
     expect(find.text('en reports.issueQuestion'), findsOneWidget);
 
@@ -86,7 +88,7 @@ void main() {
         ..periodicAnswer = issuedReport();
     }, permissions: const ['readProject']);
 
-    expect(find.byKey(ReportsScreen.issueKey), findsNothing);
+    expect(isEnabled(tester, ReportsScreen.issueKey), isFalse);
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.periodicKey(1))));
 
     expect(find.byKey(PeriodicReportScreen.surplusKey), findsOneWidget);

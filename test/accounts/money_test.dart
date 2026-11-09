@@ -9,6 +9,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/accounts/actual_balances_screen.dart';
+import 'package:redix/ui/bottom_button.dart';
 
 import '../app_harness.dart';
 
@@ -187,11 +188,11 @@ void main() {
       expect(api.sentMoney, isEmpty);
     });
 
-    testWidgets('only whoever moves money enters balances, and everyone sees the card', (tester) async {
+    testWidgets('only whoever moves money enters balances: تحديث, the bottom button, is grayed for anyone else, and everyone sees the card', (tester) async {
       await openBalances(tester, (api) => api.addAccount('project-0', 'حساب'), permissions: field);
 
       expect(find.byKey(ReconciliationCard.neverKey), findsOneWidget);
-      expect(find.byKey(ActualBalancesScreen.updateKey), findsNothing);
+      expect(isEnabled(tester, ActualBalancesScreen.updateKey), isFalse);
     });
 
     testWidgets('transfers between accounts are gone: Accounts offers only the actual balances (Muteb, 8 Nov 2026)', (tester) async {
@@ -206,6 +207,7 @@ void main() {
       final (:api, capture: _) = await openBalances(tester, (api) => api.addAccount('project-0', 'حساب'));
       expect(find.byKey(ReconciliationCard.neverKey), findsOneWidget);
       expect(tester.widget<Text>(find.byKey(ActualBalancesScreen.updateKey.label)).data, 'en accounts.reconcile');
+      expect(find.ancestor(of: find.byKey(ActualBalancesScreen.updateKey), matching: find.byType(BottomButton)), findsOneWidget, reason: 'Muteb, 9 Nov 2026: تحديث is the bottom button of the screen');
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));

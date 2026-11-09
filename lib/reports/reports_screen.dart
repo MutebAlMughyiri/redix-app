@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../format/date_format.dart';
 import '../projects/project.dart';
+import '../ui/bottom_button.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
@@ -23,7 +24,7 @@ class ReportsScreen extends StatefulWidget {
   /// The address of the screen for the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId/reports';
 
-  /// The button issuing the next periodic report.
+  /// The button issuing the next periodic report: the screen's bottom button, grayed for whoever does not move money (Muteb, 9 Nov 2026).
   static const issueKey = Key('reports.issue');
 
   /// The line saying no report was issued yet.
@@ -86,7 +87,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: ListenableBuilder(
-          listenable: Listenable.merge([widget.periodicReports, widget.nextReport]),
+          listenable: widget.periodicReports,
           builder: (context, _) {
             final reports = widget.periodicReports.all;
             return Column(
@@ -104,8 +105,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     trailing: Icon(Icons.chevron_right, key: ReportsScreen.periodicKey(report.number).icon),
                     onTap: () => context.push(PeriodicReportScreen.pathOf(project.id, report.number), extra: project),
                   ),
-                if (project.mayMoveMoney)
-                  FilledButton(key: ReportsScreen.issueKey, onPressed: () => _askToIssue(widget.nextReport.value), child: Text(words.reportsIssue.replaceFirst('{0}', '${widget.nextReport.value.number}'), key: ReportsScreen.issueKey.label)),
               ],
             );
           },
@@ -125,6 +124,15 @@ class _ReportsScreenState extends State<ReportsScreen> {
         children: [
           _periodic(),
         ],
+      ),
+      bottomNavigationBar: ListenableBuilder(
+        listenable: widget.nextReport,
+        builder: (context, _) => BottomButton(
+          buttonKey: ReportsScreen.issueKey,
+          icon: Icons.post_add,
+          label: words.reportsIssue.replaceFirst('{0}', '${widget.nextReport.value.number}'),
+          onPressed: project.mayMoveMoney ? () => _askToIssue(widget.nextReport.value) : null,
+        ),
       ),
     );
   }
