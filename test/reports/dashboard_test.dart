@@ -127,45 +127,64 @@ void main() {
     expect(find.byKey(DashboardCard.pendingKey), findsNothing);
   });
 
-  testWidgets('the categories show only once a tile is tapped: expenses opens the expense categories, revenue the revenue ones', (tester) async {
+  /// Opens الإيرادات والمصروفات from the home's buttons (Muteb, 9 Nov 2026).
+  Future<void> openRevenueAndExpenses(WidgetTester tester, FakeApi api) => scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0'));
+
+  ItemReportsSide sideShown(WidgetTester tester) => tester.widget<SegmentedButton<ItemReportsSide>>(find.byKey(ItemReportsScreen.sideKey)).selected.single;
+
+  testWidgets("Muteb, 9 Nov 2026: the home's revenue and expenses totals open nothing; الإيرادات والمصروفات holds their details", (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
 
-    expect(find.byKey(DashboardCard.categoryKey('category-1')), findsNothing);
-    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsNothing);
-
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
     await act(tester, api, () => tester.tap(find.byKey(DashboardCard.expensesKey)));
-    expect(find.byKey(DashboardCard.categoryKey('category-1')), findsOneWidget);
-    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsNothing);
 
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
-    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsOneWidget);
-    expect(find.byKey(DashboardCard.categoryKey('category-1')), findsNothing);
-
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
-    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsNothing);
+    expect(find.byKey(DashboardCard.revenueKey.icon), findsNothing);
+    expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsNothing);
+    expect(find.byKey(ItemReportsScreen.categoryKey('category-9')), findsNothing);
+    expect(text(tester, HomeScreen.itemReportsKey('project-0').label), 'en reports.revenueAndExpenses');
   });
 
-  testWidgets('BR-06, redix-api #109: the revenue side is its categories in the structure\'s order, رأس المال first like any other, adding up to the revenue', (tester) async {
+  testWidgets('Muteb, 9 Nov 2026: الإيرادات والمصروفات opens on the expenses, and its switch, like the language one, shows the revenue categories instead', (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
+    await openRevenueAndExpenses(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
+    expect(find.text('en reports.revenueAndExpenses'), findsOneWidget);
+    expect(sideShown(tester), ItemReportsSide.expenses);
+    expect(text(tester, ItemReportsScreen.sideOptionKey(ItemReportsSide.revenue)), 'en dashboard.revenue');
+    expect(text(tester, ItemReportsScreen.sideOptionKey(ItemReportsSide.expenses)), 'en dashboard.expenses');
+    expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsOneWidget);
+    expect(find.byKey(ItemReportsScreen.categoryKey('category-9')), findsNothing);
 
-    expect(text(tester, DashboardCard.categoryKey('category-capital').title), 'رأس المال');
-    expect(text(tester, DashboardCard.categoryKey('category-capital').trailing), formatMoney(4000));
-    expect(text(tester, DashboardCard.categoryKey('category-9').trailing), formatMoney(1000));
-    expect(tester.getTopLeft(find.byKey(DashboardCard.categoryKey('category-capital'))).dy < tester.getTopLeft(find.byKey(DashboardCard.categoryKey('category-9'))).dy, isTrue);
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(ItemReportsSide.revenue))));
+
+    expect(sideShown(tester), ItemReportsSide.revenue);
+    expect(find.byKey(ItemReportsScreen.categoryKey('category-9')), findsOneWidget);
+    expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsNothing);
+  });
+
+  testWidgets("BR-06, redix-api #109: the revenue side is its categories in the structure's order, رأس المال first like any other, each with its total", (tester) async {
+    final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
+    await openRevenueAndExpenses(tester, api);
+
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(ItemReportsSide.revenue))));
+
+    expect(text(tester, ItemReportsScreen.categoryKey('category-capital').title), 'رأس المال');
+    expect(text(tester, ItemReportsScreen.categoryKey('category-capital').trailing), formatMoney(4000));
+    expect(text(tester, ItemReportsScreen.categoryKey('category-9').trailing), formatMoney(1000));
+    expect(tester.getTopLeft(find.byKey(ItemReportsScreen.categoryKey('category-capital'))).dy < tester.getTopLeft(find.byKey(ItemReportsScreen.categoryKey('category-9'))).dy, isTrue);
   });
 
   testWidgets('redix-api #109: رأس المال opens to its item like any category, and the item to its report, whose tables are its partners', (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
-    expect(find.byKey(DashboardCard.itemKey('item-capital')), findsNothing);
+    await openRevenueAndExpenses(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(ItemReportsSide.revenue))));
+    expect(find.byKey(ItemReportsScreen.itemKey('item-capital')), findsNothing);
 
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.categoryKey('category-capital'))));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.categoryKey('category-capital'))));
 
-    expect(text(tester, DashboardCard.itemKey('item-capital').title), 'رأس المال');
-    expect(text(tester, DashboardCard.itemKey('item-capital').trailing), formatMoney(4000));
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.itemKey('item-capital'))));
+    expect(text(tester, ItemReportsScreen.itemKey('item-capital').title), 'رأس المال');
+    expect(text(tester, ItemReportsScreen.itemKey('item-capital').trailing), formatMoney(4000));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-capital'))));
     expect(find.byType(ItemReportScreen), findsOneWidget);
   });
 
@@ -179,15 +198,15 @@ void main() {
     expect(find.textContaining('en dashboard.surplusWithoutSales'), findsNothing);
   });
 
-  testWidgets('a category opens to its items, and an item opens its report', (tester) async {
+  testWidgets('a category opens to its items with their totals, and an item opens its report', (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
+    await openRevenueAndExpenses(tester, api);
 
-    expect(find.byKey(DashboardCard.itemKey('item-1')), findsNothing);
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.expensesKey)));
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.categoryKey('category-1'))));
-    expect(find.text('3,000.00'), findsOneWidget);
+    expect(find.byKey(ItemReportsScreen.itemKey('item-1')), findsNothing);
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.categoryKey('category-1'))));
+    expect(text(tester, ItemReportsScreen.itemKey('item-1').trailing), '3,000.00');
 
-    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.itemKey('item-1'))));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
 
     expect(find.byKey(ItemReportScreen.totalKey), findsOneWidget);
   });
@@ -243,7 +262,7 @@ void main() {
     await tester.ensureVisible(find.byKey(HomeScreen.reportsKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.reportsKey('project-0'))));
     expect(find.byKey(ReportsScreen.periodicCardKey), findsOneWidget);
-    for (final gone in ['en reports.contracts', 'en reports.partners', 'en vat.title', 'en reports.item']) {
+    for (final gone in ['en reports.contracts', 'en reports.partners', 'en vat.title', 'en reports.revenueAndExpenses']) {
       expect(find.text(gone), findsNothing, reason: gone);
     }
     await act(tester, api, () => tester.tap(find.byType(BackButton)));

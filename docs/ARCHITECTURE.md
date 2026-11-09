@@ -85,7 +85,7 @@ lib/
     date_format.dart        A date as the app shows it, in both languages: Gregorian dd.MM.yyyy
     number_format.dart      A number as a person types it: no separators, and as few decimals as it needs, at most two, so 15 is 15 and 7.5 is 7.5
   home/
-    dashboard_card.dart     The project's figures at a glance: what waits for approval, the surplus, the completion, the reconciliation difference, and revenue and expenses, each opening to its categories, each category to its items, and the capital to the partners the reader may see
+    dashboard_card.dart     The project's figures at a glance: what waits for approval, the surplus, the completion, the reconciliation difference, and the revenue and expenses totals, which open nothing
     home_screen.dart        The home of the open project: the project, with what the user's permissions allow in it
   notifications/
     notification_row.dart   Something a person was told: its words come from kind, in their language
@@ -136,7 +136,7 @@ lib/
     quarter_picker.dart     A quarter chosen by its year and its number, each as chips, from the year firstYear to this one
     report_files.dart       What can be done with a report's file on the phone
     reports_screen.dart     A project's periodic reports: the next one and those issued before
-    item_reports_screen.dart Every category with its items, each opening its report, from the home
+    item_reports_screen.dart الإيرادات والمصروفات, from the home: a switch between the revenue and the expense categories, each with its total and share, opening on its items, each opening its report
     vat_statement_screen.dart How a period is chosen
     waiting_figures.dart    What waits for approval, as two figures: expenses, which lower the surplus once approved, and revenue with partners' money, which raises it
     year_chips.dart         A year chosen as chips, from this year back to firstYear

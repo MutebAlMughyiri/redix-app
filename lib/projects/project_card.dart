@@ -67,7 +67,7 @@ class ProjectCard extends StatelessWidget {
                 _button(HomeScreen.suppliersKey(id), Icons.storefront_outlined, words.suppliersTitle, SuppliersScreen.pathOf(id)),
                 _button(HomeScreen.contractsKey(id), Icons.description_outlined, words.contractsTitle, ContractsScreen.pathOf(id)),
                 _button(HomeScreen.reportsKey(id), Icons.summarize_outlined, words.reportsTitle, ReportsScreen.pathOf(id)),
-                _button(HomeScreen.itemReportsKey(id), Icons.analytics_outlined, words.reportsItem, ItemReportsScreen.pathOf(id)),
+                _button(HomeScreen.itemReportsKey(id), Icons.analytics_outlined, words.reportsRevenueAndExpenses, ItemReportsScreen.pathOf(id)),
                 _button(HomeScreen.actualBalancesKey(id), Icons.balance_outlined, words.reconciliationsEnterTitle, ActualBalancesScreen.pathOf(id)),
                 _button(HomeScreen.vatKey(id), Icons.receipt_long_outlined, words.vatTitle, VatStatementScreen.pathOf(id)),
                 if (project.may(Permission.approveEntries)) _button(HomeScreen.approvalsKey(id), Icons.fact_check_outlined, words.approvalsTitle, ApprovalsScreen.pathOf(id)),

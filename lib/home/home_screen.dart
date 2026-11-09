@@ -16,7 +16,6 @@ import '../offline/outbox.dart';
 import '../offline/project_sync.dart';
 import '../offline/waiting_screen.dart';
 import '../reports/dashboard.dart';
-import '../reports/item_report_screen.dart';
 import 'dashboard_card.dart';
 import '../projects/project.dart';
 import '../projects/project_card.dart';
@@ -277,7 +276,6 @@ class _HomeScreenState extends State<HomeScreen> {
               project: project,
               dashboard: widget.dashboard,
               onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
-              onItem: (item) => _open(ItemReportScreen.pathOf(project.id, item.id), project),
             ),
             MyCustody(accounts: widget.accounts),
             HomeEntries(project: project, entries: widget.entries),

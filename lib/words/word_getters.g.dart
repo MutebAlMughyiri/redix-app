@@ -1745,9 +1745,6 @@ mixin WordGetters {
   /// The word `reports.issued`.
   String get reportsIssued => text('reports.issued');
 
-  /// The word `reports.item`.
-  String get reportsItem => text('reports.item');
-
   /// The word `reports.itemTotal`.
   String get reportsItemTotal => text('reports.itemTotal');
 
@@ -1807,6 +1804,9 @@ mixin WordGetters {
 
   /// The word `reports.reportNumber`.
   String get reportsReportNumber => text('reports.reportNumber');
+
+  /// The word `reports.revenueAndExpenses`.
+  String get reportsRevenueAndExpenses => text('reports.revenueAndExpenses');
 
   /// The word `reports.save`.
   String get reportsSave => text('reports.save');
