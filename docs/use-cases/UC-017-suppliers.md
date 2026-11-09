@@ -62,7 +62,7 @@ The project's home, `HomeScreen`:
 | Without keeping the settings there is nothing to change | `Project.mayManageSettings` | `without keeping the settings the register shows with nothing to change` |
 | A finished project shows it with nothing to change (AC-04.1) | `Project.mayManageSettings` | `a finished project shows its register with nothing to change` |
 | A list that cannot be read says so | `ApiListBody` | `a list that cannot be read says so` |
-| It fits 360 points wide in both languages (AC-N03) | `SuppliersScreen`, `SupplierDialog` | `AC-N03` in `test/account/settings/account_test.dart` |
+| It fits 360 points wide in both languages (AC-N03) | `SuppliersScreen`, `SupplierDialog` | `AC-N03` in `test/settings/account_test.dart` |
 
 The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, which adds a supplier with a default item.
 

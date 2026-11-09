@@ -42,7 +42,7 @@
 | Closing goes back to the search | `SupplierPicker` | `closing the quick add goes back to the search` |
 | Without `addSupplier` there is no quick add | `Project.mayAddSupplier` | `without a way to add a supplier there is no quick add` |
 | A finished project offers none (AC-04.1) | `Project.mayAddSupplier` | `a finished project offers no quick add` |
-| It fits 360 points wide in both languages (AC-N03) | `QuickAddSupplierDialog` | `AC-N03` in `test/account/settings/account_test.dart` |
+| It fits 360 points wide in both languages (AC-N03) | `QuickAddSupplierDialog` | `AC-N03` in `test/settings/account_test.dart` |
 
 The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, through the contract's dialog (UC-020).
 

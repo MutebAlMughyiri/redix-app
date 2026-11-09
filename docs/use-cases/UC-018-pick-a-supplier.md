@@ -40,7 +40,7 @@ UC-020 opens the sheet from the contract's dialog, and UC-022 will open it from 
 | A search that finds nothing says so | `ApiListBody` | `a search that finds nothing says so` |
 | An answer to an older search never replaces a newer one | `ApiList.load` | `an answer to an older search never replaces a newer one` |
 | Opening again starts with nothing typed | `SupplierSearch.openAnew` | `opening again starts with nothing typed` |
-| It fits 360 points wide in both languages (AC-N03) | `SupplierPicker` | `AC-N03` in `test/account/settings/account_test.dart` |
+| It fits 360 points wide in both languages (AC-N03) | `SupplierPicker` | `AC-N03` in `test/settings/account_test.dart` |
 
 The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, through the contract's dialog (UC-020).
 

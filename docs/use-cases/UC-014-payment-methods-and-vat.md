@@ -50,6 +50,6 @@ The home of a project, `HomeScreen`:
 | A number may be typed in Arabic digits, since the app is Arabic first | `parseNumber` | `a typed number reads Western and Arabic digits and thousands separators` |
 | A finished project shows them with nothing to change (AC-04.1) | `Project.mayManageSettings` | `a finished project shows its methods with nothing to change` |
 | Without `manageSettings` there is no way in | `ProjectCard` | `without manageSettings there is no way in` |
-| It fits 360 points wide in both languages (AC-N03) | `PaymentMethodsScreen` | `AC-N03` in `test/account/settings/account_test.dart` |
+| It fits 360 points wide in both languages (AC-N03) | `PaymentMethodsScreen` | `AC-N03` in `test/settings/account_test.dart` |
 
 The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, which adds a method and disables it.
