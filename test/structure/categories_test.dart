@@ -117,6 +117,7 @@ void main() {
     final opened = await openCategories(tester);
     await open(tester, opened.api, opened.bone);
 
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.categoryMenuKey(opened.bone))));
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.renameCategoryKey(opened.bone))));
     expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).controller!.text, 'العظم');
     await save(tester, opened.api, 'الهيكل');
@@ -190,10 +191,12 @@ void main() {
     final opened = await openCategories(tester);
     await open(tester, opened.api, opened.bone);
 
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.categoryMenuKey(opened.bone))));
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.disableCategoryKey(opened.bone))));
     expect(text(tester, CategoriesScreen.categoryDetailsKey(opened.bone)), 'en categories.disabled');
     expect(find.byKey(CategoriesScreen.disableCategoryKey(opened.bone)), findsNothing);
 
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.categoryMenuKey(opened.bone))));
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.enableCategoryKey(opened.bone))));
     expect(text(tester, CategoriesScreen.categoryDetailsKey(opened.bone)), 'en categories.items: 2');
   });
@@ -203,6 +206,7 @@ void main() {
     await open(tester, opened.api, opened.bone);
     opened.api.structureAnswer = (status: 409, code: 'projectFinished');
 
+    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.categoryMenuKey(opened.bone))));
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.disableCategoryKey(opened.bone))));
 
     expect(find.text('en categories.projectFinished'), findsOneWidget);

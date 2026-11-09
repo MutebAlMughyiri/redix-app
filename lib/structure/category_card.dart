@@ -11,6 +11,7 @@ import 'categories_screen.dart';
 import 'category.dart';
 import 'item_row.dart';
 import '../ui/app_color.dart';
+import '../ui/row_menu.dart';
 
 /// One category of the list: its name, how many items it holds or that it is disabled, and a handle to drag it. Opened, it shows what can be done to it, and its items.
 class CategoryCard extends StatelessWidget {
@@ -59,19 +60,13 @@ class CategoryCard extends StatelessWidget {
               builder: (_) => AddItemDialog(category: category, categories: categories),
             ),
           ),
-          TextButton(key: CategoriesScreen.renameCategoryKey(category.id), onPressed: () => _askForName(context), child: Text(words.categoriesRename, key: CategoriesScreen.renameCategoryKey(category.id).label)),
-          if (category.isActive)
-            TextButton(
-              key: CategoriesScreen.disableCategoryKey(category.id),
-              onPressed: () => showRefusalOf(context, categories.disableCategory(category)),
-              child: Text(words.categoriesDisable, key: CategoriesScreen.disableCategoryKey(category.id).label),
-            )
-          else
-            TextButton(
-              key: CategoriesScreen.enableCategoryKey(category.id),
-              onPressed: () => showRefusalOf(context, categories.enableCategory(category)),
-              child: Text(words.categoriesEnable, key: CategoriesScreen.enableCategoryKey(category.id).label),
-            ),
+          rowMenu(CategoriesScreen.categoryMenuKey(category.id), [
+            rowMenuItem(CategoriesScreen.renameCategoryKey(category.id), words.categoriesRename, () => _askForName(context)),
+            if (category.isActive)
+              rowMenuItem(CategoriesScreen.disableCategoryKey(category.id), words.categoriesDisable, () => showRefusalOf(context, categories.disableCategory(category)))
+            else
+              rowMenuItem(CategoriesScreen.enableCategoryKey(category.id), words.categoriesEnable, () => showRefusalOf(context, categories.enableCategory(category))),
+          ]),
         ],
       ),
     );
