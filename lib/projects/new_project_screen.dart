@@ -12,6 +12,7 @@ import 'project_registration.dart';
 import 'projects.dart';
 import '../ui/typed_names.dart';
 import '../ui/refusal_text.dart';
+import '../ui/picker_field.dart';
 
 /// The form that registers a project (UC-006, UC-066): its name, its start date and its units. From the sign-in page it also takes the details of the manager, who has
 /// no login yet. Either way the project waits for the admin.
@@ -193,17 +194,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               decoration: InputDecoration(labelText: words.projectsDescription),
             ),
             const SizedBox(height: 16),
-            InkWell(
-              key: NewProjectScreen.startDateKey,
-              onTap: _pickStartDate,
-              child: InputDecorator(
-                decoration: InputDecoration(
-                  labelText: words.projectsStartDate,
-                  suffixIcon: Icon(Icons.calendar_today_outlined, key: NewProjectScreen.startDateKey.icon),
-                ),
-                child: Text(formatDate(_startDate), key: NewProjectScreen.startDateKey.label),
-              ),
-            ),
+            PickerField(key: NewProjectScreen.startDateKey, label: words.projectsStartDate, value: formatDate(_startDate), icon: Icons.calendar_today_outlined, onTap: _pickStartDate),
             const SizedBox(height: 24),
             TypedNames(
               names: _units,
