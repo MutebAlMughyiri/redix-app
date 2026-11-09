@@ -1,79 +1,59 @@
 import 'package:flutter/material.dart';
 
+import '../accounts/accounts_screen.dart';
+import '../accounts/actual_balances_screen.dart';
+import '../approvals/approvals_screen.dart';
 import '../auth/permission.dart';
+import '../contracts/contracts_screen.dart';
+import '../documents/documents_screen.dart';
 import '../home/home_screen.dart';
+import '../partners/partners_screen.dart';
+import '../reports/item_reports_screen.dart';
+import '../reports/reports_screen.dart';
+import '../reports/vat_statement_screen.dart';
+import '../settings/payment_methods_screen.dart';
+import '../structure/categories_screen.dart';
+import '../suppliers/suppliers_screen.dart';
 import '../ui/part_keys.dart';
+import '../users/my_permissions_screen.dart';
+import '../users/users_screen.dart';
 import '../words/words.dart';
 import 'project.dart';
+import 'project_info_screen.dart';
 
 /// The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, the item reports, the actual balances,
-/// the VAT refund, Approvals and Documents; Settings is an icon in the home's top bar.
+/// the VAT refund, Approvals and Documents, then the project's own: More info, the user's own permissions, its users, its categories and items, its payment methods, and
+/// importing its settings, grayed until it is built (Muteb, 9 Nov 2026). Settings is an icon in the home's top bar.
 /// A finished project says first, in one line, that it is read-only (redix-api 93).
 class ProjectCard extends StatelessWidget {
-  /// The card of [project], calling [onAccounts], [onPartners], [onSuppliers], [onContracts], [onApprovals], [onReports], [onItemReports], [onActualBalances], [onVat] and [onDocuments] when those are tapped.
-  const ProjectCard({
-    super.key,
-    required this.project,
-    required this.onAccounts,
-    required this.onPartners,
-    required this.onSuppliers,
-    required this.onContracts,
-    required this.onApprovals,
-    required this.onReports,
-    required this.onDocuments,
-    required this.onVat,
-    required this.onItemReports,
-    required this.onActualBalances,
-  });
+  /// The card of [project], calling [onOpen] with the route of the screen a button opens.
+  const ProjectCard({super.key, required this.project, required this.onOpen});
 
   /// The project this card shows.
   final Project project;
 
-  /// Called when Accounts is tapped.
-  final VoidCallback onAccounts;
+  /// Opens the screen at a route of the project.
+  final ValueChanged<String> onOpen;
 
-  /// Called when Partners is tapped.
-  final VoidCallback onPartners;
-
-  /// Called when Suppliers is tapped.
-  final VoidCallback onSuppliers;
-
-  /// Called when Contracts is tapped.
-  final VoidCallback onContracts;
-
-  /// Called when Waiting for approval is tapped.
-  final VoidCallback onApprovals;
-
-  /// Called when Reports is tapped.
-  final VoidCallback onReports;
-
-  /// Called when Documents is tapped.
-  final VoidCallback onDocuments;
-
-  /// Called when the VAT refund is tapped (Muteb, 9 Nov 2026).
-  final VoidCallback onVat;
-
-  /// Called when the item reports are tapped (Muteb, 9 Nov 2026).
-  final VoidCallback onItemReports;
-
-  /// Called when the actual balances are tapped (Muteb, 9 Nov 2026).
-  final VoidCallback onActualBalances;
+  Widget _button(Key key, IconData icon, String label, String path) =>
+      TextButton.icon(key: key, icon: Icon(icon, key: key.icon), label: Text(label, key: key.label), onPressed: () => onOpen(path));
 
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
+    final id = project.id;
     return Card.outlined(
-      key: HomeScreen.cardKey(project.id),
+      key: HomeScreen.cardKey(id),
       margin: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (project.isFinished) ...[
             ListTile(
-              key: HomeScreen.finishedKey(project.id),
+              key: HomeScreen.finishedKey(id),
               dense: true,
-              leading: Icon(Icons.lock_outline, key: HomeScreen.finishedKey(project.id).icon),
-              title: Text('${words.projectsFinished} · ${words.projectsReadOnly}', key: HomeScreen.finishedKey(project.id).title),
+              leading: Icon(Icons.lock_outline, key: HomeScreen.finishedKey(id).icon),
+              title: Text('${words.projectsFinished} · ${words.projectsReadOnly}', key: HomeScreen.finishedKey(id).title),
             ),
             const Divider(height: 1),
           ],
@@ -82,66 +62,26 @@ class ProjectCard extends StatelessWidget {
             child: OverflowBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
+                _button(HomeScreen.accountsKey(id), Icons.account_balance_wallet_outlined, words.accountsTitle, AccountsScreen.pathOf(id)),
+                _button(HomeScreen.partnersKey(id), Icons.handshake_outlined, words.partnersTitle, PartnersScreen.pathOf(id)),
+                _button(HomeScreen.suppliersKey(id), Icons.storefront_outlined, words.suppliersTitle, SuppliersScreen.pathOf(id)),
+                _button(HomeScreen.contractsKey(id), Icons.description_outlined, words.contractsTitle, ContractsScreen.pathOf(id)),
+                _button(HomeScreen.reportsKey(id), Icons.summarize_outlined, words.reportsTitle, ReportsScreen.pathOf(id)),
+                _button(HomeScreen.itemReportsKey(id), Icons.analytics_outlined, words.reportsItem, ItemReportsScreen.pathOf(id)),
+                _button(HomeScreen.actualBalancesKey(id), Icons.balance_outlined, words.reconciliationsEnterTitle, ActualBalancesScreen.pathOf(id)),
+                _button(HomeScreen.vatKey(id), Icons.receipt_long_outlined, words.vatTitle, VatStatementScreen.pathOf(id)),
+                if (project.may(Permission.approveEntries)) _button(HomeScreen.approvalsKey(id), Icons.fact_check_outlined, words.approvalsTitle, ApprovalsScreen.pathOf(id)),
+                _button(HomeScreen.documentsKey(id), Icons.folder_outlined, words.documentsTitle, DocumentsScreen.pathOf(id)),
+                _button(HomeScreen.projectInfoKey(id), Icons.info_outline, words.projectInfoTitle, ProjectInfoScreen.pathOf(id)),
+                _button(HomeScreen.myPermissionsKey(id), Icons.verified_user_outlined, words.permissionsMine, MyPermissionsScreen.pathOf(id)),
+                if (project.may(Permission.manageUsers)) _button(HomeScreen.usersKey(id), Icons.group_outlined, words.usersTitle, UsersScreen.pathOf(id)),
+                if (project.may(Permission.manageStructure)) _button(HomeScreen.categoriesKey(id), Icons.category_outlined, words.categoriesTitle, CategoriesScreen.pathOf(id)),
+                if (project.may(Permission.manageSettings)) _button(HomeScreen.paymentMethodsKey(id), Icons.credit_card_outlined, words.paymentMethodsTitle, PaymentMethodsScreen.pathOf(id)),
                 TextButton.icon(
-                  key: HomeScreen.accountsKey(project.id),
-                  icon: Icon(Icons.account_balance_wallet_outlined, key: HomeScreen.accountsKey(project.id).icon),
-                  label: Text(words.accountsTitle, key: HomeScreen.accountsKey(project.id).label),
-                  onPressed: onAccounts,
-                ),
-                TextButton.icon(
-                  key: HomeScreen.partnersKey(project.id),
-                  icon: Icon(Icons.handshake_outlined, key: HomeScreen.partnersKey(project.id).icon),
-                  label: Text(words.partnersTitle, key: HomeScreen.partnersKey(project.id).label),
-                  onPressed: onPartners,
-                ),
-                TextButton.icon(
-                  key: HomeScreen.suppliersKey(project.id),
-                  icon: Icon(Icons.storefront_outlined, key: HomeScreen.suppliersKey(project.id).icon),
-                  label: Text(words.suppliersTitle, key: HomeScreen.suppliersKey(project.id).label),
-                  onPressed: onSuppliers,
-                ),
-                TextButton.icon(
-                  key: HomeScreen.contractsKey(project.id),
-                  icon: Icon(Icons.description_outlined, key: HomeScreen.contractsKey(project.id).icon),
-                  label: Text(words.contractsTitle, key: HomeScreen.contractsKey(project.id).label),
-                  onPressed: onContracts,
-                ),
-                TextButton.icon(
-                  key: HomeScreen.reportsKey(project.id),
-                  icon: Icon(Icons.summarize_outlined, key: HomeScreen.reportsKey(project.id).icon),
-                  label: Text(words.reportsTitle, key: HomeScreen.reportsKey(project.id).label),
-                  onPressed: onReports,
-                ),
-                TextButton.icon(
-                  key: HomeScreen.itemReportsKey(project.id),
-                  icon: Icon(Icons.analytics_outlined, key: HomeScreen.itemReportsKey(project.id).icon),
-                  label: Text(words.reportsItem, key: HomeScreen.itemReportsKey(project.id).label),
-                  onPressed: onItemReports,
-                ),
-                TextButton.icon(
-                  key: HomeScreen.actualBalancesKey(project.id),
-                  icon: Icon(Icons.balance_outlined, key: HomeScreen.actualBalancesKey(project.id).icon),
-                  label: Text(words.reconciliationsEnterTitle, key: HomeScreen.actualBalancesKey(project.id).label),
-                  onPressed: onActualBalances,
-                ),
-                TextButton.icon(
-                  key: HomeScreen.vatKey(project.id),
-                  icon: Icon(Icons.receipt_long_outlined, key: HomeScreen.vatKey(project.id).icon),
-                  label: Text(words.vatTitle, key: HomeScreen.vatKey(project.id).label),
-                  onPressed: onVat,
-                ),
-                if (project.may(Permission.approveEntries))
-                  TextButton.icon(
-                    key: HomeScreen.approvalsKey(project.id),
-                    icon: Icon(Icons.fact_check_outlined, key: HomeScreen.approvalsKey(project.id).icon),
-                    label: Text(words.approvalsTitle, key: HomeScreen.approvalsKey(project.id).label),
-                    onPressed: onApprovals,
-                  ),
-                TextButton.icon(
-                  key: HomeScreen.documentsKey(project.id),
-                  icon: Icon(Icons.folder_outlined, key: HomeScreen.documentsKey(project.id).icon),
-                  label: Text(words.documentsTitle, key: HomeScreen.documentsKey(project.id).label),
-                  onPressed: onDocuments,
+                  key: HomeScreen.importSettingsKey(id),
+                  icon: Icon(Icons.file_upload_outlined, key: HomeScreen.importSettingsKey(id).icon),
+                  label: Text(words.projectsImportSettings, key: HomeScreen.importSettingsKey(id).label),
+                  onPressed: null,
                 ),
               ],
             ),

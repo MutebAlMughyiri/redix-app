@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'app_language.dart';
 import 'words.dart';
-import 'language_tile.dart';
 import '../ui/app_color.dart';
 
-/// The choice between Arabic and English on the sign-in screen (UC-004), with the line that says why it could not switch; once signed in, the language is chosen in Settings
-/// through [LanguageTile].
+/// The choice between Arabic and English (UC-004), on the sign-in screen and in Settings, with the line that says why it could not switch.
 class LanguageSwitch extends StatefulWidget {
   /// The switch that changes [language].
   const LanguageSwitch({super.key, required this.language});

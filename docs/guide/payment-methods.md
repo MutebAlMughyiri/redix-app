@@ -7,7 +7,7 @@
 ## English
 
 **What it is for:** the ways this project pays.
-**Who sees it:** whoever does the project's finance, from **Settings › Payment methods** on the project's card. It needs a network.
+**Who sees it:** whoever does the project's finance, from **Payment methods** on the project's home. It needs a network.
 
 A project starts with شبكة, تحويل and كاش. From then on they are this project's own: changing them touches no other project.
 
@@ -27,7 +27,7 @@ A project starts with شبكة, تحويل and كاش. From then on they are thi
 ## العربية
 
 **الغرض:** طرق الدفع في هذا المشروع.
-**من يراها:** من يتولى مالية المشروع، من **الإعدادات › طرق الدفع** في بطاقة المشروع. تحتاج إلى اتصال بالشبكة.
+**من يراها:** من يتولى مالية المشروع، من **طرق الدفع** في الشاشة الرئيسية للمشروع. تحتاج إلى اتصال بالشبكة.
 
 يبدأ المشروع بشبكة وتحويل وكاش. وبعدها تصبح خاصة بهذا المشروع، فتغييرها لا يمس أي مشروع آخر.
 

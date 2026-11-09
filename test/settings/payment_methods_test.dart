@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/home/home_screen.dart';
 
 import '../app_harness.dart';
 
@@ -16,8 +16,7 @@ void main() {
     final card = api.addPaymentMethod('project-0', 'شبكة');
     final sadad = api.addPaymentMethod('project-0', 'سداد', isActive: false);
     await openProject(tester, api);
-    await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.paymentMethodsKey)));
+    await scrollAndTap(tester, api, HomeScreen.paymentMethodsKey('project-0'));
     return (api: api, card: card['id'] as String, sadad: sadad['id'] as String);
   }
 
@@ -129,8 +128,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
     await openProject(tester, api);
 
-    await openSettings(tester, api);
-    expect(find.byKey(SettingsScreen.paymentMethodsKey), findsNothing);
+    expect(find.byKey(HomeScreen.paymentMethodsKey('project-0')), findsNothing);
   });
 
   testWidgets('with no network the list shows what was kept, and no failure', (tester) async {
@@ -138,7 +136,7 @@ void main() {
     opened.api.online = false;
 
     await act(tester, opened.api, () => tester.tap(find.byType(BackButton)));
-    await act(tester, opened.api, () => tester.tap(find.byKey(SettingsScreen.paymentMethodsKey)));
+    await scrollAndTap(tester, opened.api, HomeScreen.paymentMethodsKey('project-0'));
 
     expect(find.byKey(PaymentMethodsScreen.messageKey), findsNothing);
   });

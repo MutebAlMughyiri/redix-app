@@ -3,7 +3,7 @@
 # UC-003: Change password
 
 **What it is for:** replacing the password; above all the temporary one a new user receives, which must be changed before anything else (AC-02.1).
-**Who uses it:** every signed-in user, from My account; a user with a temporary password is sent here and cannot reach any other screen.
+**Who uses it:** every signed-in user, from Settings; a user with a temporary password is sent here and cannot reach any other screen.
 **Issue:** redix-app #24; the API side is redix-api #22.
 
 ## Screen
@@ -36,4 +36,4 @@
 | An expired access token is renewed once and the request sent again | `Session.post` | `change_password_test.dart`: an expired access token |
 | Without a network the change says so | `Session.changePassword` | `change_password_test.dart`: without a network |
 | A server answer that names no refusal says the server could not change it, never that there is no connection | `refusalOf`, `answerOf` in `lib/api.dart` | `change_password_test.dart`: a server answer that names no refusal |
-| Opened by choice from My account, the screen has a way back | `ChangePasswordScreen` (`AppBar`) | `my_account_test.dart`: the password change opens from My account |
+| Opened by choice from Settings, the screen has a way back | `ChangePasswordScreen` (`AppBar`) | `my_account_test.dart`: the password change opens from Settings |

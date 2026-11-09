@@ -15,7 +15,7 @@
 | Projects | Register new project | Always |
 | A project's card | Users | The project says `manageUsers` |
 | More info | Rename, Add unit, a unit's menu, the description's field and Save, Close project | The project says `manageProject` and is active |
-| Settings | Projects, My account | Always |
+| Settings | Switch project, the default project, the language and the account | Always |
 | Settings | Registered projects | The session says `approveProjects` |
 | A project's Users | New user, Add an existing user; a menu on each row | Always, on this screen |
 | Roles | A tick for each project role, as the API lists them | Always, on this screen |

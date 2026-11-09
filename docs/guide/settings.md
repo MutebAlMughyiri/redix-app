@@ -4,28 +4,44 @@
 
 <img src="images/settings.png" alt="Settings" width="300">
 
+<img src="images/my-account.png" alt="Settings, scrolled to your account" width="300">
+
 ## English
 
-**What it is for:** the way back to your project list, your account and the app's language.
+**What it is for:** who you are, the way back to your project list, your default project, the app's language, and your own account, all on one screen. A project's own screens open from its [home](home.md).
 **Who sees it:** everyone signed in. Open it with the settings button at the top of the project list, or the gear at the top of a project's home.
 
-| Row | Who sees it | Opens |
+| Part | Who sees it | What it does |
 | --- | --- | --- |
-| Switch project | Everyone | The [project list](projects.md) |
-| Registered projects | The admin | [Register a project](register-a-project.md) |
-| My account | Everyone | [My account](my-account.md) |
-| Language | Everyone | A choice of العربية or English, one radio button each, the language in use chosen |
-| More info | Everyone in the project, when opened from it | [More info](projects.md#more-info): its name, start date, status, units and description |
+| Your name | Everyone | Your name, with the username you sign in with under it |
+| Switch project | Everyone | Opens the [project list](projects.md) |
+| Default project | Everyone | The project that opens when you sign in |
+| Registered projects | The admin | Opens [Register a project](register-a-project.md) |
+| Language | Everyone | العربية or English, chosen at once |
+| Sign in with fingerprint or face | Everyone | See below |
+| Change password | Everyone | Opens the password change; the back arrow returns here |
+| Sign out | Everyone | Leaves this phone, after you confirm |
+
+**Sign out:** you will need your username and password to sign in again. Your language stays, and your other phones stay signed in.
+
+**Sign in with fingerprint or face:** turn the switch on, then touch the sensor or look at the phone when asked. From then on, opening the app asks for it instead of your password, and you stay signed in until you sign out. It uses whatever the phone offers securely, and it needs a fingerprint or face set up in the phone's settings first. Signing out turns it off.
 
 ## العربية
 
-**الغرض:** الرجوع إلى قائمة مشاريعك، والوصول إلى حسابك ولغة التطبيق.
+**الغرض:** من أنت، والرجوع إلى قائمة مشاريعك، ومشروعك الافتراضي، ولغة التطبيق، وحسابك، كلها في شاشة واحدة. وشاشات المشروع نفسه تُفتح من [شاشته الرئيسية](home.md).
 **من يراها:** كل من سجّل الدخول. افتحها من زر الإعدادات أعلى قائمة المشاريع، أو من أيقونة الترس أعلى الشاشة الرئيسية للمشروع.
 
-| الصف | من يراه | يفتح |
+| الجزء | من يراه | ما يفعله |
 | --- | --- | --- |
-| تبديل المشروع | الجميع | [قائمة المشاريع](projects.md) |
-| المشاريع المسجّلة | مسؤول النظام | [تسجيل مشروع](register-a-project.md) |
-| حسابي | الجميع | [حسابي](my-account.md) |
-| اللغة | الجميع | اختيار العربية أو English، لكل لغة زر اختيار، واللغة الحالية مختارة |
-| معلومات المشروع | كل من في المشروع، عند فتحها منه | [معلومات المشروع](projects.md#more-info): اسمه وتاريخ بدئه وحالته ووحداته ووصفه |
+| اسمك | الجميع | اسمك، وتحته اسم المستخدم الذي تدخل به |
+| تبديل المشروع | الجميع | يفتح [قائمة المشاريع](projects.md) |
+| المشروع الافتراضي | الجميع | المشروع الذي يُفتح عند تسجيل الدخول |
+| المشاريع المسجّلة | مسؤول النظام | يفتح [تسجيل مشروع](register-a-project.md) |
+| اللغة | الجميع | العربية أو English، تُختار مباشرة |
+| الدخول بالبصمة أو الوجه | الجميع | انظر أدناه |
+| تغيير كلمة المرور | الجميع | يفتح تغيير كلمة المرور؛ وسهم الرجوع يعيدك إلى هنا |
+| تسجيل الخروج | الجميع | يغادر هذا الجوال بعد أن تؤكّد |
+
+**تسجيل الخروج:** ستحتاج إلى اسم المستخدم وكلمة المرور للدخول مرة أخرى. تبقى لغتك، وتبقى جوالاتك الأخرى مسجّلة.
+
+**الدخول بالبصمة أو الوجه:** فعّل المفتاح، ثم المس المستشعر أو انظر إلى الجوال عند الطلب. بعدها يطلبها التطبيق عند فتحه بدل كلمة المرور، وتبقى مسجّلاً حتى تخرج. يستخدم ما يوفره الجوال بأمان، ويحتاج أولاً إلى بصمة أو وجه في إعدادات الجوال. وتسجيل الخروج يوقفها.

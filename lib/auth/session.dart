@@ -32,6 +32,8 @@ class Session extends ChangeNotifier {
   var _accessToken = '';
   var _refreshToken = '';
   var _userId = '';
+  var _username = '';
+  var _displayName = '';
   var _renewal = Future<void>.value();
   var _sending = Future<void>.value();
   var _mustChangePassword = false;
@@ -180,6 +182,12 @@ class Session extends ChangeNotifier {
   /// Who is signed in; empty when nobody is.
   String get userId => _userId;
 
+  /// The name they sign in with; empty when nobody is.
+  String get username => _username;
+
+  /// Their name as it shows on entries; empty when nobody is.
+  String get displayName => _displayName;
+
   /// Reads the API [path] as the signed-in user, renewing an expired access token like [post]. A list read is kept, and without a network the kept copy answers (FR-16).
   Future<http.Response> get(String path) async {
     try {
@@ -265,8 +273,9 @@ class Session extends ChangeNotifier {
   }
 
   Future<void> _keep(http.Response response) async {
-    _apply(jsonDecode(response.body) as Map<String, dynamic>);
-    await _storage.write(key: _storageKey, value: response.body);
+    final body = utf8.decode(response.bodyBytes);
+    _apply(jsonDecode(body) as Map<String, dynamic>);
+    await _storage.write(key: _storageKey, value: body);
     notifyListeners();
   }
 
@@ -282,6 +291,8 @@ class Session extends ChangeNotifier {
     _accessToken = session['accessToken'] as String? ?? '';
     _refreshToken = session['refreshToken'] as String? ?? '';
     _userId = session['userId'] as String? ?? '';
+    _username = session['username'] as String? ?? '';
+    _displayName = session['displayName'] as String? ?? '';
     _mustChangePassword = session['mustChangePassword'] as bool? ?? false;
     _permissions = {...(session['permissions'] as List<dynamic>? ?? []).cast<String>()};
     _defaultProjectId = session['defaultProjectId'] as String? ?? '';

@@ -8,7 +8,7 @@
 
 ## Screens
 
-[Users](../guide/users.md), `UsersScreen` at `/users`, opened from Settings (`SettingsScreen.usersKey`):
+[Users](../guide/users.md), `UsersScreen` at `/users`, opened from the home of a project (`HomeScreen.usersKey`):
 
 | Element | `Key` | Does |
 | --- | --- | --- |

@@ -10,7 +10,7 @@
 **What it is for:** adding the people of a project, giving their roles, and looking after their accounts.
 **Who sees it:** each project's project manager, from **Users** on the project's card. It needs a network.
 
-Each project has its own project manager, who manages its users. Open **Settings** on the project's card, then **Users**. Add a new user, or add someone who already has a login by their exact username. To change what someone may do, open their menu, choose **Permissions** and tick each permission they need; there are no roles. A project needs at least one person who manages its users. If a person also works in a project you do not manage, you cannot reset their password or disable them, but you can untick their permissions here. If a project's only manager forgets their password, nobody in the app can reset it, so keep a second manager.
+Each project has its own project manager, who manages its users. Open **Users** from the project's home. Add a new user, or add someone who already has a login by their exact username. To change what someone may do, open their menu, choose **Permissions** and tick each permission they need; there are no roles. A project needs at least one person who manages its users. If a person also works in a project you do not manage, you cannot reset their password or disable them, but you can untick their permissions here. If a project's only manager forgets their password, nobody in the app can reset it, so keep a second manager.
 
 **Add a user**
 
@@ -50,7 +50,7 @@ Each project has its own project manager, who manages its users. Open **Settings
 **الغرض:** إنشاء حسابات مستخدمي REDIX والعناية بها.
 **من يراها:** مدير كل مشروع، من **المستخدمون** في بطاقة المشروع. تحتاج إلى شبكة.
 
-لكل مشروع مدير مشروع خاص به يدير مستخدميه. افتح **الإعدادات** من بطاقة المشروع، ثم **المستخدمون**. أضف مستخدماً جديداً، أو من له حساب باسم مستخدمه بالضبط. لتغيير ما يستطيعه شخص، افتح قائمته واختر **الصلاحيات** وحدد كل صلاحية يحتاجها؛ فلا أدوار. ويحتاج المشروع إلى شخص واحد على الأقل يدير مستخدميه. وإذا كان الشخص يعمل في مشروع لا تديره، فلا يمكنك إعادة تعيين كلمة مروره أو تعطيله، لكن يمكنك إلغاء صلاحياته هنا. وإذا نسي مدير المشروع الوحيد كلمة مروره فلا أحد في التطبيق يستطيع إعادة تعيينها، فاحرص على مدير ثانٍ.
+لكل مشروع مدير مشروع خاص به يدير مستخدميه. افتح **المستخدمون** من الشاشة الرئيسية للمشروع. أضف مستخدماً جديداً، أو من له حساب باسم مستخدمه بالضبط. لتغيير ما يستطيعه شخص، افتح قائمته واختر **الصلاحيات** وحدد كل صلاحية يحتاجها؛ فلا أدوار. ويحتاج المشروع إلى شخص واحد على الأقل يدير مستخدميه. وإذا كان الشخص يعمل في مشروع لا تديره، فلا يمكنك إعادة تعيين كلمة مروره أو تعطيله، لكن يمكنك إلغاء صلاحياته هنا. وإذا نسي مدير المشروع الوحيد كلمة مروره فلا أحد في التطبيق يستطيع إعادة تعيينها، فاحرص على مدير ثانٍ.
 
 **إضافة مستخدم**
 

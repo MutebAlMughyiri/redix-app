@@ -4,13 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../accounts/accounts.dart';
-import '../accounts/accounts_screen.dart';
 import '../accounts/my_custody.dart';
 import '../auth/session.dart';
-import '../contracts/contracts_screen.dart';
-import '../documents/documents_screen.dart';
-import '../partners/partners_screen.dart';
-import '../reports/reports_screen.dart';
 import '../approvals/approvals_screen.dart';
 import '../entries/add_entry_screen.dart';
 import '../entries/home_entries.dart';
@@ -28,14 +23,10 @@ import '../projects/project_card.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
 import '../settings/settings_screen.dart';
-import '../suppliers/suppliers_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
-import '../reports/vat_statement_screen.dart';
-import '../reports/item_reports_screen.dart';
-import '../accounts/actual_balances_screen.dart';
 
 /// The home of the open project (UC-010): the project, with what the user's permissions allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
@@ -146,6 +137,24 @@ class HomeScreen extends StatefulWidget {
   /// The way into the documents of the project [id].
   static Key documentsKey(String id) => Key('home.documents.$id');
 
+  /// The way into More info of the project [id], moved from Settings (Muteb, 9 Nov 2026).
+  static Key projectInfoKey(String id) => Key('home.projectInfo.$id');
+
+  /// The way into what the signed-in user may do in the project [id], read only (Muteb, 9 Nov 2026).
+  static Key myPermissionsKey(String id) => Key('home.myPermissions.$id');
+
+  /// The way into the users of the project [id], moved from Settings (Muteb, 9 Nov 2026).
+  static Key usersKey(String id) => Key('home.users.$id');
+
+  /// The way into the categories and items of the project [id], moved from Settings (Muteb, 9 Nov 2026).
+  static Key categoriesKey(String id) => Key('home.categories.$id');
+
+  /// The way into the payment methods of the project [id], moved from Settings (Muteb, 9 Nov 2026).
+  static Key paymentMethodsKey(String id) => Key('home.paymentMethods.$id');
+
+  /// Importing the settings of the project [id], grayed until it is built (Muteb, 9 Nov 2026).
+  static Key importSettingsKey(String id) => Key('home.importSettings.$id');
+
   /// The heading over the entries of the project [id].
   static Key entriesHeadingKey(String id) => Key('home.entriesHeading.$id');
 
@@ -183,18 +192,14 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Opens [path] for [project], and reads what home shows again on the way back, since what was done there may have changed it (AC-34.1).
+  /// Opens the screen at [path] of [project], and on coming back reads again the project, which may have changed there, and what the home shows besides it.
   Future<void> _open(String path, Project project) async {
     await context.push(path, extra: project);
-    await _readAgain();
+    await Future.wait([widget.projects.load(), _readAgain()]);
   }
 
   /// Reads again what home shows besides the project: its figures, the latest entries and the accounts.
   Future<void> _readAgain() => Future.wait([widget.dashboard.load(), widget.entries.load(), widget.accounts.load()]);
-
-  Future<void> _openSettings(Project project) async {
-    await context.push(SettingsScreen.pathOf(project.id), extra: project);
-    await Future.wait([widget.projects.load(), _readAgain()]);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 key: HomeScreen.settingsKey(widget.projectId),
                 tooltip: words.settingsTitle,
                 icon: Icon(Icons.settings_outlined, key: HomeScreen.settingsKey(widget.projectId).icon),
-                onPressed: project.isNone ? null : () => _openSettings(project),
+                onPressed: project.isNone ? null : () => _open(SettingsScreen.path, project),
               );
             },
           ),
@@ -266,19 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             MyCustody(accounts: widget.accounts),
             HomeEntries(project: project, entries: widget.entries),
-            ProjectCard(
-              project: project,
-              onAccounts: () => _open(AccountsScreen.pathOf(project.id), project),
-              onPartners: () => _open(PartnersScreen.pathOf(project.id), project),
-              onSuppliers: () => _open(SuppliersScreen.pathOf(project.id), project),
-              onContracts: () => _open(ContractsScreen.pathOf(project.id), project),
-              onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
-              onReports: () => _open(ReportsScreen.pathOf(project.id), project),
-              onDocuments: () => _open(DocumentsScreen.pathOf(project.id), project),
-              onVat: () => _open(VatStatementScreen.pathOf(project.id), project),
-              onItemReports: () => _open(ItemReportsScreen.pathOf(project.id), project),
-              onActualBalances: () => _open(ActualBalancesScreen.pathOf(project.id), project),
-            ),
+            ProjectCard(project: project, onOpen: (path) => _open(path, project)),
           ],
         ),
       ),

@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import 'package:image/image.dart' as img;
 import 'package:patrol/patrol.dart';
 import 'package:qr/qr.dart';
-import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/approvals/approvals_screen.dart';
@@ -54,7 +53,7 @@ import 'package:redix/users/user_permissions_screen.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:redix/words/app_language.dart';
 import 'package:redix/words/words.dart';
-import 'package:redix/words/language_tile.dart';
+import 'package:redix/words/language_switch.dart';
 
 /// The test's admin, created by the API with a temporary password.
 const username = String.fromEnvironment('TEST_USERNAME');
@@ -272,9 +271,9 @@ void main() {
       expect($(ProjectsScreen.titleKey), findsOneWidget);
       await $(ProjectsScreen.settingsKey).tap();
       expect($(SettingsScreen.registeredKey), findsNothing);
-      await $(SettingsScreen.myAccountKey).tap();
-      await $(MyAccountScreen.signOutKey).tap();
-      await $(MyAccountScreen.confirmSignOutKey).tap();
+      await goTo($(SettingsScreen.signOutKey));
+      await $(SettingsScreen.signOutKey).tap();
+      await $(SettingsScreen.confirmSignOutKey).tap();
 
       await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText(username);
@@ -301,9 +300,9 @@ void main() {
       await $(RegisteredProjectsScreen.approveKey(projectId)).tap();
       await reach($(RegisteredProjectsScreen.emptyKey));
       await back();
-      await $(SettingsScreen.myAccountKey).tap();
-      await $(MyAccountScreen.signOutKey).tap();
-      await $(MyAccountScreen.confirmSignOutKey).tap();
+      await goTo($(SettingsScreen.signOutKey));
+      await $(SettingsScreen.signOutKey).tap();
+      await $(SettingsScreen.confirmSignOutKey).tap();
 
       await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText('patrol-reem');
@@ -316,9 +315,8 @@ void main() {
 
       final projectSettings = $(HomeScreen.settingsKey(projectId));
       await reach(projectSettings);
-      await goTo(projectSettings);
-      await projectSettings.tap();
-      await $(SettingsScreen.usersKey).tap();
+      await goTo($(HomeScreen.usersKey(projectId)));
+      await $(HomeScreen.usersKey(projectId)).tap();
       final reemId = await idShowing('users.name.', 'ريم');
       await $(UsersScreen.menuKey(reemId)).tap();
       await $(UsersScreen.permissionsKey).tap();
@@ -326,14 +324,12 @@ void main() {
       await picture('user-permissions');
       await back();
       await back();
-      await back();
 
       await reach(projectSettings);
       await picture('home');
-      final projectInfo = $(SettingsScreen.projectInfoKey);
+      final projectInfo = $(HomeScreen.projectInfoKey(projectId));
       final addUnit = $(ProjectInfoScreen.addUnitKey);
-      await goTo(projectSettings);
-      await projectSettings.tap();
+      await goTo(projectInfo);
       await projectInfo.tap();
       await idShowing('projectInfo.unit.', 'الفلة الشرقية');
       await idShowing('projectInfo.unit.', 'الفلة الشمالية');
@@ -374,13 +370,10 @@ void main() {
       await swipeAway(ProjectInfoScreen.unitRowKey(annexId));
       await gone($(ProjectInfoScreen.unitKey(annexId)));
       await back();
-      await back();
       await says(HomeScreen.titleKey, 'غصون 7');
 
-      await goTo(projectSettings);
-
-      await projectSettings.tap();
-      await $(SettingsScreen.categoriesKey).tap();
+      await goTo($(HomeScreen.categoriesKey(projectId)));
+      await $(HomeScreen.categoriesKey(projectId)).tap();
       final landId = await idShowing('categories.name.', 'تكلفة الأراضي');
       double topOf(Key key) => $.tester.getTopLeft(find.byKey(key)).dy;
       final landTop = topOf(CategoriesScreen.categoryNameKey(landId));
@@ -479,7 +472,8 @@ void main() {
       await reach(canopyMenu);
       await back();
 
-      await $(SettingsScreen.paymentMethodsKey).tap();
+      await goTo($(HomeScreen.paymentMethodsKey(projectId)));
+      await $(HomeScreen.paymentMethodsKey(projectId)).tap();
       await idShowing('paymentMethods.name.', 'شبكة');
       await $(PaymentMethodsScreen.addKey).tap();
       await $(PaymentMethodsScreen.dialogNameKey).enterText('مدى');
@@ -489,7 +483,6 @@ void main() {
       await $(PaymentMethodsScreen.disableKey).tap();
       await reach($(PaymentMethodsScreen.disabledKey(madaId)));
       await picture('payment-methods');
-      await back();
       await back();
 
       await goTo($(HomeScreen.accountsKey(projectId)));
@@ -622,10 +615,8 @@ void main() {
       await $.pumpAndSettle();
       await back();
 
-      await goTo(projectSettings);
-
-      await projectSettings.tap();
-      await $(SettingsScreen.usersKey).tap();
+      await goTo($(HomeScreen.usersKey(projectId)));
+      await $(HomeScreen.usersKey(projectId)).tap();
       await reach($(UsersScreen.menuKey(reemId)));
 
       await $(UsersScreen.newUserKey).tap();
@@ -671,7 +662,6 @@ void main() {
       await back();
 
       await back();
-      await back();
       await reach(projectSettings);
       await back();
       await $(ProjectsScreen.starKey(projectId)).tap();
@@ -685,29 +675,25 @@ void main() {
       expect($.tester.widget<CheckboxListTile>(find.byKey(DefaultProjectSheet.optionKey(projectId))).value, isTrue);
       await picture('default-project');
       await back();
-      await $(SettingsScreen.myAccountKey).tap();
-      await reach($(MyAccountScreen.signOutKey));
+      await goTo($(SettingsScreen.signOutKey));
       await picture('my-account');
-      await back();
 
-      await $(LanguageTile.tileKey).tap();
-      await reach($(LanguageTile.optionKey('ar')));
+      await goTo($(LanguageSwitch.arabicKey));
       await picture('language');
-      await $(LanguageTile.optionKey('ar')).tap();
+      await $(LanguageSwitch.arabicKey).tap();
       await $.pumpAndSettle();
-      expect(Directionality.of($.tester.element(find.byKey(LanguageTile.tileKey))), TextDirection.rtl);
+      expect(Directionality.of($.tester.element(find.byKey(SettingsScreen.languageKey))), TextDirection.rtl);
+      await goTo($(SettingsScreen.switchProjectKey));
 
       await $(SettingsScreen.switchProjectKey).tap();
       await reach($(ProjectsScreen.statusKey(projectId)));
       expect(Directionality.of($.tester.element(find.byKey(ProjectsScreen.statusKey(projectId)))), TextDirection.rtl);
       await picture('projects-arabic');
       await $(ProjectsScreen.cardKey(projectId)).tap();
-      await goTo(projectSettings);
-      await projectSettings.tap();
-      await $(SettingsScreen.usersKey).tap();
+      await goTo($(HomeScreen.usersKey(projectId)));
+      await $(HomeScreen.usersKey(projectId)).tap();
       await reach($(UsersScreen.menuKey(nawafId)));
       await picture('users-arabic');
-      await back();
       await back();
       await reach(projectSettings);
 
@@ -729,24 +715,24 @@ void main() {
       await reach(projectSettings);
       await back();
       await $(ProjectsScreen.settingsKey).tap();
-      await $(LanguageTile.tileKey).tap();
-      await $(LanguageTile.optionKey('en')).tap();
+      await goTo($(LanguageSwitch.englishKey));
+      await $(LanguageSwitch.englishKey).tap();
       await $.pumpAndSettle();
-      expect(Directionality.of($.tester.element(find.byKey(LanguageTile.tileKey))), TextDirection.ltr);
-      await $(SettingsScreen.myAccountKey).tap();
+      expect(Directionality.of($.tester.element(find.byKey(SettingsScreen.languageKey))), TextDirection.ltr);
 
       if (!const bool.fromEnvironment('TEST_HAS_FINGERPRINT')) {
-        await goTo($(MyAccountScreen.biometricsKey));
-        await $(MyAccountScreen.biometricsKey).tap();
-        await reach($(MyAccountScreen.biometricsMessageKey));
-        expect($.tester.widget<SwitchListTile>(find.byKey(MyAccountScreen.biometricsKey)).value, isFalse);
+        await goTo($(SettingsScreen.biometricsKey));
+        await $(SettingsScreen.biometricsKey).tap();
+        await reach($(SettingsScreen.biometricsMessageKey));
+        expect($.tester.widget<SwitchListTile>(find.byKey(SettingsScreen.biometricsKey)).value, isFalse);
       }
 
-      await $(MyAccountScreen.signOutKey).tap();
-      await $(MyAccountScreen.cancelSignOutKey).tap();
-      expect($(MyAccountScreen.signOutKey), findsOneWidget);
-      await $(MyAccountScreen.signOutKey).tap();
-      await $(MyAccountScreen.confirmSignOutKey).tap();
+      await goTo($(SettingsScreen.signOutKey));
+      await $(SettingsScreen.signOutKey).tap();
+      await $(SettingsScreen.cancelSignOutKey).tap();
+      expect($(SettingsScreen.signOutKey), findsOneWidget);
+      await $(SettingsScreen.signOutKey).tap();
+      await $(SettingsScreen.confirmSignOutKey).tap();
 
       await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText('patrol-nawaf');
@@ -760,21 +746,19 @@ void main() {
       await $(ChangePasswordScreen.submitKey).tap();
 
       await $(ProjectsScreen.settingsKey).tap();
-      await reach($(SettingsScreen.myAccountKey));
+      await reach($(SettingsScreen.whoKey));
       expect($(SettingsScreen.registeredKey), findsNothing);
       await $(SettingsScreen.switchProjectKey).tap();
       await reach($(ProjectsScreen.cardKey(projectId)));
       expect($(ProjectsScreen.newProjectKey), findsOneWidget);
       await $(ProjectsScreen.cardKey(projectId)).tap();
       await reach($(HomeScreen.cardKey(projectId)));
-      await goTo(projectSettings);
-      await projectSettings.tap();
-      expect($(SettingsScreen.usersKey), findsNothing);
+      expect($(HomeScreen.usersKey(projectId)), findsNothing);
+      await goTo(projectInfo);
       await projectInfo.tap();
       await says(ProjectInfoScreen.descriptionTextKey, 'ثلاث فلل في حي الياسمين، التسليم ديسمبر 2027.');
       expect(addUnit, findsNothing);
       expect($(ProjectInfoScreen.closeKey), findsNothing);
-      await back();
       await back();
 
       final addEntry = $(HomeScreen.addEntryKey(projectId));
@@ -906,9 +890,9 @@ void main() {
 
       await goTo(projectSettings);
       await projectSettings.tap();
-      await $(SettingsScreen.myAccountKey).tap();
-      await $(MyAccountScreen.signOutKey).tap();
-      await $(MyAccountScreen.confirmSignOutKey).tap();
+      await goTo($(SettingsScreen.signOutKey));
+      await $(SettingsScreen.signOutKey).tap();
+      await $(SettingsScreen.confirmSignOutKey).tap();
 
       await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText('patrol-reem');
@@ -919,8 +903,7 @@ void main() {
       expect(GoRouter.of($.tester.element(find.byKey(HomeScreen.titleKey))).canPop(), isFalse);
 
       final close = $(ProjectInfoScreen.closeKey);
-      await goTo(projectSettings);
-      await projectSettings.tap();
+      await goTo(projectInfo);
       await projectInfo.tap();
 
       await goTo(close);
@@ -934,7 +917,6 @@ void main() {
       await $(ProjectInfoScreen.confirmCloseKey).tap();
       await reach($(messageKeyOf('projects.pendingEntries')));
       expect(close, findsOneWidget, reason: 'BR-35: a project stays active while entries wait for approval');
-      await back();
       await back();
 
       final words = Words.of($.tester.element(find.byKey(HomeScreen.titleKey)));
@@ -961,8 +943,7 @@ void main() {
       await back();
       await gone($(DashboardCard.pendingKey));
 
-      await goTo(projectSettings);
-      await projectSettings.tap();
+      await goTo(projectInfo);
       await projectInfo.tap();
       await goTo(close);
       await close.tap();
@@ -972,12 +953,14 @@ void main() {
       await says(ProjectInfoScreen.statusKey.label, Words.of($.tester.element(find.byKey(ProjectInfoScreen.nameKey))).projectsFinished);
       await back();
 
+      await goTo(projectSettings);
+      await projectSettings.tap();
       await $(SettingsScreen.switchProjectKey).tap();
       await reach($(ProjectsScreen.titleKey));
       await $(ProjectsScreen.settingsKey).tap();
-      await $(SettingsScreen.myAccountKey).tap();
-      await $(MyAccountScreen.signOutKey).tap();
-      await $(MyAccountScreen.confirmSignOutKey).tap();
+      await goTo($(SettingsScreen.signOutKey));
+      await $(SettingsScreen.signOutKey).tap();
+      await $(SettingsScreen.confirmSignOutKey).tap();
     }),
   );
 }

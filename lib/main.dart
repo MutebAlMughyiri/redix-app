@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 
-import 'account/my_account_screen.dart';
 import 'accounts/accounts.dart';
 import 'accounts/accounts_screen.dart';
 import 'accounts/offered_accounts.dart';
@@ -84,6 +83,7 @@ import 'config/app_config.dart';
 import 'entries/entry_link_screen.dart';
 import 'ui/app_color.dart';
 import 'accounts/actual_balances_screen.dart';
+import 'users/my_permissions_screen.dart';
 
 /// Starts the app with the session and the language kept from an earlier start, if any. An app built without its environment's config
 /// file stops here, rather than calling an address nobody chose.
@@ -182,13 +182,9 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session, language: widget.language)),
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
-      GoRoute(path: MyAccountScreen.path, builder: (context, state) => MyAccountScreen(session: widget.session)),
-      GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session, projects: _projects, project: Project.none(), language: widget.language)),
-      GoRoute(
-        path: SettingsScreen.projectPath,
-        builder: (context, state) => SettingsScreen(session: widget.session, projects: _projects, project: state.extra! as Project, language: widget.language),
-      ),
+      GoRoute(path: SettingsScreen.path, builder: (context, state) => SettingsScreen(session: widget.session, projects: _projects, language: widget.language)),
       GoRoute(path: ProjectInfoScreen.path, builder: (context, state) => ProjectInfoScreen(project: state.extra! as Project, projects: _projects)),
+      GoRoute(path: MyPermissionsScreen.path, builder: (context, state) => MyPermissionsScreen(project: state.extra! as Project, projects: _projects)),
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
@@ -218,7 +214,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: RegisteredProjectsScreen.path, builder: (context, state) => RegisteredProjectsScreen(projects: _registered)),
       GoRoute(
         path: UsersScreen.path,
-        builder: (context, state) => UsersScreen(users: _usersOf(state.pathParameters['projectId'] ?? ''), projectName: state.extra as String? ?? ''),
+        builder: (context, state) => UsersScreen(users: _usersOf(state.pathParameters['projectId'] ?? ''), projectName: (state.extra! as Project).name),
       ),
       GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _usersOf(state.pathParameters['projectId'] ?? ''))),
       GoRoute(

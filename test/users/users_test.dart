@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/users/users_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/home/home_screen.dart';
 
 import '../app_harness.dart';
 
@@ -18,8 +18,7 @@ void main() {
       ..give(nawaf, 'project-0', field)
       ..give(disabled, 'project-0', reader);
     await openProject(tester, api);
-    await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
+    await scrollAndTap(tester, api, HomeScreen.usersKey('project-0'));
     return api;
   }
 
@@ -205,8 +204,7 @@ void main() {
     api.give(api.addUser('متعب', username: 'muteb'), 'project-0', const ['manageUsers', 'readProject', 'seeAllCapital']);
     await openProject(tester, api);
     api.online = false;
-    await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
+    await scrollAndTap(tester, api, HomeScreen.usersKey('project-0'));
     expect(text(tester, UsersScreen.messageKey), 'en users.loadFailed');
 
     api.online = true;

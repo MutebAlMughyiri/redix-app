@@ -3,7 +3,7 @@
 # UC-011: Sign in with fingerprint or face
 
 **What it is for:** opening the app without typing the password (FR-35).
-**Who uses it:** anyone who signed in with the password on this phone, and turned it on in My account.
+**Who uses it:** anyone who signed in with the password on this phone, and turned it on in Settings.
 **Issue:** redix-app #30; the API side is redix-api #29.
 
 ## How it works
@@ -21,12 +21,12 @@ The app learns whether the phone has it on from the session the server answered,
 | Sign in with fingerprint or face | `SignInScreen.unlockKey` | Shows while `Session.canUnlock`; the screen asks once by itself as it opens |
 | The message | `SignInScreen.messageKey` | `biometrics.failed`, or `biometrics.usePassword` after the third try |
 
-[My account](../guide/my-account.md), `MyAccountScreen`:
+[Settings](../guide/settings.md), `SettingsScreen`:
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Sign in with fingerprint or face | `MyAccountScreen.biometricsKey` | Turns it on, asking first; turns it off with no prompt |
-| The message | `MyAccountScreen.biometricsMessageKey` | `biometrics.notAvailable` or `biometrics.notChanged` |
+| Sign in with fingerprint or face | `SettingsScreen.biometricsKey` | Turns it on, asking first; turns it off with no prompt |
+| The message | `SettingsScreen.biometricsMessageKey` | `biometrics.notAvailable` or `biometrics.notChanged` |
 
 ## Rules and where they live
 

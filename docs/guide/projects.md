@@ -22,7 +22,7 @@ After you sign in, REDIX lists the projects you have access to. Tap one to open 
 
 <a id="more-info"></a>**More info**
 
-On a project's home, open **Settings**, then **More info**. It shows the project's name, start date, status, units and description to everyone in the project. Whoever does the project's finance also changes them there, while the project is active:
+On a project's home, open **More info**. It shows the project's name, start date, status, units and description to everyone in the project. Whoever does the project's finance also changes them there, while the project is active:
 
 - **Rename:** tap the pencil beside the name.
 - **Add a unit:** tap **Add unit**, type its name, and tap **Add unit**. To rename a unit, use the menu on its row; to delete it, swipe its row. Entries and contracts belong to the project, not a unit, so any unit can be deleted.
@@ -30,7 +30,7 @@ On a project's home, open **Settings**, then **More info**. It shows the project
 
 **Close a finished project**
 
-1. Open **Settings**, then **More info**, and tap **Close project** at the bottom.
+1. Open **More info** from the project's home, and tap **Close project** at the bottom.
 2. Read the question and tap **Close project** to confirm, or **Cancel** to keep it active.
 
 A closed project shows **Finished · Read-only** on its home, stays in the list, and cannot be reopened. Its More info can still be read.
@@ -61,7 +61,7 @@ A closed project shows **Finished · Read-only** on its home, stays in the list,
 
 **معلومات المشروع**
 
-في الشاشة الرئيسية للمشروع، افتح **الإعدادات** ثم **معلومات المشروع**. تعرض اسم المشروع وتاريخ بدئه وحالته ووحداته ووصفه لكل من في المشروع. ويغيّرها منها من يتولى مالية المشروع، ما دام نشطاً:
+في الشاشة الرئيسية للمشروع، افتح **معلومات المشروع**. تعرض اسم المشروع وتاريخ بدئه وحالته ووحداته ووصفه لكل من في المشروع. ويغيّرها منها من يتولى مالية المشروع، ما دام نشطاً:
 
 - **تعديل الاسم:** اضغط القلم بجانب الاسم.
 - **إضافة وحدة:** اضغط **إضافة وحدة**، واكتب اسمها، ثم اضغط **إضافة وحدة**. ولتعديل اسم وحدة استخدم القائمة في سطرها، ولحذفها اسحب سطرها؛ فالقيود والعقود للمشروع لا للوحدة، فتُحذف أي وحدة.
@@ -69,7 +69,7 @@ A closed project shows **Finished · Read-only** on its home, stays in the list,
 
 **إغلاق مشروع منتهٍ**
 
-1. افتح **الإعدادات** ثم **معلومات المشروع**، واضغط **إغلاق المشروع** في الأسفل.
+1. افتح **معلومات المشروع** من الشاشة الرئيسية للمشروع، واضغط **إغلاق المشروع** في الأسفل.
 2. اقرأ السؤال واضغط **إغلاق المشروع** للتأكيد، أو **إلغاء** ليبقى نشطاً.
 
 يظهر في الشاشة الرئيسية للمشروع المغلق **منتهٍ · للقراءة فقط**، ويبقى في القائمة، ولا يمكن إعادة فتحه. وتبقى معلومات المشروع متاحة للقراءة.

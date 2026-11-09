@@ -5,9 +5,9 @@ import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/category.dart';
 import 'package:redix/structure/columns.dart';
 import 'package:redix/structure/item_columns_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
 
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/home/home_screen.dart';
 
 import '../app_harness.dart';
 
@@ -28,8 +28,7 @@ void main() {
     api.addColumn(templatePath, 'تاريخ القالب', dataType: 'date', isCore: true, isRequired: true);
     api.addColumn(templatePath, 'وحدة القالب', dataType: 'list');
     await openProject(tester, api);
-    await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
+    await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.categoryTileKey('category-0'))));
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemColumnsKey('item-1'))));
     return (api: api, date: date['id'] as String, unit: unit['id'] as String, area: area['id'] as String);
@@ -299,8 +298,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6');
     api.addItem(api.addCategory('project-0', 'التشطيب'), 'البلاط');
     await openProject(tester, api);
-    await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
+    await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.categoryTileKey('category-0'))));
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemColumnsKey('item-1'))));

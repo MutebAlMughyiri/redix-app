@@ -20,7 +20,6 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Projects](guide/projects.md) | Everyone, by their role in each project |
 | [Home](guide/home.md) | Everyone, for the projects they have access to |
 | [Settings](guide/settings.md) | Everyone signed in |
-| [My account](guide/my-account.md) | Everyone signed in |
 | [Users](guide/users.md) | Project managers |
 | [Register a project](guide/register-a-project.md) | Everyone; the admin approves |
 | [Categories and items](guide/categories.md) | Whoever does a project's finance |
@@ -52,7 +51,7 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-001](use-cases/UC-001-setup.md) | The base: Arabic and English from the database, the theme, the first screen, the no-network screen | Everyone |
 | [UC-002](use-cases/UC-002-sign-in.md) | Sign in with a username and password, and stay signed in | Every user |
 | [UC-003](use-cases/UC-003-change-password.md) | Change the password, forced while it is temporary | Every signed-in user |
-| [UC-004](use-cases/UC-004-language.md) | Switch the app between Arabic and English in My account | Every signed-in user |
+| [UC-004](use-cases/UC-004-language.md) | Switch the app between Arabic and English in Settings | Every signed-in user |
 | [UC-006](use-cases/UC-006-projects.md) | A project and its units: rename them, delete a unit nothing uses, and close the project when finished | Whoever does the project's finance |
 | [UC-007](use-cases/UC-007-users.md) | Correct logins, disable them, and reset a forgotten password | Project managers |
 | [UC-008](use-cases/UC-008-project-roles.md) | Add people to a project and tick what each may do | Project managers |

@@ -33,10 +33,7 @@ void main() {
   }
 
   /// Goes back from More info and Settings to the project's home, which reads the project again.
-  Future<void> backHome(WidgetTester tester, FakeApi api) async {
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
-  }
+  Future<void> backHome(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byType(BackButton)));
 
   void expectNoChangeOffered() {
     for (final key in [ProjectInfoScreen.renameKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey]) {

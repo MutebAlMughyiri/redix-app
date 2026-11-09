@@ -10,7 +10,6 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/category.dart';
 import 'package:redix/structure/item_tables_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
 
 import 'package:redix/ui/part_keys.dart';
 
@@ -27,8 +26,7 @@ void main() {
     final digging = api.addItem(bone, 'الحفر');
     final steel = api.addItem(bone, 'الحديد', type: 'purchases');
     await openProject(tester, api);
-    await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
+    await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
     return (api: api, bone: bone['id'] as String, finishing: finishing['id'] as String, digging: digging['id'] as String, steel: steel['id'] as String);
   }
 
@@ -217,8 +215,7 @@ void main() {
       {'id': 'contract-1', 'kind': 'contract', 'name': 'مقاول الحفر', 'count': 27},
     ];
     await openProject(tester, api);
-    await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
+    await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
     await open(tester, api, bone['id'] as String);
     if (status == 'active') {
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(item['id'] as String))));
@@ -248,8 +245,7 @@ void main() {
     final method = api.addPaymentMethod('project-0', 'تحويل');
     api.addAccount('project-0', 'حساب المؤسسة', isMine: true);
     await openProject(tester, api);
-    await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
+    await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
     await open(tester, api, bone['id'] as String);
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(item['id'] as String))));
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.tablesKey)));
@@ -257,7 +253,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ItemTablesScreen.addKey)));
     await save(tester, api, 'الجلاي');
     final added = (item['subgroups']! as List<Map<String, Object>>).last['id']! as String;
-    for (var back = 0; back < 3; back++) {
+    for (var back = 0; back < 2; back++) {
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
     }
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
@@ -281,8 +277,7 @@ void main() {
     final bone = api.addCategory('project-0', 'تكلفة العظم');
     final item = api.addItem(bone, 'دفعات العظم', type: 'contractorPayments');
     await openProject(tester, api);
-    await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
+    await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
     await open(tester, api, bone['id'] as String);
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(item['id'] as String))));
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.tablesKey)));
@@ -412,8 +407,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
     api.online = false;
-    await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
+    await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
 
     expect(text(tester, CategoriesScreen.messageKey), 'en categories.loadFailed');
   });
@@ -421,8 +415,7 @@ void main() {
   testWidgets('a project with no categories says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
-    await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
+    await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
 
     expect(text(tester, CategoriesScreen.emptyKey), 'en categories.empty');
   });
@@ -444,8 +437,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
     await openProject(tester, api);
 
-    await openSettings(tester, api);
-    expect(find.byKey(SettingsScreen.categoriesKey), findsNothing);
+    expect(find.byKey(HomeScreen.categoriesKey('project-0')), findsNothing);
   });
 
   group('a new project', () {

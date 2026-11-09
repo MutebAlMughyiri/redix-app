@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/auth/session.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/home/home_screen.dart';
@@ -186,10 +185,9 @@ void main() {
     final prompt = FakePrompt();
     await pumpRedix(tester, api, stored: {'session': keptBiometricSession}, prompt: prompt);
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
 
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.signOutKey)));
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.confirmSignOutKey)));
+    await scrollAndTap(tester, api, SettingsScreen.signOutKey);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.confirmSignOutKey)));
 
     expect(find.byKey(SignInScreen.unlockKey), findsNothing);
     expect(await const FlutterSecureStorage().read(key: 'session'), isNull);

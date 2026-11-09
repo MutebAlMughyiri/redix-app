@@ -10,11 +10,11 @@
 
 The canvas has no screen for this (findings row 7), so it is built from Material's parts, as Categories and items is. A project has no VAT rate to set: the VAT statement's workbook works the VAT out at the config row `vatRatePercent` (redix-api #96, D18).
 
-Settings, `SettingsScreen`, reached from the project's card:
+The home of a project, `HomeScreen`:
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Payment methods | `SettingsScreen.paymentMethodsKey` | Opens the screen below; shown with `manageSettings` |
+| Payment methods | `HomeScreen.paymentMethodsKey` | Opens the screen below; shown with `manageSettings` |
 
 [Payment methods](../guide/payment-methods.md), `PaymentMethodsScreen` at `/projects/:projectId/payment-methods`:
 
@@ -49,7 +49,7 @@ Settings, `SettingsScreen`, reached from the project's card:
 | A refused change says why | `showRefusalOf` | `a refused disable says why` |
 | A number may be typed in Arabic digits, since the app is Arabic first | `parseNumber` | `a typed number reads Western and Arabic digits and thousands separators` |
 | A finished project shows them with nothing to change (AC-04.1) | `Project.mayManageSettings` | `a finished project shows its methods with nothing to change` |
-| Without `manageSettings` there is no way in | `SettingsScreen` | `without manageSettings there is no way in` |
+| Without `manageSettings` there is no way in | `ProjectCard` | `without manageSettings there is no way in` |
 | It fits 360 points wide in both languages (AC-N03) | `PaymentMethodsScreen` | `AC-N03` in `test/account/my_account_test.dart` |
 
 The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, which adds a method and disables it.

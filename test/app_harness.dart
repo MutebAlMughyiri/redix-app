@@ -15,7 +15,6 @@ import 'package:redix/auth/session.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/words/app_language.dart';
 import 'package:redix/ui/app_color.dart';
@@ -35,8 +34,8 @@ Map<String, String> wordsIn(String language) => {
     'changePassword.title', 'changePassword.hint', 'changePassword.current', 'changePassword.new', 'changePassword.confirm',
     'changePassword.submit', 'changePassword.mismatch', 'changePassword.invalidCredentials', 'changePassword.accountLocked',
     'changePassword.weakPassword', 'changePassword.noConnection', 'changePassword.refused',
-    'myAccount.title', 'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
-    'permissions.title', 'permissions.hint', 'permissions.count',
+    'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
+    'permissions.title', 'permissions.hint', 'permissions.count', 'permissions.mine', 'permissions.mineHint', 'projects.importSettings',
     'permissions.readProject', 'permissions.readProjectHint', 'permissions.manageUsers', 'permissions.manageUsersHint', 'permissions.seeAllCapital', 'permissions.seeAllCapitalHint', 'permissions.manageProject', 'permissions.manageProjectHint', 'permissions.manageStructure', 'permissions.manageStructureHint', 'permissions.manageSettings', 'permissions.manageSettingsHint', 'permissions.addSupplier', 'permissions.addSupplierHint', 'permissions.chargeAnyAccount', 'permissions.chargeAnyAccountHint', 'permissions.recordEntries', 'permissions.recordEntriesHint', 'permissions.manageAnyEntry', 'permissions.manageAnyEntryHint', 'permissions.deleteEntries', 'permissions.deleteEntriesHint', 'permissions.attachFiles', 'permissions.attachFilesHint', 'permissions.approveEntries', 'permissions.approveEntriesHint', 'permissions.moveMoney', 'permissions.moveMoneyHint',
     'users.addExisting', 'users.unknownUser', 'users.invalidPermission', 'users.lastManager', 'users.otherProject',
     'signIn.registerProject', 'register.hint', 'register.sent', 'register.tooManyTries', 'register.invalidName', 'register.invalidUsername',
@@ -762,11 +761,11 @@ class FakeApi {
       mustChangePassword = false;
     }
     final body = status == 200
-        ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "usesBiometrics": $usesBiometrics, "userId": "$userId"}'
+        ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "usesBiometrics": $usesBiometrics, "userId": "$userId", "username": "muteb", "displayName": "متعب المغيري"}'
         : code.isEmpty
         ? ''
         : '{"code": "$code"}';
-    return http.Response(body, status);
+    return http.Response.bytes(utf8.encode(body), status);
   });
 
   /// Adds a project to what the API holds, with [units] named in order.
@@ -1697,6 +1696,13 @@ Future<void> openProject(WidgetTester tester, FakeApi api, {InvoiceCapture? capt
 }
 
 /// Opens Settings from the card of the open project [projectId].
+/// Taps the widget keyed [key], scrolled into view first.
+Future<void> scrollAndTap(WidgetTester tester, FakeApi api, Key key) async {
+  await tester.ensureVisible(find.byKey(key));
+  await tester.pumpAndSettle();
+  await act(tester, api, () => tester.tap(find.byKey(key)));
+}
+
 Future<void> openSettings(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) async {
   await tester.ensureVisible(find.byKey(HomeScreen.settingsKey(projectId)));
   await tester.pumpAndSettle();
@@ -1714,11 +1720,9 @@ Future<void> swipeToRemove(WidgetTester tester, FakeApi api, Key rowKey, {double
   await act(tester, api, () => tester.drag(row, Offset(towardStart, 0)));
 }
 
-/// Opens Settings › More info from the card of the open project [projectId] (redix-api 93).
-Future<void> openProjectInfo(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) async {
-  await openSettings(tester, api, projectId: projectId);
-  await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectInfoKey)));
-}
+/// Opens More info from the home of the open project [projectId] (redix-api 93; Muteb, 9 Nov 2026).
+Future<void> openProjectInfo(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) =>
+    scrollAndTap(tester, api, HomeScreen.projectInfoKey(projectId));
 
 /// Taps [finder] and lets the app run half a second, with its requests reaching [api], without waiting for it to settle: a screen shows a spinner, which never settles,
 /// while [api] holds an answer back.

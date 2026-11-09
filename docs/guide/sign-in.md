@@ -14,7 +14,7 @@
 
 You stay signed in on this phone, even without a network, until you are away for 12 hours in a row or your project manager disables your account; then the app asks you to sign in again. With fingerprint or face on, being away does not end it.
 
-If you turned on fingerprint or face in [My account](my-account.md), the app asks for it as it opens. Tap **Use password** on the prompt to type your password instead. After 3 failed tries, or when a new fingerprint or face was added to the phone, only your password works; turn it on again afterwards.
+If you turned on fingerprint or face in [Settings](settings.md), the app asks for it as it opens. Tap **Use password** on the prompt to type your password instead. After 3 failed tries, or when a new fingerprint or face was added to the phone, only your password works; turn it on again afterwards.
 
 | Message | Meaning |
 | --- | --- |
@@ -35,7 +35,7 @@ Forgot your password? The financial supervisor sets a new one for you.
 
 تبقى مسجّلاً على هذا الجوال حتى دون شبكة، إلا إذا غبت 12 ساعة متصلة أو عطّل مدير مشروعك حسابك، فيطلب التطبيق تسجيل الدخول من جديد. ومع تفعيل البصمة أو الوجه لا ينهيها الغياب.
 
-إذا فعّلت البصمة أو الوجه في [حسابي](my-account.md)، يطلبها التطبيق عند فتحه. اضغط **كلمة المرور** في نافذة الطلب لكتابة كلمة المرور بدلاً منها. وبعد 3 محاولات فاشلة، أو عند إضافة بصمة أو وجه جديد إلى الجوال، لا تعمل إلا كلمة المرور؛ ثم فعّلها من جديد.
+إذا فعّلت البصمة أو الوجه في [الإعدادات](settings.md)، يطلبها التطبيق عند فتحه. اضغط **كلمة المرور** في نافذة الطلب لكتابة كلمة المرور بدلاً منها. وبعد 3 محاولات فاشلة، أو عند إضافة بصمة أو وجه جديد إلى الجوال، لا تعمل إلا كلمة المرور؛ ثم فعّلها من جديد.
 
 | الرسالة | معناها |
 | --- | --- |

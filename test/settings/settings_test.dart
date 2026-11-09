@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/default_project_sheet.dart';
 import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/words/language_switch.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/users/my_permissions_screen.dart';
+import 'package:redix/auth/permission.dart';
 
 import '../app_harness.dart';
 import '../app_harness.dart' as harness;
@@ -30,23 +32,32 @@ void main() {
 
     await act(tester, api, () => tester.tap(icon));
 
-    expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.switchProjectKey), findsOneWidget);
   });
 
-  testWidgets('the admin sees Switch project, Registered projects and My account', (tester) async {
+  testWidgets('the admin sees Switch project, the default project and Registered projects', (tester) async {
     await openSettings(tester, FakeApi()..permissions = admin);
 
     expect(find.byKey(SettingsScreen.switchProjectKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.defaultProjectKey), findsOneWidget);
     expect(find.byKey(SettingsScreen.registeredKey), findsOneWidget);
-    expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
   });
 
-  testWidgets('anyone else sees Switch project and My account, and not the registered projects', (tester) async {
+  testWidgets('anyone else sees Switch project and the default project, and not the registered projects', (tester) async {
     await openSettings(tester, FakeApi());
 
     expect(find.byKey(SettingsScreen.switchProjectKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.defaultProjectKey), findsOneWidget);
     expect(find.byKey(SettingsScreen.registeredKey), findsNothing);
-    expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
+  });
+
+  testWidgets('Muteb, 9 Nov 2026: Settings shows the account itself, with no My account or language row to open first', (tester) async {
+    await openSettings(tester, FakeApi());
+
+    for (final key in [SettingsScreen.whoKey, SettingsScreen.languageKey, LanguageSwitch.choiceKey, SettingsScreen.biometricsKey, SettingsScreen.changePasswordKey, SettingsScreen.signOutKey]) {
+      expect(find.byKey(key), findsOneWidget, reason: '$key');
+    }
+    expect(find.text('en myAccount.title'), findsNothing);
   });
 
   testWidgets('Switch project goes back to the list', (tester) async {
@@ -125,34 +136,34 @@ void main() {
     expect((isTicked(tester, 'project-0'), isTicked(tester, 'project-1')), (false, false));
   });
 
-  testWidgets('from the project list Settings holds nothing of a project', (tester) async {
-    await openSettings(tester, FakeApi()..addProject('غصون 6'));
-
-    expect(find.byKey(SettingsScreen.projectInfoKey), findsNothing);
-    expect(find.byKey(SettingsScreen.usersKey), findsNothing);
-    expect(find.byKey(SettingsScreen.categoriesKey), findsNothing);
-    expect(find.byKey(SettingsScreen.paymentMethodsKey), findsNothing);
-  });
-
-  testWidgets('from a project Settings holds More info, its users, categories and items, and payment methods', (tester) async {
+  testWidgets("Muteb, 9 Nov 2026: a project's More info, permissions, users, categories and items, and payment methods open from its home, beside a grayed import of its settings, and Settings holds none of them", (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
 
-    await harness.openSettings(tester, api);
+    for (final key in [HomeScreen.projectInfoKey('project-0'), HomeScreen.myPermissionsKey('project-0'), HomeScreen.usersKey('project-0'), HomeScreen.categoriesKey('project-0'), HomeScreen.paymentMethodsKey('project-0')]) {
+      expect(isEnabled(tester, key), isTrue, reason: '$key');
+    }
+    expect(isEnabled(tester, HomeScreen.importSettingsKey('project-0')), isFalse);
+    expect(tester.widget<Text>(find.byKey(HomeScreen.importSettingsKey('project-0').label)).data, 'en projects.importSettings');
 
-    expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
-    expect(find.byKey(SettingsScreen.projectInfoKey), findsOneWidget);
-    expect(find.byKey(SettingsScreen.usersKey), findsOneWidget);
-    expect(find.byKey(SettingsScreen.categoriesKey), findsOneWidget);
-    expect(find.byKey(SettingsScreen.paymentMethodsKey), findsOneWidget);
+    await harness.openSettings(tester, api);
+    for (final word in ['projectInfo.title', 'permissions.mine', 'users.title', 'categories.title', 'paymentMethods.title', 'projects.importSettings']) {
+      expect(find.text('en $word'), findsNothing, reason: word);
+    }
   });
 
-  testWidgets('My account opens from Settings', (tester) async {
-    final api = FakeApi();
-    await openSettings(tester, api);
+  testWidgets('Muteb, 9 Nov 2026: صلاحياتي on the home shows every permission, those the person holds ticked, and none can be changed there', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', permissions: field);
+    await openProject(tester, api);
+    expect(tester.widget<Text>(find.byKey(HomeScreen.myPermissionsKey('project-0').label)).data, 'en permissions.mine');
 
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
+    await scrollAndTap(tester, api, HomeScreen.myPermissionsKey('project-0'));
 
-    expect(find.byKey(MyAccountScreen.changePasswordKey), findsOneWidget);
+    expect(find.byKey(MyPermissionsScreen.hintKey), findsOneWidget);
+    for (final permission in Permission.inAProject) {
+      final tick = tester.widget<CheckboxListTile>(find.byKey(MyPermissionsScreen.permissionKey(permission).body));
+      expect(tick.value, field.contains(permission.name), reason: permission.name);
+      expect(tick.onChanged, isNull, reason: permission.name);
+    }
   });
 }

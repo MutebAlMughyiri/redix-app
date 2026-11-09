@@ -12,9 +12,11 @@
 
 | Element | `Key` | Does |
 | --- | --- | --- |
+| Who is signed in | `SettingsScreen.whoKey` | Their name over their username |
 | Switch project | `SettingsScreen.switchProjectKey` | Goes to the list (UC-010) |
-| My account | `SettingsScreen.myAccountKey` | Opens My account |
-| More info | `SettingsScreen.projectInfoKey` | Only from a project, for everyone in it: opens More info |
+| Default project | `SettingsScreen.defaultProjectKey` | Chooses the project sign-in opens |
+
+More info opens from a project's home (`HomeScreen.projectInfoKey`), for everyone in it (Muteb, 9 Nov 2026).
 
 [More info](../guide/projects.md#more-info), `ProjectInfoScreen` at `/projects/:projectId/info`, reading the project live from the app's list:
 
@@ -93,8 +95,8 @@ All go through `Session`, which renews an expired access token once and sends ag
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Everyone sees Switch project | `SettingsScreen` | `settings_test.dart`: anyone else sees Switch project and My account |
-| More info is in Settings only when it is opened from a project, for everyone in it | `SettingsScreen` | `settings_test.dart`: anyone else sees Switch project and My account, and not the registered projects; from a project Settings opens after Reports and holds More info; `home_test.dart`: a reader or a field supervisor has More info |
+| Everyone sees Switch project and the default project | `SettingsScreen` | `settings_test.dart`: anyone else sees Switch project and the default project |
+| More info opens from a project's home, for everyone in it, and Settings holds no project screen | `ProjectCard` | `settings_test.dart`: a project's More info, permissions, users, categories and items, and payment methods open from its home; `home_test.dart`: a reader or a field supervisor has More info |
 | The home shows no start date, status or units; More info shows them, the units in order (redix-api #93 R1) | `ProjectCard`, `ProjectInfoScreen` | `home_test.dart`: R1; `project_info_test.dart`: R1 |
 | A finished project's home says in one line that it is finished and read-only (R13) | `ProjectCard` | `home_test.dart`: R13; `project_info_test.dart`: closing makes it finished |
 | Everyone in the project reads More info and its description; only `manageProject` changes it, and only while it is open (R8, AC-04.1) | `Project.mayManageProject`, `ProjectInfoScreen` | `project_info_test.dart`: R8; a finished project shows read-only; whoever manages an open project has Rename, Add unit…; `permission_gates_test.dart`: More info's five gates |

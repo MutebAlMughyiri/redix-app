@@ -8,11 +8,11 @@
 
 ## Screen
 
-In [My account](../guide/my-account.md):
+In [Settings](../guide/settings.md):
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Sign out | `MyAccountScreen.signOutKey` | Asks first, through `ConfirmDialog`, then signs out and leads to the sign-in screen |
+| Sign out | `SettingsScreen.signOutKey` | Asks first, through `ConfirmDialog`, then signs out and leads to the sign-in screen |
 
 ## API calls
 
@@ -24,7 +24,7 @@ In [My account](../guide/my-account.md):
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Signing out asks first, and Cancel changes nothing | `MyAccountScreen`, `ConfirmDialog` | `my_account_test.dart`: signing out asks first |
+| Signing out asks first, and Cancel changes nothing | `SettingsScreen`, `ConfirmDialog` | `my_account_test.dart`: signing out asks first |
 | Signing out ends the session here and leads to sign-in, with no message | `Session.signOut` | `my_account_test.dart`: signing out; Patrol |
 | Without a network the phone still signs out | `Session.signOut` | `my_account_test.dart`: without a network |
 | The chosen language stays on the phone | `AppLanguage`, untouched | `my_account_test.dart`: the language stays |

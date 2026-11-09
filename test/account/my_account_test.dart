@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/permission.dart';
-import 'package:redix/account/my_account_screen.dart';
 import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
@@ -40,9 +39,7 @@ import 'package:redix/users/users_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../app_harness.dart';
-import 'package:redix/words/language_tile.dart';
 import 'package:redix/words/language_switch.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
 import 'package:redix/ui/part_keys.dart';
 
 void main() {
@@ -50,75 +47,81 @@ void main() {
 
   TextDirection direction(WidgetTester tester, Key key) => Directionality.of(tester.element(find.byKey(key)));
 
-  Future<void> openMyAccount(WidgetTester tester, FakeApi api) async {
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
-  }
+  Future<void> openSettingsFromList(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
 
-  SwitchListTile biometricsSwitch(WidgetTester tester) => tester.widget<SwitchListTile>(find.byKey(MyAccountScreen.biometricsKey));
+  SwitchListTile biometricsSwitch(WidgetTester tester) => tester.widget<SwitchListTile>(find.byKey(SettingsScreen.biometricsKey));
+
+  testWidgets('Muteb, 9 Nov 2026: Settings shows who is signed in at its top, their name over the name they sign in with', (tester) async {
+    final api = FakeApi();
+    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await openSettingsFromList(tester, api);
+
+    expect(text(tester, SettingsScreen.whoKey.title), 'متعب المغيري');
+    expect(text(tester, SettingsScreen.whoKey.subtitle), 'muteb');
+  });
 
   testWidgets('turning on fingerprint or face asks first, then tells the server', (tester) async {
     final api = FakeApi();
     final prompt = FakePrompt();
     await pumpRedix(tester, api, stored: {'session': keptSession}, prompt: prompt);
-    await openMyAccount(tester, api);
+    await openSettingsFromList(tester, api);
     expect(biometricsSwitch(tester).value, isFalse);
 
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+    await scrollAndTap(tester, api, SettingsScreen.biometricsKey);
 
     expect(prompt.shown, 1);
     expect(api.sentBiometrics, [true]);
     expect(biometricsSwitch(tester).value, isTrue);
-    expect(find.byKey(MyAccountScreen.biometricsMessageKey), findsNothing);
+    expect(find.byKey(SettingsScreen.biometricsMessageKey), findsNothing);
   });
 
   testWidgets('a phone with no fingerprint or face stays off, tells the server nothing, and says what to do', (tester) async {
     final api = FakeApi();
     await pumpRedix(tester, api, stored: {'session': keptSession}, prompt: FakePrompt()..fails = true);
-    await openMyAccount(tester, api);
+    await openSettingsFromList(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+    await scrollAndTap(tester, api, SettingsScreen.biometricsKey);
 
     expect(api.sentBiometrics, isEmpty);
     expect(biometricsSwitch(tester).value, isFalse);
-    expect(text(tester, MyAccountScreen.biometricsMessageKey), 'en biometrics.notAvailable');
+    expect(text(tester, SettingsScreen.biometricsMessageKey), 'en biometrics.notAvailable');
   });
 
   testWidgets('a prompt with no answer leaves the switch off, and it can be tapped again', (tester) async {
     final api = FakeApi();
     final prompt = FakePrompt()..neverAnswers = true;
     await pumpRedix(tester, api, stored: {'session': keptSession}, prompt: prompt);
-    await openMyAccount(tester, api);
+    await openSettingsFromList(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+    await scrollAndTap(tester, api, SettingsScreen.biometricsKey);
     expect(biometricsSwitch(tester).value, isFalse);
 
     prompt.neverAnswers = false;
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+    await scrollAndTap(tester, api, SettingsScreen.biometricsKey);
     expect(biometricsSwitch(tester).value, isTrue);
   });
 
   testWidgets('without a network it stays off and says so', (tester) async {
     final api = FakeApi();
     await pumpRedix(tester, api, stored: {'session': keptSession}, prompt: FakePrompt());
-    await openMyAccount(tester, api);
+    await openSettingsFromList(tester, api);
 
     api.online = false;
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+    await scrollAndTap(tester, api, SettingsScreen.biometricsKey);
 
     expect(biometricsSwitch(tester).value, isFalse);
-    expect(text(tester, MyAccountScreen.biometricsMessageKey), 'en biometrics.notChanged');
+    expect(text(tester, SettingsScreen.biometricsMessageKey), 'en biometrics.notChanged');
   });
 
   testWidgets('a refused change stays as it was and says so', (tester) async {
     final api = FakeApi()..biometricsStatus = 403;
     await pumpRedix(tester, api, stored: {'session': keptSession}, prompt: FakePrompt());
-    await openMyAccount(tester, api);
+    await openSettingsFromList(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+    await scrollAndTap(tester, api, SettingsScreen.biometricsKey);
 
     expect(biometricsSwitch(tester).value, isFalse);
-    expect(text(tester, MyAccountScreen.biometricsMessageKey), 'en biometrics.notChanged');
+    expect(text(tester, SettingsScreen.biometricsMessageKey), 'en biometrics.notChanged');
   });
 
   testWidgets('turning it off asks nothing', (tester) async {
@@ -126,42 +129,30 @@ void main() {
     final prompt = FakePrompt();
     await pumpRedix(tester, api, stored: {'session': keptBiometricSession}, prompt: prompt);
     expect(prompt.shown, 1);
-    await openMyAccount(tester, api);
+    await openSettingsFromList(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.biometricsKey)));
+    await scrollAndTap(tester, api, SettingsScreen.biometricsKey);
 
     expect(prompt.shown, 1);
     expect(api.sentBiometrics, [false]);
     expect(biometricsSwitch(tester).value, isFalse);
   });
 
-  /// Chooses [language] through Settings' language row, from the project list.
+  /// Chooses [language] through the language switch in Settings, from the project list.
   Future<void> choose(WidgetTester tester, FakeApi api, String language) async {
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(LanguageTile.tileKey)));
-    await act(tester, api, () => tester.tap(find.byKey(LanguageTile.optionKey(language))));
+    await act(tester, api, () => tester.tap(find.byKey(language == 'ar' ? LanguageSwitch.arabicKey : LanguageSwitch.englishKey)));
   }
 
-  testWidgets('UC-004 (Muteb, 8 Nov 2026): Settings has a language row naming the language in use, which opens one radio button per language, the one in use chosen', (tester) async {
+  testWidgets('UC-004 (Muteb, 9 Nov 2026): Settings shows the Arabic and English choice itself, the language in use chosen, with no row to open first', (tester) async {
     final api = FakeApi();
     await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
 
-    expect(text(tester, LanguageTile.tileKey.subtitle), 'ar myAccount.arabic');
-    await act(tester, api, () => tester.tap(find.byKey(LanguageTile.tileKey)));
-
-    expect(text(tester, LanguageTile.optionKey('ar').title), 'ar myAccount.arabic');
-    expect(text(tester, LanguageTile.optionKey('en').title), 'ar myAccount.english');
-    expect(tester.widget<RadioGroup<String>>(find.byKey(LanguageTile.tileKey.body)).groupValue, 'ar');
-  });
-
-  testWidgets('UC-004: My account no longer holds the language', (tester) async {
-    final api = FakeApi();
-    await pumpRedix(tester, api, stored: {'session': keptSession});
-    await openMyAccount(tester, api);
-
-    expect(find.byKey(LanguageSwitch.choiceKey), findsNothing);
-    expect(find.byKey(LanguageTile.tileKey), findsNothing);
+    expect(text(tester, SettingsScreen.languageKey.title), 'ar myAccount.language');
+    expect(text(tester, LanguageSwitch.arabicKey), 'ar myAccount.arabic');
+    expect(text(tester, LanguageSwitch.englishKey), 'ar myAccount.english');
+    expect(tester.widget<SegmentedButton<String>>(find.byKey(LanguageSwitch.choiceKey)).selected, {'ar'});
   });
 
   testWidgets('choosing English on an Arabic phone switches every screen to English, left to right', (tester) async {
@@ -170,8 +161,8 @@ void main() {
 
     await choose(tester, api, 'en');
 
-    expect(text(tester, LanguageTile.tileKey.subtitle), 'en myAccount.english');
-    expect(direction(tester, LanguageTile.tileKey.subtitle), TextDirection.ltr);
+    expect(tester.widget<SegmentedButton<String>>(find.byKey(LanguageSwitch.choiceKey)).selected, {'en'});
+    expect(direction(tester, SettingsScreen.languageKey.title), TextDirection.ltr);
     await act(tester, api, tester.pageBack);
     expect(text(tester, ProjectsScreen.titleKey), 'en projects.choose');
     expect(direction(tester, ProjectsScreen.titleKey), TextDirection.ltr);
@@ -197,48 +188,48 @@ void main() {
     api.online = false;
     await choose(tester, api, 'en');
 
-    expect(text(tester, messageKeyOf('myAccount.languageNeedsNetwork').label), 'ar myAccount.languageNeedsNetwork');
-    expect(direction(tester, messageKeyOf('myAccount.languageNeedsNetwork').label), TextDirection.rtl);
-    expect(text(tester, LanguageTile.tileKey.subtitle), 'ar myAccount.arabic');
+    expect(text(tester, LanguageSwitch.messageKey), 'ar myAccount.languageNeedsNetwork');
+    expect(direction(tester, LanguageSwitch.messageKey), TextDirection.rtl);
+    expect(tester.widget<SegmentedButton<String>>(find.byKey(LanguageSwitch.choiceKey)).selected, {'ar'});
     expect((await SharedPreferences.getInstance()).containsKey('language'), isFalse);
   });
 
-  testWidgets('the password change opens from My account and goes back to it', (tester) async {
+  testWidgets('the password change opens from Settings and goes back to it', (tester) async {
     final api = FakeApi();
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await openMyAccount(tester, api);
+    await openSettingsFromList(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.changePasswordKey)));
+    await scrollAndTap(tester, api, SettingsScreen.changePasswordKey);
     expect(find.byKey(ChangePasswordScreen.currentKey), findsOneWidget);
 
     await act(tester, api, tester.pageBack);
-    expect(find.byKey(MyAccountScreen.changePasswordKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.changePasswordKey), findsOneWidget);
   });
 
   Future<void> signOut(WidgetTester tester, FakeApi api) async {
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.signOutKey)));
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.confirmSignOutKey)));
+    await scrollAndTap(tester, api, SettingsScreen.signOutKey);
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.confirmSignOutKey)));
   }
 
   testWidgets('signing out asks first, says what it means, and Cancel changes nothing', (tester) async {
     final api = FakeApi();
     final session = await pumpRedix(tester, api, stored: {'session': keptSession});
-    await openMyAccount(tester, api);
+    await openSettingsFromList(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.signOutKey)));
-    expect(text(tester, MyAccountScreen.signOutExplainKey), 'en myAccount.signOutExplain');
+    await scrollAndTap(tester, api, SettingsScreen.signOutKey);
+    expect(text(tester, SettingsScreen.signOutExplainKey), 'en myAccount.signOutExplain');
     expect(find.byKey(ConfirmDialog.subjectKey), findsNothing);
 
-    await act(tester, api, () => tester.tap(find.byKey(MyAccountScreen.cancelSignOutKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.cancelSignOutKey)));
     expect(api.signOuts, 0);
     expect(session.isOpen, isTrue);
-    expect(find.byKey(MyAccountScreen.signOutKey), findsOneWidget);
+    expect(find.byKey(SettingsScreen.signOutKey), findsOneWidget);
   });
 
   testWidgets('signing out tells the API, forgets the session, and leads to sign-in with no message', (tester) async {
     final api = FakeApi();
     final session = await pumpRedix(tester, api, stored: {'session': keptSession});
-    await openMyAccount(tester, api);
+    await openSettingsFromList(tester, api);
 
     await signOut(tester, api);
 
@@ -252,7 +243,7 @@ void main() {
   testWidgets('without a network the phone still signs out', (tester) async {
     final api = FakeApi();
     final session = await pumpRedix(tester, api, stored: {'session': keptSession});
-    await openMyAccount(tester, api);
+    await openSettingsFromList(tester, api);
 
     api.online = false;
     await signOut(tester, api);
@@ -265,7 +256,6 @@ void main() {
     final api = FakeApi();
     await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession});
     await choose(tester, api, 'en');
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
 
     await signOut(tester, api);
 
@@ -278,7 +268,6 @@ void main() {
     await pumpRedix(tester, api, stored: {'session': keptSession});
     expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsOneWidget);
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
     await signOut(tester, api);
     api.projects.clear();
 
@@ -296,7 +285,7 @@ void main() {
   testWidgets('the next user signs in as themselves', (tester) async {
     final api = FakeApi()..permissions = admin;
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await openMyAccount(tester, api);
+    await openSettingsFromList(tester, api);
     await signOut(tester, api);
 
     api.permissions = [];
@@ -308,7 +297,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
 
     expect(find.byKey(SettingsScreen.registeredKey), findsNothing);
-    expect(find.byKey(SettingsScreen.myAccountKey), findsOneWidget);
+    expect(text(tester, SettingsScreen.whoKey.subtitle), 'muteb');
   });
 
   for (final (language, textDirection) in [('ar', TextDirection.rtl), ('en', TextDirection.ltr)]) {
@@ -376,9 +365,10 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey(runningId))));
       [HomeScreen.titleKey, HomeScreen.settingsKey(runningId)].forEach(expectFits);
 
-      await openSettings(tester, api, projectId: runningId);
-      expectFits(SettingsScreen.projectInfoKey);
-      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.projectInfoKey)));
+      await tester.ensureVisible(find.byKey(HomeScreen.projectInfoKey(runningId)));
+      await tester.pumpAndSettle();
+      expectFits(HomeScreen.projectInfoKey(runningId));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.projectInfoKey(runningId))));
       [ProjectInfoScreen.nameKey, ProjectInfoScreen.renameKey, ProjectInfoScreen.detailsKey, ProjectInfoScreen.statusKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.unitMenuKey('$runningId-unit-0')]
           .forEach(expectFits);
       await tester.scrollUntilVisible(find.byKey(ProjectInfoScreen.closeKey), 80, scrollable: find.byType(Scrollable).first);
@@ -389,15 +379,13 @@ void main() {
       [ProjectInfoScreen.closeExplainKey, ProjectInfoScreen.confirmCloseKey, ProjectInfoScreen.cancelCloseKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.cancelCloseKey)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       final bone = api.addCategory(runningId, 'العظم');
       final tiles = api.addItem(bone, 'بند الدرابزين والألمنيوم مع التركيب الكامل', subgroups: ['مواد']);
       final disabledItem = api.addItem(bone, 'بند الحديد', isActive: false);
       final boneId = bone['id'] as String;
       final tilesId = tiles['id'] as String;
-      await openSettings(tester, api, projectId: runningId);
-      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.categoriesKey)));
+      await scrollAndTap(tester, api, HomeScreen.categoriesKey(runningId));
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.categoryTileKey(boneId))));
       [
         CategoriesScreen.hintKey,
@@ -469,15 +457,15 @@ void main() {
       [ItemTablesScreen.hintKey, ItemTablesScreen.addKey, ItemTablesScreen.handleKey(subgroupId), ItemTablesScreen.tableNameKey(subgroupId), ItemTablesScreen.detailsKey(subgroupId), ItemTablesScreen.renameKey(subgroupId)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       final cardMethod = api.addPaymentMethod(runningId, 'شبكة')['id'] as String;
       final longMethod = api.addPaymentMethod(runningId, 'تحويل بنكي عن طريق الحساب الجاري للمؤسسة', isActive: false)['id'] as String;
-      await openSettings(tester, api, projectId: runningId);
-      [SettingsScreen.usersKey, SettingsScreen.categoriesKey, SettingsScreen.paymentMethodsKey].forEach(expectFits);
-      await tester.ensureVisible(find.byKey(SettingsScreen.paymentMethodsKey));
-      await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.paymentMethodsKey)));
+      for (final key in [HomeScreen.myPermissionsKey(runningId), HomeScreen.usersKey(runningId), HomeScreen.categoriesKey(runningId), HomeScreen.importSettingsKey(runningId), HomeScreen.paymentMethodsKey(runningId)]) {
+        await tester.ensureVisible(find.byKey(key));
+        await tester.pumpAndSettle();
+        expectFits(key);
+      }
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.paymentMethodsKey(runningId))));
       [
         PaymentMethodsScreen.addKey,
         PaymentMethodsScreen.nameKey(cardMethod),
@@ -491,7 +479,6 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(PaymentMethodsScreen.renameKey)));
       [PaymentMethodsScreen.dialogNameKey, PaymentMethodsScreen.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       api.addMember('user-nawaf', 'نواف بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني بالمشروع');
@@ -650,8 +637,7 @@ void main() {
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-      await openSettings(tester, api, projectId: runningId);
-      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.usersKey)));
+      await scrollAndTap(tester, api, HomeScreen.usersKey(runningId));
       [
         UsersScreen.newUserKey,
         UsersScreen.addExistingKey,
@@ -685,10 +671,9 @@ void main() {
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
-      [SettingsScreen.switchProjectKey, SettingsScreen.registeredKey, SettingsScreen.myAccountKey].forEach(expectFits);
+      [SettingsScreen.whoKey, SettingsScreen.switchProjectKey, SettingsScreen.defaultProjectKey, SettingsScreen.registeredKey].forEach(expectFits);
       api.addRegistered('غصون 8');
       await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.registeredKey)));
       [
@@ -702,12 +687,9 @@ void main() {
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-      expectFits(LanguageTile.tileKey);
-      await act(tester, api, () => tester.tap(find.byKey(LanguageTile.tileKey)));
-      [LanguageTile.optionKey('ar'), LanguageTile.optionKey('en')].forEach(expectFits);
-      await act(tester, api, () => tester.tapAt(const Offset(4, 4)));
-      await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.myAccountKey)));
-      [MyAccountScreen.changePasswordKey, MyAccountScreen.signOutKey].forEach(expectFits);
+      [SettingsScreen.languageKey, LanguageSwitch.arabicKey, LanguageSwitch.englishKey].forEach(expectFits);
+      await tester.scrollUntilVisible(find.byKey(SettingsScreen.signOutKey), 200, scrollable: find.byType(Scrollable).first);
+      [SettingsScreen.biometricsKey, SettingsScreen.changePasswordKey, SettingsScreen.signOutKey].forEach(expectFits);
     });
   }
 }

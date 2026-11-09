@@ -82,12 +82,12 @@ final _dashboardWithAnItem = <String, Object>{
 
 final List<Gate> _gates = [
   (name: 'Registered projects in the settings', permission: Permission.approveProjects, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.registeredKey)),
-  (name: 'Users in the settings', permission: Permission.manageUsers, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.usersKey)),
-  (name: 'Add unit in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.addUnitKey)),
-  (name: 'Rename project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.renameKey)),
-  (name: 'Close project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.closeKey)),
-  (name: 'A unit\'s menu in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.unitMenuKey('$_project-unit-0'))),
-  (name: 'The description in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project)), _tapKey(SettingsScreen.projectInfoKey)], control: _key(ProjectInfoScreen.saveDescriptionKey)),
+  (name: 'Users on the home', permission: Permission.manageUsers, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.usersKey(_project))),
+  (name: 'Add unit in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.addUnitKey)),
+  (name: 'Rename project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.renameKey)),
+  (name: 'Close project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.closeKey)),
+  (name: 'A unit\'s menu in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.unitMenuKey('$_project-unit-0'))),
+  (name: 'The description in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.saveDescriptionKey)),
   (
     name: 'An enabled Add a document',
     permission: Permission.manageProject,
@@ -111,8 +111,8 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.documentsKey(_project))],
     control: _key(DocumentsScreen.documentKey('permit').swipe),
   ),
-  (name: 'Categories and items in the settings', permission: Permission.manageStructure, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.categoriesKey)),
-  (name: 'Payment methods in the settings', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.paymentMethodsKey)),
+  (name: 'Categories and items on the home', permission: Permission.manageStructure, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.categoriesKey(_project))),
+  (name: 'Payment methods on the home', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.paymentMethodsKey(_project))),
   (name: 'An enabled Add an account', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))], control: _enabled(AccountsScreen.addKey)),
   (
     name: 'An account\'s menu',

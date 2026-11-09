@@ -12,7 +12,6 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/sharing/share_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/item_columns_screen.dart';
@@ -35,21 +34,20 @@ typedef MainAction = ({String name, void Function(FakeApi api) arrange, List<Key
 void _nothing(FakeApi api) {}
 
 final _card = ProjectsScreen.cardKey(_project);
-final _settings = HomeScreen.settingsKey(_project);
 
 /// The category and item the fake API numbers first.
 void _anItem(FakeApi api) => api.addItem(api.addCategory(_project, 'التشطيب'), 'البلاط');
-final _theItemsCategory = [_card, _settings, SettingsScreen.categoriesKey, CategoriesScreen.categoryTileKey('category-0')];
+final _theItemsCategory = [_card, HomeScreen.categoriesKey(_project), CategoriesScreen.categoryTileKey('category-0')];
 
 final List<MainAction> _mainActions = [
   (name: 'Home: إضافة قيد', arrange: _nothing, reach: [_card], key: HomeScreen.addEntryKey(_project), icon: Icons.add),
   (name: 'Documents', arrange: _nothing, reach: [_card, HomeScreen.documentsKey(_project)], key: DocumentsScreen.addKey, icon: Icons.add),
   (name: 'Accounts', arrange: _nothing, reach: [_card, HomeScreen.accountsKey(_project)], key: AccountsScreen.addKey, icon: Icons.add),
-  (name: 'Payment methods', arrange: _nothing, reach: [_card, _settings, SettingsScreen.paymentMethodsKey], key: PaymentMethodsScreen.addKey, icon: Icons.add),
+  (name: 'Payment methods', arrange: _nothing, reach: [_card, HomeScreen.paymentMethodsKey(_project)], key: PaymentMethodsScreen.addKey, icon: Icons.add),
   (name: 'Suppliers', arrange: _nothing, reach: [_card, HomeScreen.suppliersKey(_project)], key: SuppliersScreen.addKey, icon: Icons.add),
   (name: 'Partners', arrange: _nothing, reach: [_card, HomeScreen.partnersKey(_project)], key: PartnersScreen.addKey, icon: Icons.add),
   (name: 'Contracts', arrange: _nothing, reach: [_card, HomeScreen.contractsKey(_project)], key: ContractsScreen.addKey, icon: Icons.add),
-  (name: 'Categories', arrange: _nothing, reach: [_card, _settings, SettingsScreen.categoriesKey], key: CategoriesScreen.addCategoryKey, icon: Icons.add),
+  (name: 'Categories', arrange: _nothing, reach: [_card, HomeScreen.categoriesKey(_project)], key: CategoriesScreen.addCategoryKey, icon: Icons.add),
   (
     name: 'An item\'s tables',
     arrange: _anItem,
@@ -64,7 +62,7 @@ final List<MainAction> _mainActions = [
     key: ItemColumnsScreen.addKey,
     icon: Icons.add,
   ),
-  (name: 'Users', arrange: _nothing, reach: [_card, _settings, SettingsScreen.usersKey], key: UsersScreen.newUserKey, icon: Icons.add),
+  (name: 'Users', arrange: _nothing, reach: [_card, HomeScreen.usersKey(_project)], key: UsersScreen.newUserKey, icon: Icons.add),
   (name: 'Projects', arrange: _nothing, reach: [], key: ProjectsScreen.newProjectKey, icon: Icons.add),
   (name: 'Share: a new entry with the file', arrange: _nothing, reach: [], key: ShareScreen.newExpenseKey, icon: Icons.add),
   (

@@ -1214,9 +1214,6 @@ mixin WordGetters {
   /// The word `myAccount.signOutQuestion`.
   String get myAccountSignOutQuestion => text('myAccount.signOutQuestion');
 
-  /// The word `myAccount.title`.
-  String get myAccountTitle => text('myAccount.title');
-
   /// The word `notifications.empty`.
   String get notificationsEmpty => text('notifications.empty');
 
@@ -1424,6 +1421,12 @@ mixin WordGetters {
   /// The word `permissions.manageUsersHint`.
   String get permissionsManageUsersHint => text('permissions.manageUsersHint');
 
+  /// The word `permissions.mine`.
+  String get permissionsMine => text('permissions.mine');
+
+  /// The word `permissions.mineHint`.
+  String get permissionsMineHint => text('permissions.mineHint');
+
   /// The word `permissions.moveMoney`.
   String get permissionsMoveMoney => text('permissions.moveMoney');
 
@@ -1510,6 +1513,9 @@ mixin WordGetters {
 
   /// The word `projects.finished`.
   String get projectsFinished => text('projects.finished');
+
+  /// The word `projects.importSettings`.
+  String get projectsImportSettings => text('projects.importSettings');
 
   /// The word `projects.invalidDescription`.
   String get projectsInvalidDescription => text('projects.invalidDescription');
