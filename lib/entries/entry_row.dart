@@ -94,7 +94,10 @@ class EntryRow {
   final String paymentMethodName;
 
   /// What names it on a list: a partner's money's partner, otherwise its item.
-  String get title => partnerName.isEmpty ? itemName : partnerName;
+  String get title => titleOf(partnerName, itemName);
+
+  /// What an entry is called on a list: its partner's name for a partner's money, otherwise its item's.
+  static String titleOf(String partnerName, String itemName) => partnerName.isEmpty ? itemName : partnerName;
 
   /// True for a purchase or a contractor payment, which Add entry opens to change.
   bool get isExpense => kind.isExpense;

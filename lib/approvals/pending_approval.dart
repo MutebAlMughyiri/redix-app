@@ -1,4 +1,5 @@
 import '../entries/entry_kind.dart';
+import '../entries/entry_row.dart';
 
 /// An entry waiting for Finance's decision (UC-031).
 class PendingApproval {
@@ -62,7 +63,7 @@ class PendingApproval {
   final String partnerName;
 
   /// What names it on its card: a capital movement's partner, otherwise its item.
-  String get title => partnerName.isEmpty ? itemName : partnerName;
+  String get title => EntryRow.titleOf(partnerName, itemName);
 
   /// The word key saying what a capital movement or a revenue entry is; empty for an expense, which its supplier explains.
   String get kindWordKey => kind.isExpense ? '' : kind.wordKey;
