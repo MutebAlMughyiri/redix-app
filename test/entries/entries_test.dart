@@ -323,6 +323,15 @@ void main() {
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
   });
 
+  testWidgets('findings row 189: a swipe that removes an entry on the home reads the figures again, so the waiting count is right at once', (tester) async {
+    final api = await openHome(tester, (api) => api.addEntry(status: 'draft'));
+    api.sentReads.clear();
+
+    await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
+
+    expect(api.sentReads, contains('/projects/project-0/dashboard'));
+  });
+
   for (final status in ['draft', 'pendingApproval', 'rejected']) {
     testWidgets('a bill that is $status, not approved, is removed by a swipe, then it leaves the list', (tester) async {
       final api = await openEntries(tester, (api) => api.addEntry(status: status, rejectionReason: status == 'rejected' ? 'الصورة غير واضحة' : ''), permissions: managerAndFinance);

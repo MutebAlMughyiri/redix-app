@@ -268,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
             ),
             MyCustody(accounts: widget.accounts),
-            HomeEntries(project: project, entries: widget.entries, onOpen: (path) => _open(path, project)),
+            HomeEntries(project: project, entries: widget.entries, onOpen: (path) => _open(path, project), onRemoved: widget.dashboard.load),
             ProjectCard(project: project, onOpen: (path) => _open(path, project)),
           ],
         ),
