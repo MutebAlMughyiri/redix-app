@@ -131,30 +131,30 @@ class _RedixAppState extends State<RedixApp> {
   late final _sync = ProjectSync(widget.session);
   late final _registered = RegisteredProjects(widget.session);
   late final _notifications = Notifications(widget.session);
-  final _projectUsers = <String, Users>{};
-  final _projectCategories = <String, Categories>{};
-  final _columnLists = <String, Columns>{};
-  final _projectPaymentMethods = <String, PaymentMethods>{};
-  final _projectAccounts = <String, Accounts>{};
-  final _projectApprovals = <String, Approvals>{};
-  final _projectEntries = <String, ProjectEntries>{};
-  final _projectMembers = <String, Members>{};
-  final _projectPartners = <String, Partners>{};
-  final _projectSuppliers = <String, Suppliers>{};
+  late final _usersOf = _kept((projectId) => Users(widget.session, projectId));
+  late final _categoriesOf = _kept((projectId) => Categories(widget.session, projectId));
+  late final _paymentMethodsOf = _kept((projectId) => PaymentMethods(widget.session, projectId));
+  late final _accountsOf = _kept((projectId) => Accounts(widget.session, projectId));
+  late final _reconciliationsOf = _kept((projectId) => Reconciliations(widget.session, projectId));
+  late final _dashboardOf = _kept((projectId) => Dashboard(widget.session, projectId));
+  late final _capitalOf = _kept((projectId) => Capital(widget.session, projectId));
+  late final _membersOf = _kept((projectId) => Members(widget.session, projectId));
+  late final _partnersOf = _kept((projectId) => Partners(widget.session, projectId));
+  late final _suppliersOf = _kept((projectId) => Suppliers(widget.session, projectId));
+  late final _contractsOf = _kept((projectId) => Contracts(widget.session, projectId));
+  late final _attachmentsOf = _kept((projectId) => Attachments(widget.session, projectId));
+  late final _recordingOf = _kept((projectId) => EntryRecording(widget.session, projectId, _outbox, _entriesOf(projectId)));
+  late final _entriesOf = _kept((projectId) => ProjectEntries(widget.session, projectId));
+  late final _approvalsOf = _kept((projectId) => Approvals(widget.session, projectId));
+  late final _offeredAccountsOf = _kept((projectId) => OfferedAccounts(widget.session, projectId));
+  late final _columnsAt = _kept((path) => Columns(widget.session, path));
+  late final _periodicReportsOf = _kept((projectId) => PeriodicReports(widget.session, projectId));
+  late final _nextReportOf = _kept((projectId) => NextReport(widget.session, projectId));
+  late final _documentsOf = _kept((projectId) => Documents(widget.session, projectId));
+  late final _attachableOf = _kept((projectId) => AttachableEntries(widget.session, projectId));
+  late final _entryTablesOf = _kept((projectId) => EntryTables(widget.session, projectId));
+  late final _creditableInvoicesOf = _kept((projectId) => CreditableInvoices(widget.session, projectId));
   final _offeredItemLists = <String, OfferedItems>{};
-  final _projectContracts = <String, Contracts>{};
-  final _projectEntryTables = <String, EntryTables>{};
-  final _projectAttachments = <String, Attachments>{};
-  final _projectRecordings = <String, EntryRecording>{};
-  final _projectCreditableInvoices = <String, CreditableInvoices>{};
-  final _projectOfferedAccounts = <String, OfferedAccounts>{};
-  final _projectAttachable = <String, AttachableEntries>{};
-  final _projectReconciliations = <String, Reconciliations>{};
-  final _projectCapital = <String, Capital>{};
-  final _projectDashboards = <String, Dashboard>{};
-  final _projectPeriodicReports = <String, PeriodicReports>{};
-  final _projectNextReports = <String, NextReport>{};
-  final _projectDocuments = <String, Documents>{};
   final _periodicReports = <String, PeriodicReport>{};
   final _itemReports = <String, ItemReport>{};
   final _partnerMovements = <String, CapitalMovements>{};
@@ -175,7 +175,7 @@ class _RedixAppState extends State<RedixApp> {
           capture: widget.capture,
           projects: _projects,
           itemsOf: _offeredItemsOf,
-          entriesOf: (projectId) => _projectAttachable.putIfAbsent(projectId, () => AttachableEntries(widget.session, projectId)),
+          entriesOf: _attachableOf,
           attachmentsOf: _attachmentsOf,
           onDone: _letGoOfShared,
         ),
@@ -199,20 +199,20 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.pathParameters['projectId'] ?? '', projects: _projects, accounts: _accountsOf(state.pathParameters['projectId'] ?? ''), outbox: _outbox, sync: _sync, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), notifications: _notifications, dashboard: _dashboardOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => HomeScreen(projectId: state.projectId, projects: _projects, accounts: _accountsOf(state.projectId), outbox: _outbox, sync: _sync, entries: _entriesOf(state.projectId), notifications: _notifications, dashboard: _dashboardOf(state.projectId)),
       ),
       GoRoute(
         path: ApprovalsScreen.path,
-        builder: (context, state) => ApprovalsScreen(project: state.extra! as Project, approvals: _approvalsOf(state.pathParameters['projectId'] ?? ''), focusEntryId: state.uri.queryParameters['entry'] ?? ''),
+        builder: (context, state) => ApprovalsScreen(project: state.extra! as Project, approvals: _approvalsOf(state.projectId), focusEntryId: state.uri.queryParameters['entry'] ?? ''),
       ),
       GoRoute(
         path: EntryLinkScreen.path,
-        builder: (context, state) => EntryLinkScreen(projectId: state.pathParameters['projectId'] ?? '', entryId: state.pathParameters['entryId'] ?? '', projects: _projects, entriesOf: _entriesOf),
+        builder: (context, state) => EntryLinkScreen(projectId: state.projectId, entryId: state.pathParameters['entryId'] ?? '', projects: _projects, entriesOf: _entriesOf),
       ),
       GoRoute(
         path: AttachmentScreen.path,
         builder: (context, state) => AttachmentScreen(
-          projectId: state.pathParameters['projectId'] ?? '',
+          projectId: state.projectId,
           attachmentId: state.pathParameters['attachmentId'] ?? '',
           fileName: state.uri.queryParameters['name'] ?? '',
           contentType: state.extra as String? ?? '',
@@ -220,66 +220,66 @@ class _RedixAppState extends State<RedixApp> {
           capture: widget.capture,
         ),
       ),
-      GoRoute(path: WaitingScreen.path, builder: (context, state) => WaitingScreen(projectId: state.pathParameters['projectId'] ?? '', outbox: _outbox)),
+      GoRoute(path: WaitingScreen.path, builder: (context, state) => WaitingScreen(projectId: state.projectId, outbox: _outbox)),
       GoRoute(path: NewProjectScreen.registerPath, builder: (context, state) => NewProjectScreen(projects: _projects, isPublic: true)),
       GoRoute(path: RegisteredProjectsScreen.path, builder: (context, state) => RegisteredProjectsScreen(projects: _registered)),
       GoRoute(
         path: UsersScreen.path,
-        builder: (context, state) => UsersScreen(users: _usersOf(state.pathParameters['projectId'] ?? ''), projectName: (state.extra! as Project).name),
+        builder: (context, state) => UsersScreen(users: _usersOf(state.projectId), projectName: (state.extra! as Project).name),
       ),
-      GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _usersOf(state.pathParameters['projectId'] ?? ''))),
+      GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _usersOf(state.projectId))),
       GoRoute(
         path: UserPermissionsScreen.path,
         builder: (context, state) => UserPermissionsScreen(
           userId: state.pathParameters['userId'] ?? '',
-          users: _usersOf(state.pathParameters['projectId'] ?? ''),
+          users: _usersOf(state.projectId),
           projectName: state.extra as String? ?? '',
         ),
       ),
       GoRoute(
         path: CategoriesScreen.path,
-        builder: (context, state) => CategoriesScreen(categories: _categoriesOf(state.pathParameters['projectId'] ?? ''), project: state.extra! as Project),
+        builder: (context, state) => CategoriesScreen(categories: _categoriesOf(state.projectId), project: state.extra! as Project),
       ),
-      GoRoute(path: ItemColumnsScreen.path, builder: (context, state) => _itemColumnsScreen(state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? '', state.extra! as Project)),
+      GoRoute(path: ItemColumnsScreen.path, builder: (context, state) => _itemColumnsScreen(state.projectId, state.pathParameters['itemId'] ?? '', state.extra! as Project)),
       GoRoute(
         path: PaymentMethodsScreen.path,
-        builder: (context, state) => PaymentMethodsScreen(project: state.extra! as Project, paymentMethods: _paymentMethodsOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => PaymentMethodsScreen(project: state.extra! as Project, paymentMethods: _paymentMethodsOf(state.projectId)),
       ),
       GoRoute(
         path: AccountsScreen.path,
         builder: (context, state) => AccountsScreen(
           project: state.extra! as Project,
-          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
-          members: _membersOf(state.pathParameters['projectId'] ?? ''),
+          accounts: _accountsOf(state.projectId),
+          members: _membersOf(state.projectId),
         ),
       ),
       GoRoute(
         path: ActualBalancesScreen.path,
         builder: (context, state) => ActualBalancesScreen(
           project: state.extra! as Project,
-          reconciliations: _reconciliationsOf(state.pathParameters['projectId'] ?? ''),
-          accounts: _accountsOf(state.pathParameters['projectId'] ?? ''),
-          members: _membersOf(state.pathParameters['projectId'] ?? ''),
+          reconciliations: _reconciliationsOf(state.projectId),
+          accounts: _accountsOf(state.projectId),
+          members: _membersOf(state.projectId),
         ),
       ),
       GoRoute(
         path: ReportsScreen.path,
         builder: (context, state) => ReportsScreen(
           project: state.extra! as Project,
-          periodicReports: _projectPeriodicReports.putIfAbsent(state.pathParameters['projectId'] ?? '', () => PeriodicReports(widget.session, state.pathParameters['projectId'] ?? '')),
-          nextReport: _projectNextReports.putIfAbsent(state.pathParameters['projectId'] ?? '', () => NextReport(widget.session, state.pathParameters['projectId'] ?? '')),
+          periodicReports: _periodicReportsOf(state.projectId),
+          nextReport: _nextReportOf(state.projectId),
         ),
       ),
       GoRoute(
         path: ItemReportsScreen.path,
-        builder: (context, state) => ItemReportsScreen(project: state.extra! as Project, dashboard: _dashboardOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => ItemReportsScreen(project: state.extra! as Project, dashboard: _dashboardOf(state.projectId)),
       ),
       GoRoute(
         path: PeriodicReportScreen.path,
         builder: (context, state) => PeriodicReportScreen(
           project: state.extra! as Project,
           number: int.parse(state.pathParameters['number'] ?? '0'),
-          report: _periodicReports.putIfAbsent(state.uri.path, () => PeriodicReport(widget.session, state.pathParameters['projectId'] ?? '', int.parse(state.pathParameters['number'] ?? '0'))),
+          report: _periodicReports.putIfAbsent(state.uri.path, () => PeriodicReport(widget.session, state.projectId, int.parse(state.pathParameters['number'] ?? '0'))),
           files: _reportFiles,
         ),
       ),
@@ -288,7 +288,7 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => ItemReportScreen(
           project: state.extra! as Project,
           itemId: state.pathParameters['itemId'] ?? '',
-          report: _itemReports.putIfAbsent(state.uri.path, () => ItemReport(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? '')),
+          report: _itemReports.putIfAbsent(state.uri.path, () => ItemReport(widget.session, state.projectId, state.pathParameters['itemId'] ?? '')),
           files: _reportFiles,
         ),
       ),
@@ -301,16 +301,16 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(
         path: ReconcileScreen.path,
-        builder: (context, state) => ReconcileScreen(project: state.extra! as Project, reconciliations: _reconciliationsOf(state.pathParameters['projectId'] ?? '')),
+        builder: (context, state) => ReconcileScreen(project: state.extra! as Project, reconciliations: _reconciliationsOf(state.projectId)),
       ),
       GoRoute(
         path: PartnersScreen.path,
         builder: (context, state) => PartnersScreen(
           project: state.extra! as Project,
-          partners: _partnersOf(state.pathParameters['projectId'] ?? ''),
-          items: _offeredItemsOf(state.pathParameters['projectId'] ?? '', ItemType.capital),
-          members: _membersOf(state.pathParameters['projectId'] ?? ''),
-          capital: _capitalOf(state.pathParameters['projectId'] ?? ''),
+          partners: _partnersOf(state.projectId),
+          items: _offeredItemsOf(state.projectId, ItemType.capital),
+          members: _membersOf(state.projectId),
+          capital: _capitalOf(state.projectId),
         ),
       ),
       GoRoute(
@@ -318,15 +318,15 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => MovementsScreen(
           project: state.extra! as Project,
           partnerName: state.uri.queryParameters['name'] ?? '',
-          movements: _partnerMovements.putIfAbsent(state.uri.path, () => CapitalMovements(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['partnerId'] ?? '')),
-          capital: _capitalOf(state.pathParameters['projectId'] ?? ''),
+          movements: _partnerMovements.putIfAbsent(state.uri.path, () => CapitalMovements(widget.session, state.projectId, state.pathParameters['partnerId'] ?? '')),
+          capital: _capitalOf(state.projectId),
         ),
       ),
       GoRoute(
         path: DocumentsScreen.path,
         builder: (context, state) => DocumentsScreen(
           project: state.extra! as Project,
-          documents: _projectDocuments.putIfAbsent(state.pathParameters['projectId'] ?? '', () => Documents(widget.session, state.pathParameters['projectId'] ?? '')),
+          documents: _documentsOf(state.projectId),
           capture: widget.capture,
           files: _reportFiles,
         ),
@@ -335,75 +335,41 @@ class _RedixAppState extends State<RedixApp> {
         path: SuppliersScreen.path,
         builder: (context, state) => SuppliersScreen(
           project: state.extra! as Project,
-          suppliers: _suppliersOf(state.pathParameters['projectId'] ?? ''),
-          items: _offeredItemsOf(state.pathParameters['projectId'] ?? '', ItemType.purchases),
+          suppliers: _suppliersOf(state.projectId),
+          items: _offeredItemsOf(state.projectId, ItemType.purchases),
         ),
       ),
       GoRoute(
         path: ContractsScreen.path,
         builder: (context, state) => ContractsScreen(
           project: state.extra! as Project,
-          contracts: _contractsOf(state.pathParameters['projectId'] ?? ''),
-          suppliers: _suppliersOf(state.pathParameters['projectId'] ?? ''),
-          items: _offeredItemsOf(state.pathParameters['projectId'] ?? '', ItemType.contractorPayments),
-          attachments: _attachmentsOf(state.pathParameters['projectId'] ?? ''),
+          contracts: _contractsOf(state.projectId),
+          suppliers: _suppliersOf(state.projectId),
+          items: _offeredItemsOf(state.projectId, ItemType.contractorPayments),
+          attachments: _attachmentsOf(state.projectId),
           capture: widget.capture,
           files: _reportFiles,
         ),
       ),
-      GoRoute(path: AddEntryScreen.path, builder: (context, state) => _addEntryScreen(state.pathParameters['projectId'] ?? '', state.extra! as Project, state.uri.queryParameters)),
+      GoRoute(path: AddEntryScreen.path, builder: (context, state) => _addEntryScreen(state.projectId, state.extra! as Project, state.uri.queryParameters)),
       GoRoute(
         path: EntriesScreen.path,
-        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.pathParameters['projectId'] ?? ''), openEntryId: state.uri.queryParameters['entry'] ?? '', startsSearching: state.uri.queryParameters.containsKey('search')),
+        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.projectId), openEntryId: state.uri.queryParameters['entry'] ?? '', startsSearching: state.uri.queryParameters.containsKey('search')),
       ),
       GoRoute(
         path: ItemTablesScreen.path,
         builder: (context, state) => ItemTablesScreen(
           itemId: state.pathParameters['itemId'] ?? '',
           project: state.extra! as Project,
-          categories: _categoriesOf(state.pathParameters['projectId'] ?? ''),
-          tables: _itemTables.putIfAbsent(state.uri.path, () => ItemTables(widget.session, state.pathParameters['projectId'] ?? '', state.pathParameters['itemId'] ?? '')),
+          categories: _categoriesOf(state.projectId),
+          tables: _itemTables.putIfAbsent(state.uri.path, () => ItemTables(widget.session, state.projectId, state.pathParameters['itemId'] ?? '')),
         ),
       ),
     ],
   );
 
-  Users _usersOf(String projectId) => _projectUsers.putIfAbsent(projectId, () => Users(widget.session, projectId));
-
-
-  Categories _categoriesOf(String projectId) => _projectCategories.putIfAbsent(projectId, () => Categories(widget.session, projectId));
-
-  PaymentMethods _paymentMethodsOf(String projectId) => _projectPaymentMethods.putIfAbsent(projectId, () => PaymentMethods(widget.session, projectId));
-
-  Accounts _accountsOf(String projectId) => _projectAccounts.putIfAbsent(projectId, () => Accounts(widget.session, projectId));
-
-  Reconciliations _reconciliationsOf(String projectId) => _projectReconciliations.putIfAbsent(projectId, () => Reconciliations(widget.session, projectId));
-
-  Dashboard _dashboardOf(String projectId) => _projectDashboards.putIfAbsent(projectId, () => Dashboard(widget.session, projectId));
-
-
-  Capital _capitalOf(String projectId) => _projectCapital.putIfAbsent(projectId, () => Capital(widget.session, projectId));
-
-  Members _membersOf(String projectId) => _projectMembers.putIfAbsent(projectId, () => Members(widget.session, projectId));
-
-  Partners _partnersOf(String projectId) => _projectPartners.putIfAbsent(projectId, () => Partners(widget.session, projectId));
-
-  Suppliers _suppliersOf(String projectId) => _projectSuppliers.putIfAbsent(projectId, () => Suppliers(widget.session, projectId));
-
   /// The items of [projectId] offered for [type]: an expense of that type, revenue of any kind, or a partner's capital item.
   OfferedItems _offeredItemsOf(String projectId, ItemType type) => _offeredItemLists.putIfAbsent('$projectId/${type.name}', () => OfferedItems(widget.session, projectId, type));
-
-  Contracts _contractsOf(String projectId) => _projectContracts.putIfAbsent(projectId, () => Contracts(widget.session, projectId));
-
-  Attachments _attachmentsOf(String projectId) => _projectAttachments.putIfAbsent(projectId, () => Attachments(widget.session, projectId));
-
-  EntryRecording _recordingOf(String projectId) => _projectRecordings.putIfAbsent(projectId, () => EntryRecording(widget.session, projectId, _outbox, _entriesOf(projectId)));
-
-  ProjectEntries _entriesOf(String projectId) => _projectEntries.putIfAbsent(projectId, () => ProjectEntries(widget.session, projectId));
-
-  Approvals _approvalsOf(String projectId) => _projectApprovals.putIfAbsent(projectId, () => Approvals(widget.session, projectId));
-
-  OfferedAccounts _offeredAccountsOf(String projectId) => _projectOfferedAccounts.putIfAbsent(projectId, () => OfferedAccounts(widget.session, projectId));
 
   AddEntryScreen _addEntryScreen(String projectId, Project project, Map<String, String> query) => AddEntryScreen(
     sharedFile: query.containsKey('shared') ? _shared : PickedFile.none(),
@@ -412,12 +378,12 @@ class _RedixAppState extends State<RedixApp> {
     rejectionReason: query['reason'] ?? '',
     project: project,
     recording: _recordingOf(projectId),
-    tables: _projectEntryTables.putIfAbsent(projectId, () => EntryTables(widget.session, projectId)),
+    tables: _entryTablesOf(projectId),
     contracts: _contractsOf(projectId),
     accounts: _offeredAccountsOf(projectId),
     paymentMethods: _paymentMethodsOf(projectId),
     suppliers: _suppliersOf(projectId),
-    creditableInvoices: _projectCreditableInvoices.putIfAbsent(projectId, () => CreditableInvoices(widget.session, projectId)),
+    creditableInvoices: _creditableInvoicesOf(projectId),
     columnsOf: (itemId) => _columnsAt(Columns.itemPath(projectId, itemId)),
     attachments: _attachmentsOf(projectId),
     capture: widget.capture,
@@ -425,8 +391,6 @@ class _RedixAppState extends State<RedixApp> {
     approvals: _approvalsOf(projectId),
     projectAccounts: _accountsOf(projectId),
   );
-
-  Columns _columnsAt(String path) => _columnLists.putIfAbsent(path, () => Columns(widget.session, path));
 
   ItemColumnsScreen _itemColumnsScreen(String projectId, String itemId, Project project) {
     final categories = _categoriesOf(projectId);
@@ -519,4 +483,15 @@ class _RedixAppState extends State<RedixApp> {
       ),
     );
   }
+}
+
+/// What [make] builds for a key, a project's id or a route, built the first time it is asked for and then kept.
+T Function(String) _kept<T>(T Function(String key) make) {
+  final built = <String, T>{};
+  return (key) => built.putIfAbsent(key, () => make(key));
+}
+
+extension on GoRouterState {
+  /// The project the route is about; empty on a route that names none.
+  String get projectId => pathParameters['projectId'] ?? '';
 }
