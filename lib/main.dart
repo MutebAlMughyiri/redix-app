@@ -174,7 +174,7 @@ class _RedixAppState extends State<RedixApp> {
           file: _shared,
           capture: widget.capture,
           projects: _projects,
-          itemsOf: _offeredItemsOf,
+          tablesOf: _entryTablesOf,
           entriesOf: _attachableOf,
           attachmentsOf: _attachmentsOf,
           onDone: _letGoOfShared,

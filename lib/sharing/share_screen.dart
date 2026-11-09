@@ -13,9 +13,6 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../projects/projects.dart';
-import '../structure/category.dart';
-import '../structure/item_picker.dart';
-import '../structure/offered_items.dart';
 import '../ui/bottom_button.dart';
 import '../ui/form_section.dart';
 import '../ui/labelled_chips.dart';
@@ -27,11 +24,13 @@ import 'attachable_entries.dart';
 import 'attachable_entry.dart';
 import '../ui/app_color.dart';
 import '../ui/refusal_text.dart';
+import '../entries/table_picker.dart';
+import '../entries/entry_tables.dart';
 
 /// What opens when a picture or a PDF is shared to the app (UC-038, FR-49): put it on an expense entered without an invoice (UC-039), or start a new expense with it (UC-046).
 class ShareScreen extends StatefulWidget {
   /// The screen holding [file], read through [capture], in one of [projects].
-  const ShareScreen({super.key, required this.file, required this.capture, required this.projects, required this.itemsOf, required this.entriesOf, required this.attachmentsOf, required this.onDone});
+  const ShareScreen({super.key, required this.file, required this.capture, required this.projects, required this.tablesOf, required this.entriesOf, required this.attachmentsOf, required this.onDone});
 
   /// The address of the screen.
   static const path = '/share';
@@ -42,14 +41,8 @@ class ShareScreen extends StatefulWidget {
   /// The line saying there is no project to enter in.
   static const noProjectKey = Key('share.noProject');
 
-  /// The item.
-  static const itemKey = Key('share.item');
-
-  /// The choice of purchases.
-  static const purchasesKey = Key('share.purchases');
-
-  /// The choice of contractor payments.
-  static const contractorPaymentsKey = Key('share.contractorPayments');
+  /// The field choosing the table, the one list إضافة قيد uses (findings row 177, Muteb, 9 Nov 2026).
+  static const tableKey = Key('share.table');
 
   /// The line saying the amounts differ.
   static const amountDiffersKey = Key('share.amountDiffers');
@@ -62,7 +55,6 @@ class ShareScreen extends StatefulWidget {
 
   /// The button starting a new expense with it.
   static const newExpenseKey = Key('share.newExpense');
-
 
   /// The line saying why it was refused.
   static const messageKey = Key('share.message');
@@ -112,8 +104,8 @@ class ShareScreen extends StatefulWidget {
   /// The projects to choose from.
   final Projects projects;
 
-  /// What a project offers of a type of item.
-  final OfferedItems Function(String projectId, ItemType type) itemsOf;
+  /// The tables an entry of a project may go into.
+  final EntryTables Function(String projectId) tablesOf;
 
   /// What a project's items hold.
   final AttachableEntries Function(String projectId) entriesOf;
@@ -131,8 +123,7 @@ class ShareScreen extends StatefulWidget {
 class _ShareScreenState extends State<ShareScreen> {
   var _qr = InvoiceQr.none();
   var _projectId = '';
-  var _type = ItemType.purchases;
-  var _item = Item.none();
+  var _table = EntryTable.none();
   var _chosen = '';
   var _message = '';
   var _saving = false;
@@ -160,26 +151,18 @@ class _ShareScreenState extends State<ShareScreen> {
   void _chooseProject(Project project) {
     setState(() {
       _projectId = project.id;
-      _item = Item.none();
+      _table = EntryTable.none();
       _chosen = '';
     });
   }
 
-  void _chooseType(ItemType type) {
+  Future<void> _chooseTable(EntryTable table) async {
     setState(() {
-      _type = type;
-      _item = Item.none();
-      _chosen = '';
-    });
-  }
-
-  Future<void> _chooseItem(Item item) async {
-    setState(() {
-      _item = item;
+      _table = table;
       _chosen = '';
     });
     final entries = widget.entriesOf(_project.id);
-    await entries.findIn(item.id, _qr);
+    await entries.findIn(table.itemId, _qr);
     final matching = entries.all.where((entry) => entry.isMatching);
     if (mounted && matching.isNotEmpty) {
       setState(() => _chosen = matching.first.id);
@@ -297,15 +280,8 @@ class _ShareScreenState extends State<ShareScreen> {
               onChosen: _chooseProject,
             ),
           FormSection(key: ShareScreen.forSectionKey, [
-            Wrap(
-              spacing: 8,
-              children: [
-                ChoiceChip(key: ShareScreen.purchasesKey, label: Text(words.approvalsPurchases, key: ShareScreen.purchasesKey.label), selected: _type == ItemType.purchases, onSelected: (_) => _chooseType(ItemType.purchases)),
-                ChoiceChip(key: ShareScreen.contractorPaymentsKey, label: Text(words.approvalsContractorPayments, key: ShareScreen.contractorPaymentsKey.label), selected: _type == ItemType.contractorPayments, onSelected: (_) => _chooseType(ItemType.contractorPayments)),
-              ],
-            ),
-            ItemPicker(key: ShareScreen.itemKey, items: widget.itemsOf(project.id, _type), label: words.expensesItem, itemName: _item.name, onChanged: _chooseItem),
-            if (_item.id.isEmpty) Text(words.shareChooseItem, key: ShareScreen.chooseItemKey) else _expenses(),
+            TablePicker(key: ShareScreen.tableKey, tables: widget.tablesOf(project.id), chosen: _table, keeps: (table) => table.isExpense, onChanged: _chooseTable),
+            if (_table.isNone) Text(words.shareChooseItem, key: ShareScreen.chooseItemKey) else _expenses(),
           ]),
         ],
       ),

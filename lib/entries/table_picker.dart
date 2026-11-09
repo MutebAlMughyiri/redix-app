@@ -11,8 +11,8 @@ import '../ui/picker_sheet.dart';
 /// The field that chooses the table an expense goes into (redix-app #84), opening a sheet of every table on offer: by category, each item with its general table first and its
 /// named tables and contracts under it, with a search over the items' and the tables' names.
 class TablePicker extends StatelessWidget {
-  /// The field showing [chosen], choosing among [tables] and answering [onChanged].
-  const TablePicker({super.key, required this.tables, required this.chosen, required this.onChanged});
+  /// The field showing [chosen], choosing among those of [tables] that [keeps] holds and answering [onChanged].
+  const TablePicker({super.key, required this.tables, required this.chosen, required this.onChanged, this.keeps = _every});
 
   /// What is on offer.
   final EntryTables tables;
@@ -22,6 +22,11 @@ class TablePicker extends StatelessWidget {
 
   /// Called with the table chosen.
   final ValueChanged<EntryTable> onChanged;
+
+  /// Which tables are offered, for a screen that takes only some.
+  final bool Function(EntryTable table) keeps;
+
+  static bool _every(EntryTable table) => true;
 
   /// The choice of the table [id].
   static Key optionKey(String id) => Key('tablePicker.option.$id');
@@ -39,7 +44,7 @@ class TablePicker extends StatelessWidget {
   static Key categoryKey(String name) => Key('tablePicker.category.$name');
 
   Future<void> _choose(BuildContext context) async {
-    final picked = await showPickerSheet<EntryTable>(context, (_) => _TableSheet(tables: tables));
+    final picked = await showPickerSheet<EntryTable>(context, (_) => _TableSheet(tables: tables, keeps: keeps));
     if (picked != null) {
       onChanged(picked);
     }
@@ -51,9 +56,11 @@ class TablePicker extends StatelessWidget {
 
 /// The sheet of tables, narrowed by what is typed.
 class _TableSheet extends StatefulWidget {
-  const _TableSheet({required this.tables});
+  const _TableSheet({required this.tables, required this.keeps});
 
   final EntryTables tables;
+
+  final bool Function(EntryTable table) keeps;
 
   @override
   State<_TableSheet> createState() => _TableSheetState();
@@ -62,10 +69,17 @@ class _TableSheet extends StatefulWidget {
 class _TableSheetState extends State<_TableSheet> {
   var _typed = '';
 
-  /// The tables of [item] the search keeps: all of them when the item's name holds what was typed, otherwise those whose own name does, in one spelling.
+  @override
+  void initState() {
+    super.initState();
+    widget.tables.loadOnOpen();
+  }
+
+  /// The tables of [item] on offer that the search keeps: all of them when the item's name holds what was typed, otherwise those whose own name does, in one spelling.
   List<EntryTable> _keptOf(TableItem item) {
     bool holds(String name) => sameSpelling(name).contains(_typed);
-    return holds(item.name) ? item.tables : item.tables.where((table) => holds(table.name)).toList();
+    final offered = item.tables.where(widget.keeps).toList();
+    return holds(item.name) ? offered : offered.where((table) => holds(table.name)).toList();
   }
 
   /// The item's general table, or its name when it takes no purchase, and under it each of its other [kept] tables.
