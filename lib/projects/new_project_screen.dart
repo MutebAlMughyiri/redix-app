@@ -11,7 +11,7 @@ import 'project.dart';
 import 'project_registration.dart';
 import 'projects.dart';
 import '../ui/typed_names.dart';
-import '../ui/app_color.dart';
+import '../ui/refusal_text.dart';
 
 /// The form that registers a project (UC-006, UC-066): its name, its start date and its units. From the sign-in page it also takes the details of the manager, who has
 /// no login yet. Either way the project waits for the admin.
@@ -282,11 +282,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
             ),
             if (_message.isNotEmpty) ...[
               const SizedBox(height: 16),
-              Text(
-                words.text(_message),
-                key: NewProjectScreen.messageKey,
-                style: TextStyle(color: AppColor.refusal.of(context)),
-              ),
+              refusalText(context, words.text(_message), NewProjectScreen.messageKey),
             ],
           ],
         ),

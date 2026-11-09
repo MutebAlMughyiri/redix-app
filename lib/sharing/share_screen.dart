@@ -26,6 +26,7 @@ import '../words/words.dart';
 import 'attachable_entries.dart';
 import 'attachable_entry.dart';
 import '../ui/app_color.dart';
+import '../ui/refusal_text.dart';
 
 /// What opens when a picture or a PDF is shared to the app (UC-038, FR-49): put it on an expense entered without an invoice (UC-039), or start a new expense with it (UC-046).
 class ShareScreen extends StatefulWidget {
@@ -266,7 +267,7 @@ class _ShareScreenState extends State<ShareScreen> {
               child: Column(children: [for (final entry in entries.all) _entryRow(entry)]),
             ),
             for (final entry in chosen) ..._differences(entry),
-            if (_message.isNotEmpty) Text(words.text(_message), key: ShareScreen.messageKey, style: TextStyle(color: AppColor.refusal.of(context))),
+            if (_message.isNotEmpty) refusalText(context, words.text(_message), ShareScreen.messageKey),
             if (chosen.isNotEmpty) FilledButton(key: ShareScreen.attachKey, onPressed: _saving ? null : _attach, child: Text(words.shareAttach, key: ShareScreen.attachKey.label)),
           ],
         );

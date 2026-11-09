@@ -18,7 +18,7 @@ import '../words/words.dart';
 import 'contract.dart';
 import 'contracts.dart';
 import 'contracts_screen.dart';
-import '../ui/app_color.dart';
+import '../ui/refusal_text.dart';
 
 /// Asks for a contract's terms, and its contractor, item and unit while no payment names it.
 class ContractDialog extends StatefulWidget {
@@ -121,7 +121,7 @@ class _ContractDialogState extends State<ContractDialog> {
       ),
     const SizedBox(height: 8),
     if (widget.project.mayAttachFiles) OutlinedButton.icon(key: ContractsScreen.addDocumentKey, icon: Icon(Icons.attach_file, key: ContractsScreen.addDocumentKey.icon), label: Text(words.contractsAddDocument, key: ContractsScreen.addDocumentKey.label), onPressed: _addDocument),
-    if (_documentMessage.isNotEmpty) Text(words.text(_documentMessage), key: ContractsScreen.documentMessageKey, style: TextStyle(color: AppColor.refusal.of(context))),
+    if (_documentMessage.isNotEmpty) refusalText(context, words.text(_documentMessage), ContractsScreen.documentMessageKey),
   ];
 
   Future<void> _pickContractor() async {

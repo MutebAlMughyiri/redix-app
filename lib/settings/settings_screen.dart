@@ -17,6 +17,7 @@ import '../words/language_switch.dart';
 import '../words/words.dart';
 import 'default_project_sheet.dart';
 import '../format/parts_line.dart';
+import '../ui/refusal_text.dart';
 
 /// Settings (الإعدادات), all on one screen (Muteb, 9 Nov 2026): who is signed in, the way back to the project list, the default project, the registered projects for the
 /// admin, the language (UC-004), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out (UC-062). A project's own screens
@@ -146,7 +147,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             if (_biometricsMessage.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Text(words.text(_biometricsMessage), key: SettingsScreen.biometricsMessageKey, style: TextStyle(color: AppColor.refusal.of(context))),
+                child: refusalText(context, words.text(_biometricsMessage), SettingsScreen.biometricsMessageKey),
               ),
             _row(SettingsScreen.changePasswordKey, Icons.lock_outline, words.myAccountChangePassword, () => context.push(ChangePasswordScreen.path)),
             ListTile(

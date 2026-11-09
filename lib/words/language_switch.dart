@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'app_language.dart';
 import 'words.dart';
-import '../ui/app_color.dart';
+import '../ui/refusal_text.dart';
 
 /// The choice between Arabic and English (UC-004), on the sign-in screen and in Settings, with the line that says why it could not switch.
 class LanguageSwitch extends StatefulWidget {
@@ -59,7 +59,7 @@ class _LanguageSwitchState extends State<LanguageSwitch> {
           selected: {Localizations.localeOf(context).languageCode},
           onSelectionChanged: _switching ? null : (selection) => _choose(selection.single),
         ),
-        if (_message.isNotEmpty) Text(words.text(_message), key: LanguageSwitch.messageKey, style: TextStyle(color: AppColor.refusal.of(context))),
+        if (_message.isNotEmpty) refusalText(context, words.text(_message), LanguageSwitch.messageKey),
       ],
     );
   }
