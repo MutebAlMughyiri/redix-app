@@ -84,6 +84,7 @@ lib/
   format/
     date_format.dart        A date as the app shows it, in both languages: Gregorian dd.MM.yyyy
     number_format.dart      A number as a person types it: no separators, and as few decimals as it needs, at most two, so 15 is 15 and 7.5 is 7.5
+    parts_line.dart         The non-empty parts of a line joined by a middle dot, the one way a row writes its details
   home/
     dashboard_card.dart     The project's figures at a glance: what waits for approval, the surplus, the completion, the reconciliation difference, and the revenue and expenses totals, each opening to its categories with their totals; a category opens nothing
     home_screen.dart        The home of the open project: the project, with what the user's permissions allow in it
@@ -109,7 +110,6 @@ lib/
     partners.dart           A project's partners, and the one way to change them
     partners_screen.dart    A project's partners and capital: the total, each line the user may see with its balance and share, and a way into its movements
   projects/
-    add_unit_dialog.dart    Asks for a new unit's name and adds it to an active project
     default_project_toggle.dart Makes project the default project of session, or clears it when it already is, the one way the star and Settings both change it
     member.dart             Someone in a project, as a person choosing among them sees them
     member_picker.dart      Chooses someone in a project, or nobody, as a list of choices with every name in full
@@ -118,6 +118,7 @@ lib/
     project.dart            Where a project stands, as the API says it, each knowing its word so no reader needs to tell them apart
     project_card.dart       The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Settings, Approvals and Documents
     project_choice.dart     One project on the list: its name, units and its status
+    project_status_chip.dart Where a project stands, as a chip: the project list and More info draw the same one
     project_info_screen.dart More info (معلومات المشروع, redix-api 93): the project's own record on one page, its name, start date, status, units and description
     project_registration.dart Registers a project from the sign-in page, with its description, no session, and a new login as its manager
     projects.dart           The projects, and the one way to change them
@@ -137,6 +138,7 @@ lib/
     report_files.dart       What can be done with a report's file on the phone
     reports_screen.dart     A project's periodic reports: the next one and those issued before
     item_reports_screen.dart الإيرادات والمصروفات, from the home: a switch between the revenue and the expense categories, each with its total and share, opening on its items, each opening its report
+    category_share.dart     A category's name and total over a bar of its share of its side
     vat_statement_screen.dart How a period is chosen
     waiting_figures.dart    What waits for approval, as two figures: expenses, which lower the surplus once approved, and revenue with partners' money, which raises it
     year_chips.dart         A year chosen as chips, from this year back to firstYear
@@ -185,6 +187,7 @@ lib/
     vat_number_field.dart   Asks for a supplier's VAT number, which may stay empty, and names the supplier already holding a number that was refused
   ui/
     app_color.dart          Every color the app shows, named for what it is for (a refusal, something quiet, a card's frame, an entry waiting) and taken from the theme; the one place a color is chosen
+    amount_line.dart        A label with its amount at the end of the line, each in the style the screen wants
     api_list_body.dart      The body of a screen that shows an ApiList: why it could not load with a way to try again, loading, empty, or its items, which are read again when pulled down
     api_object_body.dart    What shows something the API owns: why it could not load with a way to try again, or what builder draws from it
     bottom_button.dart      A screen's main action: one full-width filled button at its bottom, the same on every screen
@@ -196,6 +199,9 @@ lib/
     name_dialog.dart        Asks for one name, for adding or renaming anything in a project
     part_keys.dart          The keys of the parts inside a keyed element: its label, icon, title, subtitle and the field it is drawn as
     picker_field.dart       A field whose value is chosen elsewhere: it looks like a text field, shows what was chosen, and opens the choice when tapped
+    picker_sheet.dart       Opens a sheet of choices, the same for every picker
+    refusal_text.dart       A refusal or failure said in words, in the one refusal color
+    row_menu.dart           A row's ⋮ menu and its choices; each row lists its own
     refusal_snack_bar.dart  The key of the SnackBar saying the word wordKey: every message has its own key, made from what it says, so a test finds it by key
     screen_title.dart       A screen's title in the app bar, with what it belongs to on a line beneath, so a long title on a narrow phone never cuts the name to a letter
     swipe_to_remove.dart    The one way a row is removed, and the one frame of a row that can be: an outlined card with a red bar inside its end edge where it may be removed, swiped from that edge toward its start past 40% of its width, with no question
