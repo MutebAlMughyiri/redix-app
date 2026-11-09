@@ -137,7 +137,7 @@ void main() {
     expect(text(tester, UsersScreen.nameKey('user-1')), 'نواف الأول');
   });
 
-  testWidgets('Muteb, 9 Nov 2026: Edit holds the role name in this project, starting from it, sends it to the project, and the row shows it beside the username', (tester) async {
+  testWidgets('Muteb, 9 Nov 2026: Edit holds the role name in this project, starting from it, sends it alone to the project when the name and mobile stay as they were, so someone also in another project can still be named, and the row shows it beside the username', (tester) async {
     final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.editKey);
@@ -147,7 +147,7 @@ void main() {
       await tester.tap(find.byKey(UsersScreen.saveKey));
     });
 
-    final (path, body) = api.sentUserChanges.last;
+    final (path, body) = api.sentUserChanges.single;
     expect((path, body['roleName']), ('/projects/project-0/users/user-1/role-name', 'مشرف مالي'));
     expect(text(tester, UsersScreen.detailsKey('user-1')), 'nawaf · مشرف مالي · 0500000000');
 
