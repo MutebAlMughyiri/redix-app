@@ -8,7 +8,6 @@ import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
-import 'add_unit_dialog.dart';
 import 'project.dart';
 import 'projects.dart';
 import 'unit_row.dart';
@@ -65,12 +64,6 @@ class ProjectInfoScreen extends StatefulWidget {
   /// Rename, in a unit's menu.
   static const renameUnitKey = Key('projectInfo.renameUnit');
 
-  /// The unit's name, in the Add unit dialog.
-  static const unitNameKey = Key('projectInfo.unitName');
-
-  /// The button that adds the unit, in the Add unit dialog.
-  static const saveUnitKey = ChangeDialog.saveKey;
-
   /// The line that says why the unit was refused, in the Add unit dialog.
   static const unitMessageKey = ChangeDialog.messageKey;
 
@@ -123,7 +116,11 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
   }
 
   void _askForUnit(Project project) {
-    showDialog<void>(context: context, builder: (_) => AddUnitDialog(project: project, projects: widget.projects));
+    final words = Words.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (_) => NameDialog(title: words.projectsAddUnit, label: words.projectsUnitName, saveLabel: words.projectsAddUnit, onSave: (name) => widget.projects.addUnit(project, name)),
+    );
   }
 
   void _askToRenameUnit(Project project, Unit unit) {

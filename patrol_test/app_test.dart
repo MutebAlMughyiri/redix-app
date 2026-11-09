@@ -334,8 +334,8 @@ void main() {
       await idShowing('projectInfo.unit.', 'الفلة الشرقية');
       await idShowing('projectInfo.unit.', 'الفلة الشمالية');
       await addUnit.tap();
-      await $(ProjectInfoScreen.unitNameKey).enterText('الفلة الغربية');
-      await $(ProjectInfoScreen.saveUnitKey).tap();
+      await $(NameDialog.nameKey).enterText('الفلة الغربية');
+      await $(ChangeDialog.saveKey).tap();
       await idShowing('projectInfo.unit.', 'الفلة الغربية');
       final description = $(ProjectInfoScreen.descriptionKey);
       await goTo(description);
@@ -349,8 +349,8 @@ void main() {
 
       await goTo(addUnit);
       await addUnit.tap();
-      await $(ProjectInfoScreen.unitNameKey).enterText('ملحق');
-      await $(ProjectInfoScreen.saveUnitKey).tap();
+      await $(NameDialog.nameKey).enterText('ملحق');
+      await $(ChangeDialog.saveKey).tap();
       await $(ProjectInfoScreen.renameKey).tap();
       await $(NameDialog.nameKey).enterText('غصون 7 الأولى');
       await $(ChangeDialog.saveKey).tap();

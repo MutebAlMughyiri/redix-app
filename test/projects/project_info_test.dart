@@ -216,10 +216,10 @@ void main() {
       await openInfo(tester, api);
 
       await tap(tester, api, ProjectInfoScreen.addUnitKey);
-      await tester.enterText(find.byKey(ProjectInfoScreen.unitNameKey), 'الفلة الجنوبية');
-      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.saveUnitKey)));
+      await tester.enterText(find.byKey(NameDialog.nameKey), 'الفلة الجنوبية');
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-      expect(find.byKey(ProjectInfoScreen.saveUnitKey), findsNothing);
+      expect(find.byKey(ChangeDialog.saveKey), findsNothing);
       expect(api.sentProjectChanges.single.$1, '/projects/project-0/units');
       expect(api.sentProjectChanges.single.$2, {'name': 'الفلة الجنوبية'});
       expect(text(tester, ProjectInfoScreen.unitKey('project-0-unit-1')), 'الفلة الجنوبية');
@@ -231,11 +231,11 @@ void main() {
       await tap(tester, api, ProjectInfoScreen.addUnitKey);
 
       api.projectAnswer = (status: 409, code: 'unitNameTaken');
-      await tester.enterText(find.byKey(ProjectInfoScreen.unitNameKey), 'الفلة الغربية');
-      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.saveUnitKey)));
+      await tester.enterText(find.byKey(NameDialog.nameKey), 'الفلة الغربية');
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
       expect(text(tester, ProjectInfoScreen.unitMessageKey), 'en projects.unitNameTaken');
-      expect(typed(tester, ProjectInfoScreen.unitNameKey), 'الفلة الغربية');
+      expect(typed(tester, NameDialog.nameKey), 'الفلة الغربية');
     });
 
     testWidgets('BR-38: a unit is renamed from its menu, starting from its name', (tester) async {
