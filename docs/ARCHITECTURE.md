@@ -85,7 +85,7 @@ lib/
     date_format.dart        A date as the app shows it, in both languages: Gregorian dd.MM.yyyy
     number_format.dart      A number as a person types it: no separators, and as few decimals as it needs, at most two, so 15 is 15 and 7.5 is 7.5
   home/
-    dashboard_card.dart     The project's figures at a glance: what waits for approval, the surplus, the completion, the reconciliation difference, and the revenue and expenses totals, which open nothing
+    dashboard_card.dart     The project's figures at a glance: what waits for approval, the surplus, the completion, the reconciliation difference, and the revenue and expenses totals, each opening to its categories with their totals; a category opens nothing
     home_screen.dart        The home of the open project: the project, with what the user's permissions allow in it
   notifications/
     notification_row.dart   Something a person was told: its words come from kind, in their language

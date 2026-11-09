@@ -14,7 +14,7 @@
 
 The home's buttons at its bottom open the rest:
 
-- **Revenue and expenses**: a switch like the language's between the revenue and the expense categories, expenses first. Each category shows its total and its share of the side, and opens on its items with theirs; an item opens its report, with its PDF and Excel. The revenue and expenses totals at the top of the home open nothing.
+- **Revenue and expenses**: a switch like the language's between the revenue and the expense categories, expenses first. Each category shows its total and its share of the side, and opens on its items with theirs; an item opens its report, with its PDF and Excel. At the top of the home, Revenue and Expenses still open to their categories with their totals, but a category opens nothing: its items are here.
 - **Actual balances**: what the accounts should hold, what they really held at the last check, and the difference; **Update** enters them again.
 - **VAT refund**, as Excel, its VAT worked out from each total.
 - **Contracts**, whose screen holds the contracts report's PDF and Excel for the owner and Finance; and **Partners**, with the capital.
@@ -33,7 +33,7 @@ Print opens the phone's printer with a preview. PDF and Excel open the share she
 
 وتفتح أزرار أسفل الصفحة الرئيسية الباقي:
 
-- **الإيرادات والمصروفات**: مفتاح كمفتاح اللغة بين تصنيفات الإيرادات وتصنيفات المصروفات، والمصروفات أولاً. يعرض كل تصنيف مجموعه ونصيبه، ويُفتح على بنوده بمجاميعها؛ وكل بند يفتح تقريره بملفي PDF وExcel. أما مجموعا الإيرادات والمصروفات أعلى الصفحة الرئيسية فلا يفتحان شيئاً.
+- **الإيرادات والمصروفات**: مفتاح كمفتاح اللغة بين تصنيفات الإيرادات وتصنيفات المصروفات، والمصروفات أولاً. يعرض كل تصنيف مجموعه ونصيبه، ويُفتح على بنوده بمجاميعها؛ وكل بند يفتح تقريره بملفي PDF وExcel. أما الإيرادات والمصروفات أعلى الصفحة الرئيسية فما زالت تُفتح على تصنيفاتها بمجاميعها، لكن التصنيف لا يفتح شيئاً: بنوده هنا.
 - **الأرصدة الفعلية**: ما يفترض أن تحويه الحسابات، وما حوته فعلاً عند آخر مطابقة، والفرق؛ و**تحديث** يُدخلها من جديد.
 - **استرداد ضريبة القيمة المضافة** ملفَّ Excel، تُحسب ضريبته من كل إجمالي.
 - **العقود**، وفي شاشتها ملفا PDF وExcel لتقرير العقود للمالك والمالي؛ و**الشركاء** ومعهم رأس المال.

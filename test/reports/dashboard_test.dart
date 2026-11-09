@@ -132,15 +132,35 @@ void main() {
 
   ItemReportsSide sideShown(WidgetTester tester) => tester.widget<SegmentedButton<ItemReportsSide>>(find.byKey(ItemReportsScreen.sideKey)).selected.single;
 
-  testWidgets("Muteb, 9 Nov 2026: the home's revenue and expenses totals open nothing; الإيرادات والمصروفات holds their details", (tester) async {
+  testWidgets('the categories show only once a tile is tapped: expenses opens the expense categories, revenue the revenue ones, each with its total', (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
 
+    expect(find.byKey(DashboardCard.categoryKey('category-1')), findsNothing);
+    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsNothing);
+
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.expensesKey)));
+    expect(find.byKey(DashboardCard.categoryKey('category-1')), findsOneWidget);
+    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsNothing);
+
     await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
+    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsOneWidget);
+    expect(find.byKey(DashboardCard.categoryKey('category-1')), findsNothing);
+    expect(text(tester, DashboardCard.categoryKey('category-capital').trailing), formatMoney(4000));
+    expect(text(tester, DashboardCard.categoryKey('category-9').trailing), formatMoney(1000));
+
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.revenueKey)));
+    expect(find.byKey(DashboardCard.categoryKey('category-9')), findsNothing);
+  });
+
+  testWidgets("Muteb, 9 Nov 2026: a category on the home opens nothing; its items and their reports are on الإيرادات والمصروفات", (tester) async {
+    final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
     await act(tester, api, () => tester.tap(find.byKey(DashboardCard.expensesKey)));
 
-    expect(find.byKey(DashboardCard.revenueKey.icon), findsNothing);
-    expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsNothing);
-    expect(find.byKey(ItemReportsScreen.categoryKey('category-9')), findsNothing);
+    await act(tester, api, () => tester.tap(find.byKey(DashboardCard.categoryKey('category-1'))));
+
+    expect(find.text('التشطيب'), findsOneWidget);
+    expect(find.byKey(ItemReportsScreen.itemKey('item-1')), findsNothing);
+    expect(find.byType(ItemReportScreen), findsNothing);
     expect(text(tester, HomeScreen.itemReportsKey('project-0').label), 'en reports.revenueAndExpenses');
   });
 
