@@ -12,10 +12,11 @@ class Users extends ApiList<User> {
   /// The project these people belong to.
   final String projectId;
 
-  /// Creates a login in this project holding [permissions], who must change [temporaryPassword] at first sign-in.
-  Future<String> create(String displayName, String username, String mobile, String temporaryPassword, Set<Permission> permissions) => change('/projects/$projectId/users', {
+  /// Creates a login in this project holding [permissions], called [roleName] there, who must change [temporaryPassword] at first sign-in.
+  Future<String> create(String displayName, String username, String roleName, String mobile, String temporaryPassword, Set<Permission> permissions) => change('/projects/$projectId/users', {
     'displayName': displayName,
     'username': username,
+    'roleName': roleName,
     'mobile': westernDigits(mobile),
     'temporaryPassword': temporaryPassword,
     'permissions': [for (final permission in permissions) permission.name],
@@ -24,8 +25,11 @@ class Users extends ApiList<User> {
   /// Adds someone who already has a login to this project, by their exact [username].
   Future<String> addExisting(String username) => change('/projects/$projectId/users/existing', {'username': username});
 
-  /// Changes the name and mobile of [user].
-  Future<String> edit(User user, String displayName, String mobile) => change('/users/${user.id}', {'displayName': displayName, 'mobile': westernDigits(mobile)});
+  /// Changes the name and mobile of [user], then what they are called in this project, [roleName] (Muteb, 9 Nov 2026). Returns the first refusal.
+  Future<String> edit(User user, String displayName, String mobile, String roleName) async {
+    final refusal = await change('/users/${user.id}', {'displayName': displayName, 'mobile': westernDigits(mobile)});
+    return refusal.isEmpty ? change('/projects/$projectId/users/${user.id}/role-name', {'roleName': roleName}) : refusal;
+  }
 
   /// Sets a new temporary password for [user], who is signed out everywhere.
   Future<String> resetPassword(User user, String temporaryPassword) =>

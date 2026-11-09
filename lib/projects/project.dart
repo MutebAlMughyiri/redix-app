@@ -42,11 +42,12 @@ class Project {
       status = ProjectStatus.values.byName(json['status'] as String),
       rejectionReason = json['rejectionReason'] as String,
       description = json['description'] as String,
+      roleName = json['roleName'] as String? ?? '',
       units = [for (final unit in json['units'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
       _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()};
 
   /// No project: what Settings holds when it is opened from the project list, where the signed-in user may do nothing to a project.
-  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.active, rejectionReason = '', description = '', units = const [], _permissions = const {};
+  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.active, rejectionReason = '', description = '', roleName = '', units = const [], _permissions = const {};
 
   /// True for no project.
   bool get isNone => id.isEmpty;
@@ -71,6 +72,9 @@ class Project {
 
   /// What the project is, as its manager wrote it; empty for none (redix-api 93).
   final String description;
+
+  /// What the signed-in user is called in this project, typed by whoever manages its users (Muteb, 9 Nov 2026); empty when nothing was typed.
+  final String roleName;
 
   /// The project's units, in order.
   final List<Unit> units;

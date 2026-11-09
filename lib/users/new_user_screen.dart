@@ -32,6 +32,9 @@ class NewUserScreen extends StatefulWidget {
   /// The user's mobile.
   static const mobileKey = Key('newUser.mobile');
 
+  /// What they are called in this project, beside their username (Muteb, 9 Nov 2026).
+  static const roleNameKey = Key('newUser.roleName');
+
   /// The temporary password, shown as typed so the project manager can pass it on.
   static const passwordKey = Key('newUser.password');
 
@@ -55,6 +58,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
   final _name = TextEditingController();
   final _username = TextEditingController();
   final _mobile = TextEditingController();
+  final _roleName = TextEditingController();
   final _password = TextEditingController();
   var _message = '';
   var _saving = false;
@@ -65,6 +69,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
     _name.dispose();
     _username.dispose();
     _mobile.dispose();
+    _roleName.dispose();
     _password.dispose();
     super.dispose();
   }
@@ -74,7 +79,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
       _saving = true;
       _message = '';
     });
-    final refusal = await widget.users.create(_name.text, _username.text, _mobile.text, _password.text, _ticked);
+    final refusal = await widget.users.create(_name.text, _username.text, _roleName.text, _mobile.text, _password.text, _ticked);
     if (!mounted) {
       return;
     }
@@ -106,6 +111,8 @@ class _NewUserScreenState extends State<NewUserScreen> {
             ),
             const SizedBox(height: 16),
             TextField(key: NewUserScreen.usernameKey, controller: _username, autocorrect: false, decoration: field(words.usersUsername)),
+            const SizedBox(height: 16),
+            TextField(key: NewUserScreen.roleNameKey, controller: _roleName, decoration: field(words.usersRoleName)),
             const SizedBox(height: 16),
             TextField(key: NewUserScreen.mobileKey, controller: _mobile, keyboardType: TextInputType.phone, decoration: field(words.usersMobile)),
             const SizedBox(height: 16),

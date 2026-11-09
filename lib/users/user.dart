@@ -9,6 +9,7 @@ class User {
       displayName = json['displayName'] as String,
       mobile = json['mobile'] as String,
       isActive = json['isActive'] as bool,
+      roleName = [for (final line in (json['projects'] as List<dynamic>).cast<Map<String, dynamic>>()) line['roleName'] as String? ?? ''].firstOrNull ?? '',
       _permissions = {
         for (final line in (json['projects'] as List<dynamic>).cast<Map<String, dynamic>>()) ...(line['permissions'] as List<dynamic>).cast<String>(),
       };
@@ -27,6 +28,9 @@ class User {
 
   /// False once disabled.
   final bool isActive;
+
+  /// What they are called in this project (Muteb, 9 Nov 2026); empty when nothing was typed.
+  final String roleName;
 
   /// What they may do in this project, by the API's names.
   final Set<String> _permissions;

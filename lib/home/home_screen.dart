@@ -116,6 +116,9 @@ class HomeScreen extends StatefulWidget {
   /// The way into the VAT refund of the project [id] (Muteb, 9 Nov 2026).
   static Key vatKey(String id) => Key('home.vat.$id');
 
+  /// What the signed-in user is called in the project, under its name (Muteb, 9 Nov 2026).
+  static const roleNameKey = Key('home.roleName');
+
   /// The way into the settings of the project [id]: a gear in the top bar (Muteb, 8 and 9 Nov 2026).
   static Key settingsKey(String id) => Key('home.settings.$id');
 
@@ -208,10 +211,17 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: ListenableBuilder(
           listenable: widget.projects,
-          builder: (context, _) => Text(
-            widget.projects.byId(widget.projectId).name,
-            key: HomeScreen.titleKey,
-          ),
+          builder: (context, _) {
+            final project = widget.projects.byId(widget.projectId);
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(project.name, key: HomeScreen.titleKey),
+                if (project.roleName.isNotEmpty) Text(project.roleName, key: HomeScreen.roleNameKey, style: Theme.of(context).textTheme.bodySmall),
+              ],
+            );
+          },
         ),
         actions: [
           ListenableBuilder(

@@ -51,6 +51,18 @@ void main() {
     expect(find.byKey(SettingsScreen.registeredKey), findsNothing);
   });
 
+  testWidgets('Muteb, 9 Nov 2026: opened from a project, Settings shows the role name typed there beside the username; from the project list, the username alone', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', roleName: 'مدير المشروع');
+    await openProject(tester, api);
+    await harness.openSettings(tester, api);
+
+    expect(tester.widget<Text>(find.byKey(SettingsScreen.whoKey.subtitle)).data, 'muteb · مدير المشروع');
+
+    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.switchProjectKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
+    expect(tester.widget<Text>(find.byKey(SettingsScreen.whoKey.subtitle)).data, 'muteb');
+  });
+
   testWidgets('Muteb, 9 Nov 2026: Settings shows the account itself, with no My account or language row to open first', (tester) async {
     await openSettings(tester, FakeApi());
 

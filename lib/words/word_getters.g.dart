@@ -2081,6 +2081,9 @@ mixin WordGetters {
   /// The word `users.invalidPermission`.
   String get usersInvalidPermission => text('users.invalidPermission');
 
+  /// The word `users.invalidRoleName`.
+  String get usersInvalidRoleName => text('users.invalidRoleName');
+
   /// The word `users.invalidUsername`.
   String get usersInvalidUsername => text('users.invalidUsername');
 
@@ -2116,6 +2119,9 @@ mixin WordGetters {
 
   /// The word `users.resetPassword`.
   String get usersResetPassword => text('users.resetPassword');
+
+  /// The word `users.roleName`.
+  String get usersRoleName => text('users.roleName');
 
   /// The word `users.save`.
   String get usersSave => text('users.save');

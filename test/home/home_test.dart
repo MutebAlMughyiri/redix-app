@@ -27,6 +27,21 @@ void main() {
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
 
+  testWidgets('Muteb, 9 Nov 2026: the role name typed for the signed-in user shows under the project name, and nothing shows where none was typed', (tester) async {
+    final api = FakeApi()
+      ..addProject('غصون 6', roleName: 'مدير المشروع')
+      ..addProject('غصون 7');
+    await openHome(tester, api);
+
+    expect(text(tester, HomeScreen.titleKey), 'غصون 6');
+    expect(text(tester, HomeScreen.roleNameKey), 'مدير المشروع');
+
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
+    expect(text(tester, HomeScreen.titleKey), 'غصون 7');
+    expect(find.byKey(HomeScreen.roleNameKey), findsNothing);
+  });
+
   testWidgets('the buttons follow the permissions in the open project', (tester) async {
     final api = FakeApi()
       ..addProject('غصون 6')

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../auth/change_password_screen.dart';
 import '../auth/permission.dart';
 import '../auth/session.dart';
+import '../projects/project.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
 import '../projects/registered_projects_screen.dart';
@@ -20,8 +21,8 @@ import 'default_project_sheet.dart';
 /// admin, the language (UC-004), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out (UC-062). A project's own screens
 /// open from its home.
 class SettingsScreen extends StatefulWidget {
-  /// The screen for the user signed in through [session], whose [projects] the default is chosen among, switching [language].
-  const SettingsScreen({super.key, required this.session, required this.projects, required this.language});
+  /// The screen for the user signed in through [session], opened from [project], whose [projects] the default is chosen among, switching [language].
+  const SettingsScreen({super.key, required this.session, required this.projects, required this.project, required this.language});
 
   /// The language choice it changes.
   final AppLanguage language;
@@ -32,10 +33,13 @@ class SettingsScreen extends StatefulWidget {
   /// The user's projects, among which the default is chosen.
   final Projects projects;
 
+  /// The project it was opened from, whose role name shows under the user's name; [Project.none] from the project list.
+  final Project project;
+
   /// The screen's route.
   static const path = '/settings';
 
-  /// Who is signed in: their name over the name they sign in with.
+  /// Who is signed in: their name over the name they sign in with and, opened from a project, what they are called there.
   static const whoKey = Key('settings.who');
 
   /// The way back to the project list.
@@ -109,7 +113,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(words.settingsTitle, key: ScreenTitle.titleKey)),
       body: ListenableBuilder(
-        listenable: session,
+        listenable: Listenable.merge([session, widget.projects]),
         builder: (context, _) => ListView(
           padding: const EdgeInsets.only(bottom: 16),
           children: [
@@ -117,7 +121,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               key: SettingsScreen.whoKey,
               leading: Icon(Icons.account_circle_outlined, key: SettingsScreen.whoKey.icon),
               title: Text(session.displayName, key: SettingsScreen.whoKey.title),
-              subtitle: Text(session.username, key: SettingsScreen.whoKey.subtitle),
+              subtitle: Text([session.username, widget.projects.latest(widget.project).roleName].where((part) => part.isNotEmpty).join(' · '), key: SettingsScreen.whoKey.subtitle),
             ),
             const Divider(),
             _row(SettingsScreen.switchProjectKey, Icons.swap_horiz, words.settingsSwitchProject, () => context.go(ProjectsScreen.path)),

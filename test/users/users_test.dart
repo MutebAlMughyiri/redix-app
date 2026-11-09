@@ -117,7 +117,7 @@ void main() {
       await tester.tap(find.byKey(UsersScreen.saveKey));
     });
 
-    expect(api.sentUserChanges.single.$2['mobile'], '0500000001');
+    expect(api.sentUserChanges.first.$2['mobile'], '0500000001');
   });
 
   testWidgets('Edit starts from the current name and mobile, and the row shows the change', (tester) async {
@@ -133,8 +133,26 @@ void main() {
     });
 
     expect(find.byKey(UsersScreen.saveKey), findsNothing);
-    expect(api.sentUserChanges.single.$2, {'displayName': 'نواف الأول', 'mobile': '0500000000'});
+    expect(api.sentUserChanges.first.$2, {'displayName': 'نواف الأول', 'mobile': '0500000000'});
     expect(text(tester, UsersScreen.nameKey('user-1')), 'نواف الأول');
+  });
+
+  testWidgets('Muteb, 9 Nov 2026: Edit holds the role name in this project, starting from it, sends it to the project, and the row shows it beside the username', (tester) async {
+    final api = await openProjectUsers(tester);
+
+    await choose(tester, api, 'user-1', UsersScreen.editKey);
+    expect(tester.widget<TextField>(find.byKey(UsersScreen.editRoleNameKey)).controller!.text, '');
+    await act(tester, api, () async {
+      await tester.enterText(find.byKey(UsersScreen.editRoleNameKey), 'مشرف مالي');
+      await tester.tap(find.byKey(UsersScreen.saveKey));
+    });
+
+    final (path, body) = api.sentUserChanges.last;
+    expect((path, body['roleName']), ('/projects/project-0/users/user-1/role-name', 'مشرف مالي'));
+    expect(text(tester, UsersScreen.detailsKey('user-1')), 'nawaf · مشرف مالي · 0500000000');
+
+    await choose(tester, api, 'user-1', UsersScreen.editKey);
+    expect(tester.widget<TextField>(find.byKey(UsersScreen.editRoleNameKey)).controller!.text, 'مشرف مالي');
   });
 
   testWidgets('a refused edit stays in the dialog with what was typed', (tester) async {

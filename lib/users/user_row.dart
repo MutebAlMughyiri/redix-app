@@ -68,7 +68,7 @@ class UserRow extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(user.mobile.isEmpty ? user.username : '${user.username} · ${user.mobile}', key: UsersScreen.detailsKey(user.id)),
+            Text([user.username, user.roleName, user.mobile].where((part) => part.isNotEmpty).join(' · '), key: UsersScreen.detailsKey(user.id)),
             Text(words.permissionsCount.replaceFirst('{0}', '${user.permissionCount}'), key: UsersScreen.permissionsLineKey(user.id)),
           ],
         ),

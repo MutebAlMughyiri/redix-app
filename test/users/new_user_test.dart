@@ -35,9 +35,19 @@ void main() {
 
     final (path, body) = api.sentUserChanges.single;
     expect(path, '/projects/project-0/users');
-    expect(body, {'displayName': 'نواف', 'username': 'nawaf', 'mobile': '0500000000', 'temporaryPassword': 'Temporary-1', 'permissions': ['readProject']});
+    expect(body, {'displayName': 'نواف', 'username': 'nawaf', 'roleName': '', 'mobile': '0500000000', 'temporaryPassword': 'Temporary-1', 'permissions': ['readProject']});
     expect(find.byKey(NewUserScreen.submitKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(UsersScreen.nameKey('user-1'))).data, 'نواف');
+  });
+
+  testWidgets('Muteb, 9 Nov 2026: a role name typed beside the username is sent with the new user, and the list shows it beside the username', (tester) async {
+    final api = await openForm(tester);
+
+    await tester.enterText(find.byKey(NewUserScreen.roleNameKey), 'مشرف ميداني');
+    await fillAndSubmit(tester, api);
+
+    expect(api.sentUserChanges.single.$2['roleName'], 'مشرف ميداني');
+    expect(tester.widget<Text>(find.byKey(UsersScreen.detailsKey('user-1'))).data, 'nawaf · مشرف ميداني · 0500000000');
   });
 
   testWidgets('what is ticked is sent with the new user, and See the project is always ticked', (tester) async {

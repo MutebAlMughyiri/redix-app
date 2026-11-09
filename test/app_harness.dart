@@ -776,6 +776,7 @@ class FakeApi {
     List<String> units = const [],
     String rejectionReason = '',
     String description = '',
+    String roleName = '',
     List<String> permissions = managerAndFinance,
   }) {
     final id = 'project-${projects.length}';
@@ -786,6 +787,7 @@ class FakeApi {
       'status': status,
       'rejectionReason': rejectionReason,
       'description': description,
+      'roleName': roleName,
       'units': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}],
       'permissions': permissions,
     };
@@ -1347,6 +1349,7 @@ class FakeApi {
     if (segments.length == 3) {
       final user = addUser(body['displayName'] as String, username: body['username'] as String, mobile: body['mobile'] as String);
       give(user, projectId, ['readProject', ...(body['permissions'] as List<dynamic>).cast<String>()]);
+      (user['projects'] as List<Map<String, Object>>).singleWhere((line) => line['projectId'] == projectId)['roleName'] = body['roleName'] as String;
       return _json(_inProject(user, projectId), 201);
     }
     if (segments[3] == 'existing') {
@@ -1356,7 +1359,9 @@ class FakeApi {
     }
     final user = users.singleWhere((user) => user['id'] == segments[3]);
     final lines = user['projects'] as List<Map<String, Object>>;
-    if (segments.last != 'remove') {
+    if (segments.last == 'role-name') {
+      lines.singleWhere((line) => line['projectId'] == projectId)['roleName'] = body['roleName'] as String;
+    } else if (segments.last != 'remove') {
       give(user, projectId, [segments[5]]);
     } else if (segments[5] == 'readProject') {
       lines.removeWhere((line) => line['projectId'] == projectId);
