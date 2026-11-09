@@ -8,6 +8,7 @@ import 'quick_add_supplier_dialog.dart';
 import 'supplier.dart';
 import 'supplier_search.dart';
 import 'suppliers.dart';
+import '../ui/picker_sheet.dart';
 
 /// Picks a supplier from a project's register (UC-018): a sheet that searches by name or VAT number, so free text never names a supplier (BR-19), and adds a missing one without leaving what is being entered (UC-019).
 class SupplierPicker extends StatefulWidget {
@@ -55,13 +56,7 @@ class SupplierPicker extends StatefulWidget {
 
   /// Opens the sheet over [context], picking from the [suppliers] of [project]. Answers the supplier picked, with its VAT number, or no supplier when closed without picking.
   static Future<Supplier> show(BuildContext context, Project project, Suppliers suppliers) async =>
-      await showModalBottomSheet<Supplier>(
-        context: context,
-        isScrollControlled: true,
-        useSafeArea: true,
-        showDragHandle: true,
-        builder: (_) => SupplierPicker(project: project, suppliers: suppliers),
-      ) ??
+      await showPickerSheet<Supplier>(context, (_) => SupplierPicker(project: project, suppliers: suppliers)) ??
       Supplier.none();
 
   @override

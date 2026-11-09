@@ -6,6 +6,7 @@ import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
 import '../words/words.dart';
 import 'entry_tables.dart';
+import '../ui/picker_sheet.dart';
 
 /// The field that chooses the table an expense goes into (redix-app #84), opening a sheet of every table on offer: by category, each item with its general table first and its
 /// named tables and contracts under it, with a search over the items' and the tables' names.
@@ -38,13 +39,7 @@ class TablePicker extends StatelessWidget {
   static Key categoryKey(String name) => Key('tablePicker.category.$name');
 
   Future<void> _choose(BuildContext context) async {
-    final picked = await showModalBottomSheet<EntryTable>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
-      builder: (_) => _TableSheet(tables: tables),
-    );
+    final picked = await showPickerSheet<EntryTable>(context, (_) => _TableSheet(tables: tables));
     if (picked != null) {
       onChanged(picked);
     }

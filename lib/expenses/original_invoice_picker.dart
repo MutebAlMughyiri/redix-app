@@ -8,6 +8,7 @@ import '../ui/picker_field.dart';
 import '../words/words.dart';
 import 'creditable_invoice.dart';
 import 'creditable_invoices.dart';
+import '../ui/picker_sheet.dart';
 
 /// The field that links a credit note to the bill it returns, which it needs (D13), opening a sheet of what that supplier's bills have left to return.
 class OriginalInvoicePicker extends StatelessWidget {
@@ -31,12 +32,7 @@ class OriginalInvoicePicker extends StatelessWidget {
 
   Future<void> _choose(BuildContext context) async {
     invoices.ofSupplier(supplierId);
-    final picked = await showModalBottomSheet<CreditableInvoice>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
-      builder: (sheet) {
+    final picked = await showPickerSheet<CreditableInvoice>(context, (sheet) {
         final words = Words.of(sheet);
         return FractionallySizedBox(
           heightFactor: 0.9,
@@ -57,8 +53,7 @@ class OriginalInvoicePicker extends StatelessWidget {
             ],
           ),
         );
-      },
-    );
+      });
     if (picked != null) {
       onChanged(picked);
     }

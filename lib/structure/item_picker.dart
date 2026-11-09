@@ -6,6 +6,7 @@ import '../ui/picker_field.dart';
 import '../words/words.dart';
 import 'category.dart';
 import 'offered_items.dart';
+import '../ui/picker_sheet.dart';
 
 /// The field that chooses an item, opening a sheet of what is on offer, by category, with every name in full.
 class ItemPicker extends StatelessWidget {
@@ -35,12 +36,7 @@ class ItemPicker extends StatelessWidget {
 
   Future<void> _choose(BuildContext context) async {
     items.loadOnOpen();
-    final chosen = await showModalBottomSheet<Item>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      showDragHandle: true,
-      builder: (sheet) => FractionallySizedBox(
+    final chosen = await showPickerSheet<Item>(context, (sheet) => FractionallySizedBox(
         heightFactor: 0.9,
         child: Column(
           children: [
@@ -60,8 +56,7 @@ class ItemPicker extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
+      ));
     if (chosen != null) {
       onChanged(chosen);
     }
