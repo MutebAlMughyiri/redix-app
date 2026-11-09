@@ -7,7 +7,6 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/api_object_body.dart';
 import '../ui/bottom_button.dart';
-import '../ui/change_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
@@ -48,7 +47,6 @@ class PartnersScreen extends StatefulWidget {
   /// The total capital.
   static const totalKey = Key('partners.total');
 
-
   /// The balance of the partner [id].
   static Key balanceKey(String id) => Key('partners.balance.$id');
 
@@ -69,18 +67,6 @@ class PartnersScreen extends StatefulWidget {
 
   /// The line that says what the login is for, in the dialog.
   static const loginHintKey = Key('partners.loginHint');
-
-  /// The button that saves, in the dialog.
-  static const saveKey = ChangeDialog.saveKey;
-
-  /// The line that says why a change was refused, in the dialog.
-  static const dialogMessageKey = ChangeDialog.messageKey;
-
-  /// The line that says the list could not be read.
-  static const messageKey = ApiListBody.messageKey;
-
-  /// The line shown while the project has no partners.
-  static const emptyKey = ApiListBody.emptyKey;
 
   /// The name of the partner [id].
   static Key nameKey(String id) => Key('partners.name.$id');

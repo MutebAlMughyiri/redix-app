@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
 import '../ui/bottom_button.dart';
-import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
@@ -42,12 +41,6 @@ class ItemTablesScreen extends StatefulWidget {
   /// The button that adds a subgroup.
   static const addKey = Key('tables.add');
 
-  /// The name, in the dialogs that add and rename.
-  static const nameKey = NameDialog.nameKey;
-
-  /// The button that saves, in the dialogs that add and rename.
-  static const saveKey = ChangeDialog.saveKey;
-
   /// The row of the table [id].
   static Key rowKey(String id) => Key('tables.row.$id');
 
@@ -62,7 +55,6 @@ class ItemTablesScreen extends StatefulWidget {
 
   /// The button that renames the subgroup [id].
   static Key renameKey(String id) => Key('tables.rename.$id');
-
 
   @override
   State<ItemTablesScreen> createState() => _ItemTablesScreenState();

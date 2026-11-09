@@ -54,6 +54,7 @@ import 'package:redix/users/users_screen.dart';
 import 'package:redix/words/app_language.dart';
 import 'package:redix/words/words.dart';
 import 'package:redix/words/language_switch.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 
 /// The test's admin, created by the API with a temporary password.
 const username = String.fromEnvironment('TEST_USERNAME');
@@ -273,7 +274,7 @@ void main() {
       expect($(SettingsScreen.registeredKey), findsNothing);
       await goTo($(SettingsScreen.signOutKey));
       await $(SettingsScreen.signOutKey).tap();
-      await $(SettingsScreen.confirmSignOutKey).tap();
+      await $(ConfirmDialog.confirmKey).tap();
 
       await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText(username);
@@ -298,11 +299,11 @@ void main() {
       await says(RegisteredProjectsScreen.descriptionKey(projectId), 'ثلاث فلل في حي الياسمين.');
       await picture('registered-projects');
       await $(RegisteredProjectsScreen.approveKey(projectId)).tap();
-      await reach($(RegisteredProjectsScreen.emptyKey));
+      await reach($(ApiListBody.emptyKey));
       await back();
       await goTo($(SettingsScreen.signOutKey));
       await $(SettingsScreen.signOutKey).tap();
-      await $(SettingsScreen.confirmSignOutKey).tap();
+      await $(ConfirmDialog.confirmKey).tap();
 
       await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText('patrol-reem');
@@ -382,16 +383,16 @@ void main() {
       expect(topOf(CategoriesScreen.categoryNameKey(landId)), greaterThan(landTop));
 
       await $(CategoriesScreen.addCategoryKey).tap();
-      await $(CategoriesScreen.nameKey).enterText('الملاحق');
-      await $(CategoriesScreen.saveKey).tap();
+      await $(NameDialog.nameKey).enterText('الملاحق');
+      await $(ChangeDialog.saveKey).tap();
       final annexesId = await idShowing('categories.name.', 'الملاحق');
       await goTo($(CategoriesScreen.categoryTileKey(annexesId)));
 
       await $(CategoriesScreen.categoryTileKey(annexesId)).tap();
       await goTo($(CategoriesScreen.addItemKey(annexesId)));
       await $(CategoriesScreen.addItemKey(annexesId)).tap();
-      await $(CategoriesScreen.nameKey).enterText('المظلة');
-      await $(CategoriesScreen.saveKey).tap();
+      await $(NameDialog.nameKey).enterText('المظلة');
+      await $(ChangeDialog.saveKey).tap();
       final canopyId = await idShowing('categories.itemName.', 'المظلة');
       final canopyMenu = $(CategoriesScreen.itemMenuKey(canopyId));
       await goTo(canopyMenu);
@@ -401,13 +402,13 @@ void main() {
       await canopyMenu.tap();
       await $(CategoriesScreen.tablesKey).tap();
       await $(ItemTablesScreen.addKey).tap();
-      await $(ItemTablesScreen.nameKey).enterText('مواد');
-      await $(ItemTablesScreen.saveKey).tap();
+      await $(NameDialog.nameKey).enterText('مواد');
+      await $(ChangeDialog.saveKey).tap();
       await idShowing('tables.name.', 'مواد');
       await picture('tables');
       await $(ItemTablesScreen.addKey).tap();
-      await $(ItemTablesScreen.nameKey).enterText('دفان');
-      await $(ItemTablesScreen.saveKey).tap();
+      await $(NameDialog.nameKey).enterText('دفان');
+      await $(ChangeDialog.saveKey).tap();
       final dafanId = await idShowing('tables.name.', 'دفان');
       await swipeAway(ItemTablesScreen.rowKey(dafanId));
       await gone($(ItemTablesScreen.tableNameKey(dafanId)));
@@ -429,7 +430,7 @@ void main() {
       await $(ItemColumnsScreen.addKey).tap();
       await $(ItemColumnsScreen.columnNameKey).enterText('المساحة م²');
       await $(ItemColumnsScreen.requiredKey).tap();
-      await $(ItemColumnsScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       final areaId = await idShowing('columns.name.', 'المساحة م²');
       await goTo($(ItemColumnsScreen.nameKey(areaId)));
       await picture('item-columns');
@@ -445,12 +446,12 @@ void main() {
       await $.tester.tap(find.byKey(ItemColumnsScreen.dataTypeOptionKey(ColumnDataType.list)));
       await $.pumpAndSettle();
       await $(ItemColumnsScreen.choicesKey).enterText('شرق');
-      await $(ItemColumnsScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       final sideId = await idShowing('columns.name.', 'الجهة');
       await goTo($(ItemColumnsScreen.editKey(sideId)));
       await $(ItemColumnsScreen.editKey(sideId)).tap();
       await $(ItemColumnsScreen.newChoicesKey).enterText('غرب');
-      await $(ItemColumnsScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       await swipeAway(ItemColumnsScreen.rowKey(sideId));
       await gone($(ItemColumnsScreen.nameKey(sideId)));
 
@@ -458,7 +459,7 @@ void main() {
       await $(keyStartingWith('columns.lock.')).waitUntilExists();
       await $(ItemColumnsScreen.addKey).tap();
       await $(ItemColumnsScreen.columnNameKey).enterText('رقم أمر الشراء');
-      await $(ItemColumnsScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       await reach($(ApplyToAllDialog.applyKey));
       await picture('apply-to-all');
       await $(ApplyToAllDialog.applyKey).tap();
@@ -476,8 +477,8 @@ void main() {
       await $(HomeScreen.paymentMethodsKey(projectId)).tap();
       await idShowing('paymentMethods.name.', 'شبكة');
       await $(PaymentMethodsScreen.addKey).tap();
-      await $(PaymentMethodsScreen.dialogNameKey).enterText('مدى');
-      await $(PaymentMethodsScreen.saveKey).tap();
+      await $(NameDialog.nameKey).enterText('مدى');
+      await $(ChangeDialog.saveKey).tap();
       final madaId = await idShowing('paymentMethods.name.', 'مدى');
       await $(PaymentMethodsScreen.menuKey(madaId)).tap();
       await $(PaymentMethodsScreen.disableKey).tap();
@@ -492,7 +493,7 @@ void main() {
       await $(AccountsScreen.addKey).tap();
       await $(AccountsScreen.accountNameKey).enterText('حساب المؤسسة');
       await $(AccountsScreen.openingBalanceKey).enterText('64250.75');
-      await $(AccountsScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       final companyId = await idShowing('accounts.name.', 'حساب المؤسسة');
       await says(AccountsScreen.balanceKey(companyId), '64,250.75');
       await $(AccountsScreen.addKey).tap();
@@ -504,7 +505,7 @@ void main() {
       await $(MemberPicker.optionKey(reemId)).tap();
       await $.pumpAndSettle();
       await picture('account-dialog');
-      await $(AccountsScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       final cashId = await idShowing('accounts.name.', 'كاش مع مدير المشروع');
       await says(AccountsScreen.balanceKey(cashId), '2,750.00');
       await picture('accounts');
@@ -522,7 +523,7 @@ void main() {
       await $(PartnersScreen.itemKey.field).tap();
       final capitalId = await idShowing('itemPicker.option.', 'رأس المال');
       await $(ItemPicker.optionKey(capitalId)).tap();
-      await $(PartnersScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       final haithamId = await idShowing('partners.name.', 'هيثم');
       await $(PartnersScreen.addKey).tap();
       await $(PartnersScreen.partnerNameKey).enterText('مدير المشروع');
@@ -534,7 +535,7 @@ void main() {
       await $(MemberPicker.optionKey(reemId)).tap();
       await $.pumpAndSettle();
       await picture('partner-dialog');
-      await $(PartnersScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       await idShowing('partners.name.', 'مدير المشروع');
       await $.pumpAndSettle();
       await picture('partners');
@@ -571,7 +572,7 @@ void main() {
       await $(ItemPicker.optionKey(diggingId)).tap();
       await $.pumpAndSettle();
       await picture('supplier-dialog');
-      await $(SuppliersScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       await idShowing('suppliers.name.', 'شركة النخيل');
       await $.pumpAndSettle();
       await picture('suppliers');
@@ -590,7 +591,7 @@ void main() {
       await $(SuppliersScreen.vatNumberKey).enterText('311111111111113');
       await $.pumpAndSettle();
       await picture('quick-add-supplier');
-      await onTop(SuppliersScreen.saveKey).tap();
+      await onTop(ChangeDialog.saveKey).tap();
       await says(ContractsScreen.contractorKey.label, 'مبلط الغربية');
       await $(ContractsScreen.itemKey).tap();
       final buildingId = await idShowing('itemPicker.option.', 'البناء');
@@ -602,7 +603,7 @@ void main() {
       await showInDialog(find.byKey(ContractsScreen.contractorKey));
       await $.tester.drag(find.byKey(ContractsScreen.contractorKey), const Offset(0, 200));
       await picture('contract-dialog');
-      await $(ContractsScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       final contractId = await idShowing('contracts.name.', 'مبلط الغربية');
       await says(ContractsScreen.valueOfKey(contractId), '34,000.00');
       await $.pumpAndSettle();
@@ -610,7 +611,7 @@ void main() {
       await $(ContractsScreen.menuKey(contractId)).tap();
       await $(ContractsScreen.editKey).tap();
       await $.pumpAndSettle();
-      await $(ContractsScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       await says(ContractsScreen.valueOfKey(contractId), '34,000.00');
       await $.pumpAndSettle();
       await back();
@@ -634,18 +635,18 @@ void main() {
       await nawafMenu.tap();
       await $(UsersScreen.editKey).tap();
       await $(UsersScreen.editNameKey).enterText('نواف الأول');
-      await $(UsersScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       await says(UsersScreen.nameKey(nawafId), 'نواف الأول');
 
       await nawafMenu.tap();
       await $(UsersScreen.resetPasswordKey).tap();
       await $(UsersScreen.resetPasswordFieldKey).enterText('Temporary-2');
-      await $(UsersScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       await $.pumpAndSettle();
 
       await nawafMenu.tap();
       await $(UsersScreen.disableKey).tap();
-      await $(UsersScreen.confirmDisableKey).tap();
+      await $(ConfirmDialog.confirmKey).tap();
       await reach($(UsersScreen.statusKey(nawafId)));
       await nawafMenu.tap();
       await $(UsersScreen.enableKey).tap();
@@ -709,7 +710,7 @@ void main() {
       await $.pumpAndSettle();
       await $(MemberPicker.optionKey(nawafId)).tap();
       await $.pumpAndSettle();
-      await $(AccountsScreen.saveKey).tap();
+      await $(ChangeDialog.saveKey).tap();
       final fieldCustodyId = await idShowing('accounts.name.', 'عهدة الميدان');
       await back();
       await reach(projectSettings);
@@ -729,10 +730,10 @@ void main() {
 
       await goTo($(SettingsScreen.signOutKey));
       await $(SettingsScreen.signOutKey).tap();
-      await $(SettingsScreen.cancelSignOutKey).tap();
+      await $(ConfirmDialog.cancelKey).tap();
       expect($(SettingsScreen.signOutKey), findsOneWidget);
       await $(SettingsScreen.signOutKey).tap();
-      await $(SettingsScreen.confirmSignOutKey).tap();
+      await $(ConfirmDialog.confirmKey).tap();
 
       await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText('patrol-nawaf');
@@ -777,7 +778,7 @@ void main() {
       await $(SupplierPicker.quickAddKey).tap();
       await $(SuppliersScreen.vatNumberKey).enterText('322222222222223');
       await reach($(SupplierPicker.pendingHintKey));
-      await onTop(SuppliersScreen.saveKey).tap();
+      await onTop(ChangeDialog.saveKey).tap();
       await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
       await says(AddEntryScreen.supplierKey.label, 'مورد الميدان');
 
@@ -892,7 +893,7 @@ void main() {
       await projectSettings.tap();
       await goTo($(SettingsScreen.signOutKey));
       await $(SettingsScreen.signOutKey).tap();
-      await $(SettingsScreen.confirmSignOutKey).tap();
+      await $(ConfirmDialog.confirmKey).tap();
 
       await reach($(SignInScreen.usernameKey));
       await $(SignInScreen.usernameKey).enterText('patrol-reem');
@@ -908,13 +909,13 @@ void main() {
 
       await goTo(close);
       await close.tap();
-      await reach($(ProjectInfoScreen.confirmCloseKey));
+      await reach($(ConfirmDialog.confirmKey));
       await picture('close-project');
-      await $(ProjectInfoScreen.cancelCloseKey).tap();
+      await $(ConfirmDialog.cancelKey).tap();
       expect(close, findsOneWidget);
 
       await close.tap();
-      await $(ProjectInfoScreen.confirmCloseKey).tap();
+      await $(ConfirmDialog.confirmKey).tap();
       await reach($(messageKeyOf('projects.pendingEntries')));
       expect(close, findsOneWidget, reason: 'BR-35: a project stays active while entries wait for approval');
       await back();
@@ -947,7 +948,7 @@ void main() {
       await projectInfo.tap();
       await goTo(close);
       await close.tap();
-      await $(ProjectInfoScreen.confirmCloseKey).tap();
+      await $(ConfirmDialog.confirmKey).tap();
       await gone(close);
       expect(addUnit, findsNothing);
       await says(ProjectInfoScreen.statusKey.label, Words.of($.tester.element(find.byKey(ProjectInfoScreen.nameKey))).projectsFinished);
@@ -960,7 +961,7 @@ void main() {
       await $(ProjectsScreen.settingsKey).tap();
       await goTo($(SettingsScreen.signOutKey));
       await $(SettingsScreen.signOutKey).tap();
-      await $(SettingsScreen.confirmSignOutKey).tap();
+      await $(ConfirmDialog.confirmKey).tap();
     }),
   );
 }

@@ -148,12 +148,6 @@ class AddEntryScreen extends StatefulWidget {
   /// The route of a new entry in the project [projectId] with the shared file.
   static String sharedPathOf(String projectId) => '/projects/$projectId/entries/new?shared=1';
 
-  /// The screen's title.
-  static const titleKey = ScreenTitle.titleKey;
-
-  /// The project's name, under the title.
-  static const projectNameKey = ScreenTitle.subjectKey;
-
   /// The button that opens the camera.
   static const cameraKey = Key('addEntry.camera');
 
@@ -253,9 +247,6 @@ class AddEntryScreen extends StatefulWidget {
   /// The line that says what outside the contract means.
   static const outsideExplainKey = Key('addEntry.outsideExplain');
 
-  /// The line that says no account is on offer.
-  static const noAccountKey = PaymentChoices.noAccountKey;
-
   /// The notes.
   static const notesKey = Key('addEntry.notes');
 
@@ -267,12 +258,6 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The line that says why it was refused.
   static const messageKey = Key('addEntry.message');
-
-  /// The line that says the accounts or payment methods could not be read.
-  static const listMessageKey = PaymentChoices.listMessageKey;
-
-  /// The button that reads them again.
-  static const retryKey = PaymentChoices.retryKey;
 
   /// The line that says the item's columns could not be read.
   static const columnsMessageKey = Key('addEntry.columnsMessage');
@@ -288,7 +273,6 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The section asking how it was paid.
   static const paymentSectionKey = Key('addEntry.paymentSection');
-
 
   /// The choice [option] of the list column [key].
   static Key columnOptionKey(String key, String option) => Key('addEntry.columnOption.$key.$option');

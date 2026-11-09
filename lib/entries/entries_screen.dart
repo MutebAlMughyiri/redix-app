@@ -13,7 +13,6 @@ import 'entry_kind.dart';
 import 'entry_row.dart';
 import 'entry_tile.dart';
 import 'project_entries.dart';
-import 'reverse_sheet.dart';
 
 /// A project's entries (UC-037): each person's own, or all of them, searched and filtered (redix-app #84); tapping one opens it read only (redix-app #90).
 class EntriesScreen extends StatefulWidget {
@@ -61,12 +60,6 @@ class EntriesScreen extends StatefulWidget {
 
   /// How many entries show.
   static const foundKey = Key('entries.found');
-
-  /// The field holding why an entry is reversed.
-  static const reverseReasonKey = ReverseSheet.reasonKey;
-
-  /// The button reversing it.
-  static const reverseSendKey = ReverseSheet.sendKey;
 
   /// The row of the entry [id].
   static Key rowKey(String id) => Key('entries.row.$id');

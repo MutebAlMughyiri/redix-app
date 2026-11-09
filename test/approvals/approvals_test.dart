@@ -7,6 +7,7 @@ import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/reason_sheet.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -163,9 +164,9 @@ void main() {
     final api = await openInbox(tester, (api) => api.addPending());
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.rejectKey('entry-0'))));
 
-    await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.rejectSendKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ReasonSheet.sendKey)));
 
-    expect(tester.widget<Text>(find.byKey(ApprovalsScreen.rejectMessageKey)).data, 'en approvals.reasonRequired');
+    expect(tester.widget<Text>(find.byKey(ReasonSheet.messageKey)).data, 'en approvals.reasonRequired');
     expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsOneWidget);
   });
 
@@ -174,10 +175,10 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.rejectKey('entry-0'))));
 
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.quickReasonKey(1))));
-    await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.rejectSendKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ReasonSheet.sendKey)));
 
     expect(api.sentRejections.single, ('entry-0', 'en approvals.reasonAmount'));
-    expect(find.byKey(ApprovalsScreen.rejectSendKey), findsNothing);
+    expect(find.byKey(ReasonSheet.sendKey), findsNothing);
     expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsNothing);
   });
 

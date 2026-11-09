@@ -68,15 +68,6 @@ class SettingsScreen extends StatefulWidget {
   /// The row that signs out, after asking.
   static const signOutKey = Key('settings.signOut');
 
-  /// What signing out means, in the question.
-  static const signOutExplainKey = ConfirmDialog.explanationKey;
-
-  /// The button that signs out, in the question.
-  static const confirmSignOutKey = ConfirmDialog.confirmKey;
-
-  /// The button that changes nothing, in the question.
-  static const cancelSignOutKey = ConfirmDialog.cancelKey;
-
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
 }

@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
-import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
@@ -44,12 +43,6 @@ class UsersScreen extends StatefulWidget {
   /// The button that opens the new user form.
   static const newUserKey = Key('users.new');
 
-  /// The line that says the list could not be read.
-  static const messageKey = ApiListBody.messageKey;
-
-  /// The button that reads the list again.
-  static const retryKey = ApiListBody.retryKey;
-
   /// Edit, in a row's menu.
   static const editKey = Key('users.edit');
 
@@ -82,24 +75,6 @@ class UsersScreen extends StatefulWidget {
 
   /// The new temporary password, in the Reset password dialog.
   static const resetPasswordFieldKey = Key('users.resetPasswordField');
-
-  /// The button that saves, in the Edit, Reset password and Add an existing user dialogs.
-  static const saveKey = ChangeDialog.saveKey;
-
-  /// The line that says why a change was refused, in the Edit, Reset password and Add an existing user dialogs.
-  static const dialogMessageKey = ChangeDialog.messageKey;
-
-  /// Who is being disabled, in the disable question.
-  static const disableNameKey = ConfirmDialog.subjectKey;
-
-  /// What disabling means, in the disable question.
-  static const disableExplainKey = ConfirmDialog.explanationKey;
-
-  /// The button that disables, in the disable question.
-  static const confirmDisableKey = ConfirmDialog.confirmKey;
-
-  /// The button that changes nothing, in the disable question.
-  static const cancelDisableKey = ConfirmDialog.cancelKey;
 
   /// The row of the user [id].
   static Key rowKey(String id) => Key('users.row.$id');

@@ -14,6 +14,8 @@ import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/words/words.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/api_list_body.dart';
 
 void main() {
   testWidgets('AC-43.1: the title over what was used most shows only while nothing is typed, and only once something was used', (tester) async {
@@ -106,7 +108,7 @@ void main() {
 
     await act(tester, opened.api, () => tester.enterText(find.byKey(SupplierPicker.searchKey), 'لا أحد'));
 
-    expect(text(tester, SupplierPicker.emptyKey), 'en suppliers.noMatch');
+    expect(text(tester, ApiListBody.emptyKey), 'en suppliers.noMatch');
   });
 
   testWidgets('an answer to an older search never replaces a newer one', (tester) async {
@@ -129,7 +131,7 @@ void main() {
 
   Future<void> quickAdd(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(SupplierPicker.quickAddKey)));
 
-  Future<void> save(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(SuppliersScreen.saveKey)));
+  Future<void> save(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
   String typedIn(WidgetTester tester, Key key) => tester.widget<TextField>(find.byKey(key)).controller!.text;
 
@@ -197,7 +199,7 @@ void main() {
     await tester.enterText(find.byKey(SuppliersScreen.vatNumberKey), '30088967710003');
     await save(tester, opened.api);
 
-    expect(text(tester, SuppliersScreen.dialogMessageKey), 'en suppliers.invalidVatNumber');
+    expect(text(tester, ChangeDialog.messageKey), 'en suppliers.invalidVatNumber');
     expect(opened.picked, isEmpty);
     expect(find.byKey(SupplierPicker.useExistingKey), findsNothing);
   });

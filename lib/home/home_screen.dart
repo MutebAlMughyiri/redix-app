@@ -62,12 +62,6 @@ class HomeScreen extends StatefulWidget {
   /// The project's name.
   static const titleKey = Key('home.title');
 
-  /// The line that says the project could not be read.
-  static const messageKey = ApiListBody.messageKey;
-
-  /// The button that reads it again.
-  static const retryKey = ApiListBody.retryKey;
-
   /// The route of the home of the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId';
 

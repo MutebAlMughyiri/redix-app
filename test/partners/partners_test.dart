@@ -7,6 +7,8 @@ import 'package:redix/structure/item_picker.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/api_list_body.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -38,7 +40,7 @@ void main() {
 
   Future<void> save(WidgetTester tester, FakeApi api, String name) => act(tester, api, () async {
     await tester.enterText(find.byKey(PartnersScreen.partnerNameKey), name);
-    await tester.tap(find.byKey(PartnersScreen.saveKey));
+    await tester.tap(find.byKey(ChangeDialog.saveKey));
   });
 
   testWidgets('each partner shows their login, or that they have none', (tester) async {
@@ -82,7 +84,7 @@ void main() {
     await chooseLogin(tester, opened.api, 'user-mutab');
     await save(tester, opened.api, 'متعب الثاني');
 
-    expect(text(tester, PartnersScreen.dialogMessageKey), 'en partners.userTaken');
+    expect(text(tester, ChangeDialog.messageKey), 'en partners.userTaken');
     expect(find.byKey(PartnersScreen.partnerNameKey), findsOneWidget);
   });
 
@@ -120,7 +122,7 @@ void main() {
     await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
 
-    expect(text(tester, PartnersScreen.emptyKey), 'en partners.empty');
+    expect(text(tester, ApiListBody.emptyKey), 'en partners.empty');
   });
 
   testWidgets('seeing all capital without keeping the settings shows them with nothing to change', (tester) async {
@@ -154,6 +156,6 @@ void main() {
     await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
     await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
 
-    expect(find.byKey(PartnersScreen.messageKey), findsNothing);
+    expect(find.byKey(ApiListBody.messageKey), findsNothing);
   });
 }

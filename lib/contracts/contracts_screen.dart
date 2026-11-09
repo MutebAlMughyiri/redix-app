@@ -7,7 +7,6 @@ import '../structure/offered_items.dart';
 import '../suppliers/suppliers.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
-import '../ui/change_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
@@ -91,18 +90,6 @@ class ContractsScreen extends StatefulWidget {
 
   /// The line that says why a document was not kept, in the dialog.
   static const documentMessageKey = Key('contracts.documentMessage');
-
-  /// The button that saves, in the dialog.
-  static const saveKey = ChangeDialog.saveKey;
-
-  /// The line that says why a change was refused, in the dialog.
-  static const dialogMessageKey = ChangeDialog.messageKey;
-
-  /// The line that says the list could not be read.
-  static const messageKey = ApiListBody.messageKey;
-
-  /// The line shown while the project has no contracts.
-  static const emptyKey = ApiListBody.emptyKey;
 
   /// The document [id], in the dialog.
   static Key documentKey(String id) => Key('contracts.document.$id');

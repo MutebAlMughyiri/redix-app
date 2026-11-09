@@ -44,15 +44,6 @@ class ProjectsScreen extends StatefulWidget {
   /// The button that opens the form to register a project.
   static const newProjectKey = Key('projects.new');
 
-  /// The line shown while there are no projects.
-  static const emptyKey = ApiListBody.emptyKey;
-
-  /// The line that says the list could not be read.
-  static const messageKey = ApiListBody.messageKey;
-
-  /// The button that reads the list again.
-  static const retryKey = ApiListBody.retryKey;
-
   /// The card of the project [id].
   static Key cardKey(String id) => Key('projects.card.$id');
 
@@ -61,7 +52,6 @@ class ProjectsScreen extends StatefulWidget {
 
   /// The units of the project [id], or that it is read-only.
   static Key detailsKey(String id) => Key('projects.details.$id');
-
 
   /// The status of the project [id].
   static Key statusKey(String id) => Key('projects.status.$id');

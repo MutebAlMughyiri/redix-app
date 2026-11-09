@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
-import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
@@ -34,21 +33,6 @@ class CategoriesScreen extends StatefulWidget {
 
   /// The button that adds a category.
   static const addCategoryKey = Key('categories.add');
-
-  /// The name, in the dialogs that add and rename.
-  static const nameKey = NameDialog.nameKey;
-
-  /// The button that saves, in the dialogs that add and rename.
-  static const saveKey = ChangeDialog.saveKey;
-
-  /// The line that says why a change was refused, in the dialogs that add and rename.
-  static const dialogMessageKey = ChangeDialog.messageKey;
-
-  /// The line that says the list could not be read.
-  static const messageKey = ApiListBody.messageKey;
-
-  /// The line shown while the project has no categories.
-  static const emptyKey = ApiListBody.emptyKey;
 
   /// Rename, in an item's menu.
   static const renameItemKey = Key('categories.renameItem');

@@ -4,7 +4,6 @@ import '../projects/project.dart';
 import '../ui/bottom_button.dart';
 import '../ui/screen_title.dart';
 import '../ui/api_list_body.dart';
-import '../ui/change_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../words/words.dart';
 import 'payment_method_row.dart';
@@ -38,21 +37,6 @@ class PaymentMethodsScreen extends StatefulWidget {
 
   /// Enable, in a method's menu.
   static const enableKey = Key('paymentMethods.enable');
-
-  /// The name, in the dialogs that add and rename.
-  static const dialogNameKey = NameDialog.nameKey;
-
-  /// The button that saves, in a dialog.
-  static const saveKey = ChangeDialog.saveKey;
-
-  /// The line that says why a change was refused, in a dialog.
-  static const dialogMessageKey = ChangeDialog.messageKey;
-
-  /// The line that says the list could not be read.
-  static const messageKey = ApiListBody.messageKey;
-
-  /// The line shown while the project has no payment methods.
-  static const emptyKey = ApiListBody.emptyKey;
 
   /// The name of the payment method [id].
   static Key nameKey(String id) => Key('paymentMethods.name.$id');

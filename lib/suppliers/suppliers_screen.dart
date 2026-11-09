@@ -4,7 +4,6 @@ import '../projects/project.dart';
 import '../structure/offered_items.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
-import '../ui/change_dialog.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'supplier.dart';
@@ -58,18 +57,6 @@ class SuppliersScreen extends StatefulWidget {
 
   /// The default item, in the dialog.
   static const defaultItemKey = Key('suppliers.defaultItem');
-
-  /// The button that saves, in the dialog.
-  static const saveKey = ChangeDialog.saveKey;
-
-  /// The line that says why a change was refused, in the dialog.
-  static const dialogMessageKey = ChangeDialog.messageKey;
-
-  /// The line that says the list could not be read.
-  static const messageKey = ApiListBody.messageKey;
-
-  /// The line shown while the project has no suppliers.
-  static const emptyKey = ApiListBody.emptyKey;
 
   /// The name of the supplier [id].
   static Key nameKey(String id) => Key('suppliers.name.$id');

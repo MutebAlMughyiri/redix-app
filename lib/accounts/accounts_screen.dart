@@ -5,7 +5,6 @@ import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
-import '../ui/change_dialog.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'account.dart';
@@ -54,18 +53,6 @@ class AccountsScreen extends StatefulWidget {
 
   /// The opening balance, in the dialog.
   static const openingBalanceKey = Key('accounts.openingBalance');
-
-  /// The button that saves, in the dialog.
-  static const saveKey = ChangeDialog.saveKey;
-
-  /// The line that says why a change was refused, in the dialog.
-  static const dialogMessageKey = ChangeDialog.messageKey;
-
-  /// The line that says the list could not be read.
-  static const messageKey = ApiListBody.messageKey;
-
-  /// The line shown while the project has no accounts.
-  static const emptyKey = ApiListBody.emptyKey;
 
   /// The choice of [type], in the dialog that adds.
   static Key typeKey(AccountType type) => Key('accounts.type.${type.name}');

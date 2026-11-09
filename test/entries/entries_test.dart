@@ -16,6 +16,8 @@ import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/app_color.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/reason_sheet.dart';
+import 'package:redix/ui/screen_title.dart';
 
 void main() {
   Future<FakeApi> openHome(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field, String status = 'active'}) async {
@@ -236,12 +238,12 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(EntriesScreen.reverseReasonKey), 'إدخال خاطئ');
-      await tester.tap(find.byKey(EntriesScreen.reverseSendKey));
+      await tester.enterText(find.byKey(ReasonSheet.reasonKey), 'إدخال خاطئ');
+      await tester.tap(find.byKey(ReasonSheet.sendKey));
     });
 
     expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2, api.sentEntryChanges.single.$3['reason']), ('entry-0', 'reverse', 'إدخال خاطئ'));
-    expect(find.byKey(EntriesScreen.reverseSendKey), findsNothing);
+    expect(find.byKey(ReasonSheet.sendKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.reversed');
     expect(find.byKey(AddEntryScreen.reverseKey), findsNothing);
   });
@@ -263,16 +265,16 @@ void main() {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: managerAndFinance);
     await openActions(tester, api, 'entry-0');
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
-    await tester.enterText(find.byKey(EntriesScreen.reverseReasonKey), 'إدخال خاطئ');
+    await tester.enterText(find.byKey(ReasonSheet.reasonKey), 'إدخال خاطئ');
     api.heldEntryChange = Completer<void>();
 
     await act(tester, api, () async {
-      await tester.tap(find.byKey(EntriesScreen.reverseSendKey));
+      await tester.tap(find.byKey(ReasonSheet.sendKey));
       await tester.pump();
-      await tester.tap(find.byKey(EntriesScreen.reverseSendKey), warnIfMissed: false);
+      await tester.tap(find.byKey(ReasonSheet.sendKey), warnIfMissed: false);
     });
 
-    expect(tester.widget<FilledButton>(find.byKey(EntriesScreen.reverseSendKey)).onPressed, isNull);
+    expect(tester.widget<FilledButton>(find.byKey(ReasonSheet.sendKey)).onPressed, isNull);
     await act(tester, api, () async => api.heldEntryChange.complete());
     expect(api.sentEntryChanges.length, 1);
   });
@@ -286,10 +288,10 @@ void main() {
     await openActions(tester, api, 'entry-0');
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
 
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.reverseSendKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ReasonSheet.sendKey)));
 
     expect(find.text('en entries.reasonRequired'), findsOneWidget);
-    expect(find.byKey(EntriesScreen.reverseSendKey), findsOneWidget);
+    expect(find.byKey(ReasonSheet.sendKey), findsOneWidget);
   });
 
   testWidgets('a reversed entry cannot be reversed again', (tester) async {
@@ -341,8 +343,8 @@ void main() {
     expect(tester.widget<Text>(find.byKey(AddEntryScreen.reverseKey.label)).data, 'en entries.reverse');
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(EntriesScreen.reverseReasonKey), 'فاتورة مكررة');
-      await tester.tap(find.byKey(EntriesScreen.reverseSendKey));
+      await tester.enterText(find.byKey(ReasonSheet.reasonKey), 'فاتورة مكررة');
+      await tester.tap(find.byKey(ReasonSheet.sendKey));
     });
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
@@ -447,7 +449,7 @@ void main() {
     testWidgets('redix-app #90 (Muteb, 9 Nov 2026: "let me show all entered details en read mode"): a tap opens the entry read only, its photo and every value as it was filled, with no way to type or take another file', (tester) async {
       await openRejected(tester, change: false);
 
-      expect(tester.widget<Text>(find.byKey(AddEntryScreen.titleKey)).data, 'en entries.view');
+      expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en entries.view');
       expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.rejected');
       expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
       expect(find.byKey(AddEntryScreen.cameraKey), findsNothing);
@@ -510,7 +512,7 @@ void main() {
       await openActions(tester, api, 'entry-0');
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.changeKey)));
 
-      expect(tester.widget<Text>(find.byKey(AddEntryScreen.titleKey)).data, 'en entries.edit');
+      expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en entries.edit');
       expect(tester.widget<TablePicker>(find.byKey(AddEntryScreen.tableKey)).chosen.label, 'مقاول الحديد (بند الحديد)');
       expect(find.byKey(AddEntryScreen.supplierKey), findsNothing);
       await tester.ensureVisible(find.byKey(AddEntryScreen.sendKey));
@@ -529,7 +531,7 @@ void main() {
     expect(find.text('en entries.new'), findsOneWidget);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
 
-    expect(tester.widget<Text>(find.byKey(AddEntryScreen.titleKey)).data, 'en entries.new');
+    expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en entries.new');
   });
 
   group('search', () {

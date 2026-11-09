@@ -8,6 +8,7 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 
 void main() {
   String message(WidgetTester tester) => tester.widget<Text>(find.byKey(SignInScreen.messageKey)).data!;
@@ -187,7 +188,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
 
     await scrollAndTap(tester, api, SettingsScreen.signOutKey);
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.confirmSignOutKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
     expect(find.byKey(SignInScreen.unlockKey), findsNothing);
     expect(await const FlutterSecureStorage().read(key: 'session'), isNull);

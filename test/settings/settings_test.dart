@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/default_project_sheet.dart';
 import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/words/language_switch.dart';
@@ -13,6 +12,7 @@ import 'package:redix/auth/permission.dart';
 
 import '../app_harness.dart';
 import '../app_harness.dart' as harness;
+import 'package:redix/ui/api_list_body.dart';
 
 void main() {
   Future<void> openSettings(WidgetTester tester, FakeApi api) async {
@@ -88,7 +88,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.registeredKey)));
 
-    expect(find.byKey(RegisteredProjectsScreen.emptyKey), findsOneWidget);
+    expect(find.byKey(ApiListBody.emptyKey), findsOneWidget);
   });
 
   bool? isTicked(WidgetTester tester, String id) => tester.widget<CheckboxListTile>(find.byKey(DefaultProjectSheet.optionKey(id))).value;

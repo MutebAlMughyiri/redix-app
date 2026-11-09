@@ -6,6 +6,9 @@ import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/home/home_screen.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/name_dialog.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -21,8 +24,8 @@ void main() {
   }
 
   Future<void> saveName(WidgetTester tester, FakeApi api, String name) => act(tester, api, () async {
-    await tester.enterText(find.byKey(PaymentMethodsScreen.dialogNameKey), name);
-    await tester.tap(find.byKey(PaymentMethodsScreen.saveKey));
+    await tester.enterText(find.byKey(NameDialog.nameKey), name);
+    await tester.tap(find.byKey(ChangeDialog.saveKey));
   });
 
   Future<void> chooseInMenu(WidgetTester tester, FakeApi api, String id, Key item) async {
@@ -57,15 +60,15 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.addKey)));
     await saveName(tester, opened.api, ' ');
 
-    expect(text(tester, PaymentMethodsScreen.dialogMessageKey), 'en paymentMethods.invalidName');
-    expect(find.byKey(PaymentMethodsScreen.dialogNameKey), findsOneWidget);
+    expect(text(tester, ChangeDialog.messageKey), 'en paymentMethods.invalidName');
+    expect(find.byKey(NameDialog.nameKey), findsOneWidget);
   });
 
   testWidgets('renaming starts from the name and sends the new one', (tester) async {
     final opened = await openMethods(tester);
 
     await chooseInMenu(tester, opened.api, opened.card, PaymentMethodsScreen.renameKey);
-    expect(tester.widget<TextField>(find.byKey(PaymentMethodsScreen.dialogNameKey)).controller!.text, 'شبكة');
+    expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).controller!.text, 'شبكة');
     await saveName(tester, opened.api, 'بطاقة');
 
     expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/payment-methods/${opened.card}');
@@ -138,7 +141,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byType(BackButton)));
     await scrollAndTap(tester, opened.api, HomeScreen.paymentMethodsKey('project-0'));
 
-    expect(find.byKey(PaymentMethodsScreen.messageKey), findsNothing);
+    expect(find.byKey(ApiListBody.messageKey), findsNothing);
   });
 
   test('a plain number shows as few decimals as it needs', () {

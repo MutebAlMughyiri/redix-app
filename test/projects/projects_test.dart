@@ -6,6 +6,7 @@ import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/refusal_snack_bar.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/api_list_body.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -20,7 +21,7 @@ void main() {
   testWidgets('with no projects yet, the list says what to do next', (tester) async {
     await openProjects(tester, FakeApi());
 
-    expect(text(tester, ProjectsScreen.emptyKey), 'en projects.empty');
+    expect(text(tester, ApiListBody.emptyKey), 'en projects.empty');
     expect(find.byKey(ProjectsScreen.newProjectKey), findsOneWidget);
   });
 
@@ -29,11 +30,11 @@ void main() {
       ..online = false
       ..addProject('غصون 6');
     await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: keptWords('en'));
-    expect(text(tester, ProjectsScreen.messageKey), 'en projects.loadFailed');
+    expect(text(tester, ApiListBody.messageKey), 'en projects.loadFailed');
 
     api.online = true;
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.retryKey)));
-    expect(find.byKey(ProjectsScreen.messageKey), findsNothing);
+    await act(tester, api, () => tester.tap(find.byKey(ApiListBody.retryKey)));
+    expect(find.byKey(ApiListBody.messageKey), findsNothing);
     expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsOneWidget);
   });
 

@@ -14,6 +14,9 @@ import 'package:redix/structure/item_tables_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/name_dialog.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -33,8 +36,8 @@ void main() {
   Future<void> open(WidgetTester tester, FakeApi api, String categoryId) => act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.categoryTileKey(categoryId))));
 
   Future<void> save(WidgetTester tester, FakeApi api, String name) => act(tester, api, () async {
-    await tester.enterText(find.byKey(CategoriesScreen.nameKey), name);
-    await tester.tap(find.byKey(CategoriesScreen.saveKey));
+    await tester.enterText(find.byKey(NameDialog.nameKey), name);
+    await tester.tap(find.byKey(ChangeDialog.saveKey));
   });
 
   Future<void> drag(WidgetTester tester, FakeApi api, Key handle, double by) => act(tester, api, () async {
@@ -80,7 +83,7 @@ void main() {
     expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/categories');
     expect(opened.api.sentStructureChanges.single.$2, {'name': 'الملاحق'});
     expect(find.text('الملاحق'), findsOneWidget);
-    expect(find.byKey(CategoriesScreen.saveKey), findsNothing);
+    expect(find.byKey(ChangeDialog.saveKey), findsNothing);
   });
 
   testWidgets('a refused name stays in the dialog with why', (tester) async {
@@ -90,7 +93,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.addCategoryKey)));
     await save(tester, opened.api, ' ');
 
-    expect(text(tester, CategoriesScreen.dialogMessageKey), 'en categories.invalidName');
+    expect(text(tester, ChangeDialog.messageKey), 'en categories.invalidName');
   });
 
   testWidgets('a new item is sent with the type chosen, both unless changed', (tester) async {
@@ -115,7 +118,7 @@ void main() {
     await open(tester, opened.api, opened.bone);
 
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.renameCategoryKey(opened.bone))));
-    expect(tester.widget<TextField>(find.byKey(CategoriesScreen.nameKey)).controller!.text, 'العظم');
+    expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).controller!.text, 'العظم');
     await save(tester, opened.api, 'الهيكل');
     expect(text(tester, CategoriesScreen.categoryNameKey(opened.bone)), 'الهيكل');
 
@@ -354,7 +357,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.changeTypeKey)));
     expect(tester.widget<RadioGroup<ItemType>>(find.byType(RadioGroup<ItemType>)).groupValue, ItemType.purchases);
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemTypeKey(ItemType.both))));
-    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.saveKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/items/${opened.steel}/type');
     expect(opened.api.sentStructureChanges.single.$2, {'type': 'both'});
@@ -385,7 +388,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.sideKey(isRevenue: true))));
     expect(find.byKey(CategoriesScreen.itemTypeKey(ItemType.both)), findsNothing);
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemTypeKey(ItemType.vatRefund))));
-    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.saveKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(opened.api.sentStructureChanges.single.$2, {'type': 'vatRefund'});
     expect(text(tester, CategoriesScreen.itemDetailsKey(opened.steel)), 'en categories.typeVatRefund');
@@ -398,9 +401,9 @@ void main() {
 
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(opened.steel))));
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.changeTypeKey)));
-    await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.saveKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-    expect(text(tester, CategoriesScreen.dialogMessageKey), 'en categories.itemHasEntries');
+    expect(text(tester, ChangeDialog.messageKey), 'en categories.itemHasEntries');
   });
 
   testWidgets('a list that cannot be read offers to try again', (tester) async {
@@ -409,7 +412,7 @@ void main() {
     api.online = false;
     await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
 
-    expect(text(tester, CategoriesScreen.messageKey), 'en categories.loadFailed');
+    expect(text(tester, ApiListBody.messageKey), 'en categories.loadFailed');
   });
 
   testWidgets('a project with no categories says so', (tester) async {
@@ -417,7 +420,7 @@ void main() {
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
 
-    expect(text(tester, CategoriesScreen.emptyKey), 'en categories.empty');
+    expect(text(tester, ApiListBody.emptyKey), 'en categories.empty');
   });
 
   testWidgets('a finished project shows its structure with nothing to change', (tester) async {

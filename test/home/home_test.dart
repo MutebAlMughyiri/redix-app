@@ -7,6 +7,7 @@ import 'package:redix/settings/settings_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/api_list_body.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -100,10 +101,10 @@ void main() {
     api.online = false;
     await store.clear('copies');
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
-    expect(text(tester, HomeScreen.messageKey), 'en projects.loadFailed');
+    expect(text(tester, ApiListBody.messageKey), 'en projects.loadFailed');
 
     api.online = true;
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.retryKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ApiListBody.retryKey)));
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsOneWidget);
   });
 

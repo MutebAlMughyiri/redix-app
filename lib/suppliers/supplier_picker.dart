@@ -39,12 +39,6 @@ class SupplierPicker extends StatefulWidget {
   /// The title over the suppliers used most.
   static const mostUsedKey = Key('supplierPicker.mostUsed');
 
-  /// The line that says the list could not be read.
-  static const messageKey = ApiListBody.messageKey;
-
-  /// The line shown while nothing matches.
-  static const emptyKey = ApiListBody.emptyKey;
-
   /// The row of the supplier [id], which picks it.
   static Key rowKey(String id) => Key('supplierPicker.row.$id');
 

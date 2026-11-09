@@ -6,6 +6,7 @@ import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/change_dialog.dart';
 
 void main() {
   const vatNumber = '300000000000003';
@@ -27,7 +28,7 @@ void main() {
 
   Future<void> openMenu(WidgetTester tester, FakeApi api, String id) => act(tester, api, () => tester.tap(find.byKey(SuppliersScreen.menuKey(id))));
 
-  Future<void> save(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(SuppliersScreen.saveKey)));
+  Future<void> save(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
   testWidgets('each supplier shows its VAT number and default item', (tester) async {
     final opened = await openSuppliers(tester);
@@ -88,7 +89,7 @@ void main() {
     await tester.enterText(find.byKey(SuppliersScreen.vatNumberKey), '30088967710003');
     await save(tester, opened.api);
 
-    expect(text(tester, SuppliersScreen.dialogMessageKey), 'en suppliers.invalidVatNumber');
+    expect(text(tester, ChangeDialog.messageKey), 'en suppliers.invalidVatNumber');
     expect(find.byKey(SuppliersScreen.holderKey), findsNothing);
   });
 
@@ -103,7 +104,7 @@ void main() {
     await tester.enterText(find.byKey(SuppliersScreen.vatNumberKey), vatNumber);
     await save(tester, opened.api);
 
-    expect(text(tester, SuppliersScreen.dialogMessageKey), 'en suppliers.vatNumberTaken');
+    expect(text(tester, ChangeDialog.messageKey), 'en suppliers.vatNumberTaken');
     expect(text(tester, SuppliersScreen.holderKey), 'en suppliers.holder شركة النخيل');
   });
 
@@ -182,7 +183,7 @@ void main() {
     await tester.ensureVisible(find.byKey(HomeScreen.suppliersKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey('project-0'))));
 
-    expect(text(tester, SuppliersScreen.emptyKey), 'en suppliers.empty');
+    expect(text(tester, ApiListBody.emptyKey), 'en suppliers.empty');
   });
 
   testWidgets('without keeping the settings the register shows with nothing to change', (tester) async {

@@ -57,15 +57,6 @@ class ApprovalsScreen extends StatefulWidget {
   /// The button approving what is selected.
   static const approveSelectedKey = Key('approvals.approveSelected');
 
-  /// The field holding why an entry is rejected.
-  static const reasonKey = ReasonSheet.reasonKey;
-
-  /// The button rejecting the entry.
-  static const rejectSendKey = ReasonSheet.sendKey;
-
-  /// The line saying why a rejection was refused.
-  static const rejectMessageKey = ReasonSheet.messageKey;
-
   /// The card of the entry [id].
   static Key cardKey(String id) => Key('approvals.card.$id');
 
@@ -104,7 +95,6 @@ class ApprovalsScreen extends StatefulWidget {
 
   /// The amount of the entry [id].
   static Key amountKey(String id) => Key('approvals.amount.$id');
-
 
   /// The project.
   final Project project;

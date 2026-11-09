@@ -4,6 +4,9 @@ import 'package:redix/users/users_screen.dart';
 import 'package:redix/home/home_screen.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -71,11 +74,11 @@ void main() {
     final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.disableKey);
-    expect(text(tester, UsersScreen.disableNameKey), 'نواف');
-    expect(text(tester, UsersScreen.disableExplainKey), 'en users.disableExplain');
+    expect(text(tester, ConfirmDialog.subjectKey), 'نواف');
+    expect(text(tester, ConfirmDialog.explanationKey), 'en users.disableExplain');
     expect(api.sentUserChanges, isEmpty);
 
-    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.cancelDisableKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.cancelKey)));
     expect(api.sentUserChanges, isEmpty);
     expect(find.byKey(UsersScreen.statusKey('user-1')), findsNothing);
   });
@@ -84,7 +87,7 @@ void main() {
     final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.disableKey);
-    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.confirmDisableKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
     expect(api.sentUserChanges.single.$1, '/users/user-1/disable');
     expect(find.descendant(of: find.byKey(UsersScreen.statusKey('user-1')), matching: find.text('en users.disabled')), findsOneWidget);
 
@@ -98,13 +101,13 @@ void main() {
     await choose(tester, api, 'user-1', UsersScreen.disableKey);
 
     api.userAnswer = (status: 409, code: 'lastManager');
-    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.confirmDisableKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
     expect(find.text('en users.lastManager'), findsOneWidget);
 
     await tester.pumpAndSettle(const Duration(seconds: 5));
     await choose(tester, api, 'user-1', UsersScreen.disableKey);
     api.userAnswer = (status: 403, code: 'otherProject');
-    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.confirmDisableKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
     expect(find.text('en users.otherProject'), findsOneWidget);
   });
 
@@ -114,7 +117,7 @@ void main() {
     await choose(tester, api, 'user-1', UsersScreen.editKey);
     await act(tester, api, () async {
       await tester.enterText(find.byKey(UsersScreen.editMobileKey), '٠٥٠٠٠٠٠٠٠١');
-      await tester.tap(find.byKey(UsersScreen.saveKey));
+      await tester.tap(find.byKey(ChangeDialog.saveKey));
     });
 
     expect(api.sentUserChanges.first.$2['mobile'], '0500000001');
@@ -129,10 +132,10 @@ void main() {
 
     await act(tester, api, () async {
       await tester.enterText(find.byKey(UsersScreen.editNameKey), 'نواف الأول');
-      await tester.tap(find.byKey(UsersScreen.saveKey));
+      await tester.tap(find.byKey(ChangeDialog.saveKey));
     });
 
-    expect(find.byKey(UsersScreen.saveKey), findsNothing);
+    expect(find.byKey(ChangeDialog.saveKey), findsNothing);
     expect(api.sentUserChanges.first.$2, {'displayName': 'نواف الأول', 'mobile': '0500000000'});
     expect(text(tester, UsersScreen.nameKey('user-1')), 'نواف الأول');
   });
@@ -144,7 +147,7 @@ void main() {
     expect(tester.widget<TextField>(find.byKey(UsersScreen.editRoleNameKey)).controller!.text, '');
     await act(tester, api, () async {
       await tester.enterText(find.byKey(UsersScreen.editRoleNameKey), 'مشرف مالي');
-      await tester.tap(find.byKey(UsersScreen.saveKey));
+      await tester.tap(find.byKey(ChangeDialog.saveKey));
     });
 
     final (path, body) = api.sentUserChanges.single;
@@ -162,10 +165,10 @@ void main() {
     api.userAnswer = (status: 400, code: 'invalidName');
     await act(tester, api, () async {
       await tester.enterText(find.byKey(UsersScreen.editNameKey), ' ');
-      await tester.tap(find.byKey(UsersScreen.saveKey));
+      await tester.tap(find.byKey(ChangeDialog.saveKey));
     });
 
-    expect(text(tester, UsersScreen.dialogMessageKey), 'en users.invalidName');
+    expect(text(tester, ChangeDialog.messageKey), 'en users.invalidName');
     expect(tester.widget<TextField>(find.byKey(UsersScreen.editNameKey)).controller!.text, ' ');
   });
 
@@ -178,10 +181,10 @@ void main() {
 
     await act(tester, api, () async {
       await tester.enterText(find.byKey(UsersScreen.resetPasswordFieldKey), 'Temporary-2');
-      await tester.tap(find.byKey(UsersScreen.saveKey));
+      await tester.tap(find.byKey(ChangeDialog.saveKey));
     });
 
-    expect(find.byKey(UsersScreen.saveKey), findsNothing);
+    expect(find.byKey(ChangeDialog.saveKey), findsNothing);
     final (path, body) = api.sentUserChanges.single;
     expect(path, '/users/user-1/reset-password');
     expect(body, {'temporaryPassword': 'Temporary-2'});
@@ -194,12 +197,12 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.addExistingKey)));
     await act(tester, api, () async {
       await tester.enterText(find.byKey(UsersScreen.existingUsernameKey), 'reem');
-      await tester.tap(find.byKey(UsersScreen.saveKey));
+      await tester.tap(find.byKey(ChangeDialog.saveKey));
     });
 
     expect(api.sentUserChanges.single.$1, '/projects/project-0/users/existing');
     expect(api.sentUserChanges.single.$2, {'username': 'reem'});
-    expect(find.byKey(UsersScreen.saveKey), findsNothing);
+    expect(find.byKey(ChangeDialog.saveKey), findsNothing);
     expect(text(tester, UsersScreen.permissionsLineKey('user-3')), 'en permissions.count');
     expect(api.users.last['projects'], [{'projectId': 'project-0', 'name': 'غصون 6', 'permissions': ['readProject']}]);
   });
@@ -211,10 +214,10 @@ void main() {
     api.userAnswer = (status: 404, code: 'unknownUser');
     await act(tester, api, () async {
       await tester.enterText(find.byKey(UsersScreen.existingUsernameKey), 'nobody');
-      await tester.tap(find.byKey(UsersScreen.saveKey));
+      await tester.tap(find.byKey(ChangeDialog.saveKey));
     });
 
-    expect(text(tester, UsersScreen.dialogMessageKey), 'en users.unknownUser');
+    expect(text(tester, ChangeDialog.messageKey), 'en users.unknownUser');
   });
 
   testWidgets('without a network the list says so, and Try again reads it', (tester) async {
@@ -223,10 +226,10 @@ void main() {
     await openProject(tester, api);
     api.online = false;
     await scrollAndTap(tester, api, HomeScreen.usersKey('project-0'));
-    expect(text(tester, UsersScreen.messageKey), 'en users.loadFailed');
+    expect(text(tester, ApiListBody.messageKey), 'en users.loadFailed');
 
     api.online = true;
-    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.retryKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ApiListBody.retryKey)));
     expect(find.byKey(UsersScreen.rowKey('user-0')), findsOneWidget);
   });
 }

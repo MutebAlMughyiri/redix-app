@@ -41,7 +41,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(key)));
   }
 
-  Future<void> save(WidgetTester tester, FakeApi api) => tapVisible(tester, api, ContractsScreen.saveKey);
+  Future<void> save(WidgetTester tester, FakeApi api) => tapVisible(tester, api, ChangeDialog.saveKey);
 
   Future<void> pickContractor(WidgetTester tester, FakeApi api, String id) async {
     await tapVisible(tester, api, ContractsScreen.contractorKey);
@@ -239,7 +239,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(SupplierPicker.quickAddKey)));
     await tester.enterText(find.byKey(SuppliersScreen.supplierNameKey), 'مبلط جديد');
     await tester.enterText(find.byKey(SuppliersScreen.vatNumberKey), '311111111111113');
-    await act(tester, opened.api, () => tester.tap(find.byKey(SuppliersScreen.saveKey).last));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey).last));
 
     expect(find.byKey(SupplierPicker.searchKey), findsNothing);
     expect(find.byKey(ContractsScreen.contractorKey), findsOneWidget);
@@ -255,7 +255,7 @@ void main() {
     await save(tester, opened.api);
 
     expect(opened.api.sentSettingsChanges.single.$2.containsKey('supplierId'), isFalse);
-    expect(text(tester, ContractsScreen.dialogMessageKey), 'en contracts.unknownSupplier');
+    expect(text(tester, ChangeDialog.messageKey), 'en contracts.unknownSupplier');
   });
 
   testWidgets('an open-value contract asks no value and sends the mark', (tester) async {
@@ -278,17 +278,17 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
     await tester.enterText(find.byKey(ContractsScreen.valueKey), 'x');
     await save(tester, opened.api);
-    expect(text(tester, ContractsScreen.dialogMessageKey), 'en contracts.invalidValue');
+    expect(text(tester, ChangeDialog.messageKey), 'en contracts.invalidValue');
 
     await tester.enterText(find.byKey(ContractsScreen.valueKey), '1000');
     await tester.enterText(find.byKey(ContractsScreen.unitPriceKey), 'x');
     await save(tester, opened.api);
-    expect(text(tester, ContractsScreen.dialogMessageKey), 'en contracts.invalidUnitPrice');
+    expect(text(tester, ChangeDialog.messageKey), 'en contracts.invalidUnitPrice');
 
     await tester.enterText(find.byKey(ContractsScreen.unitPriceKey), '');
     await tester.enterText(find.byKey(ContractsScreen.quantityKey), 'x');
     await save(tester, opened.api);
-    expect(text(tester, ContractsScreen.dialogMessageKey), 'en contracts.invalidQuantity');
+    expect(text(tester, ChangeDialog.messageKey), 'en contracts.invalidQuantity');
 
     expect(opened.api.sentSettingsChanges, isEmpty);
   });
@@ -374,7 +374,7 @@ void main() {
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
 
-    expect(text(tester, ContractsScreen.emptyKey), 'en contracts.empty');
+    expect(text(tester, ApiListBody.emptyKey), 'en contracts.empty');
   });
 
   testWidgets('without keeping the settings the contracts show with nothing to change', (tester) async {
@@ -400,6 +400,6 @@ void main() {
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
 
-    expect(text(tester, ContractsScreen.messageKey), 'en contracts.loadFailed');
+    expect(text(tester, ApiListBody.messageKey), 'en contracts.loadFailed');
   });
 }

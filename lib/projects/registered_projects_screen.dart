@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../format/date_format.dart';
 import '../ui/api_list_body.dart';
-import '../ui/change_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
@@ -24,26 +23,11 @@ class RegisteredProjectsScreen extends StatefulWidget {
   /// The screen's route.
   static const path = '/registered-projects';
 
-  /// The line shown while nothing is waiting.
-  static const emptyKey = ApiListBody.emptyKey;
-
-  /// The line that says the list could not be read.
-  static const messageKey = ApiListBody.messageKey;
-
-  /// The button that reads the list again.
-  static const retryKey = ApiListBody.retryKey;
-
   /// Which project, in the Reject dialog.
   static const rejectNameKey = Key('registered.rejectName');
 
   /// Why it is rejected, in the Reject dialog.
   static const reasonKey = Key('registered.reason');
-
-  /// The button that rejects, in the Reject dialog.
-  static const saveKey = ChangeDialog.saveKey;
-
-  /// The line that says why a rejection was refused, in the Reject dialog.
-  static const dialogMessageKey = ChangeDialog.messageKey;
 
   /// The card of the project [id].
   static Key cardKey(String id) => Key('registered.card.$id');

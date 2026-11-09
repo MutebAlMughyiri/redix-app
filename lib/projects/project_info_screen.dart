@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../format/date_format.dart';
-import '../ui/change_dialog.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
@@ -65,9 +64,6 @@ class ProjectInfoScreen extends StatefulWidget {
   /// Rename, in a unit's menu.
   static const renameUnitKey = Key('projectInfo.renameUnit');
 
-  /// The line that says why the unit was refused, in the Add unit dialog.
-  static const unitMessageKey = ChangeDialog.messageKey;
-
   /// The heading of the description.
   static const descriptionHeadingKey = Key('projectInfo.descriptionHeading');
 
@@ -82,18 +78,6 @@ class ProjectInfoScreen extends StatefulWidget {
 
   /// The button that closes the project.
   static const closeKey = Key('projectInfo.close');
-
-  /// The project's name, in the close question.
-  static const closeNameKey = ConfirmDialog.subjectKey;
-
-  /// What closing means, in the close question.
-  static const closeExplainKey = ConfirmDialog.explanationKey;
-
-  /// The button that closes the project, in the close question.
-  static const confirmCloseKey = ConfirmDialog.confirmKey;
-
-  /// The button that keeps the project active, in the close question.
-  static const cancelCloseKey = ConfirmDialog.cancelKey;
 
   @override
   State<ProjectInfoScreen> createState() => _ProjectInfoScreenState();

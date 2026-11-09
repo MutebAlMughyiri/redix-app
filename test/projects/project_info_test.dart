@@ -9,6 +9,7 @@ import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/refusal_snack_bar.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 
 /// More info (redix-api 93): the project's own record on one page in Settings, read by everyone in it, changed only by whoever manages it while it is open.
 void main() {
@@ -234,7 +235,7 @@ void main() {
       await tester.enterText(find.byKey(NameDialog.nameKey), 'الفلة الغربية');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-      expect(text(tester, ProjectInfoScreen.unitMessageKey), 'en projects.unitNameTaken');
+      expect(text(tester, ChangeDialog.messageKey), 'en projects.unitNameTaken');
       expect(typed(tester, NameDialog.nameKey), 'الفلة الغربية');
     });
 
@@ -305,9 +306,9 @@ void main() {
       await openInfo(tester, api);
 
       await tap(tester, api, ProjectInfoScreen.closeKey);
-      expect(text(tester, ProjectInfoScreen.closeNameKey), 'غصون 6');
-      expect(text(tester, ProjectInfoScreen.closeExplainKey), 'en projects.closeExplain');
-      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.cancelCloseKey)));
+      expect(text(tester, ConfirmDialog.subjectKey), 'غصون 6');
+      expect(text(tester, ConfirmDialog.explanationKey), 'en projects.closeExplain');
+      await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.cancelKey)));
 
       expect(api.sentProjectChanges, isEmpty);
       expect(text(tester, ProjectInfoScreen.statusKey.label), 'en projects.active');
@@ -318,7 +319,7 @@ void main() {
       await openInfo(tester, api);
 
       await tap(tester, api, ProjectInfoScreen.closeKey);
-      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.confirmCloseKey)));
+      await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
       expect(api.sentProjectChanges.single.$1, '/projects/project-0/close');
       expect(text(tester, ProjectInfoScreen.statusKey.label), 'en projects.finished');
@@ -333,7 +334,7 @@ void main() {
       await tap(tester, api, ProjectInfoScreen.closeKey);
 
       api.projectAnswer = (status: 409, code: 'pendingEntries');
-      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.confirmCloseKey)));
+      await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
       expect(text(tester, messageKeyOf('projects.pendingEntries').label), 'en projects.pendingEntries');
       expect(find.byKey(ProjectInfoScreen.closeKey), findsOneWidget);
@@ -346,7 +347,7 @@ void main() {
       await tap(tester, api, ProjectInfoScreen.closeKey);
 
       api.online = false;
-      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.confirmCloseKey)));
+      await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
       expect(text(tester, messageKeyOf('projects.noConnection').label), 'en projects.noConnection');
       expect(find.byKey(ProjectInfoScreen.closeKey), findsOneWidget);
@@ -360,7 +361,7 @@ void main() {
 
       project['status'] = 'finished';
       api.projectAnswer = (status: 409, code: 'projectFinished');
-      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.confirmCloseKey)));
+      await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
       expect(text(tester, messageKeyOf('projects.projectFinished').label), 'en projects.projectFinished');
       expect(find.byKey(ProjectInfoScreen.closeKey), findsNothing);
@@ -373,7 +374,7 @@ void main() {
       await tap(tester, api, ProjectInfoScreen.closeKey);
 
       api.projectAnswer = (status: 403, code: '');
-      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.confirmCloseKey)));
+      await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
       expect(text(tester, messageKeyOf('projects.refused').label), 'en projects.refused');
     });

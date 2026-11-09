@@ -5,6 +5,8 @@ import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/api_list_body.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -50,7 +52,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.registeredKey)));
 
-    expect(text(tester, RegisteredProjectsScreen.emptyKey), 'en registered.empty');
+    expect(text(tester, ApiListBody.emptyKey), 'en registered.empty');
   });
 
   testWidgets('Approve sends it, and it leaves the list', (tester) async {
@@ -78,7 +80,7 @@ void main() {
     expect(text(tester, RegisteredProjectsScreen.rejectNameKey), 'غصون 8');
     await act(tester, api, () async {
       await tester.enterText(find.byKey(RegisteredProjectsScreen.reasonKey), 'الاسم مكرر');
-      await tester.tap(find.byKey(RegisteredProjectsScreen.saveKey));
+      await tester.tap(find.byKey(ChangeDialog.saveKey));
     });
 
     final (path, body) = api.sentRegistrations.single;
@@ -92,9 +94,9 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(RegisteredProjectsScreen.rejectKey('registered-0'))));
 
     api.registrationAnswer = (status: 400, code: 'invalidReason');
-    await act(tester, api, () => tester.tap(find.byKey(RegisteredProjectsScreen.saveKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-    expect(text(tester, RegisteredProjectsScreen.dialogMessageKey), 'en registered.invalidReason');
+    expect(text(tester, ChangeDialog.messageKey), 'en registered.invalidReason');
   });
 
   testWidgets('without a network the list says so, and Try again reads it', (tester) async {
@@ -106,10 +108,10 @@ void main() {
 
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.registeredKey)));
-    expect(text(tester, RegisteredProjectsScreen.messageKey), 'en registered.loadFailed');
+    expect(text(tester, ApiListBody.messageKey), 'en registered.loadFailed');
 
     api.online = true;
-    await act(tester, api, () => tester.tap(find.byKey(RegisteredProjectsScreen.retryKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ApiListBody.retryKey)));
     expect(find.byKey(RegisteredProjectsScreen.cardKey('registered-0')), findsOneWidget);
   });
 }

@@ -421,7 +421,7 @@ void main() {
   testWidgets('someone who holds nothing is told so, with no account to choose', (tester) async {
     await openExpense(tester, arrange: (api) => api.accounts['project-0']!.clear());
 
-    expect(find.byKey(AddEntryScreen.noAccountKey), findsOneWidget);
+    expect(find.byKey(PaymentChoices.noAccountKey), findsOneWidget);
     expect(find.byType(RadioListTile<String>), findsNothing);
   });
 
@@ -440,14 +440,14 @@ void main() {
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
 
-    await tester.ensureVisible(find.byKey(AddEntryScreen.retryKey));
-    expect(shown(tester, AddEntryScreen.listMessageKey), 'en accounts.loadFailed');
+    await tester.ensureVisible(find.byKey(PaymentChoices.retryKey));
+    expect(shown(tester, PaymentChoices.listMessageKey), 'en accounts.loadFailed');
 
     api.online = true;
-    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.retryKey)));
+    await act(tester, api, () => tester.tap(find.byKey(PaymentChoices.retryKey)));
 
     expect(find.text('عهدتي'), findsOneWidget);
-    expect(find.byKey(AddEntryScreen.listMessageKey), findsNothing);
+    expect(find.byKey(PaymentChoices.listMessageKey), findsNothing);
   });
 
   testWidgets('D10: an expense has one date, sent as its payment date, and no payment of its own', (tester) async {

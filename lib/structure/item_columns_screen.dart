@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
-import '../ui/change_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../ui/swipe_to_remove.dart';
@@ -78,16 +77,6 @@ class ItemColumnsScreen extends StatefulWidget {
 
   /// Whether it prints, in the dialogs that add and change.
   static const showInReportsKey = Key('columns.showInReports');
-
-  /// The button that saves, in the dialogs that add and change.
-  static const saveKey = ChangeDialog.saveKey;
-
-  /// The line that says why a change was refused, in the dialogs that add and change.
-  static const dialogMessageKey = ChangeDialog.messageKey;
-
-
-  /// The line that says the list could not be read.
-  static const messageKey = ApiListBody.messageKey;
 
   /// The row of the column [id].
   static Key rowKey(String id) => Key('columns.row.$id');

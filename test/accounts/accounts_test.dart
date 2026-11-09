@@ -7,6 +7,8 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/member_picker.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/api_list_body.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -38,7 +40,7 @@ void main() {
   Future<void> save(WidgetTester tester, FakeApi api, {required String name, required String openingBalance}) => act(tester, api, () async {
     await tester.enterText(find.byKey(AccountsScreen.accountNameKey), name);
     await tester.enterText(find.byKey(AccountsScreen.openingBalanceKey), openingBalance);
-    await tester.tap(find.byKey(AccountsScreen.saveKey));
+    await tester.tap(find.byKey(ChangeDialog.saveKey));
   });
 
   testWidgets('each account shows its type, who holds it and what it holds', (tester) async {
@@ -81,7 +83,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(AccountsScreen.addKey)));
     await save(tester, opened.api, name: 'كاش', openingBalance: '0');
 
-    expect(text(tester, AccountsScreen.dialogMessageKey), 'en accounts.custodianRequired');
+    expect(text(tester, ChangeDialog.messageKey), 'en accounts.custodianRequired');
     expect(find.byKey(AccountsScreen.accountNameKey), findsOneWidget);
   });
 
@@ -92,7 +94,7 @@ void main() {
     await chooseInMenu(tester, opened.api, opened.bank, AccountsScreen.editKey);
     await save(tester, opened.api, name: 'حساب المؤسسة', openingBalance: '1');
 
-    expect(text(tester, AccountsScreen.dialogMessageKey), 'en accounts.accountHasEntries');
+    expect(text(tester, ChangeDialog.messageKey), 'en accounts.accountHasEntries');
   });
 
   testWidgets('an opening balance that is not a number is refused without asking the API', (tester) async {
@@ -102,7 +104,7 @@ void main() {
     await save(tester, opened.api, name: 'حساب', openingBalance: 'abc');
 
     expect(opened.api.sentSettingsChanges, isEmpty);
-    expect(text(tester, AccountsScreen.dialogMessageKey), 'en accounts.invalidOpeningBalance');
+    expect(text(tester, ChangeDialog.messageKey), 'en accounts.invalidOpeningBalance');
   });
 
   testWidgets('editing starts from the account and sends what changed, and its type cannot change', (tester) async {
@@ -127,7 +129,7 @@ void main() {
 
     await chooseInMenu(tester, opened.api, opened.custody, AccountsScreen.editKey);
     await chooseCustodian(tester, opened.api, '');
-    await act(tester, opened.api, () => tester.tap(find.byKey(AccountsScreen.saveKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(opened.api.sentSettingsChanges.single.$2.containsKey('custodianId'), isFalse);
   });
@@ -199,7 +201,7 @@ void main() {
     await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));
     await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.accountsKey('project-0'))));
 
-    expect(find.byKey(AccountsScreen.messageKey), findsNothing);
+    expect(find.byKey(ApiListBody.messageKey), findsNothing);
   });
 
   test('money shows two decimals, thousands separators, and negatives in brackets (NFR-04)', () {

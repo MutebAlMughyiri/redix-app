@@ -10,6 +10,8 @@ import 'package:redix/ui/part_keys.dart';
 import 'package:redix/home/home_screen.dart';
 
 import '../app_harness.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/api_list_body.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -42,7 +44,7 @@ void main() {
     await tester.tap(find.byKey(ItemColumnsScreen.addKey));
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(ItemColumnsScreen.columnNameKey), name);
-    await tester.tap(find.byKey(ItemColumnsScreen.saveKey));
+    await tester.tap(find.byKey(ChangeDialog.saveKey));
   });
 
   Future<void> drag(WidgetTester tester, FakeApi api, Key handle, double by) => act(tester, api, () async {
@@ -90,7 +92,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.dataTypeKey)));
     await act(tester, opened.api, () => tester.tap(find.text('en columns.typeNumber').last));
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.requiredKey)));
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.saveKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(find.byType(ApplyToAllDialog), findsNothing);
     expect(opened.api.sentStructureChanges.single.$1, itemPath);
@@ -115,7 +117,7 @@ void main() {
     expect(find.text('en columns.typeFile'), findsNothing);
     await act(tester, opened.api, () => tester.tap(find.text('en columns.typeList').last));
     await tester.enterText(find.byKey(ItemColumnsScreen.choicesKey), 'أبيض\nرمادي');
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.saveKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(opened.api.sentStructureChanges.single.$2['options'], ['أبيض', 'رمادي']);
   });
@@ -126,7 +128,7 @@ void main() {
 
     await addColumn(tester, opened.api, 'اللون');
 
-    expect(text(tester, ItemColumnsScreen.dialogMessageKey), 'en columns.invalidOptions');
+    expect(text(tester, ChangeDialog.messageKey), 'en columns.invalidOptions');
   });
 
   testWidgets('a core column changes its name only: its switches are off', (tester) async {
@@ -137,7 +139,7 @@ void main() {
     expect(tester.widget<SwitchListTile>(find.byKey(ItemColumnsScreen.requiredKey)).onChanged, isNull);
     expect(tester.widget<SwitchListTile>(find.byKey(ItemColumnsScreen.showInReportsKey)).onChanged, isNull);
     await tester.enterText(find.byKey(ItemColumnsScreen.columnNameKey), 'تاريخ الفاتورة');
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.saveKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(opened.api.sentStructureChanges.single.$1, '$itemPath/${opened.date}');
     expect(opened.api.sentStructureChanges.single.$2, {'name': 'تاريخ الفاتورة', 'isRequired': true, 'showInReports': true, 'applyToAllItems': false});
@@ -151,7 +153,7 @@ void main() {
     expect(find.byKey(ItemColumnsScreen.dataTypeKey), findsNothing);
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.requiredKey)));
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.showInReportsKey)));
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.saveKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(text(tester, ItemColumnsScreen.detailsKey(opened.unit)), 'en columns.typeList · en columns.required · en columns.inReports');
   });
@@ -167,7 +169,7 @@ void main() {
 
     expect(text(tester, ItemColumnsScreen.existingChoicesKey), 'شرق · غرب');
     await tester.enterText(find.byKey(ItemColumnsScreen.newChoicesKey), 'شمال\nجنوب');
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.saveKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(opened.api.sentStructureChanges.single.$2['newOptions'], ['شمال', 'جنوب']);
     expect(list['options'], ['شرق', 'غرب', 'شمال', 'جنوب']);
@@ -178,7 +180,7 @@ void main() {
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.editKey(opened.unit))));
     expect(find.byKey(ItemColumnsScreen.newChoicesKey), findsNothing);
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.saveKey)));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(opened.api.sentStructureChanges.single.$2.containsKey('newOptions'), isFalse);
   });
@@ -261,7 +263,7 @@ void main() {
       await showTemplate(tester, opened.api);
 
       await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.editKey(templateColumn(opened.api, 0)))));
-      await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.saveKey)));
+      await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
       await act(tester, opened.api, () => tester.tap(find.byKey(ApplyToAllDialog.applyKey)));
 
       expect(opened.api.sentStructureChanges.single.$1, '$templatePath/${templateColumn(opened.api, 0)}');
@@ -303,7 +305,7 @@ void main() {
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.itemColumnsKey('item-1'))));
 
-    expect(text(tester, ItemColumnsScreen.messageKey), 'en columns.loadFailed');
+    expect(text(tester, ApiListBody.messageKey), 'en columns.loadFailed');
   });
 
   testWidgets('a finished project shows its columns with nothing to change', (tester) async {
