@@ -6,6 +6,7 @@ import 'user.dart';
 import 'users_screen.dart';
 import '../ui/app_color.dart';
 import '../format/parts_line.dart';
+import '../ui/row_menu.dart';
 
 /// One user on the list: their name, username, mobile and how many permissions they hold, a badge when disabled, and a menu of what can be done to them.
 class UserRow extends StatelessWidget {
@@ -54,7 +55,7 @@ class UserRow extends StatelessWidget {
             Text(
               user.displayName,
               key: UsersScreen.nameKey(user.id),
-              style: user.isActive ? null : TextStyle(color: AppColor.quiet.of(context)),
+              style: AppColor.quiet.textUnless(context, user.isActive),
             ),
             if (!user.isActive)
               Chip(
@@ -73,19 +74,15 @@ class UserRow extends StatelessWidget {
             Text(words.permissionsCount.replaceFirst('{0}', '${user.permissionCount}'), key: UsersScreen.permissionsLineKey(user.id)),
           ],
         ),
-        trailing: PopupMenuButton<VoidCallback>(
-          key: UsersScreen.menuKey(user.id),
-          onSelected: (action) => action(),
-          itemBuilder: (context) => [
-            PopupMenuItem(key: UsersScreen.editKey, value: onEdit, child: Text(words.usersEdit, key: UsersScreen.editKey.label)),
-            PopupMenuItem(key: UsersScreen.permissionsKey, value: onPermissions, child: Text(words.permissionsTitle, key: UsersScreen.permissionsKey.label)),
-            PopupMenuItem(key: UsersScreen.resetPasswordKey, value: onResetPassword, child: Text(words.usersResetPassword, key: UsersScreen.resetPasswordKey.label)),
+        trailing: rowMenu(UsersScreen.menuKey(user.id), [
+            rowMenuItem(UsersScreen.editKey, words.usersEdit, onEdit),
+            rowMenuItem(UsersScreen.permissionsKey, words.permissionsTitle, onPermissions),
+            rowMenuItem(UsersScreen.resetPasswordKey, words.usersResetPassword, onResetPassword),
             if (user.isActive)
-              PopupMenuItem(key: UsersScreen.disableKey, value: onDisable, child: Text(words.usersDisable, key: UsersScreen.disableKey.label))
+              rowMenuItem(UsersScreen.disableKey, words.usersDisable, onDisable)
             else
-              PopupMenuItem(key: UsersScreen.enableKey, value: onEnable, child: Text(words.usersEnable, key: UsersScreen.enableKey.label)),
-          ],
-        ),
+              rowMenuItem(UsersScreen.enableKey, words.usersEnable, onEnable),
+          ]),
       ),
     );
   }

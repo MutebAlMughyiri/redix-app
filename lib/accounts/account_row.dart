@@ -10,6 +10,7 @@ import 'accounts.dart';
 import 'accounts_screen.dart';
 import '../ui/app_color.dart';
 import '../format/parts_line.dart';
+import '../ui/row_menu.dart';
 
 /// One account: its type and who holds it, or that it is disabled, what it holds and, for whoever keeps the settings, a menu of what can be done to it.
 class AccountRow extends StatelessWidget {
@@ -46,7 +47,7 @@ class AccountRow extends StatelessWidget {
         title: Text(
           account.name,
           key: AccountsScreen.nameKey(account.id),
-          style: account.isActive ? null : TextStyle(color: AppColor.quiet.of(context)),
+          style: AppColor.quiet.textUnless(context, account.isActive),
         ),
         subtitle: Text(_details(words), key: AccountsScreen.detailsKey(account.id)),
         trailing: Row(
@@ -54,24 +55,16 @@ class AccountRow extends StatelessWidget {
           children: [
             Text(amount, key: AccountsScreen.balanceKey(account.id), style: Theme.of(context).textTheme.titleSmall),
             if (mayChange)
-              PopupMenuButton<VoidCallback>(
-                key: AccountsScreen.menuKey(account.id),
-                onSelected: (action) => action(),
-                itemBuilder: (_) => [
-                  PopupMenuItem(
-                    key: AccountsScreen.editKey,
-                    value: () => showDialog<void>(
+              rowMenu(AccountsScreen.menuKey(account.id), [
+                  rowMenuItem(AccountsScreen.editKey, words.accountsEdit, () => showDialog<void>(
                       context: context,
                       builder: (_) => AccountDialog(account: account, accounts: accounts, members: members),
-                    ),
-                    child: Text(words.accountsEdit, key: AccountsScreen.editKey.label),
-                  ),
+                    )),
                   if (account.isActive)
-                    PopupMenuItem(key: AccountsScreen.disableKey, value: () => showRefusalOf(context, accounts.disable(account)), child: Text(words.accountsDisable, key: AccountsScreen.disableKey.label))
+                    rowMenuItem(AccountsScreen.disableKey, words.accountsDisable, () => showRefusalOf(context, accounts.disable(account)))
                   else
-                    PopupMenuItem(key: AccountsScreen.enableKey, value: () => showRefusalOf(context, accounts.enable(account)), child: Text(words.accountsEnable, key: AccountsScreen.enableKey.label)),
-                ],
-              ),
+                    rowMenuItem(AccountsScreen.enableKey, words.accountsEnable, () => showRefusalOf(context, accounts.enable(account))),
+                ]),
           ],
         ),
       ),

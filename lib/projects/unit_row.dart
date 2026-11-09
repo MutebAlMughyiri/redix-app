@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../ui/part_keys.dart';
 import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'project.dart';
 import 'project_info_screen.dart';
+import '../ui/row_menu.dart';
 
 /// One unit on More info: its name and, for whoever manages the open project, a menu to rename it and a swipe that removes it (redix-api #102).
 class UnitRow extends StatelessWidget {
@@ -36,13 +36,9 @@ class UnitRow extends StatelessWidget {
       contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
       title: Text(unit.name, key: ProjectInfoScreen.unitKey(unit.id)),
       trailing: mayChange
-          ? PopupMenuButton<VoidCallback>(
-              key: ProjectInfoScreen.unitMenuKey(unit.id),
-              onSelected: (action) => action(),
-              itemBuilder: (_) => [
-                PopupMenuItem(key: ProjectInfoScreen.renameUnitKey, value: onRename, child: Text(words.projectsRenameUnit, key: ProjectInfoScreen.renameUnitKey.label)),
-              ],
-            )
+          ? rowMenu(ProjectInfoScreen.unitMenuKey(unit.id), [
+                rowMenuItem(ProjectInfoScreen.renameUnitKey, words.projectsRenameUnit, onRename),
+              ])
           : null,
       ),
     );

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../ui/name_dialog.dart';
-import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
@@ -9,6 +8,7 @@ import 'payment_method.dart';
 import 'payment_methods.dart';
 import 'payment_methods_screen.dart';
 import '../ui/app_color.dart';
+import '../ui/row_menu.dart';
 
 /// One payment method: its name, whether it is disabled and, for whoever keeps the settings, a menu of what can be done to it.
 class PaymentMethodRow extends StatelessWidget {
@@ -51,29 +51,17 @@ class PaymentMethodRow extends StatelessWidget {
         title: Text(
           method.name,
           key: PaymentMethodsScreen.nameKey(method.id),
-          style: method.isActive ? null : TextStyle(color: AppColor.quiet.of(context)),
+          style: AppColor.quiet.textUnless(context, method.isActive),
         ),
         subtitle: method.isActive ? null : Text(words.paymentMethodsDisabled, key: PaymentMethodsScreen.disabledKey(method.id)),
         trailing: mayChange
-            ? PopupMenuButton<VoidCallback>(
-                key: PaymentMethodsScreen.menuKey(method.id),
-                onSelected: (action) => action(),
-                itemBuilder: (_) => [
-                  PopupMenuItem(key: PaymentMethodsScreen.renameKey, value: () => _askForName(context), child: Text(words.paymentMethodsRename, key: PaymentMethodsScreen.renameKey.label)),
+            ? rowMenu(PaymentMethodsScreen.menuKey(method.id), [
+                  rowMenuItem(PaymentMethodsScreen.renameKey, words.paymentMethodsRename, () => _askForName(context)),
                   if (method.isActive)
-                    PopupMenuItem(
-                      key: PaymentMethodsScreen.disableKey,
-                      value: () => showRefusalOf(context, paymentMethods.disable(method)),
-                      child: Text(words.paymentMethodsDisable, key: PaymentMethodsScreen.disableKey.label),
-                    )
+                    rowMenuItem(PaymentMethodsScreen.disableKey, words.paymentMethodsDisable, () => showRefusalOf(context, paymentMethods.disable(method)))
                   else
-                    PopupMenuItem(
-                      key: PaymentMethodsScreen.enableKey,
-                      value: () => showRefusalOf(context, paymentMethods.enable(method)),
-                      child: Text(words.paymentMethodsEnable, key: PaymentMethodsScreen.enableKey.label),
-                    ),
-                ],
-              )
+                    rowMenuItem(PaymentMethodsScreen.enableKey, words.paymentMethodsEnable, () => showRefusalOf(context, paymentMethods.enable(method))),
+                ])
             : null,
       ),
     );

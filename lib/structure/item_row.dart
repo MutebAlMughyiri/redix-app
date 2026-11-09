@@ -13,6 +13,7 @@ import 'change_item_type_dialog.dart';
 import 'item_columns_screen.dart';
 import 'item_tables_screen.dart';
 import '../ui/app_color.dart';
+import '../ui/row_menu.dart';
 
 /// One item under its category: its name and type, or that it is disabled, a handle to drag it, the way into its columns, and a menu of what can be done to it.
 class ItemRow extends StatelessWidget {
@@ -56,7 +57,7 @@ class ItemRow extends StatelessWidget {
       title: Text(
         item.name,
         key: CategoriesScreen.itemNameKey(item.id),
-        style: item.isActive ? null : TextStyle(color: AppColor.quiet.of(context)),
+        style: AppColor.quiet.textUnless(context, item.isActive),
       ),
       subtitle: Text(item.isActive ? words.text(item.type.wordKey) : words.categoriesDisabled, key: CategoriesScreen.itemDetailsKey(item.id)),
       trailing: Row(
@@ -68,24 +69,13 @@ class ItemRow extends StatelessWidget {
             child: Text(words.columnsTitle, key: CategoriesScreen.itemColumnsKey(item.id).label),
           ),
           if (mayChange)
-            PopupMenuButton<VoidCallback>(
-              key: CategoriesScreen.itemMenuKey(item.id),
-              onSelected: (action) => action(),
-              itemBuilder: (_) => [
-                PopupMenuItem(key: CategoriesScreen.renameItemKey, value: () => _askForName(context), child: Text(words.categoriesRename, key: CategoriesScreen.renameItemKey.label)),
-                PopupMenuItem(
-                  key: CategoriesScreen.tablesKey,
-                  value: () => context.push(ItemTablesScreen.pathOf(project.id, item.id), extra: project),
-                  child: Text(words.categoriesTables, key: CategoriesScreen.tablesKey.label),
-                ),
-                PopupMenuItem(
-                  key: CategoriesScreen.changeTypeKey,
-                  value: () => showDialog<void>(
+            rowMenu(CategoriesScreen.itemMenuKey(item.id), [
+                rowMenuItem(CategoriesScreen.renameItemKey, words.categoriesRename, () => _askForName(context)),
+                rowMenuItem(CategoriesScreen.tablesKey, words.categoriesTables, () => context.push(ItemTablesScreen.pathOf(project.id, item.id), extra: project)),
+                rowMenuItem(CategoriesScreen.changeTypeKey, words.categoriesChangeType, () => showDialog<void>(
                     context: context,
                     builder: (_) => ChangeItemTypeDialog(item: item, categories: categories),
-                  ),
-                  child: Text(words.categoriesChangeType, key: CategoriesScreen.changeTypeKey.label),
-                ),
+                  )),
                 CheckedPopupMenuItem(
                   key: CategoriesScreen.tablePercentagesKey,
                   value: () => showRefusalOf(context, categories.setTablePercentages(item, !item.showsTablePercentages)),
@@ -93,19 +83,10 @@ class ItemRow extends StatelessWidget {
                   child: Text(words.categoriesTablePercentages, key: CategoriesScreen.tablePercentagesKey.label),
                 ),
                 if (item.isActive)
-                  PopupMenuItem(
-                    key: CategoriesScreen.disableItemKey,
-                    value: () => showRefusalOf(context, categories.disableItem(item)),
-                    child: Text(words.categoriesDisable, key: CategoriesScreen.disableItemKey.label),
-                  )
+                  rowMenuItem(CategoriesScreen.disableItemKey, words.categoriesDisable, () => showRefusalOf(context, categories.disableItem(item)))
                 else
-                  PopupMenuItem(
-                    key: CategoriesScreen.enableItemKey,
-                    value: () => showRefusalOf(context, categories.enableItem(item)),
-                    child: Text(words.categoriesEnable, key: CategoriesScreen.enableItemKey.label),
-                  ),
-              ],
-            ),
+                  rowMenuItem(CategoriesScreen.enableItemKey, words.categoriesEnable, () => showRefusalOf(context, categories.enableItem(item))),
+              ]),
         ],
       ),
     );

@@ -53,6 +53,9 @@ enum AppColor {
   /// This color in the theme of [context].
   Color of(BuildContext context) => _from(Theme.of(context).colorScheme);
 
+  /// A text style of this color unless [condition] holds, when the text keeps the theme's own: a disabled name is quiet, an active one is not.
+  TextStyle? textUnless(BuildContext context, bool condition) => condition ? null : TextStyle(color: of(context));
+
   static Color _error(ColorScheme colors) => colors.error;
 
   static Color _onError(ColorScheme colors) => colors.onError;

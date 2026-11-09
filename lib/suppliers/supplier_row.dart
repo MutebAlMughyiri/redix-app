@@ -9,6 +9,7 @@ import 'supplier_dialog.dart';
 import 'suppliers.dart';
 import 'suppliers_screen.dart';
 import '../ui/app_color.dart';
+import '../ui/row_menu.dart';
 
 /// One supplier: its name, what the register says about it and, for whoever keeps the settings, a menu of what can be done to it.
 class SupplierRow extends StatelessWidget {
@@ -39,28 +40,20 @@ class SupplierRow extends StatelessWidget {
         title: Text(
           supplier.name,
           key: SuppliersScreen.nameKey(supplier.id),
-          style: supplier.isActive ? null : TextStyle(color: AppColor.quiet.of(context)),
+          style: AppColor.quiet.textUnless(context, supplier.isActive),
         ),
         subtitle: Text(supplier.detailsIn(words), key: SuppliersScreen.detailsKey(supplier.id)),
         trailing: mayChange
-            ? PopupMenuButton<VoidCallback>(
-                key: SuppliersScreen.menuKey(supplier.id),
-                onSelected: (action) => action(),
-                itemBuilder: (_) => [
-                  PopupMenuItem(
-                    key: SuppliersScreen.editKey,
-                    value: () => showDialog<void>(
+            ? rowMenu(SuppliersScreen.menuKey(supplier.id), [
+                  rowMenuItem(SuppliersScreen.editKey, words.suppliersEdit, () => showDialog<void>(
                       context: context,
                       builder: (_) => SupplierDialog(supplier: supplier, suppliers: suppliers, items: items),
-                    ),
-                    child: Text(words.suppliersEdit, key: SuppliersScreen.editKey.label),
-                  ),
+                    )),
                   if (supplier.isActive)
-                    PopupMenuItem(key: SuppliersScreen.disableKey, value: () => showRefusalOf(context, suppliers.disable(supplier)), child: Text(words.suppliersDisable, key: SuppliersScreen.disableKey.label))
+                    rowMenuItem(SuppliersScreen.disableKey, words.suppliersDisable, () => showRefusalOf(context, suppliers.disable(supplier)))
                   else
-                    PopupMenuItem(key: SuppliersScreen.enableKey, value: () => showRefusalOf(context, suppliers.enable(supplier)), child: Text(words.suppliersEnable, key: SuppliersScreen.enableKey.label)),
-                ],
-              )
+                    rowMenuItem(SuppliersScreen.enableKey, words.suppliersEnable, () => showRefusalOf(context, suppliers.enable(supplier))),
+                ])
             : null,
       ),
     );

@@ -9,6 +9,7 @@ import 'contracts.dart';
 import 'contracts_screen.dart';
 import '../ui/labelled_figure.dart';
 import '../ui/app_color.dart';
+import '../ui/row_menu.dart';
 
 /// One contract: its contractor, item and unit, how it stands, its value, paid and remaining, with a bar of how much is paid and, for whoever keeps the settings, a menu of what can be done to it.
 class ContractCard extends StatelessWidget {
@@ -72,17 +73,13 @@ class ContractCard extends StatelessWidget {
                   ),
                 ),
                 if (mayChange)
-                  PopupMenuButton<VoidCallback>(
-                    key: ContractsScreen.menuKey(contract.id),
-                    onSelected: (action) => action(),
-                    itemBuilder: (_) => [
-                      PopupMenuItem(key: ContractsScreen.editKey, value: onAmend, child: Text(words.contractsEdit, key: ContractsScreen.editKey.label)),
+                  rowMenu(ContractsScreen.menuKey(contract.id), [
+                      rowMenuItem(ContractsScreen.editKey, words.contractsEdit, onAmend),
                       if (contract.isActive)
-                        PopupMenuItem(key: ContractsScreen.disableKey, value: () => showRefusalOf(context, contracts.disable(contract)), child: Text(words.contractsDisable, key: ContractsScreen.disableKey.label))
+                        rowMenuItem(ContractsScreen.disableKey, words.contractsDisable, () => showRefusalOf(context, contracts.disable(contract)))
                       else
-                        PopupMenuItem(key: ContractsScreen.enableKey, value: () => showRefusalOf(context, contracts.enable(contract)), child: Text(words.contractsEnable, key: ContractsScreen.enableKey.label)),
-                    ],
-                  ),
+                        rowMenuItem(ContractsScreen.enableKey, words.contractsEnable, () => showRefusalOf(context, contracts.enable(contract))),
+                    ]),
               ],
             ),
             const SizedBox(height: 8),
