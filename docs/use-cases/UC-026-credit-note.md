@@ -34,4 +34,4 @@ Tests are in `test/entries/add_entry_test.dart`. The switch shows while a purcha
 | BR-18: above what is left is blocked with a message | The API's `creditNoteAboveOriginal` | BR-18: a credit note above what is left |
 | AC-14.1, D14: a deduction is a negative amount, sent with why in its notes | `parseNumber`, `_body` | AC-14.1, D14: a deduction is a negative amount |
 | D14: a deduction with no notes is refused with the API's reason | The API's `deductionNeedsNotes` | D14: a deduction with no notes is refused |
-| Fits 360 points wide, in both languages | The screen | `test/account/my_account_test.dart`: AC-N03 |
+| Fits 360 points wide, in both languages | The screen | `test/account/settings/account_test.dart`: AC-N03 |

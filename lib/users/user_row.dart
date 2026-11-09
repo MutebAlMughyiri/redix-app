@@ -5,6 +5,7 @@ import '../words/words.dart';
 import 'user.dart';
 import 'users_screen.dart';
 import '../ui/app_color.dart';
+import '../format/parts_line.dart';
 
 /// One user on the list: their name, username, mobile and how many permissions they hold, a badge when disabled, and a menu of what can be done to them.
 class UserRow extends StatelessWidget {
@@ -68,7 +69,7 @@ class UserRow extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text([user.username, user.roleName, user.mobile].where((part) => part.isNotEmpty).join(' · '), key: UsersScreen.detailsKey(user.id)),
+            Text(partsLine([user.username, user.roleName, user.mobile]), key: UsersScreen.detailsKey(user.id)),
             Text(words.permissionsCount.replaceFirst('{0}', '${user.permissionCount}'), key: UsersScreen.permissionsLineKey(user.id)),
           ],
         ),

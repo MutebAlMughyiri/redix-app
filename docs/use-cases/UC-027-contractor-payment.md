@@ -44,5 +44,5 @@ Tests are in `test/entries/add_entry_contract_test.dart`.
 | A disabled contract is not on offer | `GET /entry-tables` | a disabled contract |
 | FR-41: its item's custom columns | `_chooseTable` | FR-41 |
 | Who may | `Project.mayEnterExpenses` | who holds no recordEntries; a finished project |
-| Fits 360 points wide, in both languages | The screen | `test/account/my_account_test.dart`: AC-N03 |
+| Fits 360 points wide, in both languages | The screen | `test/account/settings/account_test.dart`: AC-N03 |
 | The real app against the real API | | `patrol_test/app_test.dart`: the journey pays 35,000 on a contract of 34,000, sees the alert and sends it |

@@ -49,7 +49,7 @@ void main() {
     'balances': balances,
   };
 
-  Map<String, Object> balanceRow(String id, double books, double actual) => {'accountId': id, 'accountName': id, 'type': 'bank', 'booksBalance': books, 'actualBalance': actual};
+  Map<String, Object> balanceRow(String id, double books, double actual, {bool wasChecked = true}) => {'accountId': id, 'accountName': id, 'type': 'bank', 'booksBalance': books, 'actualBalance': actual, 'wasChecked': wasChecked};
 
   testWidgets('AC-N03: the money screens fit a phone 360 points wide, in long names', (tester) async {
     const longName = 'حساب جارٍ باسم طويل جداً في بنك من البنوك المحلية في الرياض';
@@ -147,6 +147,22 @@ void main() {
       expect(tester.widget<Icon>(find.byKey(AccountsScreen.rowKey(cashId).icon)).icon, Icons.payments_outlined);
       expect(find.byKey(AccountsScreen.menuKey(bankId)), findsNothing);
       expect(find.byKey(AccountsScreen.menuKey(cashId)), findsNothing);
+    });
+
+    testWidgets('findings row 187: an account the latest check did not hold shows a dash, not 0.00, and its field starts empty', (tester) async {
+      late String checkedId;
+      late String addedId;
+      final (:api, capture: _) = await openBalances(tester, (api) {
+        checkedId = api.addAccount('project-0', 'الراجحي')['id']! as String;
+        addedId = api.addAccount('project-0', 'عهدة جديدة', type: 'cashCustody')['id']! as String;
+        api.reconciliationAnswer = reconciled(1000, 700, balances: [balanceRow(checkedId, 1000, 700), balanceRow(addedId, 0, 0, wasChecked: false)]);
+      });
+
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(checkedId))).data, '700.00');
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(addedId))).data, '—');
+
+      await act(tester, api, () => tester.tap(find.byKey(ActualBalancesScreen.updateKey)));
+      expect(tester.widget<TextField>(find.descendant(of: find.byKey(ReconcileScreen.balanceKey(addedId)), matching: find.byType(TextField), matchRoot: true)).controller!.text, '');
     });
 
     testWidgets('typing a balance shows the total and the difference, and saving sends each', (tester) async {

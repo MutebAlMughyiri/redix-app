@@ -5,6 +5,7 @@ import '../ui/reason_sheet.dart';
 import '../words/words.dart';
 import 'approvals.dart';
 import 'pending_approval.dart';
+import '../format/parts_line.dart';
 
 /// Rejecting an entry, saying why (AC-19.1): the reason sheet, with the entry it is about and the quick reasons; the reason returns to who entered it.
 abstract final class RejectSheet {
@@ -15,7 +16,7 @@ abstract final class RejectSheet {
       context,
       ReasonSheet(
         title: words.approvalsRejectTitle,
-        about: [entry.title, if (entry.supplierName.isNotEmpty) entry.supplierName, formatMoney(entry.amount)].join(' · '),
+        about: partsLine([entry.title, entry.supplierName, formatMoney(entry.amount)]),
         quickReasons: [words.approvalsReasonUnclear, words.approvalsReasonAmount, words.approvalsReasonItem, words.approvalsReasonDuplicate],
         reasonLabel: words.approvalsReason,
         reasonHint: words.approvalsReasonHint,

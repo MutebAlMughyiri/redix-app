@@ -40,8 +40,8 @@ The app learns whether the phone has it on from the session the server answered,
 | A pass works without a network (FR-16) | `Session.unlock` | `biometrics_test.dart` |
 | A session ended on the server ends on sign-in after the pass | `Session._renew` | `biometrics_test.dart` |
 | The next person to sign in does not inherit it | `Session._apply` | `biometrics_test.dart` |
-| Turning it on asks first; it stays off if that fails or there is no network | `Session.setBiometrics` | `my_account_test.dart` |
-| Turning it off asks nothing | `Session.setBiometrics` | `my_account_test.dart` |
+| Turning it on asks first; it stays off if that fails or there is no network | `Session.setBiometrics` | `settings/account_test.dart` |
+| Turning it off asks nothing | `Session.setBiometrics` | `settings/account_test.dart` |
 | A journey on an emulator with no fingerprint: the real plugin refuses, and the app says what to do | `Biometrics.turnOn` | `patrol_test/app_test.dart` |
 
 ## Proven with the real prompt

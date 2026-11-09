@@ -16,7 +16,7 @@ import 'reconciliation_card.dart';
 
 /// الأرصدة الفعلية, on its own from the home (Muteb, 9 Nov 2026): the project's accounts against its books, as last entered, and the way to enter them again, تحديث, the
 /// screen's bottom button, grayed for whoever does not move money (FR-24). Under them, each account as Accounts draws it, without its menu, with what it really held at the
-/// latest check, or a dash before the first.
+/// latest check, or a dash for one that check did not hold.
 class ActualBalancesScreen extends StatefulWidget {
   /// The [reconciliations] of [project], and its [accounts], drawn with [members].
   const ActualBalancesScreen({super.key, required this.project, required this.reconciliations, required this.accounts, required this.members});
@@ -64,7 +64,7 @@ class _ActualBalancesScreenState extends State<ActualBalancesScreen> {
         listenable: widget.reconciliations,
         builder: (context, _) {
           final figures = widget.reconciliations.value;
-          final actual = {if (figures.wasChecked) for (final row in figures.balances) row.accountId: formatMoney(row.actualBalance)};
+          final actual = {for (final row in figures.balances) if (row.wasChecked) row.accountId: formatMoney(row.actualBalance)};
           return ApiListBody(
             list: widget.accounts,
             emptyText: words.accountsEmpty,

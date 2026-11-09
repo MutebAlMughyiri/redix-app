@@ -4,6 +4,7 @@ import '../api.dart';
 import '../auth/session.dart';
 import 'attachment.dart';
 import 'picked_file.dart';
+import 'file_kind.dart';
 
 /// Keeps a project's files on the API (UC-021), for an entry or a contract to name.
 class Attachments {
@@ -20,16 +21,25 @@ class Attachments {
   /// The attachment the last [keep] made; none when it made none.
   Attachment get kept => _kept;
 
-  /// The file [attachmentId] as it was kept, to show an entry as it was filled (redix-app #90); none when it cannot be read.
+  /// The file [attachmentId] as it was kept, under the name it was kept with (findings row 185), to show an entry as it was filled (redix-app #90); none when it cannot
+  /// be read.
   Future<PickedFile> read(String attachmentId) async {
     try {
       final response = await _session.read('/projects/$projectId/attachments/$attachmentId', file: true);
-      final isPdf = (response.headers['content-type'] ?? '').contains('pdf');
-      return response.statusCode == 200 ? PickedFile(isPdf ? 'file.pdf' : 'file.jpg', '', response.bodyBytes) : PickedFile.none();
+      final isPdf = FileKind.of(response.headers['content-type'] ?? '') == FileKind.pdf;
+      return response.statusCode == 200 ? PickedFile(_nameOf(response.headers, isPdf ? 'file.pdf' : 'file.jpg'), '', response.bodyBytes) : PickedFile.none();
     } on Exception catch (error) {
       debugPrint('File not read: $error');
       return PickedFile.none();
     }
+  }
+
+  /// The file's name as the API's answer gives it in `Content-Disposition`, the encoded `filename*` first so an Arabic name survives; [fallback] when it gives none.
+  static String _nameOf(Map<String, String> headers, String fallback) {
+    final disposition = headers['content-disposition'] ?? '';
+    final encoded = RegExp(r"filename\*=UTF-8''([^;]+)", caseSensitive: false).firstMatch(disposition);
+    final plain = RegExp(r'filename="?([^";]+)"?').firstMatch(disposition);
+    return encoded != null ? Uri.decodeComponent(encoded.group(1)!) : plain?.group(1) ?? fallback;
   }
 
   /// Sends an entry's [file], a picture or a PDF, to the API. Returns an empty string once kept, otherwise the word key of the refusal.

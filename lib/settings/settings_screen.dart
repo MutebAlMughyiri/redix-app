@@ -16,6 +16,7 @@ import '../words/app_language.dart';
 import '../words/language_switch.dart';
 import '../words/words.dart';
 import 'default_project_sheet.dart';
+import '../format/parts_line.dart';
 
 /// Settings (الإعدادات), all on one screen (Muteb, 9 Nov 2026): who is signed in, the way back to the project list, the default project, the registered projects for the
 /// admin, the language (UC-004), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out (UC-062). A project's own screens
@@ -121,7 +122,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               key: SettingsScreen.whoKey,
               leading: Icon(Icons.account_circle_outlined, key: SettingsScreen.whoKey.icon),
               title: Text(session.displayName, key: SettingsScreen.whoKey.title),
-              subtitle: Text([session.username, widget.projects.latest(widget.project).roleName].where((part) => part.isNotEmpty).join(' · '), key: SettingsScreen.whoKey.subtitle),
+              subtitle: Text(partsLine([session.username, widget.projects.latest(widget.project).roleName]), key: SettingsScreen.whoKey.subtitle),
             ),
             const Divider(),
             _row(SettingsScreen.switchProjectKey, Icons.swap_horiz, words.settingsSwitchProject, () => context.go(ProjectsScreen.path)),

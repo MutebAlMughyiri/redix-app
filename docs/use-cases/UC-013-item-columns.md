@@ -72,7 +72,7 @@ The question after a change to the template, `ApplyToAllDialog`:
 | Dragging sends the new order; on an item it asks nothing | `Columns.move`, `ReorderableListView` | `item_columns_test.dart`: dragging a column sends |
 | AC-41.3: every change to the template asks whether it reaches existing items | `_applyToAll`, `ApplyToAllDialog` | `item_columns_test.dart`: AC-41.3: a change to the default template |
 | A finished project shows its columns with nothing to change | `Project.mayChangeStructure` | `item_columns_test.dart`: a finished project |
-| AC-N03: nothing off a screen 360 points wide, in both languages | Each screen | `my_account_test.dart`: AC-N03 |
+| AC-N03: nothing off a screen 360 points wide, in both languages | Each screen | `settings/account_test.dart`: AC-N03 |
 
 The real app and API run it together in `patrol_test/app_test.dart`, which takes the guide's pictures.
 

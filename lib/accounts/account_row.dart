@@ -9,6 +9,7 @@ import 'account_dialog.dart';
 import 'accounts.dart';
 import 'accounts_screen.dart';
 import '../ui/app_color.dart';
+import '../format/parts_line.dart';
 
 /// One account: its type and who holds it, or that it is disabled, what it holds and, for whoever keeps the settings, a menu of what can be done to it.
 class AccountRow extends StatelessWidget {
@@ -30,7 +31,7 @@ class AccountRow extends StatelessWidget {
   /// Whether the signed-in user may change it now.
   final bool mayChange;
 
-  String _details(Words words) => account.isActive ? [words.text(account.type.wordKey), if (account.custodianName.isNotEmpty) account.custodianName].join(' · ') : words.accountsDisabled;
+  String _details(Words words) => account.isActive ? partsLine([words.text(account.type.wordKey), account.custodianName]) : words.accountsDisabled;
 
   @override
   Widget build(BuildContext context) {

@@ -19,6 +19,7 @@ import 'approvals.dart';
 import 'pending_approval.dart';
 import 'reject_sheet.dart';
 import '../ui/app_color.dart';
+import '../format/parts_line.dart';
 
 /// Finance's inbox (UC-031, UC-032): what waits, oldest first, to approve one at a time or many at once, or to reject saying why.
 class ApprovalsScreen extends StatefulWidget {
@@ -171,7 +172,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
         Text(entry.title, key: ApprovalsScreen.itemKey(entry.id), style: theme.textTheme.titleSmall),
         if (entry.supplierName.isNotEmpty) Text(entry.supplierName, key: ApprovalsScreen.supplierKey(entry.id)),
         if (entry.kindWordKey.isNotEmpty) Text(words.text(entry.kindWordKey), key: ApprovalsScreen.kindKey(entry.id)),
-        Text([if (entry.invoiceNumber.isNotEmpty) entry.invoiceNumber, formatDate(entry.date)].join(' · '), key: ApprovalsScreen.dateKey(entry.id), style: small),
+        Text(partsLine([entry.invoiceNumber, formatDate(entry.date)]), key: ApprovalsScreen.dateKey(entry.id), style: small),
         Text('${words.approvalsEnteredBy}: ${entry.authorName} · ${entry.accountName}', key: ApprovalsScreen.enteredByKey(entry.id), style: small),
         if (entry.notes.isNotEmpty) Text(entry.notes, key: ApprovalsScreen.notesKey(entry.id), style: small),
         Text(formatMoney(entry.amount), key: ApprovalsScreen.amountKey(entry.id), style: theme.textTheme.titleMedium),

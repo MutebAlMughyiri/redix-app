@@ -71,8 +71,6 @@ class EntriesScreen extends StatefulWidget {
   /// The row of the entry [id].
   static Key rowKey(String id) => Key('entries.row.$id');
 
-
-
   /// Who supplied the entry [id], when, and who entered it.
   static Key detailsKey(String id) => Key('entries.details.$id');
 
@@ -82,10 +80,9 @@ class EntriesScreen extends StatefulWidget {
   /// Its entries.
   final ProjectEntries entries;
 
-  /// Opens [entry] in إضافة قيد, in its table, read only as it was filled, with what can be done to it at its bottom (redix-app #90).
-  static void openEntry(BuildContext context, Project project, EntryRow entry) {
-    context.push(Uri(path: AddEntryScreen.pathOf(project.id), queryParameters: {'entry': entry.id, 'read': '1', if (entry.isRejected) 'reason': entry.rejectionReason}).toString(), extra: project);
-  }
+  /// The route opening [entry] of the project [projectId] in إضافة قيد, in its table, read only as it was filled, with what can be done to it at its bottom (redix-app #90).
+  static String entryPathOf(String projectId, EntryRow entry) =>
+      Uri(path: AddEntryScreen.pathOf(projectId), queryParameters: {'entry': entry.id, 'read': '1', if (entry.isRejected) 'reason': entry.rejectionReason}).toString();
 
   @override
   State<EntriesScreen> createState() => _EntriesScreenState();
@@ -173,13 +170,15 @@ class _EntriesScreenState extends State<EntriesScreen> {
     );
   }
 
+  void _open(String path) => context.push(path, extra: widget.project);
+
   void _openAsked() {
     if (widget.entries.isLoading) {
       return;
     }
     widget.entries.removeListener(_openAsked);
     for (final entry in widget.entries.all.where((entry) => entry.id == widget.openEntryId)) {
-      EntriesScreen.openEntry(context, widget.project, entry);
+      _open(EntriesScreen.entryPathOf(widget.project.id, entry));
     }
   }
 
@@ -196,7 +195,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
               list: widget.entries,
               emptyText: words.entriesEmpty,
               keeps: _filter.keeps,
-              itemBuilder: (entry) => EntryListTile(project: widget.project, entries: widget.entries, entry: entry),
+              itemBuilder: (entry) => EntryListTile(project: widget.project, entries: widget.entries, entry: entry, onOpen: _open),
             ),
           ),
         ],

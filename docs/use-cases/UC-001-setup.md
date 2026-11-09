@@ -23,7 +23,7 @@
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Arabic right to left, English left to right | `RedixApp` locales | `widget_test.dart`: home shows the Arabic words from the API, right to left; `my_account_test.dart`: AC-N03 |
+| Arabic right to left, English left to right | `RedixApp` locales | `widget_test.dart`: home shows the Arabic words from the API, right to left; `settings/account_test.dart`: AC-N03 |
 | Any other phone language gets Arabic | `Words.languages` order | `widget_test.dart`: another language |
 | A language the phone lacks is fetched and kept; only one is kept | `Words.load` | `words_test.dart` |
 | Kept words show at once and are refreshed with their ETag | `Words.load` | `words_test.dart` |

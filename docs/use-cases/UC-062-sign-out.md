@@ -24,11 +24,11 @@ In [Settings](../guide/settings.md):
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Signing out asks first, and Cancel changes nothing | `SettingsScreen`, `ConfirmDialog` | `my_account_test.dart`: signing out asks first |
-| Signing out ends the session here and leads to sign-in, with no message | `Session.signOut` | `my_account_test.dart`: signing out; Patrol |
-| Without a network the phone still signs out | `Session.signOut` | `my_account_test.dart`: without a network |
-| The chosen language stays on the phone | `AppLanguage`, untouched | `my_account_test.dart`: the language stays |
-| The next user signs in as themselves | `Session`, the router | `my_account_test.dart`: the next user; Patrol |
+| Signing out asks first, and Cancel changes nothing | `SettingsScreen`, `ConfirmDialog` | `settings/account_test.dart`: signing out asks first |
+| Signing out ends the session here and leads to sign-in, with no message | `Session.signOut` | `settings/account_test.dart`: signing out; Patrol |
+| Without a network the phone still signs out | `Session.signOut` | `settings/account_test.dart`: without a network |
+| The chosen language stays on the phone | `AppLanguage`, untouched | `settings/account_test.dart`: the language stays |
+| The next user signs in as themselves | `Session`, the router | `settings/account_test.dart`: the next user; Patrol |
 
 ## Left to later use cases
 

@@ -387,8 +387,32 @@ void main() {
     expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
   });
 
+  testWidgets("deep review, 9 Nov 2026: coming back from an entry opened on the home reads the home's figures again, so an approval there shows at once", (tester) async {
+    final api = await openHome(tester, (api) => api.addEntry());
+    await openActions(tester, api, 'entry-0');
+    api.sentReads.clear();
+
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+
+    expect(api.sentReads, contains('/projects/project-0/dashboard'));
+    expect(api.sentReads, contains('/projects'));
+  });
+
+  testWidgets('an answer that is not one entry opens the entry as unknown, and nothing escapes (findings row 184)', (tester) async {
+    final api = await openHome(tester, (api) {
+      api
+        ..addEntry(status: 'rejected', rejectionReason: 'الصورة غير واضحة')
+        ..entryDetails['entry-0'] = const <Object>[];
+    });
+
+    await openActions(tester, api, 'entry-0');
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(AddEntryScreen), findsOneWidget);
+  });
+
   group('AC-19.1: fixing a rejected entry', () {
-    Future<FakeApi> openRejected(WidgetTester tester, {bool change = true}) async {
+    Future<FakeApi> openRejected(WidgetTester tester, {bool change = true, String attachmentId = 'attachment-1'}) async {
       final api = await openEntries(tester, (api) {
         final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'بند اللياسة', subgroups: ['مواد']);
         for (final key in ['product', 'notes']) {
@@ -406,7 +430,7 @@ void main() {
             'purchase': {'supplierId': supplier['id']!, 'product': 'مواد لياسة', 'unitPrice': 0, 'quantity': 0},
             'contractorPayment': {'contractId': '00000000-0000-0000-0000-000000000000', 'isOutsideContract': false},
             'attachments': [
-              {'attachmentId': 'attachment-1'},
+              {'attachmentId': attachmentId},
             ],
             'links': const <Object>[],
           };
@@ -431,6 +455,12 @@ void main() {
       expect(find.ancestor(of: find.byKey(AddEntryScreen.amountKey), matching: find.byWidgetPredicate((widget) => widget is IgnorePointer && widget.ignoring)), findsWidgets);
       expect(typed(tester, AddEntryScreen.amountKey), '1150');
       expect(typed(tester, AddEntryScreen.notesKey), 'دفعة أولى');
+    });
+
+    testWidgets('findings row 185: a kept PDF shows under the name it was kept with, its Arabic name too', (tester) async {
+      await openRejected(tester, change: false, attachmentId: 'attachment-pdf');
+
+      expect(tester.widget<Text>(find.byKey(AddEntryScreen.invoiceNameKey)).data, 'فاتورة.pdf');
     });
 
     testWidgets('the reason shows at the top, and the form holds what it held', (tester) async {

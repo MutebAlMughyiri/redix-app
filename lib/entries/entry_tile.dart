@@ -13,8 +13,8 @@ import 'project_entries.dart';
 
 /// An entry on a list of [project]'s [entries], framed in its status's color: tapping it opens it read only (redix-app #90), and swiping it removes it where the user may delete it (redix-api #102).
 class EntryListTile extends StatelessWidget {
-  /// The tile of [entry], one of [project]'s [entries].
-  const EntryListTile({super.key, required this.project, required this.entries, required this.entry});
+  /// The tile of [entry], one of [project]'s [entries], calling [onOpen] with the route that opens it.
+  const EntryListTile({super.key, required this.project, required this.entries, required this.entry, required this.onOpen});
 
   /// The project.
   final Project project;
@@ -25,13 +25,16 @@ class EntryListTile extends StatelessWidget {
   /// The entry.
   final EntryRow entry;
 
+  /// Opens a route of the project, so the screen it is on reads again what the entry changed once it comes back.
+  final ValueChanged<String> onOpen;
+
   @override
   Widget build(BuildContext context) => SwipeToRemove(
     rowKey: EntriesScreen.rowKey(entry.id),
     mayRemove: entry.allows(project, Permission.deleteEntries),
     onRemove: () => entries.delete(entry),
     side: entry.status.sideIn(context),
-    child: EntryTile(entry: entry, onTap: () => EntriesScreen.openEntry(context, project, entry)),
+    child: EntryTile(entry: entry, onTap: () => onOpen(EntriesScreen.entryPathOf(project.id, entry))),
   );
 }
 

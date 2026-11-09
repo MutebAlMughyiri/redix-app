@@ -35,8 +35,26 @@ class CategoryTotal {
   /// The sum of its items.
   final double total;
 
+  /// What part of [sideTotal] it is, from 0 to 1; 0 while the side holds nothing.
+  double shareOf(double sideTotal) => sideTotal <= 0 ? 0 : (total / sideTotal).clamp(0, 1);
+
   /// Each item's total.
   final List<ItemTotal> items;
+}
+
+/// A side of a project's figures: what came in or what went out (deep review, 9 Nov 2026).
+enum DashboardSide {
+  /// The revenue, رأس المال among it.
+  revenue,
+
+  /// The expenses.
+  expenses;
+
+  /// This side's categories in [figures].
+  List<CategoryTotal> categoriesOf(DashboardFigures figures) => this == revenue ? figures.revenueCategories : figures.categories;
+
+  /// This side's total in [figures].
+  double totalOf(DashboardFigures figures) => this == revenue ? figures.revenue : figures.expenses;
 }
 
 /// A project's figures at a glance (UC-049, UC-063).

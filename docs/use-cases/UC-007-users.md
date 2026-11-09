@@ -63,7 +63,7 @@ New user, `NewUserScreen` at `/users/new`:
 | A disabled user stays listed, muted, and can be enabled | `UserRow`, `UsersScreen` | `users_test.dart`: a disabled user stays listed |
 | Every row has the whole menu | `UserRow` | `users_test.dart`: every row has the whole menu |
 | A disabled user's session ends at their next request (AC-01.3) | The API | `UsersTests.DisablingAUserEndsTheOpenSessionAtTheNextRequest`, in the API |
-| AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `my_account_test.dart`: AC-N03, once per language |
+| AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `settings/account_test.dart`: AC-N03, once per language |
 
 ## Left to later use cases
 

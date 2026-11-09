@@ -467,7 +467,7 @@ class FakeApi {
   final entryRows = <Map<String, Object>>[];
 
   /// What each entry holds, read to change it.
-  final entryDetails = <String, Map<String, Object>>{};
+  final entryDetails = <String, Object>{};
 
   /// What was asked of an entry: its id, the action and the body.
   final sentEntryChanges = <(String, String, Map<String, dynamic>)>[];
@@ -1394,7 +1394,6 @@ class FakeApi {
     return _json(user, 200);
   }
 
-  /// Answers as bytes with no character set, as a JSON reply may arrive, so reading Arabic takes UTF-8 on the app's side.
   /// Records the entry the app sent to the one route, or the change of one, and answers as [entryAnswer] says (redix-api #110).
   http.Response _recordEntry(http.Request request) {
     sentEntryPaths.add(request.url.path);
@@ -1402,6 +1401,7 @@ class FakeApi {
     return _json(entryAnswer.body, entryAnswer.status);
   }
 
+  /// Answers as bytes with no character set, as a JSON reply may arrive, so reading Arabic takes UTF-8 on the app's side.
   http.Response _json(Object body, int status) => http.Response.bytes(utf8.encode(jsonEncode(body)), status);
 
   /// Adds a project waiting for the admin.
@@ -1610,6 +1610,9 @@ class FakeApi {
       return _json(const <String, Object>{}, 200);
     }
     if (segments.length == 4 && segments[2] == 'attachments' && request.method == 'GET') {
+      if (segments[3] == 'attachment-pdf') {
+        return http.Response.bytes(const [37, 80, 68, 70], 200, headers: {'content-type': 'application/pdf', 'content-disposition': "attachment; filename=invoice.pdf; filename*=UTF-8''%D9%81%D8%A7%D8%AA%D9%88%D8%B1%D8%A9.pdf"});
+      }
       return segments[3] == 'attachment-gone' ? http.Response('', 404) : http.Response.bytes(onePixelPng, 200, headers: {'content-type': 'image/png'});
     }
     if (segments.length >= 3 && segments[2] == 'attachments') {

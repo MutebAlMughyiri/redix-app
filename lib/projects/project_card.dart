@@ -35,8 +35,9 @@ class ProjectCard extends StatelessWidget {
   /// Opens the screen at a route of the project.
   final ValueChanged<String> onOpen;
 
+  /// A button opening [path]; an empty path is a screen not built yet, so the button shows grayed.
   Widget _button(Key key, IconData icon, String label, String path) =>
-      TextButton.icon(key: key, icon: Icon(icon, key: key.icon), label: Text(label, key: key.label), onPressed: () => onOpen(path));
+      TextButton.icon(key: key, icon: Icon(icon, key: key.icon), label: Text(label, key: key.label), onPressed: path.isEmpty ? null : () => onOpen(path));
 
   @override
   Widget build(BuildContext context) {
@@ -77,12 +78,7 @@ class ProjectCard extends StatelessWidget {
                 if (project.may(Permission.manageUsers)) _button(HomeScreen.usersKey(id), Icons.group_outlined, words.usersTitle, UsersScreen.pathOf(id)),
                 if (project.may(Permission.manageStructure)) _button(HomeScreen.categoriesKey(id), Icons.category_outlined, words.categoriesTitle, CategoriesScreen.pathOf(id)),
                 if (project.may(Permission.manageSettings)) _button(HomeScreen.paymentMethodsKey(id), Icons.credit_card_outlined, words.paymentMethodsTitle, PaymentMethodsScreen.pathOf(id)),
-                TextButton.icon(
-                  key: HomeScreen.importSettingsKey(id),
-                  icon: Icon(Icons.file_upload_outlined, key: HomeScreen.importSettingsKey(id).icon),
-                  label: Text(words.projectsImportSettings, key: HomeScreen.importSettingsKey(id).label),
-                  onPressed: null,
-                ),
+                _button(HomeScreen.importSettingsKey(id), Icons.file_upload_outlined, words.projectsImportSettings, ''),
               ],
             ),
           ),

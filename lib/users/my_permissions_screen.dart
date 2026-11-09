@@ -8,7 +8,7 @@ import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'permission_tick.dart';
 
-/// صلاحياتي, from Settings (Muteb, 9 Nov 2026): what the signed-in user may do in a project, each permission as the project manager ticked it, read only.
+/// صلاحياتي, from the home (Muteb, 9 Nov 2026): what the signed-in user may do in a project, each permission as the project manager ticked it, read only.
 class MyPermissionsScreen extends StatelessWidget {
   /// The permissions of the signed-in user in [project], read again from [projects] when pulled down.
   const MyPermissionsScreen({super.key, required this.project, required this.projects});

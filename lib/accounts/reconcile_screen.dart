@@ -51,7 +51,7 @@ class ReconcileScreen extends StatefulWidget {
 
 class _ReconcileScreenState extends State<ReconcileScreen> {
   late final _fields = {
-    for (final row in widget.reconciliations.value.balances) row.accountId: TextEditingController(text: widget.reconciliations.value.wasChecked ? formatPlain(row.actualBalance) : ''),
+    for (final row in widget.reconciliations.value.balances) row.accountId: TextEditingController(text: row.wasChecked ? formatPlain(row.actualBalance) : ''),
   };
   var _message = '';
   var _saving = false;

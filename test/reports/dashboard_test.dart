@@ -9,6 +9,7 @@ import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/app_color.dart';
+import 'package:redix/reports/dashboard.dart';
 import 'package:redix/reports/item_reports_screen.dart';
 import 'package:redix/reports/report_files.dart';
 
@@ -130,7 +131,7 @@ void main() {
   /// Opens الإيرادات والمصروفات from the home's buttons (Muteb, 9 Nov 2026).
   Future<void> openRevenueAndExpenses(WidgetTester tester, FakeApi api) => scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0'));
 
-  ItemReportsSide sideShown(WidgetTester tester) => tester.widget<SegmentedButton<ItemReportsSide>>(find.byKey(ItemReportsScreen.sideKey)).selected.single;
+  DashboardSide sideShown(WidgetTester tester) => tester.widget<SegmentedButton<DashboardSide>>(find.byKey(ItemReportsScreen.sideKey)).selected.single;
 
   testWidgets('the categories show only once a tile is tapped: expenses opens the expense categories, revenue the revenue ones, each with its total', (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
@@ -169,15 +170,15 @@ void main() {
     await openRevenueAndExpenses(tester, api);
 
     expect(find.text('en reports.revenueAndExpenses'), findsOneWidget);
-    expect(sideShown(tester), ItemReportsSide.expenses);
-    expect(text(tester, ItemReportsScreen.sideOptionKey(ItemReportsSide.revenue)), 'en dashboard.revenue');
-    expect(text(tester, ItemReportsScreen.sideOptionKey(ItemReportsSide.expenses)), 'en dashboard.expenses');
+    expect(sideShown(tester), DashboardSide.expenses);
+    expect(text(tester, ItemReportsScreen.sideOptionKey(DashboardSide.revenue)), 'en dashboard.revenue');
+    expect(text(tester, ItemReportsScreen.sideOptionKey(DashboardSide.expenses)), 'en dashboard.expenses');
     expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsOneWidget);
     expect(find.byKey(ItemReportsScreen.categoryKey('category-9')), findsNothing);
 
-    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(ItemReportsSide.revenue))));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(DashboardSide.revenue))));
 
-    expect(sideShown(tester), ItemReportsSide.revenue);
+    expect(sideShown(tester), DashboardSide.revenue);
     expect(find.byKey(ItemReportsScreen.categoryKey('category-9')), findsOneWidget);
     expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsNothing);
   });
@@ -186,7 +187,7 @@ void main() {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
     await openRevenueAndExpenses(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(ItemReportsSide.revenue))));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(DashboardSide.revenue))));
 
     expect(text(tester, ItemReportsScreen.categoryKey('category-capital').title), 'رأس المال');
     expect(text(tester, ItemReportsScreen.categoryKey('category-capital').trailing), formatMoney(4000));
@@ -197,7 +198,7 @@ void main() {
   testWidgets('redix-api #109: رأس المال opens to its item like any category, and the item to its report, whose tables are its partners', (tester) async {
     final api = await openHome(tester, (api) => api.dashboardAnswer = figures());
     await openRevenueAndExpenses(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(ItemReportsSide.revenue))));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(DashboardSide.revenue))));
     expect(find.byKey(ItemReportsScreen.itemKey('item-capital')), findsNothing);
 
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.categoryKey('category-capital'))));

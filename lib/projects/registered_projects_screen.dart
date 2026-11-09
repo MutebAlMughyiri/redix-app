@@ -11,6 +11,7 @@ import 'registered_project.dart';
 import 'registered_projects.dart';
 import 'reject_project_dialog.dart';
 import '../ui/app_color.dart';
+import '../format/parts_line.dart';
 
 /// Registered projects (UC-066): what is waiting for the admin, with the manager's details and a decision. This is all the admin can do (BR-29).
 class RegisteredProjectsScreen extends StatefulWidget {
@@ -78,7 +79,7 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
 
   Widget _card(Words words, ThemeData theme, RegisteredProject project) {
     final details = [formatDate(project.startDate), ...project.units].join(' · ');
-    final manager = [project.managerName, project.managerUsername, if (project.managerMobile.isNotEmpty) project.managerMobile].join(' · ');
+    final manager = partsLine([project.managerName, project.managerUsername, project.managerMobile]);
     return Card.outlined(
       key: RegisteredProjectsScreen.cardKey(project.id),
       margin: const EdgeInsets.only(bottom: 12),

@@ -128,7 +128,7 @@ All go through `Session`, which renews an expired access token once and sends ag
 | More info shows the project it was opened from | `Projects.latest` | `project_info_test.dart`: More info of a second project |
 | A project with entries waiting for approval stays open, and the refusal says why (BR-35) | `showRefusalOf`, the word `projects.pendingEntries` | `project_info_test.dart`: BR-35; Patrol |
 | Arabic names show as typed | `jsonOf` | `projects_test.dart`: Arabic names |
-| AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `my_account_test.dart`: AC-N03, once per language |
+| AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `settings/account_test.dart`: AC-N03, once per language |
 
 ## Left to later use cases
 

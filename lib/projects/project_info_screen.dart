@@ -65,7 +65,6 @@ class ProjectInfoScreen extends StatefulWidget {
   /// Rename, in a unit's menu.
   static const renameUnitKey = Key('projectInfo.renameUnit');
 
-
   /// The unit's name, in the Add unit dialog.
   static const unitNameKey = Key('projectInfo.unitName');
 

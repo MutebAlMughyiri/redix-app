@@ -40,7 +40,7 @@ Every permission a project can give is listed, with what the person holds ticked
 | Going back while a permission is being saved, the home reads only after it is saved | `UserPermissionsScreen` | `user_permissions_test.dart`: going back while a permission is being saved |
 | What is ticked is sent with a new user, and See the project is always ticked | `NewUserScreen` | `new_user_test.dart`: what is ticked is sent with the new user |
 | An existing user is added by username, and an unknown one says so | `AddExistingUserDialog` | `users_test.dart`: an existing user is added, an unknown username stays |
-| AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `my_account_test.dart`: AC-N03 |
+| AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `settings/account_test.dart`: AC-N03 |
 
 ## Left to later use cases
 

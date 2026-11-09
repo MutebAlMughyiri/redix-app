@@ -39,7 +39,6 @@ class PaymentMethodsScreen extends StatefulWidget {
   /// Enable, in a method's menu.
   static const enableKey = Key('paymentMethods.enable');
 
-
   /// The name, in the dialogs that add and rename.
   static const dialogNameKey = NameDialog.nameKey;
 

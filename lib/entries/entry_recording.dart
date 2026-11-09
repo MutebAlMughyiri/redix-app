@@ -39,7 +39,13 @@ class EntryRecording {
   Future<SavedEntry> read(String id) async {
     try {
       final response = await _session.get('/projects/$projectId/entries/$id');
-      return response.statusCode == 200 ? SavedEntry.fromJson(jsonOf(response) as Map<String, dynamic>) : SavedEntry.none();
+      if (response.statusCode != 200) {
+        return SavedEntry.none();
+      }
+      return switch (jsonOf(response)) {
+        final Map<String, dynamic> json => SavedEntry.fromJson(json),
+        _ => SavedEntry.none(),
+      };
     } on Exception catch (error) {
       debugPrint('Entry not read: $error');
       return SavedEntry.none();

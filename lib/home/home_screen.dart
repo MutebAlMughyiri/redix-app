@@ -32,7 +32,6 @@ class HomeScreen extends StatefulWidget {
   /// The home of the project [projectId], one of [projects], with [accounts], its accounts.
   const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.dashboard});
 
-
   /// Its figures at a glance.
   final Dashboard dashboard;
 
@@ -62,7 +61,6 @@ class HomeScreen extends StatefulWidget {
 
   /// The project's name.
   static const titleKey = Key('home.title');
-
 
   /// The line that says the project could not be read.
   static const messageKey = ApiListBody.messageKey;
@@ -160,7 +158,6 @@ class HomeScreen extends StatefulWidget {
   /// The heading over the entries of the project [id].
   static Key entriesHeadingKey(String id) => Key('home.entriesHeading.$id');
 
-
   /// The line saying the project [id] has no entries yet.
   static Key entriesEmptyKey(String id) => Key('home.entriesEmpty.$id');
 
@@ -193,7 +190,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  /// Opens [path] for [project], and reads what home shows again on the way back, since what was done there may have changed it (AC-34.1).
   /// Opens the screen at [path] of [project], and on coming back reads again the project, which may have changed there, and what the home shows besides it.
   Future<void> _open(String path, Project project) async {
     await context.push(path, extra: project);
@@ -278,7 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
             ),
             MyCustody(accounts: widget.accounts),
-            HomeEntries(project: project, entries: widget.entries),
+            HomeEntries(project: project, entries: widget.entries, onOpen: (path) => _open(path, project)),
             ProjectCard(project: project, onOpen: (path) => _open(path, project)),
           ],
         ),

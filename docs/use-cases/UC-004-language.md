@@ -26,13 +26,13 @@ The language of [Settings](../guide/settings.md) (`SettingsScreen`): a heading a
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Settings shows the Arabic and English switch itself, the language in use chosen, with no row to open first | `SettingsScreen`, `LanguageSwitch`, `Words.languageName` | `my_account_test.dart`: UC-004 (Muteb, 9 Nov 2026) |
-| Choosing a language switches every screen to its words and direction | `AppLanguage.choose`, `RedixApp` (`locale`) | `my_account_test.dart`: choosing English on an Arabic phone; `patrol_test/app_test.dart` against the real API |
-| The choice is kept on the phone and used at the next start | `AppLanguage.restore` | `my_account_test.dart`: the chosen language is kept |
+| Settings shows the Arabic and English switch itself, the language in use chosen, with no row to open first | `SettingsScreen`, `LanguageSwitch`, `Words.languageName` | `settings/account_test.dart`: UC-004 (Muteb, 9 Nov 2026) |
+| Choosing a language switches every screen to its words and direction | `AppLanguage.choose`, `RedixApp` (`locale`) | `settings/account_test.dart`: choosing English on an Arabic phone; `patrol_test/app_test.dart` against the real API |
+| The choice is kept on the phone and used at the next start | `AppLanguage.restore` | `settings/account_test.dart`: the chosen language is kept |
 | The phone keeps the words of one language only: the new one replaces the old | `Words.load` | `words_test.dart`: the phone keeps only the language in use |
-| Without a network the language stays and the app says switching needs a network | `AppLanguage.choose` | `my_account_test.dart`: without a network |
+| Without a network the language stays and the app says switching needs a network | `AppLanguage.choose` | `settings/account_test.dart`: without a network |
 | Until a language is chosen the app follows the phone, Arabic for any other language | `AppLanguage.locale` (empty choice) | `widget_test.dart`: a phone in another language gets Arabic |
-| AC-N03: on a screen 360 points wide, every screen is right to left in Arabic and left to right in English, with nothing off the screen | Each screen | `my_account_test.dart`: AC-N03, once per language |
+| AC-N03: on a screen 360 points wide, every screen is right to left in Arabic and left to right in English, with nothing off the screen | Each screen | `settings/account_test.dart`: AC-N03, once per language |
 
 ## Left to later use cases
 

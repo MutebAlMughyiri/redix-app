@@ -9,6 +9,7 @@ import '../ui/api_object_body.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 import '../ui/app_color.dart';
+import '../reports/category_share.dart';
 
 /// The project's figures at a glance (UC-049): what waits for approval, the surplus, the completion (UC-063), the reconciliation difference, and the revenue and expenses
 /// totals, each opening to its categories with their totals, رأس المال among them (redix-api #109). A category opens nothing: its items and their reports are on
@@ -57,11 +58,9 @@ class DashboardCard extends StatefulWidget {
   State<DashboardCard> createState() => _DashboardCardState();
 }
 
-/// Which tile shows its categories.
-enum _Side { none, revenue, expenses }
-
 class _DashboardCardState extends State<DashboardCard> {
-  var _side = _Side.none;
+  /// The side whose categories show: one at most, none at first.
+  var _opened = <DashboardSide>{};
 
   @override
   void initState() {
@@ -69,14 +68,14 @@ class _DashboardCardState extends State<DashboardCard> {
     widget.dashboard.loadOnOpen();
   }
 
-  Widget _tile(String label, double amount, Key key, _Side side) => Expanded(
+  Widget _tile(String label, Key key, DashboardSide side, DashboardFigures figures) => Expanded(
     child: Card.filled(
       key: key.card,
       margin: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         key: key.body,
-        onTap: () => setState(() => _side = _side == side ? _Side.none : side),
+        onTap: () => setState(() => _opened = _opened.contains(side) ? {} : {side}),
         child: Padding(
           padding: const EdgeInsets.all(10),
           child: Column(
@@ -85,10 +84,10 @@ class _DashboardCardState extends State<DashboardCard> {
               Row(
                 children: [
                   Expanded(child: Text(label, key: key.label, style: Theme.of(context).textTheme.bodySmall)),
-                  Icon(_side == side ? Icons.expand_less : Icons.expand_more, key: key.icon, size: 18),
+                  Icon(_opened.contains(side) ? Icons.expand_less : Icons.expand_more, key: key.icon, size: 18),
                 ],
               ),
-              Text(formatMoney(amount), key: key, style: Theme.of(context).textTheme.titleSmall),
+              Text(formatMoney(side.totalOf(figures)), key: key, style: Theme.of(context).textTheme.titleSmall),
             ],
           ),
         ),
@@ -98,26 +97,14 @@ class _DashboardCardState extends State<DashboardCard> {
 
   /// The categories of the side opened, each with its total and its share of the side, with no heading over them: the tile tapped already names the side (Muteb, 8 Nov
   /// 2026). None opens: their items are on الإيرادات والمصروفات (Muteb, 9 Nov 2026).
-  Widget _categories(List<CategoryTotal> categories, double total) => Column(
+  Widget _categories(DashboardSide side, DashboardFigures figures) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      for (final category in categories)
+      for (final category in side.categoriesOf(figures))
         Padding(
           key: DashboardCard.categoryKey(category.id),
           padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: 4,
-            children: [
-              Row(
-                children: [
-                  Expanded(child: Text(category.name, key: DashboardCard.categoryKey(category.id).title)),
-                  Text(formatMoney(category.total), key: DashboardCard.categoryKey(category.id).trailing),
-                ],
-              ),
-              LinearProgressIndicator(key: DashboardCard.categoryKey(category.id).bar, value: total <= 0 ? 0 : (category.total / total).clamp(0, 1)),
-            ],
-          ),
+          child: CategoryShare(category: category, sideTotal: side.totalOf(figures), parts: DashboardCard.categoryKey(category.id)),
         ),
     ],
   );
@@ -158,12 +145,11 @@ class _DashboardCardState extends State<DashboardCard> {
         Row(
           spacing: 8,
           children: [
-            _tile(words.dashboardRevenue, figures.revenue, DashboardCard.revenueKey, _Side.revenue),
-            _tile(words.dashboardExpenses, figures.expenses, DashboardCard.expensesKey, _Side.expenses),
+            _tile(words.dashboardRevenue, DashboardCard.revenueKey, DashboardSide.revenue, figures),
+            _tile(words.dashboardExpenses, DashboardCard.expensesKey, DashboardSide.expenses, figures),
           ],
         ),
-        if (_side == _Side.revenue) _categories(figures.revenueCategories, figures.revenue),
-        if (_side == _Side.expenses) _categories(figures.categories, figures.expenses),
+        for (final side in _opened) _categories(side, figures),
       ],
     );
   }

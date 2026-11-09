@@ -36,4 +36,4 @@
 | An expired access token is renewed once and the request sent again | `Session.post` | `change_password_test.dart`: an expired access token |
 | Without a network the change says so | `Session.changePassword` | `change_password_test.dart`: without a network |
 | A server answer that names no refusal says the server could not change it, never that there is no connection | `refusalOf`, `answerOf` in `lib/api.dart` | `change_password_test.dart`: a server answer that names no refusal |
-| Opened by choice from Settings, the screen has a way back | `ChangePasswordScreen` (`AppBar`) | `my_account_test.dart`: the password change opens from Settings |
+| Opened by choice from Settings, the screen has a way back | `ChangePasswordScreen` (`AppBar`) | `settings/account_test.dart`: the password change opens from Settings |

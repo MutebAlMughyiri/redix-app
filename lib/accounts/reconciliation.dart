@@ -8,7 +8,8 @@ class ReconciliationBalance {
     : accountId = json['accountId'] as String,
       accountName = json['accountName'] as String,
       booksBalance = (json['booksBalance'] as num).toDouble(),
-      actualBalance = (json['actualBalance'] as num).toDouble();
+      actualBalance = (json['actualBalance'] as num).toDouble(),
+      wasChecked = json['wasChecked'] as bool? ?? false;
 
   /// The account.
   final String accountId;
@@ -21,6 +22,9 @@ class ReconciliationBalance {
 
   /// What it really held at the latest check.
   final double actualBalance;
+
+  /// True when the latest check held this account; an account added since was never checked (findings row 187).
+  final bool wasChecked;
 }
 
 /// The accounts against the books (BR-08).

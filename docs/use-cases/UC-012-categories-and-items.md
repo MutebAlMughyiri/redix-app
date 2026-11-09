@@ -85,7 +85,7 @@ New project, `NewProjectScreen`, signed in:
 | An item's type changes from its menu, starting from the one it has; one with entries keeps it and the dialog says why | `ChangeItemTypeDialog`, `ItemTypeChoice`, `Categories.changeItemType` | `categories_test.dart`: an item's type changes from its menu; an item with entries keeps its type |
 | A finished project shows its structure with nothing to change (AC-04.1) | `Project.mayChangeStructure` | `categories_test.dart`: a finished project |
 | AC-05.2: a new project can copy an approved earlier one, and the sign-in page offers none | `NewProjectScreen` | `categories_test.dart`: a new project |
-| AC-N03: nothing off a screen 360 points wide, in both languages | Each screen | `my_account_test.dart`: AC-N03 |
+| AC-N03: nothing off a screen 360 points wide, in both languages | Each screen | `settings/account_test.dart`: AC-N03 |
 
 The real app and API run it together in `patrol_test/app_test.dart`, which takes the guide's pictures.
 
