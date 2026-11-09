@@ -14,8 +14,11 @@ import '../ui/row_menu.dart';
 
 /// One account: its type and who holds it, or that it is disabled, what it holds and, for whoever keeps the settings, a menu of what can be done to it.
 class AccountRow extends StatelessWidget {
-  /// The row of [account] showing [amount], changed through [accounts] while [mayChange], choosing a custodian among [members].
-  const AccountRow({super.key, required this.account, required this.amount, required this.accounts, required this.members, required this.mayChange});
+  /// The row of [account] showing [amount], ending in [menu].
+  const AccountRow({super.key, required this.account, required this.amount, this.menu = noMenu});
+
+  /// The end of a row with no menu: as wide as the menu's own space, so a row's amount lines up the same on every screen.
+  static const noMenu = SizedBox(width: 12);
 
   /// The account this row shows.
   final Account account;
@@ -23,14 +26,8 @@ class AccountRow extends StatelessWidget {
   /// What it holds, as written: its balance on Accounts, what it really held at the latest check on the actual balances.
   final String amount;
 
-  /// The way to change it.
-  final Accounts accounts;
-
-  /// The people who can hold it.
-  final Members members;
-
-  /// Whether the signed-in user may change it now.
-  final bool mayChange;
+  /// What ends the row: its [AccountMenu], or [noMenu].
+  final Widget menu;
 
   String _details(Words words) => account.isActive ? partsLine([words.text(account.type.wordKey), account.custodianName]) : words.accountsDisabled;
 
@@ -42,7 +39,7 @@ class AccountRow extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         key: AccountsScreen.rowKey(account.id).body,
-        contentPadding: EdgeInsetsDirectional.fromSTEB(16, 0, mayChange ? 4 : 16, 0),
+        contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
         leading: Icon(account.type == AccountType.bank ? Icons.account_balance_outlined : Icons.payments_outlined, key: AccountsScreen.rowKey(account.id).icon),
         title: Text(
           account.name,
@@ -54,20 +51,37 @@ class AccountRow extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(amount, key: AccountsScreen.balanceKey(account.id), style: Theme.of(context).textTheme.titleSmall),
-            if (mayChange)
-              rowMenu(AccountsScreen.menuKey(account.id), [
-                  rowMenuItem(AccountsScreen.editKey, words.accountsEdit, () => showDialog<void>(
-                      context: context,
-                      builder: (_) => AccountDialog(account: account, accounts: accounts, members: members),
-                    )),
-                  if (account.isActive)
-                    rowMenuItem(AccountsScreen.disableKey, words.accountsDisable, () => showRefusalOf(context, accounts.disable(account)))
-                  else
-                    rowMenuItem(AccountsScreen.enableKey, words.accountsEnable, () => showRefusalOf(context, accounts.enable(account))),
-                ]),
+            menu,
           ],
         ),
       ),
     );
+  }
+}
+
+/// What can be done to an account, for whoever keeps the settings: its ⋮ menu.
+class AccountMenu extends StatelessWidget {
+  /// The menu of [account], changed through [accounts], choosing a custodian among [members].
+  const AccountMenu({super.key, required this.account, required this.accounts, required this.members});
+
+  /// The account.
+  final Account account;
+
+  /// The way to change it.
+  final Accounts accounts;
+
+  /// The people who can hold it.
+  final Members members;
+
+  @override
+  Widget build(BuildContext context) {
+    final words = Words.of(context);
+    return rowMenu(AccountsScreen.menuKey(account.id), [
+      rowMenuItem(AccountsScreen.editKey, words.accountsEdit, () => showDialog<void>(context: context, builder: (_) => AccountDialog(account: account, accounts: accounts, members: members))),
+      if (account.isActive)
+        rowMenuItem(AccountsScreen.disableKey, words.accountsDisable, () => showRefusalOf(context, accounts.disable(account)))
+      else
+        rowMenuItem(AccountsScreen.enableKey, words.accountsEnable, () => showRefusalOf(context, accounts.enable(account))),
+    ]);
   }
 }

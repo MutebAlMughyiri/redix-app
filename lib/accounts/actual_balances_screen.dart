@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../format/number_format.dart';
-import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
@@ -18,8 +17,8 @@ import 'reconciliation_card.dart';
 /// screen's bottom button, grayed for whoever does not move money (FR-24). Under them, each account as Accounts draws it, without its menu, with what it really held at the
 /// latest check, or a dash for one that check did not hold.
 class ActualBalancesScreen extends StatefulWidget {
-  /// The [reconciliations] of [project], and its [accounts], drawn with [members].
-  const ActualBalancesScreen({super.key, required this.project, required this.reconciliations, required this.accounts, required this.members});
+  /// The [reconciliations] of [project], and its [accounts].
+  const ActualBalancesScreen({super.key, required this.project, required this.reconciliations, required this.accounts});
 
   /// The screen's route.
   static const path = '/projects/:projectId/actual-balances';
@@ -38,9 +37,6 @@ class ActualBalancesScreen extends StatefulWidget {
 
   /// Its accounts, each with what it really held.
   final Accounts accounts;
-
-  /// The people who can hold an account, which its row is drawn with.
-  final Members members;
 
   @override
   State<ActualBalancesScreen> createState() => _ActualBalancesScreenState();
@@ -69,7 +65,7 @@ class _ActualBalancesScreenState extends State<ActualBalancesScreen> {
             list: widget.accounts,
             emptyText: words.accountsEmpty,
             alsoRefresh: widget.reconciliations.load,
-            itemBuilder: (account) => AccountRow(account: account, amount: actual[account.id] ?? '—', accounts: widget.accounts, members: widget.members, mayChange: false),
+            itemBuilder: (account) => AccountRow(account: account, amount: actual[account.id] ?? '—'),
             listOf: (items) => ListView(
               padding: ApiListBody.padding,
               physics: ApiListBody.physics,

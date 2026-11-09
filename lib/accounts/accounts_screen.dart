@@ -104,7 +104,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
       body: ApiListBody(
         list: accounts,
         emptyText: words.accountsEmpty,
-        itemBuilder: (account) => AccountRow(account: account, amount: formatMoney(account.balance), accounts: accounts, members: widget.members, mayChange: project.mayManageSettings),
+        itemBuilder: (account) => AccountRow(account: account, amount: formatMoney(account.balance), menu: project.mayManageSettings ? AccountMenu(account: account, accounts: accounts, members: widget.members) : AccountRow.noMenu),
       ),
     );
   }
