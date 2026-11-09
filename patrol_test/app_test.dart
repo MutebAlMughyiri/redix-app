@@ -55,6 +55,8 @@ import 'package:redix/words/app_language.dart';
 import 'package:redix/words/words.dart';
 import 'package:redix/words/language_switch.dart';
 import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/ui/reason_sheet.dart';
+import 'package:redix/entries/entries_screen.dart';
 
 /// The test's admin, created by the API with a temporary password.
 const username = String.fromEnvironment('TEST_USERNAME');
@@ -923,6 +925,68 @@ void main() {
       final words = Words.of($.tester.element(find.byKey(HomeScreen.titleKey)));
       await goTo($(DashboardCard.pendingKey.title));
       await says(DashboardCard.pendingKey.title, words.dashboardPending.replaceFirst('{0}', '5'));
+
+      // Findings row 186: a partner's money saved as a draft, then sent from القيود on the home.
+      await goTo(addEntry);
+      await addEntry.tap();
+      await reach($(AddEntryScreen.tableKey));
+      await $(AddEntryScreen.tableKey).tap();
+      await $(TablePicker.searchKey).enterText('هيثم');
+      await reach($(TablePicker.optionKey(haithamId)));
+      await $(TablePicker.optionKey(haithamId)).tap();
+      await reach($(AddEntryScreen.amountKey));
+      await $(AddEntryScreen.amountKey).enterText('700');
+      await goTo($(PaymentChoices.accountKey(cashId)));
+      await $(PaymentChoices.accountKey(cashId)).tap();
+      await goTo($(AddEntryScreen.draftKey));
+      await $(AddEntryScreen.draftKey).tap();
+      await reach($(messageKeyOf('expenses.saved').label));
+      await reach(addEntry);
+      final draftId = await idShowing('entries.row.', '700.00');
+      await $(EntriesScreen.rowKey(draftId)).tap();
+      await goTo($(AddEntryScreen.sendDraftKey));
+      await $(AddEntryScreen.sendDraftKey).tap();
+      await reach(addEntry);
+      await says(DashboardCard.pendingKey.title, words.dashboardPending.replaceFirst('{0}', '6'));
+
+      // Findings row 186: a revenue entry rejected, then fixed from القيود and sent again with what it held.
+      await goTo(addEntry);
+      await addEntry.tap();
+      await reach($(AddEntryScreen.tableKey));
+      await $(AddEntryScreen.tableKey).tap();
+      await $(TablePicker.searchKey).enterText('استرجاع');
+      final refundTableId = await idShowing('tablePicker.option.', 'استرجاع الضرائب');
+      await $(TablePicker.optionKey(refundTableId)).tap();
+      await reach($(AddEntryScreen.amountKey));
+      await $(AddEntryScreen.amountKey).enterText('300');
+      await goTo($(PaymentChoices.accountKey(cashId)));
+      await $(PaymentChoices.accountKey(cashId)).tap();
+      await goTo($(AddEntryScreen.sendKey));
+      await $(AddEntryScreen.sendKey).tap();
+      await reach($(messageKeyOf('expenses.sent').label));
+      await reach(addEntry);
+      await goTo($(HomeScreen.approvalsKey(projectId)));
+      await $(HomeScreen.approvalsKey(projectId)).tap();
+      final refundEntryId = await idShowing('approvals.card.', 'استرجاع الضرائب');
+      await goTo($(ApprovalsScreen.rejectKey(refundEntryId)));
+      await $(ApprovalsScreen.rejectKey(refundEntryId)).tap();
+      await $(ReasonSheet.reasonKey).enterText('المبلغ يحتاج مراجعة');
+      await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+      await goTo($(ReasonSheet.sendKey));
+      await $(ReasonSheet.sendKey).tap();
+      await gone($(ApprovalsScreen.cardKey(refundEntryId)));
+      await back();
+      await reach(addEntry);
+      final rejectedId = await idShowing('entries.row.', '300.00');
+      await $(EntriesScreen.rowKey(rejectedId)).tap();
+      await goTo($(AddEntryScreen.changeKey));
+      await $(AddEntryScreen.changeKey).tap();
+      await reach($(AddEntryScreen.sendKey));
+      expect($.tester.widget<TextField>(find.byKey(AddEntryScreen.amountKey)).controller!.text, '300');
+      await goTo($(AddEntryScreen.sendKey));
+      await $(AddEntryScreen.sendKey).tap();
+      await reach($(messageKeyOf('expenses.sent').label));
+      await reach(addEntry);
 
       await goTo($(HomeScreen.approvalsKey(projectId)));
       await $(HomeScreen.approvalsKey(projectId)).tap();
