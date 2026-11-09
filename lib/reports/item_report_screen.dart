@@ -154,7 +154,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
       builder: (context, _) {
         final report = widget.report.value;
         return Scaffold(
-          appBar: AppBar(title: ScreenTitle(report.itemName.isEmpty ? words.reportsRevenueAndExpenses : report.itemName, subject: report.categoryName)),
+          appBar: AppBar(title: ScreenTitle(report.itemName, subject: report.categoryName)),
           body: ListView(
             padding: const EdgeInsets.all(16),
             children: [
