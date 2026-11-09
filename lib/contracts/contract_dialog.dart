@@ -19,6 +19,7 @@ import 'contract.dart';
 import 'contracts.dart';
 import 'contracts_screen.dart';
 import '../ui/refusal_text.dart';
+import '../ui/entry_field.dart';
 
 /// Asks for a contract's terms, and its contractor, item and unit while no payment names it.
 class ContractDialog extends StatefulWidget {
@@ -149,13 +150,6 @@ class _ContractDialogState extends State<ContractDialog> {
     ),
   ];
 
-  Widget _amount(Key key, TextEditingController controller, String label) => TextField(
-    key: key,
-    controller: controller,
-    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-    decoration: InputDecoration(labelText: label),
-  );
-
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
@@ -173,10 +167,10 @@ class _ContractDialogState extends State<ContractDialog> {
           value: _isOpenValue,
           onChanged: (isOpenValue) => setState(() => _isOpenValue = isOpenValue),
         ),
-        if (!_isOpenValue) ...[_amount(ContractsScreen.valueKey, _value, words.contractsContractValue), const SizedBox(height: 16)],
-        _amount(ContractsScreen.unitPriceKey, _unitPrice, words.contractsUnitPrice),
+        if (!_isOpenValue) ...[entryField(key: ContractsScreen.valueKey, controller: _value, label: words.contractsContractValue, isNumber: true), const SizedBox(height: 16)],
+        entryField(key: ContractsScreen.unitPriceKey, controller: _unitPrice, label: words.contractsUnitPrice, isNumber: true),
         const SizedBox(height: 16),
-        _amount(ContractsScreen.quantityKey, _quantity, words.contractsQuantity),
+        entryField(key: ContractsScreen.quantityKey, controller: _quantity, label: words.contractsQuantity, isNumber: true),
         const SizedBox(height: 16),
         TextField(
           key: ContractsScreen.notesKey,
