@@ -73,6 +73,6 @@ Tests are in `test/entries/add_entry_test.dart`, with the payment's in `add_entr
 | FR-44: Field reaches the sheet and its quick add from the entry (findings row 79) | `_pickSupplier` | findings row 79; Patrol |
 | AC-43.1: the title over what was used most | `SupplierSearch.leadsWithMostUsed` | `supplier_picker_test`: AC-43.1 |
 | Who may | `Project.mayEnterExpenses` | who holds no recordEntries; a finished project; `permission_gates_test` |
-| AC-N03: it fits 360 points wide, in both languages | The screen | `my_account_test`: AC-N03 |
+| AC-N03: it fits 360 points wide, in both languages | The screen | `settings/account_test`: AC-N03 |
 
 The Patrol journey follows Field from the home through the supplier's quick add to sending for approval, and pays a contractor from the same screen.
