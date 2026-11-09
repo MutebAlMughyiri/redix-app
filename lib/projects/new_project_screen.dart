@@ -13,6 +13,7 @@ import 'projects.dart';
 import '../ui/typed_names.dart';
 import '../ui/refusal_text.dart';
 import '../ui/picker_field.dart';
+import '../ui/form_button_style.dart';
 
 /// The form that registers a project (UC-006, UC-066): its name, its start date and its units. From the sign-in page it also takes the details of the manager, who has
 /// no login yet. Either way the project waits for the admin.
@@ -268,7 +269,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
             FilledButton(
               key: NewProjectScreen.submitKey,
               onPressed: _saving ? null : _create,
-              style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+              style: formButtonStyle,
               child: Text(words.projectsCreate, key: NewProjectScreen.submitKey.label),
             ),
             if (_message.isNotEmpty) ...[

@@ -8,6 +8,7 @@ import '../words/language_switch.dart';
 import '../words/words.dart';
 import 'session.dart';
 import '../ui/refusal_text.dart';
+import '../ui/form_button_style.dart';
 
 /// The sign-in screen (UC-002, تسجيل الدخول): username and password, or a fingerprint or face on a phone that uses them (UC-011), with the language choice at the top so it can be read before signing in (UC-004). A refusal shows as one line that never says which field was wrong (AC-01.2).
 class SignInScreen extends StatefulWidget {
@@ -143,7 +144,7 @@ class _SignInScreenState extends State<SignInScreen> {
             FilledButton(
               key: SignInScreen.submitKey,
               onPressed: _signingIn ? null : _signIn,
-              style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+              style: formButtonStyle,
               child: Text(words.signInSubmit, key: SignInScreen.submitKey.label),
             ),
             ListenableBuilder(
@@ -180,7 +181,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           OutlinedButton.icon(
                             key: SignInScreen.unlockKey,
                             onPressed: _unlock,
-                            style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+                            style: formButtonStyle,
                             icon: Icon(Icons.fingerprint, key: SignInScreen.unlockKey.icon),
                             label: Text(words.biometricsSignIn, key: SignInScreen.unlockKey.label),
                           ),

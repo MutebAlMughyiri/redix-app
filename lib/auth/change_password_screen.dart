@@ -6,6 +6,7 @@ import '../words/words.dart';
 import 'session.dart';
 import 'sign_in_screen.dart';
 import '../ui/refusal_text.dart';
+import '../ui/form_button_style.dart';
 
 /// The change-password screen (UC-003, غيّر كلمة المرور): the current password and the new one twice. While the password is temporary the
 /// router keeps the user here, so the change cannot be skipped (AC-02.1).
@@ -108,7 +109,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             FilledButton(
               key: ChangePasswordScreen.submitKey,
               onPressed: _saving ? null : _save,
-              style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+              style: formButtonStyle,
               child: Text(words.changePasswordSubmit, key: ChangePasswordScreen.submitKey.label),
             ),
             if (_message.isNotEmpty) ...[

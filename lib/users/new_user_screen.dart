@@ -8,6 +8,7 @@ import '../words/words.dart';
 import 'permission_tick.dart';
 import 'users.dart';
 import '../ui/refusal_text.dart';
+import '../ui/form_button_style.dart';
 
 /// The new user form (UC-007): their name, username, mobile and a temporary password they change at first sign-in (AC-02.1). A new login is born in a project.
 class NewUserScreen extends StatefulWidget {
@@ -136,7 +137,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
             FilledButton(
               key: NewUserScreen.submitKey,
               onPressed: _saving ? null : _add,
-              style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(52)),
+              style: formButtonStyle,
               child: Text(words.usersAdd, key: NewUserScreen.submitKey.label),
             ),
             if (_message.isNotEmpty) ...[
