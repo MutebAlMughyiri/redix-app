@@ -10,7 +10,7 @@ Needs Flutter (stable), Android Studio with the Android SDK, and Windows Develop
 ```
 flutter pub get
 adb reverse tcp:5010 tcp:5010
-flutter run --dart-define-from-file=config/local.json
+flutter run --dart-define-from-file=config/dev.json
 ```
 
 Run it on an Android emulator (Android Studio › Device Manager) or a phone with USB debugging on. iPhone builds need a Mac with Xcode.
@@ -21,7 +21,8 @@ Each environment has a config file in `config/`, passed when building or running
 
 | Environment | File | `API_BASE_URL` |
 | --- | --- | --- |
-| The developer's machine | `config/local.json` | `http://127.0.0.1:5010` |
+| dev, automated runs (the API's `Dev`) | `config/dev.json` | `http://127.0.0.1:5010` |
+| qa, Muteb's own testing (the API's `QA`) | `config/qa.json` | `http://127.0.0.1:5012` |
 | Production | `config/production.json`, added when the server is published | The server's public address, over `https` |
 
 On a phone, `127.0.0.1` is the phone itself; `adb reverse tcp:5010 tcp:5010` routes it to the developer's machine, on the emulator and on a phone plugged in by USB alike. Run it once after the emulator or phone connects. A release build only talks `https`: Android and iOS block plain `http` outside debug builds. An app built without a config file stops at start with a message naming the flag.
@@ -65,7 +66,7 @@ Every element a user sees or acts on carries a `Key`, declared as a constant on 
 ```
 flutter analyze
 flutter test
-patrol test --device emulator-5554 --dart-define-from-file=config/local.json
+patrol test --device emulator-5554 --dart-define-from-file=config/dev.json
 dart run tool/update_guide_images.dart
 ```
 

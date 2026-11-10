@@ -18,7 +18,7 @@ jobs:
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
-      - run: flutter build apk --debug --dart-define-from-file=config/local.json
+      - run: flutter build apk --debug --dart-define-from-file=config/dev.json
 
   patrol:
     runs-on: ubuntu-latest
@@ -57,7 +57,7 @@ jobs:
           dotnet tool install --global dotnet-ef
           dotnet build src/Redix.Api
           dotnet ef database update --project src/Redix.Api --no-build
-          nohup dotnet run --project src/Redix.Api --launch-profile http --no-build > api.log 2>&1 &
+          nohup dotnet run --project src/Redix.Api --launch-profile dev --no-build > api.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://localhost:5010/health && break; sleep 2; done
       - uses: actions/setup-java@v4
         with:
@@ -85,4 +85,4 @@ jobs:
           arch: x86_64
           target: google_apis
           working-directory: redix-app
-          script: adb reverse tcp:5010 tcp:5010 && patrol test --device emulator-5554 --dart-define-from-file=config/local.json --dart-define=TEST_USERNAME=${{ env.REDIX_Admin__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Admin__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd
+          script: adb reverse tcp:5010 tcp:5010 && patrol test --device emulator-5554 --dart-define-from-file=config/dev.json --dart-define=TEST_USERNAME=${{ env.REDIX_Admin__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Admin__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd

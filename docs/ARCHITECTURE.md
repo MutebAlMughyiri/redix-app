@@ -6,7 +6,7 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 
 ```
 lib/
-  api.dart                  The API's address, from the environment's config file: `--dart-define-from-file=config/local.json` on the developer's machine, `config/production.json` for a release
+  api.dart                  The API's address, from the environment's config file: `config/dev.json` for automated runs, `config/qa.json` for Muteb's own testing, `config/production.json` for a release (redix-api #118)
   api_list.dart             A list the API owns, as it last answered, and the way to change it
   api_object.dart           Something the API owns, as it last answered, and the way to change it
   main.dart                 The app: its theme, its languages, and its screens
@@ -266,7 +266,7 @@ Settings such as projects keep nothing on the phone: the API owns every rule, th
 | A screen's main action is `BottomButton`: one full-width filled button in the `Scaffold`'s `bottomNavigationBar`, a plus unless the action says otherwise; no screen draws a floating button. Without the permission it shows grayed, never hidden | `lib/ui/bottom_button.dart` |
 | One class to a file: a screen's card, row and dialogs are files of their own | Each feature folder |
 | Every public class and member has a doc comment | The lint `public_member_api_docs` |
-| The API's address comes from the environment's config file (`--dart-define-from-file=config/local.json`); none is built in | `apiBaseUrl`, `config/` |
+| The API's address comes from the environment's config file (`--dart-define-from-file=config/dev.json` or `config/qa.json`, named as the API's environments `Dev` and `QA`); none is built in | `apiBaseUrl`, `config/` |
 
 ## Tests
 
