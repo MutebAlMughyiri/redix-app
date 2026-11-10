@@ -9,7 +9,6 @@ import 'package:redix/auth/permission.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/documents/documents_screen.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/sharing/share_screen.dart';
@@ -44,7 +43,6 @@ final List<MainAction> _mainActions = [
   (name: 'Documents', arrange: _nothing, reach: [_card, HomeScreen.documentsKey(_project)], key: DocumentsScreen.addKey, icon: Icons.add),
   (name: 'Payment methods', arrange: _nothing, reach: [_card, HomeScreen.paymentMethodsKey(_project)], key: PaymentMethodsScreen.addKey, icon: Icons.add),
   (name: 'Suppliers', arrange: _nothing, reach: [_card, HomeScreen.suppliersKey(_project)], key: SuppliersScreen.addKey, icon: Icons.add),
-  (name: 'Partners', arrange: _nothing, reach: [_card, HomeScreen.partnersKey(_project)], key: PartnersScreen.addKey, icon: Icons.add),
   (name: 'Contracts', arrange: _nothing, reach: [_card, HomeScreen.contractsKey(_project)], key: ContractsScreen.addKey, icon: Icons.add),
   (name: 'Categories', arrange: _nothing, reach: [_card, HomeScreen.categoriesKey(_project)], key: CategoriesScreen.addCategoryKey, icon: Icons.add),
   (
@@ -119,7 +117,6 @@ void main() {
     (HomeScreen.addEntryKey(_project), Permission.recordEntries),
     (DocumentsScreen.addKey, Permission.manageProject),
     (SuppliersScreen.addKey, Permission.manageSettings),
-    (PartnersScreen.addKey, Permission.manageSettings),
     (ContractsScreen.addKey, Permission.manageSettings),
   ]) {
     final action = _mainActions.firstWhere((action) => action.key == key);

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/partners/partner_history_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
+import 'package:redix/ui/bottom_button.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
@@ -132,6 +134,33 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.deleteKey), warnIfMissed: false));
 
     expect(opened.api.sentSettingsChanges, isEmpty);
+  });
+
+  testWidgets('redix-app #101: Partners has + and History in the title bar and no bottom button; + adds a partner', (tester) async {
+    final opened = await openPartners(tester);
+
+    expect(find.byType(BottomButton), findsNothing);
+    expect(find.descendant(of: find.byType(AppBar), matching: find.byKey(PartnersScreen.addKey)), findsOneWidget);
+    expect(find.descendant(of: find.byType(AppBar), matching: find.byKey(PartnersScreen.historyKey)), findsOneWidget);
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.addKey)));
+
+    expect(find.byKey(PartnersScreen.partnerNameKey), findsOneWidget);
+  });
+
+  testWidgets('redix-app #101: History lists the partners\' lines, a chip per partner, and one partner\'s chip asks for theirs alone', (tester) async {
+    final opened = await openPartners(tester);
+    opened.api
+      ..addPartnerHistoryLine('project-0', 'capitalIn', partnerId: opened.mutab, partner: 'متعب', account: 'حساب المؤسسة', amount: 1000)
+      ..addPartnerHistoryLine('project-0', 'partnerCreated', partnerId: opened.mutab, partner: 'متعب');
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.historyKey)));
+    expect(find.byKey(PartnerHistoryScreen.lineKey(2000)), findsOneWidget);
+    expect(find.byKey(PartnerHistoryScreen.lineKey(1999)), findsOneWidget);
+    expect(find.byKey(PartnerHistoryScreen.partnerKey(opened.haitham)), findsOneWidget);
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnerHistoryScreen.partnerKey(opened.mutab))));
+
+    expect(opened.api.historyReads.last.queryParameters['partner'], opened.mutab);
+    expect(opened.api.historyReads.last.path, '/projects/project-0/partners/history');
   });
 
   testWidgets('a project with no partners says so', (tester) async {

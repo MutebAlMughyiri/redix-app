@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
-import '../ui/api_list_body.dart';
-import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../history/history_view.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'account_history.dart';
@@ -57,35 +55,6 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
     widget.accounts.loadOnOpen();
   }
 
-  Widget _filters(Words words) {
-    final history = widget.history;
-    return Wrap(
-      spacing: 6,
-      runSpacing: 6,
-      children: [
-        ChoiceChip(key: AccountHistoryScreen.allKey, label: Text(words.historyAllAccounts, key: AccountHistoryScreen.allKey.label), selected: history.accountId.isEmpty, onSelected: (_) => history.filter('', history.mine)),
-        for (final account in widget.accounts.all)
-          ChoiceChip(
-            key: AccountHistoryScreen.accountKey(account.id),
-            label: Text(account.name, key: AccountHistoryScreen.accountKey(account.id).label),
-            selected: history.accountId == account.id,
-            onSelected: (_) => history.filter(account.id, history.mine),
-          ),
-        FilterChip(key: AccountHistoryScreen.mineKey, label: Text(words.historyMine, key: AccountHistoryScreen.mineKey.label), selected: history.mine, onSelected: (mine) => history.filter(history.accountId, mine)),
-      ],
-    );
-  }
-
-  Widget _line(AccountHistoryLine line, Words words) => Card.outlined(
-    key: AccountHistoryScreen.lineKey(line.id),
-    margin: const EdgeInsets.only(bottom: 8),
-    child: ListTile(
-      leading: Icon(line.kind.icon, key: AccountHistoryScreen.lineKey(line.id).icon),
-      title: Text(line.textIn(words), key: AccountHistoryScreen.lineKey(line.id).title),
-      subtitle: Text(line.whoAndWhenIn(words), key: AccountHistoryScreen.lineKey(line.id).subtitle),
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
@@ -94,27 +63,15 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
       appBar: AppBar(title: ScreenTitle(words.accountsHistory, subject: widget.project.name)),
       body: ListenableBuilder(
         listenable: Listenable.merge([history, widget.accounts]),
-        builder: (context, _) => Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: _filters(words)),
-            Expanded(
-              child: ApiListBody(
-                list: history,
-                emptyText: words.historyEmpty,
-                itemBuilder: (line) => _line(line, words),
-                listOf: (items) => ListView(
-                  padding: ApiListBody.padding,
-                  physics: ApiListBody.physics,
-                  children: [
-                    ...items,
-                    if (history.mayHaveMore)
-                      TextButton(key: AccountHistoryScreen.moreKey, onPressed: () => showRefusalOf(context, history.more()), child: Text(words.historyMore, key: AccountHistoryScreen.moreKey.label)),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        builder: (context, _) => HistoryView(
+          history: history,
+          allLabel: words.historyAllAccounts,
+          choices: [for (final account in widget.accounts.all) (account.id, account.name)],
+          allKey: AccountHistoryScreen.allKey,
+          choiceKey: AccountHistoryScreen.accountKey,
+          mineKey: AccountHistoryScreen.mineKey,
+          lineKey: AccountHistoryScreen.lineKey,
+          moreKey: AccountHistoryScreen.moreKey,
         ),
       ),
     );

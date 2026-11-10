@@ -6,7 +6,6 @@ import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/api_object_body.dart';
-import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
@@ -14,6 +13,7 @@ import 'capital.dart';
 import 'movements_screen.dart';
 import 'partner.dart';
 import 'partner_dialog.dart';
+import 'partner_history_screen.dart';
 import 'partner_menu.dart';
 import 'partners.dart';
 import '../ui/amount_line.dart';
@@ -51,8 +51,11 @@ class PartnersScreen extends StatefulWidget {
   /// The share of the partner [id].
   static Key shareKey(String id) => Key('partners.share.$id');
 
-  /// The button that adds a partner.
+  /// The + in the title bar that adds a partner (redix-app #101).
   static const addKey = Key('partners.add');
+
+  /// The title bar's History, opening the partners' history (redix-app #101).
+  static const historyKey = Key('partners.history');
 
   /// The name, in the dialog.
   static const partnerNameKey = Key('partners.partnerName');
@@ -160,8 +163,18 @@ class _PartnersScreenState extends State<PartnersScreen> {
     final words = Words.of(context);
     final project = widget.project;
     return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.partnersTitle, subject: project.name)),
-      bottomNavigationBar: BottomButton(buttonKey: PartnersScreen.addKey, label: words.partnersNew, onPressed: project.mayManageSettings ? () => _ask(Partner.none()) : null),
+      appBar: AppBar(
+        title: ScreenTitle(words.partnersTitle, subject: project.name),
+        actions: [
+          IconButton(key: PartnersScreen.addKey, tooltip: words.partnersNew, icon: Icon(Icons.add, key: PartnersScreen.addKey.icon), onPressed: project.mayManageSettings ? () => _ask(Partner.none()) : null),
+          IconButton(
+            key: PartnersScreen.historyKey,
+            tooltip: words.partnersHistory,
+            icon: Icon(Icons.history, key: PartnersScreen.historyKey.icon),
+            onPressed: () => context.push(PartnerHistoryScreen.pathOf(project.id), extra: project),
+          ),
+        ],
+      ),
       body: ApiListBody(
         list: widget.partners,
         emptyText: words.partnersEmpty,

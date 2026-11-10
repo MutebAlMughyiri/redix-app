@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../api_list.dart';
 import '../auth/session.dart';
 import '../entries/entry_kind.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../format/parts_line.dart';
+import '../history/history_list.dart';
 import '../words/word_fill.dart';
 import '../words/words.dart';
 
@@ -73,7 +73,7 @@ enum AccountHistoryKind {
 }
 
 /// One line of the account history, as the API answers it.
-class AccountHistoryLine {
+class AccountHistoryLine implements HistoryLine {
   /// The line the API describes in [json].
   AccountHistoryLine.fromJson(Map<String, dynamic> json)
     : id = json['id'] as int,
@@ -88,6 +88,7 @@ class AccountHistoryLine {
       custodian = json['custodian'] as String;
 
   /// Its History row, which the next page starts after.
+  @override
   final int id;
 
   /// When it was done, in the phone's time.
@@ -117,46 +118,20 @@ class AccountHistoryLine {
   /// Who holds an account now, for a custodian's change; empty when nobody does.
   final String custodian;
 
+  @override
+  IconData get icon => kind.icon;
+
   /// What it says, in [words].
+  @override
   String textIn(Words words) => words.text(kind.wordKey).fill(kind._values(this, words));
 
   /// Who did it and when, in [words]: an approval says who approved it.
+  @override
   String whoAndWhenIn(Words words) => partsLine([kind.isApproval ? words.historyApprovedBy.fill([by]) : by, '${formatDate(at)} ${formatTime(at)}']);
 }
 
 /// A project's account history, newest first, a page at a time (redix-app #89, R22): every account, or one, and everyone's lines, or the signed-in user's own.
-class AccountHistory extends ApiList<AccountHistoryLine> {
+class AccountHistory extends HistoryList<AccountHistoryLine> {
   /// The history of the accounts of the project [projectId], seen through [session].
-  AccountHistory(Session session, this.projectId) : super(session, _pathOf(projectId, '', false, 0), 'history', AccountHistoryLine.fromJson);
-
-  /// How many lines a page holds, as the API gives them.
-  static const pageSize = 50;
-
-  /// The project.
-  final String projectId;
-
-  var _accountId = '';
-  var _mine = false;
-
-  static String _pathOf(String projectId, String accountId, bool mine, int before) => '/projects/$projectId/accounts/history?account=$accountId&mine=$mine&before=$before';
-
-  /// The account whose lines show; empty for every account.
-  String get accountId => _accountId;
-
-  /// True while only the signed-in user's own lines show.
-  bool get mine => _mine;
-
-  /// True while the last page read was full, so another may follow.
-  bool get mayHaveMore => all.isNotEmpty && all.length % pageSize == 0;
-
-  /// Shows the lines of the account [accountId], or every account's when empty, and only the signed-in user's own when [mine], from the newest.
-  Future<void> filter(String accountId, bool mine) async {
-    _accountId = accountId;
-    _mine = mine;
-    pointAt(_pathOf(projectId, accountId, mine, 0));
-    await load();
-  }
-
-  /// Adds the next page after the last line shown; returns an empty string once added, otherwise the word key saying it could not be read.
-  Future<String> more() => loadMore(_pathOf(projectId, _accountId, _mine, all.last.id));
+  AccountHistory(Session session, String projectId) : super(session, '/projects/$projectId/accounts/history', 'account', AccountHistoryLine.fromJson);
 }

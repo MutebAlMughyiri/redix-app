@@ -175,6 +175,17 @@ void main() {
       expect(find.text($.words.capitalContribution), findsNothing);
     });
 
+    phoneCase('redix-app #101: History, in the title bar, lists a partner added and their approved capital', ($) async {
+      final manager = await Given.manager();
+      final id = await Given.partner(manager, 'متعب');
+      await Given.entriesApproved(manager, [await Given.partnerMoney(manager, id, amount: 1000)]);
+      await onPartners($, manager);
+      await $.tapOn(PartnersScreen.historyKey);
+      await $.reach($(keyStartingWith('partnerHistory.line.')));
+      expect(find.textContaining('1,000.00'), findsWidgets);
+      await $.picture('partner-history');
+    });
+
     phoneCase('a project with no partners says so', ($) async {
       final manager = await Given.manager();
       await onPartners($, manager);

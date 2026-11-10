@@ -1232,8 +1232,17 @@ mixin WordGetters {
   /// The word `history.allAccounts`.
   String get historyAllAccounts => text('history.allAccounts');
 
+  /// The word `history.allPartners`.
+  String get historyAllPartners => text('history.allPartners');
+
   /// The word `history.approvedBy`.
   String get historyApprovedBy => text('history.approvedBy');
+
+  /// The word `history.capitalIn`.
+  String get historyCapitalIn => text('history.capitalIn');
+
+  /// The word `history.capitalOut`.
+  String get historyCapitalOut => text('history.capitalOut');
 
   /// The word `history.check`.
   String get historyCheck => text('history.check');
@@ -1262,6 +1271,18 @@ mixin WordGetters {
   /// The word `history.nameWas`.
   String get historyNameWas => text('history.nameWas');
 
+  /// The word `history.partnerAccount`.
+  String get historyPartnerAccount => text('history.partnerAccount');
+
+  /// The word `history.partnerChanged`.
+  String get historyPartnerChanged => text('history.partnerChanged');
+
+  /// The word `history.partnerCreated`.
+  String get historyPartnerCreated => text('history.partnerCreated');
+
+  /// The word `history.partnerDeleted`.
+  String get historyPartnerDeleted => text('history.partnerDeleted');
+
   /// The word `history.reversed`.
   String get historyReversed => text('history.reversed');
 
@@ -1270,6 +1291,9 @@ mixin WordGetters {
 
   /// The word `history.unknownAccount`.
   String get historyUnknownAccount => text('history.unknownAccount');
+
+  /// The word `history.unknownPartner`.
+  String get historyUnknownPartner => text('history.unknownPartner');
 
   /// The word `home.hideDetails`.
   String get homeHideDetails => text('home.hideDetails');
@@ -1360,6 +1384,9 @@ mixin WordGetters {
 
   /// The word `partners.empty`.
   String get partnersEmpty => text('partners.empty');
+
+  /// The word `partners.history`.
+  String get partnersHistory => text('partners.history');
 
   /// The word `partners.invalidName`.
   String get partnersInvalidName => text('partners.invalidName');
