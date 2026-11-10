@@ -31,7 +31,7 @@
 | Rule | Code | Test |
 | --- | --- | --- |
 | Without a session every screen leads to sign-in | `RedixApp` router redirect | `sign_in_test.dart`: without a session |
-| The right password opens home (FR-01) | `Session.signIn`, router redirect | `sign_in_test.dart`: the right password; `patrol_test/app_test.dart` against the real API |
+| The right password opens home (FR-01) | `Session.signIn`, router redirect | `sign_in_test.dart`: the right password; `patrol_test/auth/sign_in_test.dart` against the real API |
 | The session is kept only in the Keychain or Keystore (NFR-09) | `Session`, `flutter_secure_storage` | `sign_in_test.dart`: the right password |
 | A refusal shows one line that never says which field was wrong (AC-01.2) | `SignInScreen`, the API's `code` | `sign_in_test.dart`: a wrong password, a locked account |
 | Without a network, sign-in says so | `Session.signIn` | `sign_in_test.dart`: without a network |

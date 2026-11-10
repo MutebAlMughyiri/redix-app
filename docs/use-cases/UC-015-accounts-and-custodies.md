@@ -65,7 +65,7 @@ The project's home, `HomeScreen`:
 | An expired token is renewed for each list when the home opens, and the session stays open | `HomeScreen`, `Session._renew` | `an expired access token is renewed once for each list read at once`, in `test/projects/projects_test.dart` |
 | It fits 360 points wide in both languages (AC-N03) | `AccountsScreen`, `MyCustody` | `AC-N03` in `test/settings/account_test.dart` |
 
-The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, which adds a bank account and a custody and sees the custody on the home.
+The real app runs on a real phone against the real API in `patrol_test/accounts/accounts_test.dart`, `patrol_test/home/custody_test.dart` and `patrol_test/money/account_balance_figures_test.dart`, one case per rule.
 
 ## Left to later use cases
 

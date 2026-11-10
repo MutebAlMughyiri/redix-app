@@ -52,8 +52,8 @@
 | R8: signed out with a temporary password, the link opens once the password is changed, since the change returns to sign-in, which decides where a person lands | `ChangePasswordScreen._save`, `RedixApp._redirect` | `entry_share_test.dart`: R8: signed out with a temporary password |
 | A finished project says nothing about swiping an entry away | `Project.mayDeleteEntries` | `entries_test.dart`: a finished project says nothing about swiping |
 
-## Not proved
+## On a real phone
 
-The contractor payment's form opens an entry through the same steps, with no widget test of its own. The journey does not reach these screens yet.
+`patrol_test/entries/open_and_change_test.dart` opens every kind of entry on the HUAWEI, the contractor payment's included, and `patrol_test/money/contract_figures_test.dart` opens saved payments to check their contract's figures. `patrol_test/entries/share_entry_test.dart` shares an entry to the phone's Notepad and reads the text back.
 
 A link tapped in WhatsApp reaches REDIX through the Android manifest's `https` intent filter for `LINK_HOST`, which no widget test runs. It was checked on the HUAWEI on 8 Nov 2026: a link to a made-up entry, opened as a browser opens it, reached REDIX, which said the entry cannot be found. On a phone without REDIX the link opens nothing until go-live (redix-app #83, D6).

@@ -76,7 +76,7 @@ The project's home, `HomeScreen`:
 | A list that cannot be read says so | `ApiListBody` | `a list that cannot be read says so` |
 | It fits 360 points wide in both languages (AC-N03) | `ContractsScreen`, `ContractDialog` | `AC-N03` in `test/settings/account_test.dart` |
 
-The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, which opens the supplier picker, adds a contractor with the quick add, and adds a contract.
+The real app runs on a real phone against the real API in `patrol_test/contracts/contracts_test.dart` and `patrol_test/money/contract_figures_test.dart`, one case per rule.
 
 ## Left to later use cases
 

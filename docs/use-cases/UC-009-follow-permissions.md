@@ -35,4 +35,4 @@ A new person starts at the last project role the API lists. The app names no rol
 | An existing user is added by username, and an unknown one says so | `users_test.dart` |
 | Every permission a project can give is ticked one by one, at once (redix-api #89) | `user_permissions_test.dart` |
 | A refusal shows its word, and nothing changes | `user_permissions_test.dart` |
-| A journey on a real phone | `patrol_test/app_test.dart` |
+| Each permission on a real phone, against the real API | `patrol_test/users/user_permissions_test.dart`, `patrol_test/users/my_permissions_test.dart` |

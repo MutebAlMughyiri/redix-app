@@ -43,6 +43,6 @@ Android's backup of the app's data is off, so none of this leaves the phone that
 | A server that could not answer leaves it waiting | `Outbox._sendOne` | `offline_test.dart`: an answer the server could not give |
 | A typed search looks in what was kept, whichever way the name is spelled | `SupplierSearch._findInKeptCopy` | `offline_test.dart`: with no network a typed search |
 
-## Not proved
+## On a real phone
 
-The journey cannot yet cut the network, and it has not run this code on a phone: the system stopped the emulator run for low memory on 5 Nov 2026. The folder store is tested on a real folder; the widget tests use a store in memory.
+`patrol_test/offline/offline_entries_test.dart` runs this code on the HUAWEI with its link to the API cut. The folder store is tested on a real folder; the widget tests use a store in memory.

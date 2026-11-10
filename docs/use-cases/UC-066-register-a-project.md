@@ -29,4 +29,4 @@
 | A waiting or rejected project offers nothing | `projects_test.dart` |
 | Only `approveProjects` sees Registered projects | `settings_test.dart` |
 | Approve, and Reject with a reason | `registered_projects_test.dart` |
-| A journey on a real phone | `patrol_test/app_test.dart` |
+| On a real phone, against the real API | `patrol_test/projects/register_project_test.dart`, `patrol_test/projects/approve_projects_test.dart` |

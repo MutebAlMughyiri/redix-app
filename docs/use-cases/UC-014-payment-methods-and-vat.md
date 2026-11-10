@@ -52,4 +52,4 @@ The home of a project, `HomeScreen`:
 | Without `manageSettings` there is no way in | `ProjectCard` | `without manageSettings there is no way in` |
 | It fits 360 points wide in both languages (AC-N03) | `PaymentMethodsScreen` | `AC-N03` in `test/settings/account_test.dart` |
 
-The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, which adds a method and disables it.
+The real app runs on a real phone against the real API in `patrol_test/settings/payment_methods_test.dart`, one case per rule.

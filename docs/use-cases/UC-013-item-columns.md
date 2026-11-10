@@ -74,7 +74,7 @@ The question after a change to the template, `ApplyToAllDialog`:
 | A finished project shows its columns with nothing to change | `Project.mayChangeStructure` | `item_columns_test.dart`: a finished project |
 | AC-N03: nothing off a screen 360 points wide, in both languages | Each screen | `settings/account_test.dart`: AC-N03 |
 
-The real app and API run it together in `patrol_test/app_test.dart`, which takes the guide's pictures.
+The real app and API run it together on a real phone in `patrol_test/structure/item_columns_test.dart` and `column_template_test.dart`, which take the guide's pictures.
 
 ## Left to later use cases
 

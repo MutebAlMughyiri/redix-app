@@ -28,7 +28,7 @@
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| A temporary password leads straight to the change screen (AC-02.1) | `RedixApp` router redirect | `change_password_test.dart`: signing in with a temporary password; `patrol_test/app_test.dart` against the real API |
+| A temporary password leads straight to the change screen (AC-02.1) | `RedixApp` router redirect | `change_password_test.dart`: signing in with a temporary password; `patrol_test/auth/change_password_test.dart` against the real API |
 | The change cannot be skipped while the password is temporary | `RedixApp` router redirect | `change_password_test.dart`: cannot be skipped |
 | A changed password opens home | `Session.changePassword` | `change_password_test.dart`: a changed password opens home |
 | New passwords that differ are caught before anything is sent | `ChangePasswordScreen` | `change_password_test.dart`: new passwords that differ |

@@ -75,4 +75,4 @@ Tests are in `test/entries/add_entry_test.dart`, with the payment's in `add_entr
 | Who may | `Project.mayEnterExpenses` | who holds no recordEntries; a finished project; `permission_gates_test` |
 | AC-N03: it fits 360 points wide, in both languages | The screen | `settings/account_test`: AC-N03 |
 
-The Patrol journey follows Field from the home through the supplier's quick add to sending for approval, and pays a contractor from the same screen.
+On a real phone, `patrol_test/entries/add_purchase_test.dart` and `patrol_test/suppliers/quick_add_supplier_test.dart` follow Field from the home through the supplier's quick add to sending for approval, and `patrol_test/entries/add_contractor_payment_test.dart` pays a contractor from the same screen.

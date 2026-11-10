@@ -87,7 +87,7 @@ New project, `NewProjectScreen`, signed in:
 | AC-05.2: a new project can copy an approved earlier one, and the sign-in page offers none | `NewProjectScreen` | `categories_test.dart`: a new project |
 | AC-N03: nothing off a screen 360 points wide, in both languages | Each screen | `settings/account_test.dart`: AC-N03 |
 
-The real app and API run it together in `patrol_test/app_test.dart`, which takes the guide's pictures.
+The real app and API run it together on a real phone in `patrol_test/structure/categories_test.dart`, `items_test.dart` and `item_tables_test.dart`, which take the guide's pictures.
 
 ## Left to later use cases
 

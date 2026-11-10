@@ -42,7 +42,7 @@ UC-020 opens the sheet from the contract's dialog, and UC-022 will open it from 
 | Opening again starts with nothing typed | `SupplierSearch.openAnew` | `opening again starts with nothing typed` |
 | It fits 360 points wide in both languages (AC-N03) | `SupplierPicker` | `AC-N03` in `test/settings/account_test.dart` |
 
-The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, through the contract's dialog (UC-020).
+The real app runs on a real phone against the real API in `patrol_test/suppliers/pick_supplier_test.dart`, one case per rule.
 
 ## Left to later use cases
 

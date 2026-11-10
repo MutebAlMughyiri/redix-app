@@ -29,4 +29,4 @@
 | Kept words show at once and are refreshed with their ETag | `Words.load` | `words_test.dart` |
 | Without a network, another language's words never show | `Words.load` | `words_test.dart` |
 | A first start without a network shows no words and retries | `NoWordsScreen`, `WordsDelegate.attempt` | `widget_test.dart`: first start without a network |
-| The real app opens with words from the real API | The whole app | `patrol_test/app_test.dart` |
+| The real app opens with words from the real API | The whole app | `patrol_test/settings/language_test.dart` |

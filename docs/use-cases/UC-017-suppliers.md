@@ -64,7 +64,7 @@ The project's home, `HomeScreen`:
 | A list that cannot be read says so | `ApiListBody` | `a list that cannot be read says so` |
 | It fits 360 points wide in both languages (AC-N03) | `SuppliersScreen`, `SupplierDialog` | `AC-N03` in `test/settings/account_test.dart` |
 
-The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, which adds a supplier with a default item.
+The real app runs on a real phone against the real API in `patrol_test/suppliers/suppliers_test.dart`, one case per rule.
 
 ## Left to later use cases
 

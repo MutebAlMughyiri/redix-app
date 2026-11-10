@@ -60,4 +60,4 @@ The button beside Settings, `HomeScreen.collapseKey`, hides the conclusion (`Das
 | AC-37.1: a default opens directly at sign-in and at start | `home_test.dart` |
 | A project gone while open returns to the list | `home_test.dart` |
 | Switch project reaches the list | `settings_test.dart` |
-| A journey on a real phone | `patrol_test/app_test.dart` |
+| On a real phone, against the real API | `patrol_test/projects/project_list_test.dart`, `patrol_test/projects/default_project_test.dart`, `patrol_test/home/collapse_home_test.dart` |

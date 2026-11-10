@@ -41,8 +41,8 @@ Tests are in `test/expenses/invoice_qr_test.dart` and `test/entries/add_entry_qr
 | AC-11.2: anything else is no code; the message shows and the fields stay open | `InvoiceQr.parse`, `_readQr` | `invoice_qr_test`: AC-11.2, twice; `add_entry_qr_test`: AC-11.2 |
 | A supplier not in the register is offered a quick add | `_addSupplierFromQr` | `add_entry_qr_test`: supplier not in the register; who cannot add a supplier |
 | A picture is read, from the camera or the files; a PDF is not | `_takeFrom` | a PDF is not looked at; a picture from the files is read too; a picture taken again |
-| The phone's real barcode reader reads a picture of a made-up invoice's QR code, and it reaches the API | `InvoiceCapture.qrTextOf` | `patrol_test/app_test.dart`: the journey hands the screen a picture, and the real reader reads it |
+| The phone's real barcode reader reads a picture of a made-up invoice's QR code, and it reaches the API | `InvoiceCapture.qrTextOf` | `patrol_test/entries/invoice_capture_test.dart`: the camera hands the screen a picture, and the phone's real reader reads it |
 
 ## Not run
 
-The emulator's camera is virtual, so a QR code has never gone from a real invoice through the camera. The journey proves everything from the picture inward, with the phone's real reader on a sharp picture made for the test. A photo at an angle, in poor light or with a small code is not proved; whether a whole page's photo reads well enough is what a real phone must show. It is in the findings.
+The camera is the one part of the phone a test cannot drive, so a QR code has never gone from a real invoice through it. `patrol_test/entries/invoice_capture_test.dart` hands the screen a sharp picture made for the test in its place and proves everything from the picture inward, with the phone's real reader; a picture picked from the phone's own files goes the real way. A photo at an angle, in poor light or with a small code is not proved; whether a whole page's photo reads well enough is what a real phone must show. It is in the findings.

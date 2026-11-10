@@ -37,6 +37,6 @@
 
 A contract's document opens the same way, from its dialog.
 
-## Not proved
+## On a real phone
 
-The journey does not reach this screen yet, and a PDF was not opened on a phone.
+`patrol_test/approvals/what_waits_test.dart`, `approve_entries_test.dart` and `reject_entries_test.dart` run this screen on the HUAWEI against the real API. A PDF is handed to the phone's own share sheet by its name, and a double tap on Approve sends one approval.

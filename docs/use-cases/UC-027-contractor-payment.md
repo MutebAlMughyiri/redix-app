@@ -45,4 +45,4 @@ Tests are in `test/entries/add_entry_contract_test.dart`.
 | FR-41: its item's custom columns | `_chooseTable` | FR-41 |
 | Who may | `Project.mayEnterExpenses` | who holds no recordEntries; a finished project |
 | Fits 360 points wide, in both languages | The screen | `test/settings/account_test.dart`: AC-N03 |
-| The real app against the real API | | `patrol_test/app_test.dart`: the journey pays 35,000 on a contract of 34,000, sees the alert and sends it |
+| The real app against the real API | | `patrol_test/entries/add_contractor_payment_test.dart`: R10 pays 35,000 on a contract of 34,000, sees the alert and sends it; `patrol_test/money/contract_figures_test.dart`: the contract's figures as payments move |

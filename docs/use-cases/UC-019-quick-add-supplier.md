@@ -44,7 +44,7 @@
 | A finished project offers none (AC-04.1) | `Project.mayAddSupplier` | `a finished project offers no quick add` |
 | It fits 360 points wide in both languages (AC-N03) | `QuickAddSupplierDialog` | `AC-N03` in `test/settings/account_test.dart` |
 
-The real app is run on an emulator by the journey in `patrol_test/app_test.dart`, through the contract's dialog (UC-020).
+The real app runs on a real phone against the real API in `patrol_test/suppliers/quick_add_supplier_test.dart`, one case per rule.
 
 ## Left to later use cases
 
