@@ -17,6 +17,7 @@ import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/name_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/swipe_to_remove.dart';
 import 'package:redix/words/app_language.dart';
 import 'package:redix/words/language_switch.dart';
 import 'package:redix/words/words.dart';
@@ -306,9 +307,26 @@ extension Steps on PatrolIntegrationTester {
   Future<void> swipeAway(Key rowKey, {double share = 0.8}) async {
     final row = find.byKey(rowKey.swipe);
     await goTo(this(row));
+    expectRedBar(rowKey);
     final distance = tester.getSize(row).width * share;
     await tester.drag(row, Offset(Directionality.of(tester.element(row)) == TextDirection.rtl ? distance : -distance, 0));
     await pumpAndSettle();
+  }
+
+  /// The row [rowKey], which can be removed, shows its red bar on screen, along the end edge of its card: the right in English, the left in Arabic (redix-app #88).
+  void expectRedBar(Key rowKey) {
+    const reason = 'a row that can be removed shows its red bar (redix-app #88)';
+    final bar = find.byKey(rowKey.bar);
+    expect(bar, findsOneWidget, reason: reason);
+    final barRect = tester.getRect(bar);
+    final cardRect = tester.getRect(find.byKey(rowKey.card));
+    final screen = Offset.zero & (tester.view.physicalSize / tester.view.devicePixelRatio);
+    final endEdge = Directionality.of(tester.element(bar)) == TextDirection.rtl ? barRect.left - cardRect.left : cardRect.right - barRect.right;
+    expect(barRect.width, SwipeToRemove.barWidth, reason: reason);
+    expect(barRect.height, greaterThan(0), reason: reason);
+    expect(endEdge.abs(), lessThan(1), reason: reason);
+    expect(barRect.top >= cardRect.top - 1 && barRect.bottom <= cardRect.bottom + 1, isTrue, reason: reason);
+    expect(screen.contains(barRect.center), isTrue, reason: reason);
   }
 
   /// Pulls the list showing now down, which reads it again.

@@ -143,6 +143,7 @@ void main() {
       await $.reach($(DocumentsScreen.documentKey(document)));
       expect($.isEnabled(DocumentsScreen.addKey), isFalse);
       expect($(DocumentsScreen.documentKey(document).swipe), findsNothing);
+      expect($(DocumentsScreen.documentKey(document).bar), findsNothing);
     });
 
     phoneCase('Add entry is gray', ($) async {
@@ -161,6 +162,7 @@ void main() {
       await $.goTo($(EntriesScreen.rowKey(entry)));
       expect($(EntriesScreen.rowKey(entry)), findsOneWidget);
       expect($(EntriesScreen.rowKey(entry).swipe), findsNothing);
+      expect($(EntriesScreen.rowKey(entry).bar), findsNothing);
     });
   });
 }

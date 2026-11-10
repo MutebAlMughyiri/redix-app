@@ -107,6 +107,7 @@ void main() {
       await onTables($, made.manager, made.category, made.item);
       final general = await $.idShowing('tables.name.', made.itemName);
       expect($(ItemTablesScreen.rowKey(general).swipe), findsNothing);
+      expect($(ItemTablesScreen.rowKey(general).bar), findsNothing);
     });
 
     phoneCase('redix-api #102: a table that entries use comes back, and the refusal says why', ($) async {

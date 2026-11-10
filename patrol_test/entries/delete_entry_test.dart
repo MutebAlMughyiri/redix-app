@@ -47,6 +47,7 @@ void main() {
       await $.onTheHome(member);
       await $.goTo($(EntriesScreen.rowKey(entry)));
       expect($(EntriesScreen.rowKey(entry).swipe), findsNothing);
+      expect($(EntriesScreen.rowKey(entry).bar), findsNothing);
     });
 
     phoneCase('redix-api #102: an approved entry does not swipe', ($) async {
@@ -56,6 +57,7 @@ void main() {
       await $.onTheHome(manager);
       await $.goTo($(EntriesScreen.rowKey(entry)));
       expect($(EntriesScreen.rowKey(entry).swipe), findsNothing);
+      expect($(EntriesScreen.rowKey(entry).bar), findsNothing);
     });
   });
 }

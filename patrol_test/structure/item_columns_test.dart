@@ -159,6 +159,7 @@ void main() {
       final id = await $.idShowing('columns.name.', 'التاريخ');
       expect($(ItemColumnsScreen.lockKey(id)), findsOneWidget);
       expect($(ItemColumnsScreen.rowKey(id).swipe), findsNothing);
+      expect($(ItemColumnsScreen.rowKey(id).bar), findsNothing);
     });
 
     phoneCase('redix-api #102: a short swipe deletes nothing', ($) async {
