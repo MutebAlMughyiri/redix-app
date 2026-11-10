@@ -57,6 +57,7 @@ import 'package:redix/words/language_switch.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/reason_sheet.dart';
 import 'package:redix/entries/entries_screen.dart';
+import 'package:redix/config/local_config.dart';
 
 /// The test's admin, created by the API with a temporary password.
 const username = String.fromEnvironment('TEST_USERNAME');
@@ -231,7 +232,9 @@ void main() {
       final language = AppLanguage();
       await session.restore();
       await language.restore();
-      await $.pumpWidgetAndSettle(RedixApp(session: session, language: language, capture: const CameraWithAPicture()));
+      final localConfig = LocalConfig();
+      await localConfig.restore();
+      await $.pumpWidgetAndSettle(RedixApp(session: session, language: language, localConfig: localConfig, capture: const CameraWithAPicture()));
       await reach($(SignInScreen.usernameKey));
       final logo = find.byKey(SignInScreen.logoKey);
       await precacheImage($.tester.widget<Image>(logo).image, $.tester.element(logo));

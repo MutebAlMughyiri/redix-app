@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/auth/session.dart';
+import 'package:redix/config/local_config.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/main.dart';
 import 'package:redix/projects/projects_screen.dart';
@@ -26,7 +27,9 @@ extension Steps on PatrolIntegrationTester {
     final language = AppLanguage();
     await session.restore();
     await language.restore();
-    await pumpWidgetAndSettle(RedixApp(session: session, language: language));
+    final localConfig = LocalConfig();
+    await localConfig.restore();
+    await pumpWidgetAndSettle(RedixApp(session: session, language: language, localConfig: localConfig));
   }
 
   /// Closes the app and starts it again, for what must be kept for the next start.

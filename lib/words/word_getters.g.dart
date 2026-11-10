@@ -1193,6 +1193,12 @@ mixin WordGetters {
   /// The word `expenses.unknownTable`.
   String get expensesUnknownTable => text('expenses.unknownTable');
 
+  /// The word `home.hideDetails`.
+  String get homeHideDetails => text('home.hideDetails');
+
+  /// The word `home.showDetails`.
+  String get homeShowDetails => text('home.showDetails');
+
   /// The word `myAccount.arabic`.
   String get myAccountArabic => text('myAccount.arabic');
 

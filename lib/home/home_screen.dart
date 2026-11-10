@@ -26,14 +26,18 @@ import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
+import '../config/local_config.dart';
 
 /// The home of the open project (UC-010): the project, with what the user's permissions allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
   /// The home of the project [projectId], one of [projects], with [accounts], its accounts.
-  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.dashboard});
+  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.dashboard, required this.localConfig});
 
   /// Its figures at a glance.
   final Dashboard dashboard;
+
+  /// Whether this phone keeps the conclusion and the project's buttons showing.
+  final LocalConfig localConfig;
 
   /// What the user was told.
   final Notifications notifications;
@@ -61,6 +65,9 @@ class HomeScreen extends StatefulWidget {
 
   /// The project's name.
   static const titleKey = Key('home.title');
+
+  /// The button beside Settings that hides the conclusion and the project's buttons, and shows them again (redix-app #91).
+  static const collapseKey = Key('home.collapse');
 
   /// The route of the home of the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId';
@@ -191,11 +198,17 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Reads again what home shows besides the project: its figures, the latest entries and the accounts.
+  void _toggleDetails() {
+    widget.localConfig.toggleHomeDetails();
+    setState(() {});
+  }
+
   Future<void> _readAgain() => Future.wait([widget.dashboard.load(), widget.entries.load(), widget.accounts.load()]);
 
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
+    final showsDetails = widget.localConfig.showsHomeDetails;
     return Scaffold(
       appBar: AppBar(
         title: ListenableBuilder(
@@ -213,6 +226,12 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         actions: [
+          IconButton(
+            key: HomeScreen.collapseKey,
+            tooltip: showsDetails ? words.homeHideDetails : words.homeShowDetails,
+            icon: Icon(showsDetails ? Icons.unfold_less : Icons.unfold_more, key: HomeScreen.collapseKey.icon),
+            onPressed: _toggleDetails,
+          ),
           ListenableBuilder(
             listenable: widget.projects,
             builder: (context, _) {
@@ -262,14 +281,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
               },
             ),
-            DashboardCard(
+            if (showsDetails) DashboardCard(
               project: project,
               dashboard: widget.dashboard,
               onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
             ),
             MyCustody(accounts: widget.accounts),
             HomeEntries(project: project, entries: widget.entries, onOpen: (path) => _open(path, project), onRemoved: widget.dashboard.load),
-            ProjectCard(project: project, onOpen: (path) => _open(path, project)),
+            if (showsDetails) ProjectCard(project: project, onOpen: (path) => _open(path, project)),
           ],
         ),
       ),

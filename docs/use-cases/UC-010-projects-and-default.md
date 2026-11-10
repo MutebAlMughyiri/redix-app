@@ -38,11 +38,20 @@ The star and the tick change the default through one owner, `toggleDefaultProjec
 
 The home, `HomeScreen` at `/projects/:projectId`, shows the project's card; its Settings hold Users (`manageUsers`) and More info, where Add unit and Close project are (`manageProject`, UC-006). Settings has **Switch project** (`SettingsScreen.switchProjectKey`), which goes to the list.
 
+The button beside Settings, `HomeScreen.collapseKey`, hides the conclusion (`DashboardCard`) and the project's buttons (`ProjectCard`) completely, and shows them again. The phone keeps it as `summary_projectSetting_state`, 1 expanded and 0 collapsed, through `LocalConfig`.
+
 ## Rules and where they live
 
 | Rule | Test |
 | --- | --- |
 | Sign-in shows the list | `projects_test.dart` |
+| redix-app #91 R1, R2: the button beside Settings hides the summary completely, and shows it again | `collapsed_home_test.dart` |
+| R4: the project's buttons hide with it | `collapsed_home_test.dart` |
+| R5: the icon says what the next tap does: `unfold_less` while everything shows, `unfold_more` while collapsed | `collapsed_home_test.dart` |
+| R6, R9: the phone keeps how it was left through a restart and a sign-out | `collapsed_home_test.dart` |
+| R7: custody, the entries and Add entry stay | `collapsed_home_test.dart` |
+| R8: it is kept as `summary_projectSetting_state`, 0 collapsed and 1 expanded; a key not found starts expanded and is set to 1 | `collapsed_home_test.dart` |
+| R10: a collapsed home hides them from the first frame | `collapsed_home_test.dart` |
 | A card opens its home, and back returns to the list | `home_test.dart` |
 | The buttons follow the role in the open project (AC-36.2) | `home_test.dart` |
 | The list has no change buttons | `projects_test.dart` |

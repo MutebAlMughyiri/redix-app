@@ -80,6 +80,7 @@ import 'words/app_language.dart';
 import 'words/no_words_screen.dart';
 import 'words/words.dart';
 import 'config/app_config.dart';
+import 'config/local_config.dart';
 import 'entries/entry_link_screen.dart';
 import 'ui/app_color.dart';
 import 'accounts/actual_balances_screen.dart';
@@ -94,23 +95,28 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final session = Session();
   final language = AppLanguage();
+  final localConfig = LocalConfig();
   await config.restore();
   unawaited(config.refresh());
   await session.restore();
   await language.restore();
-  runApp(RedixApp(session: session, language: language));
+  await localConfig.restore();
+  runApp(RedixApp(session: session, language: language, localConfig: localConfig));
 }
 
 /// The app: its theme, its languages, and its screens. Without a session every screen leads to sign-in; with a temporary password, to the password change.
 class RedixApp extends StatefulWidget {
-  /// The app, signed in through [session], shown in [language], and reaching the phone's camera and files through [capture].
-  const RedixApp({super.key, required this.session, required this.language, this.capture = const InvoiceCapture()});
+  /// The app, signed in through [session], shown in [language], keeping this phone's choices in [localConfig], and reaching the phone's camera and files through [capture].
+  const RedixApp({super.key, required this.session, required this.language, required this.localConfig, this.capture = const InvoiceCapture()});
 
   /// The signed-in session the screens depend on.
   final Session session;
 
   /// The language the user chose; the phone's while none is chosen.
   final AppLanguage language;
+
+  /// What this phone keeps of its own choices.
+  final LocalConfig localConfig;
 
   /// The phone's camera and files.
   final InvoiceCapture capture;
@@ -199,7 +205,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.projectId, projects: _projects, accounts: _accountsOf(state.projectId), outbox: _outbox, sync: _sync, entries: _entriesOf(state.projectId), notifications: _notifications, dashboard: _dashboardOf(state.projectId)),
+        builder: (context, state) => HomeScreen(projectId: state.projectId, projects: _projects, accounts: _accountsOf(state.projectId), outbox: _outbox, sync: _sync, entries: _entriesOf(state.projectId), notifications: _notifications, dashboard: _dashboardOf(state.projectId), localConfig: widget.localConfig),
       ),
       GoRoute(
         path: ApprovalsScreen.path,
