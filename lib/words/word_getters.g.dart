@@ -1853,6 +1853,9 @@ mixin WordGetters {
   /// The word `revenue.total`.
   String get revenueTotal => text('revenue.total');
 
+  /// The word `settings.darkMode`.
+  String get settingsDarkMode => text('settings.darkMode');
+
   /// The word `settings.defaultProject`.
   String get settingsDefaultProject => text('settings.defaultProject');
 

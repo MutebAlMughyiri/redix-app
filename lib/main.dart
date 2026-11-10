@@ -82,7 +82,7 @@ import 'words/words.dart';
 import 'config/app_config.dart';
 import 'config/local_config.dart';
 import 'entries/entry_link_screen.dart';
-import 'ui/app_color.dart';
+import 'ui/app_theme.dart';
 import 'accounts/actual_balances_screen.dart';
 import 'users/my_permissions_screen.dart';
 
@@ -198,6 +198,7 @@ class _RedixAppState extends State<RedixApp> {
             _ => Project.none(),
           },
           language: widget.language,
+          localConfig: widget.localConfig,
         ),
       ),
       GoRoute(path: ProjectInfoScreen.path, builder: (context, state) => ProjectInfoScreen(project: state.extra! as Project, projects: _projects)),
@@ -465,7 +466,7 @@ class _RedixAppState extends State<RedixApp> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: widget.language,
+      listenable: Listenable.merge([widget.language, widget.localConfig]),
       builder: (context, _) => MaterialApp.router(
         routerConfig: _router,
         locale: widget.language.locale,
@@ -477,7 +478,9 @@ class _RedixAppState extends State<RedixApp> {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: [for (final language in Words.languages) Locale(language)],
-        theme: ThemeData(colorSchemeSeed: AppColor.seed, fontFamily: 'IBMPlexSansArabic', inputDecorationTheme: const InputDecorationTheme(border: OutlineInputBorder())),
+        theme: appThemeOf(Brightness.light),
+        darkTheme: appThemeOf(Brightness.dark),
+        themeMode: widget.localConfig.isDark ? ThemeMode.dark : ThemeMode.light,
         builder: (context, child) => Words.of(context).isEmpty
             ? NoWordsScreen(onRetry: _reloadWords)
             : child ?? const SizedBox.shrink(),

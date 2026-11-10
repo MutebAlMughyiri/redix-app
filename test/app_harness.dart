@@ -29,7 +29,7 @@ Map<String, String> wordsIn(String language) => {
     'entries.share', 'entries.notFound', 'approvals.showAll', 'entryShare.item', 'entryShare.partner', 'entryShare.supplier', 'entryShare.contractor', 'entryShare.amount',
     'entryShare.date', 'entryShare.status', 'entryShare.account', 'entryShare.paymentMethod', 'entryShare.author', 'entryShare.notes',
     'biometrics.signIn', 'biometrics.hint', 'biometrics.or', 'biometrics.failed', 'biometrics.usePassword', 'biometrics.promptTitle', 'biometrics.promptCancel', 'biometrics.notAvailable', 'biometrics.notChanged',
-    'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.defaultSet', 'settings.defaultProject', 'settings.defaultProjectHint', 'settings.switchProject',
+    'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.defaultSet', 'settings.defaultProject', 'settings.defaultProjectHint', 'settings.switchProject', 'settings.darkMode',
     'signIn.username', 'signIn.password', 'signIn.hint', 'signIn.submit', 'signIn.forgotPassword',
     'signIn.invalidCredentials', 'signIn.accountLocked', 'signIn.sessionExpired', 'signIn.noConnection', 'signIn.refused',
     'changePassword.title', 'changePassword.hint', 'changePassword.current', 'changePassword.new', 'changePassword.confirm',

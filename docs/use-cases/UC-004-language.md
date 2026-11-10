@@ -34,6 +34,22 @@ The language of [Settings](../guide/settings.md) (`SettingsScreen`): a heading a
 | Until a language is chosen the app follows the phone, Arabic for any other language | `AppLanguage.locale` (empty choice) | `widget_test.dart`: a phone in another language gets Arabic |
 | AC-N03: on a screen 360 points wide, every screen is right to left in Arabic and left to right in English, with nothing off the screen | Each screen | `settings/account_test.dart`: AC-N03, once per language |
 
+## Dark mode (redix-app #87)
+
+Under the language, a switch like the fingerprint one turns every screen dark at once (Muteb, 10 Nov 2026). Every Settings row sits in its own frame, `Card.outlined` (Muteb, 10 Nov 2026: "i like borders for each component").
+
+| Element | `Key` | Does |
+| --- | --- | --- |
+| Dark mode | `SettingsScreen.darkModeKey` | Turns the app dark, or back to light |
+
+| Rule | Code | Test |
+| --- | --- | --- |
+| Dark mode turns every screen dark at once, and off turns it light; the language does not change | `LocalConfig.toggleDarkMode`, `RedixApp` (`themeMode`), `appThemeOf` | `settings/dark_mode_test.dart`: R1, R2, R3, R7; `patrol_test/settings/dark_mode_test.dart` |
+| The phone keeps `darkMode_state`, 0 light and 1 dark, and opens in it from the first frame; a phone that never chose starts light and keeps 0 | `LocalConfig.restore` | `settings/dark_mode_test.dart`: R6; Patrol: kept for the next start, and through signing out |
+| Sign-in and the no-words screen follow the choice | `RedixApp` | `settings/dark_mode_test.dart`: R9 |
+| Every Settings row sits in its own frame, the language heading and its choice in one | `SettingsScreen` | `settings/dark_mode_test.dart`: R5 |
+| Light and dark grow from one seed in one place, so every screen follows with no change of its own | `appThemeOf`, `AppColor` | The whole widget suite, run once with every test started dark |
+
 ## Left to later use cases
 
 Nothing: UC-011 added fingerprint or face to Settings, and the default project stayed on the project list (UC-010).

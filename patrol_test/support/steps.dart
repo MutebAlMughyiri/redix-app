@@ -52,7 +52,14 @@ extension Steps on PatrolIntegrationTester {
     if (!_localConfig.showsHomeDetails) {
       await _localConfig.toggleHomeDetails();
     }
+    if (_localConfig.isDark) {
+      await _localConfig.toggleDarkMode();
+      await pumpAndSettle();
+    }
   }
+
+  /// Whether the screen showing now is drawn in the dark mode.
+  bool get isDark => Theme.of(tester.element(find.byType(Scaffold).first)).brightness == Brightness.dark;
 
   /// Closes the app's screens and starts it again, for what must be kept for the next start.
   Future<void> restartApp() => _open();
