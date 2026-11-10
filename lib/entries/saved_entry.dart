@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'entry_kind.dart';
+import 'entry_status.dart';
 
 /// An entry as the API keeps it, whatever its table, read to fill Add entry when it is changed (UC-033, findings row 165, redix-api #110).
 class SavedEntry {
@@ -14,6 +15,7 @@ class SavedEntry {
     final creditNoteOf = (json['links'] as List<dynamic>).cast<Map<String, dynamic>>().where((link) => link['type'] == 'creditNoteOf').map((link) => link['linkedEntryId'] as String);
     return SavedEntry._(
       tableId: json['tableId'] as String,
+      status: EntryStatus.values.byName(entry['status'] as String),
       isWithdrawal: EntryKind.values.byName(entry['kind'] as String) == EntryKind.capitalOut,
       amount: (entry['amount'] as num).toDouble(),
       date: DateTime.parse(entry['entryDate'] as String),
@@ -34,6 +36,7 @@ class SavedEntry {
   /// An entry that could not be read.
   SavedEntry.none()
     : tableId = '',
+      status = EntryStatus.draft,
       isWithdrawal = false,
       amount = 0,
       date = DateTime(1),
@@ -51,6 +54,7 @@ class SavedEntry {
 
   SavedEntry._({
     required this.tableId,
+    required this.status,
     required this.isWithdrawal,
     required this.amount,
     required this.date,
@@ -69,6 +73,9 @@ class SavedEntry {
 
   /// The table it went into: an item's group, a contract or a partner, as the API names it (redix-api #110).
   final String tableId;
+
+  /// Where it stands.
+  final EntryStatus status;
 
   /// True for a partner's withdrawal.
   final bool isWithdrawal;
@@ -117,4 +124,7 @@ class SavedEntry {
 
   /// True for a credit note.
   bool get isCreditNote => originalEntryId.isNotEmpty;
+
+  /// What the figures of the contract [contractId] already hold of it: its amount once it waits or is approved inside that contract, otherwise nothing.
+  double heldBy(String contractId) => tableId == contractId && !isOutsideContract && (status == EntryStatus.pendingApproval || status == EntryStatus.approved) ? amount : 0;
 }

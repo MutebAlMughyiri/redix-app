@@ -534,6 +534,96 @@ void main() {
     });
   });
 
+  group('a saved payment is counted once in its contract\'s figures', () {
+    /// The entries of a contract of 1,000 holding [paid] and [pending], with one saved payment of [amount], opened to read.
+    Future<FakeApi> openSaved(WidgetTester tester, {required String status, double amount = 500, double paid = 0, double pending = 0, bool isOutside = false}) async {
+      final api = await openEntries(tester, (api) {
+        final item = api.addItem(api.addCategory('project-0', 'العظم'), 'بند الحديد', type: 'contractorPayments');
+        api.addColumn('/projects/project-0/items/${item['id']}/columns', 'notes');
+        final contract = api.addContract('project-0', 'مقاول الحديد', value: 1000, paid: paid, pending: pending, itemId: item['id']! as String);
+        final account = api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
+        api
+          ..addEntry(kind: 'contractorPayment', status: status, amount: amount)
+          ..entryDetails['entry-0'] = {
+            'tableId': contract['id']!,
+            'entry': {'id': 'entry-0', 'kind': 'contractorPayment', 'status': status, 'entryDate': '2026-11-05', 'amount': amount, 'accountId': account['id']!, 'notes': 'دفعة'},
+            'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': '00000000-0000-0000-0000-000000000000', 'customValues': '{}'},
+            'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000', 'product': '', 'unitPrice': 0, 'quantity': 0},
+            'contractorPayment': {'contractId': contract['id']!, 'isOutsideContract': isOutside},
+            'attachments': const <Object>[],
+            'links': const <Object>[],
+          };
+      }, permissions: managerAndFinance);
+      await openActions(tester, api, 'entry-0');
+      return api;
+    }
+
+    String remaining(WidgetTester tester) => tester.widget<Text>(find.byKey(AddEntryScreen.remainingKey)).data!;
+
+    testWidgets('a waiting payment, already in what waits, is not added again', (tester) async {
+      await openSaved(tester, status: 'pendingApproval', pending: 500);
+
+      expect(remaining(tester), '500.00');
+      expect(find.byKey(AddEntryScreen.overrunKey), findsNothing);
+    });
+
+    testWidgets('an approved payment, already in what was paid, is not added again and raises no false overrun', (tester) async {
+      await openSaved(tester, status: 'approved', amount: 800, paid: 800);
+
+      expect(remaining(tester), '200.00');
+      expect(find.byKey(AddEntryScreen.overrunKey), findsNothing);
+    });
+
+    testWidgets('a deduction, already counted, is not added again', (tester) async {
+      await openSaved(tester, status: 'approved', amount: -100, paid: 400);
+
+      expect(remaining(tester), '600.00');
+    });
+
+    testWidgets('a draft is in neither sum, so its amount is counted', (tester) async {
+      await openSaved(tester, status: 'draft', paid: 200);
+
+      expect(remaining(tester), '300.00');
+    });
+
+    testWidgets('a rejected payment is in neither sum, so its amount is counted', (tester) async {
+      await openSaved(tester, status: 'rejected', paid: 200);
+
+      expect(remaining(tester), '300.00');
+    });
+
+    testWidgets('a payment saved outside the contract was never in its figures', (tester) async {
+      await openSaved(tester, status: 'pendingApproval', paid: 200, isOutside: true);
+
+      expect(remaining(tester), '800.00');
+    });
+
+    testWidgets('changing a waiting amount counts only the change', (tester) async {
+      final api = await openSaved(tester, status: 'pendingApproval', pending: 500);
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.changeKey)));
+      expect(find.byKey(AddEntryScreen.sendKey), findsOneWidget);
+
+      await tester.ensureVisible(find.byKey(AddEntryScreen.amountKey));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(AddEntryScreen.amountKey), '700');
+      await tester.pumpAndSettle();
+
+      expect(remaining(tester), '300.00');
+    });
+
+    testWidgets('moving a waiting payment outside the contract takes it out of what remains', (tester) async {
+      final api = await openSaved(tester, status: 'pendingApproval', pending: 500);
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.changeKey)));
+      expect(find.byKey(AddEntryScreen.sendKey), findsOneWidget);
+
+      await tester.ensureVisible(find.byKey(AddEntryScreen.outsideKey));
+      await tester.pumpAndSettle();
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.outsideKey)));
+
+      expect(remaining(tester), '1,000.00');
+    });
+  });
+
   testWidgets('R5: one إضافة قيد button sits at the bottom of the home, and opens the screen to add an entry', (tester) async {
     final api = await openHome(tester, (api) {});
 

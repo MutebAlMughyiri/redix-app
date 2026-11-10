@@ -47,6 +47,7 @@ import 'table_picker.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import 'entry_row.dart';
+import 'saved_entry.dart';
 import '../approvals/approvals.dart';
 import 'entry_share.dart';
 import 'reverse_sheet.dart';
@@ -338,6 +339,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   var _refusedColumn = '';
   var _saving = false;
   late var _reading = widget.isReading;
+  var _saved = SavedEntry.none();
 
   @override
   void initState() {
@@ -374,6 +376,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     }
     final table = widget.tables.tableOf(saved.tableId);
     setState(() {
+      _saved = saved;
       _supplier = widget.suppliers.all.where((supplier) => supplier.id == saved.supplierId).firstOrNull ?? Supplier.none();
       _product.text = saved.product;
       if (saved.unitPrice != 0) {
@@ -695,7 +698,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   /// What a contractor payment asks: the contract's figures with this payment counted, and whether it is inside the contract.
   List<Widget> _theContract(Words words) => [
-    ListenableBuilder(listenable: widget.contracts, builder: (_, _) => ContractFigures(contract: _contract, counted: _isOutside ? 0 : _typedAmount)),
+    ListenableBuilder(listenable: widget.contracts, builder: (_, _) => ContractFigures(contract: _contract, counted: (_isOutside ? 0 : _typedAmount) - _saved.heldBy(_table.id))),
     Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 4,

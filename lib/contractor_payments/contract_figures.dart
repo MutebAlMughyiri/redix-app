@@ -15,7 +15,7 @@ class ContractFigures extends StatelessWidget {
   /// The contract.
   final Contract contract;
 
-  /// What this payment adds inside the contract.
+  /// What this payment adds inside the contract, beyond what the contract already holds of it.
   final double counted;
 
   @override
