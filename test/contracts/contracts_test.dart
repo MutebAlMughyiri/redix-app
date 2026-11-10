@@ -82,7 +82,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
 
     final id = contract['id']! as String;
-    expect(text(tester, ContractsScreen.pendingKey(id)), 'en contracts.pending 2,000.00');
+    expect(text(tester, ContractsScreen.pendingKey(id)), 'en contracts.pending 2,000.00 · 2,000.00 en contracts.afterApproval');
     expect(text(tester, ContractsScreen.remainingKey(id)), '4,000.00');
   });
 
@@ -153,6 +153,18 @@ void main() {
     expect(text(tester, ContractsScreen.remainingKey(opened.overrun)), '(1,000.00)');
     expect(find.descendant(of: find.byKey(ContractsScreen.standingKey(opened.overrun)), matching: find.text('en contracts.overrun')), findsOneWidget);
     expect(tester.widget<LinearProgressIndicator>(find.byKey(ContractsScreen.progressKey(opened.overrun))).value, 1);
+  });
+
+  testWidgets('an open-value contract has nothing to remain, so what waits stands alone', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة الغربية']);
+    final contract = api.addContract('project-0', 'دهان داخلي', isOpenValue: true, paid: 12000, pending: 500);
+    await openProject(tester, api);
+    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await tester.pumpAndSettle();
+
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+
+    expect(text(tester, ContractsScreen.pendingKey(contract['id']! as String)), 'en contracts.pending 500.00');
   });
 
   testWidgets('AC-07.2: an open-value contract adds up, with no remaining and no alert', (tester) async {

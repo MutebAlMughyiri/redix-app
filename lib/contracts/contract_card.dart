@@ -28,6 +28,12 @@ class ContractCard extends StatelessWidget {
   /// Opens the dialog that amends it.
   final VoidCallback onAmend;
 
+  /// What waits for approval and, unless the value is open, what remains once it is approved: the figure Add entry works from.
+  String _waitingLine(Words words) {
+    final waiting = '${words.contractsPending} ${formatMoney(contract.pending)}';
+    return contract.isOpenValue ? waiting : '$waiting · ${formatMoney(contract.remainingAfter(0))} ${words.contractsAfterApproval}';
+  }
+
   String _terms() => [
     contract.itemName,
     if (contract.unitPrice > 0 && contract.quantity > 0) '${formatPlain(contract.unitPrice)} × ${formatPlain(contract.quantity)}' else if (contract.unitPrice > 0) formatPlain(contract.unitPrice),
@@ -95,7 +101,7 @@ class ContractCard extends StatelessWidget {
                       LabelledFigure(label: words.contractsRemaining, figure: contract.isOpenValue ? '—' : formatMoney(contract.remaining), figureKey: ContractsScreen.remainingKey(contract.id), color: contract.isOverrun ? AppColor.refusal.of(context) : null),
                     ],
                   ),
-                  if (contract.pending != 0) Text('${words.contractsPending} ${formatMoney(contract.pending)}', key: ContractsScreen.pendingKey(contract.id), style: theme.textTheme.bodySmall),
+                  if (contract.pending != 0) Text(_waitingLine(words), key: ContractsScreen.pendingKey(contract.id), style: theme.textTheme.bodySmall),
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     key: ContractsScreen.progressKey(contract.id),

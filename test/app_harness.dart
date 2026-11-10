@@ -93,7 +93,7 @@ Map<String, String> wordsIn(String language) => {
     'expenses.invalidPaymentDate', 'expenses.unknownColumn', 'expenses.invalidColumnValue', 'expenses.requiredColumnMissing', 'expenses.qrRead',
     'expenses.qrUnreadable', 'expenses.qrSupplierMissing', 'expenses.qrAddSupplier', 'suppliers.mostUsed',
     'expenses.duplicateTitle', 'expenses.duplicateExplain', 'expenses.invoiceAlreadyAttached',
-    'expenses.amount',     'expenses.unknownContract', 'contracts.pending', 'contractorPayments.remainingAfter',
+    'expenses.amount',     'expenses.unknownContract', 'contracts.pending', 'contracts.afterApproval', 'contractorPayments.remainingAfter',
     'contractorPayments.overrun', 'contractorPayments.savedOverrun', 'contractorPayments.kind', 'contractorPayments.inside', 'contractorPayments.outside', 'contractorPayments.outsideExplain',
     'contractorPayments.receipt',
     'documents.title', 'documents.none', 'documents.add', 'documents.name', 'documents.group', 'documents.groupHint', 'documents.file', 'documents.fileHint', 'documents.save', 'documents.saved', 'documents.loadFailed', 'documents.noConnection', 'documents.refused', 'documents.projectFinished', 'documents.invalidName', 'documents.invalidGroup', 'documents.fileRequired', 'documents.fileTooLarge', 'documents.documentAlreadyKept',

@@ -626,6 +626,9 @@ mixin WordGetters {
   /// The word `contracts.addDocument`.
   String get contractsAddDocument => text('contracts.addDocument');
 
+  /// The word `contracts.afterApproval`.
+  String get contractsAfterApproval => text('contracts.afterApproval');
+
   /// The word `contracts.contractHasPayments`.
   String get contractsContractHasPayments => text('contracts.contractHasPayments');
 

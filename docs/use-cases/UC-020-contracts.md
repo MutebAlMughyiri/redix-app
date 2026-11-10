@@ -54,6 +54,7 @@ The project's home, `HomeScreen`:
 | Rule | Code | Test in `test/contracts/contracts_test.dart` |
 | --- | --- | --- |
 | Each contract shows its contractor, item and figures (FR-07); a contract belongs to the project, not a unit (redix-api #96) | `ContractCard` | `each contract shows its contractor, item and figures` |
+| What waits shows beside what was paid, with what remains once it is approved, the figure Add entry works from (Muteb, 10 Nov 2026); an open value has none. The remaining itself counts only what was approved (BR-10) | `ContractCard` | `BR-10: what waits for approval shows beside what was paid, and leaves the remaining alone`, `an open-value contract has nothing to remain, so what waits stands alone` |
 | It shows what remains, and how it stands (AC-07.1) | `ContractCard`, `Contract.standingWordKey` | `AC-07.1: a contract shows what remains of it, and how it stands` |
 | An overrun shows in brackets, with an alert (AC-07.1) | `ContractCard`, `formatMoney` | `AC-07.1: an overrun shows its remaining in brackets, with an alert` |
 | An open-value contract has no remaining and no alert (AC-07.2) | `ContractCard` | `AC-07.2: an open-value contract adds up, with no remaining and no alert` |
