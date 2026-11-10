@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../auth/permission.dart';
+import '../partners/partners.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
-import 'permission_tick.dart';
+import 'permission_ticks.dart';
 import 'users.dart';
 import '../ui/form_refusal.dart';
 import '../ui/form_button_style.dart';
@@ -13,11 +14,14 @@ import '../ui/act_once.dart';
 
 /// The new user form (UC-007): their name, username, mobile and a temporary password they change at first sign-in (AC-02.1). A new login is born in a project.
 class NewUserScreen extends StatefulWidget {
-  /// The form, adding to the project's [users].
-  const NewUserScreen({super.key, required this.users});
+  /// The form, adding to the project's [users], choosing among its [partners] whose capital the new one sees (redix-api #106).
+  const NewUserScreen({super.key, required this.users, required this.partners});
 
   /// The users the new one joins.
   final Users users;
+
+  /// The project's partners.
+  final Partners partners;
 
   /// The screen's route.
   static const path = '/projects/:projectId/users/new';
@@ -64,6 +68,28 @@ class _NewUserScreenState extends State<NewUserScreen> {
   final _password = TextEditingController();
   var _message = '';
   final _ticked = {Permission.readProject};
+  final _chosen = <String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    widget.partners.loadOnOpen();
+  }
+
+  /// Ticks or unticks [permission]; a capital tick takes the other, and unticking chosen capital forgets the partners chosen under it (redix-api #106).
+  void _tick(Permission permission, bool ticked) => setState(() {
+    if (!ticked) {
+      _ticked.remove(permission);
+    } else {
+      if (Permission.capitalTicks.contains(permission)) {
+        _ticked.removeAll(Permission.capitalTicks);
+      }
+      _ticked.add(permission);
+    }
+    if (!_ticked.contains(Permission.seeChosenCapital)) {
+      _chosen.clear();
+    }
+  });
 
   @override
   void dispose() {
@@ -77,7 +103,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
 
   Future<void> _add() async {
     setState(() => _message = '');
-    final refusal = await widget.users.create(_name.text, _username.text, _roleName.text, _mobile.text, _password.text, _ticked);
+    final refusal = await widget.users.create(_name.text, _username.text, _roleName.text, _mobile.text, _password.text, _ticked, _chosen);
     if (!mounted) {
       return;
     }
@@ -120,13 +146,17 @@ class _NewUserScreenState extends State<NewUserScreen> {
             const SizedBox(height: 16),
             Text(words.permissionsTitle, key: NewUserScreen.permissionsHeadingKey, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
-            for (final permission in Permission.inAProject)
-              PermissionTick(
-                key: NewUserScreen.permissionKey(permission),
-                permission: permission,
-                value: _ticked.contains(permission),
-                onChanged: permission == Permission.readProject ? null : (ticked) => setState(() => ticked ? _ticked.add(permission) : _ticked.remove(permission)),
+            ListenableBuilder(
+              listenable: widget.partners,
+              builder: (context, _) => PermissionTicks(
+                keyOf: NewUserScreen.permissionKey,
+                holds: _ticked.contains,
+                onChangedOf: (permission) => permission == Permission.readProject ? null : (ticked) => _tick(permission, ticked),
+                partners: widget.partners.all,
+                chosen: (partner) => _chosen.contains(partner.id),
+                onChooseOf: (partner) => (ticked) => setState(() => ticked ? _chosen.add(partner.id) : _chosen.remove(partner.id)),
               ),
+            ),
             const SizedBox(height: 24),
             ActOnce(builder: (once) => FilledButton(
               key: NewUserScreen.submitKey,

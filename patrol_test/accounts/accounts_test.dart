@@ -53,10 +53,7 @@ void main() {
       await $.tapOn(AccountsScreen.addKey);
       await $(AccountsScreen.typeKey(AccountType.cashCustody)).tap();
       await $(AccountsScreen.accountNameKey).enterText('كاش مع مدير المشروع');
-      await $.tester.ensureVisible(find.byKey(MemberPicker.optionKey(manager.id)));
-      await $.pumpAndSettle();
-      await $(MemberPicker.optionKey(manager.id)).tap();
-      await $.pumpAndSettle();
+      await $.chooseMember(AccountsScreen.custodianKey, manager.id);
       await $.picture('account-dialog');
       await $(ChangeDialog.saveKey).tap();
       final id = await $.idShowing('accounts.name.', 'كاش مع مدير المشروع');

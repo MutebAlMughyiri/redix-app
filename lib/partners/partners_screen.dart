@@ -15,16 +15,13 @@ import 'movements_screen.dart';
 import 'partner.dart';
 import 'partner_dialog.dart';
 import 'partners.dart';
-import '../structure/offered_items.dart';
 import '../ui/amount_line.dart';
 
-/// A project's partners and capital (UC-016, UC-044): the total, each line the user may see with its balance and share, and a way into its movements. Whoever keeps the settings adds and renames them, and links each to their login, so they see their own capital (BR-31). Nothing is deleted.
+/// A project's partners and capital (UC-016, UC-044): the total, each line the user may see with its own account, balance and share, and a way into its movements. Whoever keeps the
+/// settings adds and renames them and sets whose account each is; who sees each is ticked on people's permissions (BR-31, redix-api #106). Nothing is deleted.
 class PartnersScreen extends StatefulWidget {
-  /// The screen, showing and changing the [partners] of [project], choosing their capital item among [items] and a login among [members].
-  const PartnersScreen({super.key, required this.project, required this.partners, required this.items, required this.members, required this.capital});
-
-  /// The capital items a partner's table may belong to (redix-api #109).
-  final OfferedItems items;
+  /// The screen, showing and changing the [partners] of [project], choosing each one's account among [members].
+  const PartnersScreen({super.key, required this.project, required this.partners, required this.members, required this.capital});
 
   /// Their capital and shares.
   final Capital capital;
@@ -35,7 +32,7 @@ class PartnersScreen extends StatefulWidget {
   /// The partners this screen shows and changes.
   final Partners partners;
 
-  /// The people who can be a partner's login.
+  /// The project's people, one of whom may be a partner's own account.
   final Members members;
 
   /// The screen's route.
@@ -59,20 +56,17 @@ class PartnersScreen extends StatefulWidget {
   /// The name, in the dialog.
   static const partnerNameKey = Key('partners.partnerName');
 
-  /// The capital item whose table the partner is, in the dialog (redix-api #109).
-  static const itemKey = Key('partners.item');
-
-  /// The login, in the dialog.
+  /// The partner's own account, in the dialog.
   static const loginKey = Key('partners.login');
 
-  /// The line that says what the login is for, in the dialog.
+  /// The line that says what the account is for, in the dialog.
   static const loginHintKey = Key('partners.loginHint');
+
+  /// The account of the partner [id], or that they have none.
+  static Key detailsKey(String id) => Key('partners.details.$id');
 
   /// The name of the partner [id].
   static Key nameKey(String id) => Key('partners.name.$id');
-
-  /// The login of the partner [id], or that they have none.
-  static Key detailsKey(String id) => Key('partners.details.$id');
 
   /// The button that edits the partner [id].
   static Key editKey(String id) => Key('partners.edit.$id');
@@ -98,7 +92,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
   void _ask(Partner partner) {
     showDialog<void>(
       context: context,
-      builder: (_) => PartnerDialog(partner: partner, partners: widget.partners, items: widget.items, members: widget.members),
+      builder: (_) => PartnerDialog(partner: partner, partners: widget.partners, members: widget.members),
     );
   }
 

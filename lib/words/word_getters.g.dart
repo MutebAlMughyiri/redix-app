@@ -1352,9 +1352,6 @@ mixin WordGetters {
   /// The word `partners.invalidName`.
   String get partnersInvalidName => text('partners.invalidName');
 
-  /// The word `partners.item`.
-  String get partnersItem => text('partners.item');
-
   /// The word `partners.itemNotOffered`.
   String get partnersItemNotOffered => text('partners.itemNotOffered');
 
@@ -1460,6 +1457,9 @@ mixin WordGetters {
   /// The word `permissions.attachFilesHint`.
   String get permissionsAttachFilesHint => text('permissions.attachFilesHint');
 
+  /// The word `permissions.capitalGroup`.
+  String get permissionsCapitalGroup => text('permissions.capitalGroup');
+
   /// The word `permissions.chargeAnyAccount`.
   String get permissionsChargeAnyAccount => text('permissions.chargeAnyAccount');
 
@@ -1537,6 +1537,12 @@ mixin WordGetters {
 
   /// The word `permissions.seeAllCapitalHint`.
   String get permissionsSeeAllCapitalHint => text('permissions.seeAllCapitalHint');
+
+  /// The word `permissions.seeChosenCapital`.
+  String get permissionsSeeChosenCapital => text('permissions.seeChosenCapital');
+
+  /// The word `permissions.seeChosenCapitalHint`.
+  String get permissionsSeeChosenCapitalHint => text('permissions.seeChosenCapitalHint');
 
   /// The word `permissions.title`.
   String get permissionsTitle => text('permissions.title');
@@ -2293,6 +2299,9 @@ mixin WordGetters {
 
   /// The word `users.title`.
   String get usersTitle => text('users.title');
+
+  /// The word `users.unknownPartner`.
+  String get usersUnknownPartner => text('users.unknownPartner');
 
   /// The word `users.unknownUser`.
   String get usersUnknownUser => text('users.unknownUser');

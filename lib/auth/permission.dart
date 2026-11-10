@@ -9,8 +9,11 @@ enum Permission {
   /// Add people to a project and tick their permissions.
   manageUsers,
 
-  /// See every partner in a project and their capital, not only their own, and take the report files.
+  /// See every partner in a project and their capital, and take the report files; holding it takes [seeChosenCapital].
   seeAllCapital,
+
+  /// See only the partners chosen for one in a project, and their capital (redix-api #106); holding it takes [seeAllCapital].
+  seeChosenCapital,
 
   /// Rename a project, add and delete its units, keep its documents and close it.
   manageProject,
@@ -47,6 +50,9 @@ enum Permission {
 
   /// What can be ticked in a project, in this order: every permission but the system's own.
   static List<Permission> get inAProject => values.where((permission) => permission != approveProjects).toList();
+
+  /// The two capital ticks, which exclude each other (redix-api #106).
+  static const capitalTicks = {seeAllCapital, seeChosenCapital};
 
   /// The key of the word naming it.
   String get wordKey => 'permissions.$name';

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/permission.dart';
+import 'package:redix/ui/part_keys.dart';
+import 'package:redix/users/permission_ticks.dart';
 import 'package:redix/users/user_permissions_screen.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:redix/home/home_screen.dart';
@@ -12,6 +14,9 @@ import '../app_harness.dart';
 void main() {
   Future<FakeApi> openScreen(WidgetTester tester) async {
     final api = FakeApi()..addProject('غصون 6');
+    api
+      ..addPartner('project-0', 'خالد')
+      ..addPartner('project-0', 'سعد');
     final manager = api.addUser('متعب', username: 'muteb');
     final user = api.addUser('نواف', username: 'nawaf');
     api
@@ -96,5 +101,36 @@ void main() {
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     expect(find.byKey(UsersScreen.rowKey('user-1')), findsNothing);
     expect(find.byKey(UsersScreen.rowKey('user-0')), findsOneWidget);
+  });
+
+  Finder partnerTick(FakeApi api, String name) => find.byKey(PermissionTicks.partnerKey(api.partners['project-0']!.singleWhere((partner) => partner['name'] == name)['id']! as String));
+
+  testWidgets('redix-api #106: the two capital ticks sit under رأس المال, and the partners show only under a ticked رأس مال شركاء محددين', (tester) async {
+    final api = await openScreen(tester);
+
+    expect(find.byKey(PermissionTicks.capitalGroupKey), findsOneWidget);
+    expect(partnerTick(api, 'خالد'), findsNothing);
+    await toggle(tester, api, Permission.seeChosenCapital);
+
+    expect(isTicked(tester, Permission.seeChosenCapital), isTrue);
+    await tester.scrollUntilVisible(partnerTick(api, 'سعد'), 100);
+    expect(partnerTick(api, 'خالد'), findsOneWidget);
+    expect(partnerTick(api, 'سعد'), findsOneWidget);
+  });
+
+  testWidgets('redix-api #106: ticking a partner chooses them for the person, and رأس مال كل الشركاء takes chosen capital and closes the list', (tester) async {
+    final api = await openScreen(tester);
+    await toggle(tester, api, Permission.seeChosenCapital);
+    final khaled = api.partners['project-0']!.first['id']! as String;
+
+    await tester.scrollUntilVisible(find.byKey(PermissionTicks.partnerKey(khaled)), 100);
+    await act(tester, api, () => tester.tap(find.byKey(PermissionTicks.partnerKey(khaled).body)));
+    expect(api.sentUserChanges.last.$1, '/projects/project-0/users/user-1/partners/$khaled');
+    expect(tester.widget<CheckboxListTile>(find.byKey(PermissionTicks.partnerKey(khaled).body)).value, isTrue);
+
+    await toggle(tester, api, Permission.seeAllCapital);
+
+    expect((isTicked(tester, Permission.seeAllCapital), isTicked(tester, Permission.seeChosenCapital)), (true, false));
+    expect(find.byKey(PermissionTicks.partnerKey(khaled)), findsNothing);
   });
 }

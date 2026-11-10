@@ -310,8 +310,8 @@ void main() {
     return api;
   }
 
-  test('findings row 134: every permission that hides a control has one here; readProject is membership itself, and chargeAnyAccount only widens the accounts offered', () {
-    expect({for (final gate in _gates) gate.permission}, Permission.values.toSet().difference({Permission.readProject, Permission.chargeAnyAccount}));
+  test('findings row 134: every permission that hides a control has one here; readProject is membership itself, chargeAnyAccount only widens the accounts offered, and seeChosenCapital only narrows the partners the API answers (redix-api #106)', () {
+    expect({for (final gate in _gates) gate.permission}, Permission.values.toSet().difference({Permission.readProject, Permission.chargeAnyAccount, Permission.seeChosenCapital}));
   });
 
   for (final gate in _gates) {

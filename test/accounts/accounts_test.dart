@@ -4,7 +4,6 @@ import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/projects/member_picker.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
@@ -31,11 +30,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(item)));
   }
 
-  Future<void> chooseCustodian(WidgetTester tester, FakeApi api, String userId) async {
-    await tester.ensureVisible(find.byKey(MemberPicker.optionKey(userId)));
-    await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(MemberPicker.optionKey(userId))));
-  }
+  Future<void> chooseCustodian(WidgetTester tester, FakeApi api, String userId) => chooseMember(tester, api, AccountsScreen.custodianKey, userId);
 
   Future<void> save(WidgetTester tester, FakeApi api, {required String name}) => act(tester, api, () async {
     await tester.enterText(find.byKey(AccountsScreen.accountNameKey), name);

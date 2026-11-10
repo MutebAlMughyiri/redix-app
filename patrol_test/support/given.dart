@@ -291,12 +291,14 @@ class Given {
   /// [manager] adds a partner on the project's capital item, with [login] as their login if given, and their id is answered.
   static Future<String> partner(Person manager, String name, {Person login = Person.none}) async {
     final token = await _tokenOf(manager);
-    final categories = await _getList('${manager.project}/categories', token);
-    final items = categories.expand((category) => category['items'] as List<dynamic>).cast<Map<String, dynamic>>();
-    final capital = items.firstWhere((item) => item['type'] == 'capital');
-    await _post('${manager.project}/partners', {'name': name, 'itemId': capital['id'] as String, if (!login.isNone) 'userId': login.id}, token);
+    await _post('${manager.project}/partners', {'name': name, if (!login.isNone) 'userId': login.id}, token);
     final all = await _getList('${manager.project}/partners', token);
     return all.cast<Map<String, dynamic>>().singleWhere((partner) => partner['name'] == name)['id'] as String;
+  }
+
+  /// [manager] chooses the partner [partnerId] for [person], who then holds رأس مال شركاء محددين and sees that partner's capital (redix-api #106).
+  static Future<void> choosePartner(Person manager, Person person, String partnerId) async {
+    await _post('${manager.project}/users/${person.id}/partners/$partnerId', {}, await _tokenOf(manager));
   }
 
   /// [by] adds a supplier, and its id is answered: approved when [by] keeps the settings, otherwise waiting for approval.

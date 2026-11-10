@@ -204,7 +204,7 @@ class _RedixAppState extends State<RedixApp> {
         ),
       ),
       GoRoute(path: ProjectInfoScreen.path, builder: (context, state) => ProjectInfoScreen(project: state.extra! as Project, projects: _projects)),
-      GoRoute(path: MyPermissionsScreen.path, builder: (context, state) => MyPermissionsScreen(project: state.extra! as Project, projects: _projects)),
+      GoRoute(path: MyPermissionsScreen.path, builder: (context, state) => MyPermissionsScreen(project: state.extra! as Project, projects: _projects, partners: _partnersOf(state.projectId))),
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
@@ -236,12 +236,13 @@ class _RedixAppState extends State<RedixApp> {
         path: UsersScreen.path,
         builder: (context, state) => UsersScreen(users: _usersOf(state.projectId), projectName: (state.extra! as Project).name),
       ),
-      GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _usersOf(state.projectId))),
+      GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _usersOf(state.projectId), partners: _partnersOf(state.projectId))),
       GoRoute(
         path: UserPermissionsScreen.path,
         builder: (context, state) => UserPermissionsScreen(
           userId: state.pathParameters['userId'] ?? '',
           users: _usersOf(state.projectId),
+          partners: _partnersOf(state.projectId),
           projectName: state.extra as String? ?? '',
         ),
       ),
@@ -313,7 +314,6 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => PartnersScreen(
           project: state.extra! as Project,
           partners: _partnersOf(state.projectId),
-          items: _offeredItemsOf(state.projectId, ItemType.capital),
           members: _membersOf(state.projectId),
           capital: _capitalOf(state.projectId),
         ),

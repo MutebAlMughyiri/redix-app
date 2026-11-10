@@ -9,6 +9,7 @@ import 'package:redix/auth/session.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
+import 'package:redix/projects/member_picker.dart';
 import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/general_settings_screen.dart';
@@ -265,6 +266,14 @@ extension Steps on PatrolIntegrationTester {
   Future<void> tapOn(Key key) async {
     await goTo(this(key));
     await this(key).tap();
+  }
+
+  /// Opens the [MemberPicker] keyed [pickerKey] and chooses [id] in its list; nobody when that is empty. The open list draws over the closed one, so the last match is tapped.
+  Future<void> chooseMember(Key pickerKey, String id) async {
+    await tapOn(pickerKey.field);
+    await pumpAndSettle();
+    await tester.tap(find.byKey(MemberPicker.optionKey(id)).last);
+    await pumpAndSettle();
   }
 
   /// Brings [finder] into view, above or below what shows now: one not built yet is further down the list.

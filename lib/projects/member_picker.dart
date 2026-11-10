@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import '../ui/part_keys.dart';
 import 'members.dart';
 
-/// Chooses someone in a project, or nobody, as a list of choices with every name in full.
+/// Chooses someone in a project, or nobody, from a dropdown list of the project's people only (BR-33), each name in full (Muteb, 11 Nov 2026: a list, not radio buttons).
 class MemberPicker extends StatelessWidget {
   /// The choice labelled [label] among [members], showing [userId] and answering [onChanged], where [nobody] names an empty choice. The [currentId] called [currentName] stays on offer even if they have left the project; both are empty when there is none.
   const MemberPicker({
-    super.key,
+    required Key super.key,
     required this.members,
     required this.label,
     required this.nobody,
@@ -17,7 +17,7 @@ class MemberPicker extends StatelessWidget {
     required this.onChanged,
   });
 
-  /// The people to choose among.
+  /// The people to choose among: the project's own (`GET /projects/{id}/members`).
   final Members members;
 
   /// What is being chosen.
@@ -38,7 +38,7 @@ class MemberPicker extends StatelessWidget {
   /// Called with who is chosen; empty for nobody.
   final ValueChanged<String> onChanged;
 
-  /// The choice of the user [id]; of nobody when that is empty.
+  /// The choice of the user [id] in the open list; of nobody when that is empty.
   static Key optionKey(String id) => Key('memberPicker.option.$id');
 
   @override
@@ -46,16 +46,20 @@ class MemberPicker extends StatelessWidget {
     listenable: members,
     builder: (context, _) {
       final people = {'': nobody, if (currentId.isNotEmpty) currentId: currentName, for (final member in members.all) member.id: member.displayName};
-      return RadioGroup<String>(
-        groupValue: userId,
-        onChanged: (chosen) => onChanged(chosen ?? userId),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, key: key.label, style: Theme.of(context).textTheme.titleSmall),
-            for (final person in people.entries)
-              RadioListTile<String>(key: optionKey(person.key), contentPadding: EdgeInsets.zero, value: person.key, title: Text(person.value, key: optionKey(person.key).title)),
-          ],
+      return InputDecorator(
+        decoration: InputDecoration(labelText: label),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            key: key!.field,
+            value: people.containsKey(userId) ? userId : '',
+            isExpanded: true,
+            isDense: true,
+            items: [
+              for (final person in people.entries)
+                DropdownMenuItem(key: optionKey(person.key), value: person.key, child: Text(person.value, key: optionKey(person.key).title, overflow: TextOverflow.ellipsis)),
+            ],
+            onChanged: (chosen) => onChanged(chosen ?? userId),
+          ),
         ),
       );
     },

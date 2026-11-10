@@ -12,15 +12,17 @@ class Users extends ApiList<User> {
   /// The project these people belong to.
   final String projectId;
 
-  /// Creates a login in this project holding [permissions], called [roleName] there, who must change [temporaryPassword] at first sign-in.
-  Future<String> create(String displayName, String username, String roleName, String mobile, String temporaryPassword, Set<Permission> permissions) => change('/projects/$projectId/users', {
-    'displayName': displayName,
-    'username': username,
-    'roleName': roleName,
-    'mobile': westernDigits(mobile),
-    'temporaryPassword': temporaryPassword,
-    'permissions': [for (final permission in permissions) permission.name],
-  });
+  /// Creates a login in this project holding [permissions] and seeing the partners [partnerIds] (redix-api #106), called [roleName] there, who must change [temporaryPassword] at first sign-in.
+  Future<String> create(String displayName, String username, String roleName, String mobile, String temporaryPassword, Set<Permission> permissions, Set<String> partnerIds) =>
+      change('/projects/$projectId/users', {
+        'displayName': displayName,
+        'username': username,
+        'roleName': roleName,
+        'mobile': westernDigits(mobile),
+        'temporaryPassword': temporaryPassword,
+        'permissions': [for (final permission in permissions) permission.name],
+        'partnerIds': [...partnerIds],
+      });
 
   /// Adds someone who already has a login to this project, by their exact [username].
   Future<String> addExisting(String username) => change('/projects/$projectId/users/existing', {'username': username});
@@ -51,4 +53,10 @@ class Users extends ApiList<User> {
 
   /// Takes the [permission] in this project from [user]; taking [Permission.readProject] takes them out of it.
   Future<String> take(User user, Permission permission) => change('/projects/$projectId/users/${user.id}/permissions/${permission.name}/remove', {});
+
+  /// Chooses the partner [partnerId] for [user], who then sees their capital (redix-api #106).
+  Future<String> choosePartner(User user, String partnerId) => change('/projects/$projectId/users/${user.id}/partners/$partnerId', {});
+
+  /// Takes the partner [partnerId] from those chosen for [user].
+  Future<String> unchoosePartner(User user, String partnerId) => change('/projects/$projectId/users/${user.id}/partners/$partnerId/remove', {});
 }

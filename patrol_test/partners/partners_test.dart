@@ -3,11 +3,8 @@ import 'package:patrol/patrol.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
-import 'package:redix/projects/member_picker.dart';
-import 'package:redix/structure/item_picker.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/change_dialog.dart';
-import 'package:redix/ui/part_keys.dart';
 
 import '../support/given.dart';
 import '../support/pc.dart';
@@ -20,27 +17,18 @@ Future<void> onPartners(PatrolIntegrationTester $, Person person) async {
   await $.reach($(PartnersScreen.addKey));
 }
 
-/// Opens the dialog of a new partner, types [name] and picks the capital item.
+/// Opens the dialog of a new partner and types [name]; the project's capital item is not asked (redix-api #106).
 Future<void> fillPartner(PatrolIntegrationTester $, String name) async {
   await $.tapOn(PartnersScreen.addKey);
   await $(PartnersScreen.partnerNameKey).enterText(name);
-  await $(PartnersScreen.itemKey.field).tap();
-  final capital = await $.idShowing('itemPicker.option.', 'رأس المال');
-  await $(ItemPicker.optionKey(capital)).tap();
-  await $.pumpAndSettle();
 }
 
-/// Chooses the login [id] in the dialog showing now; empty for none.
-Future<void> chooseLogin(PatrolIntegrationTester $, String id) async {
-  await $.tester.ensureVisible(find.byKey(MemberPicker.optionKey(id)));
-  await $.pumpAndSettle();
-  await $(MemberPicker.optionKey(id)).tap();
-  await $.pumpAndSettle();
-}
+/// Chooses the partner's account [id] in the dialog showing now; empty for none.
+Future<void> chooseLogin(PatrolIntegrationTester $, String id) => $.chooseMember(PartnersScreen.loginKey, id);
 
 void main() {
   phoneClass('Partners (UC-016 and UC-040)', () {
-    phoneCase('redix-api #109: a partner is added, named, with the capital item whose table they are', ($) async {
+    phoneCase('redix-api #106: a partner is added by name alone, joining the project\'s capital item', ($) async {
       final manager = await Given.manager();
       await onPartners($, manager);
       await fillPartner($, 'هيثم');
@@ -48,7 +36,7 @@ void main() {
       await $.idShowing('partners.name.', 'هيثم');
     });
 
-    phoneCase('a partner is added with a login', ($) async {
+    phoneCase('a partner is added with their account, chosen from the project\'s people', ($) async {
       final manager = await Given.manager(project: 'غصون 7', manager: 'مدير المشروع');
       await Given.partner(manager, 'هيثم');
       await onPartners($, manager);
@@ -61,7 +49,7 @@ void main() {
       await $.picture('partners');
     });
 
-    phoneCase('each partner shows their login, or that they have none', ($) async {
+    phoneCase('each partner shows their account, or that they have none', ($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager, name: 'نواف');
       final withLogin = await Given.partner(manager, 'متعب', login: member);
@@ -71,7 +59,7 @@ void main() {
       await $.says(PartnersScreen.detailsKey(without), $.words.partnersNoLogin);
     });
 
-    phoneCase('redix-api #109: adding with no login sends none', ($) async {
+    phoneCase('adding with no account sends none', ($) async {
       final manager = await Given.manager();
       await onPartners($, manager);
       await fillPartner($, 'هيثم');
@@ -92,7 +80,7 @@ void main() {
       await $.says(PartnersScreen.nameKey(id), 'هيثم الأول');
     });
 
-    phoneCase('editing can give a login, and take it away', ($) async {
+    phoneCase('editing can give an account, and take it away', ($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager, name: 'نواف');
       final id = await Given.partner(manager, 'هيثم');
@@ -129,12 +117,22 @@ void main() {
       await $.reach($(PartnersScreen.nameKey(second)));
     });
 
-    phoneCase('BR-31: everyone has a way in, each seeing their own line', ($) async {
+    phoneCase('BR-31, redix-api #106: a partner chosen for someone shows to them', ($) async {
+      final manager = await Given.manager();
+      final member = await Given.member(manager);
+      final chosen = await Given.partner(manager, 'نواف');
+      await Given.choosePartner(manager, member, chosen);
+      await onPartners($, member);
+      await $.reach($(PartnersScreen.nameKey(chosen)));
+    });
+
+    phoneCase('redix-api #106: a partner\'s own account gives no sight: linked but not chosen, the partner does not show', ($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager);
       final own = await Given.partner(manager, 'نواف', login: member);
       await onPartners($, member);
-      await $.reach($(PartnersScreen.nameKey(own)));
+      await $.says(ApiListBody.emptyKey, $.words.partnersEmpty);
+      expect($(PartnersScreen.nameKey(own)), findsNothing);
     });
 
     phoneCase('pulling down reads the capital again', ($) async {
@@ -147,13 +145,14 @@ void main() {
       await $.says(PartnersScreen.totalKey, '500.00');
     });
 
-    phoneCase('BR-31: without seeAllCapital a partner sees only their own line', ($) async {
+    phoneCase('BR-31, redix-api #106: with chosen partners someone sees only those, not the others', ($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager);
-      final own = await Given.partner(manager, 'نواف', login: member);
+      final chosen = await Given.partner(manager, 'نواف');
       final other = await Given.partner(manager, 'متعب');
+      await Given.choosePartner(manager, member, chosen);
       await onPartners($, member);
-      await $.reach($(PartnersScreen.nameKey(own)));
+      await $.reach($(PartnersScreen.nameKey(chosen)));
       expect($(PartnersScreen.nameKey(other)), findsNothing);
     });
 

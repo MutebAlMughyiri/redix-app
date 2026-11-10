@@ -14,6 +14,7 @@ import 'package:redix/auth/biometrics.dart';
 import 'package:redix/auth/session.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
+import 'package:redix/projects/member_picker.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/words/app_language.dart';
@@ -38,8 +39,8 @@ Map<String, String> wordsIn(String language) => {
     'changePassword.weakPassword', 'changePassword.noConnection', 'changePassword.refused',
     'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
     'permissions.title', 'permissions.hint', 'permissions.count', 'permissions.mine', 'permissions.mineHint', 'projects.importSettings',
-    'permissions.readProject', 'permissions.readProjectHint', 'permissions.manageUsers', 'permissions.manageUsersHint', 'permissions.seeAllCapital', 'permissions.seeAllCapitalHint', 'permissions.manageProject', 'permissions.manageProjectHint', 'permissions.manageStructure', 'permissions.manageStructureHint', 'permissions.manageSettings', 'permissions.manageSettingsHint', 'permissions.addSupplier', 'permissions.addSupplierHint', 'permissions.chargeAnyAccount', 'permissions.chargeAnyAccountHint', 'permissions.recordEntries', 'permissions.recordEntriesHint', 'permissions.manageAnyEntry', 'permissions.manageAnyEntryHint', 'permissions.deleteEntries', 'permissions.deleteEntriesHint', 'permissions.attachFiles', 'permissions.attachFilesHint', 'permissions.approveEntries', 'permissions.approveEntriesHint', 'permissions.moveMoney', 'permissions.moveMoneyHint',
-    'users.addExisting', 'users.unknownUser', 'users.invalidPermission', 'users.lastManager', 'users.otherProject',
+    'permissions.readProject', 'permissions.readProjectHint', 'permissions.manageUsers', 'permissions.manageUsersHint', 'permissions.seeAllCapital', 'permissions.seeAllCapitalHint', 'permissions.seeChosenCapital', 'permissions.seeChosenCapitalHint', 'permissions.capitalGroup', 'permissions.manageProject', 'permissions.manageProjectHint', 'permissions.manageStructure', 'permissions.manageStructureHint', 'permissions.manageSettings', 'permissions.manageSettingsHint', 'permissions.addSupplier', 'permissions.addSupplierHint', 'permissions.chargeAnyAccount', 'permissions.chargeAnyAccountHint', 'permissions.recordEntries', 'permissions.recordEntriesHint', 'permissions.manageAnyEntry', 'permissions.manageAnyEntryHint', 'permissions.deleteEntries', 'permissions.deleteEntriesHint', 'permissions.attachFiles', 'permissions.attachFilesHint', 'permissions.approveEntries', 'permissions.approveEntriesHint', 'permissions.moveMoney', 'permissions.moveMoneyHint',
+    'users.addExisting', 'users.unknownUser', 'users.invalidPermission', 'users.lastManager', 'users.unknownPartner', 'users.otherProject',
     'signIn.registerProject', 'register.hint', 'register.sent', 'register.tooManyTries', 'register.invalidName', 'register.invalidUsername',
     'register.invalidMobile', 'register.unitNameTaken', 'projects.unitNameTaken', 'register.weakPassword', 'register.usernameTaken', 'register.noConnection', 'register.refused',
     'projects.pending', 'projects.rejected', 'registered.title', 'registered.empty', 'registered.loadFailed', 'registered.approve', 'registered.reject',
@@ -73,7 +74,7 @@ Map<String, String> wordsIn(String language) => {
     'paymentMethods.title', 'paymentMethods.empty', 'paymentMethods.loadFailed', 'paymentMethods.noConnection', 'paymentMethods.refused', 'paymentMethods.projectFinished',
     'paymentMethods.invalidName', 'paymentMethods.new', 'paymentMethods.name', 'paymentMethods.rename', 'paymentMethods.save', 'paymentMethods.disable', 'paymentMethods.enable', 'paymentMethods.disabled', 'paymentMethods.paymentMethodUsed',
     'accounts.title', 'accounts.empty', 'accounts.loadFailed', 'accounts.noConnection', 'accounts.refused', 'accounts.projectFinished', 'accounts.invalidName', 'accounts.custodianRequired', 'accounts.unknownCustodian', 'accounts.new', 'accounts.edit', 'accounts.save', 'accounts.type', 'accounts.typeBank', 'accounts.typeCashCustody', 'accounts.name',
-    'partners.title', 'partners.empty', 'partners.loadFailed', 'partners.noConnection', 'partners.refused', 'partners.projectFinished', 'partners.invalidName', 'partners.unknownUser', 'partners.userTaken',
+    'partners.title', 'partners.empty', 'partners.loadFailed', 'partners.noConnection', 'partners.refused', 'partners.projectFinished', 'partners.invalidName', 'partners.unknownUser', 'partners.userTaken', 'partners.itemNotOffered',
     'partners.new', 'partners.edit', 'partners.save', 'partners.name', 'partners.login', 'partners.noLogin', 'partners.loginHint',
     'suppliers.title', 'suppliers.empty', 'suppliers.loadFailed', 'suppliers.noConnection', 'suppliers.refused', 'suppliers.projectFinished', 'suppliers.invalidName', 'suppliers.invalidVatNumber',
     'suppliers.invalidMobile', 'suppliers.generalCashSupplier', 'suppliers.vatNumberTaken', 'suppliers.holder', 'suppliers.unknownItem', 'suppliers.new', 'suppliers.edit', 'suppliers.save', 'suppliers.name', 'suppliers.vatNumber',
@@ -971,9 +972,10 @@ class FakeApi {
     return _json(lines, 200);
   }
 
-  /// Adds a partner to the project [projectId], as the API holds them: a table of the capital item [itemId] (redix-api #109).
-  Map<String, Object> addPartner(String projectId, String name, {String userId = '', String userName = '', String itemId = 'item-capital', String itemName = 'رأس المال'}) {
-    final partner = <String, Object>{'id': 'partner-${_nextStructureId++}', 'name': name, 'userId': userId, 'userName': userName, 'itemId': itemId, 'itemName': itemName};
+  /// Adds a partner to the project [projectId], as the API holds them: a table of the capital item [itemId] (redix-api #109), whose own account is [userId], called [userName]. Who sees
+  /// them is chosen on people's permissions (redix-api #106).
+  Map<String, Object> addPartner(String projectId, String name, {String userId = '', String userName = '', String itemId = 'item-capital'}) {
+    final partner = <String, Object>{'id': 'partner-${_nextStructureId++}', 'name': name, 'userId': userId, 'userName': userName, 'itemId': itemId};
     partners.putIfAbsent(projectId, () => []).add(partner);
     return partner;
   }
@@ -990,15 +992,13 @@ class FakeApi {
       return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
     }
     final userId = body['userId'] as String? ?? '';
-    final itemId = body['itemId'] as String? ?? '';
     if (segments.length == 3) {
-      addPartner(segments[1], body['name'] as String, userId: userId, userName: _memberName(userId), itemId: itemId);
+      addPartner(segments[1], body['name'] as String, userId: userId, userName: _memberName(userId));
     } else {
       list.singleWhere((row) => row['id'] == segments[3])
         ..['name'] = body['name'] as String
         ..['userId'] = userId
-        ..['userName'] = _memberName(userId)
-        ..['itemId'] = itemId;
+        ..['userName'] = _memberName(userId);
     }
     return _json({}, 200);
   }
@@ -1394,11 +1394,22 @@ class FakeApi {
     final project = projects.singleWhere((project) => project['id'] == projectId);
     final lines = user['projects'] as List<Map<String, Object>>;
     if (!lines.any((line) => line['projectId'] == projectId)) {
-      lines.add({'projectId': projectId, 'name': project['name'] as String, 'permissions': <String>[]});
+      lines.add({'projectId': projectId, 'name': project['name'] as String, 'permissions': <String>[], 'partnerIds': <String>[]});
     }
-    final held = lines.singleWhere((line) => line['projectId'] == projectId)['permissions']! as List<String>;
-    held.addAll(permissions.where((permission) => !held.contains(permission)));
+    final line = lines.singleWhere((line) => line['projectId'] == projectId);
+    final held = line['permissions']! as List<String>;
+    for (final permission in permissions.where((permission) => !held.contains(permission))) {
+      held
+        ..removeWhere((other) => _capitalTicks.contains(permission) && _capitalTicks.contains(other))
+        ..add(permission);
+    }
+    if (!held.contains('seeChosenCapital')) {
+      (line['partnerIds']! as List<String>).clear();
+    }
   }
+
+  /// The two capital ticks, which the API lets nobody hold together (redix-api #106).
+  static const _capitalTicks = {'seeAllCapital', 'seeChosenCapital'};
 
   /// [user] as a project's list answers them: only that project's lines.
   Map<String, Object> _inProject(Map<String, Object> user, String projectId) => {
@@ -1420,7 +1431,9 @@ class FakeApi {
     if (segments.length == 3) {
       final user = addUser(body['displayName'] as String, username: body['username'] as String, mobile: body['mobile'] as String);
       give(user, projectId, ['readProject', ...(body['permissions'] as List<dynamic>).cast<String>()]);
-      (user['projects'] as List<Map<String, Object>>).singleWhere((line) => line['projectId'] == projectId)['roleName'] = body['roleName'] as String;
+      (user['projects'] as List<Map<String, Object>>).singleWhere((line) => line['projectId'] == projectId)
+        ..['roleName'] = body['roleName'] as String
+        ..['partnerIds'] = (body['partnerIds'] as List<dynamic>).cast<String>().toList();
       return _json(_inProject(user, projectId), 201);
     }
     if (segments[3] == 'existing') {
@@ -1432,12 +1445,25 @@ class FakeApi {
     final lines = user['projects'] as List<Map<String, Object>>;
     if (segments.last == 'role-name') {
       lines.singleWhere((line) => line['projectId'] == projectId)['roleName'] = body['roleName'] as String;
+    } else if (segments[4] == 'partners') {
+      if (segments.last != 'remove') {
+        give(user, projectId, ['seeChosenCapital']);
+      }
+      final chosen = lines.singleWhere((line) => line['projectId'] == projectId)['partnerIds']! as List<String>;
+      chosen.remove(segments[5]);
+      if (segments.last != 'remove') {
+        chosen.add(segments[5]);
+      }
     } else if (segments.last != 'remove') {
       give(user, projectId, [segments[5]]);
     } else if (segments[5] == 'readProject') {
       lines.removeWhere((line) => line['projectId'] == projectId);
     } else {
-      (lines.singleWhere((line) => line['projectId'] == projectId)['permissions']! as List<String>).remove(segments[5]);
+      final line = lines.singleWhere((line) => line['projectId'] == projectId);
+      (line['permissions']! as List<String>).remove(segments[5]);
+      if (segments[5] == 'seeChosenCapital') {
+        (line['partnerIds']! as List<String>).clear();
+      }
     }
     return _json(_inProject(user, projectId), 200);
   }
@@ -1824,6 +1850,13 @@ Future<void> act(WidgetTester tester, FakeApi api, Future<void> Function() actio
   await action();
   await tester.pumpAndSettle();
 }, () => api.client);
+
+/// Opens the [MemberPicker] keyed [pickerKey] and chooses [userId] in its list; nobody when that is empty. The open list draws over the closed one, so the last match is the one tapped.
+Future<void> chooseMember(WidgetTester tester, FakeApi api, Key pickerKey, String userId) async {
+  await tester.ensureVisible(find.byKey(pickerKey.field));
+  await act(tester, api, () => tester.tap(find.byKey(pickerKey.field)));
+  await act(tester, api, () => tester.tap(find.byKey(MemberPicker.optionKey(userId)).last));
+}
 
 /// The color the frame of the entry [id]'s row is drawn in, which alone says where the entry stands (Muteb, 9 Nov 2026).
 AppColor frameOf(WidgetTester tester, String id) {
