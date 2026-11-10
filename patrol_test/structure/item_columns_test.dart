@@ -78,11 +78,11 @@ void main() {
       await onColumns($);
       await addList($, 'الجهة', 'شرق');
       final id = await $.idShowing('columns.name.', 'الجهة');
-      await $.tapOn(ItemColumnsScreen.editKey(id));
+      await $.menuChoice(ItemColumnsScreen.menuKey(id), ItemColumnsScreen.editKey);
       await $(ItemColumnsScreen.newChoicesKey).enterText('غرب');
       await $(ChangeDialog.saveKey).tap();
       await $.gone($(ItemColumnsScreen.newChoicesKey));
-      await $.tapOn(ItemColumnsScreen.editKey(id));
+      await $.menuChoice(ItemColumnsScreen.menuKey(id), ItemColumnsScreen.editKey);
       await $.reach($(ItemColumnsScreen.existingChoicesKey));
       final existing = $.tester.widget<Text>(find.byKey(ItemColumnsScreen.existingChoicesKey)).data!;
       expect(existing, allOf(contains('شرق'), contains('غرب')));
@@ -116,7 +116,7 @@ void main() {
     phoneCase('a core column changes its name only', ($) async {
       await onColumns($);
       final id = await $.idShowing('columns.name.', 'التاريخ');
-      await $.tapOn(ItemColumnsScreen.editKey(id));
+      await $.menuChoice(ItemColumnsScreen.menuKey(id), ItemColumnsScreen.editKey);
       await $.reach($(ItemColumnsScreen.requiredKey));
       expect($.tester.widget<SwitchListTile>(find.byKey(ItemColumnsScreen.requiredKey)).onChanged, isNull);
       expect($(ItemColumnsScreen.columnNameKey), findsOneWidget);
@@ -176,7 +176,7 @@ void main() {
       await onColumns($);
       await addList($, 'الجهة', 'شرق');
       final id = await $.idShowing('columns.name.', 'الجهة');
-      await $.tapOn(ItemColumnsScreen.editKey(id));
+      await $.menuChoice(ItemColumnsScreen.menuKey(id), ItemColumnsScreen.editKey);
       await $.reach($(ItemColumnsScreen.requiredKey));
       expect($(ItemColumnsScreen.dataTypeKey), findsNothing);
     });
@@ -203,7 +203,7 @@ void main() {
       await Given.column(manager, bone.itemId, 'رقم الأمر');
       await openColumns($, manager, bone.categoryId, bone.itemId);
       final id = await $.idShowing('columns.name.', 'رقم الأمر');
-      await $.tapOn(ItemColumnsScreen.editKey(id));
+      await $.menuChoice(ItemColumnsScreen.menuKey(id), ItemColumnsScreen.editKey);
       await $.reach($(ItemColumnsScreen.requiredKey));
       expect($(ItemColumnsScreen.newChoicesKey), findsNothing);
     });

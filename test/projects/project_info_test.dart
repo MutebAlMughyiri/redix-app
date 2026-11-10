@@ -37,7 +37,7 @@ void main() {
   Future<void> backHome(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byType(BackButton)));
 
   void expectNoChangeOffered() {
-    for (final key in [ProjectInfoScreen.renameKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey]) {
+    for (final key in [ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey]) {
       expect(find.byKey(key), findsNothing, reason: '$key');
     }
   }
@@ -69,7 +69,7 @@ void main() {
       final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
       await openInfo(tester, api);
 
-      for (final key in [ProjectInfoScreen.renameKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.unitMenuKey('project-0-unit-0'), ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey]) {
+      for (final key in [ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.unitMenuKey('project-0-unit-0'), ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey]) {
         expect(find.byKey(key), findsOneWidget, reason: '$key');
       }
     });
@@ -171,6 +171,8 @@ void main() {
       await openInfo(tester, api);
       await tester.enterText(find.byKey(ProjectInfoScreen.descriptionKey), 'ثلاث فلل');
 
+      await tap(tester, api, ProjectInfoScreen.nameMenuKey);
+
       await tap(tester, api, ProjectInfoScreen.renameKey);
       await tester.enterText(find.byKey(NameDialog.nameKey), 'غصون السادس');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
@@ -184,6 +186,8 @@ void main() {
     testWidgets('whoever manages the project renames it, starting from its name, and More info and the home follow', (tester) async {
       final api = FakeApi()..addProject('غصون 6');
       await openInfo(tester, api);
+
+      await tap(tester, api, ProjectInfoScreen.nameMenuKey);
 
       await tap(tester, api, ProjectInfoScreen.renameKey);
       expect(typed(tester, NameDialog.nameKey), 'غصون 6');
@@ -200,6 +204,7 @@ void main() {
     testWidgets('a refused name stays in the dialog with its reason', (tester) async {
       final api = FakeApi()..addProject('غصون 6');
       await openInfo(tester, api);
+      await tap(tester, api, ProjectInfoScreen.nameMenuKey);
       await tap(tester, api, ProjectInfoScreen.renameKey);
 
       api.projectAnswer = (status: 400, code: 'invalidName');

@@ -23,7 +23,7 @@ void main() {
     phoneCase('BR-38: renaming the project starts from its name, and More info and the home follow', ($) async {
       final manager = await Given.manager();
       await $.onMoreInfo(manager);
-      await $.tapOn(ProjectInfoScreen.renameKey);
+      await $.menuChoice(ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.renameKey);
       await $.reach($(NameDialog.nameKey));
       expect($.typed(NameDialog.nameKey), manager.projectName);
       final renamed = 'Renamed ${Given.unique()}';
@@ -85,7 +85,7 @@ void main() {
     phoneCase('a refused name shows its own line, and nothing typed is lost', ($) async {
       final manager = await Given.manager();
       await $.onMoreInfo(manager);
-      await $.tapOn(ProjectInfoScreen.renameKey);
+      await $.menuChoice(ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.renameKey);
       await $.saveName(' ');
       await $.says(ChangeDialog.messageKey, $.words.projectsInvalidName);
       expect($(NameDialog.nameKey), findsOneWidget);

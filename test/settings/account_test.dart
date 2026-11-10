@@ -373,7 +373,7 @@ void main() {
       await tester.pumpAndSettle();
       expectFits(HomeScreen.projectInfoKey(runningId));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.projectInfoKey(runningId))));
-      [ProjectInfoScreen.nameKey, ProjectInfoScreen.renameKey, ProjectInfoScreen.detailsKey, ProjectInfoScreen.statusKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.unitMenuKey('$runningId-unit-0')]
+      [ProjectInfoScreen.nameKey, ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.detailsKey, ProjectInfoScreen.statusKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.unitMenuKey('$runningId-unit-0')]
           .forEach(expectFits);
       await tester.scrollUntilVisible(find.byKey(ProjectInfoScreen.closeKey), 80, scrollable: find.byType(Scrollable).first);
       await tester.ensureVisible(find.byKey(ProjectInfoScreen.closeKey));
@@ -433,19 +433,19 @@ void main() {
         ItemColumnsScreen.handleKey(dateColumn),
         ItemColumnsScreen.nameKey(dateColumn),
         ItemColumnsScreen.detailsKey(dateColumn),
-        ItemColumnsScreen.editKey(dateColumn),
+        ItemColumnsScreen.menuKey(dateColumn),
         ItemColumnsScreen.lockKey(dateColumn),
         ItemColumnsScreen.nameKey(areaColumn),
         ItemColumnsScreen.detailsKey(areaColumn),
-        ItemColumnsScreen.editKey(areaColumn),
+        ItemColumnsScreen.menuKey(areaColumn),
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.addKey)));
       [ItemColumnsScreen.columnNameKey, ItemColumnsScreen.dataTypeKey, ItemColumnsScreen.requiredKey, ItemColumnsScreen.showInReportsKey, ChangeDialog.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.templateKey)));
-      await tester.ensureVisible(find.byKey(ItemColumnsScreen.editKey(templateDate)));
+      await tester.ensureVisible(find.byKey(ItemColumnsScreen.menuKey(templateDate)));
       await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.editKey(templateDate))));
+      await chooseFromMenu(tester, api, ItemColumnsScreen.menuKey(templateDate), ItemColumnsScreen.editKey);
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
       [ApplyToAllDialog.explainKey, ApplyToAllDialog.applyKey, ApplyToAllDialog.templateOnlyKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ApplyToAllDialog.templateOnlyKey)));
@@ -457,7 +457,7 @@ void main() {
       [CategoriesScreen.renameItemKey, CategoriesScreen.tablesKey, CategoriesScreen.disableItemKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.tablesKey)));
       final subgroupId = (tiles['subgroups']! as List<Map<String, Object>>).last['id'] as String;
-      [ItemTablesScreen.hintKey, ItemTablesScreen.addKey, ItemTablesScreen.handleKey(subgroupId), ItemTablesScreen.tableNameKey(subgroupId), ItemTablesScreen.detailsKey(subgroupId), ItemTablesScreen.renameKey(subgroupId)].forEach(expectFits);
+      [ItemTablesScreen.hintKey, ItemTablesScreen.addKey, ItemTablesScreen.handleKey(subgroupId), ItemTablesScreen.tableNameKey(subgroupId), ItemTablesScreen.detailsKey(subgroupId), ItemTablesScreen.menuKey(subgroupId)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 

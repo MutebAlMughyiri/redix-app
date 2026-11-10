@@ -77,7 +77,7 @@ void main() {
 
     expect(find.byKey(ItemColumnsScreen.lockKey(opened.date)), findsOneWidget);
     expect(find.byKey(ItemColumnsScreen.rowKey(opened.date).swipe), findsNothing);
-    expect(find.byKey(ItemColumnsScreen.editKey(opened.date)), findsOneWidget);
+    expect(find.byKey(ItemColumnsScreen.menuKey(opened.date)), findsOneWidget);
     expect(find.byKey(ItemColumnsScreen.rowKey(opened.unit).swipe), findsOneWidget);
     expect(find.byKey(ItemColumnsScreen.lockKey(opened.unit)), findsNothing);
     expect(find.byKey(ItemColumnsScreen.rowKey(opened.unit).bar), findsOneWidget);
@@ -134,7 +134,7 @@ void main() {
   testWidgets('a core column changes its name only: its switches are off', (tester) async {
     final opened = await openColumns(tester);
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.editKey(opened.date))));
+    await chooseFromMenu(tester, opened.api, ItemColumnsScreen.menuKey(opened.date), ItemColumnsScreen.editKey);
 
     expect(tester.widget<SwitchListTile>(find.byKey(ItemColumnsScreen.requiredKey)).onChanged, isNull);
     expect(tester.widget<SwitchListTile>(find.byKey(ItemColumnsScreen.showInReportsKey)).onChanged, isNull);
@@ -149,7 +149,7 @@ void main() {
   testWidgets('another column changes what entry asks and what prints; no dialog offers its type', (tester) async {
     final opened = await openColumns(tester);
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.editKey(opened.unit))));
+    await chooseFromMenu(tester, opened.api, ItemColumnsScreen.menuKey(opened.unit), ItemColumnsScreen.editKey);
     expect(find.byKey(ItemColumnsScreen.dataTypeKey), findsNothing);
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.requiredKey)));
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.showInReportsKey)));
@@ -163,9 +163,9 @@ void main() {
     final list = opened.api.addColumn(itemPath, 'الجهة', dataType: 'list', isCustom: true)..['options'] = <String>['شرق', 'غرب'];
     await showTemplate(tester, opened.api);
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.thisItemKey)));
-    await tester.ensureVisible(find.byKey(ItemColumnsScreen.editKey(list['id'] as String)));
+    await tester.ensureVisible(find.byKey(ItemColumnsScreen.menuKey(list['id'] as String)));
     await tester.pumpAndSettle();
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.editKey(list['id'] as String))));
+    await chooseFromMenu(tester, opened.api, ItemColumnsScreen.menuKey(list['id'] as String), ItemColumnsScreen.editKey);
 
     expect(text(tester, ItemColumnsScreen.existingChoicesKey), 'شرق · غرب');
     await tester.enterText(find.byKey(ItemColumnsScreen.newChoicesKey), 'شمال\nجنوب');
@@ -178,7 +178,7 @@ void main() {
   testWidgets('only a list a person added offers new choices, and an edit that gives none sends none', (tester) async {
     final opened = await openColumns(tester);
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.editKey(opened.unit))));
+    await chooseFromMenu(tester, opened.api, ItemColumnsScreen.menuKey(opened.unit), ItemColumnsScreen.editKey);
     expect(find.byKey(ItemColumnsScreen.newChoicesKey), findsNothing);
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
@@ -262,7 +262,7 @@ void main() {
       final opened = await openColumns(tester);
       await showTemplate(tester, opened.api);
 
-      await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.editKey(templateColumn(opened.api, 0)))));
+      await chooseFromMenu(tester, opened.api, ItemColumnsScreen.menuKey(templateColumn(opened.api, 0)), ItemColumnsScreen.editKey);
       await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
       await act(tester, opened.api, () => tester.tap(find.byKey(ApplyToAllDialog.applyKey)));
 
@@ -316,7 +316,7 @@ void main() {
     expect(isEnabled(tester, ItemColumnsScreen.addKey), isFalse);
     expect(find.byKey(ItemColumnsScreen.hintKey), findsNothing);
     expect(find.byKey(ItemColumnsScreen.handleKey(opened.date)), findsNothing);
-    expect(find.byKey(ItemColumnsScreen.editKey(opened.date)), findsNothing);
+    expect(find.byKey(ItemColumnsScreen.menuKey(opened.date)), findsNothing);
     expect(find.byKey(ItemColumnsScreen.rowKey(opened.unit).swipe), findsNothing);
   });
 }

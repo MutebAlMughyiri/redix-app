@@ -1880,6 +1880,13 @@ Future<void> act(WidgetTester tester, FakeApi api, Future<void> Function() actio
   await tester.pumpAndSettle();
 }, () => api.client);
 
+/// Opens the ⋮ keyed [menuKey] and chooses [itemKey] in it.
+Future<void> chooseFromMenu(WidgetTester tester, FakeApi api, Key menuKey, Key itemKey) async {
+  await tester.ensureVisible(find.byKey(menuKey));
+  await act(tester, api, () => tester.tap(find.byKey(menuKey)));
+  await act(tester, api, () => tester.tap(find.byKey(itemKey)));
+}
+
 /// Opens the [MemberPicker] keyed [pickerKey] and chooses [userId] in its list; nobody when that is empty. The open list draws over the closed one, so the last match is the one tapped.
 Future<void> chooseMember(WidgetTester tester, FakeApi api, Key pickerKey, String userId) async {
   await tester.ensureVisible(find.byKey(pickerKey.field));

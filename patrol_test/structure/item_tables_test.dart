@@ -63,7 +63,7 @@ void main() {
       final made = await newItem();
       final table = await Given.subgroup(made.manager, made.item, 'الجلاي');
       await onTables($, made.manager, made.category, made.item);
-      await $.tapOn(ItemTablesScreen.renameKey(table));
+      await $.menuChoice(ItemTablesScreen.menuKey(table), ItemTablesScreen.renameKey);
       await $.reach($(NameDialog.nameKey));
       expect($.typed(NameDialog.nameKey), 'الجلاي');
       await $.saveName('السيراميك');

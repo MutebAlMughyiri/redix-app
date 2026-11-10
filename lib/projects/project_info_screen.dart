@@ -5,6 +5,7 @@ import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
+import '../ui/row_menu.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'project.dart';
@@ -37,6 +38,9 @@ class ProjectInfoScreen extends StatefulWidget {
 
   /// The button that renames the project.
   static const renameKey = Key('projectInfo.rename');
+
+  /// The ⋮ beside the project's name, holding Rename (redix-app #102: no pencil button).
+  static const nameMenuKey = Key('projectInfo.nameMenu');
 
   /// The project's start date, and whether it is read-only.
   static const detailsKey = Key('projectInfo.details');
@@ -183,13 +187,7 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
               Row(
                 children: [
                   Expanded(child: Text(project.name, key: ProjectInfoScreen.nameKey, style: theme.textTheme.titleLarge)),
-                  if (mayChange)
-                    IconButton(
-                      key: ProjectInfoScreen.renameKey,
-                      tooltip: words.projectsRename,
-                      icon: Icon(Icons.edit_outlined, key: ProjectInfoScreen.renameKey.icon),
-                      onPressed: () => _askToRename(project),
-                    ),
+                  if (mayChange) rowMenu(ProjectInfoScreen.nameMenuKey, [rowMenuItem(ProjectInfoScreen.renameKey, words.projectsRename, () => _askToRename(project))]),
                 ],
               ),
               OverflowBar(

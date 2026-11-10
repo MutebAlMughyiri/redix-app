@@ -90,8 +90,11 @@ class ItemColumnsScreen extends StatefulWidget {
   /// What the column [id] is.
   static Key detailsKey(String id) => Key('columns.details.$id');
 
-  /// The button that changes the column [id].
-  static Key editKey(String id) => Key('columns.edit.$id');
+  /// The ⋮ of the column [id] (redix-app #102: no pencil button).
+  static Key menuKey(String id) => Key('columns.menu.$id');
+
+  /// Edit, in a column's ⋮.
+  static const editKey = Key('columns.edit');
 
   /// The lock on the core column [id].
   static Key lockKey(String id) => Key('columns.lock.$id');

@@ -238,11 +238,11 @@ void main() {
     expect(text(tester, ItemTablesScreen.tableNameKey(opened.general)), 'الحفر');
     expect(text(tester, ItemTablesScreen.detailsKey(opened.general)), 'en categories.tablePurchases · 0');
     expect(text(tester, ItemTablesScreen.detailsKey('contract-1')), 'en categories.tableContract · 27');
-    expect(find.byKey(ItemTablesScreen.renameKey(opened.general)), findsNothing);
+    expect(find.byKey(ItemTablesScreen.menuKey(opened.general)), findsNothing);
     expect(find.byKey(ItemTablesScreen.rowKey('contract-1').swipe), findsNothing);
     expect(find.byKey(ItemTablesScreen.rowKey(opened.general).swipe), findsNothing);
     expect(find.byKey(ItemTablesScreen.rowKey(opened.ids[0]).swipe), findsOneWidget);
-    expect(find.byKey(ItemTablesScreen.renameKey(opened.ids[0])), findsOneWidget);
+    expect(find.byKey(ItemTablesScreen.menuKey(opened.ids[0])), findsOneWidget);
   });
 
   testWidgets('a sub-table added here is offered in إضافة قيد as its table and sheet, and takes a purchase', (tester) async {
@@ -301,7 +301,7 @@ void main() {
     expect(opened.api.sentStructureChanges.single.$2, {'name': 'أسمنت'});
     expect(find.text('أسمنت'), findsOneWidget);
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemTablesScreen.renameKey(opened.ids[0]))));
+    await chooseFromMenu(tester, opened.api, ItemTablesScreen.menuKey(opened.ids[0]), ItemTablesScreen.renameKey);
     await save(tester, opened.api, 'مواد بناء');
     expect(find.text('مواد بناء'), findsOneWidget);
   });

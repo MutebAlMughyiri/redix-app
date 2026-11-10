@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
+import '../ui/row_menu.dart';
 import '../ui/bottom_button.dart';
 import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
@@ -53,8 +54,11 @@ class ItemTablesScreen extends StatefulWidget {
   /// What the table [id] prints and how many entries it holds.
   static Key detailsKey(String id) => Key('tables.details.$id');
 
-  /// The button that renames the subgroup [id].
-  static Key renameKey(String id) => Key('tables.rename.$id');
+  /// The ⋮ of the named sub-table [id] (redix-app #102: no pencil button).
+  static Key menuKey(String id) => Key('tables.menu.$id');
+
+  /// Rename, in a named sub-table's ⋮.
+  static const renameKey = Key('tables.rename');
 
   @override
   State<ItemTablesScreen> createState() => _ItemTablesScreenState();
@@ -91,17 +95,13 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
       title: Text(table.name, key: ItemTablesScreen.tableNameKey(table.id)),
       subtitle: Text('${_kindOf(table, words)} · ${table.count}', key: ItemTablesScreen.detailsKey(table.id)),
       trailing: mayChange && table.isNamedSubgroup
-          ? Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  key: ItemTablesScreen.renameKey(table.id),
-                  icon: Icon(Icons.edit_outlined, key: ItemTablesScreen.renameKey(table.id).icon),
-                  tooltip: words.categoriesRename,
-                  onPressed: () => _ask(title: words.categoriesRename, saveLabel: words.categoriesSave, name: table.name, onSave: (name) => widget.tables.renameSubgroup(table, name)),
-                ),
-              ],
-            )
+          ? rowMenu(ItemTablesScreen.menuKey(table.id), [
+              rowMenuItem(
+                ItemTablesScreen.renameKey,
+                words.categoriesRename,
+                () => _ask(title: words.categoriesRename, saveLabel: words.categoriesSave, name: table.name, onSave: (name) => widget.tables.renameSubgroup(table, name)),
+              ),
+            ])
           : null,
       ),
     );

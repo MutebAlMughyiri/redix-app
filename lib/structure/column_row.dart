@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../ui/row_menu.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'item_column.dart';
@@ -43,7 +44,7 @@ class ColumnRow extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (mayChange)
-            IconButton(key: ItemColumnsScreen.editKey(column.id), icon: Icon(Icons.edit_outlined, key: ItemColumnsScreen.editKey(column.id).icon), tooltip: words.columnsEdit, onPressed: onEdit),
+            rowMenu(ItemColumnsScreen.menuKey(column.id), [rowMenuItem(ItemColumnsScreen.editKey, words.columnsEdit, onEdit)]),
           if (column.isCore)
             Tooltip(
               key: ItemColumnsScreen.coreKey(column.id),

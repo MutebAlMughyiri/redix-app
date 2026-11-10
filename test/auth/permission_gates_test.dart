@@ -85,7 +85,7 @@ final List<Gate> _gates = [
   (name: 'Registered projects in the settings', permission: Permission.approveProjects, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.generalSettingsKey(_project))], control: _key(GeneralSettingsScreen.registeredKey)),
   (name: 'Users on the home', permission: Permission.manageUsers, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.usersKey(_project))),
   (name: 'Add unit in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.addUnitKey)),
-  (name: 'Rename project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.renameKey)),
+  (name: 'Rename project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.nameMenuKey)),
   (name: 'Close project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.closeKey)),
   (name: 'A unit\'s menu in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.unitMenuKey('$_project-unit-0'))),
   (name: 'The description in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.saveDescriptionKey)),

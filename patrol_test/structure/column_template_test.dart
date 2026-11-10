@@ -64,7 +64,7 @@ void main() {
       await addToTemplate($, 'رقم أمر الشراء');
       await $(ApplyToAllDialog.templateOnlyKey).tap();
       final id = await $.idShowing('columns.name.', 'رقم أمر الشراء');
-      await $.tapOn(ItemColumnsScreen.editKey(id));
+      await $.menuChoice(ItemColumnsScreen.menuKey(id), ItemColumnsScreen.editKey);
       await $(ItemColumnsScreen.columnNameKey).enterText('رقم الأمر');
       await $(ChangeDialog.saveKey).tap();
       await $.reach($(ApplyToAllDialog.applyKey));

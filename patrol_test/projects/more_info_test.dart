@@ -98,7 +98,7 @@ void main() {
       expect($(ProjectInfoScreen.descriptionKey), findsNothing);
       expect($(ProjectInfoScreen.addUnitKey), findsNothing);
       expect($(ProjectInfoScreen.closeKey), findsNothing);
-      expect($(ProjectInfoScreen.renameKey), findsNothing);
+      expect($(ProjectInfoScreen.nameMenuKey), findsNothing);
     });
 
     phoneCase('R10: a description cannot pass 2,000 characters, and the count shows', ($) async {
