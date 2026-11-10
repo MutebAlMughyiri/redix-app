@@ -25,6 +25,8 @@ Each environment has a config file in `config/`, passed when building or running
 | qa, Muteb's own testing (the API's `QA`) | `config/qa.json` | `http://127.0.0.1:5012` |
 | Production | `config/production.json`, added when the server is published | The server's public address, over `https` |
 
+Each environment's file also names its app: dev installs as `sa.redix.dev`, "REDIX dev", with links on `dev.redix.test`; qa as `sa.redix.qa`, "REDIX qa", on `qa.redix.test`. Both can be on one phone, and `sa.redix`, "REDIX", stays for production. Patrol always builds dev, so a run never touches the qa app (redix-app #95). The activity keeps the code's own package: start an app with `adb shell am start -n sa.redix.qa/sa.redix.MainActivity`.
+
 On a phone, `127.0.0.1` is the phone itself; `adb reverse tcp:5010 tcp:5010` routes it to the developer's machine, on the emulator and on a phone plugged in by USB alike. Run it once after the emulator or phone connects. A release build only talks `https`: Android and iOS block plain `http` outside debug builds. An app built without a config file stops at start with a message naming the flag.
 
 ## Words and languages

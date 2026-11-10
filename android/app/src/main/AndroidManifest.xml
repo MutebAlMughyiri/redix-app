@@ -5,7 +5,7 @@
          on a phone without Google Play services (the HUAWEI, 8 Nov 2026); the camera app needs no permission of REDIX's own. -->
     <uses-permission android:name="android.permission.CAMERA" tools:node="remove"/>
     <application
-        android:label="REDIX"
+        android:label="${appName}"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="false">

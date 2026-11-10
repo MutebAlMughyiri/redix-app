@@ -266,7 +266,7 @@ Settings such as projects keep nothing on the phone: the API owns every rule, th
 | A screen's main action is `BottomButton`: one full-width filled button in the `Scaffold`'s `bottomNavigationBar`, a plus unless the action says otherwise; no screen draws a floating button. Without the permission it shows grayed, never hidden | `lib/ui/bottom_button.dart` |
 | One class to a file: a screen's card, row and dialogs are files of their own | Each feature folder |
 | Every public class and member has a doc comment | The lint `public_member_api_docs` |
-| The API's address comes from the environment's config file (`--dart-define-from-file=config/dev.json` or `config/qa.json`, named as the API's environments `Dev` and `QA`); none is built in | `apiBaseUrl`, `config/` |
+| The environment's config file (`--dart-define-from-file=config/dev.json` or `config/qa.json`, named as the API's environments `Dev` and `QA`) decides the API's address and, through `build.gradle.kts`, the app's id, its name and its link host; none is built in, and without the file the app is `sa.redix`, REDIX, `redix.test`, the production names (redix-app #95) | `apiBaseUrl`, `config/`, `build.gradle.kts` |
 
 ## Tests
 

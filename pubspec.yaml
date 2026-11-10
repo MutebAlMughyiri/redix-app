@@ -45,7 +45,7 @@ flutter_launcher_icons:
 patrol:
   app_name: REDIX
   android:
-    package_name: sa.redix
+    package_name: sa.redix.dev
   ios:
     bundle_id: sa.redix
 

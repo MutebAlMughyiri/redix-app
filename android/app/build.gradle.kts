@@ -17,8 +17,12 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "sa.redix"
+        // The environment's config file decides the app's id, its name and its link host (redix-app #95, #83): the --dart-define values the app is built
+        // with. Without one the app is sa.redix, REDIX and redix.test, the production names.
+        val dartDefines = (project.findProperty("dart-defines") as String? ?: "").split(",").filter { it.isNotEmpty() }
+            .map { String(Base64.getDecoder().decode(it)) }
+            .associate { it.substringBefore("=") to it.substringAfter("=") }
+        applicationId = "sa.redix" + (dartDefines["APP_ID_SUFFIX"] ?: "")
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -29,10 +33,7 @@ android {
         // flag during build.
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // The host a shared entry's link names (redix-app #83): LINK_HOST from the --dart-define the app is built with, so the manifest and the app's linkHost agree.
-        val dartDefines = (project.findProperty("dart-defines") as String? ?: "").split(",").filter { it.isNotEmpty() }
-            .map { String(Base64.getDecoder().decode(it)) }
-            .associate { it.substringBefore("=") to it.substringAfter("=") }
+        manifestPlaceholders["appName"] = dartDefines["APP_NAME"] ?: "REDIX"
         manifestPlaceholders["linkHost"] = dartDefines["LINK_HOST"] ?: "redix.test"
         testInstrumentationRunner = "pl.leancode.patrol.PatrolJUnitRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
