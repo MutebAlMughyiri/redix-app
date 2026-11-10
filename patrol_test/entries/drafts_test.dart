@@ -55,13 +55,14 @@ void main() {
       expect(await Given.waitingIds(manager), [entry]);
     });
 
-    phoneCase('WAITS FOR MUTEB, findings row 194: UC-028 with manageAnyEntry someone else\'s draft can be sent', ($) async {
+    phoneCase('BR-42: with manageAnyEntry someone else\'s draft is not listed, so it cannot be sent', ($) async {
       final manager = await Given.manager();
       final entry = await Given.entry(manager, sent: false);
-      final member = await Given.member(manager, permissions: [Permission.manageAnyEntry, Permission.recordEntries]);
+      final member = await Given.member(manager, permissions: [Permission.manageAnyEntry, Permission.recordEntries, Permission.chargeAnyAccount]);
+      final own = await Given.entry(member, accountId: await Given.account(manager));
       await $.onTheHome(member);
-      await $.tapOn(EntriesScreen.rowKey(entry));
-      await $.reach($(AddEntryScreen.sendDraftKey));
+      await $.goTo($(EntriesScreen.rowKey(own)));
+      expect($(EntriesScreen.rowKey(entry)), findsNothing);
     });
 
     phoneCase('a draft does not raise the waiting count', ($) async {

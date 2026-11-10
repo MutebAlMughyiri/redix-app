@@ -30,10 +30,10 @@ enum Permission {
   /// Record a purchase or a contractor payment in a project's ledger.
   recordEntries,
 
-  /// Change or send an entry someone else entered, or one waiting, before it is approved.
+  /// Change or send an entry someone else sent, or one waiting, before it is approved; never someone else's draft (BR-42).
   manageAnyEntry,
 
-  /// Delete an entry not yet approved: one's own, or with [manageAnyEntry] anyone's.
+  /// Delete an entry not yet approved: one's own, or with [manageAnyEntry] anyone's once sent.
   deleteEntries,
 
   /// Keep a picture or a file in a project, for an entry, a receipt or a contract.
