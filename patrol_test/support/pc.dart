@@ -10,6 +10,24 @@ class Pc {
   /// Puts the phone's link to the API back.
   static Future<void> restoreNetwork() => _ask('network/on');
 
+  /// Opens [link] as a tap on it in another app would.
+  static Future<void> openLink(String link) => _ask('link?${Uri.encodeComponent(link)}');
+
+  /// Copies the file named [name] from the app's own folder on the phone to its Download folder, where the phone's file picker lists it.
+  static Future<void> copyToDownloads(String name) => _ask('to-downloads?${Uri.encodeComponent(name)}');
+
+  /// Shares the phone's file at [path], of the type [mimeType], into the app, as another app's share sheet does.
+  static Future<void> shareIntoTheApp(String path, String mimeType) => _ask('share-in?${Uri.encodeComponent('$mimeType|$path')}');
+
+  /// Closes Notepad with nothing saved, so a case leaves no note on the phone.
+  static Future<void> closeNotepad() => _ask('notepad/close');
+
+  /// Throws unless a file whose name starts with [start] reached the phone's Download folder in the last two minutes, and removes what it found so the case leaves nothing behind.
+  static Future<void> expectDownloaded(String start) => _ask('downloaded?${Uri.encodeComponent(start)}');
+
+  /// Keeps one line about a case in a file on the PC: whether it passed, how long it took, and why it failed.
+  static Future<void> note(String line) => _ask('note?${Uri.encodeComponent(line.length > 1500 ? line.substring(0, 1500) : line)}');
+
   static Future<void> _ask(String what) async {
     final answer = await http.get(Uri.parse('http://127.0.0.1:5011/$what'));
     if (answer.statusCode != 200) {

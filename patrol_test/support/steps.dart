@@ -3,15 +3,35 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:patrol/patrol.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/session.dart';
-import 'package:redix/config/local_config.dart';
 import 'package:redix/auth/sign_in_screen.dart';
+import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
+import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/refusal_snack_bar.dart';
 import 'package:redix/words/app_language.dart';
+import 'package:redix/words/language_switch.dart';
 import 'package:redix/words/words.dart';
+
+import 'given.dart';
+import 'made_up_invoice.dart';
+import 'package:redix/config/local_config.dart';
+
+/// The app's session while it is open, and whether it is open: every case of a class shares the one open app.
+var _session = Session();
+var _appIsOpen = false;
+var _localConfig = LocalConfig();
+
+/// Every widget whose key starts with [start].
+Finder keyStartingWith(String start) => find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith(start));
 
 /// The steps every case is written in, each finding what it needs by its exact key.
 extension Steps on PatrolIntegrationTester {
@@ -21,21 +41,63 @@ extension Steps on PatrolIntegrationTester {
   /// Whether the phone's back has somewhere to go inside the app.
   bool get canGoBack => GoRouter.of(tester.element(find.byType(Scaffold).first)).canPop();
 
-  /// Starts the app as the phone would, from what it keeps.
+  /// Leaves the app on the sign-in screen, ready for the next case: the first case of a class opens the app, and every other one signs out of the one already open.
   Future<void> startApp() async {
-    final session = Session();
-    final language = AppLanguage();
-    await session.restore();
-    await language.restore();
-    final localConfig = LocalConfig();
-    await localConfig.restore();
-    await pumpWidgetAndSettle(RedixApp(session: session, language: language, localConfig: localConfig));
+    if (_appIsOpen) {
+      await _backToSignIn();
+    } else {
+      await _open();
+    }
+    if (!_localConfig.showsHomeDetails) {
+      await _localConfig.toggleHomeDetails();
+    }
   }
 
-  /// Closes the app and starts it again, for what must be kept for the next start.
-  Future<void> restartApp() async {
-    await pumpWidget(const SizedBox());
-    await startApp();
+  /// Closes the app's screens and starts it again, for what must be kept for the next start.
+  Future<void> restartApp() => _open();
+
+  /// Forgets all the phone keeps of the app's settings and words, as a first start finds it.
+  Future<void> forgetTheSettings() async {
+    await (await SharedPreferences.getInstance()).clear();
+  }
+
+  Future<void> _open() async {
+    if (_appIsOpen) {
+      await pumpWidget(const SizedBox());
+    }
+    _session = Session();
+    final language = AppLanguage();
+    await _session.restore();
+    await language.restore();
+    _localConfig = LocalConfig();
+    await _localConfig.restore();
+    await pumpWidgetAndSettle(RedixApp(session: _session, language: language, localConfig: _localConfig, capture: CameraWithAPicture()));
+    _appIsOpen = true;
+  }
+
+  /// Goes to Settings and signs out with its button, whatever screen the last case stopped on, and turns the app back to English if the case turned it to Arabic.
+  Future<void> _backToSignIn() async {
+    final context = tester.element(find.byType(Scaffold).first);
+    ScaffoldMessenger.of(context).clearSnackBars();
+    await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+    GoRouter.of(context).go(SettingsScreen.path);
+    await pumpAndSettle();
+    final signIn = find.byKey(SignInScreen.usernameKey);
+    final signOut = find.byKey(SettingsScreen.signOutKey);
+    final changePassword = find.byKey(ChangePasswordScreen.currentKey);
+    await until(() => signIn.evaluate().isNotEmpty || changePassword.evaluate().isNotEmpty || find.byKey(SettingsScreen.whoKey).evaluate().isNotEmpty);
+    if (signIn.evaluate().isEmpty && changePassword.evaluate().isEmpty) {
+      await goTo(this(signOut));
+      await signOutFromSettings();
+    }
+    if (changePassword.evaluate().isNotEmpty) {
+      await _session.signOut();
+    }
+    await reach(this(signIn));
+    if (Directionality.of(tester.element(signIn)) == TextDirection.rtl) {
+      await this(LanguageSwitch.englishKey).tap();
+      await until(() => Directionality.of(tester.element(signIn)) == TextDirection.ltr);
+    }
   }
 
   /// Types [username] and [password] on the sign-in screen and sends them, returning once the API has answered.
@@ -48,12 +110,97 @@ extension Steps on PatrolIntegrationTester {
     await answered(SignInScreen.submitKey);
   }
 
-  /// Signs out from the project list, through Settings, answering the question with yes.
+  /// Starts the app and signs [person] in, standing on the project list.
+  Future<void> onTheList(Person person) async {
+    await startApp();
+    await signIn(person.username, person.password);
+    await reach(this(ProjectsScreen.cardKey(person.projectId)));
+  }
+
+  /// Opens the project [projectId] from the list, standing on its home.
+  Future<void> openProject(String projectId) async {
+    await reach(this(ProjectsScreen.cardKey(projectId)));
+    await this(ProjectsScreen.cardKey(projectId)).tap();
+    await reach(this(HomeScreen.titleKey));
+  }
+
+  /// Signs [person] in and stands on the home of their project.
+  Future<void> onTheHome(Person person) async {
+    await onTheList(person);
+    await openProject(person.projectId);
+  }
+
+  /// Signs [person] in and stands on More info of their project.
+  Future<void> onMoreInfo(Person person) async {
+    await onTheHome(person);
+    await tapOn(HomeScreen.projectInfoKey(person.projectId));
+    await reach(this(ProjectInfoScreen.nameKey));
+  }
+
+  /// Signs [person] in and opens what [key] leads to from the home of their project.
+  Future<void> fromTheHome(Person person, Key key) async {
+    await onTheHome(person);
+    await tapOn(key);
+  }
+
+  /// Opens the menu [menu] and chooses [item].
+  Future<void> menuChoice(Key menu, Key item) async {
+    await tapOn(menu);
+    await reach(this(item));
+    await this(item).tap();
+  }
+
+  /// Types [name] into the dialog showing now and saves it.
+  Future<void> saveName(String name) async {
+    await reach(this(NameDialog.nameKey));
+    await this(NameDialog.nameKey).enterText(name);
+    await this(ChangeDialog.saveKey).tap();
+  }
+
+  /// Waits for the message of [wordKey] at the bottom of the screen, and checks it says [text].
+  Future<void> messageSays(String wordKey, String text) => says(messageKeyOf(wordKey).label, text);
+
+  /// Waits for the message of [wordKey] at the bottom of the screen.
+  Future<void> messageShows(String wordKey) => this(messageKeyOf(wordKey).label).waitUntilExists();
+
+  /// Signs out from the home of the project [projectId], through Settings.
+  Future<void> signOutFromTheHome(String projectId) async {
+    await this(HomeScreen.settingsKey(projectId)).tap();
+    await signOutFromSettings();
+  }
+
+  /// Signs out from the home and signs [person] in, standing on the home of their project.
+  Future<void> switchPersonTo(Person person, {required String projectId}) async {
+    await signOutFromTheHome(projectId);
+    await signIn(person.username, person.password);
+    await openProject(person.projectId);
+  }
+
+  /// How far down the screen [key] is.
+  double topOf(Key key) => tester.getTopLeft(find.byKey(key)).dy;
+
+  /// Drags the handle [handle] down by [distance], as reordering does.
+  Future<void> dragDown(Key handle, {double distance = 160}) async {
+    await tester.timedDrag(find.byKey(handle), Offset(0, distance), const Duration(milliseconds: 600));
+    await pumpAndSettle();
+  }
+
+  /// Whether the tick [key] of a permission is ticked.
+  bool isTicked(Key key) => tester.widget<CheckboxListTile>(find.byKey(key.body)).value!;
+
+  /// Whether the tick [key] of a permission can be changed.
+  bool canTick(Key key) => tester.widget<CheckboxListTile>(find.byKey(key.body)).onChanged != null;
+
+  /// Signs out from Settings, answering the question with yes.
+  Future<void> signOutFromSettings() async {
+    await tapOn(SettingsScreen.signOutKey);
+    await this(ConfirmDialog.confirmKey).tap();
+  }
+
+  /// Signs out from the project list, through Settings.
   Future<void> signOutFromTheList() async {
     await this(ProjectsScreen.settingsKey).tap();
-    await goTo(this(SettingsScreen.signOutKey));
-    await this(SettingsScreen.signOutKey).tap();
-    await this(ConfirmDialog.confirmKey).tap();
+    await signOutFromSettings();
   }
 
   /// Waits until [isTrue], because what a case waits for changes only once the API has answered.
@@ -70,11 +217,42 @@ extension Steps on PatrolIntegrationTester {
     await until(() => button.evaluate().isEmpty || tester.widget<ButtonStyleButton>(button).onPressed != null);
   }
 
+  /// Waits until the text [key] holds [part], and checks it does.
+  Future<void> saysContaining(Key key, String part) async {
+    final finder = find.byKey(key);
+    await until(() => finder.evaluate().isNotEmpty && (tester.widget<Text>(finder).data ?? '').contains(part));
+    expect(tester.widget<Text>(finder).data, contains(part));
+  }
+
   /// Waits until the text [key] says [text].
   Future<void> says(Key key, String text) async {
     final finder = find.byKey(key);
     await until(() => finder.evaluate().isNotEmpty && tester.widget<Text>(finder).data == text);
     expect(tester.widget<Text>(finder).data, text);
+  }
+
+  /// Waits until [finder] finds nothing, because a row leaves only once the API has answered.
+  Future<void> gone(PatrolFinder finder) async {
+    await until(() => finder.evaluate().isEmpty);
+    expect(finder, findsNothing);
+  }
+
+  /// What the field [key] holds.
+  String typed(Key key) => tester.widget<TextField>(find.byKey(key)).controller!.text;
+
+  /// Whether the button [key] can be pressed.
+  bool isEnabled(Key key) => tester.widget<ButtonStyleButton>(find.byKey(key)).enabled;
+
+  /// Brings the field [key] into view and types [text] into it.
+  Future<void> fill(Key key, String text) async {
+    await goTo(this(key));
+    await this(key).enterText(text);
+  }
+
+  /// Brings [key] into view and taps it.
+  Future<void> tapOn(Key key) async {
+    await goTo(this(key));
+    await this(key).tap();
   }
 
   /// Brings [finder] into view, above or below what shows now: one not built yet is further down the list.
@@ -84,9 +262,20 @@ extension Steps on PatrolIntegrationTester {
       await finder.scrollTo();
       return;
     }
-    if (finder.hitTestable().evaluate().isEmpty) {
+    for (var attempt = 0; attempt < 10 && finder.hitTestable().evaluate().isEmpty; attempt++) {
       await tester.ensureVisible(finder);
       await pumpAndSettle();
+      if (finder.hitTestable().evaluate().isEmpty) {
+        await Future<void>.delayed(const Duration(milliseconds: 300));
+      }
+    }
+  }
+
+  /// Scrolls up to [finder], which a long list stopped building once it was scrolled past.
+  Future<void> goUpTo(PatrolFinder finder) async {
+    await pumpAndSettle();
+    if (finder.evaluate().isEmpty) {
+      await finder.scrollTo(scrollDirection: AxisDirection.up);
     }
   }
 
@@ -98,6 +287,34 @@ extension Steps on PatrolIntegrationTester {
       await tester.ensureVisible(finder);
       await pumpAndSettle();
     }
+  }
+
+  /// The id in the key of the element whose key starts with [prefix] and that shows [text]: a case names what it makes and learns its id from that name once, then finds it by its key.
+  Future<String> idShowing(String prefix, String text) async {
+    await pumpAndSettle();
+    if (find.text(text).evaluate().isEmpty) {
+      await this(find.text(text)).scrollTo();
+    }
+    final keyed = this(find.ancestor(of: find.text(text), matching: keyStartingWith(prefix), matchRoot: true));
+    await keyed.waitUntilExists();
+    final ids = {for (final element in keyed.evaluate()) (element.widget.key! as ValueKey<String>).value.substring(prefix.length)}.where((id) => !id.contains('.')).toSet();
+    expect(ids, hasLength(1), reason: 'one $prefix showing $text');
+    return ids.single;
+  }
+
+  /// Swipes the row keyed [rowKey] from its end toward its start by [share] of its width, as removing it does, in whichever language the phone reads.
+  Future<void> swipeAway(Key rowKey, {double share = 0.8}) async {
+    final row = find.byKey(rowKey.swipe);
+    await goTo(this(row));
+    final distance = tester.getSize(row).width * share;
+    await tester.drag(row, Offset(Directionality.of(tester.element(row)) == TextDirection.rtl ? distance : -distance, 0));
+    await pumpAndSettle();
+  }
+
+  /// Pulls the list showing now down, which reads it again.
+  Future<void> pullDown() async {
+    await tester.fling(find.byType(Scrollable).first, const Offset(0, 500), 1200);
+    await pumpAndSettle();
   }
 
   /// Takes a guide's picture with the keyboard closed, because under Patrol it stays up once a field was typed in, even after the field loses focus.

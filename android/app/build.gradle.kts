@@ -38,6 +38,9 @@ android {
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
     }
 
+    // Which build the Patrol cases run on: profile is compiled as a release is, and keeps Patrol, which Flutter leaves out of a release.
+    testBuildType = System.getenv("REDIX_TEST_BUILD_TYPE") ?: "debug"
+
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
