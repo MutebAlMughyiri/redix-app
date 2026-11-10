@@ -176,6 +176,9 @@ mixin WordGetters {
   /// The word `attachments.cameraFailed`.
   String get attachmentsCameraFailed => text('attachments.cameraFailed');
 
+  /// The word `attachments.fileTooLarge`.
+  String get attachmentsFileTooLarge => text('attachments.fileTooLarge');
+
   /// The word `attachments.imageTooLarge`.
   String get attachmentsImageTooLarge => text('attachments.imageTooLarge');
 
