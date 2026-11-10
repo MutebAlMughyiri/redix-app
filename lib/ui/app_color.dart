@@ -34,7 +34,7 @@ enum AppColor {
   /// The ground of what is active or the user's own: an active project's chip, my custody, the QR code's reading.
   activeSurface(_primaryContainer),
 
-  /// The ground of what needs a look: what waits, on the dashboard.
+  /// The ground of what needs a look: what waits, on the summary.
   noticeSurface(_tertiaryContainer),
 
   /// The app's own color: the star of the default project.

@@ -1,6 +1,6 @@
-[Documentation](../README.md) › User guide › The dashboard and the reports
+[Documentation](../README.md) › User guide › The summary and the reports
 
-# The dashboard and the reports · اللوحة والتقارير
+# The summary and the reports · اللوحة والتقارير
 
 ## English
 

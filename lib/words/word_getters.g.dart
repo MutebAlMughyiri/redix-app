@@ -770,36 +770,6 @@ mixin WordGetters {
   /// The word `contracts.value`.
   String get contractsValue => text('contracts.value');
 
-  /// The word `dashboard.byCategory`.
-  String get dashboardByCategory => text('dashboard.byCategory');
-
-  /// The word `dashboard.completion`.
-  String get dashboardCompletion => text('dashboard.completion');
-
-  /// The word `dashboard.difference`.
-  String get dashboardDifference => text('dashboard.difference');
-
-  /// The word `dashboard.expenses`.
-  String get dashboardExpenses => text('dashboard.expenses');
-
-  /// The word `dashboard.loadFailed`.
-  String get dashboardLoadFailed => text('dashboard.loadFailed');
-
-  /// The word `dashboard.pending`.
-  String get dashboardPending => text('dashboard.pending');
-
-  /// The word `dashboard.pendingHint`.
-  String get dashboardPendingHint => text('dashboard.pendingHint');
-
-  /// The word `dashboard.revenue`.
-  String get dashboardRevenue => text('dashboard.revenue');
-
-  /// The word `dashboard.surplus`.
-  String get dashboardSurplus => text('dashboard.surplus');
-
-  /// The word `dashboard.surplusWithoutSales`.
-  String get dashboardSurplusWithoutSales => text('dashboard.surplusWithoutSales');
-
   /// The word `documents.add`.
   String get documentsAdd => text('documents.add');
 
@@ -1219,6 +1189,21 @@ mixin WordGetters {
 
   /// The word `expenses.unknownTable`.
   String get expensesUnknownTable => text('expenses.unknownTable');
+
+  /// The word `generalSettings.darkMode`.
+  String get generalSettingsDarkMode => text('generalSettings.darkMode');
+
+  /// The word `generalSettings.defaultProject`.
+  String get generalSettingsDefaultProject => text('generalSettings.defaultProject');
+
+  /// The word `generalSettings.defaultProjectHint`.
+  String get generalSettingsDefaultProjectHint => text('generalSettings.defaultProjectHint');
+
+  /// The word `generalSettings.switchProject`.
+  String get generalSettingsSwitchProject => text('generalSettings.switchProject');
+
+  /// The word `generalSettings.title`.
+  String get generalSettingsTitle => text('generalSettings.title');
 
   /// The word `history.accountChanged`.
   String get historyAccountChanged => text('history.accountChanged');
@@ -1934,21 +1919,6 @@ mixin WordGetters {
   /// The word `revenue.total`.
   String get revenueTotal => text('revenue.total');
 
-  /// The word `settings.darkMode`.
-  String get settingsDarkMode => text('settings.darkMode');
-
-  /// The word `settings.defaultProject`.
-  String get settingsDefaultProject => text('settings.defaultProject');
-
-  /// The word `settings.defaultProjectHint`.
-  String get settingsDefaultProjectHint => text('settings.defaultProjectHint');
-
-  /// The word `settings.switchProject`.
-  String get settingsSwitchProject => text('settings.switchProject');
-
-  /// The word `settings.title`.
-  String get settingsTitle => text('settings.title');
-
   /// The word `share.amountDiffers`.
   String get shareAmountDiffers => text('share.amountDiffers');
 
@@ -2041,6 +2011,36 @@ mixin WordGetters {
 
   /// The word `subgroups.new`.
   String get subgroupsNew => text('subgroups.new');
+
+  /// The word `summary.byCategory`.
+  String get summaryByCategory => text('summary.byCategory');
+
+  /// The word `summary.completion`.
+  String get summaryCompletion => text('summary.completion');
+
+  /// The word `summary.difference`.
+  String get summaryDifference => text('summary.difference');
+
+  /// The word `summary.expenses`.
+  String get summaryExpenses => text('summary.expenses');
+
+  /// The word `summary.loadFailed`.
+  String get summaryLoadFailed => text('summary.loadFailed');
+
+  /// The word `summary.pending`.
+  String get summaryPending => text('summary.pending');
+
+  /// The word `summary.pendingHint`.
+  String get summaryPendingHint => text('summary.pendingHint');
+
+  /// The word `summary.revenue`.
+  String get summaryRevenue => text('summary.revenue');
+
+  /// The word `summary.surplus`.
+  String get summarySurplus => text('summary.surplus');
+
+  /// The word `summary.surplusWithoutSales`.
+  String get summarySurplusWithoutSales => text('summary.surplusWithoutSales');
 
   /// The word `suppliers.addAndPick`.
   String get suppliersAddAndPick => text('suppliers.addAndPick');

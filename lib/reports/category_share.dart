@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../format/number_format.dart';
 import '../ui/part_keys.dart';
-import 'dashboard.dart';
+import 'summary.dart';
 
 /// A category's name and total over a bar of its share of its side, the one way the home's card and الإيرادات والمصروفات draw a category (deep review, 9 Nov 2026).
 class CategoryShare extends StatelessWidget {

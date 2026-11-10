@@ -4,7 +4,7 @@ import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/entries/table_picker.dart';
 import 'package:redix/expenses/payment_choices.dart';
-import 'package:redix/home/dashboard_card.dart';
+import 'package:redix/home/summary_card.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../support/entry_steps.dart';
@@ -29,7 +29,7 @@ void main() {
       final id = await $.idShowing('entries.row.', '700.00');
       await $.tapOn(EntriesScreen.rowKey(id));
       await $.tapOn(AddEntryScreen.sendDraftKey);
-      await $.says(DashboardCard.pendingKey.title, $.words.dashboardPending.replaceFirst('{0}', '1'));
+      await $.says(SummaryCard.pendingKey.title, $.words.summaryPending.replaceFirst('{0}', '1'));
     });
 
     phoneCase('a purchase draft is saved, changed and sent', ($) async {
@@ -68,8 +68,8 @@ void main() {
       final manager = await Given.manager();
       await Given.entry(manager, sent: false);
       await $.onTheHome(manager);
-      await $.reach($(DashboardCard.surplusKey));
-      expect($(DashboardCard.pendingKey), findsNothing);
+      await $.reach($(SummaryCard.surplusKey));
+      expect($(SummaryCard.pendingKey), findsNothing);
     });
 
     phoneCase('UC-028: without manageAnyEntry someone else\'s draft is not listed, so it cannot be sent', ($) async {

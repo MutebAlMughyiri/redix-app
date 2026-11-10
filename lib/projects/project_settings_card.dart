@@ -24,9 +24,9 @@ import 'project_info_screen.dart';
 /// the VAT refund, Approvals and Documents, then the project's own: More info, the user's own permissions, its users, its categories and items, its payment methods, and
 /// importing its settings, grayed until it is built (Muteb, 9 Nov 2026). Settings is an icon in the home's top bar.
 /// A finished project says first, in one line, that it is read-only (redix-api 93).
-class ProjectCard extends StatelessWidget {
+class ProjectSettingsCard extends StatelessWidget {
   /// The card of [project], calling [onOpen] with the route of the screen a button opens.
-  const ProjectCard({super.key, required this.project, required this.onOpen});
+  const ProjectSettingsCard({super.key, required this.project, required this.onOpen});
 
   /// The project this card shows.
   final Project project;

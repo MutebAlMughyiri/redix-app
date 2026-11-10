@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/settings/general_settings_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/words/language_switch.dart';
 
@@ -23,9 +23,9 @@ void main() {
   phoneClass('Sign out (UC-062)', () {
     phoneCase('signing out asks first, then leads to sign-in with no message', ($) async {
       await onTheProjectList($);
-      await $(ProjectsScreen.settingsKey).tap();
-      await $.goTo($(SettingsScreen.signOutKey));
-      await $(SettingsScreen.signOutKey).tap();
+      await $(ProjectsScreen.generalSettingsKey).tap();
+      await $.goTo($(GeneralSettingsScreen.signOutKey));
+      await $(GeneralSettingsScreen.signOutKey).tap();
       await $.reach($(ConfirmDialog.confirmKey));
       await $(ConfirmDialog.confirmKey).tap();
       await $.reach($(SignInScreen.usernameKey));
@@ -43,12 +43,12 @@ void main() {
 
     phoneCase('the chosen language stays after signing out', ($) async {
       await onTheProjectList($);
-      await $(ProjectsScreen.settingsKey).tap();
+      await $(ProjectsScreen.generalSettingsKey).tap();
       await $.goTo($(LanguageSwitch.arabicKey));
       await $(LanguageSwitch.arabicKey).tap();
-      await $.until(() => Directionality.of($.tester.element(find.byKey(SettingsScreen.languageKey))) == TextDirection.rtl);
-      await $.goTo($(SettingsScreen.signOutKey));
-      await $(SettingsScreen.signOutKey).tap();
+      await $.until(() => Directionality.of($.tester.element(find.byKey(GeneralSettingsScreen.languageKey))) == TextDirection.rtl);
+      await $.goTo($(GeneralSettingsScreen.signOutKey));
+      await $(GeneralSettingsScreen.signOutKey).tap();
       await $(ConfirmDialog.confirmKey).tap();
       await $.reach($(SignInScreen.usernameKey));
       expect(Directionality.of($.tester.element(find.byKey(SignInScreen.titleKey))), TextDirection.rtl);
@@ -56,11 +56,11 @@ void main() {
 
     phoneCase('Cancel changes nothing', ($) async {
       await onTheProjectList($);
-      await $(ProjectsScreen.settingsKey).tap();
-      await $.goTo($(SettingsScreen.signOutKey));
-      await $(SettingsScreen.signOutKey).tap();
+      await $(ProjectsScreen.generalSettingsKey).tap();
+      await $.goTo($(GeneralSettingsScreen.signOutKey));
+      await $(GeneralSettingsScreen.signOutKey).tap();
       await $(ConfirmDialog.cancelKey).tap();
-      await $.reach($(SettingsScreen.signOutKey));
+      await $.reach($(GeneralSettingsScreen.signOutKey));
       expect($(SignInScreen.usernameKey), findsNothing);
     });
 

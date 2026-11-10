@@ -49,7 +49,7 @@ The home of a project, `HomeScreen`:
 | A refused change says why | `showRefusalOf` | `a refused disable says why` |
 | A number may be typed in Arabic digits, since the app is Arabic first | `parseNumber` | `a typed number reads Western and Arabic digits and thousands separators` |
 | A finished project shows them with nothing to change (AC-04.1) | `Project.mayManageSettings` | `a finished project shows its methods with nothing to change` |
-| Without `manageSettings` there is no way in | `ProjectCard` | `without manageSettings there is no way in` |
+| Without `manageSettings` there is no way in | `ProjectSettingsCard` | `without manageSettings there is no way in` |
 | It fits 360 points wide in both languages (AC-N03) | `PaymentMethodsScreen` | `AC-N03` in `test/settings/account_test.dart` |
 
 The real app runs on a real phone against the real API in `patrol_test/settings/payment_methods_test.dart`, one case per rule.

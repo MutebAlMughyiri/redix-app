@@ -43,7 +43,7 @@ class CategoryTotal {
 }
 
 /// A side of a project's figures: what came in or what went out (deep review, 9 Nov 2026).
-enum DashboardSide {
+enum SummarySide {
   /// The revenue, رأس المال among it.
   revenue,
 
@@ -51,16 +51,16 @@ enum DashboardSide {
   expenses;
 
   /// This side's categories in [figures].
-  List<CategoryTotal> categoriesOf(DashboardFigures figures) => this == revenue ? figures.revenueCategories : figures.categories;
+  List<CategoryTotal> categoriesOf(SummaryFigures figures) => this == revenue ? figures.revenueCategories : figures.categories;
 
   /// This side's total in [figures].
-  double totalOf(DashboardFigures figures) => this == revenue ? figures.revenue : figures.expenses;
+  double totalOf(SummaryFigures figures) => this == revenue ? figures.revenue : figures.expenses;
 }
 
 /// A project's figures at a glance (UC-049, UC-063).
-class DashboardFigures {
+class SummaryFigures {
   /// The figures as the API answers them.
-  DashboardFigures.fromJson(Map<String, dynamic> json)
+  SummaryFigures.fromJson(Map<String, dynamic> json)
     : revenue = (json['revenue'] as num).toDouble(),
       expenses = (json['expenses'] as num).toDouble(),
       surplus = (json['surplus'] as num).toDouble(),
@@ -72,7 +72,7 @@ class DashboardFigures {
       revenueCategories = [for (final row in json['revenueCategories'] as List<dynamic>) CategoryTotal.fromJson(row as Map<String, dynamic>)];
 
   /// Nothing yet.
-  DashboardFigures.none() : revenue = 0, expenses = 0, surplus = 0, wasReconciled = false, reconciliationDifference = 0, waiting = const WaitingFigures.none(), completionPercent = 0, categories = const [], revenueCategories = const [];
+  SummaryFigures.none() : revenue = 0, expenses = 0, surplus = 0, wasReconciled = false, reconciliationDifference = 0, waiting = const WaitingFigures.none(), completionPercent = 0, categories = const [], revenueCategories = const [];
 
   /// Capital, VAT refunds and sales.
   final double revenue;
@@ -102,10 +102,10 @@ class DashboardFigures {
   final List<CategoryTotal> revenueCategories;
 }
 
-/// A project's dashboard (UC-049), read again whenever its home comes back into view.
-class Dashboard extends ApiObject<DashboardFigures> {
-  /// The dashboard of the project [projectId], seen through [session].
-  Dashboard(Session session, this.projectId) : super(session, '/projects/$projectId/dashboard', 'dashboard', (json) => DashboardFigures.fromJson(json! as Map<String, dynamic>), DashboardFigures.none());
+/// A project's summary (UC-049), read again whenever its home comes back into view.
+class Summary extends ApiObject<SummaryFigures> {
+  /// The summary of the project [projectId], seen through [session].
+  Summary(Session session, this.projectId) : super(session, '/projects/$projectId/summary', 'summary', (json) => SummaryFigures.fromJson(json! as Map<String, dynamic>), SummaryFigures.none());
 
   /// The project.
   final String projectId;

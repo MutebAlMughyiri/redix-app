@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
-import 'package:redix/home/dashboard_card.dart';
+import 'package:redix/home/summary_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/item_reports_screen.dart';
@@ -39,10 +39,10 @@ void main() {
       await approved(manager, expense: 120.75);
       await $.onTheHome(manager);
       await $.homeFigures(surplus: '(120.75)', revenue: '0.00', expenses: '120.75');
-      await $.reach($(DashboardCard.expensesKey));
-      await $(DashboardCard.expensesKey.body).tap();
-      final id = await $.idShowing('dashboard.category.', table.category);
-      await $.says(DashboardCard.categoryKey(id).trailing, '120.75');
+      await $.reach($(SummaryCard.expensesKey));
+      await $(SummaryCard.expensesKey.body).tap();
+      final id = await $.idShowing('summary.category.', table.category);
+      await $.says(SummaryCard.categoryKey(id).trailing, '120.75');
       await $.openReportCategory(manager, table.category);
       await $.says(ItemReportsScreen.itemKey(table.itemId).trailing, '120.75');
       await $.tapOn(ItemReportsScreen.itemKey(table.itemId));
@@ -53,22 +53,22 @@ void main() {
       final manager = await Given.manager();
       await approved(manager, revenue: 300, expense: 100);
       await $.onTheHome(manager);
-      await $.says(DashboardCard.completionKey, '${$.words.dashboardCompletion}: 33.33%');
+      await $.says(SummaryCard.completionKey, '${$.words.summaryCompletion}: 33.33%');
     });
 
     phoneCase('UC-063: a whole percent shows with no decimals', ($) async {
       final manager = await Given.manager();
       await approved(manager, revenue: 200, expense: 100);
       await $.onTheHome(manager);
-      await $.says(DashboardCard.completionKey, '${$.words.dashboardCompletion}: 50%');
+      await $.says(SummaryCard.completionKey, '${$.words.summaryCompletion}: 50%');
     });
 
     phoneCase('UC-063: expenses past the revenue take the completion over 100, and the bar stops full', ($) async {
       final manager = await Given.manager();
       await approved(manager, revenue: 300, expense: 500);
       await $.onTheHome(manager);
-      await $.says(DashboardCard.completionKey, '${$.words.dashboardCompletion}: 166.67%');
-      expect($.tester.widget<LinearProgressIndicator>(find.byKey(DashboardCard.completionBarKey)).value, 1);
+      await $.says(SummaryCard.completionKey, '${$.words.summaryCompletion}: 166.67%');
+      expect($.tester.widget<LinearProgressIndicator>(find.byKey(SummaryCard.completionBarKey)).value, 1);
     });
 
     phoneCase('UC-063: with no revenue the completion stays at 0', ($) async {
@@ -76,7 +76,7 @@ void main() {
       await approved(manager, expense: 100);
       await $.onTheHome(manager);
       await $.homeFigures(surplus: '(100.00)', revenue: '0.00', expenses: '100.00');
-      await $.says(DashboardCard.completionKey, '${$.words.dashboardCompletion}: 0%');
+      await $.says(SummaryCard.completionKey, '${$.words.summaryCompletion}: 0%');
     });
 
     phoneCase('BR-26: an issued report keeps its figures when a later entry moves the home', ($) async {
@@ -88,7 +88,7 @@ void main() {
       await $.says(PeriodicReportScreen.surplusKey, '200.00');
       await $.back();
       await $.back();
-      await $.says(DashboardCard.surplusKey, '150.00');
+      await $.says(SummaryCard.surplusKey, '150.00');
     });
 
     phoneCase('the next report shows the expenses since the last one', ($) async {

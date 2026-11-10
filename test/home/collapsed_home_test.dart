@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:redix/home/dashboard_card.dart';
+import 'package:redix/home/summary_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/settings/general_settings_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,13 +31,13 @@ void main() {
 
   testWidgets('redix-app #91 R1: the button beside Settings hides the summary, and a second tap shows it', (tester) async {
     final api = await openHome(tester);
-    expect(find.byKey(DashboardCard.cardKey), findsOneWidget);
+    expect(find.byKey(SummaryCard.cardKey), findsOneWidget);
 
     await tapCollapse(tester, api);
-    expect(find.byKey(DashboardCard.cardKey), findsNothing);
+    expect(find.byKey(SummaryCard.cardKey), findsNothing);
 
     await tapCollapse(tester, api);
-    expect(find.byKey(DashboardCard.cardKey), findsOneWidget);
+    expect(find.byKey(SummaryCard.cardKey), findsOneWidget);
   });
 
   testWidgets('R1: the button sits right before Settings in the top bar', (tester) async {
@@ -45,8 +45,8 @@ void main() {
 
     final actions = tester.widget<AppBar>(find.byType(AppBar)).actions!;
     expect((actions[0] as IconButton).key, HomeScreen.collapseKey);
-    expect(find.byKey(HomeScreen.settingsKey('project-0')), findsOneWidget);
-    expect(tester.getCenter(find.byKey(HomeScreen.collapseKey)).dx, lessThan(tester.getCenter(find.byKey(HomeScreen.settingsKey('project-0'))).dx));
+    expect(find.byKey(HomeScreen.generalSettingsKey('project-0')), findsOneWidget);
+    expect(tester.getCenter(find.byKey(HomeScreen.collapseKey)).dx, lessThan(tester.getCenter(find.byKey(HomeScreen.generalSettingsKey('project-0'))).dx));
   });
 
   testWidgets('R4: collapsed, the project\'s buttons are gone too', (tester) async {
@@ -82,7 +82,7 @@ void main() {
   testWidgets('R6: it opens the way it was left after a restart', (tester) async {
     await openHome(tester, preferences: {stateKey: 0});
 
-    expect(find.byKey(DashboardCard.cardKey), findsNothing);
+    expect(find.byKey(SummaryCard.cardKey), findsNothing);
     expect(iconOf(Icons.unfold_more), findsOneWidget);
   });
 
@@ -107,24 +107,24 @@ void main() {
   testWidgets('R8: a key not found starts expanded, and is set to 1', (tester) async {
     await openHome(tester);
 
-    expect(find.byKey(DashboardCard.cardKey), findsOneWidget);
+    expect(find.byKey(SummaryCard.cardKey), findsOneWidget);
     expect(await kept(), 1);
   });
 
   testWidgets('R8: a key found at 1 starts expanded', (tester) async {
     await openHome(tester, preferences: {stateKey: 1});
 
-    expect(find.byKey(DashboardCard.cardKey), findsOneWidget);
+    expect(find.byKey(SummaryCard.cardKey), findsOneWidget);
     expect(await kept(), 1);
   });
 
   testWidgets('R9: it survives signing out', (tester) async {
     final api = await openHome(tester, preferences: {stateKey: 0});
 
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.settingsKey('project-0'))));
-    await tester.ensureVisible(find.byKey(SettingsScreen.signOutKey));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.generalSettingsKey('project-0'))));
+    await tester.ensureVisible(find.byKey(GeneralSettingsScreen.signOutKey));
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(SettingsScreen.signOutKey)));
+    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.signOutKey)));
     await tester.pumpAndSettle();
 
     expect(await kept(), 0);
@@ -137,8 +137,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 16));
 
-    expect(find.byKey(DashboardCard.cardKey), findsNothing);
+    expect(find.byKey(SummaryCard.cardKey), findsNothing);
     await tester.pumpAndSettle();
-    expect(find.byKey(DashboardCard.cardKey), findsNothing);
+    expect(find.byKey(SummaryCard.cardKey), findsNothing);
   });
 }

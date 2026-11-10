@@ -110,7 +110,7 @@ void main() {
 
     expect(text(tester, ProjectsScreen.titleKey), 'en projects.choose');
     expect(text(tester, ProjectsScreen.hintKey), 'en projects.chooseHint');
-    expect(find.byKey(HomeScreen.settingsKey('project-0')), findsNothing);
+    expect(find.byKey(HomeScreen.generalSettingsKey('project-0')), findsNothing);
   });
 
   testWidgets('a card shows its units, roles and status', (tester) async {

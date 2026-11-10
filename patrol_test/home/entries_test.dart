@@ -5,7 +5,7 @@ import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
-import 'package:redix/home/dashboard_card.dart';
+import 'package:redix/home/summary_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/app_color.dart';
 import 'package:redix/ui/part_keys.dart';
@@ -107,10 +107,10 @@ void main() {
       final manager = await Given.manager();
       final entry = await Given.entry(manager);
       await $.onTheHome(manager);
-      await $.reach($(DashboardCard.pendingKey));
+      await $.reach($(SummaryCard.pendingKey));
       await $.swipeAway(EntriesScreen.rowKey(entry));
       await $.gone($(EntriesScreen.rowKey(entry)));
-      await $.gone($(DashboardCard.pendingKey));
+      await $.gone($(SummaryCard.pendingKey));
     });
 
     phoneCase('coming back from approving reads the latest entries again', ($) async {

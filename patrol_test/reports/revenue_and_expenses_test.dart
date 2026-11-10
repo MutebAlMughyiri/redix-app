@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/reports/dashboard.dart';
+import 'package:redix/reports/summary.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/item_reports_screen.dart';
 import 'package:redix/reports/report_files.dart';
@@ -36,7 +36,7 @@ void main() {
       final table = await Given.firstPurchaseTable(manager);
       await onReports($, manager);
       await $.idShowing('itemReports.category.', table.category);
-      await $.tapOn(ItemReportsScreen.sideOptionKey(DashboardSide.revenue));
+      await $.tapOn(ItemReportsScreen.sideOptionKey(SummarySide.revenue));
       await $.pumpAndSettle();
       await $.idShowing('itemReports.category.', 'استرجاع ضرائب');
       expect(find.text(table.category), findsNothing);
@@ -74,7 +74,7 @@ void main() {
       final partner = await Given.partner(manager, 'هيثم');
       await Given.entriesApproved(manager, [await Given.partnerMoney(manager, partner, amount: 500)]);
       await onReports($, manager);
-      await $.tapOn(ItemReportsScreen.sideOptionKey(DashboardSide.revenue));
+      await $.tapOn(ItemReportsScreen.sideOptionKey(SummarySide.revenue));
       await $.pumpAndSettle();
       await openCategory($, 'رأس المال');
       final item = await $.idShowing('itemReports.item.', 'رأس المال');
@@ -111,7 +111,7 @@ void main() {
       final other = await Given.partner(manager, 'هيثم');
       await Given.entriesApproved(manager, [await Given.partnerMoney(manager, own), await Given.partnerMoney(manager, other)]);
       await onReports($, member);
-      await $.tapOn(ItemReportsScreen.sideOptionKey(DashboardSide.revenue));
+      await $.tapOn(ItemReportsScreen.sideOptionKey(SummarySide.revenue));
       await $.pumpAndSettle();
       await openCategory($, 'رأس المال');
       final item = await $.idShowing('itemReports.item.', 'رأس المال');

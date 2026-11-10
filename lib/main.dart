@@ -41,7 +41,7 @@ import 'offline/outbox.dart';
 import 'offline/project_sync.dart';
 import 'offline/waiting_screen.dart';
 import 'projects/members.dart';
-import 'reports/dashboard.dart';
+import 'reports/summary.dart';
 import 'reports/item_report.dart';
 import 'reports/item_report_screen.dart';
 import 'reports/item_reports_screen.dart';
@@ -59,7 +59,7 @@ import 'projects/registered_projects_screen.dart';
 import 'projects/project.dart';
 import 'settings/payment_methods.dart';
 import 'settings/payment_methods_screen.dart';
-import 'settings/settings_screen.dart';
+import 'settings/general_settings_screen.dart';
 import 'sharing/attachable_entries.dart';
 import 'sharing/share_screen.dart';
 import 'structure/categories.dart';
@@ -144,7 +144,7 @@ class _RedixAppState extends State<RedixApp> {
   late final _accountsOf = _kept((projectId) => Accounts(widget.session, projectId));
   late final _reconciliationsOf = _kept((projectId) => Reconciliations(widget.session, projectId));
   late final _historyOf = _kept((projectId) => AccountHistory(widget.session, projectId));
-  late final _dashboardOf = _kept((projectId) => Dashboard(widget.session, projectId));
+  late final _summaryOf = _kept((projectId) => Summary(widget.session, projectId));
   late final _capitalOf = _kept((projectId) => Capital(widget.session, projectId));
   late final _membersOf = _kept((projectId) => Members(widget.session, projectId));
   late final _partnersOf = _kept((projectId) => Partners(widget.session, projectId));
@@ -191,8 +191,8 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session, language: widget.language)),
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
       GoRoute(
-        path: SettingsScreen.path,
-        builder: (context, state) => SettingsScreen(
+        path: GeneralSettingsScreen.path,
+        builder: (context, state) => GeneralSettingsScreen(
           session: widget.session,
           projects: _projects,
           project: switch (state.extra) {
@@ -208,7 +208,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.projectId, projects: _projects, accounts: _accountsOf(state.projectId), outbox: _outbox, sync: _sync, entries: _entriesOf(state.projectId), notifications: _notifications, dashboard: _dashboardOf(state.projectId), localConfig: widget.localConfig),
+        builder: (context, state) => HomeScreen(projectId: state.projectId, projects: _projects, accounts: _accountsOf(state.projectId), outbox: _outbox, sync: _sync, entries: _entriesOf(state.projectId), notifications: _notifications, summary: _summaryOf(state.projectId), localConfig: widget.localConfig),
       ),
       GoRoute(
         path: ApprovalsScreen.path,
@@ -277,7 +277,7 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(
         path: ItemReportsScreen.path,
-        builder: (context, state) => ItemReportsScreen(project: state.extra! as Project, dashboard: _dashboardOf(state.projectId)),
+        builder: (context, state) => ItemReportsScreen(project: state.extra! as Project, summary: _summaryOf(state.projectId)),
       ),
       GoRoute(
         path: PeriodicReportScreen.path,

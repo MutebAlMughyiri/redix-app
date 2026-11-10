@@ -329,7 +329,7 @@ void main() {
 
     await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
 
-    expect(api.sentReads, contains('/projects/project-0/dashboard'));
+    expect(api.sentReads, contains('/projects/project-0/summary'));
   });
 
   for (final status in ['draft', 'pendingApproval', 'rejected']) {
@@ -405,7 +405,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-    expect(api.sentReads, contains('/projects/project-0/dashboard'));
+    expect(api.sentReads, contains('/projects/project-0/summary'));
     expect(api.sentReads, contains('/projects'));
   });
 

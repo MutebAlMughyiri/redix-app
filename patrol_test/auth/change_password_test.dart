@@ -3,7 +3,7 @@ import 'package:patrol/patrol.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/settings/general_settings_screen.dart';
 
 import '../support/given.dart';
 import '../support/pc.dart';
@@ -57,14 +57,14 @@ void main() {
     phoneCase('opened from Settings, the screen has a way back, and the change is kept', ($) async {
       final manager = await Given.manager();
       await $.onTheList(manager);
-      await $(ProjectsScreen.settingsKey).tap();
-      await $.goTo($(SettingsScreen.changePasswordKey));
-      await $(SettingsScreen.changePasswordKey).tap();
+      await $(ProjectsScreen.generalSettingsKey).tap();
+      await $.goTo($(GeneralSettingsScreen.changePasswordKey));
+      await $(GeneralSettingsScreen.changePasswordKey).tap();
       await $.reach($(ChangePasswordScreen.currentKey));
       expect($.canGoBack, isTrue);
       await $.back();
-      await $.reach($(SettingsScreen.changePasswordKey));
-      await $(SettingsScreen.changePasswordKey).tap();
+      await $.reach($(GeneralSettingsScreen.changePasswordKey));
+      await $(GeneralSettingsScreen.changePasswordKey).tap();
       final chosen = 'Chosen-${Given.unique()}';
       await sendChange($, manager.password, chosen, chosen);
       await $.reach($(ProjectsScreen.cardKey(manager.projectId)));

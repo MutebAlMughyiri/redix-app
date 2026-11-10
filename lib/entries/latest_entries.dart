@@ -5,14 +5,14 @@ import '../projects/project.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'entries_screen.dart';
-import 'entry_tile.dart';
+import 'entry_card.dart';
 import 'project_entries.dart';
 
 /// The project's entries on its home (UC-037, redix-app #84): the latest five by anyone, a spinner while they are first read, a search beside the heading, and the way to all of
 /// them. It counts nothing: each row says where it stands (Muteb, 7 Nov 2026).
-class HomeEntries extends StatelessWidget {
+class LatestEntries extends StatelessWidget {
   /// The entries of [project], in [entries], calling [onOpen] with the route of what is tapped, so the home reads its figures again on coming back, and [onRemoved] once a swipe removes one (findings row 189).
-  const HomeEntries({super.key, required this.project, required this.entries, required this.onOpen, required this.onRemoved});
+  const LatestEntries({super.key, required this.project, required this.entries, required this.onOpen, required this.onRemoved});
 
   /// How many of the latest show.
   static const latest = 5;
@@ -59,7 +59,7 @@ class HomeEntries extends StatelessWidget {
                 child: Center(child: CircularProgressIndicator(key: HomeScreen.entriesLoadingKey)),
               ),
             if (!entries.isLoading && entries.all.isEmpty) Text(entries.message.isEmpty ? words.entriesEmpty : words.text(entries.message), key: HomeScreen.entriesEmptyKey(project.id)),
-            for (final entry in entries.all.take(latest)) EntryListTile(project: project, entries: entries, entry: entry, onOpen: onOpen, onRemoved: onRemoved),
+            for (final entry in entries.all.take(latest)) SwipeableEntryCard(project: project, entries: entries, entry: entry, onOpen: onOpen, onRemoved: onRemoved),
             Align(
               alignment: AlignmentDirectional.centerEnd,
               child: TextButton(

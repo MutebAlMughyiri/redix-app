@@ -5,7 +5,7 @@ import 'package:redix/auth/session.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/settings/general_settings_screen.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/confirm_dialog.dart';
@@ -185,9 +185,9 @@ void main() {
     final api = apiWithBiometrics();
     final prompt = FakePrompt();
     await pumpRedix(tester, api, stored: {'session': keptBiometricSession}, prompt: prompt);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.generalSettingsKey)));
 
-    await scrollAndTap(tester, api, SettingsScreen.signOutKey);
+    await scrollAndTap(tester, api, GeneralSettingsScreen.signOutKey);
     await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
     expect(find.byKey(SignInScreen.unlockKey), findsNothing);

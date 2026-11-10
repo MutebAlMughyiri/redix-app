@@ -82,10 +82,10 @@ The account history, `AccountHistoryScreen` at `/projects/:projectId/accounts/hi
 | History reads by its project alone, every account or one, everyone or What I did, a page at a time (R17-R22) | `AccountHistory`, `AccountHistoryScreen` | `transfers_history_test.dart`: the History group; the isolation cases H1-H15 in redix-api `AccountHistoryTests` |
 | Without `manageSettings` the accounts show with nothing to change (AC-22.1) | `Project.mayManageSettings` | `accounts_test.dart`: `without manageSettings the accounts show with nothing to change (AC-22.1)` |
 | A finished project shows them with nothing to change (AC-04.1) | `Project.mayManageSettings` | `accounts_test.dart`: `a finished project shows its accounts with nothing to change` |
-| A custodian sees their custody on the home, and nobody else does (AC-22.1) | `MyCustody`, `Accounts.mine` | `accounts_test.dart`: `a custodian sees their custody on the home, and nobody else does (AC-22.1)` |
+| A custodian sees their custody on the home, and nobody else does (AC-22.1) | `CustodyCard`, `Accounts.mine` | `accounts_test.dart`: `a custodian sees their custody on the home, and nobody else does (AC-22.1)` |
 | A disabled custody leaves the home | `Accounts.mine` | `accounts_test.dart`: `a disabled custody leaves the home` |
 | Each control shows to whoever holds its permission, and is gray or absent without it | The screen | `permission_gates_test.dart`: Add an account, تحديث on Accounts, Transfer on Accounts |
-| It fits 360 points wide in both languages (AC-N03) | `AccountsScreen`, `MyCustody` | `AC-N03` in `test/settings/account_test.dart` |
+| It fits 360 points wide in both languages (AC-N03) | `AccountsScreen`, `CustodyCard` | `AC-N03` in `test/settings/account_test.dart` |
 
 The real app runs on a real phone against the real API in `patrol_test/accounts/accounts_test.dart`, `actual_balances_test.dart`, `transfers_history_test.dart`, `patrol_test/home/custody_test.dart` and `patrol_test/money/account_balance_figures_test.dart`, one case per rule.
 

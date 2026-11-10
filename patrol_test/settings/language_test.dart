@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/settings/general_settings_screen.dart';
 import 'package:redix/words/language_switch.dart';
 import 'package:redix/words/no_words_screen.dart';
 
@@ -25,8 +25,8 @@ Future<void> reads(PatrolIntegrationTester $, Key key, TextDirection direction) 
 Future<Person> onSettings(PatrolIntegrationTester $) async {
   final manager = await Given.manager();
   await $.onTheList(manager);
-  await $(ProjectsScreen.settingsKey).tap();
-  await $.reach($(SettingsScreen.languageKey));
+  await $(ProjectsScreen.generalSettingsKey).tap();
+  await $.reach($(GeneralSettingsScreen.languageKey));
   return manager;
 }
 
@@ -44,9 +44,9 @@ void main() {
       await $.goTo($(LanguageSwitch.arabicKey));
       await $.picture('language');
       await $(LanguageSwitch.arabicKey).tap();
-      await reads($, SettingsScreen.languageKey, TextDirection.rtl);
+      await reads($, GeneralSettingsScreen.languageKey, TextDirection.rtl);
       await $.says(LanguageSwitch.arabicKey, 'العربية');
-      await $.tapOn(SettingsScreen.switchProjectKey);
+      await $.tapOn(GeneralSettingsScreen.switchProjectKey);
       await $.reach($(ProjectsScreen.titleKey));
       await reads($, ProjectsScreen.titleKey, TextDirection.rtl);
     });
@@ -55,10 +55,10 @@ void main() {
       await onSettings($);
       await $.goTo($(LanguageSwitch.arabicKey));
       await $(LanguageSwitch.arabicKey).tap();
-      await reads($, SettingsScreen.languageKey, TextDirection.rtl);
+      await reads($, GeneralSettingsScreen.languageKey, TextDirection.rtl);
       await $.goTo($(LanguageSwitch.englishKey));
       await $(LanguageSwitch.englishKey).tap();
-      await reads($, SettingsScreen.languageKey, TextDirection.ltr);
+      await reads($, GeneralSettingsScreen.languageKey, TextDirection.ltr);
       await $.says(LanguageSwitch.englishKey, 'English');
     });
 
@@ -84,7 +84,7 @@ void main() {
       await onSettings($);
       await $.goTo($(LanguageSwitch.arabicKey));
       await $(LanguageSwitch.arabicKey).tap();
-      await reads($, SettingsScreen.languageKey, TextDirection.rtl);
+      await reads($, GeneralSettingsScreen.languageKey, TextDirection.rtl);
       await $.restartApp();
       await $.reach($(ProjectsScreen.titleKey));
       await reads($, ProjectsScreen.titleKey, TextDirection.rtl);
@@ -92,12 +92,12 @@ void main() {
 
     phoneCase('without a network the language stays, and the app says switching needs one', ($) async {
       await onSettings($);
-      final before = directionOf($, SettingsScreen.languageKey);
+      final before = directionOf($, GeneralSettingsScreen.languageKey);
       await Pc.cutNetwork();
       await $.goTo($(LanguageSwitch.arabicKey));
       await $(before == TextDirection.ltr ? LanguageSwitch.arabicKey : LanguageSwitch.englishKey).tap();
       await $.says(LanguageSwitch.messageKey, $.words.myAccountLanguageNeedsNetwork);
-      expect(directionOf($, SettingsScreen.languageKey), before);
+      expect(directionOf($, GeneralSettingsScreen.languageKey), before);
     });
 
     phoneCase('a first start without a network shows no words and retries', ($) async {

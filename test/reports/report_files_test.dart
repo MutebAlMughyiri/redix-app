@@ -114,8 +114,8 @@ void main() {
 
   testWidgets('AC-33.1: an item report hands on its PDF', (tester) async {
     final (:api, :capture) = await openReports(tester, (api) {
-      api.dashboardAnswer = {
-        ...api.dashboardAnswer,
+      api.summaryAnswer = {
+        ...api.summaryAnswer,
         'categories': [
           {
             'id': 'category-1',

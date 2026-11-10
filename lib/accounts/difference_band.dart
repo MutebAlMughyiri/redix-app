@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../ui/app_color.dart';
 import '../ui/amount_line.dart';
 
-/// The reconciliation difference as a band, red while it is not zero (BR-08): the one look the dashboard and Accounts both show (findings row 166).
+/// The reconciliation difference as a band, red while it is not zero (BR-08): the one look the summary and Accounts both show (findings row 166).
 class DifferenceBand extends StatelessWidget {
   /// The band saying [label] and [difference], its figure keyed [figureKey] and its label by that key's label part.
   const DifferenceBand({super.key, required this.label, required this.difference, required this.figureKey});

@@ -8,9 +8,9 @@ import 'accounts.dart';
 import '../ui/app_color.dart';
 
 /// What the signed-in user holds, on the project's home (AC-22.1): one card per account, and nothing for someone who holds none.
-class MyCustody extends StatelessWidget {
+class CustodyCard extends StatelessWidget {
   /// The cards of the signed-in user's own accounts among [accounts].
-  const MyCustody({super.key, required this.accounts});
+  const CustodyCard({super.key, required this.accounts});
 
   /// The project's accounts.
   final Accounts accounts;

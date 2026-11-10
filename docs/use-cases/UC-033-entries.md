@@ -19,11 +19,11 @@
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| AC-22.1, R1, R2, R3, R15: the home lists the project's latest five by anyone under القيود, someone else's saying who entered it; it counts none of mine waiting or rejected (Muteb, 7 Nov 2026) | `HomeEntries`, `EntryTile` | `entries_test.dart`: AC-22.1, R1, R2, R3, R15 |
+| AC-22.1, R1, R2, R3, R15: the home lists the project's latest five by anyone under القيود, someone else's saying who entered it; it counts none of mine waiting or rejected (Muteb, 7 Nov 2026) | `LatestEntries`, `EntryCard` | `entries_test.dart`: AC-22.1, R1, R2, R3, R15 |
 | A row says where it stands by its frame's color alone, with no status words and no reason: teal a draft, orange waiting, red rejected, plain once approved or reversed; the entry's page says the status and the reason (Muteb, 9 Nov 2026) | `EntryStatus.color`, `SwipeToRemove.side` | `entries_test.dart`: Muteb, 9 Nov 2026: a row says where it stands by its frame alone; a reversed entry says so on its page |
-| While the entries are first read, the home shows a spinner under القيود, and the rows once they come | `HomeEntries`, `HomeScreen.entriesLoadingKey` | `entries_test.dart`: the home shows a spinner under القيود |
-| R3, R14: with none of mine the home still lists the project's; with none at all it keeps its heading, search and the way to all | `HomeEntries` | `entries_test.dart`: R3, R14; R14 |
-| R4: the search beside القيود opens the list ready to type | `HomeEntries`, `EntriesScreen.startsSearching` | `entries_test.dart`: search, R4 |
+| While the entries are first read, the home shows a spinner under القيود, and the rows once they come | `LatestEntries`, `HomeScreen.entriesLoadingKey` | `entries_test.dart`: the home shows a spinner under القيود |
+| R3, R14: with none of mine the home still lists the project's; with none at all it keeps its heading, search and the way to all | `LatestEntries` | `entries_test.dart`: R3, R14; R14 |
+| R4: the search beside القيود opens the list ready to type | `LatestEntries`, `EntriesScreen.startsSearching` | `entries_test.dart`: search, R4 |
 | R8, R16: the text finds the item, supplier and amount, Arabic spelling read as one and digits in either script | `EntryFilter.keeps`, `EntryRow.searchText` | `entries_test.dart`: search, R8, R16 |
 | R8: a kind and a status keep what holds both; mine keeps mine; clearing shows all | `EntryFilter` | `entries_test.dart`: search, R8: a kind and a status |
 | R8: a period keeps the entries dated inside it, both ends included | `EntryFilter.keeps` | `entries_test.dart`: search, R8: a period |
@@ -36,7 +36,7 @@
 | What is approved is only reversed, by حذف, and only by whoever decides; its تعديل is grayed, saying an approved entry does not change | `AddEntryScreen._readingActions` | `entries_test.dart`: what is approved; an approved bill |
 | AC-50.1: reversing asks why, and the entry's page then says it was reversed | `ReverseSheet`, `ProjectEntries.reverse` | `entries_test.dart`: AC-50.1 |
 | القيود lists every kind of entry: expenses, revenue and partners' money, each named by its item or partner and saying what it is; any of them opens in Add entry to change or fix, for whoever may enter its table (redix-api #110) | `EntryRow.title`, `kindWordKey`, `EntryKind.recordedWith` | `one_entry_test.dart`: No Revenue screen; R14, two tests |
-| A swipe deletes an entry with no question, where `EntryRow.allows` lets the user delete it | `EntryListTile`, `SwipeToRemove` | `entries_test.dart`: redix-api #102: a swipe deletes a draft with no question; without Delete entries a bill does not swipe |
+| A swipe deletes an entry with no question, where `EntryRow.allows` lets the user delete it | `SwipeableEntryCard`, `SwipeToRemove` | `entries_test.dart`: redix-api #102: a swipe deletes a draft with no question; without Delete entries a bill does not swipe |
 | AC-19.1: a rejected entry opens with its reason, and holds what it held | `AddEntryScreen._openEntry` | `entries_test.dart`: the reason shows at the top |
 | R12, D10: a contractor payment opens in its contract's table under the title تعديل, and goes back to its own route | `AddEntryScreen._openEntry`, `EntryTables.tableOf` | `entries_test.dart`: R12, D10 |
 | Saving goes to that entry, with its id, file and figures | `EntryRecording.record` | `entries_test.dart`: saving goes to that entry |

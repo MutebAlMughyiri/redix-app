@@ -20,7 +20,7 @@ lib/
     accounts.dart           A project's accounts and cash custodies, and the one way to change them
     accounts_screen.dart    A project's bank accounts and cash custodies: everyone with access sees them, and whoever keeps the settings adds, changes and disables them
     actual_balances_screen.dart The actual balances against the books, from the home, and تحديث to enter them again
-    my_custody.dart         What the signed-in user holds, on the project's home: one card per account, and nothing for someone who holds none
+    custody_card.dart         What the signed-in user holds, on the project's home: one card per account, and nothing for someone who holds none
     offered_accounts.dart   What the signed-in user's entry may be paid from
     reconcile_screen.dart   What each account and custody really holds, with the total and the difference as they are typed
     reconciliation.dart     One account against the books
@@ -66,8 +66,8 @@ lib/
     entry_row.dart          An entry on a list
     entry_status.dart       Where an entry stands, named as the API names it, and the color that marks it (redix-app #90)
     entry_tables.dart       One table an entry may go into, and what it asks beyond every entry
-    entry_tile.dart         An entry on a list of project's entries: tapping it opens its actions, and swiping it removes it where the user may delete it
-    home_entries.dart       The project's entries on its home: the latest five by anyone, a spinner while they are first read, a search beside the heading, and the way to all of them
+    entry_card.dart         An entry on a list of project's entries: tapping it opens its actions, and swiping it removes it where the user may delete it
+    latest_entries.dart       The project's entries on its home: the latest five by anyone, a spinner while they are first read, a search beside the heading, and the way to all of them
     project_entries.dart    A project's entries, newest first: everyone who reads the project sees them all, and only their own drafts
     reverse_sheet.dart      Asks why something approved is reversed, and reverses it
     saved_entry.dart        An entry as the API keeps it, whatever its table, read to fill Add entry when it is changed
@@ -88,7 +88,7 @@ lib/
     number_format.dart      A number as a person types it: no separators, and as few decimals as it needs, at most two, so 15 is 15 and 7.5 is 7.5
     parts_line.dart         The non-empty parts of a line joined by a middle dot, the one way a row writes its details
   home/
-    dashboard_card.dart     The project's figures at a glance: what waits for approval, the surplus, the completion, the reconciliation difference, and the revenue and expenses totals, each opening to its categories with their totals; a category opens nothing
+    summary_card.dart     The project's figures at a glance: what waits for approval, the surplus, the completion, the reconciliation difference, and the revenue and expenses totals, each opening to its categories with their totals; a category opens nothing
     home_screen.dart        The home of the open project: the project, with what the user's permissions allow in it
   notifications/
     notification_row.dart   Something a person was told: its words come from kind, in their language
@@ -118,7 +118,7 @@ lib/
     members.dart            The active people of one project, for choosing who holds something in it
     new_project_screen.dart The form that registers a project: its name, its start date and its units
     project.dart            Where a project stands, as the API says it, each knowing its word so no reader needs to tell them apart
-    project_card.dart       The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Settings, Approvals and Documents
+    project_settings_card.dart       The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Settings, Approvals and Documents
     project_choice.dart     One project on the list: its name, units and its status
     project_status_chip.dart Where a project stands, as a chip: the project list and More info draw the same one
     project_info_screen.dart More info (معلومات المشروع, redix-api 93): the project's own record on one page, its name, start date, status, units and description
@@ -130,7 +130,7 @@ lib/
     registered_projects_screen.dart Registered projects: what is waiting for the admin, with the manager's details and a decision
     unit_row.dart           One unit on More info: its name and, for whoever manages the open project, a menu to rename it and a swipe that removes it
   reports/
-    dashboard.dart          One item's total, one category's, and the project's figures
+    summary.dart          One item's total, one category's, and the project's figures
     item_report.dart        One purchase or payment in an item's report
     item_report_screen.dart Everything spent on one item: a table per subgroup, then each contract with its value, paid and remaining
     periodic_report_screen.dart One periodic report as it was issued: what everyone may read, and its files for whoever may export them
@@ -149,7 +149,7 @@ lib/
     payment_method_row.dart One payment method: its name, whether it is disabled and, for whoever keeps the settings, a menu of what can be done to it
     payment_methods.dart    A project's payment methods, and the one way to change them
     payment_methods_screen.dart A project's payment methods: whoever keeps its settings adds, renames, disables and deletes them; one an expense was paid with is only disabled
-    settings_screen.dart    Settings (الإعدادات), one screen: who is signed in, Switch project, the default project, the registered projects for the admin, the language, fingerprint or face, the password change and signing out
+    general_settings_screen.dart    Settings (الإعدادات), one screen: who is signed in, Switch project, the default project, the registered projects for the admin, the language, fingerprint or face, the password change and signing out
   sharing/
     attachable_entries.dart What in one item of a project can take a shared invoice, and the way to put it there
     attachable_entry.dart   An expense entered without an invoice, which a shared file can go on
@@ -264,7 +264,7 @@ Settings such as projects keep nothing on the phone: the API owns every rule, th
 | No color in a screen: every color is an `AppColor`, named for what it is for and read from the theme, so a design change or a dark mode is made in one file (Muteb, 9 Nov 2026) | `lib/ui/app_color.dart`; `app_color_test` fails on any other file that picks a color |
 | Every element a user sees or acts on has a `Key` constant on its screen, and every label, icon, title, subtitle, card and message has one too: a part inside a keyed element takes its element's key and the part's name (`HomeScreen.accountsKey(id).label`), and a message its word (`messageKeyOf('projects.pendingEntries')`). A test finds an element by its key, never by its text or its place | Each screen, `PartKeys`, `messageKeyOf` |
 | A button that sends something goes through `ActOnce`: the first tap runs its action and the button stays gray until the action ends, so a double tap cannot act twice; buttons that must not run together share one `ActOnce` (Muteb, 10 Nov 2026). `BottomButton` has it built in. A button that only opens a screen needs none, because the new screen covers it from its first frame | `lib/ui/act_once.dart`, `BottomButton` |
-| Light and dark grow from one function, `appThemeOf`, from `AppColor.seed`; the Dark mode switch in Settings keeps `darkMode_state`, 0 light and 1 dark, in `LocalConfig`, which tells `RedixApp` so every screen redraws at once (redix-app #87) | `lib/ui/app_theme.dart`, `LocalConfig`, `SettingsScreen` |
+| Light and dark grow from one function, `appThemeOf`, from `AppColor.seed`; the Dark mode switch in Settings keeps `darkMode_state`, 0 light and 1 dark, in `LocalConfig`, which tells `RedixApp` so every screen redraws at once (redix-app #87) | `lib/ui/app_theme.dart`, `LocalConfig`, `GeneralSettingsScreen` |
 | A screen's main action is `BottomButton`: one full-width filled button in the `Scaffold`'s `bottomNavigationBar`, a plus unless the action says otherwise; no screen draws a floating button. Without the permission it shows grayed, never hidden | `lib/ui/bottom_button.dart` |
 | One class to a file: a screen's card, row and dialogs are files of their own | Each feature folder |
 | Every public class and member has a doc comment | The lint `public_member_api_docs` |

@@ -5,7 +5,7 @@ import '../auth/session.dart';
 import '../home/home_screen.dart';
 import '../notifications/notifications.dart';
 import '../notifications/notifications_bell.dart';
-import '../settings/settings_screen.dart';
+import '../settings/general_settings_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
@@ -39,7 +39,7 @@ class ProjectsScreen extends StatefulWidget {
   static const hintKey = Key('projects.hint');
 
   /// The button that opens Settings.
-  static const settingsKey = Key('projects.settings');
+  static const generalSettingsKey = Key('projects.generalSettings');
 
   /// The button that opens the form to register a project.
   static const newProjectKey = Key('projects.new');
@@ -84,10 +84,10 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
         actions: [
           NotificationsBell(notifications: widget.notifications),
           IconButton(
-            key: ProjectsScreen.settingsKey,
-            icon: Icon(Icons.tune, key: ProjectsScreen.settingsKey.icon),
-            tooltip: words.settingsTitle,
-            onPressed: () => context.push(SettingsScreen.path),
+            key: ProjectsScreen.generalSettingsKey,
+            icon: Icon(Icons.tune, key: ProjectsScreen.generalSettingsKey.icon),
+            tooltip: words.generalSettingsTitle,
+            onPressed: () => context.push(GeneralSettingsScreen.path),
           ),
         ],
       ),

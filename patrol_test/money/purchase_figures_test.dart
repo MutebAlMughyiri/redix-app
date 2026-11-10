@@ -1,6 +1,6 @@
 import 'package:patrol/patrol.dart';
 import 'package:redix/entries/add_entry_screen.dart';
-import 'package:redix/home/dashboard_card.dart';
+import 'package:redix/home/summary_card.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/item_reports_screen.dart';
 import 'package:redix/ui/part_keys.dart';
@@ -22,8 +22,8 @@ Future<({String category, String item, String table, String itemName})> newExpen
 /// The home of [manager] opens its expense categories.
 Future<void> openExpenseCategories(PatrolIntegrationTester $, Person manager) async {
   await $.onTheHome(manager);
-  await $.reach($(DashboardCard.expensesKey));
-  await $(DashboardCard.expensesKey.body).tap();
+  await $.reach($(SummaryCard.expensesKey));
+  await $(SummaryCard.expensesKey.body).tap();
 }
 
 void main() {
@@ -126,10 +126,10 @@ void main() {
         await Given.entry(manager, amount: 80.5, accountId: account, itemId: second.item, tableId: second.table),
       ]);
       await openExpenseCategories($, manager);
-      await $.goTo($(DashboardCard.categoryKey(first.category)));
-      await $.says(DashboardCard.categoryKey(first.category).trailing, '120.00');
-      await $.goTo($(DashboardCard.categoryKey(second.category)));
-      await $.says(DashboardCard.categoryKey(second.category).trailing, '80.50');
+      await $.goTo($(SummaryCard.categoryKey(first.category)));
+      await $.says(SummaryCard.categoryKey(first.category).trailing, '120.00');
+      await $.goTo($(SummaryCard.categoryKey(second.category)));
+      await $.says(SummaryCard.categoryKey(second.category).trailing, '80.50');
     });
 
     phoneCase('AC-30.1: an item\'s report totals its purchases, and each table its own', ($) async {

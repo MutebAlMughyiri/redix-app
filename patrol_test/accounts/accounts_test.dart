@@ -6,7 +6,7 @@ import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/member_picker.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/settings/general_settings_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/words/language_switch.dart';
@@ -69,11 +69,11 @@ void main() {
     phoneCase('an account is added while the app is in Arabic', ($) async {
       final manager = await Given.manager();
       await $.onTheList(manager);
-      await $(ProjectsScreen.settingsKey).tap();
+      await $(ProjectsScreen.generalSettingsKey).tap();
       await $.goTo($(LanguageSwitch.arabicKey));
       await $(LanguageSwitch.arabicKey).tap();
-      await $.until(() => Directionality.of($.tester.element(find.byKey(SettingsScreen.languageKey))) == TextDirection.rtl);
-      await $.tapOn(SettingsScreen.switchProjectKey);
+      await $.until(() => Directionality.of($.tester.element(find.byKey(GeneralSettingsScreen.languageKey))) == TextDirection.rtl);
+      await $.tapOn(GeneralSettingsScreen.switchProjectKey);
       await $.openProject(manager.projectId);
       await $.tapOn(HomeScreen.accountsKey(manager.projectId));
       await fillBank($, 'حساب الموقع');

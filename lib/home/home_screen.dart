@@ -4,24 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../accounts/accounts.dart';
-import '../accounts/my_custody.dart';
+import '../accounts/custody_card.dart';
 import '../auth/session.dart';
 import '../approvals/approvals_screen.dart';
 import '../entries/add_entry_screen.dart';
-import '../entries/home_entries.dart';
+import '../entries/latest_entries.dart';
 import '../entries/project_entries.dart';
 import '../notifications/notifications.dart';
 import '../notifications/notifications_bell.dart';
 import '../offline/outbox.dart';
 import '../offline/project_sync.dart';
 import '../offline/waiting_screen.dart';
-import '../reports/dashboard.dart';
-import 'dashboard_card.dart';
+import '../reports/summary.dart';
+import 'summary_card.dart';
 import '../projects/project.dart';
-import '../projects/project_card.dart';
+import '../projects/project_settings_card.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
-import '../settings/settings_screen.dart';
+import '../settings/general_settings_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
@@ -31,10 +31,10 @@ import '../config/local_config.dart';
 /// The home of the open project (UC-010): the project, with what the user's permissions allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
   /// The home of the project [projectId], one of [projects], with [accounts], its accounts.
-  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.dashboard, required this.localConfig});
+  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.summary, required this.localConfig});
 
   /// Its figures at a glance.
-  final Dashboard dashboard;
+  final Summary summary;
 
   /// Whether this phone keeps the conclusion and the project's buttons showing.
   final LocalConfig localConfig;
@@ -115,7 +115,7 @@ class HomeScreen extends StatefulWidget {
   static const roleNameKey = Key('home.roleName');
 
   /// The way into the settings of the project [id]: a gear in the top bar (Muteb, 8 and 9 Nov 2026).
-  static Key settingsKey(String id) => Key('home.settings.$id');
+  static Key generalSettingsKey(String id) => Key('home.generalSettings.$id');
 
   /// The way to what waits for a decision in the project [id].
   static Key approvalsKey(String id) => Key('home.approvals.$id');
@@ -200,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {});
   }
 
-  Future<void> _readAgain() => Future.wait([widget.dashboard.load(), widget.entries.load(), widget.accounts.load()]);
+  Future<void> _readAgain() => Future.wait([widget.summary.load(), widget.entries.load(), widget.accounts.load()]);
 
   @override
   Widget build(BuildContext context) {
@@ -234,10 +234,10 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context, _) {
               final project = widget.projects.byId(widget.projectId);
               return IconButton(
-                key: HomeScreen.settingsKey(widget.projectId),
-                tooltip: words.settingsTitle,
-                icon: Icon(Icons.settings_outlined, key: HomeScreen.settingsKey(widget.projectId).icon),
-                onPressed: project.isNone ? null : () => _open(SettingsScreen.path, project),
+                key: HomeScreen.generalSettingsKey(widget.projectId),
+                tooltip: words.generalSettingsTitle,
+                icon: Icon(Icons.settings_outlined, key: HomeScreen.generalSettingsKey(widget.projectId).icon),
+                onPressed: project.isNone ? null : () => _open(GeneralSettingsScreen.path, project),
               );
             },
           ),
@@ -278,14 +278,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
               },
             ),
-            if (showsDetails) DashboardCard(
+            if (showsDetails) SummaryCard(
               project: project,
-              dashboard: widget.dashboard,
+              summary: widget.summary,
               onApprovals: () => _open(ApprovalsScreen.pathOf(project.id), project),
             ),
-            MyCustody(accounts: widget.accounts),
-            HomeEntries(project: project, entries: widget.entries, onOpen: (path) => _open(path, project), onRemoved: widget.dashboard.load),
-            if (showsDetails) ProjectCard(project: project, onOpen: (path) => _open(path, project)),
+            CustodyCard(accounts: widget.accounts),
+            LatestEntries(project: project, entries: widget.entries, onOpen: (path) => _open(path, project), onRemoved: widget.summary.load),
+            if (showsDetails) ProjectSettingsCard(project: project, onOpen: (path) => _open(path, project)),
           ],
         ),
       ),

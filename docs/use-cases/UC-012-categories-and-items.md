@@ -66,7 +66,7 @@ New project, `NewProjectScreen`, signed in:
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| The way in follows `manageStructure` | `ProjectCard`, `Permission.manageStructure` | `categories_test.dart`: without the permission there is no way in |
+| The way in follows `manageStructure` | `ProjectSettingsCard`, `Permission.manageStructure` | `categories_test.dart`: without the permission there is no way in |
 | Categories show in order, each with how many items it holds | `CategoryCard` | `categories_test.dart`: categories show in order |
 | An item shows its type | `Item.type`, `ItemRow` | `categories_test.dart`: a category opens to its items |
 | AC-39.1: dragging a category sends the order, and it stays where it was dropped | `Categories.moveCategory`, `ApiList.reorder`, `ReorderableListView` | `categories_test.dart`: AC-39.1 |

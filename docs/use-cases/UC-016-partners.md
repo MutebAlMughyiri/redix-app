@@ -52,7 +52,7 @@ The project's home, `HomeScreen`:
 | A project with no partners says so | `ApiListBody` | `a project with no partners says so` |
 | Seeing all capital without keeping the settings shows them with nothing to change | `Project.mayManageSettings` | `seeing all capital without keeping the settings shows them with nothing to change` |
 | A finished project shows them with nothing to change (AC-04.1) | `Project.mayManageSettings` | `a finished project shows its partners with nothing to change` |
-| Everyone in the project has a way in, each seeing their own line; whoever holds `seeAllCapital` sees every partner (BR-31) | `ProjectCard`, `PartnersScreen` | `partners_test.dart`: everyone in the project has a way in |
+| Everyone in the project has a way in, each seeing their own line; whoever holds `seeAllCapital` sees every partner (BR-31) | `ProjectSettingsCard`, `PartnersScreen` | `partners_test.dart`: everyone in the project has a way in |
 | A list that cannot be read says so | `ApiListBody` | `a list that cannot be read says so` |
 | It fits 360 points wide in both languages (AC-N03) | `PartnersScreen`, `PartnerDialog` | `AC-N03` in `test/settings/account_test.dart` |
 

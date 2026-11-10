@@ -12,9 +12,9 @@ import 'entry_row.dart';
 import 'project_entries.dart';
 
 /// An entry on a list of [project]'s [entries], framed in its status's color: tapping it opens it read only (redix-app #90), and swiping it removes it where the user may delete it (redix-api #102).
-class EntryListTile extends StatelessWidget {
+class SwipeableEntryCard extends StatelessWidget {
   /// The tile of [entry], one of [project]'s [entries], calling [onOpen] with the route that opens it and [onRemoved] once a swipe has removed it.
-  const EntryListTile({super.key, required this.project, required this.entries, required this.entry, required this.onOpen, this.onRemoved = _nothing});
+  const SwipeableEntryCard({super.key, required this.project, required this.entries, required this.entry, required this.onOpen, this.onRemoved = _nothing});
 
   /// The project.
   final Project project;
@@ -45,14 +45,14 @@ class EntryListTile extends StatelessWidget {
       return refusal;
     },
     side: entry.status.sideIn(context),
-    child: EntryTile(entry: entry, onTap: () => onOpen(EntriesScreen.entryPathOf(project.id, entry))),
+    child: EntryCard(entry: entry, onTap: () => onOpen(EntriesScreen.entryPathOf(project.id, entry))),
   );
 }
 
 /// An entry on a list: what it was for, how much, and who entered it when someone else did. Where it stands is its frame's color alone; its page says the rest, a rejection's reason included (Muteb, 9 Nov 2026).
-class EntryTile extends StatelessWidget {
+class EntryCard extends StatelessWidget {
   /// The tile of [entry], calling [onTap].
-  const EntryTile({super.key, required this.entry, required this.onTap});
+  const EntryCard({super.key, required this.entry, required this.onTap});
 
   /// The entry.
   final EntryRow entry;

@@ -11,7 +11,7 @@ import 'add_entry_screen.dart';
 import 'entry_filter.dart';
 import 'entry_kind.dart';
 import 'entry_row.dart';
-import 'entry_tile.dart';
+import 'entry_card.dart';
 import 'project_entries.dart';
 
 /// A project's entries (UC-037): each person's own, or all of them, searched and filtered (redix-app #84); tapping one opens it read only (redix-app #90).
@@ -188,7 +188,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
               list: widget.entries,
               emptyText: words.entriesEmpty,
               keeps: _filter.keeps,
-              itemBuilder: (entry) => EntryListTile(project: widget.project, entries: widget.entries, entry: entry, onOpen: _open),
+              itemBuilder: (entry) => SwipeableEntryCard(project: widget.project, entries: widget.entries, entry: entry, onOpen: _open),
             ),
           ),
         ],

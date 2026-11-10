@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/settings/general_settings_screen.dart';
 import 'package:redix/ui/app_color.dart';
 import 'package:redix/ui/app_theme.dart';
 import 'package:redix/ui/part_keys.dart';
@@ -21,17 +21,17 @@ void main() {
   Future<FakeApi> openSettings(WidgetTester tester, {Map<String, Object> preferences = const {}}) async {
     final api = FakeApi();
     await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: preferences);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.settingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.generalSettingsKey)));
     return api;
   }
 
-  Future<void> tapDarkMode(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(SettingsScreen.darkModeKey)));
+  Future<void> tapDarkMode(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.darkModeKey)));
 
   Brightness brightnessAt(WidgetTester tester, Finder finder) => Theme.of(tester.element(finder)).brightness;
 
-  Brightness settingsBrightness(WidgetTester tester) => brightnessAt(tester, find.byKey(SettingsScreen.darkModeKey));
+  Brightness settingsBrightness(WidgetTester tester) => brightnessAt(tester, find.byKey(GeneralSettingsScreen.darkModeKey));
 
-  SwitchListTile darkModeSwitch(WidgetTester tester) => tester.widget<SwitchListTile>(find.byKey(SettingsScreen.darkModeKey));
+  SwitchListTile darkModeSwitch(WidgetTester tester) => tester.widget<SwitchListTile>(find.byKey(GeneralSettingsScreen.darkModeKey));
 
   Future<int?> kept() async => (await SharedPreferences.getInstance()).getInt(stateKey);
 
@@ -54,11 +54,11 @@ void main() {
     await openSettings(tester);
 
     expect(darkModeSwitch(tester).secondary, isA<Icon>().having((icon) => icon.icon, 'icon', Icons.dark_mode_outlined));
-    expect(text(tester, SettingsScreen.darkModeKey.title), 'en settings.darkMode');
-    expect(tester.widget(find.byKey(SettingsScreen.biometricsKey)), isA<SwitchListTile>());
+    expect(text(tester, GeneralSettingsScreen.darkModeKey.title), 'en generalSettings.darkMode');
+    expect(tester.widget(find.byKey(GeneralSettingsScreen.biometricsKey)), isA<SwitchListTile>());
     final language = tester.getTopLeft(find.byKey(LanguageSwitch.choiceKey)).dy;
-    final darkMode = tester.getTopLeft(find.byKey(SettingsScreen.darkModeKey)).dy;
-    final biometrics = tester.getTopLeft(find.byKey(SettingsScreen.biometricsKey)).dy;
+    final darkMode = tester.getTopLeft(find.byKey(GeneralSettingsScreen.darkModeKey)).dy;
+    final biometrics = tester.getTopLeft(find.byKey(GeneralSettingsScreen.biometricsKey)).dy;
     expect(language < darkMode && darkMode < biometrics, isTrue);
   });
 
@@ -66,14 +66,14 @@ void main() {
     await openSettings(tester);
 
     final components = [
-      SettingsScreen.whoKey,
-      SettingsScreen.switchProjectKey,
-      SettingsScreen.defaultProjectKey,
-      SettingsScreen.languageKey,
-      SettingsScreen.darkModeKey,
-      SettingsScreen.biometricsKey,
-      SettingsScreen.changePasswordKey,
-      SettingsScreen.signOutKey,
+      GeneralSettingsScreen.whoKey,
+      GeneralSettingsScreen.switchProjectKey,
+      GeneralSettingsScreen.defaultProjectKey,
+      GeneralSettingsScreen.languageKey,
+      GeneralSettingsScreen.darkModeKey,
+      GeneralSettingsScreen.biometricsKey,
+      GeneralSettingsScreen.changePasswordKey,
+      GeneralSettingsScreen.signOutKey,
     ];
     Finder cardOf(Finder finder) => find.ancestor(of: finder, matching: find.byType(Card));
     for (final key in components) {
@@ -84,8 +84,8 @@ void main() {
       expect((frame.shape! as OutlinedBorder).side.color, AppColor.frame.of(tester.element(find.byKey(key))), reason: '$key');
     }
     expect({for (final key in components) tester.widget<Card>(cardOf(find.byKey(key)))}.length, components.length);
-    expect(tester.widget<Card>(cardOf(find.byKey(LanguageSwitch.choiceKey))), same(tester.widget<Card>(cardOf(find.byKey(SettingsScreen.languageKey)))));
-    expect(find.descendant(of: find.byType(SettingsScreen), matching: find.byType(Divider)), findsNothing);
+    expect(tester.widget<Card>(cardOf(find.byKey(LanguageSwitch.choiceKey))), same(tester.widget<Card>(cardOf(find.byKey(GeneralSettingsScreen.languageKey)))));
+    expect(find.descendant(of: find.byType(GeneralSettingsScreen), matching: find.byType(Divider)), findsNothing);
   });
 
   testWidgets('R6: the key holds 1 while dark and 0 while light', (tester) async {
@@ -119,7 +119,7 @@ void main() {
     await tapDarkMode(tester, api);
     await act(tester, api, () => tester.pageBack());
 
-    expect(brightnessAt(tester, find.byKey(ProjectsScreen.settingsKey)), Brightness.dark);
+    expect(brightnessAt(tester, find.byKey(ProjectsScreen.generalSettingsKey)), Brightness.dark);
   });
 
   testWidgets('R9: sign-in follows the choice', (tester) async {
@@ -138,10 +138,10 @@ void main() {
     final api = await openSettings(tester);
 
     await tapDarkMode(tester, api);
-    expect(Localizations.localeOf(tester.element(find.byKey(SettingsScreen.darkModeKey))).languageCode, 'en');
+    expect(Localizations.localeOf(tester.element(find.byKey(GeneralSettingsScreen.darkModeKey))).languageCode, 'en');
 
     await act(tester, api, () => tester.tap(find.byKey(LanguageSwitch.arabicKey)));
-    expect(text(tester, SettingsScreen.darkModeKey.title), 'ar settings.darkMode');
+    expect(text(tester, GeneralSettingsScreen.darkModeKey.title), 'ar generalSettings.darkMode');
     expect(settingsBrightness(tester), Brightness.dark);
     expect(await kept(), 1);
   });

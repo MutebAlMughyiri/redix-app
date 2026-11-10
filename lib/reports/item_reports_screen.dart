@@ -8,7 +8,7 @@ import '../ui/api_object_body.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
-import 'dashboard.dart';
+import 'summary.dart';
 import 'item_report_screen.dart';
 import 'category_share.dart';
 
@@ -16,8 +16,8 @@ import 'category_share.dart';
 /// every category of that side with its total and its share of the side, opening on its items with theirs, each opening its report. The expenses show first. The home's
 /// card shows the same categories and opens none of them.
 class ItemReportsScreen extends StatefulWidget {
-  /// The items of [project], named by its [dashboard]'s figures.
-  const ItemReportsScreen({super.key, required this.project, required this.dashboard});
+  /// The items of [project], named by its [summary]'s figures.
+  const ItemReportsScreen({super.key, required this.project, required this.summary});
 
   /// The screen's route.
   static const path = '/projects/:projectId/item-reports';
@@ -29,7 +29,7 @@ class ItemReportsScreen extends StatefulWidget {
   static const sideKey = Key('itemReports.side');
 
   /// One side of the choice.
-  static Key sideOptionKey(DashboardSide side) => Key('itemReports.side.${side.name}');
+  static Key sideOptionKey(SummarySide side) => Key('itemReports.side.${side.name}');
 
   /// The way into the report of the item [id].
   static Key itemKey(String id) => Key('itemReports.item.$id');
@@ -41,19 +41,19 @@ class ItemReportsScreen extends StatefulWidget {
   final Project project;
 
   /// Its figures, which name its items.
-  final Dashboard dashboard;
+  final Summary summary;
 
   @override
   State<ItemReportsScreen> createState() => _ItemReportsScreenState();
 }
 
 class _ItemReportsScreenState extends State<ItemReportsScreen> {
-  var _side = DashboardSide.expenses;
+  var _side = SummarySide.expenses;
 
   @override
   void initState() {
     super.initState();
-    widget.dashboard.loadOnOpen();
+    widget.summary.loadOnOpen();
   }
 
 
@@ -64,18 +64,18 @@ class _ItemReportsScreenState extends State<ItemReportsScreen> {
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.reportsRevenueAndExpenses, subject: project.name)),
       body: ApiObjectBody(
-        object: widget.dashboard,
+        object: widget.summary,
         builder: (figures) => RefreshIndicator(
-          onRefresh: widget.dashboard.load,
+          onRefresh: widget.summary.load,
           child: ListView(
             padding: const EdgeInsets.all(16),
             physics: ApiListBody.physics,
             children: [
-              SegmentedButton<DashboardSide>(
+              SegmentedButton<SummarySide>(
                 key: ItemReportsScreen.sideKey,
                 segments: [
-                  ButtonSegment(value: DashboardSide.revenue, label: Text(words.dashboardRevenue, key: ItemReportsScreen.sideOptionKey(DashboardSide.revenue))),
-                  ButtonSegment(value: DashboardSide.expenses, label: Text(words.dashboardExpenses, key: ItemReportsScreen.sideOptionKey(DashboardSide.expenses))),
+                  ButtonSegment(value: SummarySide.revenue, label: Text(words.summaryRevenue, key: ItemReportsScreen.sideOptionKey(SummarySide.revenue))),
+                  ButtonSegment(value: SummarySide.expenses, label: Text(words.summaryExpenses, key: ItemReportsScreen.sideOptionKey(SummarySide.expenses))),
                 ],
                 selected: {_side},
                 onSelectionChanged: (selection) => setState(() => _side = selection.single),

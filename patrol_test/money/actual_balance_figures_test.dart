@@ -2,7 +2,7 @@ import 'package:patrol/patrol.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/accounts/reconcile_screen.dart';
 import 'package:redix/accounts/reconciliation_card.dart';
-import 'package:redix/home/dashboard_card.dart';
+import 'package:redix/home/summary_card.dart';
 import 'package:redix/home/home_screen.dart';
 
 import '../support/given.dart';
@@ -45,7 +45,7 @@ void main() {
       await $.tapOn(ReconcileScreen.saveKey);
       await cardShows($, surplus: '200.00', actual: '150.50', difference: '(49.50)');
       await $.back();
-      await $.says(DashboardCard.differenceKey, '(49.50)');
+      await $.says(SummaryCard.differenceKey, '(49.50)');
     });
 
     phoneCase('BR-08: more than the surplus shows without brackets', ($) async {

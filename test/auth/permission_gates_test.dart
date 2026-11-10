@@ -11,7 +11,7 @@ import 'package:redix/documents/documents_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/table_picker.dart';
-import 'package:redix/home/dashboard_card.dart';
+import 'package:redix/home/summary_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/item_reports_screen.dart';
 import 'package:redix/notifications/notifications_bell.dart';
@@ -22,7 +22,7 @@ import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/settings/general_settings_screen.dart';
 import 'package:redix/sharing/share_screen.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
@@ -67,8 +67,8 @@ Finder Function(FakeApi api) _enabled(Key key) =>
 
 String _first(List<Map<String, Object>>? rows) => rows!.first['id']! as String;
 
-final _dashboardWithAnItem = <String, Object>{
-  ...FakeApi().dashboardAnswer,
+final _summaryWithAnItem = <String, Object>{
+  ...FakeApi().summaryAnswer,
   'categories': [
     {
       'id': 'category-1',
@@ -82,7 +82,7 @@ final _dashboardWithAnItem = <String, Object>{
 };
 
 final List<Gate> _gates = [
-  (name: 'Registered projects in the settings', permission: Permission.approveProjects, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.settingsKey(_project))], control: _key(SettingsScreen.registeredKey)),
+  (name: 'Registered projects in the settings', permission: Permission.approveProjects, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.generalSettingsKey(_project))], control: _key(GeneralSettingsScreen.registeredKey)),
   (name: 'Users on the home', permission: Permission.manageUsers, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.usersKey(_project))),
   (name: 'Add unit in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.addUnitKey)),
   (name: 'Rename project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.renameKey)),
@@ -216,7 +216,7 @@ final List<Gate> _gates = [
   (
     name: 'An item report\'s files',
     permission: Permission.seeAllCapital,
-    arrange: (api) => api.dashboardAnswer = _dashboardWithAnItem,
+    arrange: (api) => api.summaryAnswer = _summaryWithAnItem,
     steps: [_openProject, _tapKey(HomeScreen.itemReportsKey(_project)), _tapKey(ItemReportsScreen.categoryKey('category-1')), _tapKey(ItemReportsScreen.itemKey('item-1'))],
     control: (_) => find.byType(ReportFileButtons),
   ),
@@ -231,11 +231,11 @@ final List<Gate> _gates = [
     control: _key(ApprovalsScreen.approveKey('entry-0')),
   ),
   (
-    name: 'What waits on the dashboard',
+    name: 'What waits on the summary',
     permission: Permission.approveEntries,
-    arrange: (api) => api.dashboardAnswer = {...api.dashboardAnswer, 'waiting': waiting(expensesCount: 2, expensesAmount: 200)},
+    arrange: (api) => api.summaryAnswer = {...api.summaryAnswer, 'waiting': waiting(expensesCount: 2, expensesAmount: 200)},
     steps: [_openProject],
-    control: _key(DashboardCard.pendingKey),
+    control: _key(SummaryCard.pendingKey),
   ),
   (
     name: 'Reverse an approved entry',

@@ -8,13 +8,13 @@
 
 ## Screens
 
-[Settings](../guide/settings.md), `SettingsScreen` at `/settings`, opened from the settings button on the list's top bar (`ProjectsScreen.settingsKey`) or a project's home (`HomeScreen.settingsKey`):
+[Settings](../guide/settings.md), `GeneralSettingsScreen` at `/settings`, opened from the settings button on the list's top bar (`ProjectsScreen.generalSettingsKey`) or a project's home (`HomeScreen.generalSettingsKey`):
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Who is signed in | `SettingsScreen.whoKey` | Their name over their username |
-| Switch project | `SettingsScreen.switchProjectKey` | Goes to the list (UC-010) |
-| Default project | `SettingsScreen.defaultProjectKey` | Chooses the project sign-in opens |
+| Who is signed in | `GeneralSettingsScreen.whoKey` | Their name over their username |
+| Switch project | `GeneralSettingsScreen.switchProjectKey` | Goes to the list (UC-010) |
+| Default project | `GeneralSettingsScreen.defaultProjectKey` | Chooses the project sign-in opens |
 
 More info opens from a project's home (`HomeScreen.projectInfoKey`), for everyone in it (Muteb, 9 Nov 2026).
 
@@ -95,10 +95,10 @@ All go through `Session`, which renews an expired access token once and sends ag
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Everyone sees Switch project and the default project | `SettingsScreen` | `settings_test.dart`: anyone else sees Switch project and the default project |
-| More info opens from a project's home, for everyone in it, and Settings holds no project screen | `ProjectCard` | `settings_test.dart`: a project's More info, permissions, users, categories and items, and payment methods open from its home; `home_test.dart`: a reader or a field supervisor has More info |
-| The home shows no start date, status or units; More info shows them, the units in order (redix-api #93 R1) | `ProjectCard`, `ProjectInfoScreen` | `home_test.dart`: R1; `project_info_test.dart`: R1 |
-| A finished project's home says in one line that it is finished and read-only (R13) | `ProjectCard` | `home_test.dart`: R13; `project_info_test.dart`: closing makes it finished |
+| Everyone sees Switch project and the default project | `GeneralSettingsScreen` | `general_settings_test.dart`: anyone else sees Switch project and the default project |
+| More info opens from a project's home, for everyone in it, and Settings holds no project screen | `ProjectSettingsCard` | `general_settings_test.dart`: a project's More info, permissions, users, categories and items, and payment methods open from its home; `home_test.dart`: a reader or a field supervisor has More info |
+| The home shows no start date, status or units; More info shows them, the units in order (redix-api #93 R1) | `ProjectSettingsCard`, `ProjectInfoScreen` | `home_test.dart`: R1; `project_info_test.dart`: R1 |
+| A finished project's home says in one line that it is finished and read-only (R13) | `ProjectSettingsCard` | `home_test.dart`: R13; `project_info_test.dart`: closing makes it finished |
 | Everyone in the project reads More info and its description; only `manageProject` changes it, and only while it is open (R8, AC-04.1) | `Project.mayManageProject`, `ProjectInfoScreen` | `project_info_test.dart`: R8; a finished project shows read-only; whoever manages an open project has Rename, Add unit…; `permission_gates_test.dart`: More info's five gates |
 | The description is kept, empty clears it, and saving says "Description saved." (R3, R12) | `Projects.describe`, `ProjectInfoScreen` | `project_info_test.dart`: R3, R12; the description kept starts the field |
 | A description has at most 2,000 characters, counted, on More info, New project and Register a project (R10) | `Project.descriptionMaxLength` | `project_info_test.dart`: R10; `new_project_test.dart`: R10; `register_project_test.dart`: R10 |

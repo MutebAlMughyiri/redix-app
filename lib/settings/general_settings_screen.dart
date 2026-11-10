@@ -24,10 +24,10 @@ import '../ui/refusal_text.dart';
 /// Settings (الإعدادات), all on one screen (Muteb, 9 Nov 2026): who is signed in, the way back to the project list, the default project, the registered projects for the
 /// admin, the language (UC-004), the dark mode (redix-app #87), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out
 /// (UC-062), each in its own border (Muteb, 10 Nov 2026: "i like borders for each component"). A project's own screens open from its home.
-class SettingsScreen extends StatefulWidget {
+class GeneralSettingsScreen extends StatefulWidget {
   /// The screen for the user signed in through [session], opened from [project], whose [projects] the default is chosen among, switching [language] and the mode kept in
   /// [localConfig].
-  const SettingsScreen({super.key, required this.session, required this.projects, required this.project, required this.language, required this.localConfig});
+  const GeneralSettingsScreen({super.key, required this.session, required this.projects, required this.project, required this.language, required this.localConfig});
 
   /// The language choice it changes.
   final AppLanguage language;
@@ -45,43 +45,43 @@ class SettingsScreen extends StatefulWidget {
   final Project project;
 
   /// The screen's route.
-  static const path = '/settings';
+  static const path = '/general-settings';
 
   /// Who is signed in: their name over the name they sign in with and, opened from a project, what they are called there.
-  static const whoKey = Key('settings.who');
+  static const whoKey = Key('generalSettings.who');
 
   /// The way back to the project list.
-  static const switchProjectKey = Key('settings.switchProject');
+  static const switchProjectKey = Key('generalSettings.switchProject');
 
   /// The way into the registered projects, for whoever approves them.
-  static const registeredKey = Key('settings.registered');
+  static const registeredKey = Key('generalSettings.registered');
 
   /// The way into the choice of the default project.
-  static const defaultProjectKey = Key('settings.defaultProject');
+  static const defaultProjectKey = Key('generalSettings.defaultProject');
 
   /// The heading over the choice of the language.
-  static const languageKey = Key('settings.language');
+  static const languageKey = Key('generalSettings.language');
 
   /// The switch that turns the dark mode on and off for this phone.
-  static const darkModeKey = Key('settings.darkMode');
+  static const darkModeKey = Key('generalSettings.darkMode');
 
   /// The switch that turns fingerprint or face on and off for this phone.
-  static const biometricsKey = Key('settings.biometrics');
+  static const biometricsKey = Key('generalSettings.biometrics');
 
   /// The line that says why fingerprint or face did not change.
-  static const biometricsMessageKey = Key('settings.biometricsMessage');
+  static const biometricsMessageKey = Key('generalSettings.biometricsMessage');
 
   /// The way into the password change.
-  static const changePasswordKey = Key('settings.changePassword');
+  static const changePasswordKey = Key('generalSettings.changePassword');
 
   /// The row that signs out, after asking.
-  static const signOutKey = Key('settings.signOut');
+  static const signOutKey = Key('generalSettings.signOut');
 
   @override
-  State<SettingsScreen> createState() => _SettingsScreenState();
+  State<GeneralSettingsScreen> createState() => _GeneralSettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
   var _biometricsMessage = '';
 
   /// Nothing waits on the prompt, because a cancelled one may never answer: the switch can always be tapped again.
@@ -120,7 +120,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final words = Words.of(context);
     final session = widget.session;
     return Scaffold(
-      appBar: AppBar(title: Text(words.settingsTitle, key: ScreenTitle.titleKey)),
+      appBar: AppBar(title: Text(words.generalSettingsTitle, key: ScreenTitle.titleKey)),
       body: ListenableBuilder(
         listenable: Listenable.merge([session, widget.projects, widget.localConfig]),
         builder: (context, _) => ListView(
@@ -128,56 +128,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             _bordered([
               ListTile(
-                key: SettingsScreen.whoKey,
-                leading: Icon(Icons.account_circle_outlined, key: SettingsScreen.whoKey.icon),
-                title: Text(session.displayName, key: SettingsScreen.whoKey.title),
-                subtitle: Text(partsLine([session.username, widget.projects.latest(widget.project).roleName]), key: SettingsScreen.whoKey.subtitle),
+                key: GeneralSettingsScreen.whoKey,
+                leading: Icon(Icons.account_circle_outlined, key: GeneralSettingsScreen.whoKey.icon),
+                title: Text(session.displayName, key: GeneralSettingsScreen.whoKey.title),
+                subtitle: Text(partsLine([session.username, widget.projects.latest(widget.project).roleName]), key: GeneralSettingsScreen.whoKey.subtitle),
               ),
             ]),
-            _row(SettingsScreen.switchProjectKey, Icons.swap_horiz, words.settingsSwitchProject, () => context.go(ProjectsScreen.path)),
-            _row(SettingsScreen.defaultProjectKey, Icons.star_outline, words.settingsDefaultProject, () => DefaultProjectSheet.show(context, session, widget.projects)),
+            _row(GeneralSettingsScreen.switchProjectKey, Icons.swap_horiz, words.generalSettingsSwitchProject, () => context.go(ProjectsScreen.path)),
+            _row(GeneralSettingsScreen.defaultProjectKey, Icons.star_outline, words.generalSettingsDefaultProject, () => DefaultProjectSheet.show(context, session, widget.projects)),
             if (session.may(Permission.approveProjects))
-              _row(SettingsScreen.registeredKey, Icons.approval_outlined, words.registeredTitle, () => context.push(RegisteredProjectsScreen.path)),
+              _row(GeneralSettingsScreen.registeredKey, Icons.approval_outlined, words.registeredTitle, () => context.push(RegisteredProjectsScreen.path)),
             _bordered([
               ListTile(
-                key: SettingsScreen.languageKey,
-                leading: Icon(Icons.language, key: SettingsScreen.languageKey.icon),
-                title: Text(words.myAccountLanguage, key: SettingsScreen.languageKey.title),
+                key: GeneralSettingsScreen.languageKey,
+                leading: Icon(Icons.language, key: GeneralSettingsScreen.languageKey.icon),
+                title: Text(words.myAccountLanguage, key: GeneralSettingsScreen.languageKey.title),
               ),
               Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), child: LanguageSwitch(language: widget.language)),
             ]),
             _bordered([
               SwitchListTile(
-                key: SettingsScreen.darkModeKey,
-                secondary: Icon(Icons.dark_mode_outlined, key: SettingsScreen.darkModeKey.icon),
-                title: Text(words.settingsDarkMode, key: SettingsScreen.darkModeKey.title),
+                key: GeneralSettingsScreen.darkModeKey,
+                secondary: Icon(Icons.dark_mode_outlined, key: GeneralSettingsScreen.darkModeKey.icon),
+                title: Text(words.generalSettingsDarkMode, key: GeneralSettingsScreen.darkModeKey.title),
                 value: widget.localConfig.isDark,
                 onChanged: (_) => widget.localConfig.toggleDarkMode(),
               ),
             ]),
             _bordered([
               SwitchListTile(
-                key: SettingsScreen.biometricsKey,
-                secondary: Icon(Icons.fingerprint, key: SettingsScreen.biometricsKey.icon),
-                title: Text(words.biometricsSignIn, key: SettingsScreen.biometricsKey.title),
-                subtitle: Text(words.biometricsHint, key: SettingsScreen.biometricsKey.subtitle),
+                key: GeneralSettingsScreen.biometricsKey,
+                secondary: Icon(Icons.fingerprint, key: GeneralSettingsScreen.biometricsKey.icon),
+                title: Text(words.biometricsSignIn, key: GeneralSettingsScreen.biometricsKey.title),
+                subtitle: Text(words.biometricsHint, key: GeneralSettingsScreen.biometricsKey.subtitle),
                 value: session.usesBiometrics,
                 onChanged: _setBiometrics,
               ),
               if (_biometricsMessage.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: refusalText(context, words.text(_biometricsMessage), SettingsScreen.biometricsMessageKey),
+                  child: refusalText(context, words.text(_biometricsMessage), GeneralSettingsScreen.biometricsMessageKey),
                 ),
             ]),
-            _row(SettingsScreen.changePasswordKey, Icons.lock_outline, words.myAccountChangePassword, () => context.push(ChangePasswordScreen.path)),
+            _row(GeneralSettingsScreen.changePasswordKey, Icons.lock_outline, words.myAccountChangePassword, () => context.push(ChangePasswordScreen.path)),
             _bordered([
               ListTile(
-                key: SettingsScreen.signOutKey,
+                key: GeneralSettingsScreen.signOutKey,
                 iconColor: AppColor.refusal.of(context),
                 textColor: AppColor.refusal.of(context),
-                leading: Icon(Icons.logout, key: SettingsScreen.signOutKey.icon),
-                title: Text(words.myAccountSignOut, key: SettingsScreen.signOutKey.title),
+                leading: Icon(Icons.logout, key: GeneralSettingsScreen.signOutKey.icon),
+                title: Text(words.myAccountSignOut, key: GeneralSettingsScreen.signOutKey.title),
                 onTap: _askToSignOut,
               ),
             ]),

@@ -20,7 +20,7 @@
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Only whoever decides entries has a way in | `ProjectCard`, `project.may` | `approvals_test.dart`: only whoever decides |
+| Only whoever decides entries has a way in | `ProjectSettingsCard`, `project.may` | `approvals_test.dart`: only whoever decides |
 | AC-18.1: what waits shows what Finance needs, in the API's order | `ApprovalsScreen._details` | `approvals_test.dart`: AC-18.1: what waits |
 | AC-18.1: a picture opens to zoom into | `AttachmentScreen` | `approvals_test.dart`: AC-18.1: a picture |
 | A PDF goes to the phone by its own name, and an unreadable file says so | `AttachmentScreen`, `PendingApproval.fileName` | `approvals_test.dart`: a PDF is handed to the phone by its own name |

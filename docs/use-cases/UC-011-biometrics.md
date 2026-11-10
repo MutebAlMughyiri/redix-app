@@ -21,12 +21,12 @@ The app learns whether the phone has it on from the session the server answered,
 | Sign in with fingerprint or face | `SignInScreen.unlockKey` | Shows while `Session.canUnlock`; the screen asks once by itself as it opens |
 | The message | `SignInScreen.messageKey` | `biometrics.failed`, or `biometrics.usePassword` after the third try |
 
-[Settings](../guide/settings.md), `SettingsScreen`:
+[Settings](../guide/settings.md), `GeneralSettingsScreen`:
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Sign in with fingerprint or face | `SettingsScreen.biometricsKey` | Turns it on, asking first; turns it off with no prompt |
-| The message | `SettingsScreen.biometricsMessageKey` | `biometrics.notAvailable` or `biometrics.notChanged` |
+| Sign in with fingerprint or face | `GeneralSettingsScreen.biometricsKey` | Turns it on, asking first; turns it off with no prompt |
+| The message | `GeneralSettingsScreen.biometricsMessageKey` | `biometrics.notAvailable` or `biometrics.notChanged` |
 
 ## Rules and where they live
 

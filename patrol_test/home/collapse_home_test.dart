@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/entries/entries_screen.dart';
-import 'package:redix/home/dashboard_card.dart';
+import 'package:redix/home/summary_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/settings_screen.dart';
+import 'package:redix/settings/general_settings_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/words/language_switch.dart';
 
@@ -26,13 +26,13 @@ Future<void> tapCollapse(PatrolIntegrationTester $) async {
 /// Signs [manager] in and stands on their project's home, expanded, its figures read.
 Future<void> onAnExpandedHome(PatrolIntegrationTester $, Person manager) async {
   await $.onTheHome(manager);
-  await $.reach($(DashboardCard.surplusKey));
+  await $.reach($(SummaryCard.surplusKey));
   expect(showsIcon($, Icons.unfold_less), isTrue);
 }
 
 /// The home of [projectId] shows no summary and none of the project's buttons, while its entries and Add entry stay.
 Future<void> isCollapsed(PatrolIntegrationTester $, String projectId) async {
-  await $.gone($(DashboardCard.cardKey));
+  await $.gone($(SummaryCard.cardKey));
   expect($(HomeScreen.cardKey(projectId)), findsNothing);
   expect(showsIcon($, Icons.unfold_more), isTrue);
   await $.reach($(HomeScreen.addEntryKey(projectId)));
@@ -40,7 +40,7 @@ Future<void> isCollapsed(PatrolIntegrationTester $, String projectId) async {
 
 /// How far the button beside Settings is from Settings, along the top bar: positive when it sits to the right.
 double collapseFromSettings(PatrolIntegrationTester $, String projectId) =>
-    $.tester.getCenter(find.byKey(HomeScreen.collapseKey)).dx - $.tester.getCenter(find.byKey(HomeScreen.settingsKey(projectId))).dx;
+    $.tester.getCenter(find.byKey(HomeScreen.collapseKey)).dx - $.tester.getCenter(find.byKey(HomeScreen.generalSettingsKey(projectId))).dx;
 
 void main() {
   phoneClass('Collapse the home\'s summary (redix-app #91)', () {
@@ -57,12 +57,12 @@ void main() {
     phoneCase('R2: a second tap shows them again, with fresh figures', ($) async {
       final manager = await Given.manager();
       await onAnExpandedHome($, manager);
-      await $.says(DashboardCard.expensesKey, '0.00');
+      await $.says(SummaryCard.expensesKey, '0.00');
       await tapCollapse($);
-      await $.gone($(DashboardCard.cardKey));
+      await $.gone($(SummaryCard.cardKey));
       await Given.entriesApproved(manager, [await Given.entry(manager, amount: 100)]);
       await tapCollapse($);
-      await $.says(DashboardCard.expensesKey, '100.00');
+      await $.says(SummaryCard.expensesKey, '100.00');
       await $.reach($(HomeScreen.cardKey(manager.projectId)));
       expect(showsIcon($, Icons.unfold_less), isTrue);
     });
@@ -76,20 +76,20 @@ void main() {
       await $.pumpAndSettle();
       expect($(HomeScreen.accountsKey(manager.projectId)), findsNothing);
       expect($(HomeScreen.contractsKey(manager.projectId)), findsNothing);
-      expect($(DashboardCard.surplusKey), findsNothing);
+      expect($(SummaryCard.surplusKey), findsNothing);
     });
 
     phoneCase('R6, R10: after a restart the home opens collapsed, never showing the summary on the way', ($) async {
       final manager = await Given.manager();
       await onAnExpandedHome($, manager);
       await tapCollapse($);
-      await $.gone($(DashboardCard.cardKey));
+      await $.gone($(SummaryCard.cardKey));
       await $.restartApp();
       await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
       await $(ProjectsScreen.cardKey(manager.projectId)).tap(settlePolicy: SettlePolicy.noSettle);
       for (var frame = 0; frame < 40; frame++) {
         await $.tester.pump(const Duration(milliseconds: 50));
-        expect(find.byKey(DashboardCard.cardKey), findsNothing);
+        expect(find.byKey(SummaryCard.cardKey), findsNothing);
       }
       await isCollapsed($, manager.projectId);
     });
@@ -98,7 +98,7 @@ void main() {
       final manager = await Given.manager();
       await onAnExpandedHome($, manager);
       await tapCollapse($);
-      await $.gone($(DashboardCard.cardKey));
+      await $.gone($(SummaryCard.cardKey));
       await $.signOutFromTheHome(manager.projectId);
       await $.signIn(manager.username, manager.password);
       await $.openProject(manager.projectId);
@@ -111,9 +111,9 @@ void main() {
       await Given.joined(manager, by: other);
       await onAnExpandedHome($, manager);
       await tapCollapse($);
-      await $.gone($(DashboardCard.cardKey));
-      await $.tapOn(HomeScreen.settingsKey(manager.projectId));
-      await $.tapOn(SettingsScreen.switchProjectKey);
+      await $.gone($(SummaryCard.cardKey));
+      await $.tapOn(HomeScreen.generalSettingsKey(manager.projectId));
+      await $.tapOn(GeneralSettingsScreen.switchProjectKey);
       await $.openProject(other.projectId);
       await isCollapsed($, other.projectId);
     });
@@ -125,7 +125,7 @@ void main() {
       await tapCollapse($);
       await isCollapsed($, manager.projectId);
       await tapCollapse($);
-      await $.reach($(DashboardCard.cardKey));
+      await $.reach($(SummaryCard.cardKey));
       expect(showsIcon($, Icons.unfold_less), isTrue);
     });
 
@@ -138,11 +138,11 @@ void main() {
     phoneCase('R1: in Arabic the button sits just before Settings, to its right', ($) async {
       final manager = await Given.manager();
       await $.onTheList(manager);
-      await $(ProjectsScreen.settingsKey).tap();
+      await $(ProjectsScreen.generalSettingsKey).tap();
       await $.goTo($(LanguageSwitch.arabicKey));
       await $(LanguageSwitch.arabicKey).tap();
-      await $.until(() => Directionality.of($.tester.element(find.byKey(SettingsScreen.languageKey))) == TextDirection.rtl);
-      await $.tapOn(SettingsScreen.switchProjectKey);
+      await $.until(() => Directionality.of($.tester.element(find.byKey(GeneralSettingsScreen.languageKey))) == TextDirection.rtl);
+      await $.tapOn(GeneralSettingsScreen.switchProjectKey);
       await $.openProject(manager.projectId);
       await $.reach($(HomeScreen.collapseKey));
       expect(collapseFromSettings($, manager.projectId), inInclusiveRange(1, 60));

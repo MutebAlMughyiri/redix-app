@@ -2,7 +2,7 @@ import 'package:patrol/patrol.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/contracts/contracts_screen.dart';
-import 'package:redix/home/dashboard_card.dart';
+import 'package:redix/home/summary_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/item_reports_screen.dart';
 import 'package:redix/ui/part_keys.dart';
@@ -23,19 +23,19 @@ Future<({Person manager, String account})> aProjectWithMoney() async {
 extension MoneySteps on PatrolIntegrationTester {
   /// The home shows these three figures.
   Future<void> homeFigures({required String surplus, required String revenue, required String expenses}) async {
-    await says(DashboardCard.surplusKey, surplus);
-    await says(DashboardCard.revenueKey, revenue);
-    await says(DashboardCard.expensesKey, expenses);
+    await says(SummaryCard.surplusKey, surplus);
+    await says(SummaryCard.revenueKey, revenue);
+    await says(SummaryCard.expensesKey, expenses);
   }
 
   /// The home says [count] expenses wait for approval, coming to [amount], and no revenue does.
-  Future<void> expensesWaiting(int count, String amount) => says(DashboardCard.pendingKey.subtitle, '${words.dashboardPendingHint}\n${words.reportsPendingExpenses} ($count): $amount');
+  Future<void> expensesWaiting(int count, String amount) => says(SummaryCard.pendingKey.subtitle, '${words.summaryPendingHint}\n${words.reportsPendingExpenses} ($count): $amount');
 
   /// The home says [count] revenue entries wait for approval, coming to [amount], and no expense does.
-  Future<void> revenueWaiting(int count, String amount) => says(DashboardCard.pendingKey.subtitle, '${words.dashboardPendingHint}\n${words.reportsPendingRevenue} ($count): $amount');
+  Future<void> revenueWaiting(int count, String amount) => says(SummaryCard.pendingKey.subtitle, '${words.summaryPendingHint}\n${words.reportsPendingRevenue} ($count): $amount');
 
   /// The home says nothing waits.
-  Future<void> nothingWaits() => gone(this(DashboardCard.pendingKey));
+  Future<void> nothingWaits() => gone(this(SummaryCard.pendingKey));
 
   /// From the home, [manager] approves [entry] in the inbox and comes back.
   Future<void> approveOnThePhone(Person manager, String entry) async {
