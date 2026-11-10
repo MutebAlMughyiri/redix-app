@@ -22,7 +22,7 @@ import '../format/parts_line.dart';
 import '../ui/refusal_text.dart';
 
 /// Settings (الإعدادات), all on one screen (Muteb, 9 Nov 2026): who is signed in, the way back to the project list, the default project, the registered projects for the
-/// admin, the language (UC-004), the dark mode (redix-app #87), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out
+/// admin, the language (UC-004), the appearance (redix-app #87, #97), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out
 /// (UC-062), each in its own border (Muteb, 10 Nov 2026: "i like borders for each component"). A project's own screens open from its home.
 class GeneralSettingsScreen extends StatefulWidget {
   /// The screen for the user signed in through [session], opened from [project], whose [projects] the default is chosen among, switching [language] and the mode kept in
@@ -32,7 +32,7 @@ class GeneralSettingsScreen extends StatefulWidget {
   /// The language choice it changes.
   final AppLanguage language;
 
-  /// This phone's choices, where the dark mode is kept.
+  /// This phone's choices, where the appearance is kept.
   final LocalConfig localConfig;
 
   /// The session that says who is signed in and what they may do, and that it signs out of.
@@ -62,8 +62,20 @@ class GeneralSettingsScreen extends StatefulWidget {
   /// The heading over the choice of the language.
   static const languageKey = Key('generalSettings.language');
 
-  /// The switch that turns the dark mode on and off for this phone.
-  static const darkModeKey = Key('generalSettings.darkMode');
+  /// The heading over the choice of the appearance.
+  static const appearanceKey = Key('generalSettings.appearance');
+
+  /// The choice of the appearance for this phone: System, Light or Dark.
+  static const themeChoiceKey = Key('generalSettings.themeChoice');
+
+  /// The System choice, light or dark as the phone is.
+  static const themeSystemKey = Key('generalSettings.themeSystem');
+
+  /// The Light choice.
+  static const themeLightKey = Key('generalSettings.themeLight');
+
+  /// The Dark choice.
+  static const themeDarkKey = Key('generalSettings.themeDark');
 
   /// The switch that turns fingerprint or face on and off for this phone.
   static const biometricsKey = Key('generalSettings.biometrics');
@@ -147,12 +159,23 @@ class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
               Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), child: LanguageSwitch(language: widget.language)),
             ]),
             _bordered([
-              SwitchListTile(
-                key: GeneralSettingsScreen.darkModeKey,
-                secondary: Icon(Icons.dark_mode_outlined, key: GeneralSettingsScreen.darkModeKey.icon),
-                title: Text(words.generalSettingsDarkMode, key: GeneralSettingsScreen.darkModeKey.title),
-                value: widget.localConfig.isDark,
-                onChanged: (_) => widget.localConfig.toggleDarkMode(),
+              ListTile(
+                key: GeneralSettingsScreen.appearanceKey,
+                leading: Icon(Icons.dark_mode_outlined, key: GeneralSettingsScreen.appearanceKey.icon),
+                title: Text(words.generalSettingsAppearance, key: GeneralSettingsScreen.appearanceKey.title),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: SegmentedButton<ThemeMode>(
+                  key: GeneralSettingsScreen.themeChoiceKey,
+                  segments: [
+                    ButtonSegment(value: ThemeMode.system, label: Text(words.generalSettingsThemeSystem, key: GeneralSettingsScreen.themeSystemKey)),
+                    ButtonSegment(value: ThemeMode.light, label: Text(words.generalSettingsThemeLight, key: GeneralSettingsScreen.themeLightKey)),
+                    ButtonSegment(value: ThemeMode.dark, label: Text(words.generalSettingsThemeDark, key: GeneralSettingsScreen.themeDarkKey)),
+                  ],
+                  selected: {widget.localConfig.themeMode},
+                  onSelectionChanged: (chosen) => widget.localConfig.chooseThemeMode(chosen.single),
+                ),
               ),
             ]),
             _bordered([

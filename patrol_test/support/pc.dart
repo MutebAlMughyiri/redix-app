@@ -19,6 +19,12 @@ class Pc {
   /// Shares the phone's file at [path], of the type [mimeType], into the app, as another app's share sheet does.
   static Future<void> shareIntoTheApp(String path, String mimeType) => _ask('share-in?${Uri.encodeComponent('$mimeType|$path')}');
 
+  /// Turns the phone's own dark mode on, as its settings would.
+  static Future<void> turnPhoneDark() => _ask('phone/dark');
+
+  /// Turns the phone's own dark mode off again.
+  static Future<void> turnPhoneLight() => _ask('phone/light');
+
   /// Closes Notepad with nothing saved, so a case leaves no note on the phone.
   static Future<void> closeNotepad() => _ask('notepad/close');
 

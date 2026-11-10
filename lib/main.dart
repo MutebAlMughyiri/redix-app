@@ -483,7 +483,7 @@ class _RedixAppState extends State<RedixApp> {
         supportedLocales: [for (final language in Words.languages) Locale(language)],
         theme: appThemeOf(Brightness.light),
         darkTheme: appThemeOf(Brightness.dark),
-        themeMode: widget.localConfig.isDark ? ThemeMode.dark : ThemeMode.light,
+        themeMode: widget.localConfig.themeMode,
         builder: (context, child) => Words.of(context).isEmpty
             ? NoWordsScreen(onRetry: _reloadWords)
             : child ?? const SizedBox.shrink(),

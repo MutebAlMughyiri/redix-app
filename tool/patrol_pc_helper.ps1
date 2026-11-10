@@ -25,6 +25,8 @@ while ($true) {
       $type, $file = [uri]::UnescapeDataString($query) -split '\|', 2
       adb -s $Device shell am start -a android.intent.action.SEND -t $type --eu android.intent.extra.STREAM "file://$file" -n "$App/sa.redix.MainActivity" 2>&1 | Out-Null
     }
+    '/phone/dark' { adb -s $Device shell cmd uimode night yes 2>&1 | Out-Null }
+    '/phone/light' { adb -s $Device shell cmd uimode night no 2>&1 | Out-Null }
     '/notepad/close' { adb -s $Device shell am force-stop com.huawei.notepad 2>&1 | Out-Null }
     '/downloaded' {
       $start = [uri]::UnescapeDataString($query)
