@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
+import 'package:redix/api.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/sign_in_screen.dart';
@@ -17,8 +18,8 @@ import '../support/phone_case.dart';
 import '../support/phone_screens.dart';
 import '../support/steps.dart';
 
-/// The link a shared [entry] of the project of [person] carries.
-String linkOf(Person person, String entry) => 'https://redix.test/projects/${person.projectId}/entries/$entry/open';
+/// The link a shared [entry] of the project of [person] carries, on the host of the environment the app was built for.
+String linkOf(Person person, String entry) => 'https://$linkHost${EntryLinkScreen.pathOf(person.projectId, entry)}';
 
 /// Signs [person] in, opens the entry [entry], taps Share, sends it to Notepad, and answers the text Notepad received.
 Future<String> sharedTextOf(PatrolIntegrationTester $, Person person, String entry) async {
