@@ -5,14 +5,35 @@ mixin WordGetters {
   /// The word for [key] in the language in use.
   String text(String key);
 
-  /// The word `accounts.accountHasEntries`.
-  String get accountsAccountHasEntries => text('accounts.accountHasEntries');
+  /// The word `accounts.accountInUse`.
+  String get accountsAccountInUse => text('accounts.accountInUse');
+
+  /// The word `accounts.banks`.
+  String get accountsBanks => text('accounts.banks');
+
+  /// The word `accounts.counted`.
+  String get accountsCounted => text('accounts.counted');
 
   /// The word `accounts.custodian`.
   String get accountsCustodian => text('accounts.custodian');
 
   /// The word `accounts.custodianRequired`.
   String get accountsCustodianRequired => text('accounts.custodianRequired');
+
+  /// The word `accounts.custodies`.
+  String get accountsCustodies => text('accounts.custodies');
+
+  /// The word `accounts.delete`.
+  String get accountsDelete => text('accounts.delete');
+
+  /// The word `accounts.deleteCannotUndo`.
+  String get accountsDeleteCannotUndo => text('accounts.deleteCannotUndo');
+
+  /// The word `accounts.deleteQuestion`.
+  String get accountsDeleteQuestion => text('accounts.deleteQuestion');
+
+  /// The word `accounts.deleted`.
+  String get accountsDeleted => text('accounts.deleted');
 
   /// The word `accounts.disable`.
   String get accountsDisable => text('accounts.disable');
@@ -29,11 +50,11 @@ mixin WordGetters {
   /// The word `accounts.enable`.
   String get accountsEnable => text('accounts.enable');
 
+  /// The word `accounts.history`.
+  String get accountsHistory => text('accounts.history');
+
   /// The word `accounts.invalidName`.
   String get accountsInvalidName => text('accounts.invalidName');
-
-  /// The word `accounts.invalidOpeningBalance`.
-  String get accountsInvalidOpeningBalance => text('accounts.invalidOpeningBalance');
 
   /// The word `accounts.loadFailed`.
   String get accountsLoadFailed => text('accounts.loadFailed');
@@ -52,9 +73,6 @@ mixin WordGetters {
 
   /// The word `accounts.noCustodian`.
   String get accountsNoCustodian => text('accounts.noCustodian');
-
-  /// The word `accounts.openingBalance`.
-  String get accountsOpeningBalance => text('accounts.openingBalance');
 
   /// The word `accounts.projectFinished`.
   String get accountsProjectFinished => text('accounts.projectFinished');
@@ -88,6 +106,9 @@ mixin WordGetters {
 
   /// The word `app.title`.
   String get appTitle => text('app.title');
+
+  /// The word `approvals.accountShort`.
+  String get approvalsAccountShort => text('approvals.accountShort');
 
   /// The word `approvals.all`.
   String get approvalsAll => text('approvals.all');
@@ -992,6 +1013,9 @@ mixin WordGetters {
   /// The word `entryShare.account`.
   String get entryShareAccount => text('entryShare.account');
 
+  /// The word `entryShare.accountShort`.
+  String get entryShareAccountShort => text('entryShare.accountShort');
+
   /// The word `entryShare.amount`.
   String get entryShareAmount => text('entryShare.amount');
 
@@ -1195,6 +1219,63 @@ mixin WordGetters {
 
   /// The word `expenses.unknownTable`.
   String get expensesUnknownTable => text('expenses.unknownTable');
+
+  /// The word `history.accountChanged`.
+  String get historyAccountChanged => text('history.accountChanged');
+
+  /// The word `history.accountCreated`.
+  String get historyAccountCreated => text('history.accountCreated');
+
+  /// The word `history.accountDeleted`.
+  String get historyAccountDeleted => text('history.accountDeleted');
+
+  /// The word `history.accountDisabled`.
+  String get historyAccountDisabled => text('history.accountDisabled');
+
+  /// The word `history.accountEnabled`.
+  String get historyAccountEnabled => text('history.accountEnabled');
+
+  /// The word `history.allAccounts`.
+  String get historyAllAccounts => text('history.allAccounts');
+
+  /// The word `history.approvedBy`.
+  String get historyApprovedBy => text('history.approvedBy');
+
+  /// The word `history.check`.
+  String get historyCheck => text('history.check');
+
+  /// The word `history.custodianChanged`.
+  String get historyCustodianChanged => text('history.custodianChanged');
+
+  /// The word `history.empty`.
+  String get historyEmpty => text('history.empty');
+
+  /// The word `history.entryIn`.
+  String get historyEntryIn => text('history.entryIn');
+
+  /// The word `history.entryOut`.
+  String get historyEntryOut => text('history.entryOut');
+
+  /// The word `history.loadFailed`.
+  String get historyLoadFailed => text('history.loadFailed');
+
+  /// The word `history.mine`.
+  String get historyMine => text('history.mine');
+
+  /// The word `history.more`.
+  String get historyMore => text('history.more');
+
+  /// The word `history.nameWas`.
+  String get historyNameWas => text('history.nameWas');
+
+  /// The word `history.reversed`.
+  String get historyReversed => text('history.reversed');
+
+  /// The word `history.transfer`.
+  String get historyTransfer => text('history.transfer');
+
+  /// The word `history.unknownAccount`.
+  String get historyUnknownAccount => text('history.unknownAccount');
 
   /// The word `home.hideDetails`.
   String get homeHideDetails => text('home.hideDetails');
@@ -2062,6 +2143,60 @@ mixin WordGetters {
 
   /// The word `swipe.remove`.
   String get swipeRemove => text('swipe.remove');
+
+  /// The word `transfers.accountDisabled`.
+  String get transfersAccountDisabled => text('transfers.accountDisabled');
+
+  /// The word `transfers.amount`.
+  String get transfersAmount => text('transfers.amount');
+
+  /// The word `transfers.balanceNow`.
+  String get transfersBalanceNow => text('transfers.balanceNow');
+
+  /// The word `transfers.button`.
+  String get transfersButton => text('transfers.button');
+
+  /// The word `transfers.date`.
+  String get transfersDate => text('transfers.date');
+
+  /// The word `transfers.from`.
+  String get transfersFrom => text('transfers.from');
+
+  /// The word `transfers.insufficientBalance`.
+  String get transfersInsufficientBalance => text('transfers.insufficientBalance');
+
+  /// The word `transfers.invalidAmount`.
+  String get transfersInvalidAmount => text('transfers.invalidAmount');
+
+  /// The word `transfers.invalidNotes`.
+  String get transfersInvalidNotes => text('transfers.invalidNotes');
+
+  /// The word `transfers.noConnection`.
+  String get transfersNoConnection => text('transfers.noConnection');
+
+  /// The word `transfers.notes`.
+  String get transfersNotes => text('transfers.notes');
+
+  /// The word `transfers.projectFinished`.
+  String get transfersProjectFinished => text('transfers.projectFinished');
+
+  /// The word `transfers.refused`.
+  String get transfersRefused => text('transfers.refused');
+
+  /// The word `transfers.sameAccount`.
+  String get transfersSameAccount => text('transfers.sameAccount');
+
+  /// The word `transfers.save`.
+  String get transfersSave => text('transfers.save');
+
+  /// The word `transfers.title`.
+  String get transfersTitle => text('transfers.title');
+
+  /// The word `transfers.to`.
+  String get transfersTo => text('transfers.to');
+
+  /// The word `transfers.unknownAccount`.
+  String get transfersUnknownAccount => text('transfers.unknownAccount');
 
   /// The word `users.add`.
   String get usersAdd => text('users.add');

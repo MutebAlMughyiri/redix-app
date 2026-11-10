@@ -249,18 +249,24 @@ class Given {
   }
 
   /// [manager] adds an account, a bank one unless [custodian] holds it, and its id is answered.
-  static Future<String> account(Person manager, {String name = '', num opening = 0, Person custodian = Person.none}) async {
+  static Future<String> account(Person manager, {String name = '', Person custodian = Person.none}) async {
     final token = await _tokenOf(manager);
     final accountName = name.isEmpty ? 'Bank ${unique()}' : name;
     await _post('${manager.project}/accounts', {
       'name': accountName,
       'type': custodian.isNone ? 'bank' : 'cashCustody',
-      'openingBalance': opening,
       if (!custodian.isNone) 'custodianId': custodian.id,
     }, token);
     final all = await _getList('${manager.project}/accounts', token);
     return all.cast<Map<String, dynamic>>().singleWhere((account) => account['name'] == accountName)['id'] as String;
   }
+
+  /// [manager] puts [amount] into the account [accountId] with approved revenue: money enters an account only through entries and transfers (redix-app #89).
+  static Future<void> funded(Person manager, String accountId, num amount) async => entriesApproved(manager, [await revenue(manager, amount: amount, accountId: accountId)]);
+
+  /// [manager] moves [amount] from the account [from] to [to] (FR-23), counted at once in both.
+  static Future<void> transferred(Person manager, String from, String to, num amount) async =>
+      _post('${manager.project}/transfers', {'fromAccountId': from, 'toAccountId': to, 'amount': amount, 'date': DateTime.now().toIso8601String().substring(0, 10), 'notes': ''}, await _tokenOf(manager));
 
   /// [manager] disables the account [accountId].
   static Future<void> accountDisabled(Person manager, String accountId) async {

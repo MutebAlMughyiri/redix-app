@@ -9,7 +9,8 @@ void main() {
   phoneClass('My custody on the home (UC-015)', () {
     phoneCase('AC-22.1: a custodian sees their custody on the home', ($) async {
       final manager = await Given.manager(project: 'غصون 7', manager: 'ريم');
-      final custody = await Given.account(manager, name: 'كاش مع مدير المشروع', opening: 2750, custodian: manager);
+      final custody = await Given.account(manager, name: 'كاش مع مدير المشروع', custodian: manager);
+      await Given.funded(manager, custody, 2750);
       await $.onTheHome(manager);
       await $.reach($(HomeScreen.custodyKey(custody)));
       await $.says(HomeScreen.custodyBalanceKey(custody), '2,750.00 ${$.words.accountsRiyal}');
@@ -18,7 +19,8 @@ void main() {
 
     phoneCase('its balance follows an approved expense paid from it', ($) async {
       final manager = await Given.manager();
-      final custody = await Given.account(manager, opening: 1000, custodian: manager);
+      final custody = await Given.account(manager, custodian: manager);
+      await Given.funded(manager, custody, 1000);
       await Given.entriesApproved(manager, [await Given.entry(manager, accountId: custody, amount: 100)]);
       await $.onTheHome(manager);
       await $.reach($(HomeScreen.custodyBalanceKey(custody)));

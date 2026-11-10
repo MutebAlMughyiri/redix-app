@@ -42,7 +42,6 @@ final _theItemsCategory = [_card, HomeScreen.categoriesKey(_project), Categories
 final List<MainAction> _mainActions = [
   (name: 'Home: إضافة قيد', arrange: _nothing, reach: [_card], key: HomeScreen.addEntryKey(_project), icon: Icons.add),
   (name: 'Documents', arrange: _nothing, reach: [_card, HomeScreen.documentsKey(_project)], key: DocumentsScreen.addKey, icon: Icons.add),
-  (name: 'Accounts', arrange: _nothing, reach: [_card, HomeScreen.accountsKey(_project)], key: AccountsScreen.addKey, icon: Icons.add),
   (name: 'Payment methods', arrange: _nothing, reach: [_card, HomeScreen.paymentMethodsKey(_project)], key: PaymentMethodsScreen.addKey, icon: Icons.add),
   (name: 'Suppliers', arrange: _nothing, reach: [_card, HomeScreen.suppliersKey(_project)], key: SuppliersScreen.addKey, icon: Icons.add),
   (name: 'Partners', arrange: _nothing, reach: [_card, HomeScreen.partnersKey(_project)], key: PartnersScreen.addKey, icon: Icons.add),
@@ -119,7 +118,6 @@ void main() {
   for (final (key, permission) in [
     (HomeScreen.addEntryKey(_project), Permission.recordEntries),
     (DocumentsScreen.addKey, Permission.manageProject),
-    (AccountsScreen.addKey, Permission.manageSettings),
     (SuppliersScreen.addKey, Permission.manageSettings),
     (PartnersScreen.addKey, Permission.manageSettings),
     (ContractsScreen.addKey, Permission.manageSettings),
@@ -131,6 +129,26 @@ void main() {
       expect(isEnabled(tester, action.key), isFalse);
     });
   }
+
+  testWidgets('redix-app #89 D21: the one bottom bar of Accounts holds Transfer and Update side by side, each half its width', (tester) async {
+    await open(tester, (
+      name: 'Accounts',
+      arrange: (api) => api
+        ..addAccount(_project, 'البنك')
+        ..addAccount(_project, 'كاش'),
+      reach: [_card, HomeScreen.accountsKey(_project)],
+      key: AccountsScreen.transferKey,
+      icon: Icons.sync_alt,
+    ));
+
+    final bar = find.byType(BottomButton);
+    expect(bar, findsOneWidget);
+    for (final key in [AccountsScreen.transferKey, AccountsScreen.updateKey]) {
+      expect(isEnabled(tester, key), isTrue);
+      expect(tester.getSize(find.descendant(of: bar, matching: find.byKey(key))).width, (900 - 16 - 8) / 2);
+    }
+    expect(tester.widget<Icon>(find.byKey(AccountsScreen.transferKey.icon)).icon, Icons.sync_alt);
+  });
 
   testWidgets('#85: Payment methods says what it adds, and no bare Add with a tooltip', (tester) async {
     await open(tester, _mainActions.firstWhere((action) => action.key == PaymentMethodsScreen.addKey));

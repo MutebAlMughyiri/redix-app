@@ -22,7 +22,7 @@ void main() {
   phoneClass('Revenue in the figures (BR-06 and BR-07)', () {
     phoneCase('BR-10: revenue entered on the phone waits and moves nothing, and approving it raises the revenue, the surplus and its account', ($) async {
       final manager = await Given.manager();
-      final account = await Given.account(manager, opening: 1000);
+      final account = await Given.account(manager);
       await $.onAddEntry(manager);
       await pickRefund($);
       await $.fill(AddEntryScreen.amountKey, '300.75');
@@ -34,7 +34,7 @@ void main() {
       await $.approveOnThePhone(manager, (await Given.waitingIds(manager)).single);
       await $.homeFigures(surplus: '300.75', revenue: '300.75', expenses: '0.00');
       await $.nothingWaits();
-      await $.accountStands(manager, account, '1,300.75');
+      await $.accountStands(manager, account, '300.75');
     });
 
     phoneCase('BR-10: waiting revenue leaves the revenue and its account alone', ($) async {
@@ -43,7 +43,7 @@ void main() {
       await $.onTheHome(money.manager);
       await $.homeFigures(surplus: '(10.00)', revenue: '0.00', expenses: '10.00');
       await $.revenueWaiting(1, '300.00');
-      await $.accountStands(money.manager, money.account, '990.00');
+      await $.accountStands(money.manager, money.account, '(10.00)');
     });
 
     phoneCase('BR-10: draft revenue counts nowhere, not even as waiting', ($) async {
@@ -69,16 +69,16 @@ void main() {
       await Given.entryReversed(money.manager, entry);
       await $.onTheHome(money.manager);
       await $.homeFigures(surplus: '(10.00)', revenue: '0.00', expenses: '10.00');
-      await $.accountStands(money.manager, money.account, '990.00');
+      await $.accountStands(money.manager, money.account, '(10.00)');
     });
 
     phoneCase('several revenue entries add up to the halala', ($) async {
       final manager = await Given.manager();
-      final account = await Given.account(manager, opening: 1000);
+      final account = await Given.account(manager);
       await Given.entriesApproved(manager, [for (final amount in [100.10, 200.20, 0.03]) await Given.revenue(manager, amount: amount, accountId: account)]);
       await $.onTheHome(manager);
       await $.homeFigures(surplus: '300.33', revenue: '300.33', expenses: '0.00');
-      await $.accountStands(manager, account, '1,300.33');
+      await $.accountStands(manager, account, '300.33');
     });
 
     phoneCase('BR-07: the surplus is the revenue less the expenses', ($) async {

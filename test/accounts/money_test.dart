@@ -2,13 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/accounts/reconcile_screen.dart';
 import 'package:redix/accounts/reconciliation_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
-import 'package:redix/accounts/actual_balances_screen.dart';
 import 'package:redix/ui/bottom_button.dart';
 
 import '../app_harness.dart';
@@ -26,14 +26,16 @@ void main() {
     return (api: api, capture: capture);
   }
 
-  /// Opens الأرصدة الفعلية from the home (Muteb, 9 Nov 2026).
+  /// Opens Accounts from the home, where the actual balances are since redix-app #89.
   Future<({FakeApi api, FakeCapture capture})> openBalances(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance}) async {
     final opened = await openHome(tester, arrange, permissions: permissions);
-    await tester.ensureVisible(find.byKey(HomeScreen.actualBalancesKey('project-0')));
+    await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));
     await tester.pumpAndSettle();
-    await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.actualBalancesKey('project-0'))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.accountsKey('project-0'))));
     return opened;
   }
+
+  String details(WidgetTester tester, String id) => tester.widget<Text>(find.byKey(AccountsScreen.detailsKey(id))).data!;
 
   Future<({FakeApi api, FakeCapture capture})> openPartners(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance}) async {
     final opened = await openHome(tester, arrange, permissions: permissions);
@@ -58,23 +60,21 @@ void main() {
     addTearDown(tester.view.reset);
     final api = FakeApi()..addProject('مشروع غصون السادس في شمال مدينة الرياض بالمملكة', permissions: managerAndFinance, units: ['الفلة']);
     api
-      ..addAccount('project-0', longName, openingBalance: 9999999.99)
+      ..addAccount('project-0', longName, balance: 9999999.99)
       ..reconciliationAnswer = reconciled(9999999.99, 8888888.88, balances: [balanceRow(longName, 9999999.99, 8888888.88)])
       ..capitalTotal = 9999999.99
       ..addMovement(attachmentId: 'attachment-1', amount: -9999999.99);
     final partner = api.addPartner('project-0', 'متعب بن عبدالله بن محمد المغيري الشريك المؤسس في المشروع', userId: 'user-1', userName: 'نواف بن عبدالله بن محمد العتيبي');
     api.addCapitalLine(partner['id']! as String, 9999999.99, 66.6666666667);
     await openProject(tester, api);
-    final project = find.byKey(HomeScreen.actualBalancesKey('project-0'));
+    final project = find.byKey(HomeScreen.accountsKey('project-0'));
 
     await tester.ensureVisible(project);
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(project));
     expect(find.byKey(ReconciliationCard.differenceKey), findsOneWidget);
 
-    await tester.ensureVisible(find.byKey(ActualBalancesScreen.updateKey));
-    await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(ActualBalancesScreen.updateKey)));
+    await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.updateKey)));
     expect(find.byKey(ReconcileScreen.saveKey, skipOffstage: false), findsOneWidget);
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
@@ -122,34 +122,36 @@ void main() {
       expect(tester.widget<Text>(find.byKey(ReconciliationCard.actualTotalKey)).data, '975.00');
     });
 
-    testWidgets('before any check it says so, and each account shows a dash', (tester) async {
+    testWidgets('before any check it says so, and each account shows what it holds with no counted line', (tester) async {
       late String accountId;
-      await openBalances(tester, (api) => accountId = api.addAccount('project-0', 'حساب', openingBalance: 500)['id']! as String);
+      await openBalances(tester, (api) => accountId = api.addAccount('project-0', 'حساب', balance: 500)['id']! as String);
 
       expect(find.byKey(ReconciliationCard.neverKey), findsOneWidget);
       expect(find.byKey(ReconciliationCard.differenceKey), findsNothing);
-      expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(accountId))).data, '—');
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(accountId))).data, '500.00');
+      expect(details(tester, accountId), isNot(contains('accounts.counted')));
     });
 
-    testWidgets('Muteb, 9 Nov 2026: each account is listed as Accounts draws it, with what it really held at the latest check, and no menu', (tester) async {
+    testWidgets('redix-app #89: each account shows what it holds, and what was counted at the latest check on its line, grouped by type', (tester) async {
       late String bankId;
       late String cashId;
       await openBalances(tester, (api) {
-        bankId = api.addAccount('project-0', 'الراجحي', openingBalance: 800)['id']! as String;
-        cashId = api.addAccount('project-0', 'عهدة الموقع', type: 'cashCustody', openingBalance: 200)['id']! as String;
+        bankId = api.addAccount('project-0', 'الراجحي', balance: 800)['id']! as String;
+        cashId = api.addAccount('project-0', 'عهدة الموقع', type: 'cashCustody', balance: 200)['id']! as String;
         api.reconciliationAnswer = reconciled(1000, 900.75, balances: [balanceRow(bankId, 800, 700.75), balanceRow(cashId, 200, 200)]);
       });
 
       expect(tester.widget<Text>(find.byKey(AccountsScreen.nameKey(bankId))).data, 'الراجحي');
-      expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(bankId))).data, '700.75');
-      expect(tester.widget<Text>(find.byKey(AccountsScreen.nameKey(cashId))).data, 'عهدة الموقع');
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(bankId))).data, '800.00');
+      expect(details(tester, bankId), 'en accounts.typeBank · en accounts.counted');
       expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(cashId))).data, '200.00');
       expect(tester.widget<Icon>(find.byKey(AccountsScreen.rowKey(cashId).icon)).icon, Icons.payments_outlined);
-      expect(find.byKey(AccountsScreen.menuKey(bankId)), findsNothing);
-      expect(find.byKey(AccountsScreen.menuKey(cashId)), findsNothing);
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.groupKey(AccountType.bank))).data, 'en accounts.banks');
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.groupKey(AccountType.cashCustody))).data, 'en accounts.custodies');
+      expect(tester.getTopLeft(find.byKey(AccountsScreen.groupKey(AccountType.cashCustody))).dy, greaterThan(tester.getTopLeft(find.byKey(AccountsScreen.rowKey(bankId))).dy));
     });
 
-    testWidgets('findings row 187: an account the latest check did not hold shows a dash, not 0.00, and its field starts empty', (tester) async {
+    testWidgets('findings row 187: an account the latest check did not hold shows no counted line, and its field starts empty', (tester) async {
       late String checkedId;
       late String addedId;
       final (:api, capture: _) = await openBalances(tester, (api) {
@@ -158,10 +160,10 @@ void main() {
         api.reconciliationAnswer = reconciled(1000, 700, balances: [balanceRow(checkedId, 1000, 700), balanceRow(addedId, 0, 0, wasChecked: false)]);
       });
 
-      expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(checkedId))).data, '700.00');
-      expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(addedId))).data, '—');
+      expect(details(tester, checkedId), contains('en accounts.counted'));
+      expect(details(tester, addedId), isNot(contains('accounts.counted')));
 
-      await act(tester, api, () => tester.tap(find.byKey(ActualBalancesScreen.updateKey)));
+      await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.updateKey)));
       expect(tester.widget<TextField>(find.descendant(of: find.byKey(ReconcileScreen.balanceKey(addedId)), matching: find.byType(TextField), matchRoot: true)).controller!.text, '');
     });
 
@@ -171,7 +173,7 @@ void main() {
           ..addAccount('project-0', 'حساب')
           ..reconciliationAnswer = reconciled(1000, 0, balances: [balanceRow('account-a', 800, 0), balanceRow('account-b', 200, 0)]);
       });
-      await act(tester, api, () => tester.tap(find.byKey(ActualBalancesScreen.updateKey)));
+      await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.updateKey)));
 
       await tester.enterText(find.byKey(ReconcileScreen.balanceKey('account-a')), '٧٠٠');
       await tester.enterText(find.byKey(ReconcileScreen.balanceKey('account-b')), '200.50');
@@ -195,7 +197,7 @@ void main() {
           ..addAccount('project-0', 'حساب')
           ..reconciliationAnswer = reconciled(1000, 0, balances: [balanceRow('account-a', 800, 0)]);
       });
-      await act(tester, api, () => tester.tap(find.byKey(ActualBalancesScreen.updateKey)));
+      await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.updateKey)));
 
       await tester.enterText(find.byKey(ReconcileScreen.balanceKey('account-a')), '');
       await act(tester, api, () => tester.tap(find.byKey(ReconcileScreen.saveKey)));
@@ -204,32 +206,32 @@ void main() {
       expect(api.sentMoney, isEmpty);
     });
 
-    testWidgets('only whoever moves money enters balances: تحديث, the bottom button, is grayed for anyone else, and everyone sees the card', (tester) async {
-      await openBalances(tester, (api) => api.addAccount('project-0', 'حساب'), permissions: field);
+    testWidgets('only whoever moves money transfers and enters balances: both bottom buttons are grayed for anyone else, and everyone sees the card', (tester) async {
+      await openBalances(tester, (api) => api..addAccount('project-0', 'حساب')..addAccount('project-0', 'كاش'), permissions: field);
 
       expect(find.byKey(ReconciliationCard.neverKey), findsOneWidget);
-      expect(isEnabled(tester, ActualBalancesScreen.updateKey), isFalse);
+      expect(isEnabled(tester, AccountsScreen.updateKey), isFalse);
+      expect(isEnabled(tester, AccountsScreen.transferKey), isFalse);
     });
 
-    testWidgets('transfers between accounts are gone: Accounts offers only the actual balances (Muteb, 8 Nov 2026)', (tester) async {
-      await openBalances(tester, (api) => api.addAccount('project-0', 'حساب'));
+    testWidgets('redix-app #89 R1: Accounts holds the actual balances: the card on top, Transfer and تحديث side by side in its one bottom bar, and the home has no Actual balances button', (tester) async {
+      await openBalances(tester, (api) => api..addAccount('project-0', 'حساب')..addAccount('project-0', 'كاش'));
 
-      expect(find.byKey(ActualBalancesScreen.updateKey), findsOneWidget);
-      expect(find.byKey(const Key('accounts.transfer')), findsNothing);
-      expect(find.byKey(const Key('accounts.transfersHeading')), findsNothing);
+      expect(find.byKey(ReconciliationCard.cardKey), findsOneWidget);
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.updateKey.label)).data, 'en accounts.reconcile');
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.transferKey.label)).data, 'en transfers.button');
+      final bar = find.byType(BottomButton);
+      expect(find.descendant(of: bar, matching: find.byKey(AccountsScreen.updateKey)), findsOneWidget);
+      expect(find.descendant(of: bar, matching: find.byKey(AccountsScreen.transferKey)), findsOneWidget);
+      expect(isEnabled(tester, AccountsScreen.transferKey), isTrue);
+      expect(find.byKey(const Key('home.actualBalances.project-0')), findsNothing);
     });
 
-    testWidgets('Muteb, 9 Nov 2026: the actual balances have their own screen from the home, its button reads تحديث, and Accounts shows the accounts alone', (tester) async {
-      final (:api, capture: _) = await openBalances(tester, (api) => api.addAccount('project-0', 'حساب'));
-      expect(find.byKey(ReconciliationCard.neverKey), findsOneWidget);
-      expect(tester.widget<Text>(find.byKey(ActualBalancesScreen.updateKey.label)).data, 'en accounts.reconcile');
-      expect(find.ancestor(of: find.byKey(ActualBalancesScreen.updateKey), matching: find.byType(BottomButton)), findsOneWidget, reason: 'Muteb, 9 Nov 2026: تحديث is the bottom button of the screen');
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    testWidgets('redix-app #89: with one active account there is nothing to transfer to, so Transfer is grayed', (tester) async {
+      await openBalances(tester, (api) => api..addAccount('project-0', 'حساب')..addAccount('project-0', 'قديم', isActive: false));
 
-      await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.accountsKey('project-0'))));
-      expect(find.byType(ReconciliationCard), findsNothing);
-      expect(find.byKey(ActualBalancesScreen.updateKey), findsNothing);
+      expect(isEnabled(tester, AccountsScreen.transferKey), isFalse);
+      expect(isEnabled(tester, AccountsScreen.updateKey), isTrue);
     });
   });
 

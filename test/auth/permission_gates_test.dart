@@ -28,7 +28,6 @@ import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/accounts/actual_balances_screen.dart';
 
 import '../app_harness.dart';
 
@@ -63,7 +62,8 @@ void _nothing(FakeApi api) {}
 Finder Function(FakeApi api) _key(Key key) => (_) => find.byKey(key);
 
 /// The button keyed [key] in its working state: a screen's add button shows grayed without the permission rather than hidden (Muteb, 8 Nov 2026; issue #85).
-Finder Function(FakeApi api) _enabled(Key key) => (_) => find.byWidgetPredicate((widget) => widget.key == key && widget is ButtonStyleButton && widget.enabled);
+Finder Function(FakeApi api) _enabled(Key key) =>
+    (_) => find.byWidgetPredicate((widget) => widget.key == key && ((widget is ButtonStyleButton && widget.enabled) || (widget is IconButton && widget.onPressed != null)));
 
 String _first(List<Map<String, Object>>? rows) => rows!.first['id']! as String;
 
@@ -261,11 +261,20 @@ final List<Gate> _gates = [
     control: _key(AddEntryScreen.reverseKey),
   ),
   (
-    name: 'An enabled تحديث on the actual balances',
+    name: 'An enabled تحديث on Accounts (redix-app #89)',
     permission: Permission.moveMoney,
     arrange: (api) => api.addAccount(_project, 'البنك'),
-    steps: [_openProject, _tapKey(HomeScreen.actualBalancesKey(_project))],
-    control: _enabled(ActualBalancesScreen.updateKey),
+    steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))],
+    control: _enabled(AccountsScreen.updateKey),
+  ),
+  (
+    name: 'An enabled Transfer on Accounts (redix-app #89, D1)',
+    permission: Permission.moveMoney,
+    arrange: (api) => api
+      ..addAccount(_project, 'البنك')
+      ..addAccount(_project, 'كاش'),
+    steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))],
+    control: _enabled(AccountsScreen.transferKey),
   ),
   (name: 'An enabled Issue a periodic report', permission: Permission.moveMoney, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _enabled(ReportsScreen.issueKey)),
   (

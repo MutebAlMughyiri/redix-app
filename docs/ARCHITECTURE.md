@@ -13,7 +13,9 @@ lib/
   account/
   accounts/
     account.dart            What kind of account holds a project's money, as the API names it, each knowing its word
-    account_dialog.dart     Asks for an account's name, opening balance and who holds it, and for a new account its type, which is set once
+    account_dialog.dart     Asks for an account's name and who holds it, and for a new account its type, which is set once; no balance (redix-app #89)
+    transfer_dialog.dart    Moves money from one active account to another (FR-23)
+    account_history*.dart   The account history: its lines, their words and icons, the filters and the next page
     account_row.dart        One account: its type and who holds it, or that it is disabled, what it holds and, for whoever keeps the settings, a menu of what can be done to it
     accounts.dart           A project's accounts and cash custodies, and the one way to change them
     accounts_screen.dart    A project's bank accounts and cash custodies: everyone with access sees them, and whoever keeps the settings adds, changes and disables them

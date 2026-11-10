@@ -30,7 +30,7 @@ void main() {
   phoneClass('A purchase in the figures (BR-10)', () {
     phoneCase('BR-10: a purchase entered on the phone waits and moves nothing, and approving it moves the expenses, the surplus and its account', ($) async {
       final manager = await Given.manager();
-      final account = await Given.account(manager, opening: 1000);
+      final account = await Given.account(manager);
       final table = await Given.firstPurchaseTable(manager);
       await $.onAddEntry(manager);
       await $.pickTable(table.tableId);
@@ -44,7 +44,7 @@ void main() {
       await $.approveOnThePhone(manager, (await Given.waitingIds(manager)).single);
       await $.homeFigures(surplus: '(250.50)', revenue: '0.00', expenses: '250.50');
       await $.nothingWaits();
-      await $.accountStands(manager, account, '749.50');
+      await $.accountStands(manager, account, '(250.50)');
     });
 
     phoneCase('BR-10: a waiting purchase leaves the expenses and its account alone', ($) async {
@@ -53,7 +53,7 @@ void main() {
       await $.onTheHome(money.manager);
       await $.homeFigures(surplus: '(10.00)', revenue: '0.00', expenses: '10.00');
       await $.expensesWaiting(1, '100.00');
-      await $.accountStands(money.manager, money.account, '990.00');
+      await $.accountStands(money.manager, money.account, '(10.00)');
     });
 
     phoneCase('BR-10: a draft counts nowhere, not even as waiting', ($) async {
@@ -62,7 +62,7 @@ void main() {
       await $.onTheHome(money.manager);
       await $.homeFigures(surplus: '(10.00)', revenue: '0.00', expenses: '10.00');
       await $.nothingWaits();
-      await $.accountStands(money.manager, money.account, '990.00');
+      await $.accountStands(money.manager, money.account, '(10.00)');
     });
 
     phoneCase('BR-10: a rejected purchase leaves what waits, and counts nowhere', ($) async {
@@ -71,7 +71,7 @@ void main() {
       await $.onTheHome(money.manager);
       await $.homeFigures(surplus: '(10.00)', revenue: '0.00', expenses: '10.00');
       await $.nothingWaits();
-      await $.accountStands(money.manager, money.account, '990.00');
+      await $.accountStands(money.manager, money.account, '(10.00)');
     });
 
     phoneCase('AC-50.1: reversing a purchase puts the expenses, the surplus and the account back', ($) async {
@@ -81,7 +81,7 @@ void main() {
       await Given.entryReversed(money.manager, entry);
       await $.onTheHome(money.manager);
       await $.homeFigures(surplus: '(10.00)', revenue: '0.00', expenses: '10.00');
-      await $.accountStands(money.manager, money.account, '990.00');
+      await $.accountStands(money.manager, money.account, '(10.00)');
     });
 
     phoneCase('a purchase deleted while it waits leaves no trace in the figures', ($) async {
@@ -104,16 +104,16 @@ void main() {
       await $.expensesWaiting(1, '175.25');
       await $.approveOnThePhone(money.manager, entry);
       await $.homeFigures(surplus: '(185.25)', revenue: '0.00', expenses: '185.25');
-      await $.accountStands(money.manager, money.account, '814.75');
+      await $.accountStands(money.manager, money.account, '(185.25)');
     });
 
     phoneCase('several purchases add up to the halala', ($) async {
       final manager = await Given.manager();
-      final account = await Given.account(manager, opening: 1000);
+      final account = await Given.account(manager);
       await Given.entriesApproved(manager, [for (final amount in [100.10, 200.20, 0.03]) await Given.entry(manager, amount: amount, accountId: account)]);
       await $.onTheHome(manager);
       await $.homeFigures(surplus: '(300.33)', revenue: '0.00', expenses: '300.33');
-      await $.accountStands(manager, account, '699.67');
+      await $.accountStands(manager, account, '(300.33)');
     });
 
     phoneCase('each expense category totals only its own purchases', ($) async {

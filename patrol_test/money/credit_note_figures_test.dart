@@ -12,10 +12,10 @@ import '../support/money_steps.dart';
 import '../support/phone_case.dart';
 import '../support/steps.dart';
 
-/// A new manager, an account that opened at 1,000.00, a supplier and that supplier's approved bill of [amount].
+/// A new manager, an account that held nothing before, a supplier and that supplier's approved bill of [amount].
 Future<({Person manager, String account, String supplier, String bill})> aBill({num amount = 500}) async {
   final manager = await Given.manager();
-  final account = await Given.account(manager, opening: 1000);
+  final account = await Given.account(manager);
   final supplier = await Given.supplier(manager, name: 'مورد ${Given.unique()}');
   final bill = await Given.entry(manager, amount: amount, accountId: account, supplierId: supplier);
   await Given.entriesApproved(manager, [bill]);
@@ -53,7 +53,7 @@ void main() {
       await $.homeFigures(surplus: '(500.00)', revenue: '0.00', expenses: '500.00');
       await $.approveOnThePhone(made.manager, (await Given.waitingIds(made.manager)).single);
       await $.homeFigures(surplus: '(400.00)', revenue: '0.00', expenses: '400.00');
-      await $.accountStands(made.manager, made.account, '600.00');
+      await $.accountStands(made.manager, made.account, '(400.00)');
     });
 
     phoneCase('BR-10: a waiting credit note leaves the account alone', ($) async {
@@ -61,7 +61,7 @@ void main() {
       await aNote(made, 100);
       await $.onTheHome(made.manager);
       await $.homeFigures(surplus: '(500.00)', revenue: '0.00', expenses: '500.00');
-      await $.accountStands(made.manager, made.account, '500.00');
+      await $.accountStands(made.manager, made.account, '(500.00)');
     });
 
     phoneCase('BR-10: a rejected credit note counts nowhere', ($) async {
@@ -70,7 +70,7 @@ void main() {
       await $.onTheHome(made.manager);
       await $.homeFigures(surplus: '(500.00)', revenue: '0.00', expenses: '500.00');
       await $.nothingWaits();
-      await $.accountStands(made.manager, made.account, '500.00');
+      await $.accountStands(made.manager, made.account, '(500.00)');
     });
 
     phoneCase('AC-50.1: reversing a credit note brings the expense and the account back', ($) async {
@@ -80,7 +80,7 @@ void main() {
       await Given.entryReversed(made.manager, note);
       await $.onTheHome(made.manager);
       await $.homeFigures(surplus: '(500.00)', revenue: '0.00', expenses: '500.00');
-      await $.accountStands(made.manager, made.account, '500.00');
+      await $.accountStands(made.manager, made.account, '(500.00)');
     });
 
     phoneCase('AC-30.1: the item report shows the bill less what came back', ($) async {

@@ -18,7 +18,10 @@ class PendingApproval {
       contentType = json['contentType'] as String,
       fileName = json['fileName'] as String,
       authorName = json['authorName'] as String,
-      partnerName = json['partnerName'] as String;
+      partnerName = json['partnerName'] as String,
+      accountBalance = (json['accountBalance'] as num).toDouble(),
+      accountWaiting = (json['accountWaiting'] as num).toDouble(),
+      accountShortBy = (json['accountShortBy'] as num).toDouble();
 
   /// The entry's id.
   final String id;
@@ -61,6 +64,15 @@ class PendingApproval {
 
   /// A capital movement's partner; empty for any other entry (redix-api #101).
   final String partnerName;
+
+  /// What its account holds now (redix-app #89).
+  final double accountBalance;
+
+  /// What waits to leave its account, this entry among it: every entry taking money out of it that waits for approval (Muteb, 10 Nov 2026).
+  final double accountWaiting;
+
+  /// How much more what waits on its account takes than the account holds; zero when it covers all of it. Nothing blocks it, but the inbox notes it (R5).
+  final double accountShortBy;
 
   /// What names it on its card: a capital movement's partner, otherwise its item.
   String get title => EntryRow.titleOf(partnerName, itemName);

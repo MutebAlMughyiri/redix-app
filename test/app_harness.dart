@@ -71,8 +71,7 @@ Map<String, String> wordsIn(String language) => {
     'subgroups.new', 'categories.subgroupName', 'projects.structureSource', 'projects.defaultTemplate', 'projects.unknownSource',
     'paymentMethods.title', 'paymentMethods.empty', 'paymentMethods.loadFailed', 'paymentMethods.noConnection', 'paymentMethods.refused', 'paymentMethods.projectFinished',
     'paymentMethods.invalidName', 'paymentMethods.new', 'paymentMethods.name', 'paymentMethods.rename', 'paymentMethods.save', 'paymentMethods.disable', 'paymentMethods.enable', 'paymentMethods.disabled', 'paymentMethods.paymentMethodUsed',
-    'accounts.title', 'accounts.empty', 'accounts.loadFailed', 'accounts.noConnection', 'accounts.refused', 'accounts.projectFinished', 'accounts.invalidName', 'accounts.invalidOpeningBalance',
-    'accounts.custodianRequired', 'accounts.unknownCustodian', 'accounts.new', 'accounts.edit', 'accounts.save', 'accounts.type', 'accounts.typeBank', 'accounts.typeCashCustody', 'accounts.name',
+    'accounts.title', 'accounts.empty', 'accounts.loadFailed', 'accounts.noConnection', 'accounts.refused', 'accounts.projectFinished', 'accounts.invalidName', 'accounts.custodianRequired', 'accounts.unknownCustodian', 'accounts.new', 'accounts.edit', 'accounts.save', 'accounts.type', 'accounts.typeBank', 'accounts.typeCashCustody', 'accounts.name',
     'partners.title', 'partners.empty', 'partners.loadFailed', 'partners.noConnection', 'partners.refused', 'partners.projectFinished', 'partners.invalidName', 'partners.unknownUser', 'partners.userTaken',
     'partners.new', 'partners.edit', 'partners.save', 'partners.name', 'partners.login', 'partners.noLogin', 'partners.loginHint',
     'suppliers.title', 'suppliers.empty', 'suppliers.loadFailed', 'suppliers.noConnection', 'suppliers.refused', 'suppliers.projectFinished', 'suppliers.invalidName', 'suppliers.invalidVatNumber',
@@ -103,7 +102,7 @@ Map<String, String> wordsIn(String language) => {
     'reports.surplus',
     'expenses.creditNote', 'expenses.creditNoteExplain', 'expenses.originalInvoice', 'expenses.noCreditableInvoice', 'expenses.returnable', 'expenses.loadFailed',
     'expenses.creditNoteAboveOriginal', 'expenses.creditNoteNeedsOriginal', 'expenses.deductionNeedsNotes', 'revenue.total', 'expenses.unknownOriginalInvoice',
-    'accounts.accountHasEntries', 'accounts.custodian', 'accounts.noCustodian', 'accounts.openingBalance', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.riyal',
+    'accounts.custodian', 'accounts.noCustodian', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.counted', 'accounts.history', 'accounts.delete', 'accounts.deleteQuestion', 'accounts.deleteCannotUndo', 'accounts.accountInUse', 'accounts.deleted', 'accounts.banks', 'accounts.custodies', 'transfers.title', 'transfers.button', 'transfers.from', 'transfers.to', 'transfers.balanceNow', 'transfers.amount', 'transfers.date', 'transfers.notes', 'transfers.save', 'transfers.sameAccount', 'transfers.invalidAmount', 'transfers.accountDisabled', 'transfers.insufficientBalance', 'transfers.unknownAccount', 'transfers.invalidNotes', 'transfers.noConnection', 'transfers.refused', 'transfers.projectFinished', 'approvals.accountShort', 'entryShare.accountShort', 'history.allAccounts', 'history.mine', 'history.empty', 'history.loadFailed', 'history.unknownAccount', 'history.accountCreated', 'history.accountChanged', 'history.nameWas', 'history.accountDisabled', 'history.accountEnabled', 'history.accountDeleted', 'history.custodianChanged', 'history.transfer', 'history.entryIn', 'history.entryOut', 'history.reversed', 'history.check', 'history.approvedBy', 'history.more', 'accounts.riyal',
   ])
     key: '$language $key',
 };
@@ -500,6 +499,7 @@ class FakeApi {
     String notes = '',
     String accountName = 'حساب المؤسسة',
     String paymentMethodName = '',
+    double accountShortBy = 0,
   }) {
     final row = <String, Object>{
       'id': id.isEmpty ? 'entry-${entryRows.length}' : id,
@@ -518,6 +518,7 @@ class FakeApi {
       'notes': notes,
       'accountName': accountName,
       'paymentMethodName': paymentMethodName,
+      'accountShortBy': accountShortBy,
     };
     entryRows.insert(0, row);
     return row;
@@ -536,7 +537,18 @@ class FakeApi {
   final sentRejections = <(String, String)>[];
 
   /// Adds an entry waiting for a decision.
-  Map<String, Object> addPending({String kind = 'purchase', double amount = 1150, String notes = '', String attachmentId = 'attachment-1', String contentType = 'image/png', String fileName = 'invoice-2617.png', String partnerName = ''}) {
+  Map<String, Object> addPending({
+    String kind = 'purchase',
+    double amount = 1150,
+    String notes = '',
+    String attachmentId = 'attachment-1',
+    String contentType = 'image/png',
+    String fileName = 'invoice-2617.png',
+    String partnerName = '',
+    double accountBalance = 5000,
+    double accountWaiting = 1150,
+    double accountShortBy = 0,
+  }) {
     final entry = <String, Object>{
       'id': 'entry-${pendingEntries.length}',
       'kind': kind,
@@ -552,6 +564,9 @@ class FakeApi {
       'fileName': fileName,
       'authorName': 'نواف',
       'partnerName': partnerName,
+      'accountBalance': accountBalance,
+      'accountWaiting': accountWaiting,
+      'accountShortBy': accountShortBy,
     };
     pendingEntries.add(entry);
     return entry;
@@ -833,27 +848,28 @@ class FakeApi {
   /// Adds someone to the people every project can choose among.
   void addMember(String id, String displayName) => members.add({'id': id, 'displayName': displayName});
 
-  /// Adds an account to the project [projectId], as the API holds it.
+  /// Adds an account to the project [projectId], as the API holds it, holding [balance]: what its entries and transfers moved (redix-app #89).
   Map<String, Object> addAccount(
     String projectId,
     String name, {
     String type = 'bank',
-    double openingBalance = 0,
+    double balance = 0,
     String custodianId = '',
     String custodianName = '',
     bool isMine = false,
     bool isActive = true,
+    bool isUsed = false,
   }) {
     final account = <String, Object>{
       'id': 'account-${_nextStructureId++}',
       'type': type,
       'name': name,
-      'openingBalance': openingBalance,
-      'balance': openingBalance,
+      'balance': balance,
       'custodianId': custodianId,
       'custodianName': custodianName,
       'isMine': isMine,
       'isActive': isActive,
+      'isUsed': isUsed,
     };
     accounts.putIfAbsent(projectId, () => []).add(account);
     return account;
@@ -879,27 +895,79 @@ class FakeApi {
     final custodianId = body['custodianId'] as String? ?? '';
     switch (segments.sublist(3)) {
       case []:
-        addAccount(
-          segments[1],
-          body['name'] as String,
-          type: body['type'] as String,
-          openingBalance: body['openingBalance'] as double,
-          custodianId: custodianId,
-          custodianName: _memberName(custodianId),
-        );
+        addAccount(segments[1], body['name'] as String, type: body['type'] as String, custodianId: custodianId, custodianName: _memberName(custodianId));
       case [final id, 'disable']:
         list.singleWhere((row) => row['id'] == id)['isActive'] = false;
       case [final id, 'enable']:
         list.singleWhere((row) => row['id'] == id)['isActive'] = true;
+      case [final id, 'delete']:
+        list.removeWhere((row) => row['id'] == id);
       case [final id]:
         list.singleWhere((row) => row['id'] == id)
           ..['name'] = body['name'] as String
-          ..['openingBalance'] = body['openingBalance'] as double
-          ..['balance'] = body['openingBalance'] as double
           ..['custodianId'] = custodianId
           ..['custodianName'] = _memberName(custodianId);
     }
     return _json({}, 200);
+  }
+
+  /// The transfers the app sent: the project and what it sent.
+  final sentTransfers = <(String, Map<String, dynamic>)>[];
+
+  /// Moves a sent transfer's amount between its two accounts at once, as the API does (FR-23), unless [settingsAnswer] refuses it.
+  http.Response _answerTransfer(http.Request request) {
+    final projectId = request.url.pathSegments[1];
+    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    sentTransfers.add((projectId, body));
+    if (settingsAnswer.status >= 300) {
+      return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
+    }
+    final list = accounts[projectId]!;
+    final amount = (body['amount'] as num).toDouble();
+    final from = list.singleWhere((row) => row['id'] == body['fromAccountId']);
+    final to = list.singleWhere((row) => row['id'] == body['toAccountId']);
+    from['balance'] = (from['balance']! as double) - amount;
+    to['balance'] = (to['balance']! as double) + amount;
+    from['isUsed'] = true;
+    to['isUsed'] = true;
+    return _json({}, 200);
+  }
+
+  /// The account history of each project, newest first, as the API answers it (redix-app #89).
+  final accountHistory = <String, List<Map<String, Object>>>{};
+
+  /// The history addresses the app read, with their filters and page.
+  final historyReads = <Uri>[];
+
+  /// Adds a line of [kind] to the history of [projectId], newest first.
+  Map<String, Object> addHistoryLine(String projectId, String kind, {String by = 'متعب', String account = 'حساب المؤسسة', String otherAccount = '', double amount = 0, String entryKind = 'purchase', String nameWas = '', String custodian = ''}) {
+    final list = accountHistory.putIfAbsent(projectId, () => []);
+    final line = <String, Object>{
+      'id': 1000 - list.length,
+      'at': '2026-11-10T11:05:00Z',
+      'by': by,
+      'kind': kind,
+      'account': account,
+      'otherAccount': otherAccount,
+      'amount': amount,
+      'entryKind': entryKind,
+      'nameWas': nameWas,
+      'custodian': custodian,
+    };
+    list.add(line);
+    return line;
+  }
+
+  http.Response _answerAccountHistory(http.Request request) {
+    historyReads.add(request.url);
+    final query = request.url.queryParameters;
+    final before = int.parse(query['before'] ?? '0');
+    final lines = (accountHistory[request.url.pathSegments[1]] ?? const <Map<String, Object>>[])
+        .where((line) => before == 0 || (line['id']! as int) < before)
+        .where((line) => (query['account'] ?? '').isEmpty || line['account'] == query['account'])
+        .take(50)
+        .toList();
+    return _json(lines, 200);
   }
 
   /// Adds a partner to the project [projectId], as the API holds them: a table of the capital item [itemId] (redix-api #109).
@@ -1489,8 +1557,14 @@ class FakeApi {
     if (segments.length >= 3 && segments[2] == 'payment-methods') {
       return _answerPaymentMethods(request);
     }
+    if (segments.length == 4 && segments[2] == 'accounts' && segments[3] == 'history') {
+      return _answerAccountHistory(request);
+    }
     if (segments.length >= 3 && segments[2] == 'accounts') {
       return _answerAccounts(request);
+    }
+    if (segments.length == 3 && segments[2] == 'transfers') {
+      return _answerTransfer(request);
     }
     if (segments.length >= 3 && segments[2] == 'partners' && segments.last != 'movements') {
       return _answerPartners(request);

@@ -485,9 +485,9 @@ void main() {
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       api.addMember('user-nawaf', 'نواف بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني بالمشروع');
-      final bankAccount = api.addAccount(runningId, 'حساب جارٍ باسم طويل جداً في بنك من البنوك المحلية', openingBalance: 64250.75)['id'] as String;
-      final custody = api.addAccount(runningId, 'كاش مع نواف', type: 'cashCustody', openingBalance: 2750.5, custodianId: 'user-nawaf', custodianName: 'نواف بن عبدالله', isMine: true)['id'] as String;
-      final oldAccount = api.addAccount(runningId, 'حساب قديم', openingBalance: -120.40, isActive: false)['id'] as String;
+      final bankAccount = api.addAccount(runningId, 'حساب جارٍ باسم طويل جداً في بنك من البنوك المحلية', balance: 64250.75)['id'] as String;
+      final custody = api.addAccount(runningId, 'كاش مع نواف', type: 'cashCustody', balance: 2750.5, custodianId: 'user-nawaf', custodianName: 'نواف بن عبدالله', isMine: true)['id'] as String;
+      final oldAccount = api.addAccount(runningId, 'حساب قديم', balance: -120.40, isActive: false)['id'] as String;
       await tester.ensureVisible(find.byKey(HomeScreen.accountsKey(runningId)));
       await tester.pumpAndSettle();
       expectFits(HomeScreen.accountsKey(runningId));
@@ -508,7 +508,6 @@ void main() {
         for (final type in AccountType.values) AccountsScreen.typeKey(type),
         AccountsScreen.accountNameKey,
         AccountsScreen.custodianKey,
-        AccountsScreen.openingBalanceKey,
         ChangeDialog.saveKey,
       ].forEach(expectFits);
       [MemberPicker.optionKey(''), MemberPicker.optionKey('user-nawaf')].forEach(expectFits);
@@ -516,9 +515,9 @@ void main() {
       await tester.ensureVisible(find.byKey(AccountsScreen.menuKey(custody)));
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.menuKey(custody))));
-      [AccountsScreen.editKey, AccountsScreen.disableKey].forEach(expectFits);
+      [AccountsScreen.editKey, AccountsScreen.disableKey, AccountsScreen.deleteKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.editKey)));
-      [AccountsScreen.accountNameKey, AccountsScreen.custodianKey, AccountsScreen.openingBalanceKey, ChangeDialog.saveKey].forEach(expectFits);
+      [AccountsScreen.accountNameKey, AccountsScreen.custodianKey, ChangeDialog.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       expectFits(HomeScreen.custodyKey(custody));

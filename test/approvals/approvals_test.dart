@@ -227,4 +227,27 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.fileKey('entry-1'))));
     expect(find.byKey(AttachmentScreen.failedKey), findsOneWidget);
   });
+
+  testWidgets('redix-app #89 R5: an entry whose account does not hold all that waits on it says so, with the account, what it holds, what waits and how much is short', (tester) async {
+    late String short;
+    late String covered;
+    await openInbox(tester, (api) {
+      short = api.addPending(amount: 600, accountBalance: 1000, accountWaiting: 1200, accountShortBy: 200)['id']! as String;
+      covered = api.addPending(amount: 100, accountBalance: 5000, accountWaiting: 100)['id']! as String;
+    });
+
+    expect(tester.widget<Text>(find.byKey(ApprovalsScreen.shortKey(short).label)).data, 'en approvals.accountShort');
+    expect(find.byKey(ApprovalsScreen.shortKey(covered)), findsNothing);
+  });
+
+  testWidgets('redix-app #89 R4: nothing blocks a short entry: it is approved as any other', (tester) async {
+    late String short;
+    final api = await openInbox(tester, (api) => short = api.addPending(amount: 3000, accountBalance: 2750, accountWaiting: 3000, accountShortBy: 250)['id']! as String);
+
+    await tester.ensureVisible(find.byKey(ApprovalsScreen.approveKey(short)));
+    await tester.pumpAndSettle();
+    await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.approveKey(short))));
+
+    expect(api.sentApprovals.single, [short]);
+  });
 }

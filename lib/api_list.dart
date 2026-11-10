@@ -19,6 +19,19 @@ abstract class ApiList<T> extends ApiObject<List<T>> {
   /// Every item, in the order the API gives.
   List<T> get all => value;
 
+  /// Adds the page the API [path] answers after the items shown, for a list read a page at a time (redix-app #89). Returns an empty string once added, otherwise
+  /// the word key saying it could not be read; what is shown stays.
+  @protected
+  Future<String> loadMore(String path) async {
+    try {
+      show([...all, ...await readAt(path)]);
+      return '';
+    } on Exception catch (error) {
+      debugPrint('$path not read: $error');
+      return loadFailedKey;
+    }
+  }
+
   /// Shows [order] at once, so what was dragged stays where it was dropped, and sends the change to the API [path]. Whatever is refused, or never arrives, goes back to what the API holds.
   /// Returns an empty string once changed, otherwise the word key of the refusal.
   @protected

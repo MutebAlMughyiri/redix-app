@@ -1,5 +1,5 @@
 import 'package:patrol/patrol.dart';
-import 'package:redix/accounts/actual_balances_screen.dart';
+import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/accounts/reconcile_screen.dart';
 import 'package:redix/accounts/reconciliation_card.dart';
 import 'package:redix/home/dashboard_card.dart';
@@ -9,9 +9,9 @@ import '../support/given.dart';
 import '../support/phone_case.dart';
 import '../support/steps.dart';
 
-/// Signs [person] in and opens the actual balances.
+/// Signs [person] in and opens Accounts, which holds the actual balances since redix-app #89.
 Future<void> onBalances(PatrolIntegrationTester $, Person person) async {
-  await $.fromTheHome(person, HomeScreen.actualBalancesKey(person.projectId));
+  await $.fromTheHome(person, HomeScreen.accountsKey(person.projectId));
   await $.reach($(ReconciliationCard.cardKey));
 }
 
@@ -35,7 +35,7 @@ void main() {
       final second = await Given.account(manager);
       await aSurplusOf200(manager, first);
       await onBalances($, manager);
-      await $.tapOn(ActualBalancesScreen.updateKey);
+      await $.tapOn(AccountsScreen.updateKey);
       await $.says(ReconcileScreen.booksKey(first), '${$.words.reconciliationsBooks}: 200.00');
       await $.fill(ReconcileScreen.balanceKey(first), '120.50');
       await $.fill(ReconcileScreen.balanceKey(second), '30');

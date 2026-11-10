@@ -66,7 +66,7 @@ void main() {
 
     phoneCase('AC-07.1: approval moves a payment from waiting to paid, lowers what remains, is an expense, and leaves its account', ($) async {
       final manager = await Given.manager();
-      final account = await Given.account(manager, opening: 1000);
+      final account = await Given.account(manager);
       final contract = await Given.contract(manager, value: 1000);
       final payment = await Given.contractorPayment(manager, contract, amount: 300, accountId: account);
       await onContracts($, manager);
@@ -76,7 +76,7 @@ void main() {
       await $.contractStands(contract.id, paid: '300.00', remaining: '700.00');
       await $.back();
       await $.homeFigures(surplus: '(300.00)', revenue: '0.00', expenses: '300.00');
-      await $.accountStands(manager, account, '700.00');
+      await $.accountStands(manager, account, '(300.00)');
     });
 
     phoneCase('a draft payment is in neither what was paid nor what waits', ($) async {
@@ -134,19 +134,19 @@ void main() {
 
     phoneCase('AC-13.1: a payment outside the contract stays out of its figures, yet is an expense and leaves its account', ($) async {
       final manager = await Given.manager();
-      final account = await Given.account(manager, opening: 1000);
+      final account = await Given.account(manager);
       final contract = await Given.contract(manager, value: 1000);
       await approvedPayment(manager, contract, 300, accountId: account, outside: true);
       await onContracts($, manager);
       await $.contractStands(contract.id, paid: '0.00', remaining: '1,000.00');
       await $.back();
       await $.homeFigures(surplus: '(300.00)', revenue: '0.00', expenses: '300.00');
-      await $.accountStands(manager, account, '700.00');
+      await $.accountStands(manager, account, '(300.00)');
     });
 
     phoneCase('AC-14.1: a deduction lowers what was paid and the expenses, and raises what remains and the account', ($) async {
       final manager = await Given.manager();
-      final account = await Given.account(manager, opening: 1000);
+      final account = await Given.account(manager);
       final contract = await Given.contract(manager, value: 1000);
       await approvedPayment(manager, contract, 500, accountId: account);
       await approvedPayment(manager, contract, -100, accountId: account, notes: 'خصم تأخير');
@@ -154,7 +154,7 @@ void main() {
       await $.contractStands(contract.id, paid: '400.00', remaining: '600.00');
       await $.back();
       await $.homeFigures(surplus: '(400.00)', revenue: '0.00', expenses: '400.00');
-      await $.accountStands(manager, account, '600.00');
+      await $.accountStands(manager, account, '(400.00)');
     });
 
     phoneCase('AC-07.2: an open-value contract adds up what was paid and shows no remaining', ($) async {

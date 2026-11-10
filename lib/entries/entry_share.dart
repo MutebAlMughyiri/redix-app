@@ -14,7 +14,8 @@ abstract final class EntryShare {
   /// The link that opens [entry] of the project [projectId] in REDIX (R6).
   static String linkOf(String projectId, EntryRow entry) => 'https://$linkHost${EntryLinkScreen.pathOf(projectId, entry.id)}';
 
-  /// [entry] of [project] as lines in the app's language, its money and date as the app shows them, then its link (R3, R4, R10).
+  /// [entry] of [project] as lines in the app's language, its money and date as the app shows them, then its link (R3, R4, R10). An entry its account does not cover
+  /// says so, without the account's balance, since the message can travel outside the project (redix-app #89, R16).
   static String textOf(Project project, EntryRow entry, Words words) => [
     '${words.text(entry.kind.wordKey)} · ${project.name}',
     if (entry.partnerName.isNotEmpty) '${words.entrySharePartner}: ${entry.partnerName}' else '${words.entryShareItem}: ${entry.itemName}',
@@ -23,6 +24,7 @@ abstract final class EntryShare {
     '${words.entryShareDate}: ${formatDate(entry.date)}',
     '${words.entryShareStatus}: ${words.text(entry.statusWordKey)}',
     if (entry.accountName.isNotEmpty) '${words.entryShareAccount}: ${entry.accountName}',
+    if (entry.accountShortBy > 0) words.entryShareAccountShort,
     if (entry.paymentMethodName.isNotEmpty) '${words.entrySharePaymentMethod}: ${entry.paymentMethodName}',
     '${words.entryShareAuthor}: ${entry.authorName}',
     if (entry.notes.isNotEmpty) '${words.entryShareNotes}: ${entry.notes}',

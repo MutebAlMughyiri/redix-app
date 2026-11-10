@@ -249,7 +249,10 @@ extension Steps on PatrolIntegrationTester {
   String typed(Key key) => tester.widget<TextField>(find.byKey(key)).controller!.text;
 
   /// Whether the button [key] can be pressed.
-  bool isEnabled(Key key) => tester.widget<ButtonStyleButton>(find.byKey(key)).enabled;
+  bool isEnabled(Key key) => switch (tester.widget(find.byKey(key))) {
+    final IconButton icon => icon.onPressed != null,
+    final widget => (widget as ButtonStyleButton).enabled,
+  };
 
   /// Brings the field [key] into view and types [text] into it.
   Future<void> fill(Key key, String text) async {

@@ -22,12 +22,11 @@ Future<void> onAccounts(PatrolIntegrationTester $, Person person) async {
   await $.reach($(AccountsScreen.addKey));
 }
 
-/// Fills in the dialog of a new bank account.
-Future<void> fillBank(PatrolIntegrationTester $, String name, String opening) async {
+/// Fills in the dialog of a new bank account, which asks no balance (redix-app #89).
+Future<void> fillBank(PatrolIntegrationTester $, String name) async {
   await $.tapOn(AccountsScreen.addKey);
   await $.reach($(AccountsScreen.accountNameKey));
   await $(AccountsScreen.accountNameKey).enterText(name);
-  await $(AccountsScreen.openingBalanceKey).enterText(opening);
 }
 
 /// The line under the account [id].
@@ -35,23 +34,25 @@ String detailsOf(PatrolIntegrationTester $, String id) => $.tester.widget<Text>(
 
 void main() {
   phoneClass('Accounts (UC-015)', () {
-    phoneCase('NFR-04: a bank account is added with its opening balance, shown with separators and two decimals', ($) async {
+    phoneCase('redix-app #89 R10: a bank account is added holding nothing, and the money that comes in shows with separators and two decimals (NFR-04)', ($) async {
       final manager = await Given.manager();
       await onAccounts($, manager);
-      await fillBank($, 'حساب المؤسسة', '64250.75');
+      await fillBank($, 'حساب المؤسسة');
       await $(ChangeDialog.saveKey).tap();
       final id = await $.idShowing('accounts.name.', 'حساب المؤسسة');
+      await $.says(AccountsScreen.balanceKey(id), '0.00');
+      await Given.funded(manager, id, 64250.75);
+      await $.pullDown();
       await $.says(AccountsScreen.balanceKey(id), '64,250.75');
     });
 
     phoneCase('a cash account is added with its custodian', ($) async {
       final manager = await Given.manager(project: 'غصون 7', manager: 'ريم');
-      await Given.account(manager, name: 'حساب المؤسسة', opening: 64250.75);
+      await Given.funded(manager, await Given.account(manager, name: 'حساب المؤسسة'), 64250.75);
       await onAccounts($, manager);
       await $.tapOn(AccountsScreen.addKey);
       await $(AccountsScreen.typeKey(AccountType.cashCustody)).tap();
       await $(AccountsScreen.accountNameKey).enterText('كاش مع مدير المشروع');
-      await $(AccountsScreen.openingBalanceKey).enterText('2750');
       await $.tester.ensureVisible(find.byKey(MemberPicker.optionKey(manager.id)));
       await $.pumpAndSettle();
       await $(MemberPicker.optionKey(manager.id)).tap();
@@ -59,6 +60,8 @@ void main() {
       await $.picture('account-dialog');
       await $(ChangeDialog.saveKey).tap();
       final id = await $.idShowing('accounts.name.', 'كاش مع مدير المشروع');
+      await Given.funded(manager, id, 2750);
+      await $.pullDown();
       await $.says(AccountsScreen.balanceKey(id), '2,750.00');
       await $.picture('accounts');
     });
@@ -73,15 +76,16 @@ void main() {
       await $.tapOn(SettingsScreen.switchProjectKey);
       await $.openProject(manager.projectId);
       await $.tapOn(HomeScreen.accountsKey(manager.projectId));
-      await fillBank($, 'حساب الموقع', '٥٠٠');
+      await fillBank($, 'حساب الموقع');
       await $(ChangeDialog.saveKey).tap();
       final id = await $.idShowing('accounts.name.', 'حساب الموقع');
-      await $.says(AccountsScreen.balanceKey(id), '500.00');
+      await $.says(AccountsScreen.balanceKey(id), '0.00');
     });
 
     phoneCase('each account shows its type, who holds it and what it holds', ($) async {
       final manager = await Given.manager(manager: 'ريم');
-      final custody = await Given.account(manager, opening: 300, custodian: manager);
+      final custody = await Given.account(manager, custodian: manager);
+      await Given.funded(manager, custody, 300);
       await onAccounts($, manager);
       await $.reach($(AccountsScreen.detailsKey(custody)));
       expect(detailsOf($, custody), allOf(contains($.words.accountsTypeCashCustody), contains('ريم')));
@@ -98,12 +102,11 @@ void main() {
 
     phoneCase('editing starts from the account', ($) async {
       final manager = await Given.manager();
-      final account = await Given.account(manager, name: 'حساب المؤسسة', opening: 500);
+      final account = await Given.account(manager, name: 'حساب المؤسسة');
       await onAccounts($, manager);
       await $.menuChoice(AccountsScreen.menuKey(account), AccountsScreen.editKey);
       await $.reach($(AccountsScreen.accountNameKey));
       expect($.typed(AccountsScreen.accountNameKey), 'حساب المؤسسة');
-      expect($.typed(AccountsScreen.openingBalanceKey), contains('500'));
       await $(AccountsScreen.accountNameKey).enterText('حساب جديد');
       await $(ChangeDialog.saveKey).tap();
       await $.says(AccountsScreen.nameKey(account), 'حساب جديد');
@@ -112,7 +115,7 @@ void main() {
     phoneCase('choosing nobody leaves the account with no custodian', ($) async {
       final manager = await Given.manager(manager: 'ريم');
       await onAccounts($, manager);
-      await fillBank($, 'حساب بلا عهدة', '0');
+      await fillBank($, 'حساب بلا عهدة');
       await $(ChangeDialog.saveKey).tap();
       final id = await $.idShowing('accounts.name.', 'حساب بلا عهدة');
       expect(detailsOf($, id), isNot(contains('ريم')));
@@ -142,7 +145,8 @@ void main() {
 
     phoneCase('its balance follows an approved entry paid from it', ($) async {
       final manager = await Given.manager();
-      final account = await Given.account(manager, opening: 1000);
+      final account = await Given.account(manager);
+      await Given.funded(manager, account, 1000);
       await Given.entriesApproved(manager, [await Given.entry(manager, accountId: account, amount: 250)]);
       await onAccounts($, manager);
       await $.says(AccountsScreen.balanceKey(account), '750.00');
@@ -157,24 +161,16 @@ void main() {
       expect($(AccountsScreen.typeKey(AccountType.cashCustody)), findsNothing);
     });
 
-    phoneCase('an opening balance cannot change once the account has entries, and the dialog says so', ($) async {
+    phoneCase('redix-app #89 R10: neither adding nor editing asks a balance', ($) async {
       final manager = await Given.manager();
-      final account = await Given.account(manager, opening: 100);
-      await Given.entry(manager, accountId: account);
+      final account = await Given.account(manager);
       await onAccounts($, manager);
+      await fillBank($, 'حساب');
+      expect($(TextField), findsOneWidget);
+      await $(ChangeDialog.cancelKey).tap();
       await $.menuChoice(AccountsScreen.menuKey(account), AccountsScreen.editKey);
-      await $.reach($(AccountsScreen.openingBalanceKey));
-      await $(AccountsScreen.openingBalanceKey).enterText('900');
-      await $(ChangeDialog.saveKey).tap();
-      await $.says(ChangeDialog.messageKey, $.words.accountsAccountHasEntries);
-    });
-
-    phoneCase('an opening balance that is not a number is refused without asking the API', ($) async {
-      final manager = await Given.manager();
-      await onAccounts($, manager);
-      await fillBank($, 'حساب', 'abc');
-      await $(ChangeDialog.saveKey).tap();
-      await $.says(ChangeDialog.messageKey, $.words.accountsInvalidOpeningBalance);
+      await $.reach($(AccountsScreen.accountNameKey));
+      expect($(TextField), findsOneWidget);
     });
 
     phoneCase('a refusal stays in the dialog', ($) async {
@@ -183,7 +179,6 @@ void main() {
       await $.tapOn(AccountsScreen.addKey);
       await $(AccountsScreen.typeKey(AccountType.cashCustody)).tap();
       await $(AccountsScreen.accountNameKey).enterText('كاش');
-      await $(AccountsScreen.openingBalanceKey).enterText('0');
       await $(ChangeDialog.saveKey).tap();
       await $.says(ChangeDialog.messageKey, $.words.accountsCustodianRequired);
       expect($(AccountsScreen.accountNameKey), findsOneWidget);

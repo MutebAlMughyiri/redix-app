@@ -10,10 +10,11 @@ import 'package:redix/ui/part_keys.dart';
 import 'given.dart';
 import 'steps.dart';
 
-/// A new manager whose project holds one approved expense of 10.00, paid from its one account, which opened at 1,000.00. A case then reads 10.00 rather than a zero, so the figure it waits for can only have come from the API.
+/// A new manager whose project holds one approved expense of 10.00, paid from its one account, which held nothing before and so stands at (10.00) (redix-app #89: no
+/// account opens with money). A case then reads 10.00 rather than a zero, so the figure it waits for can only have come from the API.
 Future<({Person manager, String account})> aProjectWithMoney() async {
   final manager = await Given.manager();
-  final account = await Given.account(manager, opening: 1000);
+  final account = await Given.account(manager);
   await Given.entriesApproved(manager, [await Given.entry(manager, amount: 10, accountId: account)]);
   return (manager: manager, account: account);
 }

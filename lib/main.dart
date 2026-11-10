@@ -83,7 +83,8 @@ import 'config/app_config.dart';
 import 'config/local_config.dart';
 import 'entries/entry_link_screen.dart';
 import 'ui/app_theme.dart';
-import 'accounts/actual_balances_screen.dart';
+import 'accounts/account_history.dart';
+import 'accounts/account_history_screen.dart';
 import 'users/my_permissions_screen.dart';
 
 /// Starts the app with the session and the language kept from an earlier start, if any. An app built without its environment's config
@@ -142,6 +143,7 @@ class _RedixAppState extends State<RedixApp> {
   late final _paymentMethodsOf = _kept((projectId) => PaymentMethods(widget.session, projectId));
   late final _accountsOf = _kept((projectId) => Accounts(widget.session, projectId));
   late final _reconciliationsOf = _kept((projectId) => Reconciliations(widget.session, projectId));
+  late final _historyOf = _kept((projectId) => AccountHistory(widget.session, projectId));
   late final _dashboardOf = _kept((projectId) => Dashboard(widget.session, projectId));
   late final _capitalOf = _kept((projectId) => Capital(widget.session, projectId));
   late final _membersOf = _kept((projectId) => Members(widget.session, projectId));
@@ -257,12 +259,13 @@ class _RedixAppState extends State<RedixApp> {
         builder: (context, state) => AccountsScreen(
           project: state.extra! as Project,
           accounts: _accountsOf(state.projectId),
+          reconciliations: _reconciliationsOf(state.projectId),
           members: _membersOf(state.projectId),
         ),
       ),
       GoRoute(
-        path: ActualBalancesScreen.path,
-        builder: (context, state) => ActualBalancesScreen(project: state.extra! as Project, reconciliations: _reconciliationsOf(state.projectId), accounts: _accountsOf(state.projectId)),
+        path: AccountHistoryScreen.path,
+        builder: (context, state) => AccountHistoryScreen(project: state.extra! as Project, history: _historyOf(state.projectId), accounts: _accountsOf(state.projectId)),
       ),
       GoRoute(
         path: ReportsScreen.path,

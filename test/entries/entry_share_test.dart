@@ -210,4 +210,19 @@ void main() {
       });
     }
   });
+
+  testWidgets('redix-app #89 R16: an entry its account does not cover says so in the shared text, without any balance', (tester) async {
+    final opened = await openEntries(tester, (api) => api.addEntry(amount: 600, accountShortBy: 247));
+
+    final shared = await share(tester, opened, 'entry-0');
+
+    expect(shared, contains('en entryShare.accountShort'));
+    expect(shared, isNot(contains('247')));
+  });
+
+  testWidgets('redix-app #89 R16: an entry its account covers has no such line', (tester) async {
+    final opened = await openEntries(tester, (api) => api.addEntry(amount: 600));
+
+    expect(await share(tester, opened, 'entry-0'), isNot(contains('entryShare.accountShort')));
+  });
 }

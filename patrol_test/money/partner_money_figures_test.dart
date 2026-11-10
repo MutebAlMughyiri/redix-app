@@ -28,7 +28,7 @@ void main() {
     phoneCase('BR-06: a contribution entered on the phone waits and moves nothing, and approving it raises the capital, the revenue, the surplus and the account', ($) async {
       final manager = await Given.manager();
       final partner = await Given.partner(manager, 'هيثم');
-      final account = await Given.account(manager, opening: 1000);
+      final account = await Given.account(manager);
       await $.onAddEntry(manager);
       await $.pickTable(partner, search: 'هيثم');
       await $.fill(AddEntryScreen.amountKey, '5000');
@@ -45,7 +45,7 @@ void main() {
       await $.says(PartnersScreen.balanceKey(partner), '5,000.00');
       await $.says(PartnersScreen.shareKey(partner), '100.0000000000%');
       await $.back();
-      await $.accountStands(manager, account, '6,000.00');
+      await $.accountStands(manager, account, '5,000.00');
     });
 
     phoneCase('BR-05: a withdrawal lowers the capital, the revenue, the surplus and the account', ($) async {

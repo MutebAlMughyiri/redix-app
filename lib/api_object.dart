@@ -26,6 +26,10 @@ abstract class ApiObject<T> extends ChangeNotifier {
   /// What the API last answered.
   T get value => _value;
 
+  /// The word key saying it could not be read.
+  @protected
+  String get loadFailedKey => '$_wordPrefix.loadFailed';
+
   /// The word key of why it could not be read; empty when it could.
   String get message => _message;
 
@@ -83,11 +87,11 @@ abstract class ApiObject<T> extends ChangeNotifier {
       if (response.statusCode == 200) {
         value = _fromJson(jsonOf(response));
       } else {
-        message = '$_wordPrefix.loadFailed';
+        message = loadFailedKey;
       }
     } on Exception catch (error) {
       debugPrint('$path not read: $error');
-      message = '$_wordPrefix.loadFailed';
+      message = loadFailedKey;
     }
     if (path == _path) {
       _value = value;
@@ -95,6 +99,16 @@ abstract class ApiObject<T> extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  /// What the API at [path] answers now, made as this is, without showing it: the next page of a list read a page at a time (redix-app #89). One that cannot be read throws.
+  @protected
+  Future<T> readAt(String path) async {
+    final response = await _session.get(path);
+    if (response.statusCode != 200) {
+      throw http.ClientException('$path answered ${response.statusCode}');
+    }
+    return _fromJson(jsonOf(response));
   }
 
   /// Sends a change to the API [path] and, once it has answered, reads this again, so what someone else changed shows as it is now.

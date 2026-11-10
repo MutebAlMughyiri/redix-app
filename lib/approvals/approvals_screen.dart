@@ -22,6 +22,7 @@ import '../ui/app_color.dart';
 import '../format/parts_line.dart';
 import '../ui/refusal_text.dart';
 import '../ui/act_once.dart';
+import '../words/word_fill.dart';
 
 /// Finance's inbox (UC-031, UC-032): what waits, oldest first, to approve one at a time or many at once, or to reject saying why.
 class ApprovalsScreen extends StatefulWidget {
@@ -90,6 +91,9 @@ class ApprovalsScreen extends StatefulWidget {
 
   /// Who entered the entry [id], and from which account.
   static Key enteredByKey(String id) => Key('approvals.enteredBy.$id');
+
+  /// The note on the entry [id] saying its account does not hold enough for it (redix-app #89, R5).
+  static Key shortKey(String id) => Key('approvals.short.$id');
 
   /// The notes of the entry [id].
   static Key notesKey(String id) => Key('approvals.notes.$id');
@@ -166,6 +170,18 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
         if (entry.kindWordKey.isNotEmpty) Text(words.text(entry.kindWordKey), key: ApprovalsScreen.kindKey(entry.id)),
         Text(partsLine([entry.invoiceNumber, formatDate(entry.date)]), key: ApprovalsScreen.dateKey(entry.id), style: small),
         Text('${words.approvalsEnteredBy}: ${entry.authorName} · ${entry.accountName}', key: ApprovalsScreen.enteredByKey(entry.id), style: small),
+        if (entry.accountShortBy > 0)
+          Container(
+            key: ApprovalsScreen.shortKey(entry.id),
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(color: AppColor.noticeSurface.of(context), borderRadius: BorderRadius.circular(8)),
+            child: Text(
+              words.approvalsAccountShort.fill([entry.accountName, formatMoney(entry.accountBalance), formatMoney(entry.accountWaiting), formatMoney(entry.accountShortBy)]),
+              key: ApprovalsScreen.shortKey(entry.id).label,
+              style: small,
+            ),
+          ),
         if (entry.notes.isNotEmpty) Text(entry.notes, key: ApprovalsScreen.notesKey(entry.id), style: small),
         Text(formatMoney(entry.amount), key: ApprovalsScreen.amountKey(entry.id), style: theme.textTheme.titleMedium),
       ],

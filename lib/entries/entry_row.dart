@@ -24,7 +24,8 @@ class EntryRow {
       partnerName = '',
       notes = '',
       accountName = '',
-      paymentMethodName = '';
+      paymentMethodName = '',
+      accountShortBy = 0;
 
   /// An entry as the API answers it.
   EntryRow.fromJson(Map<String, dynamic> json)
@@ -43,7 +44,8 @@ class EntryRow {
       partnerName = json['partnerName'] as String,
       notes = json['notes'] as String,
       accountName = json['accountName'] as String,
-      paymentMethodName = json['paymentMethodName'] as String;
+      paymentMethodName = json['paymentMethodName'] as String,
+      accountShortBy = (json['accountShortBy'] as num? ?? 0).toDouble();
 
   /// The entry's id.
   final String id;
@@ -92,6 +94,9 @@ class EntryRow {
 
   /// How an expense was paid; empty when nobody said, and for any other entry.
   final String paymentMethodName;
+
+  /// How much more it takes than its account holds; zero when its account covers it, or once decided (redix-app #89).
+  final double accountShortBy;
 
   /// What names it on a list: a partner's money's partner, otherwise its item.
   String get title => titleOf(partnerName, itemName);
