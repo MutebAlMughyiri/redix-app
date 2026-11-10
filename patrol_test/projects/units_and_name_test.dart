@@ -1,0 +1,105 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:patrol/patrol.dart';
+import 'package:redix/home/home_screen.dart';
+import 'package:redix/projects/project_info_screen.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/refusal_snack_bar.dart';
+
+import '../support/given.dart';
+import '../support/phone_case.dart';
+import '../support/steps.dart';
+
+/// Opens Add unit on More info.
+Future<void> openAddUnit(PatrolIntegrationTester $) async {
+  await $.tapOn(ProjectInfoScreen.addUnitKey);
+  await $.reach($(NameDialog.nameKey));
+}
+
+void main() {
+  phoneClass('Rename the project, and its units (UC-006)', () {
+    phoneCase('BR-38: renaming the project starts from its name, and More info and the home follow', ($) async {
+      final manager = await Given.manager();
+      await $.onMoreInfo(manager);
+      await $.tapOn(ProjectInfoScreen.renameKey);
+      await $.reach($(NameDialog.nameKey));
+      expect($.typed(NameDialog.nameKey), manager.projectName);
+      final renamed = 'Renamed ${Given.unique()}';
+      await $.saveName(renamed);
+      await $.says(ProjectInfoScreen.nameKey, renamed);
+      await $.back();
+      await $.says(HomeScreen.titleKey, renamed);
+    });
+
+    phoneCase('Add unit adds one', ($) async {
+      final manager = await Given.manager();
+      await $.onMoreInfo(manager);
+      await openAddUnit($);
+      await $.saveName('الملحق');
+      await $.idShowing('projectInfo.unit.', 'الملحق');
+    });
+
+    phoneCase('BR-38: renaming a unit starts from its name, and the row follows', ($) async {
+      final manager = await Given.manager(units: ['الفلة الغربية']);
+      await $.onMoreInfo(manager);
+      final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
+      await $.tapOn(ProjectInfoScreen.unitMenuKey(unit));
+      await $.tapOn(ProjectInfoScreen.renameUnitKey);
+      await $.reach($(NameDialog.nameKey));
+      expect($.typed(NameDialog.nameKey), 'الفلة الغربية');
+      await $.saveName('ملحق الفلة');
+      await $.says(ProjectInfoScreen.unitKey(unit), 'ملحق الفلة');
+    });
+
+    phoneCase('redix-api #102: a swipe deletes a unit with no question', ($) async {
+      final manager = await Given.manager(units: ['الفلة الغربية', 'الفلة الجنوبية']);
+      await $.onMoreInfo(manager);
+      final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
+      await $.swipeAway(ProjectInfoScreen.unitRowKey(unit));
+      expect(find.byType(AlertDialog), findsNothing);
+      await $.gone($(ProjectInfoScreen.unitKey(unit)));
+      await $.idShowing('projectInfo.unit.', 'الفلة الجنوبية');
+    });
+
+    phoneCase('BR-37: a repeated unit name is refused in Add unit', ($) async {
+      final manager = await Given.manager(units: ['الفلة الغربية']);
+      await $.onMoreInfo(manager);
+      await openAddUnit($);
+      await $.saveName('الفلة الغربية');
+      await $.says(ChangeDialog.messageKey, $.words.projectsUnitNameTaken);
+      expect($.typed(NameDialog.nameKey), 'الفلة الغربية');
+    });
+
+    phoneCase('redix-api #102: a short swipe deletes nothing', ($) async {
+      final manager = await Given.manager(units: ['الفلة الغربية']);
+      await $.onMoreInfo(manager);
+      final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
+      await $.swipeAway(ProjectInfoScreen.unitRowKey(unit), share: 0.15);
+      await Future<void>.delayed(const Duration(seconds: 1));
+      await $.pumpAndSettle();
+      expect($(ProjectInfoScreen.unitKey(unit)), findsOneWidget);
+    });
+
+    phoneCase('a refused name shows its own line, and nothing typed is lost', ($) async {
+      final manager = await Given.manager();
+      await $.onMoreInfo(manager);
+      await $.tapOn(ProjectInfoScreen.renameKey);
+      await $.saveName(' ');
+      await $.says(ChangeDialog.messageKey, $.words.projectsInvalidName);
+      expect($(NameDialog.nameKey), findsOneWidget);
+      await $.says(ProjectInfoScreen.nameKey, manager.projectName);
+    });
+
+    phoneCase('BR-38: a unit that cannot be deleted comes back, and the refusal says why', ($) async {
+      final manager = await Given.manager(units: ['الفلة الغربية']);
+      await $.onMoreInfo(manager);
+      final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
+      await Given.closed(manager);
+      await $.swipeAway(ProjectInfoScreen.unitRowKey(unit));
+      await $.says(messageKeyOf('projects.projectFinished').label, $.words.projectsProjectFinished);
+      await $.reach($(ProjectInfoScreen.unitKey(unit)));
+    });
+  });
+}
