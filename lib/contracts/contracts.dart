@@ -5,6 +5,9 @@ import 'contract.dart';
 /// What can change on a contract: its [value], or that it [isOpenValue], its [unitPrice] and [quantity], 0 when not used, its [notes], and the ids of the [attachmentIds] it is to carry besides those it does.
 typedef ContractTerms = ({double value, bool isOpenValue, double unitPrice, double quantity, String notes, List<String> attachmentIds});
 
+/// The id the API reads as nothing chosen. A choice left empty is sent as it, because the API refuses a request that misses a field before it can say which choice is missing.
+const _nothingChosen = '00000000-0000-0000-0000-000000000000';
+
 /// A project's contracts (UC-020), and the one way to change them. Each change returns an empty string once made, otherwise the word key of the refusal.
 class Contracts extends ApiList<Contract> {
   /// The contracts of the project [projectId], seen through [session].
@@ -22,10 +25,10 @@ class Contracts extends ApiList<Contract> {
     if (terms.attachmentIds.isNotEmpty) 'attachmentIds': terms.attachmentIds,
   };
 
-  /// Adds a contract with the contractor [supplierId], for [itemId], on [terms]. Either still empty is left for the API to refuse.
+  /// Adds a contract with the contractor [supplierId], for [itemId], on [terms]. Either still empty goes as nothing chosen, for the API to refuse by name.
   Future<String> add(String supplierId, String itemId, ContractTerms terms) => change('/projects/$projectId/contracts', {
-    if (supplierId.isNotEmpty) 'supplierId': supplierId,
-    if (itemId.isNotEmpty) 'itemId': itemId,
+    'supplierId': supplierId.isEmpty ? _nothingChosen : supplierId,
+    'itemId': itemId.isEmpty ? _nothingChosen : itemId,
     ..._bodyOf(terms),
   });
 

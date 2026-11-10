@@ -258,7 +258,7 @@ void main() {
     expect(find.text('مبلط جديد'), findsOneWidget);
   });
 
-  testWidgets('nothing chosen is left for the API to refuse, and stays in the dialog', (tester) async {
+  testWidgets('nothing chosen is sent as nothing chosen, which the API refuses by name, and the dialog stays', (tester) async {
     final opened = await openContracts(tester);
     opened.api.settingsAnswer = (status: 400, code: 'unknownSupplier');
 
@@ -266,7 +266,7 @@ void main() {
     await tester.enterText(find.byKey(ContractsScreen.valueKey), '1000');
     await save(tester, opened.api);
 
-    expect(opened.api.sentSettingsChanges.single.$2.containsKey('supplierId'), isFalse);
+    expect((opened.api.sentSettingsChanges.single.$2['supplierId'], opened.api.sentSettingsChanges.single.$2['itemId']), ('00000000-0000-0000-0000-000000000000', '00000000-0000-0000-0000-000000000000'));
     expect(text(tester, ChangeDialog.messageKey), 'en contracts.unknownSupplier');
   });
 
