@@ -5,6 +5,7 @@ import 'package:redix/partners/partners_screen.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/api_list_body.dart';
 
 void main() {
@@ -17,11 +18,16 @@ void main() {
     api.addMember('user-mutab', 'متعب المغيري');
     api.addMember('user-nawaf', 'نواف');
     final mutab = api.addPartner('project-0', 'متعب', userId: 'user-mutab', userName: 'متعب المغيري', itemId: capital);
-    final haitham = api.addPartner('project-0', 'هيثم', itemId: capital);
+    final haitham = api.addPartner('project-0', 'هيثم', itemId: capital, mayDelete: false);
     await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
     return (api: api, mutab: mutab['id'] as String, haitham: haitham['id'] as String);
+  }
+
+  Future<void> openEdit(WidgetTester tester, FakeApi api, String id) async {
+    await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.menuKey(id))));
+    await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.editKey)));
   }
 
   Future<void> save(WidgetTester tester, FakeApi api, String name) => act(tester, api, () async {
@@ -77,7 +83,7 @@ void main() {
   testWidgets('editing starts from the partner and renames them, keeping their account', (tester) async {
     final opened = await openPartners(tester);
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.editKey(opened.mutab))));
+    await openEdit(tester, opened.api, opened.mutab);
     expect(tester.widget<TextField>(find.byKey(PartnersScreen.partnerNameKey)).controller!.text, 'متعب');
     await save(tester, opened.api, 'متعب المغيري');
 
@@ -89,17 +95,43 @@ void main() {
   testWidgets('editing can give an account, and take it away', (tester) async {
     final opened = await openPartners(tester);
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.editKey(opened.haitham))));
+    await openEdit(tester, opened.api, opened.haitham);
     await chooseMember(tester, opened.api, PartnersScreen.loginKey, 'user-nawaf');
     await save(tester, opened.api, 'هيثم');
     expect(text(tester, PartnersScreen.detailsKey(opened.haitham)), 'نواف');
 
-    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.editKey(opened.haitham))));
+    await openEdit(tester, opened.api, opened.haitham);
     await chooseMember(tester, opened.api, PartnersScreen.loginKey, '');
     await save(tester, opened.api, 'هيثم');
 
     expect(opened.api.sentSettingsChanges.last.$2, {'name': 'هيثم'});
     expect(text(tester, PartnersScreen.detailsKey(opened.haitham)), 'en partners.noLogin');
+  });
+
+  testWidgets('redix-api #100: each row ends in ⋮ with Edit and Delete, and has no pencil; Delete asks first, then the partner leaves and it says so', (tester) async {
+    final opened = await openPartners(tester);
+
+    expect(find.byIcon(Icons.edit_outlined), findsNothing);
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.menuKey(opened.mutab))));
+    expect(find.byKey(PartnersScreen.editKey), findsOneWidget);
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.deleteKey)));
+    expect(find.text('en partners.deleteKeepsMovements'), findsOneWidget);
+    await act(tester, opened.api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
+
+    expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/partners/${opened.mutab}/delete');
+    expect(find.byKey(PartnersScreen.nameKey(opened.mutab)), findsNothing);
+    expect(find.text('en partners.deleted'), findsOneWidget);
+  });
+
+  testWidgets('redix-api #100: a partner with capital or something waiting has Delete gray, saying why, and nothing is sent', (tester) async {
+    final opened = await openPartners(tester);
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.menuKey(opened.haitham))));
+    expect(tester.widget<PopupMenuItem<VoidCallback>>(find.byKey(PartnersScreen.deleteKey)).enabled, isFalse);
+    expect(find.text('en partners.partnerNotDeletable'), findsOneWidget);
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.deleteKey), warnIfMissed: false));
+
+    expect(opened.api.sentSettingsChanges, isEmpty);
   });
 
   testWidgets('a project with no partners says so', (tester) async {
@@ -116,7 +148,7 @@ void main() {
 
     expect(find.byKey(PartnersScreen.nameKey(opened.mutab)), findsOneWidget);
     expect(isEnabled(tester, PartnersScreen.addKey), isFalse);
-    expect(find.byKey(PartnersScreen.editKey(opened.mutab)), findsNothing);
+    expect(find.byKey(PartnersScreen.menuKey(opened.mutab)), findsNothing);
   });
 
   testWidgets('a finished project shows its partners with nothing to change', (tester) async {
@@ -124,7 +156,7 @@ void main() {
 
     expect(find.byKey(PartnersScreen.nameKey(opened.mutab)), findsOneWidget);
     expect(isEnabled(tester, PartnersScreen.addKey), isFalse);
-    expect(find.byKey(PartnersScreen.editKey(opened.mutab)), findsNothing);
+    expect(find.byKey(PartnersScreen.menuKey(opened.mutab)), findsNothing);
   });
 
   testWidgets('everyone in the project has a way in, since each sees the total and the partners chosen for them (BR-31)', (tester) async {

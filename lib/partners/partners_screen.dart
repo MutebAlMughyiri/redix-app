@@ -14,6 +14,7 @@ import 'capital.dart';
 import 'movements_screen.dart';
 import 'partner.dart';
 import 'partner_dialog.dart';
+import 'partner_menu.dart';
 import 'partners.dart';
 import '../ui/amount_line.dart';
 
@@ -68,8 +69,14 @@ class PartnersScreen extends StatefulWidget {
   /// The name of the partner [id].
   static Key nameKey(String id) => Key('partners.name.$id');
 
-  /// The button that edits the partner [id].
-  static Key editKey(String id) => Key('partners.edit.$id');
+  /// The ⋮ menu of the partner [id] (redix-api #100).
+  static Key menuKey(String id) => Key('partners.menu.$id');
+
+  /// Edit, in a partner's menu.
+  static const editKey = Key('partners.edit');
+
+  /// Delete, in a partner's menu; gray with the reason unless the partner may be deleted.
+  static const deleteKey = Key('partners.delete');
 
   /// The row of the partner [id].
   static Key rowKey(String id) => Key('partners.row.$id');
@@ -139,7 +146,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(formatMoney(line.balance), key: PartnersScreen.balanceKey(partner.id), style: Theme.of(context).textTheme.titleSmall),
-                if (project.mayManageSettings) IconButton(key: PartnersScreen.editKey(partner.id), icon: Icon(Icons.edit_outlined, key: PartnersScreen.editKey(partner.id).icon), tooltip: words.partnersEdit, onPressed: () => _ask(partner)),
+                if (project.mayManageSettings) PartnerMenu(partner: partner, partners: widget.partners, onEdit: () => _ask(partner)),
               ],
             ),
           );

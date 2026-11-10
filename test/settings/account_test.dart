@@ -534,12 +534,14 @@ void main() {
         PartnersScreen.addKey,
         PartnersScreen.nameKey(partner),
         PartnersScreen.detailsKey(partner),
-        PartnersScreen.editKey(partner),
+        PartnersScreen.menuKey(partner),
         PartnersScreen.nameKey(partnerWithNoLogin),
         PartnersScreen.detailsKey(partnerWithNoLogin),
-        PartnersScreen.editKey(partnerWithNoLogin),
+        PartnersScreen.menuKey(partnerWithNoLogin),
       ].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.editKey(partner))));
+      await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.menuKey(partner))));
+      [PartnersScreen.editKey, PartnersScreen.deleteKey].forEach(expectFits);
+      await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.editKey)));
       [PartnersScreen.partnerNameKey, PartnersScreen.loginKey, PartnersScreen.loginHintKey, ChangeDialog.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await act(tester, api, () => tester.tap(find.byType(BackButton)));

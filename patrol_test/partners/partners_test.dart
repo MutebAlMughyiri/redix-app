@@ -72,7 +72,7 @@ void main() {
       final manager = await Given.manager();
       final id = await Given.partner(manager, 'هيثم');
       await onPartners($, manager);
-      await $.tapOn(PartnersScreen.editKey(id));
+      await $.menuChoice(PartnersScreen.menuKey(id), PartnersScreen.editKey);
       await $.reach($(PartnersScreen.partnerNameKey));
       expect($.typed(PartnersScreen.partnerNameKey), 'هيثم');
       await $(PartnersScreen.partnerNameKey).enterText('هيثم الأول');
@@ -85,11 +85,11 @@ void main() {
       final member = await Given.member(manager, name: 'نواف');
       final id = await Given.partner(manager, 'هيثم');
       await onPartners($, manager);
-      await $.tapOn(PartnersScreen.editKey(id));
+      await $.menuChoice(PartnersScreen.menuKey(id), PartnersScreen.editKey);
       await chooseLogin($, member.id);
       await $(ChangeDialog.saveKey).tap();
       await $.says(PartnersScreen.detailsKey(id), 'نواف');
-      await $.tapOn(PartnersScreen.editKey(id));
+      await $.menuChoice(PartnersScreen.menuKey(id), PartnersScreen.editKey);
       await chooseLogin($, '');
       await $(ChangeDialog.saveKey).tap();
       await $.says(PartnersScreen.detailsKey(id), $.words.partnersNoLogin);
@@ -163,7 +163,7 @@ void main() {
       await onPartners($, member);
       await $.reach($(PartnersScreen.nameKey(id)));
       expect($.isEnabled(PartnersScreen.addKey), isFalse);
-      expect($(PartnersScreen.editKey(id)), findsNothing);
+      expect($(PartnersScreen.menuKey(id)), findsNothing);
     });
 
     phoneCase('redix-api #101 R1: Partners has no حركة: a partner\'s money is entered from Add entry', ($) async {

@@ -75,7 +75,7 @@ Map<String, String> wordsIn(String language) => {
     'paymentMethods.invalidName', 'paymentMethods.new', 'paymentMethods.name', 'paymentMethods.rename', 'paymentMethods.save', 'paymentMethods.disable', 'paymentMethods.enable', 'paymentMethods.disabled', 'paymentMethods.paymentMethodUsed',
     'accounts.title', 'accounts.empty', 'accounts.loadFailed', 'accounts.noConnection', 'accounts.refused', 'accounts.projectFinished', 'accounts.invalidName', 'accounts.custodianRequired', 'accounts.unknownCustodian', 'accounts.new', 'accounts.edit', 'accounts.save', 'accounts.type', 'accounts.typeBank', 'accounts.typeCashCustody', 'accounts.name',
     'partners.title', 'partners.empty', 'partners.loadFailed', 'partners.noConnection', 'partners.refused', 'partners.projectFinished', 'partners.invalidName', 'partners.unknownUser', 'partners.userTaken', 'partners.itemNotOffered',
-    'partners.new', 'partners.edit', 'partners.save', 'partners.name', 'partners.login', 'partners.noLogin', 'partners.loginHint',
+    'partners.new', 'partners.edit', 'partners.save', 'partners.name', 'partners.delete', 'partners.deleteQuestion', 'partners.deleteKeepsMovements', 'partners.deleted', 'partners.partnerNotDeletable', 'partners.login', 'partners.noLogin', 'partners.loginHint',
     'suppliers.title', 'suppliers.empty', 'suppliers.loadFailed', 'suppliers.noConnection', 'suppliers.refused', 'suppliers.projectFinished', 'suppliers.invalidName', 'suppliers.invalidVatNumber',
     'suppliers.invalidMobile', 'suppliers.generalCashSupplier', 'suppliers.vatNumberTaken', 'suppliers.holder', 'suppliers.unknownItem', 'suppliers.new', 'suppliers.edit', 'suppliers.save', 'suppliers.name', 'suppliers.vatNumber',
     'suppliers.mobile', 'suppliers.defaultItem', 'suppliers.noDefaultItem', 'suppliers.pendingApproval', 'suppliers.disable', 'suppliers.enable', 'suppliers.disabled',
@@ -974,8 +974,8 @@ class FakeApi {
 
   /// Adds a partner to the project [projectId], as the API holds them: a table of the capital item [itemId] (redix-api #109), whose own account is [userId], called [userName]. Who sees
   /// them is chosen on people's permissions (redix-api #106).
-  Map<String, Object> addPartner(String projectId, String name, {String userId = '', String userName = '', String itemId = 'item-capital'}) {
-    final partner = <String, Object>{'id': 'partner-${_nextStructureId++}', 'name': name, 'userId': userId, 'userName': userName, 'itemId': itemId};
+  Map<String, Object> addPartner(String projectId, String name, {String userId = '', String userName = '', String itemId = 'item-capital', bool mayDelete = true}) {
+    final partner = <String, Object>{'id': 'partner-${_nextStructureId++}', 'name': name, 'userId': userId, 'userName': userName, 'itemId': itemId, 'mayDelete': mayDelete};
     partners.putIfAbsent(projectId, () => []).add(partner);
     return partner;
   }
@@ -992,7 +992,9 @@ class FakeApi {
       return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
     }
     final userId = body['userId'] as String? ?? '';
-    if (segments.length == 3) {
+    if (segments.last == 'delete') {
+      list.removeWhere((row) => row['id'] == segments[3]);
+    } else if (segments.length == 3) {
       addPartner(segments[1], body['name'] as String, userId: userId, userName: _memberName(userId));
     } else {
       list.singleWhere((row) => row['id'] == segments[3])

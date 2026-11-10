@@ -128,7 +128,7 @@ final List<Gate> _gates = [
     permission: Permission.manageSettings,
     arrange: (api) => api.addPartner(_project, 'متعب'),
     steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project))],
-    control: (api) => find.byKey(PartnersScreen.editKey(_first(api.partners[_project]))),
+    control: (api) => find.byKey(PartnersScreen.menuKey(_first(api.partners[_project]))),
   ),
   (name: 'An enabled Add a supplier', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.suppliersKey(_project))], control: _enabled(SuppliersScreen.addKey)),
   (

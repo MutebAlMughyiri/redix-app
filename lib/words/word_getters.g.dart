@@ -1343,6 +1343,18 @@ mixin WordGetters {
   /// The word `offline.waiting`.
   String get offlineWaiting => text('offline.waiting');
 
+  /// The word `partners.delete`.
+  String get partnersDelete => text('partners.delete');
+
+  /// The word `partners.deleteKeepsMovements`.
+  String get partnersDeleteKeepsMovements => text('partners.deleteKeepsMovements');
+
+  /// The word `partners.deleteQuestion`.
+  String get partnersDeleteQuestion => text('partners.deleteQuestion');
+
+  /// The word `partners.deleted`.
+  String get partnersDeleted => text('partners.deleted');
+
   /// The word `partners.edit`.
   String get partnersEdit => text('partners.edit');
 
@@ -1375,6 +1387,9 @@ mixin WordGetters {
 
   /// The word `partners.noLogin`.
   String get partnersNoLogin => text('partners.noLogin');
+
+  /// The word `partners.partnerNotDeletable`.
+  String get partnersPartnerNotDeletable => text('partners.partnerNotDeletable');
 
   /// The word `partners.projectFinished`.
   String get partnersProjectFinished => text('partners.projectFinished');

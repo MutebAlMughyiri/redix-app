@@ -1,0 +1,52 @@
+import 'package:flutter/material.dart';
+
+import '../ui/confirm_dialog.dart';
+import '../ui/refusal_snack_bar.dart';
+import '../ui/row_menu.dart';
+import '../words/words.dart';
+import 'partner.dart';
+import 'partners.dart';
+import 'partners_screen.dart';
+
+/// What can be done to a partner, for whoever keeps the settings: their ⋮ menu, as an account's (Muteb, 11 Nov 2026: no pencil, no red bar). Delete stays in it gray, saying why,
+/// unless the partner is at zero capital with nothing waiting (redix-api #100).
+class PartnerMenu extends StatelessWidget {
+  /// The menu of [partner], changed through [partners], opening their dialog through [onEdit].
+  const PartnerMenu({super.key, required this.partner, required this.partners, required this.onEdit});
+
+  /// The partner.
+  final Partner partner;
+
+  /// The way to change them.
+  final Partners partners;
+
+  /// Opens the partner's dialog.
+  final VoidCallback onEdit;
+
+  void _askToDelete(BuildContext context) {
+    final words = Words.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (_) => ConfirmDialog(
+        title: words.partnersDeleteQuestion,
+        subject: partner.name,
+        explanation: words.partnersDeleteKeepsMovements,
+        confirmLabel: words.partnersDelete,
+        onConfirm: () async {
+          final refusal = await partners.delete(partner);
+          showMessage(messenger, words, refusal.isEmpty ? 'partners.deleted' : refusal);
+        },
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final words = Words.of(context);
+    return rowMenu(PartnersScreen.menuKey(partner.id), [
+      rowMenuItem(PartnersScreen.editKey, words.partnersEdit, onEdit),
+      rowMenuItem(PartnersScreen.deleteKey, words.partnersDelete, () => _askToDelete(context), reason: partner.mayDelete ? '' : words.partnersPartnerNotDeletable),
+    ]);
+  }
+}

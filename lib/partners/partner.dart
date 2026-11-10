@@ -5,10 +5,11 @@ class Partner {
     : id = json['id'] as String,
       name = json['name'] as String,
       userId = json['userId'] as String,
-      userName = json['userName'] as String;
+      userName = json['userName'] as String,
+      mayDelete = json['mayDelete'] as bool;
 
   /// No partner yet, for the dialog that adds one.
-  Partner.none() : id = '', name = '', userId = '', userName = '';
+  Partner.none() : id = '', name = '', userId = '', userName = '', mayDelete = false;
 
   /// The partner's id; empty for a partner not added yet.
   final String id;
@@ -21,4 +22,7 @@ class Partner {
 
   /// That login's name; empty for a partner with no login.
   final String userName;
+
+  /// True at zero capital with nothing waiting, when Delete is offered (redix-api #100); the API decides it.
+  final bool mayDelete;
 }
