@@ -52,6 +52,7 @@ import '../approvals/approvals.dart';
 import 'entry_share.dart';
 import 'reverse_sheet.dart';
 import 'entry_recording.dart';
+import '../ui/form_refusal.dart';
 import '../attachments/entry_file.dart';
 import '../ui/refusal_text.dart';
 
@@ -788,7 +789,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
             IgnorePointer(ignoring: _reading, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: _entryFields(words, ownFields))),
             const SizedBox(height: 16),
             if (_message.isNotEmpty) ...[
-              refusalText(context, words.text(_message), AddEntryScreen.messageKey),
+              FormRefusal(text: words.text(_message), textKey: AddEntryScreen.messageKey),
               const SizedBox(height: 8),
             ],
             if (_reading) _readingActions(words) else _formActions(words),

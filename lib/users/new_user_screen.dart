@@ -7,7 +7,7 @@ import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'permission_tick.dart';
 import 'users.dart';
-import '../ui/refusal_text.dart';
+import '../ui/form_refusal.dart';
 import '../ui/form_button_style.dart';
 
 /// The new user form (UC-007): their name, username, mobile and a temporary password they change at first sign-in (AC-02.1). A new login is born in a project.
@@ -142,7 +142,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
             ),
             if (_message.isNotEmpty) ...[
               const SizedBox(height: 16),
-              refusalText(context, words.text(_message), NewUserScreen.messageKey),
+              FormRefusal(text: words.text(_message), textKey: NewUserScreen.messageKey),
             ],
           ],
         ),

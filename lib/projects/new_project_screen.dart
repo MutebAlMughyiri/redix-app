@@ -11,7 +11,7 @@ import 'project.dart';
 import 'project_registration.dart';
 import 'projects.dart';
 import '../ui/typed_names.dart';
-import '../ui/refusal_text.dart';
+import '../ui/form_refusal.dart';
 import '../ui/picker_field.dart';
 import '../ui/form_button_style.dart';
 
@@ -274,7 +274,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
             ),
             if (_message.isNotEmpty) ...[
               const SizedBox(height: 16),
-              refusalText(context, words.text(_message), NewProjectScreen.messageKey),
+              FormRefusal(text: words.text(_message), textKey: NewProjectScreen.messageKey),
             ],
           ],
         ),
