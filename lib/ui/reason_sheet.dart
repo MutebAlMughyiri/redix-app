@@ -4,6 +4,7 @@ import '../words/words.dart';
 import 'part_keys.dart';
 import 'app_color.dart';
 import 'refusal_text.dart';
+import 'act_once.dart';
 
 /// Asks why, then does what needs a reason: rejecting an entry (AC-19.1) or reversing one (FR-50). The one owner of that sheet: its quick reasons, its saving, and the refusal it keeps
 /// on screen (findings row 166).
@@ -74,7 +75,6 @@ class ReasonSheet extends StatefulWidget {
 class _ReasonSheetState extends State<ReasonSheet> {
   final _reason = TextEditingController();
   var _message = '';
-  var _saving = false;
 
   @override
   void dispose() {
@@ -83,10 +83,7 @@ class _ReasonSheetState extends State<ReasonSheet> {
   }
 
   Future<void> _send() async {
-    setState(() {
-      _saving = true;
-      _message = '';
-    });
+    setState(() => _message = '');
     final refusal = await widget.onSend(_reason.text);
     if (!mounted) {
       return;
@@ -95,10 +92,7 @@ class _ReasonSheetState extends State<ReasonSheet> {
       Navigator.of(context).pop();
       return;
     }
-    setState(() {
-      _saving = false;
-      _message = refusal;
-    });
+    setState(() => _message = refusal);
   }
 
   @override
@@ -132,12 +126,12 @@ class _ReasonSheetState extends State<ReasonSheet> {
               decoration: InputDecoration(labelText: widget.reasonLabel, helperText: widget.reasonHint.isEmpty ? null : widget.reasonHint, helperMaxLines: 3),
             ),
             if (_message.isNotEmpty) refusalText(context, words.text(_message), ReasonSheet.messageKey),
-            FilledButton(
+            ActOnce(builder: (once) => FilledButton(
               key: ReasonSheet.sendKey,
               style: FilledButton.styleFrom(backgroundColor: AppColor.refusal.of(context), foregroundColor: AppColor.onRefusal.of(context)),
-              onPressed: _saving ? null : _send,
+              onPressed: once(_send),
               child: Text(widget.sendLabel, key: ReasonSheet.sendKey.label),
-            ),
+            )),
           ],
         ),
       ),

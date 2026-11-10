@@ -11,6 +11,7 @@ import 'registered_projects.dart';
 import '../ui/app_color.dart';
 import '../format/parts_line.dart';
 import '../ui/reason_sheet.dart';
+import '../ui/act_once.dart';
 
 /// Registered projects (UC-066): what is waiting for the admin, with the manager's details and a decision. This is all the admin can do (BR-29).
 class RegisteredProjectsScreen extends StatefulWidget {
@@ -83,25 +84,25 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
           const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: OverflowBar(
+            child: ActOnce(builder: (once) => OverflowBar(
               alignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
                   key: RegisteredProjectsScreen.approveKey(project.id),
-                  onPressed: () => showRefusalOf(context, widget.projects.approve(project)),
+                  onPressed: once(() => showRefusalOf(context, widget.projects.approve(project))),
                   child: Text(words.registeredApprove, key: RegisteredProjectsScreen.approveKey(project.id).label),
                 ),
                 TextButton(
                   key: RegisteredProjectsScreen.rejectKey(project.id),
                   style: TextButton.styleFrom(foregroundColor: AppColor.refusal.of(context)),
-                  onPressed: () => ReasonSheet.show(
+                  onPressed: once(() => ReasonSheet.show(
                     context,
                     ReasonSheet(title: words.registeredReject, about: project.name, reasonLabel: words.registeredReason, sendLabel: words.registeredReject, onSend: (reason) => widget.projects.reject(project, reason)),
-                  ),
+                  )),
                   child: Text(words.registeredReject, key: RegisteredProjectsScreen.rejectKey(project.id).label),
                 ),
               ],
-            ),
+            )),
           ),
         ],
       ),

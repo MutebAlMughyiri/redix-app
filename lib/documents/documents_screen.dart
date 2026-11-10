@@ -18,6 +18,7 @@ import '../ui/swipe_to_remove.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'documents.dart';
+import '../ui/act_once.dart';
 
 /// A project's documents (UC-064): each group under its name, those in none first. Everyone opens them; whoever manages the project keeps and removes them.
 class DocumentsScreen extends StatefulWidget {
@@ -102,12 +103,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           leading: Icon(FileKind.of(document.contentType).icon, key: DocumentsScreen.documentKey(document.id).icon),
           title: Text(document.name, key: DocumentsScreen.documentKey(document.id).title),
           subtitle: Text('${document.fileName} · ${formatDate(document.uploadedAt)}', key: DocumentsScreen.documentKey(document.id).subtitle),
-          trailing: IconButton(
+          trailing: ActOnce(builder: (once) => IconButton(
             key: DocumentsScreen.downloadKey(document.id),
             tooltip: words.documentsDownload,
             icon: Icon(Icons.download_outlined, key: DocumentsScreen.downloadKey(document.id).icon),
-            onPressed: () => _download(document),
-          ),
+            onPressed: once(() => _download(document)),
+          )),
           onTap: () => context.push(AttachmentScreen.pathOf(widget.project.id, document.attachmentId, fileName: document.fileName), extra: document.contentType),
         ),
       ),

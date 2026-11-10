@@ -9,6 +9,7 @@ import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'reconciliation.dart';
 import '../ui/refusal_text.dart';
+import '../ui/act_once.dart';
 
 /// What each account and custody really holds (UC-041), with the total and the difference as they are typed.
 class ReconcileScreen extends StatefulWidget {
@@ -54,7 +55,6 @@ class _ReconcileScreenState extends State<ReconcileScreen> {
     for (final row in widget.reconciliations.value.balances) row.accountId: TextEditingController(text: row.wasChecked ? formatPlain(row.actualBalance) : ''),
   };
   var _message = '';
-  var _saving = false;
 
   @override
   void dispose() {
@@ -72,7 +72,6 @@ class _ReconcileScreenState extends State<ReconcileScreen> {
       setState(() => _message = 'reconciliations.accountMissing');
       return;
     }
-    setState(() => _saving = true);
     final refusal = await widget.reconciliations.enter(balances);
     if (!mounted) {
       return;
@@ -81,10 +80,7 @@ class _ReconcileScreenState extends State<ReconcileScreen> {
       context.pop();
       return;
     }
-    setState(() {
-      _saving = false;
-      _message = refusal;
-    });
+    setState(() => _message = refusal);
   }
 
   @override
@@ -111,7 +107,7 @@ class _ReconcileScreenState extends State<ReconcileScreen> {
             Text('${words.reconciliationsActualTotal}: ${formatMoney(_total)}', key: ReconcileScreen.totalKey),
             Text('${words.reconciliationsDifference}: ${formatMoney(_total - figures.surplus)}', key: ReconcileScreen.differenceKey, style: theme.textTheme.titleMedium),
             if (_message.isNotEmpty) refusalText(context, words.text(_message), ReconcileScreen.messageKey),
-            FilledButton(key: ReconcileScreen.saveKey, onPressed: _saving ? null : _save, child: Text(words.reconciliationsSave, key: ReconcileScreen.saveKey.label)),
+            ActOnce(builder: (once) => FilledButton(key: ReconcileScreen.saveKey, onPressed: once(_save), child: Text(words.reconciliationsSave, key: ReconcileScreen.saveKey.label))),
           ],
         ),
       ),

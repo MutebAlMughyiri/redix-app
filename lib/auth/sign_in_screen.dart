@@ -9,6 +9,7 @@ import '../words/words.dart';
 import 'session.dart';
 import '../ui/refusal_text.dart';
 import '../ui/form_button_style.dart';
+import '../ui/act_once.dart';
 
 /// The sign-in screen (UC-002, تسجيل الدخول): username and password, or a fingerprint or face on a phone that uses them (UC-011), with the language choice at the top so it can be read before signing in (UC-004). A refusal shows as one line that never says which field was wrong (AC-01.2).
 class SignInScreen extends StatefulWidget {
@@ -65,7 +66,6 @@ class _SignInScreenState extends State<SignInScreen> {
   final _username = TextEditingController();
   final _password = TextEditingController();
   var _message = '';
-  var _signingIn = false;
 
   @override
   void initState() {
@@ -91,13 +91,9 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Future<void> _signIn() async {
-    setState(() => _signingIn = true);
     final refusal = await widget.session.signIn(_username.text.trim(), _password.text);
     if (mounted) {
-      setState(() {
-        _signingIn = false;
-        _message = refusal;
-      });
+      setState(() => _message = refusal);
     }
   }
 
@@ -105,7 +101,7 @@ class _SignInScreenState extends State<SignInScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final theme = Theme.of(context);
-    return Scaffold(
+    return ActOnce(builder: (once) => Scaffold(
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
@@ -138,12 +134,12 @@ class _SignInScreenState extends State<SignInScreen> {
               decoration: InputDecoration(labelText: words.signInPassword),
               autofillHints: const [AutofillHints.password],
               obscureText: true,
-              onSubmitted: (_) => _signIn(),
+              onSubmitted: (_) => once(_signIn)?.call(),
             ),
             const SizedBox(height: 24),
             FilledButton(
               key: SignInScreen.submitKey,
-              onPressed: _signingIn ? null : _signIn,
+              onPressed: once(_signIn),
               style: formButtonStyle,
               child: Text(words.signInSubmit, key: SignInScreen.submitKey.label),
             ),
@@ -197,6 +193,6 @@ class _SignInScreenState extends State<SignInScreen> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

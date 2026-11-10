@@ -6,6 +6,7 @@ import '../auth/session.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
+import '../ui/act_once.dart';
 
 Future<String> _save(InvoiceCapture capture, Uint8List bytes, String name, String mimeType) async {
   await capture.saveFile(bytes, name, mimeType);
@@ -160,12 +161,12 @@ class ReportFileButtons extends StatelessWidget {
       runSpacing: 8,
       children: [
         for (final kind in kinds)
-          OutlinedButton.icon(
+          ActOnce(builder: (once) => OutlinedButton.icon(
             key: buttonKey(name, kind),
             icon: Icon(kind.icon, key: buttonKey(name, kind).icon),
             label: Text(words.text(kind.wordKey), key: buttonKey(name, kind).label),
-            onPressed: () => kind.handings.length == 1 ? _run(context, kind, kind.handings.single) : _ask(context, kind),
-          ),
+            onPressed: once(() => kind.handings.length == 1 ? _run(context, kind, kind.handings.single) : _ask(context, kind)),
+          )),
       ],
     );
   }

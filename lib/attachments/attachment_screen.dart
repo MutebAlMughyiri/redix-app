@@ -8,6 +8,7 @@ import '../ui/screen_title.dart';
 import 'file_kind.dart';
 import 'invoice_capture.dart';
 import '../words/words.dart';
+import '../ui/act_once.dart';
 
 /// Opens a file a project keeps (row 92 of the findings, AC-18.1): a picture to zoom into, or any other file, a PDF included, handed to the phone by its name to open (UC-064).
 class AttachmentScreen extends StatefulWidget {
@@ -80,7 +81,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
           final bytes = file.requireData;
           if (FileKind.of(widget.contentType) != FileKind.picture) {
             return Center(
-              child: FilledButton(key: AttachmentScreen.openFileKey, onPressed: () => widget.capture.shareFile(bytes, widget.fileName, widget.contentType), child: Text(words.approvalsOpenFile, key: AttachmentScreen.openFileKey.label)),
+              child: ActOnce(builder: (once) => FilledButton(key: AttachmentScreen.openFileKey, onPressed: once(() => widget.capture.shareFile(bytes, widget.fileName, widget.contentType)), child: Text(words.approvalsOpenFile, key: AttachmentScreen.openFileKey.label))),
             );
           }
           return InteractiveViewer(maxScale: 6, child: Center(child: Image.memory(bytes, key: AttachmentScreen.pictureKey)));

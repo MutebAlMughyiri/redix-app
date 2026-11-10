@@ -112,6 +112,18 @@ void main() {
     expect(find.byKey(ApprovalsScreen.cardKey('entry-2')), findsNothing);
   });
 
+  testWidgets('pressing Approve twice before the API answers sends one approval, and the button is gray meanwhile', (tester) async {
+    final api = await openInbox(tester, (api) => api.addPending());
+    final approve = tester.widget<FilledButton>(find.byKey(ApprovalsScreen.approveKey('entry-0'))).onPressed!;
+
+    await act(tester, api, () async {
+      approve();
+      approve();
+    });
+
+    expect(api.sentApprovals.single, ['entry-0']);
+  });
+
   testWidgets('approving one sends it, and it leaves the inbox', (tester) async {
     final api = await openInbox(tester, (api) => api.addPending());
 

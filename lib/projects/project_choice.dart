@@ -6,6 +6,7 @@ import 'project.dart';
 import 'projects_screen.dart';
 import '../ui/app_color.dart';
 import 'project_status_chip.dart';
+import '../ui/act_once.dart';
 
 /// One project on the list: its name, units and its status. An approved one opens when tapped, and has a star that marks the default.
 class ProjectChoice extends StatelessWidget {
@@ -22,7 +23,7 @@ class ProjectChoice extends StatelessWidget {
   final VoidCallback onOpen;
 
   /// Called when the star is tapped.
-  final VoidCallback onStar;
+  final TapAction onStar;
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +60,12 @@ class ProjectChoice extends StatelessWidget {
                 ),
               ),
               if (project.isApproved)
-                IconButton(
+                ActOnce(builder: (once) => IconButton(
                   key: ProjectsScreen.starKey(project.id),
                   icon: Icon(isDefault ? Icons.star : Icons.star_border, key: ProjectsScreen.starKey(project.id).icon, color: isDefault ? AppColor.brand.of(context) : null),
                   tooltip: words.projectsDefaultProject,
-                  onPressed: onStar,
-                ),
+                  onPressed: once(onStar),
+                )),
             ],
           ),
         ),

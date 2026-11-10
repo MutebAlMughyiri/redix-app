@@ -9,6 +9,7 @@ import 'permission_tick.dart';
 import 'users.dart';
 import '../ui/form_refusal.dart';
 import '../ui/form_button_style.dart';
+import '../ui/act_once.dart';
 
 /// The new user form (UC-007): their name, username, mobile and a temporary password they change at first sign-in (AC-02.1). A new login is born in a project.
 class NewUserScreen extends StatefulWidget {
@@ -62,7 +63,6 @@ class _NewUserScreenState extends State<NewUserScreen> {
   final _roleName = TextEditingController();
   final _password = TextEditingController();
   var _message = '';
-  var _saving = false;
   final _ticked = {Permission.readProject};
 
   @override
@@ -76,10 +76,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
   }
 
   Future<void> _add() async {
-    setState(() {
-      _saving = true;
-      _message = '';
-    });
+    setState(() => _message = '');
     final refusal = await widget.users.create(_name.text, _username.text, _roleName.text, _mobile.text, _password.text, _ticked);
     if (!mounted) {
       return;
@@ -88,10 +85,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
       context.pop();
       return;
     }
-    setState(() {
-      _saving = false;
-      _message = refusal;
-    });
+    setState(() => _message = refusal);
   }
 
   @override
@@ -134,12 +128,12 @@ class _NewUserScreenState extends State<NewUserScreen> {
                 onChanged: permission == Permission.readProject ? null : (ticked) => setState(() => ticked ? _ticked.add(permission) : _ticked.remove(permission)),
               ),
             const SizedBox(height: 24),
-            FilledButton(
+            ActOnce(builder: (once) => FilledButton(
               key: NewUserScreen.submitKey,
-              onPressed: _saving ? null : _add,
+              onPressed: once(_add),
               style: formButtonStyle,
               child: Text(words.usersAdd, key: NewUserScreen.submitKey.label),
-            ),
+            )),
             if (_message.isNotEmpty) ...[
               const SizedBox(height: 16),
               FormRefusal(text: words.text(_message), textKey: NewUserScreen.messageKey),

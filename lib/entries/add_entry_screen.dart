@@ -52,9 +52,10 @@ import '../approvals/approvals.dart';
 import 'entry_share.dart';
 import 'reverse_sheet.dart';
 import 'entry_recording.dart';
-import '../ui/form_refusal.dart';
 import '../attachments/entry_file.dart';
+import '../ui/form_refusal.dart';
 import '../ui/refusal_text.dart';
+import '../ui/act_once.dart';
 
 /// إضافة قيد (UC-022, UC-027, redix-app #84, redix-api #110): one form adds an entry to any table, and the table chosen says what it is. Every entry asks the same things in the
 /// same place: its file, its table and date, its amount, its account and its notes, and is saved as a draft or sent for approval. A table adds only its own: a purchase its
@@ -338,7 +339,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   final _payment = PaymentChoice();
   var _message = '';
   var _refusedColumn = '';
-  var _saving = false;
   late var _reading = widget.isReading;
   var _saved = SavedEntry.none();
 
@@ -618,7 +618,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   Future<void> _save(bool submit) async {
     final words = Words.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    setState(() => _saving = true);
     final refusal = await _record(submit);
     if (!mounted) {
       return;
@@ -634,7 +633,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       return;
     }
     setState(() {
-      _saving = false;
       _message = refusal;
       _refusedColumn = widget.recording.refusedColumnKey;
     });
@@ -819,28 +817,28 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 8,
       children: [
-        Row(
+        ActOnce(builder: (once) => Row(
           spacing: 8,
           children: [
             Expanded(
               flex: 2,
               child: FilledButton(
                 key: AddEntryScreen.changeKey,
-                onPressed: mayChange ? () => setState(() => _reading = false) : null,
+                onPressed: once(mayChange ? () => setState(() => _reading = false) : null),
                 child: Text(row.isRejected ? words.entriesFix : words.entriesEdit, key: AddEntryScreen.changeKey.label),
               ),
             ),
             if (row.isPending)
               Expanded(
-                child: FilledButton.tonal(key: AddEntryScreen.approveKey, onPressed: widget.project.mayApproveEntries ? () => _approve(row) : null, child: Text(words.approvalsApprove, key: AddEntryScreen.approveKey.label)),
+                child: FilledButton.tonal(key: AddEntryScreen.approveKey, onPressed: once(widget.project.mayApproveEntries ? () => _approve(row) : null), child: Text(words.approvalsApprove, key: AddEntryScreen.approveKey.label)),
               ),
-            if (row.isDraft && mayChange) Expanded(child: OutlinedButton(key: AddEntryScreen.sendDraftKey, onPressed: () => _sendDraft(row), child: Text(words.entriesSend, key: AddEntryScreen.sendDraftKey.label))),
+            if (row.isDraft && mayChange) Expanded(child: OutlinedButton(key: AddEntryScreen.sendDraftKey, onPressed: once(() => _sendDraft(row)), child: Text(words.entriesSend, key: AddEntryScreen.sendDraftKey.label))),
             if (mayReverse)
               Expanded(
-                child: OutlinedButton(key: AddEntryScreen.reverseKey, onPressed: () => ReverseSheet.show(context, (reason) => widget.entries.reverse(row, reason)), child: Text(words.entriesReverse, key: AddEntryScreen.reverseKey.label)),
+                child: OutlinedButton(key: AddEntryScreen.reverseKey, onPressed: once(() => ReverseSheet.show(context, (reason) => widget.entries.reverse(row, reason))), child: Text(words.entriesReverse, key: AddEntryScreen.reverseKey.label)),
               ),
           ],
-        ),
+        )),
         if (!mayChange) Text(words.text(row.isApproved ? 'entries.approvedCannotChange' : 'entries.notYours'), key: AddEntryScreen.cannotChangeKey, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
@@ -871,18 +869,18 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   }
 
   /// Send and Save draft, under the form.
-  Widget _formActions(Words words) => Row(
+  Widget _formActions(Words words) => ActOnce(builder: (once) => Row(
     spacing: 8,
     children: [
       Expanded(
         flex: 2,
-        child: FilledButton(key: AddEntryScreen.sendKey, onPressed: _saving ? null : () => _save(true), child: Text(words.expensesSend, key: AddEntryScreen.sendKey.label)),
+        child: FilledButton(key: AddEntryScreen.sendKey, onPressed: once(() => _save(true)), child: Text(words.expensesSend, key: AddEntryScreen.sendKey.label)),
       ),
       Expanded(
-        child: OutlinedButton(key: AddEntryScreen.draftKey, onPressed: _saving ? null : () => _save(false), child: Text(words.expensesSaveDraft, key: AddEntryScreen.draftKey.label)),
+        child: OutlinedButton(key: AddEntryScreen.draftKey, onPressed: once(() => _save(false)), child: Text(words.expensesSaveDraft, key: AddEntryScreen.draftKey.label)),
       ),
     ],
-  );
+  ));
 
   /// What every table asks, under the file: the QR code's reading, what it is for, the item's own columns, the account and notes.
   List<Widget> _entryFields(Words words, List<Widget> ownFields) => [

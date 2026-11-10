@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../words/words.dart';
 import 'part_keys.dart';
 import 'form_refusal.dart';
+import 'act_once.dart';
 
 /// A dialog that sends a change: it closes once saved, and a refusal stays in it with what was typed.
 class ChangeDialog extends StatefulWidget {
@@ -42,10 +43,8 @@ class ChangeDialog extends StatefulWidget {
 
 class _ChangeDialogState extends State<ChangeDialog> {
   var _message = '';
-  var _saving = false;
 
   Future<void> _save() async {
-    setState(() => _saving = true);
     final refusal = await widget.onSave();
     if (!mounted) {
       return;
@@ -54,10 +53,7 @@ class _ChangeDialogState extends State<ChangeDialog> {
       Navigator.of(context).pop();
       return;
     }
-    setState(() {
-      _saving = false;
-      _message = refusal;
-    });
+    setState(() => _message = refusal);
   }
 
   @override
@@ -82,7 +78,7 @@ class _ChangeDialogState extends State<ChangeDialog> {
       ),
       actions: [
         TextButton(key: ChangeDialog.cancelKey, onPressed: Navigator.of(context).pop, child: Text(words.commonCancel, key: ChangeDialog.cancelKey.label)),
-        FilledButton(key: ChangeDialog.saveKey, onPressed: _saving ? null : _save, child: Text(widget.saveLabel, key: ChangeDialog.saveKey.label)),
+        ActOnce(builder: (once) => FilledButton(key: ChangeDialog.saveKey, onPressed: once(_save), child: Text(widget.saveLabel, key: ChangeDialog.saveKey.label))),
       ],
     );
   }

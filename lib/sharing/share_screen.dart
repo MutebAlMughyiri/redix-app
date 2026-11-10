@@ -26,6 +26,7 @@ import '../ui/app_color.dart';
 import '../ui/refusal_text.dart';
 import '../entries/table_picker.dart';
 import '../entries/entry_tables.dart';
+import '../ui/act_once.dart';
 
 /// What opens when a picture or a PDF is shared to the app (UC-038, FR-49): put it on an expense entered without an invoice (UC-039), or start a new expense with it (UC-046).
 class ShareScreen extends StatefulWidget {
@@ -126,7 +127,6 @@ class _ShareScreenState extends State<ShareScreen> {
   var _table = EntryTable.none();
   var _chosen = '';
   var _message = '';
-  var _saving = false;
 
   @override
   void initState() {
@@ -174,7 +174,6 @@ class _ShareScreenState extends State<ShareScreen> {
     final messenger = ScaffoldMessenger.of(context);
     final entries = widget.entriesOf(_project.id);
     final entry = entries.all.firstWhere((entry) => entry.id == _chosen);
-    setState(() => _saving = true);
     final attachments = widget.attachmentsOf(_project.id);
     var refusal = await attachments.keep(widget.file);
     if (refusal.isEmpty) {
@@ -188,10 +187,7 @@ class _ShareScreenState extends State<ShareScreen> {
       widget.onDone();
       return;
     }
-    setState(() {
-      _saving = false;
-      _message = refusal;
-    });
+    setState(() => _message = refusal);
   }
 
   Future<void> _newExpense() async {
@@ -251,7 +247,7 @@ class _ShareScreenState extends State<ShareScreen> {
             ),
             for (final entry in chosen) ..._differences(entry),
             if (_message.isNotEmpty) refusalText(context, words.text(_message), ShareScreen.messageKey),
-            if (chosen.isNotEmpty) FilledButton(key: ShareScreen.attachKey, onPressed: _saving ? null : _attach, child: Text(words.shareAttach, key: ShareScreen.attachKey.label)),
+            if (chosen.isNotEmpty) ActOnce(builder: (once) => FilledButton(key: ShareScreen.attachKey, onPressed: once(_attach), child: Text(words.shareAttach, key: ShareScreen.attachKey.label))),
           ],
         );
       },

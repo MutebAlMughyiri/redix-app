@@ -7,6 +7,7 @@ import 'session.dart';
 import 'sign_in_screen.dart';
 import '../ui/refusal_text.dart';
 import '../ui/form_button_style.dart';
+import '../ui/act_once.dart';
 
 /// The change-password screen (UC-003, غيّر كلمة المرور): the current password and the new one twice. While the password is temporary the
 /// router keeps the user here, so the change cannot be skipped (AC-02.1).
@@ -50,7 +51,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final _new = TextEditingController();
   final _confirm = TextEditingController();
   var _message = '';
-  var _saving = false;
 
   @override
   void dispose() {
@@ -65,15 +65,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       setState(() => _message = 'changePassword.mismatch');
       return;
     }
-    setState(() => _saving = true);
     final refusal = await widget.session.changePassword(_current.text, _new.text);
     if (!mounted) {
       return;
     }
-    setState(() {
-      _saving = false;
-      _message = refusal;
-    });
+    setState(() => _message = refusal);
     if (refusal.isEmpty) {
       context.go(SignInScreen.path);
     }
@@ -84,7 +80,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     final words = Words.of(context);
     final theme = Theme.of(context);
     InputDecoration field(String label) => InputDecoration(labelText: label);
-    return Scaffold(
+    return ActOnce(builder: (once) => Scaffold(
       appBar: AppBar(),
       body: SafeArea(
         child: ListView(
@@ -103,12 +99,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               controller: _confirm,
               decoration: field(words.changePasswordConfirm),
               obscureText: true,
-              onSubmitted: (_) => _save(),
+              onSubmitted: (_) => once(_save)?.call(),
             ),
             const SizedBox(height: 24),
             FilledButton(
               key: ChangePasswordScreen.submitKey,
-              onPressed: _saving ? null : _save,
+              onPressed: once(_save),
               style: formButtonStyle,
               child: Text(words.changePasswordSubmit, key: ChangePasswordScreen.submitKey.label),
             ),
@@ -119,6 +115,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

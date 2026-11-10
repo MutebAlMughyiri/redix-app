@@ -14,6 +14,7 @@ import '../ui/typed_names.dart';
 import '../ui/form_refusal.dart';
 import '../ui/picker_field.dart';
 import '../ui/form_button_style.dart';
+import '../ui/act_once.dart';
 
 /// The form that registers a project (UC-006, UC-066): its name, its start date and its units. From the sign-in page it also takes the details of the manager, who has
 /// no login yet. Either way the project waits for the admin.
@@ -114,7 +115,6 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   var _structureSourceId = '';
   var _startDate = DateUtils.dateOnly(DateTime.now());
   var _message = '';
-  var _saving = false;
 
   @override
   void dispose() {
@@ -150,10 +150,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
   }
 
   Future<void> _create() async {
-    setState(() {
-      _saving = true;
-      _message = '';
-    });
+    setState(() => _message = '');
     final refusal = await _send();
     if (!mounted) {
       return;
@@ -162,10 +159,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
       _leave();
       return;
     }
-    setState(() {
-      _saving = false;
-      _message = refusal;
-    });
+    setState(() => _message = refusal);
   }
 
   @override
@@ -266,12 +260,12 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               ),
             ],
             const SizedBox(height: 24),
-            FilledButton(
+            ActOnce(builder: (once) => FilledButton(
               key: NewProjectScreen.submitKey,
-              onPressed: _saving ? null : _create,
+              onPressed: once(_create),
               style: formButtonStyle,
               child: Text(words.projectsCreate, key: NewProjectScreen.submitKey.label),
-            ),
+            )),
             if (_message.isNotEmpty) ...[
               const SizedBox(height: 16),
               FormRefusal(text: words.text(_message), textKey: NewProjectScreen.messageKey),

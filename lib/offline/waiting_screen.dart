@@ -9,6 +9,7 @@ import '../words/words.dart';
 import 'outbox.dart';
 import 'pending_entry.dart';
 import '../ui/app_color.dart';
+import '../ui/act_once.dart';
 
 /// What waits on this phone for the project (UC-029): an entry the network has not taken yet, or one the API refused, which waits for its author.
 class WaitingScreen extends StatelessWidget {
@@ -87,7 +88,7 @@ class WaitingScreen extends StatelessWidget {
                           alignment: WrapAlignment.end,
                           children: [
                             if (entry.isRefused)
-                              TextButton(key: sendAgainKey(entry.id), onPressed: () => outbox.sendAgain(entry), child: Text(words.offlineSendAgain, key: sendAgainKey(entry.id).label)),
+                              ActOnce(builder: (once) => TextButton(key: sendAgainKey(entry.id), onPressed: once(() => outbox.sendAgain(entry)), child: Text(words.offlineSendAgain, key: sendAgainKey(entry.id).label))),
                           ],
                         ),
                       ],

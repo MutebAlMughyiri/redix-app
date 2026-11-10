@@ -21,6 +21,7 @@ import 'reject_sheet.dart';
 import '../ui/app_color.dart';
 import '../format/parts_line.dart';
 import '../ui/refusal_text.dart';
+import '../ui/act_once.dart';
 
 /// Finance's inbox (UC-031, UC-032): what waits, oldest first, to approve one at a time or many at once, or to reject saying why.
 class ApprovalsScreen extends StatefulWidget {
@@ -241,7 +242,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
                               padding: const EdgeInsetsDirectional.only(start: 12, top: 4),
                               child: refusalText(context, words.text(_failed[entry.id]!), ApprovalsScreen.failedKey(entry.id)),
                             ),
-                            Wrap(
+                            ActOnce(builder: (once) => Wrap(
                               alignment: WrapAlignment.end,
                               spacing: 8,
                               children: [
@@ -255,13 +256,13 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
                                   OutlinedButton(
                                     key: ApprovalsScreen.rejectKey(entry.id),
                                     style: OutlinedButton.styleFrom(foregroundColor: AppColor.refusal.of(context)),
-                                    onPressed: () => _askToReject(entry),
+                                    onPressed: once(() => _askToReject(entry)),
                                     child: Text(words.approvalsReject, key: ApprovalsScreen.rejectKey(entry.id).label),
                                   ),
-                                  FilledButton(key: ApprovalsScreen.approveKey(entry.id), onPressed: () => _approve([entry.id]), child: Text(words.approvalsApprove, key: ApprovalsScreen.approveKey(entry.id).label)),
+                                  FilledButton(key: ApprovalsScreen.approveKey(entry.id), onPressed: once(() => _approve([entry.id])), child: Text(words.approvalsApprove, key: ApprovalsScreen.approveKey(entry.id).label)),
                                 ],
                               ],
-                            ),
+                            )),
                           ],
                         ),
                       ),
