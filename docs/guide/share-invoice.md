@@ -9,7 +9,7 @@
 **Who sees it:** whoever enters expenses. Field staff see only their own expenses.
 
 1. Share the picture or PDF and pick **REDIX**. Sign in if asked; the file waits.
-2. Choose the project if you have more than one, then the **Table**, from the same list as Add entry.
+2. Choose the project if you have more than one, then the **Item**, from the same list as Add entry.
 3. Choose the expense. If the invoice has a QR code, the one that matches is marked **Matching** and already chosen.
 4. Tap **Attach to the chosen expense**.
 
@@ -24,7 +24,7 @@ Only the file goes on the expense: an approved one stays approved. The screen sa
 **من يراها:** من يُدخل المصروفات. ويرى المشرف الميداني مصروفاته فقط.
 
 1. شارك الصورة أو ملف PDF واختر **REDIX**. سجّل الدخول إن طُلب منك؛ الملف ينتظر.
-2. اختر المشروع إن كان لديك أكثر من مشروع، ثم **الجدول**، من القائمة نفسها في إضافة قيد.
+2. اختر المشروع إن كان لديك أكثر من مشروع، ثم **البند**، من القائمة نفسها في إضافة قيد.
 3. اختر المصروف. إن كان في الفاتورة رمز QR، يظهر المطابق بعلامة **مطابق** ومحدداً.
 4. اضغط **إرفاق بالمصروف المحدد**.
 
