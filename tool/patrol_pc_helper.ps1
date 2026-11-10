@@ -3,6 +3,15 @@
 param([Parameter(Mandatory)][string]$Device, [Parameter(Mandatory)][string]$Results)
 # The app Patrol runs: always dev (redix-app #95). Its activity keeps the code's own package, sa.redix.
 $App = 'sa.redix.dev'
+# The phone's own dark mode as it was before a case first changed it, so /phone/restore puts back whatever Muteb chose (redix-app #97); empty while nothing changed it.
+$phoneMode = ''
+
+function Set-PhoneMode([string]$mode) {
+  if (-not $script:phoneMode) {
+    $script:phoneMode = ((adb -s $Device shell cmd uimode night 2>&1) -split ':')[-1].Trim()
+  }
+  adb -s $Device shell cmd uimode night $mode 2>&1 | Out-Null
+}
 
 $listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Loopback, 5011)
 $listener.Start()
@@ -26,8 +35,12 @@ while ($true) {
       $type, $file = [uri]::UnescapeDataString($query) -split '\|', 2
       adb -s $Device shell am start -a android.intent.action.SEND -t $type --eu android.intent.extra.STREAM "file://$file" -n "$App/sa.redix.MainActivity" 2>&1 | Out-Null
     }
-    '/phone/dark' { adb -s $Device shell cmd uimode night yes 2>&1 | Out-Null }
-    '/phone/light' { adb -s $Device shell cmd uimode night no 2>&1 | Out-Null }
+    '/phone/dark' { Set-PhoneMode 'yes' }
+    '/phone/light' { Set-PhoneMode 'no' }
+    '/phone/restore' {
+      if ($phoneMode) { adb -s $Device shell cmd uimode night $phoneMode 2>&1 | Out-Null }
+      $phoneMode = ''
+    }
     '/notepad/close' { adb -s $Device shell am force-stop com.huawei.notepad 2>&1 | Out-Null }
     '/downloaded' {
       $start = [uri]::UnescapeDataString($query)

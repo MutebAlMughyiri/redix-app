@@ -22,8 +22,11 @@ class Pc {
   /// Turns the phone's own dark mode on, as its settings would.
   static Future<void> turnPhoneDark() => _ask('phone/dark');
 
-  /// Turns the phone's own dark mode off again.
+  /// Turns the phone's own dark mode off.
   static Future<void> turnPhoneLight() => _ask('phone/light');
+
+  /// Puts the phone's own dark mode back as it was before a case changed it, whichever its owner chose.
+  static Future<void> restorePhone() => _ask('phone/restore');
 
   /// Closes Notepad with nothing saved, so a case leaves no note on the phone.
   static Future<void> closeNotepad() => _ask('notepad/close');

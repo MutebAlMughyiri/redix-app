@@ -17,15 +17,19 @@ Future<Person> onSettings(PatrolIntegrationTester $) async {
   return manager;
 }
 
-/// Runs [body] with the phone's own dark mode on, and turns it off again whatever happens.
-Future<void> onADarkPhone(PatrolIntegrationTester $, Future<void> Function() body) async {
+/// Runs [body], then puts the phone's own dark mode back as its owner had it, whatever happens: a case never assumes the phone's mode, and never leaves it changed.
+Future<void> keepingThePhone(Future<void> Function() body) async {
   try {
-    await Pc.turnPhoneDark();
-    await $.until(() => $.phoneIsDark);
     await body();
   } finally {
-    await Pc.turnPhoneLight();
+    await Pc.restorePhone();
   }
+}
+
+/// Turns the phone's own dark mode to [dark] from the PC, and waits until the app sees it.
+Future<void> phoneTurns(PatrolIntegrationTester $, {required bool dark}) async {
+  await (dark ? Pc.turnPhoneDark() : Pc.turnPhoneLight());
+  await $.until(() => $.phoneIsDark == dark);
 }
 
 void main() {
@@ -33,20 +37,26 @@ void main() {
     phoneCase('#97 T1, T2, R1, R3: on System, the app turns dark with the phone while it is open, and light again', ($) async {
       await onSettings($);
       await $.tapOn(GeneralSettingsScreen.themeSystemKey);
-      expect($.isDark, isFalse);
-      await onADarkPhone($, () => $.until(() => $.isDark));
-      await $.until(() => !$.isDark);
+      await keepingThePhone(() async {
+        await phoneTurns($, dark: false);
+        await $.until(() => !$.isDark);
+        await phoneTurns($, dark: true);
+        await $.until(() => $.isDark);
+        await phoneTurns($, dark: false);
+        await $.until(() => !$.isDark);
+      });
     });
 
     phoneCase('T3, R2: Light stays light on a dark phone, and Dark stays dark once the phone is light again', ($) async {
       await onSettings($);
-      await onADarkPhone($, () async {
+      await keepingThePhone(() async {
+        await phoneTurns($, dark: true);
         expect($.isDark, isFalse);
         await $.tapOn(GeneralSettingsScreen.themeDarkKey);
         await $.until(() => $.isDark);
+        await phoneTurns($, dark: false);
+        expect($.isDark, isTrue);
       });
-      await $.until(() => !$.phoneIsDark);
-      expect($.isDark, isTrue);
     });
 
     phoneCase('#87 R1, R2: Dark in Settings turns the app dark at once, and Light turns it light', ($) async {
@@ -78,7 +88,8 @@ void main() {
     });
 
     phoneCase('T10, #87 R12: the case before left the app dark, and on a dark phone this one still starts light', ($) async {
-      await onADarkPhone($, () async {
+      await keepingThePhone(() async {
+        await phoneTurns($, dark: true);
         await $.startApp();
         expect($.isDark, isFalse);
       });
