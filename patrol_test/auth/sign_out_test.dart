@@ -15,14 +15,12 @@ import '../support/steps.dart';
 /// A new manager, signed in and standing on the project list.
 Future<Person> onTheProjectList(PatrolIntegrationTester $) async {
   final manager = await Given.manager();
-  await $.startApp();
-  await $.signIn(manager.username, manager.password);
-  await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
+  await $.onTheList(manager);
   return manager;
 }
 
 void main() {
-  group('Sign out (UC-062)', () {
+  phoneClass('Sign out (UC-062)', () {
     phoneCase('signing out asks first, then leads to sign-in with no message', ($) async {
       await onTheProjectList($);
       await $(ProjectsScreen.settingsKey).tap();

@@ -9,7 +9,7 @@ import '../support/phone_case.dart';
 import '../support/steps.dart';
 
 void main() {
-  group('Sign in (UC-002)', () {
+  phoneClass('Sign in (UC-002)', () {
     phoneCase('without a session the app opens on sign-in, headed by the logo', ($) async {
       await $.startApp();
       await $.reach($(SignInScreen.usernameKey));
@@ -22,16 +22,12 @@ void main() {
 
     phoneCase('FR-01: the right username and password open the app', ($) async {
       final manager = await Given.manager();
-      await $.startApp();
-      await $.signIn(manager.username, manager.password);
-      await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
+      await $.onTheList(manager);
     });
 
     phoneCase('a kept session opens the app at the next start, with no sign-in', ($) async {
       final manager = await Given.manager();
-      await $.startApp();
-      await $.signIn(manager.username, manager.password);
-      await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
+      await $.onTheList(manager);
       await $.restartApp();
       await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
       expect($(SignInScreen.usernameKey), findsNothing);
@@ -39,9 +35,7 @@ void main() {
 
     phoneCase('FR-16: without a network a kept session stays open, and work goes on', ($) async {
       final manager = await Given.manager();
-      await $.startApp();
-      await $.signIn(manager.username, manager.password);
-      await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
+      await $.onTheList(manager);
       await Pc.cutNetwork();
       await $.restartApp();
       await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
@@ -92,9 +86,7 @@ void main() {
     phoneCase('AC-01.3: someone disabled while signed in ends on sign-in at their next request, with a notice', ($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager);
-      await $.startApp();
-      await $.signIn(member.username, member.password);
-      await $.reach($(ProjectsScreen.cardKey(member.projectId)));
+      await $.onTheList(member);
       await Given.disabled(member, by: manager);
       await $(ProjectsScreen.cardKey(member.projectId)).tap();
       await $.reach($(SignInScreen.usernameKey));

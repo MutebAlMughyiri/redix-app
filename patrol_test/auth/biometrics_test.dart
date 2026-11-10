@@ -8,12 +8,10 @@ import '../support/phone_case.dart';
 import '../support/steps.dart';
 
 void main() {
-  group('Fingerprint (UC-011)', () {
+  phoneClass('Fingerprint (UC-011)', () {
     phoneCase('on a phone with no fingerprint, turning it on refuses, says what to do, and stays off', ($) async {
       final manager = await Given.manager();
-      await $.startApp();
-      await $.signIn(manager.username, manager.password);
-      await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
+      await $.onTheList(manager);
       await $(ProjectsScreen.settingsKey).tap();
       await $.goTo($(SettingsScreen.biometricsKey));
       await $(SettingsScreen.biometricsKey).tap();

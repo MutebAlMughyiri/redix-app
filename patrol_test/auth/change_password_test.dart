@@ -31,7 +31,7 @@ Future<Person> onTheChangeScreen(PatrolIntegrationTester $) async {
 }
 
 void main() {
-  group('Change password (UC-003)', () {
+  phoneClass('Change password (UC-003)', () {
     phoneCase('AC-02.1: a temporary password leads straight to the change screen', ($) async {
       await onTheChangeScreen($);
       await $.picture('change-password');
@@ -56,9 +56,7 @@ void main() {
 
     phoneCase('opened from Settings, the screen has a way back, and the change is kept', ($) async {
       final manager = await Given.manager();
-      await $.startApp();
-      await $.signIn(manager.username, manager.password);
-      await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
+      await $.onTheList(manager);
       await $(ProjectsScreen.settingsKey).tap();
       await $.goTo($(SettingsScreen.changePasswordKey));
       await $(SettingsScreen.changePasswordKey).tap();
