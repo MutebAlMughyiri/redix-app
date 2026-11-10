@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/format/date_format.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/offline/folder_store.dart';
@@ -192,6 +193,61 @@ void main() {
 
     expect(find.text('en offline.title · 1'), findsOneWidget);
     expect(jsonDecode(await store.read('outbox', 'entry-1'))['refusal'], '');
+  });
+
+  Future<FakeApi> openWaiting(WidgetTester tester, MemoryStore store, {int answer = 503}) async {
+    final api = FakeApi()
+      ..addProject('غصون 6')
+      ..entryAnswer = (status: answer, body: const <String, dynamic>{});
+    await openProject(tester, api, store: store);
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
+    return api;
+  }
+
+  String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
+
+  testWidgets('redix-app #103: a refused row spans the screen and says its table, amount, supplier, date, that its bill waits, and why it was refused', (tester) async {
+    final entry = PendingEntry(
+      ownerId: 'user-signed-in',
+      projectId: 'project-0',
+      route: 'entries',
+      body: {'id': 'entry-1', 'amount': 1000, 'date': '2026-11-11'},
+      fileName: 'bill.jpg',
+      refusal: 'expenses.unknownSupplier',
+      title: 'مواد (البلاط)',
+      details: 'شركة النخيل',
+    );
+    await openWaiting(tester, await storeHolding([entry]));
+
+    expect(text(tester, WaitingScreen.titleKey('entry-1')), 'مواد (البلاط)');
+    expect(text(tester, WaitingScreen.amountKey('entry-1')), '1,000.00');
+    expect(text(tester, WaitingScreen.detailsKey('entry-1')), allOf(contains('شركة النخيل'), contains(formatDate(DateTime(2026, 11, 11))), contains('en offline.withFile')));
+    expect(text(tester, WaitingScreen.stateKey('entry-1')), 'en expenses.unknownSupplier');
+    expect(find.byKey(WaitingScreen.autoSendKey), findsOneWidget);
+    final screen = tester.getSize(find.byType(Scaffold).last).width;
+    expect(tester.getSize(find.byKey(WaitingScreen.rowKey('entry-1'))).width, greaterThan(screen - 48));
+  });
+
+  testWidgets('redix-app #103: an entry kept before has its amount for a title, its date shows again, and waiting for the network it says nothing more', (tester) async {
+    await openWaiting(tester, await storeHolding([pending('entry-1')]));
+
+    expect(text(tester, WaitingScreen.titleKey('entry-1')), '6,000.00');
+    expect(find.byKey(WaitingScreen.stateKey('entry-1')), findsNothing);
+    expect(find.byKey(WaitingScreen.amountKey('entry-1')), findsNothing);
+    expect(text(tester, WaitingScreen.detailsKey('entry-1')), formatDate(DateTime(2026, 11, 5)));
+  });
+
+  testWidgets('redix-app #103: إرسال الآن sends what waits, and the row leaves once it lands', (tester) async {
+    final store = await storeHolding([pending('entry-1')]);
+    final api = await openWaiting(tester, store);
+    expect(find.byKey(WaitingScreen.rowKey('entry-1')), findsOneWidget);
+    api.entryAnswer = (status: 200, body: const <String, dynamic>{});
+
+    await act(tester, api, () => tester.tap(find.byKey(WaitingScreen.sendNowKey)));
+
+    expect(api.sentEntries.last['id'], 'entry-1');
+    expect(await store.namesIn('outbox'), isEmpty);
+    expect(find.byKey(WaitingScreen.emptyKey), findsOneWidget);
   });
 
   testWidgets('with no network a typed search looks in what was kept, whichever way the name is spelled', (tester) async {

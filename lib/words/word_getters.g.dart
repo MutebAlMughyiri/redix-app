@@ -1355,17 +1355,23 @@ mixin WordGetters {
   /// The word `notifications.title`.
   String get notificationsTitle => text('notifications.title');
 
+  /// The word `offline.autoSend`.
+  String get offlineAutoSend => text('offline.autoSend');
+
   /// The word `offline.empty`.
   String get offlineEmpty => text('offline.empty');
 
   /// The word `offline.sendAgain`.
   String get offlineSendAgain => text('offline.sendAgain');
 
+  /// The word `offline.sendNow`.
+  String get offlineSendNow => text('offline.sendNow');
+
   /// The word `offline.title`.
   String get offlineTitle => text('offline.title');
 
-  /// The word `offline.waiting`.
-  String get offlineWaiting => text('offline.waiting');
+  /// The word `offline.withFile`.
+  String get offlineWithFile => text('offline.withFile');
 
   /// The word `partners.delete`.
   String get partnersDelete => text('partners.delete');

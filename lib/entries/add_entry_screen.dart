@@ -601,12 +601,12 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     }
     final refusal = await _file.keep(widget.attachments);
     if (refusal == 'attachments.noConnection') {
-      return widget.recording.keep(_body(submit), _file.picked, editing: widget.editingId);
+      return widget.recording.keep(_body(submit), _file.picked, editing: widget.editingId, title: _table.label, details: _supplier.name);
     }
     if (refusal.isNotEmpty) {
       return refusal;
     }
-    return widget.recording.record(_body(submit), editing: widget.editingId);
+    return widget.recording.record(_body(submit), editing: widget.editingId, title: _table.label, details: _supplier.name);
   }
 
   /// Says [wordKey] once the entry [entryId] is kept by the API, offering to share it (redix-app #83, R1). Everything the action needs is taken now, since the screen closes.

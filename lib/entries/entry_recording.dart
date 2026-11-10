@@ -52,22 +52,23 @@ class EntryRecording {
     }
   }
 
-  /// Keeps [body] and its [file] on the phone, when the file could not reach the API; [editing] names the entry it changes.
-  Future<String> keep(Map<String, Object> body, PickedFile file, {String editing = ''}) => _keep(_routeOf(editing), body, file);
+  /// Keeps [body] and its [file] on the phone, when the file could not reach the API, its row saying [title] and [details] (redix-app #103); [editing] names the entry it changes.
+  Future<String> keep(Map<String, Object> body, PickedFile file, {String editing = '', String title = '', String details = ''}) => _keep(_routeOf(editing), body, file, title, details);
 
   /// The route that records an entry, or changes the entry [editing].
   String _routeOf(String editing) => editing.isEmpty ? 'entries' : 'entries/$editing';
 
-  Future<String> _keep(String route, Map<String, Object> body, PickedFile file) async {
-    await _outbox.keep(projectId: projectId, route: route, body: body, file: file);
+  Future<String> _keep(String route, Map<String, Object> body, PickedFile file, String title, String details) async {
+    await _outbox.keep(projectId: projectId, route: route, body: body, file: file, title: title, details: details);
     _wasKept = true;
     return '';
   }
 
-  /// Sends [body] to the API, as a new entry or a change of the entry [editing]. Returns an empty string once recorded, otherwise the word key of the refusal.
-  Future<String> record(Map<String, Object> body, {String editing = ''}) => _send(_routeOf(editing), body);
+  /// Sends [body] to the API, as a new entry or a change of the entry [editing]; kept on the phone with no network, its row saying [title] and [details]. Returns an empty string
+  /// once recorded or kept, otherwise the word key of the refusal.
+  Future<String> record(Map<String, Object> body, {String editing = '', String title = '', String details = ''}) => _send(_routeOf(editing), body, title, details);
 
-  Future<String> _send(String route, Map<String, Object> body) async {
+  Future<String> _send(String route, Map<String, Object> body, String title, String details) async {
     _refusedColumnKey = '';
     _wasKept = false;
     try {
@@ -81,7 +82,7 @@ class EntryRecording {
       return refusalOf(_lastAnswer, 'expenses');
     } on Exception catch (error) {
       debugPrint('Entry kept for later: $error');
-      return _keep(route, body, PickedFile.none());
+      return _keep(route, body, PickedFile.none(), title, details);
     }
   }
 }

@@ -48,8 +48,8 @@ class Outbox extends ChangeNotifier {
   }
 
   /// Keeps an entry of the project [projectId] for the API [route], with [file] if it has one still to send.
-  Future<void> keep({required String projectId, required String route, required Map<String, Object> body, required PickedFile file}) async {
-    final entry = PendingEntry(ownerId: _session.userId, projectId: projectId, route: route, body: body, fileName: file.name);
+  Future<void> keep({required String projectId, required String route, required Map<String, Object> body, required PickedFile file, String title = '', String details = ''}) async {
+    final entry = PendingEntry(ownerId: _session.userId, projectId: projectId, route: route, body: body, fileName: file.name, title: title, details: details);
     if (!file.isNone) {
       await _store.writeBytes(_files, entry.id, file.bytes);
     }
