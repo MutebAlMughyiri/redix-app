@@ -1,5 +1,6 @@
 # What a Patrol case on the phone cannot do for itself. The Patrol run starts this on the PC, and a case asks it over port 5011 (patrol_test/support/pc.dart).
-param([Parameter(Mandatory)][string]$Device)
+# The run names the phone and the file each case's line is kept in, so no path on a PC sits in the repo (redix-api #118).
+param([Parameter(Mandatory)][string]$Device, [Parameter(Mandatory)][string]$Results)
 # The app Patrol runs: always dev (redix-app #95). Its activity keeps the code's own package, sa.redix.
 $App = 'sa.redix.dev'
 
@@ -37,7 +38,7 @@ while ($true) {
         adb -s $Device shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file://$($file -replace ' ', '%20')" 2>&1 | Out-Null
       }
     }
-    '/note' { Add-Content -Path 'C:\Users\mtb\REDIX\.night\patrol-results.log' -Value ([uri]::UnescapeDataString($query)) -Encoding UTF8 }
+    '/note' { Add-Content -Path $Results -Value ([uri]::UnescapeDataString($query)) -Encoding UTF8 }
     default { $answer = '404 Not Found' }
   }
   $bytes = [System.Text.Encoding]::ASCII.GetBytes("HTTP/1.1 $answer`r`nContent-Length: 0`r`nConnection: close`r`n`r`n")
