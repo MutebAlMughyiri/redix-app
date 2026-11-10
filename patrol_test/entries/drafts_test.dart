@@ -55,7 +55,7 @@ void main() {
       expect(await Given.waitingIds(manager), [entry]);
     });
 
-    phoneCase('WAITS FOR MUTEB, findings row 191: UC-028 with manageAnyEntry someone else\'s draft can be sent', ($) async {
+    phoneCase('WAITS FOR MUTEB, findings row 194: UC-028 with manageAnyEntry someone else\'s draft can be sent', ($) async {
       final manager = await Given.manager();
       final entry = await Given.entry(manager, sent: false);
       final member = await Given.member(manager, permissions: [Permission.manageAnyEntry, Permission.recordEntries]);
