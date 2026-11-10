@@ -1,25 +1,27 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// What this phone keeps of its own choices (redix-app #91), each one key in the phone's key-value storage, which is read once at start. Every later choice is one more key here, and a switch is 1 or 0.
-/// It tells its listeners when the mode changes, so the whole app redraws at once (redix-app #87).
+/// It tells its listeners when the appearance changes, so the whole app redraws at once (redix-app #87, #97).
 class LocalConfig extends ChangeNotifier {
   static const _expanded = 1;
   static const _collapsed = 0;
   static const _homeDetailsKey = 'summary_projectSetting_state';
 
-  static const _light = 0;
-  static const _dark = 1;
-  static const _darkModeKey = 'darkMode_state';
+  /// The appearances in the order of the numbers kept: 0 light, 1 dark and 2 the phone's (redix-app #97).
+  static const _themeModes = [ThemeMode.light, ThemeMode.dark, ThemeMode.system];
+  static const _themeModeKey = 'themeMode_state';
 
   var _homeDetails = _expanded;
-  var _darkMode = _light;
+  var _themeMode = ThemeMode.system;
 
   /// Reads what was kept before the first frame, so the home never flashes open and the app never flashes light. A key not found yet is set to its default and kept.
+  /// A number no build kept reads as the phone's.
   Future<void> restore() async {
     final preferences = await SharedPreferences.getInstance();
     _homeDetails = await preferences.restoreOrDefault(_homeDetailsKey, _expanded);
-    _darkMode = await preferences.restoreOrDefault(_darkModeKey, _light);
+    final kept = await preferences.restoreOrDefault(_themeModeKey, _themeModes.indexOf(ThemeMode.system));
+    _themeMode = _themeModes.asMap()[kept] ?? ThemeMode.system;
   }
 
   /// True while the home shows the conclusion and the project's buttons.
@@ -31,14 +33,14 @@ class LocalConfig extends ChangeNotifier {
     await (await SharedPreferences.getInstance()).setInt(_homeDetailsKey, _homeDetails);
   }
 
-  /// True while the app is in its dark mode.
-  bool get isDark => _darkMode == _dark;
+  /// The appearance the app is drawn in: light, dark, or the phone's, which Flutter follows by itself.
+  ThemeMode get themeMode => _themeMode;
 
-  /// Turns the dark mode on, or off, at once on every screen, and keeps that for the next start.
-  Future<void> toggleDarkMode() async {
-    _darkMode = isDark ? _light : _dark;
+  /// Draws every screen in [mode] at once, and keeps it for the next start.
+  Future<void> chooseThemeMode(ThemeMode mode) async {
+    _themeMode = mode;
     notifyListeners();
-    await (await SharedPreferences.getInstance()).setInt(_darkModeKey, _darkMode);
+    await (await SharedPreferences.getInstance()).setInt(_themeModeKey, _themeModes.indexOf(mode));
   }
 }
 

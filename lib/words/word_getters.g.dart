@@ -1190,8 +1190,8 @@ mixin WordGetters {
   /// The word `expenses.unknownTable`.
   String get expensesUnknownTable => text('expenses.unknownTable');
 
-  /// The word `generalSettings.darkMode`.
-  String get generalSettingsDarkMode => text('generalSettings.darkMode');
+  /// The word `generalSettings.appearance`.
+  String get generalSettingsAppearance => text('generalSettings.appearance');
 
   /// The word `generalSettings.defaultProject`.
   String get generalSettingsDefaultProject => text('generalSettings.defaultProject');
@@ -1201,6 +1201,15 @@ mixin WordGetters {
 
   /// The word `generalSettings.switchProject`.
   String get generalSettingsSwitchProject => text('generalSettings.switchProject');
+
+  /// The word `generalSettings.themeDark`.
+  String get generalSettingsThemeDark => text('generalSettings.themeDark');
+
+  /// The word `generalSettings.themeLight`.
+  String get generalSettingsThemeLight => text('generalSettings.themeLight');
+
+  /// The word `generalSettings.themeSystem`.
+  String get generalSettingsThemeSystem => text('generalSettings.themeSystem');
 
   /// The word `generalSettings.title`.
   String get generalSettingsTitle => text('generalSettings.title');

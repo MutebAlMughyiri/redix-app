@@ -34,20 +34,20 @@ The language of [Settings](../guide/settings.md) (`GeneralSettingsScreen`): a he
 | Until a language is chosen the app follows the phone, Arabic for any other language | `AppLanguage.locale` (empty choice) | `widget_test.dart`: a phone in another language gets Arabic |
 | AC-N03: on a screen 360 points wide, every screen is right to left in Arabic and left to right in English, with nothing off the screen | Each screen | `settings/account_test.dart`: AC-N03, once per language |
 
-## Dark mode (redix-app #87)
+## Appearance (redix-app #87, #97)
 
-Under the language, a switch like the fingerprint one turns every screen dark at once (Muteb, 10 Nov 2026). Every Settings row sits in its own frame, `Card.outlined` (Muteb, 10 Nov 2026: "i like borders for each component").
+Under the language, Appearance (المظهر) offers System, Light or Dark (النظام · فاتح · داكن), drawn as the language's choice is, words only (Muteb, 10 Nov 2026). Every Settings row sits in its own frame, `Card.outlined` (Muteb, 10 Nov 2026: "i like borders for each component").
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Dark mode | `GeneralSettingsScreen.darkModeKey` | Turns the app dark, or back to light |
+| Appearance | `GeneralSettingsScreen.appearanceKey`, `themeChoiceKey` | System, Light or Dark: `themeSystemKey`, `themeLightKey`, `themeDarkKey` |
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Dark mode turns every screen dark at once, and off turns it light; the language does not change | `LocalConfig.toggleDarkMode`, `RedixApp` (`themeMode`), `appThemeOf` | `settings/dark_mode_test.dart`: R1, R2, R3, R7; `patrol_test/settings/dark_mode_test.dart` |
-| The phone keeps `darkMode_state`, 0 light and 1 dark, and opens in it from the first frame; a phone that never chose starts light and keeps 0 | `LocalConfig.restore` | `settings/dark_mode_test.dart`: R6; Patrol: kept for the next start, and through signing out |
-| Sign-in and the no-words screen follow the choice | `RedixApp` | `settings/dark_mode_test.dart`: R9 |
-| Every Settings row sits in its own frame, the language heading and its choice in one | `GeneralSettingsScreen` | `settings/dark_mode_test.dart`: R5 |
+| Appearance is System, Light or Dark, words only; each draws every screen at once; on System the app turns with the phone at once, even while open; the language does not change | `LocalConfig.chooseThemeMode`, `RedixApp` (`themeMode`), `appThemeOf` | `settings/appearance_test.dart`: T1, T2, T3, T8, T9, T11, #87 R7; `patrol_test/settings/appearance_test.dart` |
+| The phone keeps `themeMode_state`, 0 light, 1 dark and 2 the phone's, and opens in it from the first frame; a phone that never chose follows the phone and keeps 2, as does one that ran #87, whose `darkMode_state` is never read; a number no build kept reads as the phone's | `LocalConfig.restore` | `settings/appearance_test.dart`: T4, T5, T6, T7; Patrol: kept for the next start, and through signing out |
+| Sign-in and the no-words screen follow the choice | `RedixApp` | `settings/appearance_test.dart`: #87 R9 |
+| Every Settings row sits in its own frame, each heading and its choice in one | `GeneralSettingsScreen` | `settings/appearance_test.dart`: #87 R5 |
 | Light and dark grow from one seed in one place, so every screen follows with no change of its own | `appThemeOf`, `AppColor` | The whole widget suite, run once with every test started dark |
 
 ## Left to later use cases
