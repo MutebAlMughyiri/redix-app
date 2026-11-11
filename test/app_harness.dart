@@ -15,7 +15,6 @@ import 'package:redix/auth/session.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
 import 'package:redix/projects/member_picker.dart';
-import 'package:redix/projects/project_settings_card.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/search_line.dart';
 import 'package:redix/format/number_format.dart';
@@ -1895,7 +1894,7 @@ Future<void> openProject(WidgetTester tester, FakeApi api, {InvoiceCapture? capt
 }
 
 /// The pages of the home's Project settings, four buttons each (Muteb, 11 Nov 2026).
-final projectSettingPages = find.descendant(of: find.byType(ProjectSettingsCard), matching: find.byType(PageView));
+final projectSettingPages = find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith('home.settingsPages.'));
 
 /// Swipes the home's Project settings one page on, as a person does: toward the start of the reading line, so in Arabic the next page comes from the left; back a page
 /// when [back].

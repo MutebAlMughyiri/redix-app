@@ -5,7 +5,7 @@ import 'entry_status.dart';
 
 /// An entry on a list (UC-037).
 class EntryRow {
-  /// No entry: approved and nobody's, so nothing may be done to it.
+  /// No entry: approved and nobody's, so nothing may be done to it; [isNone] says so.
   EntryRow.none()
     : id = '',
       kind = EntryKind.purchase,
@@ -24,6 +24,9 @@ class EntryRow {
       accountName = '',
       paymentMethodName = '',
       accountShortBy = 0;
+
+  /// True for no entry: one its list does not hold.
+  bool get isNone => id.isEmpty;
 
   /// An entry as the API answers it.
   EntryRow.fromJson(Map<String, dynamic> json)

@@ -7,6 +7,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/api_object_body.dart';
 import '../ui/part_keys.dart';
+import '../ui/title_bar_add.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'capital.dart';
@@ -19,7 +20,8 @@ import 'partners.dart';
 import '../ui/amount_line.dart';
 
 /// A project's partners and capital (UC-016, UC-044): the total, each line the user may see with its own account, balance and share, and a way into its movements. Whoever keeps the
-/// settings adds and renames them and sets whose account each is; who sees each is ticked on people's permissions (BR-31, redix-api #106). Nothing is deleted.
+/// settings adds and renames them and sets whose account each is; who sees each is ticked on people's permissions (BR-31, redix-api #106). A partner at zero capital with nothing waiting is deleted from their ⋮ menu, and stays in the
+/// history (redix-api #100).
 class PartnersScreen extends StatefulWidget {
   /// The screen, showing and changing the [partners] of [project], choosing each one's account among [members].
   const PartnersScreen({super.key, required this.project, required this.partners, required this.members, required this.capital});
@@ -166,7 +168,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
       appBar: AppBar(
         title: ScreenTitle(words.partnersTitle, subject: project.name),
         actions: [
-          IconButton(key: PartnersScreen.addKey, tooltip: words.partnersNew, icon: Icon(Icons.add, key: PartnersScreen.addKey.icon), onPressed: project.mayManageSettings ? () => _ask(Partner.none()) : null),
+          TitleBarAdd(buttonKey: PartnersScreen.addKey, tooltip: words.partnersNew, onPressed: project.mayManageSettings ? () => _ask(Partner.none()) : null),
           IconButton(
             key: PartnersScreen.historyKey,
             tooltip: words.partnersHistory,

@@ -7,6 +7,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
+import '../ui/title_bar_add.dart';
 import '../ui/screen_title.dart';
 import '../words/word_fill.dart';
 import '../words/words.dart';
@@ -149,7 +150,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
       appBar: AppBar(
         title: ScreenTitle(words.accountsTitle, subject: project.name),
         actions: [
-          IconButton(key: AccountsScreen.addKey, tooltip: words.accountsNew, icon: Icon(Icons.add, key: AccountsScreen.addKey.icon), onPressed: project.mayManageSettings ? _add : null),
+          TitleBarAdd(buttonKey: AccountsScreen.addKey, tooltip: words.accountsNew, onPressed: project.mayManageSettings ? _add : null),
           IconButton(
             key: AccountsScreen.historyKey,
             tooltip: words.accountsHistory,

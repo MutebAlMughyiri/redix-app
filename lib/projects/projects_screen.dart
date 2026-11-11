@@ -117,7 +117,7 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
                 itemBuilder: (project) => ProjectChoice(
                   project: project,
                   isDefault: session.defaultProjectId == project.id,
-                  onOpen: () => context.push(HomeScreen.pathOf(project.id)),
+                  onOpen: () => context.canPop() ? context.go(HomeScreen.pathOf(project.id)) : context.push(HomeScreen.pathOf(project.id)),
                   onStar: () => toggleDefaultProject(context, session, project),
                 ),
               ),

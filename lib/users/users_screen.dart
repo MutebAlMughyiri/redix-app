@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../ui/api_list_body.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
+import '../ui/title_bar_add.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
@@ -129,12 +130,7 @@ class _UsersScreenState extends State<UsersScreen> {
       appBar: AppBar(
         title: ScreenTitle(words.usersTitle, subject: widget.projectName),
         actions: [
-          IconButton(
-            key: UsersScreen.newUserKey,
-            tooltip: words.usersNew,
-            icon: Icon(Icons.add, key: UsersScreen.newUserKey.icon),
-            onPressed: () => context.push(NewUserScreen.pathOf(users.projectId)),
-          ),
+          TitleBarAdd(buttonKey: UsersScreen.newUserKey, tooltip: words.usersNew, onPressed: () => context.push(NewUserScreen.pathOf(users.projectId))),
           IconButton(
             key: UsersScreen.addExistingKey,
             icon: Icon(Icons.person_search_outlined, key: UsersScreen.addExistingKey.icon),

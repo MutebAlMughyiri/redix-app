@@ -767,7 +767,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       appBar: AppBar(
         title: ScreenTitle(_title, subject: widget.project.name),
         actions: [
-          if (_reading)
+          if (_reading && !_row.isNone)
             IconButton(key: AddEntryScreen.shareKey, tooltip: words.entriesShare, icon: Icon(Icons.share_outlined, key: AddEntryScreen.shareKey.icon), onPressed: () => EntryShare.share(widget.capture, widget.project, _row, words)),
         ],
       ),
@@ -776,7 +776,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (_reading) _standing(words),
+            if (_reading && !_row.isNone) _standing(words),
             InvoiceSection(
               project: widget.project,
               file: _file.picked,
@@ -792,7 +792,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
               FormRefusal(text: words.text(_message), textKey: AddEntryScreen.messageKey),
               const SizedBox(height: 8),
             ],
-            if (_reading) _readingActions(words) else _formActions(words),
+            if (!_reading) _formActions(words) else if (!_row.isNone) _readingActions(words),
           ],
         ),
       ),

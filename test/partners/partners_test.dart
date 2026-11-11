@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/ui/refusal_snack_bar.dart';
 import 'package:redix/format/date_format.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/home/home_screen.dart';
@@ -126,7 +127,7 @@ void main() {
 
     expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/partners/${opened.mutab}/delete');
     expect(find.byKey(PartnersScreen.nameKey(opened.mutab)), findsNothing);
-    expect(find.text('en partners.deleted'), findsOneWidget);
+    expect(find.byKey(messageKeyOf('partners.deleted')), findsOneWidget);
   });
 
   testWidgets('redix-api #100: a partner with capital or something waiting has Delete gray, saying why, and nothing is sent', (tester) async {

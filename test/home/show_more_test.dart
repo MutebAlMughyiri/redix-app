@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/ui/refusal_snack_bar.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entry_card.dart';
 import 'package:redix/entries/entries_screen.dart';
@@ -96,7 +97,7 @@ void main() {
 
     await showMore(tester, api);
 
-    expect(find.text('en entries.loadFailed'), findsOneWidget);
+    expect(find.byKey(messageKeyOf('entries.loadFailed')), findsOneWidget);
     expect(shown(tester), 5);
     expect(more, findsOneWidget);
   });

@@ -81,7 +81,7 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
   /// A row's height: a button's name on two lines at the phone's text size, and the button's own padding above and below.
   double _rowHeight(BuildContext context) {
     final label = Theme.of(context).textTheme.labelLarge!;
-    return MediaQuery.textScalerOf(context).scale(label.fontSize! * label.height!) * 2 + 16;
+    return MediaQuery.textScalerOf(context).scale(label.fontSize!) * label.height! * 2 + 16;
   }
 
   @override
@@ -127,7 +127,7 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
             child: PageView.builder(
               key: HomeScreen.settingsPagesKey(id),
               controller: _pages,
-              onPageChanged: (index) => setState(() => _page = index % pages.length),
+              onPageChanged: (index) => setState(() => _page = index),
               itemBuilder: (context, index) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: _twoByTwo(pages[index % pages.length])),
             ),
           ),
@@ -141,9 +141,9 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
                   AnimatedContainer(
                     key: HomeScreen.settingsDotKey(id, index),
                     duration: kThemeAnimationDuration,
-                    width: index == _page ? 16 : 6,
+                    width: index == _page % pages.length ? 16 : 6,
                     height: 6,
-                    decoration: BoxDecoration(color: (index == _page ? AppColor.brand : AppColor.frame).of(context), borderRadius: BorderRadius.circular(3)),
+                    decoration: BoxDecoration(color: (index == _page % pages.length ? AppColor.brand : AppColor.frame).of(context), borderRadius: BorderRadius.circular(3)),
                   ),
               ],
             ),

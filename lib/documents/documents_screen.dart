@@ -13,6 +13,7 @@ import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/entry_field.dart';
 import '../ui/part_keys.dart';
+import '../ui/title_bar_add.dart';
 import '../ui/screen_title.dart';
 import '../ui/swipe_to_remove.dart';
 import '../ui/refusal_snack_bar.dart';
@@ -120,12 +121,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       appBar: AppBar(
         title: ScreenTitle(words.documentsTitle, subject: widget.project.name),
         actions: [
-          IconButton(
-            key: DocumentsScreen.addKey,
-            tooltip: words.documentsAdd,
-            icon: Icon(Icons.add, key: DocumentsScreen.addKey.icon),
-            onPressed: widget.project.mayManageProject ? () => showDialog<void>(context: context, builder: (_) => _DocumentDialog(documents: widget.documents, capture: widget.capture)) : null,
-          ),
+          TitleBarAdd(buttonKey: DocumentsScreen.addKey, tooltip: words.documentsAdd, onPressed: widget.project.mayManageProject ? () => showDialog<void>(context: context, builder: (_) => _DocumentDialog(documents: widget.documents, capture: widget.capture)) : null),
         ],
       ),
       body: ApiListBody<Document>(

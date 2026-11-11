@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
-import '../ui/part_keys.dart';
+import '../ui/title_bar_add.dart';
 import '../ui/screen_title.dart';
 import '../ui/api_list_body.dart';
 import '../ui/name_dialog.dart';
@@ -70,17 +70,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
       appBar: AppBar(
         title: ScreenTitle(words.paymentMethodsTitle, subject: widget.project.name),
         actions: [
-          IconButton(
-            key: PaymentMethodsScreen.addKey,
-            tooltip: words.paymentMethodsNew,
-            icon: Icon(Icons.add, key: PaymentMethodsScreen.addKey.icon),
-            onPressed: project.mayManageSettings
-                ? () => showDialog<void>(
-                    context: context,
-                    builder: (_) => NameDialog(title: words.paymentMethodsNew, label: words.paymentMethodsName, saveLabel: words.paymentMethodsNew, onSave: paymentMethods.add),
-                  )
-                : null,
-          ),
+          TitleBarAdd(buttonKey: PaymentMethodsScreen.addKey, tooltip: words.paymentMethodsNew, onPressed: project.mayManageSettings ? () => showDialog<void>( context: context, builder: (_) => NameDialog(title: words.paymentMethodsNew, label: words.paymentMethodsName, saveLabel: words.paymentMethodsNew, onSave: paymentMethods.add), ) : null),
         ],
       ),
       body: Column(

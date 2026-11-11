@@ -36,7 +36,7 @@ class ProjectInfoScreen extends StatefulWidget {
   /// The project's name.
   static const nameKey = Key('projectInfo.name');
 
-  /// The button that renames the project.
+  /// The choice in the name's ⋮ menu that renames the project (redix-app #102).
   static const renameKey = Key('projectInfo.rename');
 
   /// The ⋮ beside the project's name, holding Rename (redix-app #102: no pencil button).
