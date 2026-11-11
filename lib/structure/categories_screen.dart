@@ -10,6 +10,9 @@ import '../words/words.dart';
 import 'categories.dart';
 import 'category.dart';
 import 'category_card.dart';
+import '../ui/list_search.dart';
+import '../words/word_fill.dart';
+import '../format/parts_line.dart';
 
 /// A project's categories and items (UC-012): whoever shapes the structure adds, renames, drags and disables them. Nothing is deleted (BR-15).
 class CategoriesScreen extends StatefulWidget {
@@ -158,9 +161,13 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
               child: Text(words.categoriesHint, key: CategoriesScreen.hintKey, style: Theme.of(context).textTheme.bodySmall),
             ),
           Expanded(
-            child: ApiListBody(
+            child: ApiListBody<Category>(
               list: categories,
               emptyText: words.categoriesEmpty,
+              search: ListSearch(
+                hint: words.commonSearchIn.fill([words.categoriesTitle]),
+                textOf: (category) => partsLine([category.name, for (final item in category.items) item.name]),
+              ),
               itemBuilder: (category) => CategoryCard(
                 key: CategoriesScreen.cardKey(category.id),
                 category: category,

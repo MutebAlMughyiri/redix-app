@@ -41,7 +41,10 @@ class FilterLine extends StatelessWidget {
   }) => MenuAnchor(
     menuChildren: [
       for (final value in values)
-        CheckboxMenuButton(key: keyOf(value), value: chosen.contains(value), closeOnActivate: false, onChanged: (_) => onToggled(value), child: Text(labelOf(value), key: keyOf(value).label)),
+        KeyedSubtree(
+          key: keyOf(value),
+          child: CheckboxMenuButton(value: chosen.contains(value), closeOnActivate: false, onChanged: (_) => onToggled(value), child: Text(labelOf(value), key: keyOf(value).label)),
+        ),
     ],
     builder: (context, menu, _) => FilterChip(
       key: key,
@@ -52,6 +55,9 @@ class FilterLine extends StatelessWidget {
       onSelected: (_) => menu.isOpen ? menu.close() : menu.open(),
     ),
   );
+
+  /// A chip named [label] doing [onPressed] at once, such as clearing the filters.
+  static Widget action({required Key key, required String label, required VoidCallback onPressed}) => ActionChip(key: key, label: Text(label, key: key.label), onPressed: onPressed);
 
   @override
   Widget build(BuildContext context) => members.length == 1 ? members.single : SingleChildScrollView(scrollDirection: Axis.horizontal, child: Row(spacing: 8, children: members));

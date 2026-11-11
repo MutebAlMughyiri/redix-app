@@ -17,6 +17,8 @@ import 'package:redix/main.dart';
 import 'package:redix/projects/member_picker.dart';
 import 'package:redix/projects/project_settings_card.dart';
 import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/format/number_format.dart';
+import 'package:redix/ui/arabic_spelling.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/words/app_language.dart';
@@ -474,6 +476,27 @@ class FakeApi {
 
   /// How many of the newest each read of the entries list asked for, 0 for every one (redix-app #105).
   final entryReads = <int>[];
+
+  /// What each read of the entries list asked for besides how many: the search and the filters (redix-app #104).
+  final entryQueries = <Map<String, List<String>>>[];
+
+  /// Whether the entry [row] holds to the search [address] asks, as the API's EntrySearch decides.
+  static bool _searchKeeps(Map<String, Object> row, Uri address) {
+    final query = address.queryParametersAll;
+    String one(String name) => query[name]?.single ?? '';
+    final kinds = query['kinds'] ?? const [];
+    final statuses = query['statuses'] ?? const [];
+    final standing = row['isReversed'] == true ? 'reversed' : row['status'] as String;
+    final date = row['entryDate'] as String;
+    final amount = (row['amount'] as num).toDouble();
+    final text = sameSpelling([row['itemName'], row['partnerName'], row['supplierName'], row['authorName'], row['invoiceNumber'], formatPlain(amount), formatMoney(amount)].join(' '));
+    return (one('mine') != 'true' || row['isMine'] == true) &&
+        (kinds.isEmpty || kinds.contains(row['kind'])) &&
+        (statuses.isEmpty || statuses.contains(standing)) &&
+        (one('from').isEmpty || date.compareTo(one('from')) >= 0) &&
+        (one('to').isEmpty || date.compareTo(one('to')) <= 0) &&
+        text.contains(sameSpelling(one('text')));
+  }
 
   /// What each entry holds, read to change it.
   final entryDetails = <String, Object>{};
@@ -1661,7 +1684,9 @@ class FakeApi {
     if (segments.length == 3 && segments[2] == 'entries') {
       final take = int.tryParse(request.url.queryParameters['take'] ?? '') ?? 0;
       entryReads.add(take);
-      return heldEntries.future.then((_) => _json(take > 0 ? entryRows.take(take).toList() : entryRows, 200));
+      entryQueries.add(request.url.queryParametersAll);
+      final kept = entryRows.where((row) => _searchKeeps(row, request.url)).toList();
+      return heldEntries.future.then((_) => _json(take > 0 ? kept.take(take).toList() : kept, 200));
     }
     if (segments.length == 4 && segments[2] == 'entries' && request.method == 'GET' && entryDetails.containsKey(segments[3])) {
       return _json(entryDetails[segments[3]]!, 200);
@@ -1905,8 +1930,25 @@ Future<void> scrollAndTap(WidgetTester tester, FakeApi api, Key key) async {
 /// What scrolls a list's rows, as opposed to the search line over it, whose field scrolls its own text (redix-app #104).
 final listRows = find.descendant(of: find.byType(RefreshIndicator), matching: find.byType(Scrollable)).first;
 
-/// Opens the filters folded under a list's search line, as its arrow does (redix-app #104).
-Future<void> openFilters(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(ApiListBody.filtersKey)));
+/// Opens the filters folded under a list's search line, as its arrow does (redix-app #104); nothing when they show already.
+Future<void> openFilters(WidgetTester tester, FakeApi api) async {
+  if (tester.widget<Icon>(find.byKey(ApiListBody.filtersKey.icon)).icon != Icons.arrow_drop_up) {
+    await act(tester, api, () => tester.tap(find.byKey(ApiListBody.filtersKey)));
+  }
+}
+
+/// Folds the filters under a list's search line again, as its arrow does.
+Future<void> foldFilters(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(ApiListBody.filtersKey)));
+
+/// Types [typed] in a list's search line.
+Future<void> searchFor(WidgetTester tester, FakeApi api, String typed) =>
+    act(tester, api, () => tester.enterText(find.descendant(of: find.byKey(ApiListBody.searchKey), matching: find.byType(TextField)), typed));
+
+/// On the Entries screen, shows everyone's entries rather than the user's own: قيودي turned off under the search line (redix-app #104).
+Future<void> showEveryonesEntries(WidgetTester tester, FakeApi api) async {
+  await openFilters(tester, api);
+  await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.mineKey)));
+}
 
 /// Opens Settings from the card of the open project [projectId].
 Future<void> openSettings(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) async {

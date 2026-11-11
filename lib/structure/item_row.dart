@@ -14,6 +14,7 @@ import 'item_columns_screen.dart';
 import 'item_tables_screen.dart';
 import '../ui/app_color.dart';
 import '../ui/row_menu.dart';
+import '../ui/drag_handle.dart';
 
 /// One item under its category: its name and type, or that it is disabled, a handle to drag it, the way into its columns, and a menu of what can be done to it.
 class ItemRow extends StatelessWidget {
@@ -53,7 +54,7 @@ class ItemRow extends StatelessWidget {
     return ListTile(
       key: CategoriesScreen.itemKey(item.id).body,
       contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
-      leading: mayChange ? ReorderableDragStartListener(key: CategoriesScreen.itemHandleKey(item.id), index: index, child: Icon(Icons.drag_indicator, key: CategoriesScreen.itemHandleKey(item.id).icon)) : null,
+      leading: mayChange ? DragHandle(key: CategoriesScreen.itemHandleKey(item.id), index: index) : null,
       title: Text(
         item.name,
         key: CategoriesScreen.itemNameKey(item.id),

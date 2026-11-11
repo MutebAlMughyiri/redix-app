@@ -1,8 +1,11 @@
+import 'package:flutter/foundation.dart';
+
 import '../config/local_config.dart';
 import 'project_entries.dart';
 
 /// The newest of a project's entries, as many at a time as this phone shows (redix-app #105): the home reads only these, never the whole list, and each Show more reads as many
-/// again. Every read asks for the pages shown at the count chosen now, so coming back keeps what showed and a count changed in Settings applies at the next read.
+/// again. Every read asks for the pages shown at the count chosen now, so coming back keeps what showed and a count changed in Settings applies at the next read. The one
+/// owner of reading entries a page at a time: the Entries screen's search adds its own [query] (redix-app #104).
 class NewestEntries extends ProjectEntries {
   /// The newest entries of the project [projectId], seen through [session], as many at a time as [_localConfig] keeps.
   NewestEntries(super.session, super.projectId, this._localConfig);
@@ -18,9 +21,20 @@ class NewestEntries extends ProjectEntries {
     loadOnOpen();
   }
 
+  /// What the read asks of the API besides how many: nothing for the newest.
+  @protected
+  Map<String, Object> get query => const {};
+
+  /// Reads the first page again: what a change of [query] does.
+  @protected
+  Future<void> readFirstPage() {
+    _pages = 1;
+    return load();
+  }
+
   @override
   Future<void> load() {
-    pointAt('/projects/$projectId/entries?take=$_asked');
+    pointAt(Uri(path: '/projects/$projectId/entries', queryParameters: {...query, 'take': '$_asked'}).toString());
     return super.load();
   }
 

@@ -112,7 +112,7 @@ void main() {
     expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.approved');
   });
 
-  testWidgets('R4: back on the Entries screen from an entry, it reads the entries again, as the home does, since what was opened may have changed', (tester) async {
+  testWidgets('R4, redix-app #104: back on the Entries screen from an entry, it reads its page again, as the home does, since what was opened may have changed', (tester) async {
     final api = await openHome(tester, 1);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
     await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0'))));
@@ -120,6 +120,6 @@ void main() {
 
     await act(tester, api, () => tester.pageBack());
 
-    expect(api.entryReads.sublist(readsBefore), [0]);
+    expect(api.entryReads.sublist(readsBefore), [5]);
   });
 }

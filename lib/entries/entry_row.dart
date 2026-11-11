@@ -1,7 +1,5 @@
 import '../auth/permission.dart';
-import '../format/number_format.dart';
 import '../projects/project.dart';
-import '../ui/arabic_spelling.dart';
 import 'entry_kind.dart';
 import 'entry_status.dart';
 
@@ -126,7 +124,4 @@ class EntryRow {
 
   /// The word key of where it stands.
   String get statusWordKey => isReversed ? 'entries.reversed' : status.wordKey;
-
-  /// What a search matches it by (redix-app #84): its item, supplier or contractor, who entered it, an old bill's number and its amount, plain and as money, in one spelling.
-  late final searchText = sameSpelling([itemName, partnerName, supplierName, authorName, invoiceNumber, formatPlain(amount), formatMoney(amount)].join(' '));
 }

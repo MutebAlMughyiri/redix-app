@@ -89,6 +89,7 @@ import 'ui/app_theme.dart';
 import 'accounts/account_history.dart';
 import 'accounts/account_history_screen.dart';
 import 'users/my_permissions_screen.dart';
+import 'entries/searched_entries.dart';
 
 /// Starts the app with the session and the language kept from an earlier start, if any. An app built without its environment's config
 /// file stops here, rather than calling an address nobody chose.
@@ -158,6 +159,7 @@ class _RedixAppState extends State<RedixApp> {
   late final _recordingOf = _kept((projectId) => EntryRecording(widget.session, projectId, _outbox));
   late final _entriesOf = _kept((projectId) => ProjectEntries(widget.session, projectId));
   late final _newestEntriesOf = _kept((projectId) => NewestEntries(widget.session, projectId, widget.localConfig));
+  late final _searchedEntriesOf = _kept((projectId) => SearchedEntries(widget.session, projectId, widget.localConfig));
   late final _approvalsOf = _kept((projectId) => Approvals(widget.session, projectId));
   late final _offeredAccountsOf = _kept((projectId) => OfferedAccounts(widget.session, projectId));
   late final _columnsAt = _kept((path) => Columns(widget.session, path));
@@ -368,7 +370,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: AddEntryScreen.path, builder: (context, state) => _addEntryScreen(state.projectId, state.extra! as Project, state.uri.queryParameters)),
       GoRoute(
         path: EntriesScreen.path,
-        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _entriesOf(state.projectId), openEntryId: state.uri.queryParameters['entry'] ?? '', startsSearching: state.uri.queryParameters.containsKey('search')),
+        builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _searchedEntriesOf(state.projectId), startsSearching: state.uri.queryParameters.containsKey('search')),
       ),
       GoRoute(
         path: ItemTablesScreen.path,
@@ -406,11 +408,13 @@ class _RedixAppState extends State<RedixApp> {
     projectAccounts: _accountsOf(projectId),
   );
 
-  /// The entries list that holds the entry [entryId], for Add entry to read again when it opens and once saved (redix-app #105): the home's newest when they hold it, as
-  /// every entry the home shows and a new one, otherwise the whole list, which the Entries screen read.
+  /// The entries list that holds the entry [entryId], for Add entry to read again when it opens and once saved (redix-app #105, #104): the home's newest when they hold it,
+  /// as every entry the home shows and a new one; otherwise the Entries screen's search, which it was opened from; otherwise the whole list, which a shared link read.
   ProjectEntries _entriesHolding(String projectId, String entryId) {
     final newest = _newestEntriesOf(projectId);
-    return newest.all.any((row) => row.id == entryId) || entryId.isEmpty ? newest : _entriesOf(projectId);
+    final searched = _searchedEntriesOf(projectId);
+    bool holds(ProjectEntries entries) => entries.all.any((row) => row.id == entryId);
+    return holds(newest) || entryId.isEmpty ? newest : (holds(searched) ? searched : _entriesOf(projectId));
   }
 
   ItemColumnsScreen _itemColumnsScreen(String projectId, String itemId, Project project) {

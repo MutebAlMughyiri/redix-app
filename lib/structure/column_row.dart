@@ -6,6 +6,7 @@ import '../words/words.dart';
 import 'item_column.dart';
 import 'item_columns_screen.dart';
 import '../ui/app_color.dart';
+import '../ui/drag_handle.dart';
 
 /// One column on the list: its name and what it is, a handle to drag it and a way to change it; a core column shows a lock, and any other is removed by a swipe (redix-api #102).
 class ColumnRow extends StatelessWidget {
@@ -37,7 +38,7 @@ class ColumnRow extends StatelessWidget {
     return ListTile(
       key: ItemColumnsScreen.rowKey(column.id).body,
       contentPadding: const EdgeInsetsDirectional.fromSTEB(12, 0, 4, 0),
-      leading: mayChange ? ReorderableDragStartListener(key: ItemColumnsScreen.handleKey(column.id), index: index, child: Icon(Icons.drag_indicator, key: ItemColumnsScreen.handleKey(column.id).icon)) : null,
+      leading: mayChange ? DragHandle(key: ItemColumnsScreen.handleKey(column.id), index: index) : null,
       title: Text(column.name, key: ItemColumnsScreen.nameKey(column.id)),
       subtitle: Text(details.join(' · '), key: ItemColumnsScreen.detailsKey(column.id)),
       trailing: Row(

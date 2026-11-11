@@ -115,7 +115,7 @@ class _ApiListBodyState<T> extends State<ApiListBody<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final items = ListenableBuilder(listenable: widget.list, builder: (context, _) => _state(context));
+    final items = ListNarrowed(isNarrowed: _typed.trim().isNotEmpty, child: ListenableBuilder(listenable: widget.list, builder: (context, _) => _state(context)));
     final search = widget.search;
     if (search.isNone) {
       return items;
@@ -128,12 +128,16 @@ class _ApiListBodyState<T> extends State<ApiListBody<T>> {
           child: SearchBar(
             key: ApiListBody.searchKey,
             hintText: search.hint,
+            autoFocus: search.autoFocus,
             leading: Icon(Icons.search, key: ApiListBody.searchKey.icon),
             trailing: [
               if (search.filters.isNotEmpty)
                 IconButton(key: ApiListBody.filtersKey, icon: Icon(_filtersIcon, key: ApiListBody.filtersKey.icon), onPressed: () => setState(() => _filtersOpen = !_filtersOpen)),
             ],
-            onChanged: (typed) => setState(() => _typed = typed),
+            onChanged: (typed) {
+              setState(() => _typed = typed);
+              search.onTyped(typed);
+            },
           ),
         ),
         if (_filtersOpen) Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: FilterLine(members: search.filters)),

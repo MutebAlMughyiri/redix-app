@@ -6,8 +6,7 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/config/app_config.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
-import 'package:redix/entries/entry_filter.dart';
-import 'package:redix/entries/entry_row.dart';
+import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/entries/table_picker.dart';
 import 'package:redix/home/home_screen.dart';
 
@@ -128,7 +127,7 @@ void main() {
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
     expect(find.byKey(EntriesScreen.rowKey('entry-1')), findsNothing);
 
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.allKey)));
+    await showEveryonesEntries(tester, api);
 
     expect(find.byKey(EntriesScreen.rowKey('entry-1')), findsOneWidget);
   });
@@ -207,7 +206,7 @@ void main() {
 
   testWidgets('Finance can change what waits, and what someone else entered', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(isMine: false), permissions: managerAndFinance);
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.allKey)));
+    await showEveryonesEntries(tester, api);
 
     await openActions(tester, api, 'entry-0');
 
@@ -216,7 +215,7 @@ void main() {
 
   testWidgets('redix-app #90 D4: someone else\'s entry offers the field Edit grayed', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft', isMine: false));
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.allKey)));
+    await showEveryonesEntries(tester, api);
 
     await openActions(tester, api, 'entry-0');
 
@@ -634,7 +633,7 @@ void main() {
   });
 
   group('search', () {
-    /// القيود opened from the home's search button, over entries of two kinds, two people and several days.
+    /// القيود opened from the home's search button, over entries of two kinds, two people and several days, showing everyone's.
     Future<FakeApi> openSearch(WidgetTester tester) async {
       final api = await openHome(tester, (api) {
         api
@@ -648,7 +647,7 @@ void main() {
         api.entryRows.firstWhere((row) => row['id'] == 'entry-1')['itemName'] = 'بند الحديد';
       });
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
-      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.allKey)));
+      await showEveryonesEntries(tester, api);
       return api;
     }
 
@@ -657,49 +656,68 @@ void main() {
         (element.widget.key! as ValueKey<String>).value.substring('entries.row.'.length),
     ];
 
-    testWidgets('R4: the search beside القيود opens the list ready to type, with every entry counted', (tester) async {
-      await openSearch(tester);
+    Future<void> choose(WidgetTester tester, FakeApi api, Key chip, Key item) async {
+      await tester.ensureVisible(find.byKey(chip));
+      await tester.pumpAndSettle();
+      await act(tester, api, () => tester.tap(find.byKey(chip)));
+      await act(tester, api, () => tester.tap(find.byKey(item)));
+      await act(tester, api, () => tester.tap(find.byKey(chip)));
+    }
 
-      expect(tester.widget<SearchBar>(find.byKey(EntriesScreen.searchKey)).autoFocus, isTrue);
+    testWidgets('R4: the search beside القيود opens the list ready to type, and the API is asked for one page, not every entry', (tester) async {
+      final api = await openSearch(tester);
+
+      expect(tester.widget<SearchBar>(find.byKey(ApiListBody.searchKey)).autoFocus, isTrue);
       expect(shownRows(tester), ['entry-3', 'entry-2', 'entry-1', 'entry-0']);
-      expect(find.text('en entries.found'), findsOneWidget);
+      expect(api.entryReads.last, greaterThan(0));
     });
 
-    testWidgets('R8, R16: the text finds the item, the supplier and the amount, Arabic spelling read as one and digits in either script', (tester) async {
+    testWidgets('R8, R16, redix-app #104: the API is asked the text, and finds the item, the supplier and the amount, Arabic spelling read as one and digits in either script', (tester) async {
       final api = await openSearch(tester);
 
-      await act(tester, api, () => tester.enterText(find.byKey(EntriesScreen.searchKey), 'احمد'));
+      await searchFor(tester, api, 'احمد');
       expect(shownRows(tester), ['entry-3']);
-      await act(tester, api, () => tester.enterText(find.byKey(EntriesScreen.searchKey), 'الحديد'));
+      await searchFor(tester, api, 'الحديد');
       expect(shownRows(tester), ['entry-1']);
-      await act(tester, api, () => tester.enterText(find.byKey(EntriesScreen.searchKey), '١٢٠٠٠'));
+      await searchFor(tester, api, '١٢٠٠٠');
       expect(shownRows(tester), ['entry-1']);
+      expect(api.entryQueries.last['text'], ['12000']);
     });
 
-    testWidgets('R8: a kind and a status keep only what holds both, mine keeps only mine, and clearing shows all again', (tester) async {
+    testWidgets('R8, redix-app #104: a kind and a status from their lists keep only what holds both, mine keeps only mine, and clearing shows all again', (tester) async {
       final api = await openSearch(tester);
 
-      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.kindKey('contractorPayment'))));
-      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.statusFilterKey('entries.approved'))));
+      await choose(tester, api, EntriesScreen.kindChoiceKey, EntriesScreen.kindKey('contractorPayment'));
+      await choose(tester, api, EntriesScreen.statusChoiceKey, EntriesScreen.statusFilterKey('entries.approved'));
       expect(shownRows(tester), ['entry-1']);
+      expect(api.entryQueries.last['kinds'], ['contractorPayment']);
+      expect(api.entryQueries.last['statuses'], ['approved']);
 
-      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.clearKey)));
+      await scrollAndTap(tester, api, EntriesScreen.clearKey);
       expect(shownRows(tester), ['entry-3', 'entry-2', 'entry-1', 'entry-0']);
       expect(find.byKey(EntriesScreen.clearKey), findsNothing);
 
-      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.mineKey)));
+      await scrollAndTap(tester, api, EntriesScreen.mineKey);
       expect(shownRows(tester), ['entry-1', 'entry-0']);
+      expect(api.entryQueries.last['mine'], ['true']);
     });
 
-    testWidgets('R8: a period keeps the entries dated inside it, both ends included', (tester) async {
-      final filter = EntryFilter()
-        ..onlyMine = false
-        ..period = DateTimeRange(start: DateTime(2026, 10, 20), end: DateTime(2026, 11, 4));
-      final api = await openSearch(tester);
+    testWidgets('redix-app #104: the entries come a page at a time, as many as chosen in Settings, and Show more reads as many again', (tester) async {
+      final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
+      for (var entry = 0; entry < 7; entry++) {
+        api.addEntry();
+      }
+      await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: {'entriesShown_count': 5});
+      await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
 
-      expect(api.entryRows.map(EntryRow.fromJson).where(filter.keeps).map((entry) => entry.id), ['entry-3']);
-      filter.period = DateTimeRange(start: DateTime(2026, 11, 5), end: DateTime(2026, 11, 5));
-      expect(api.entryRows.map(EntryRow.fromJson).where(filter.keeps).map((entry) => entry.id), ['entry-2', 'entry-1', 'entry-0']);
+      expect(shownRows(tester), hasLength(5));
+      await tester.scrollUntilVisible(find.byKey(EntriesScreen.moreKey), 200, scrollable: listRows);
+      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.moreKey)));
+      await tester.scrollUntilVisible(find.byKey(EntriesScreen.rowKey('entry-0')), 200, scrollable: listRows);
+
+      expect(find.byKey(EntriesScreen.moreKey), findsNothing);
+      expect(api.entryReads.last, 10);
     });
   });
 

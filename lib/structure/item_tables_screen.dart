@@ -11,6 +11,10 @@ import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'categories.dart';
 import 'item_tables.dart';
+import '../ui/drag_handle.dart';
+import '../ui/api_list_body.dart';
+import '../ui/list_search.dart';
+import '../words/word_fill.dart';
 
 /// An item's tables (AC-46.8), in the order its sheet prints them: its general table, each subgroup a person named, and each contract's payments, each with how many approved
 /// entries it holds. Dragging a table moves it in the sheet. A named subgroup is added, renamed and removed here; a contract is added in Contracts and only moved here.
@@ -91,7 +95,7 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
       child: ListTile(
       key: ItemTablesScreen.rowKey(table.id).body,
       contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
-      leading: mayChange ? ReorderableDragStartListener(key: ItemTablesScreen.handleKey(table.id), index: index, child: Icon(Icons.drag_indicator, key: ItemTablesScreen.handleKey(table.id).icon)) : null,
+      leading: mayChange ? DragHandle(key: ItemTablesScreen.handleKey(table.id), index: index) : null,
       title: Text(table.name, key: ItemTablesScreen.tableNameKey(table.id)),
       subtitle: Text('${_kindOf(table, words)} · ${table.count}', key: ItemTablesScreen.detailsKey(table.id)),
       trailing: mayChange && table.isNamedSubgroup
@@ -134,11 +138,17 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
               ),
             ),
             Expanded(
-              child: ReorderableListView(
-                padding: const EdgeInsets.only(bottom: 96),
-                buildDefaultDragHandles: false,
-                onReorderItem: (from, to) => showRefusalOf(context, widget.tables.move(from, to)),
-                children: [for (final (index, table) in widget.tables.all.indexed) _row(table, index)],
+              child: ApiListBody<ItemTable>(
+                list: widget.tables,
+                emptyText: '',
+                search: ListSearch(hint: words.commonSearchIn.fill([words.categoriesTables]), textOf: (table) => table.name),
+                itemBuilder: (table) => _row(table, widget.tables.all.indexOf(table)),
+                listOf: (rows) => ReorderableListView(
+                  padding: const EdgeInsets.only(bottom: 96),
+                  buildDefaultDragHandles: false,
+                  onReorderItem: (from, to) => showRefusalOf(context, widget.tables.move(from, to)),
+                  children: rows,
+                ),
               ),
             ),
           ],

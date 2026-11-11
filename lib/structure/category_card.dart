@@ -12,6 +12,7 @@ import 'category.dart';
 import 'item_row.dart';
 import '../ui/app_color.dart';
 import '../ui/row_menu.dart';
+import '../ui/drag_handle.dart';
 
 /// One category of the list: its name, how many items it holds or that it is disabled, and a handle to drag it. Opened, it shows what can be done to it, and its items.
 class CategoryCard extends StatelessWidget {
@@ -84,7 +85,7 @@ class CategoryCard extends StatelessWidget {
         key: CategoriesScreen.categoryTileKey(category.id),
         shape: const Border(),
         leading: mayChange
-            ? ReorderableDragStartListener(key: CategoriesScreen.categoryHandleKey(category.id), index: index, child: Icon(Icons.drag_indicator, key: CategoriesScreen.categoryHandleKey(category.id).icon))
+            ? DragHandle(key: CategoriesScreen.categoryHandleKey(category.id), index: index)
             : null,
         title: Text(
           category.name,

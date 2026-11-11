@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../approvals/approvals_screen.dart';
-import '../entries/entries_screen.dart';
 import '../format/date_format.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
@@ -17,6 +16,7 @@ import 'notifications.dart';
 import '../ui/list_search.dart';
 import '../words/word_fill.dart';
 import '../format/parts_line.dart';
+import '../entries/entry_link_screen.dart';
 
 /// What the person was told (UC-036), newest first. Tapping one opens what it is about.
 class NotificationsScreen extends StatefulWidget {
@@ -54,7 +54,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       context.go(ProjectsScreen.path);
       return;
     }
-    context.push(row.asksForDecision ? ApprovalsScreen.pathOf(row.projectId) : EntriesScreen.pathOfEntry(row.projectId, row.entryId), extra: project);
+    context.push(row.asksForDecision ? ApprovalsScreen.pathOf(row.projectId) : EntryLinkScreen.pathOf(row.projectId, row.entryId), extra: project);
   }
 
   @override

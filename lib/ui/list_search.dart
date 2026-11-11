@@ -7,10 +7,19 @@ import 'arabic_spelling.dart';
 class ListSearch<T> {
   /// A search line saying [hint], keeping the items whose [textOf] holds what was typed, whichever way an Arabic word is spelled, with [filters] folded under its arrow;
   /// [filtersInUse] while one of them narrows the list, so the folded arrow says so.
-  const ListSearch({required this.hint, required this.textOf, this.filters = const [], this.filtersInUse = false});
+  const ListSearch({required this.hint, required this.textOf, this.filters = const [], this.filtersInUse = false})
+    : onTyped = _keptHere,
+      searchesOnApi = false,
+      autoFocus = false;
+
+  /// A search line saying [hint] whose list the API searches: what is typed goes to [onTyped], which reads the list again, and every item it answers shows, ready to
+  /// type at once when [autoFocus]. [filters] and [filtersInUse] as a list searched here.
+  const ListSearch.onApi({required this.hint, required this.onTyped, this.filters = const [], this.filtersInUse = false, this.autoFocus = false})
+    : textOf = _nothing,
+      searchesOnApi = true;
 
   /// No search line.
-  const ListSearch.none() : hint = '', textOf = _nothing, filters = const [], filtersInUse = false;
+  const ListSearch.none() : hint = '', textOf = _nothing, filters = const [], filtersInUse = false, onTyped = _keptHere, searchesOnApi = false, autoFocus = false;
 
   /// What the empty search line says.
   final String hint;
@@ -24,11 +33,37 @@ class ListSearch<T> {
   /// True while a filter narrows the list.
   final bool filtersInUse;
 
+  /// What is typed, for a list the API searches.
+  final ValueChanged<String> onTyped;
+
+  /// True when the API searches the list, so every item it answers shows.
+  final bool searchesOnApi;
+
+  /// True to open ready to type.
+  final bool autoFocus;
+
   /// True for a list with no search line.
   bool get isNone => hint.isEmpty;
 
-  /// Whether [item] holds [typed], whichever way an Arabic word is spelled and in whichever digits.
-  bool matches(T item, String typed) => searchable(textOf(item)).contains(searchable(typed));
+  /// Whether [item] holds [typed], whichever way an Arabic word is spelled and in whichever digits; every item the API answered, for a list it searches.
+  bool matches(T item, String typed) => searchesOnApi || searchable(textOf(item)).contains(searchable(typed));
 
   static String _nothing(Object? item) => '';
+
+  static void _keptHere(String typed) {}
+}
+
+/// Tells the rows of a list whether a search narrows it, so what works only on the whole list, such as dragging rows into order, waits until it is cleared.
+class ListNarrowed extends InheritedWidget {
+  /// [child], the rows of a list that [isNarrowed] while a search holds text.
+  const ListNarrowed({super.key, required this.isNarrowed, required super.child});
+
+  /// True while a search narrows the list.
+  final bool isNarrowed;
+
+  /// Whether a search narrows the list [context] is in; false outside any list.
+  static bool of(BuildContext context) => context.dependOnInheritedWidgetOfExactType<ListNarrowed>()?.isNarrowed ?? false;
+
+  @override
+  bool updateShouldNotify(ListNarrowed oldWidget) => oldWidget.isNarrowed != isNarrowed;
 }
