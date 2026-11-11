@@ -6,6 +6,7 @@ import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/search_line.dart';
+import 'package:redix/ui/search_scope.dart';
 
 import '../support/given.dart';
 import '../support/phone_case.dart';
@@ -78,8 +79,8 @@ void main() {
       await $.chooseIn(EntriesScreen.statusChoiceKey, EntriesScreen.statusFilterKey('entries.approved'));
       await $.gone($(EntriesScreen.rowKey(waiting)));
       await $.reach($(EntriesScreen.rowKey(approved)));
-      await $.tapOn(SearchLine.filtersKey);
-      expect($.filtersArrow, Icons.filter_alt);
+      await $.tapOn(SearchIcons.filtersKey);
+      expect($.filtersIcon, Icons.filter_alt);
     });
 
     phoneCase('R8: mine keeps mine, a kind narrows the list, and clearing brings back what it hid', ($) async {

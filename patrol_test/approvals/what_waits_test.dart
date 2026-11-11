@@ -8,7 +8,7 @@ import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/ui/search_line.dart';
+import 'package:redix/ui/search_scope.dart';
 
 import '../support/entry_steps.dart';
 import '../support/given.dart';
@@ -21,7 +21,7 @@ import '../support/steps.dart';
 /// Signs [manager] in and opens what waits.
 Future<void> onApprovals(PatrolIntegrationTester $, Person manager) async {
   await $.fromTheHome(manager, HomeScreen.approvalsKey(manager.projectId));
-  await $.reach($(SearchLine.searchKey));
+  await $.reach($(SearchIcons.searchKey));
 }
 
 /// A purchase with a file sent for approval through the screens, whose id is answered.

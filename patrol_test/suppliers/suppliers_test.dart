@@ -7,10 +7,12 @@ import 'package:redix/structure/item_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/search_line.dart';
 
 import '../support/given.dart';
 import '../support/pc.dart';
 import '../support/phone_case.dart';
+import '../support/search_steps.dart';
 import '../support/steps.dart';
 
 /// Signs [person] in and opens Suppliers.
@@ -179,6 +181,20 @@ void main() {
       await $.reach($(SuppliersScreen.nameKey(id)));
       expect($.isEnabled(SuppliersScreen.addKey), isFalse);
       expect($(SuppliersScreen.menuKey(id)), findsNothing);
+    });
+
+    phoneCase('redix-app #104 R1-R3: Suppliers opens on its rows; the search icon shows the line, and its ✕ closes it and shows every supplier again', ($) async {
+      final manager = await Given.manager();
+      final horizon = await Given.supplier(manager, name: 'مؤسسة الأفق ${Given.unique()}');
+      final palm = await Given.supplier(manager, name: 'شركة النخيل ${Given.unique()}');
+      await onSuppliers($, manager);
+      expect($(SearchLine.searchKey), findsNothing);
+      await $.searchFor('الافق');
+      await $.gone($(SuppliersScreen.rowKey(palm)));
+      await $.reach($(SuppliersScreen.rowKey(horizon)));
+      await $.tapOn(SearchLine.closeKey);
+      expect($(SearchLine.searchKey), findsNothing);
+      await $.goTo($(SuppliersScreen.rowKey(palm)));
     });
 
     phoneCase('a list that cannot be read says so', ($) async {

@@ -12,7 +12,7 @@ import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/ui/search_line.dart';
+import 'package:redix/ui/search_scope.dart';
 import 'package:redix/words/word_fill.dart';
 
 import '../support/given.dart';
@@ -38,7 +38,7 @@ Future<void> transferOnThePhone(PatrolIntegrationTester $, String amount) async 
 /// From Accounts, opens History.
 Future<void> onHistory(PatrolIntegrationTester $) async {
   await $.tapOn(AccountsScreen.historyKey);
-  await $.reach($(SearchLine.searchKey));
+  await $.reach($(SearchIcons.searchKey));
 }
 
 /// Waits until a line of History says [text].
