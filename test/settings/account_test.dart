@@ -368,6 +368,8 @@ void main() {
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey(runningId))));
       [HomeScreen.titleKey, HomeScreen.generalSettingsKey(runningId)].forEach(expectFits);
+      await openAllProjectSettings(tester, api, projectId: runningId);
+      expectFits(HomeScreen.moreSettingsKey(runningId));
 
       await tester.ensureVisible(find.byKey(HomeScreen.projectInfoKey(runningId)));
       await tester.pumpAndSettle();
@@ -528,6 +530,7 @@ void main() {
       final partner = api.addPartner(runningId, 'متعب بن عبدالله بن محمد المغيري الشريك المؤسس في المشروع', userId: 'user-nawaf', userName: 'نواف بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني')['id'] as String;
       final partnerWithNoLogin = api.addPartner(runningId, 'هيثم')['id'] as String;
       await tester.ensureVisible(find.byKey(HomeScreen.partnersKey(runningId)));
+      await tester.pumpAndSettle();
       expectFits(HomeScreen.partnersKey(runningId));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.partnersKey(runningId))));
       [
@@ -548,6 +551,7 @@ void main() {
 
       final supplier = api.addSupplier(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', vatNumber: '322222222222223', defaultItemName: 'البلاط والرخام')['id'] as String;
       await tester.ensureVisible(find.byKey(HomeScreen.suppliersKey(runningId)));
+      await tester.pumpAndSettle();
       expectFits(HomeScreen.suppliersKey(runningId));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey(runningId))));
       [SuppliersScreen.addKey, SuppliersScreen.nameKey(supplier), SuppliersScreen.detailsKey(supplier), SuppliersScreen.menuKey(supplier)].forEach(expectFits);
@@ -567,6 +571,7 @@ void main() {
       final open = api.addContract(runningId, 'دهان داخلي', isOpenValue: true, paid: 12000)['id'] as String;
       api.addColumn('/projects/$runningId/items/item-of-contract/columns', 'notes');
       await tester.ensureVisible(find.byKey(HomeScreen.contractsKey(runningId)));
+      await tester.pumpAndSettle();
       expectFits(HomeScreen.contractsKey(runningId));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey(runningId))));
       List<Key> contractKeys(String id) => [
@@ -593,6 +598,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey(runningId)));
+      await tester.pumpAndSettle();
       expectFits(HomeScreen.addEntryKey(runningId));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey(runningId))));
       [

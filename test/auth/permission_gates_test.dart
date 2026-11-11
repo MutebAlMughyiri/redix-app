@@ -50,7 +50,11 @@ Step _tap(Finder Function(FakeApi api) target) => (tester, api, capture) async {
 
 Step _tapKey(Key key) => _tap((_) => find.byKey(key));
 
-final _openProject = _tapKey(ProjectsScreen.cardKey(_project));
+/// Opens the project's home and its Project settings on every button, as a person does to reach one used rarely.
+Future<void> _openProject(WidgetTester tester, FakeApi api, FakeCapture capture) async {
+  await _tapKey(ProjectsScreen.cardKey(_project))(tester, api, capture);
+  await openAllProjectSettings(tester, api);
+}
 
 Future<void> _shareAPicture(WidgetTester tester, FakeApi api, FakeCapture capture) async {
   capture.share(PickedFile('receipt.png', '', Uint8List.fromList(onePixelPng)));

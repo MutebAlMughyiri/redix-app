@@ -52,6 +52,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
+    await openAllProjectSettings(tester, api, projectId: 'project-1');
 
     expect(find.byKey(HomeScreen.projectInfoKey('project-1')), findsOneWidget);
     expect(find.byKey(HomeScreen.usersKey('project-1')), findsNothing);

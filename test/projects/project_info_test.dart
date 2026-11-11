@@ -393,6 +393,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     await tester.ensureVisible(find.byKey(ProjectsScreen.cardKey('project-1')));
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
+    await openAllProjectSettings(tester, api, projectId: 'project-1');
 
     await openProjectInfo(tester, api, projectId: 'project-1');
 

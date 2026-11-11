@@ -92,6 +92,9 @@ void main() {
       await act(tester, api, () async {});
     }
     for (final step in action.reach) {
+      if (find.byKey(step).evaluate().isEmpty) {
+        await openAllProjectSettings(tester, api);
+      }
       await tester.ensureVisible(find.byKey(step));
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(step)));

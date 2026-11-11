@@ -1840,6 +1840,19 @@ bool isEnabled(WidgetTester tester, Key key) => switch (tester.widget(find.byKey
 Future<void> openProject(WidgetTester tester, FakeApi api, {InvoiceCapture? capture, LocalStore? store}) async {
   await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture, store: store);
   await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+  await openAllProjectSettings(tester, api);
+}
+
+/// Opens the home's Project settings of the project [projectId] on every button, as a person taps their arrow to reach one used rarely (Muteb, 11 Nov 2026); nothing
+/// when they show no arrow or are open already.
+Future<void> openAllProjectSettings(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) async {
+  final arrow = find.byKey(HomeScreen.moreSettingsKey(projectId));
+  if (arrow.evaluate().isEmpty || tester.widget<Icon>(find.byKey(HomeScreen.moreSettingsKey(projectId).icon)).icon == Icons.expand_less) {
+    return;
+  }
+  await tester.ensureVisible(arrow);
+  await tester.pumpAndSettle();
+  await act(tester, api, () => tester.tap(arrow));
 }
 
 /// Opens Settings from the card of the open project [projectId].
