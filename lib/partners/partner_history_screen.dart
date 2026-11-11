@@ -69,7 +69,7 @@ class _PartnerHistoryScreenState extends State<PartnerHistoryScreen> {
         builder: (context, _) => HistoryView(
           history: history,
           title: words.partnersHistory,
-          allLabel: words.historyAllPartners,
+          choiceLabel: words.historyPartner,
           choices: [for (final partner in widget.partners.all) (partner.id, partner.name)],
           choiceChipKey: PartnerHistoryScreen.partnerChoiceKey,
           allKey: PartnerHistoryScreen.allKey,

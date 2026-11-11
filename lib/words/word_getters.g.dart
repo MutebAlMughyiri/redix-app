@@ -833,9 +833,6 @@ mixin WordGetters {
   /// The word `documents.title`.
   String get documentsTitle => text('documents.title');
 
-  /// The word `entries.all`.
-  String get entriesAll => text('entries.all');
-
   /// The word `entries.alreadyReversed`.
   String get entriesAlreadyReversed => text('entries.alreadyReversed');
 
@@ -1214,11 +1211,14 @@ mixin WordGetters {
   /// The word `history.accountEnabled`.
   String get historyAccountEnabled => text('history.accountEnabled');
 
-  /// The word `history.allAccounts`.
-  String get historyAllAccounts => text('history.allAccounts');
+  /// The word `history.account`.
+  String get historyAccount => text('history.account');
 
-  /// The word `history.allPartners`.
-  String get historyAllPartners => text('history.allPartners');
+  /// The word `history.partner`.
+  String get historyPartner => text('history.partner');
+
+  /// The word `history.all`.
+  String get historyAll => text('history.all');
 
   /// The word `history.approvedBy`.
   String get historyApprovedBy => text('history.approvedBy');

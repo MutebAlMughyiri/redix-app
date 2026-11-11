@@ -13,12 +13,12 @@ import 'history_list.dart';
 /// covers or one and a chip for what I did; the lines newest first, and المزيد while more may follow. The accounts' and the partners' history screens each give it their
 /// list, their things and their keys.
 class HistoryView extends StatelessWidget {
-  /// The view of [history], called [title], whose things are [choices] (id and name), the choice of every one saying [allLabel], each part keyed by its screen.
+  /// The view of [history], called [title], whose things are [choices] (id and name), each called a [choiceLabel], each part keyed by its screen.
   const HistoryView({
     super.key,
     required this.history,
     required this.title,
-    required this.allLabel,
+    required this.choiceLabel,
     required this.choices,
     required this.choiceChipKey,
     required this.allKey,
@@ -34,8 +34,8 @@ class HistoryView extends StatelessWidget {
   /// What the history is called, which the empty search line names.
   final String title;
 
-  /// What the choice of every thing says.
-  final String allLabel;
+  /// What one of its things is called, which the chip choosing them says before the one chosen.
+  final String choiceLabel;
 
   /// The things to filter by, each its id and its name.
   final List<(String, String)> choices;
@@ -59,10 +59,11 @@ class HistoryView extends StatelessWidget {
   final Key moreKey;
 
   List<Widget> _filters(Words words) {
-    final values = [('', allLabel), ...choices];
+    final values = [('', words.historyAll), ...choices];
     return [
       FilterLine.choice<(String, String)>(
         key: choiceChipKey,
+        label: choiceLabel,
         values: values,
         chosen: values.firstWhere((value) => value.$1 == history.chosenId, orElse: () => values.first),
         labelOf: (value) => value.$2,

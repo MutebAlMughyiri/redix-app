@@ -69,7 +69,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
         builder: (context, _) => HistoryView(
           history: history,
           title: words.accountsHistory,
-          allLabel: words.historyAllAccounts,
+          choiceLabel: words.historyAccount,
           choices: [for (final account in widget.accounts.all) (account.id, account.name)],
           choiceChipKey: AccountHistoryScreen.accountChoiceKey,
           allKey: AccountHistoryScreen.allKey,

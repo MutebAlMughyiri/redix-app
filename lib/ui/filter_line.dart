@@ -51,10 +51,11 @@ class FilterLine extends StatelessWidget {
     ],
   );
 
-  /// A chip naming the one of [values] [chosen], opening their list, each named by [labelOf] and keyed by [keyOf]; choosing one calls [onChanged] with it and closes the
-  /// list. The first of [values] keeps everything, so the chip shows on once another is chosen.
+  /// A chip saying [label] and the one of [values] [chosen], opening their list, each named by [labelOf] and keyed by [keyOf]; choosing one calls [onChanged] with it and
+  /// closes the list. The first of [values] keeps everything, so the chip shows on once another is chosen.
   static Widget choice<T>({
     required Key key,
+    required String label,
     required List<T> values,
     required T chosen,
     required String Function(T value) labelOf,
@@ -62,7 +63,7 @@ class FilterLine extends StatelessWidget {
     required ValueChanged<T> onChanged,
   }) => _menuChip(
     key: key,
-    label: labelOf(chosen),
+    label: '$label: ${labelOf(chosen)}',
     isOn: chosen != values.first,
     items: [
       for (final value in values)

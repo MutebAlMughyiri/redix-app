@@ -189,7 +189,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(account)));
     }
 
-    testWidgets('R22, redix-app #104: the account chip under the search line reads one account\'s lines and says its name, and All accounts reads every account again', (tester) async {
+    testWidgets('R22, redix-app #104: the account chip under the search line reads one account\'s lines and says its name, and All reads every account again', (tester) async {
       late String bankId;
       late String bankName;
       final api = await openHistory(tester, arrange: (api) {
@@ -200,11 +200,12 @@ void main() {
       await chooseAccount(tester, api, AccountHistoryScreen.accountKey(bankId));
       expect(api.historyReads.last.queryParameters['account'], bankId);
       expect(tester.widget<FilterChip>(find.byKey(AccountHistoryScreen.accountChoiceKey)).selected, isTrue);
-      expect(text(tester, AccountHistoryScreen.accountChoiceKey.label), bankName);
+      expect(text(tester, AccountHistoryScreen.accountChoiceKey.label), 'en history.account: $bankName');
 
       await chooseAccount(tester, api, AccountHistoryScreen.allKey);
       expect(api.historyReads.last.queryParameters['account'], '');
       expect(tester.widget<FilterChip>(find.byKey(AccountHistoryScreen.accountChoiceKey)).selected, isFalse);
+      expect(text(tester, AccountHistoryScreen.accountChoiceKey.label), 'en history.account: en history.all');
     });
 
     testWidgets('H10: What I did reads only the signed-in user\'s lines, and the filters stay when nothing is found', (tester) async {
