@@ -161,7 +161,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
             autoFocus: widget.startsSearching,
             onTyped: (typed) => _change(() => _filter.text = typed),
             filters: _filters(words),
-            filtersInUse: _filter.chosenKinds.isNotEmpty || _filter.chosenStatuses.isNotEmpty || _filter.hasPeriod || !_filter.onlyMine,
+            filtersInUse: _filter.isNarrowed || !_filter.onlyMine,
           ),
           listOf: (rows) => ListView(
             padding: ApiListBody.padding,

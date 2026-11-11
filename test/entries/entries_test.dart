@@ -702,6 +702,20 @@ void main() {
       expect(api.entryQueries.last['mine'], ['true']);
     });
 
+    testWidgets('redix-app #104: clearing the filters keeps what was typed, which the search line still shows', (tester) async {
+      final api = await openSearch(tester);
+
+      await searchFor(tester, api, 'احمد');
+      await choose(tester, api, EntriesScreen.kindChoiceKey, EntriesScreen.kindKey('purchase'));
+      expect(shownRows(tester), isEmpty);
+      await scrollAndTap(tester, api, EntriesScreen.clearKey);
+
+      expect(api.entryQueries.last['text'], ['احمد']);
+      expect(api.entryQueries.last.containsKey('kinds'), isFalse);
+      expect(shownRows(tester), ['entry-3']);
+      expect(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.text('احمد')), findsOneWidget);
+    });
+
     testWidgets('redix-app #104: the entries come a page at a time, as many as chosen in Settings, and Show more reads as many again', (tester) async {
       final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
       for (var entry = 0; entry < 7; entry++) {

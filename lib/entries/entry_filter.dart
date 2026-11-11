@@ -28,12 +28,11 @@ class EntryFilter {
   /// True once a period is chosen.
   bool get hasPeriod => period != anyTime;
 
-  /// True while the text, a kind, a status or a period narrows what shows.
-  bool get isNarrowed => text.trim().isNotEmpty || chosenKinds.isNotEmpty || chosenStatuses.isNotEmpty || hasPeriod;
+  /// True while a kind, a status or a period narrows what shows: what the clear chip under the search line clears.
+  bool get isNarrowed => chosenKinds.isNotEmpty || chosenStatuses.isNotEmpty || hasPeriod;
 
-  /// Clears the text, the kinds, the statuses and the period; whose entries show stays as chosen.
+  /// Clears the kinds, the statuses and the period. What was typed stays, as the search line still shows it, and so does whose entries show.
   void clear() {
-    text = '';
     chosenKinds.clear();
     chosenStatuses.clear();
     period = anyTime;
