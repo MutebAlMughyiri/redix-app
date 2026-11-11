@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entry_card.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/home/home_screen.dart';
@@ -98,5 +99,27 @@ void main() {
     expect(find.text('en entries.loadFailed'), findsOneWidget);
     expect(shown(tester), 5);
     expect(more, findsOneWidget);
+  });
+
+  testWidgets('R4: an entry opened from the home says where it stands now, though the Entries screen read every entry before it changed', (tester) async {
+    final api = await openHome(tester, 1);
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
+    api.entryRows.single['status'] = 'approved';
+    await act(tester, api, () => tester.pageBack());
+
+    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0'))));
+
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.approved');
+  });
+
+  testWidgets('R4: back on the Entries screen from an entry, it reads the entries again, as the home does, since what was opened may have changed', (tester) async {
+    final api = await openHome(tester, 1);
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
+    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0'))));
+    final readsBefore = api.entryReads.length;
+
+    await act(tester, api, () => tester.pageBack());
+
+    expect(api.entryReads.sublist(readsBefore), [0]);
   });
 }

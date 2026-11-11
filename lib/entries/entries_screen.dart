@@ -163,7 +163,11 @@ class _EntriesScreenState extends State<EntriesScreen> {
     );
   }
 
-  void _open(String path) => context.push(path, extra: widget.project);
+  /// Opens [path] and, on coming back, reads the entries again, as the home does: what was opened may have changed there.
+  Future<void> _open(String path) async {
+    await context.push(path, extra: widget.project);
+    await widget.entries.load();
+  }
 
   void _openAsked() {
     if (widget.entries.isLoading) {

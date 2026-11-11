@@ -406,11 +406,11 @@ class _RedixAppState extends State<RedixApp> {
     projectAccounts: _accountsOf(projectId),
   );
 
-  /// The entries list that holds the entry [entryId], for Add entry to show it and read it again once saved: the whole list once a screen has read it with that entry,
-  /// otherwise the home's newest, which hold every entry the home shows and a new one once read again (redix-app #105).
+  /// The entries list that holds the entry [entryId], for Add entry to read again when it opens and once saved (redix-app #105): the home's newest when they hold it, as
+  /// every entry the home shows and a new one, otherwise the whole list, which the Entries screen read.
   ProjectEntries _entriesHolding(String projectId, String entryId) {
-    final whole = _entriesOf(projectId);
-    return whole.all.any((row) => row.id == entryId) ? whole : _newestEntriesOf(projectId);
+    final newest = _newestEntriesOf(projectId);
+    return newest.all.any((row) => row.id == entryId) || entryId.isEmpty ? newest : _entriesOf(projectId);
   }
 
   ItemColumnsScreen _itemColumnsScreen(String projectId, String itemId, Project project) {

@@ -372,7 +372,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   /// Fills the form from the entry being changed (UC-033), in its table, whatever its kind. A credit note's total shows as typed, without its sign.
   Future<void> _openEntry() async {
     final saved = await widget.recording.read(widget.editingId);
-    await Future.wait([widget.tables.load(), widget.contracts.load(), widget.accounts.load(), widget.projectAccounts.load(), widget.suppliers.load()]);
+    await Future.wait([widget.tables.load(), widget.contracts.load(), widget.accounts.load(), widget.projectAccounts.load(), widget.suppliers.load(), widget.entries.load()]);
     if (!mounted || saved.isNone) {
       return;
     }
