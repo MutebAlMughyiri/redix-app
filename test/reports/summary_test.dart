@@ -219,6 +219,30 @@ void main() {
     expect(find.textContaining('en summary.surplusWithoutSales'), findsNothing);
   });
 
+  testWidgets('redix-app #104: the search line keeps the categories whose name or an item\'s holds what was typed, open on those items, whichever way Arabic is spelled', (tester) async {
+    final api = await openHome(tester, (api) => api.summaryAnswer = figures());
+    await openRevenueAndExpenses(tester, api);
+
+    await searchFor(tester, api, 'بلاط');
+    expect(find.byKey(ItemReportsScreen.itemKey('item-1')), findsOneWidget);
+    expect(find.byKey(ItemReportsScreen.itemKey('item-2')), findsNothing);
+
+    await searchFor(tester, api, 'الجِبس');
+    expect(find.byKey(ItemReportsScreen.itemKey('item-2')), findsOneWidget);
+    expect(find.byKey(ItemReportsScreen.itemKey('item-1')), findsNothing);
+
+    await searchFor(tester, api, 'تشطيب');
+    expect(find.byKey(ItemReportsScreen.itemKey('item-1')), findsOneWidget);
+    expect(find.byKey(ItemReportsScreen.itemKey('item-2')), findsOneWidget);
+
+    await searchFor(tester, api, 'حديد');
+    expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsNothing);
+
+    await searchFor(tester, api, '');
+    expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsOneWidget);
+    expect(find.byKey(ItemReportsScreen.itemKey('item-1')), findsNothing);
+  });
+
   testWidgets('a category opens to its items with their totals, and an item opens its report', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
     await openRevenueAndExpenses(tester, api);

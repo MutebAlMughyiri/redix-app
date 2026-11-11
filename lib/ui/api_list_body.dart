@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../api_list.dart';
-import 'filter_line.dart';
 import 'list_search.dart';
 import 'load_failure.dart';
-import 'part_keys.dart';
 import 'row_stripe.dart';
+import 'search_line.dart';
 
 /// The body of a screen that shows an [ApiList]: why it could not load with a way to try again, loading, empty, or its items, which are read again when pulled down. A
-/// list that grows has a search line over it, with its filters folded under the line's arrow (redix-app #104).
+/// list that grows has the [SearchLine] over it (redix-app #104).
 class ApiListBody<T> extends StatefulWidget {
   /// The body of a screen showing [list], with [itemBuilder] drawing each item [keeps] and [emptyText] said while it keeps none. A screen whose rows are dragged gives
   /// [listOf]; one that shows more than its list gives [alsoRefresh], read again with it; one whose list grows gives its [search].
@@ -72,19 +71,12 @@ class ApiListBody<T> extends StatefulWidget {
   /// The spinner shown while the list is first read.
   static const loadingKey = Key('apiList.loading');
 
-  /// The search line over a list that grows.
-  static const searchKey = Key('apiList.search');
-
-  /// The arrow at the end of the search line, opening and folding its filters.
-  static const filtersKey = Key('apiList.filters');
-
   @override
   State<ApiListBody<T>> createState() => _ApiListBodyState<T>();
 }
 
 class _ApiListBodyState<T> extends State<ApiListBody<T>> {
   var _typed = '';
-  var _filtersOpen = false;
 
   /// Reads the list, and whatever the screen shows besides it, again.
   Future<void> _refresh() => Future.wait([widget.list.load(), widget.alsoRefresh()]);
@@ -110,9 +102,6 @@ class _ApiListBodyState<T> extends State<ApiListBody<T>> {
     return RefreshIndicator(onRefresh: _refresh, child: widget.listOf([for (final (index, item) in kept.indexed) RowStripe(index: index, child: widget.itemBuilder(item))]));
   }
 
-  /// The arrow at the end of the search line: up while the filters show, a filled filter while they are folded and narrow the list, down otherwise.
-  IconData get _filtersIcon => _filtersOpen ? Icons.arrow_drop_up : (widget.search.filtersInUse ? Icons.filter_alt : Icons.arrow_drop_down);
-
   @override
   Widget build(BuildContext context) {
     final items = ListNarrowed(isNarrowed: _typed.trim().isNotEmpty, child: ListenableBuilder(listenable: widget.list, builder: (context, _) => _state(context)));
@@ -123,24 +112,13 @@ class _ApiListBodyState<T> extends State<ApiListBody<T>> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-          child: SearchBar(
-            key: ApiListBody.searchKey,
-            hintText: search.hint,
-            autoFocus: search.autoFocus,
-            leading: Icon(Icons.search, key: ApiListBody.searchKey.icon),
-            trailing: [
-              if (search.filters.isNotEmpty)
-                IconButton(key: ApiListBody.filtersKey, icon: Icon(_filtersIcon, key: ApiListBody.filtersKey.icon), onPressed: () => setState(() => _filtersOpen = !_filtersOpen)),
-            ],
-            onChanged: (typed) {
-              setState(() => _typed = typed);
-              search.onTyped(typed);
-            },
-          ),
+        SearchLine(
+          search: search,
+          onTyped: (typed) {
+            setState(() => _typed = typed);
+            search.onTyped(typed);
+          },
         ),
-        if (_filtersOpen) Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: FilterLine(members: search.filters)),
         Expanded(child: items),
       ],
     );

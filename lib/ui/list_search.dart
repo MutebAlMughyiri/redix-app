@@ -46,7 +46,11 @@ class ListSearch<T> {
   bool get isNone => hint.isEmpty;
 
   /// Whether [item] holds [typed], whichever way an Arabic word is spelled and in whichever digits; every item the API answered, for a list it searches.
-  bool matches(T item, String typed) => searchesOnApi || searchable(textOf(item)).contains(searchable(typed));
+  bool matches(T item, String typed) => searchesOnApi || matchesText(textOf(item), typed);
+
+  /// Whether [text] holds [typed], whichever way an Arabic word is spelled and in whichever digits: how the phone matches what was typed, for a list or for a screen that
+  /// is not one, such as الإيرادات والمصروفات.
+  static bool matchesText(String text, String typed) => searchable(text).contains(searchable(typed));
 
   static String _nothing(Object? item) => '';
 

@@ -5,7 +5,7 @@ import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
-import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/search_line.dart';
 import 'package:redix/ui/app_color.dart';
 import 'package:redix/ui/part_keys.dart';
 
@@ -13,7 +13,7 @@ import '../app_harness.dart';
 
 /// redix-app #104 step 1: a search line on every list that grows, its filters folded under the line's arrow.
 void main() {
-  IconData arrow(WidgetTester tester) => tester.widget<Icon>(find.byKey(ApiListBody.filtersKey.icon)).icon!;
+  IconData arrow(WidgetTester tester) => tester.widget<Icon>(find.byKey(SearchLine.filtersKey.icon)).icon!;
 
   testWidgets('Suppliers: typing keeps the suppliers holding it, whichever way an Arabic name is spelled, by name or VAT number; cleared, every one', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
@@ -22,7 +22,7 @@ void main() {
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.suppliersKey('project-0'));
 
-    expect(find.byKey(ApiListBody.filtersKey), findsNothing);
+    expect(find.byKey(SearchLine.filtersKey), findsNothing);
     await searchFor(tester, api, 'الافق');
     expect(find.byKey(SuppliersScreen.rowKey(horizon)), findsOneWidget);
     expect(find.byKey(SuppliersScreen.rowKey(palm)), findsNothing);

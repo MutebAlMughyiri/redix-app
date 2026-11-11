@@ -16,7 +16,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
 import 'package:redix/projects/member_picker.dart';
 import 'package:redix/projects/project_settings_card.dart';
-import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/search_line.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/ui/arabic_spelling.dart';
 import 'package:redix/projects/projects_screen.dart';
@@ -1936,17 +1936,17 @@ final listRows = find.descendant(of: find.byType(RefreshIndicator), matching: fi
 
 /// Opens the filters folded under a list's search line, as its arrow does (redix-app #104); nothing when they show already.
 Future<void> openFilters(WidgetTester tester, FakeApi api) async {
-  if (tester.widget<Icon>(find.byKey(ApiListBody.filtersKey.icon)).icon != Icons.arrow_drop_up) {
-    await act(tester, api, () => tester.tap(find.byKey(ApiListBody.filtersKey)));
+  if (tester.widget<Icon>(find.byKey(SearchLine.filtersKey.icon)).icon != Icons.arrow_drop_up) {
+    await act(tester, api, () => tester.tap(find.byKey(SearchLine.filtersKey)));
   }
 }
 
 /// Folds the filters under a list's search line again, as its arrow does.
-Future<void> foldFilters(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(ApiListBody.filtersKey)));
+Future<void> foldFilters(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(SearchLine.filtersKey)));
 
 /// Types [typed] in a list's search line.
 Future<void> searchFor(WidgetTester tester, FakeApi api, String typed) =>
-    act(tester, api, () => tester.enterText(find.descendant(of: find.byKey(ApiListBody.searchKey), matching: find.byType(TextField)), typed));
+    act(tester, api, () => tester.enterText(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(TextField)), typed));
 
 /// On the Entries screen, shows everyone's entries rather than the user's own: قيودي turned off under the search line (redix-app #104).
 Future<void> showEveryonesEntries(WidgetTester tester, FakeApi api) async {

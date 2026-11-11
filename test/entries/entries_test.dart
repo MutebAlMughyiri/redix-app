@@ -6,7 +6,7 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/config/app_config.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
-import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/search_line.dart';
 import 'package:redix/entries/table_picker.dart';
 import 'package:redix/home/home_screen.dart';
 
@@ -667,7 +667,7 @@ void main() {
     testWidgets('R4: the search beside القيود opens the list ready to type, and the API is asked for one page, not every entry', (tester) async {
       final api = await openSearch(tester);
 
-      expect(tester.widget<SearchBar>(find.byKey(ApiListBody.searchKey)).autoFocus, isTrue);
+      expect(tester.widget<SearchBar>(find.byKey(SearchLine.searchKey)).autoFocus, isTrue);
       expect(shownRows(tester), ['entry-3', 'entry-2', 'entry-1', 'entry-0']);
       expect(api.entryReads.last, greaterThan(0));
     });
