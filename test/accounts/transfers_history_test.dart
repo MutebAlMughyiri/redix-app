@@ -225,7 +225,7 @@ void main() {
       final api = await openHistory(tester, arrange: (api) {
         bankId = api.accounts['project-0']!.first['id']! as String;
         api
-          ..addHistoryLine('project-0', 'transfer', by: 'ريم', amount: 500, otherAccount: 'كاش مع نواف')
+          ..addHistoryLine('project-0', 'transfer', accountId: bankId, by: 'ريم', amount: 500, otherAccount: 'كاش مع نواف')
           ..addHistoryLine('project-0', 'entryOut', amount: 300);
       });
 
@@ -236,6 +236,8 @@ void main() {
       await searchFor(tester, api, '٥٠٠');
       await chooseAccount(tester, api, AccountHistoryScreen.accountKey(bankId));
       expect(api.historyReads.last.queryParameters, {'account': bankId, 'mine': 'false', 'before': '0', 'text': '500'});
+      expect(find.byKey(AccountHistoryScreen.lineKey(1000)), findsOneWidget);
+      expect(find.byKey(AccountHistoryScreen.lineKey(999)), findsNothing);
     });
 
     testWidgets('redix-app #104, D4: a search does not outlive its screen; History opens again with every line', (tester) async {

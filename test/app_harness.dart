@@ -972,8 +972,8 @@ class FakeApi {
   /// The history addresses the app read, with their filters and page.
   final historyReads = <Uri>[];
 
-  /// Adds a line of [kind] to the history of [projectId], newest first.
-  Map<String, Object> addHistoryLine(String projectId, String kind, {String by = 'متعب', String account = 'حساب المؤسسة', String otherAccount = '', double amount = 0, String entryKind = 'purchase', String nameWas = '', String custodian = ''}) {
+  /// Adds a line of [kind] to the history of [projectId], newest first, naming the account [accountId] for the account filter.
+  Map<String, Object> addHistoryLine(String projectId, String kind, {String accountId = '', String by = 'متعب', String account = 'حساب المؤسسة', String otherAccount = '', double amount = 0, String entryKind = 'purchase', String nameWas = '', String custodian = ''}) {
     final list = accountHistory.putIfAbsent(projectId, () => []);
     final line = <String, Object>{
       'id': 1000 - list.length,
@@ -986,6 +986,7 @@ class FakeApi {
       'entryKind': entryKind,
       'nameWas': nameWas,
       'custodian': custodian,
+      'accountId': accountId,
     };
     list.add(line);
     return line;
@@ -997,7 +998,7 @@ class FakeApi {
     final before = int.parse(query['before'] ?? '0');
     final lines = (accountHistory[request.url.pathSegments[1]] ?? const <Map<String, Object>>[])
         .where((line) => before == 0 || (line['id']! as int) < before)
-        .where((line) => (query['account'] ?? '').isEmpty || line['account'] == query['account'])
+        .where((line) => (query['account'] ?? '').isEmpty || line['accountId'] == query['account'])
         .where((line) => _holds(request.url, line['amount']! as num, [line['by'], line['account'], line['otherAccount'], line['nameWas'], line['custodian']]))
         .take(50)
         .toList();
