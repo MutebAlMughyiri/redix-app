@@ -83,7 +83,7 @@ void main() {
       final member = await Given.member(manager);
       await $.onTheHome(member);
       await $(HomeScreen.sharedSettingsKey(member.projectId)).tap();
-      await $.reach($(SharedSettingsScreen.signOutKey));
+      await $.reach($(SharedSettingsScreen.whoKey));
       await Given.removed(member, by: manager);
       await $.back();
       await $.reach($(ProjectsScreen.titleKey));

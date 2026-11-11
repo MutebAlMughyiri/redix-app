@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
-import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/ui/search_line.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/users/users_screen.dart';
@@ -49,7 +49,7 @@ void main() {
     phoneCase('with approveEntries, Waiting for approval opens', ($) async {
       final member = await onTheHomeHolding($, [Permission.approveEntries]);
       await $.tapOn(HomeScreen.approvalsKey(member.projectId));
-      await $.reach($(ApprovalsScreen.allKey));
+      await $.reach($(SearchLine.searchKey));
     });
 
     phoneCase('with recordEntries, Add entry opens', ($) async {
