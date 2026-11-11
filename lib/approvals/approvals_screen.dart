@@ -25,6 +25,7 @@ import '../ui/act_once.dart';
 import '../words/word_fill.dart';
 import '../ui/filter_line.dart';
 import '../ui/list_search.dart';
+import '../ui/search_scope.dart';
 
 /// Finance's inbox (UC-031, UC-032): what waits, oldest first, to approve one at a time or many at once, or to reject saying why.
 class ApprovalsScreen extends StatefulWidget {
@@ -255,45 +256,46 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final mayDecide = _mayDecide;
-    return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.approvalsTitle, subject: widget.project.name)),
-      bottomNavigationBar: !mayDecide || _selected.isEmpty
-          ? null
-          : BottomButton(buttonKey: ApprovalsScreen.approveSelectedKey, icon: Icons.done_all, label: '${words.approvalsApproveSelected} · ${_selected.length}', onPressed: () => _approve(_selected.toList())),
-      body: Column(
-        children: [
-          if (_focus.isNotEmpty)
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: TextButton(key: ApprovalsScreen.showAllKey, onPressed: () => setState(() => _focus = ''), child: Text(words.approvalsShowAll, key: ApprovalsScreen.showAllKey.label)),
-            ),
-          Expanded(
-            child: ListenableBuilder(
-              listenable: widget.approvals,
-              builder: (context, _) => ApiListBody<PendingApproval>(
-                list: widget.approvals,
-                emptyText: words.approvalsEmpty,
-                keeps: (entry) => (_focus.isEmpty || entry.id == _focus) && _filter.keeps(entry),
-                search: ListSearch(
-                  hint: words.commonSearchIn.fill([words.approvalsTitle]),
-                  textOf: (entry) => partsLine([entry.itemName, entry.supplierName, entry.partnerName, entry.authorName, entry.accountName, entry.invoiceNumber, entry.notes, searchableAmount(entry.amount)]),
-                  filtersInUse: _filter != _Filter.all,
-                  filters: [
-                    FilterLine.segmented(
-                      key: ApprovalsScreen.filterChoiceKey,
-                      values: _Filter.values,
-                      selected: _filter,
-                      labelOf: (filter) => '${words.text(filter.wordKey)} · ${widget.approvals.all.where(filter.keeps).length}',
-                      keyOf: (filter) => filter.key,
-                      onChanged: (filter) => setState(() => _filter = filter),
-                    ),
-                  ],
+    return SearchScope(
+      child: Scaffold(
+        appBar: AppBar(title: ScreenTitle(words.approvalsTitle, subject: widget.project.name), actions: [SearchIcons.andFilters(filtersInUse: _filter != _Filter.all)]),
+        bottomNavigationBar: !mayDecide || _selected.isEmpty
+            ? null
+            : BottomButton(buttonKey: ApprovalsScreen.approveSelectedKey, icon: Icons.done_all, label: '${words.approvalsApproveSelected} · ${_selected.length}', onPressed: () => _approve(_selected.toList())),
+        body: Column(
+          children: [
+            if (_focus.isNotEmpty)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: TextButton(key: ApprovalsScreen.showAllKey, onPressed: () => setState(() => _focus = ''), child: Text(words.approvalsShowAll, key: ApprovalsScreen.showAllKey.label)),
+              ),
+            Expanded(
+              child: ListenableBuilder(
+                listenable: widget.approvals,
+                builder: (context, _) => ApiListBody<PendingApproval>(
+                  list: widget.approvals,
+                  emptyText: words.approvalsEmpty,
+                  keeps: (entry) => (_focus.isEmpty || entry.id == _focus) && _filter.keeps(entry),
+                  search: ListSearch(
+                    hint: words.commonSearchIn.fill([words.approvalsTitle]),
+                    textOf: (entry) => partsLine([entry.itemName, entry.supplierName, entry.partnerName, entry.authorName, entry.accountName, entry.invoiceNumber, entry.notes, searchableAmount(entry.amount)]),
+                    filters: [
+                      FilterLine.segmented(
+                        key: ApprovalsScreen.filterChoiceKey,
+                        values: _Filter.values,
+                        selected: _filter,
+                        labelOf: (filter) => '${words.text(filter.wordKey)} · ${widget.approvals.all.where(filter.keeps).length}',
+                        keyOf: (filter) => filter.key,
+                        onChanged: (filter) => setState(() => _filter = filter),
+                      ),
+                    ],
+                  ),
+                  itemBuilder: (entry) => _card(entry, mayDecide, words),
                 ),
-                itemBuilder: (entry) => _card(entry, mayDecide, words),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

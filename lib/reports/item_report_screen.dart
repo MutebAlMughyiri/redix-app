@@ -6,6 +6,7 @@ import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/api_object_body.dart';
 import '../ui/list_search.dart';
+import '../ui/search_scope.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/search_line.dart';
@@ -185,19 +186,22 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
       listenable: widget.report,
       builder: (context, _) {
         final report = widget.report.value;
-        return Scaffold(
-          appBar: AppBar(title: ScreenTitle(report.itemName, subject: report.categoryName)),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              SearchLine(hint: words.commonSearchIn.fill([report.itemName]), onTyped: (typed) => setState(() => _typed = typed)),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [ApiObjectBody(object: widget.report, builder: (report) => _report(report, words))],
+        return SearchScope(
+          onTyped: (typed) => setState(() => _typed = typed),
+          child: Scaffold(
+            appBar: AppBar(title: ScreenTitle(report.itemName, subject: report.categoryName), actions: const [SearchIcons()]),
+            body: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SearchLine(hint: words.commonSearchIn.fill([report.itemName])),
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
+                    children: [ApiObjectBody(object: widget.report, builder: (report) => _report(report, words))],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

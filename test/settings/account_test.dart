@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:redix/ui/search_line.dart';
+import 'package:redix/ui/search_scope.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
@@ -590,7 +590,7 @@ void main() {
         ContractsScreen.menuKey(id),
       ];
       await openFilters(tester, api);
-      [ContractsScreen.addKey, SearchLine.searchKey, for (final filter in ContractFilter.values) ContractsScreen.filterKey(filter), ...contractKeys(overrun)].forEach(expectFits);
+      [ContractsScreen.addKey, SearchIcons.searchKey, SearchIcons.filtersKey, for (final filter in ContractFilter.values) ContractsScreen.filterKey(filter), ...contractKeys(overrun)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
       [ContractsScreen.contractorKey, ContractsScreen.itemKey, ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.unitPriceKey, ContractsScreen.quantityKey, ContractsScreen.notesKey, ContractsScreen.addDocumentKey, ChangeDialog.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));

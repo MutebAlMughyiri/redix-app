@@ -92,9 +92,7 @@ class HistoryView extends StatelessWidget {
       emptyText: words.historyEmpty,
       search: ListSearch.onApi(
         hint: words.commonSearchIn.fill([title]),
-        onTyped: history.search,
         filters: _filters(words),
-        filtersInUse: history.chosenId.isNotEmpty || history.mine,
       ),
       itemBuilder: (line) => _line(line, words),
       listOf: (items) => ListView(

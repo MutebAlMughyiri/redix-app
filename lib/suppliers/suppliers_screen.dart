@@ -11,6 +11,7 @@ import 'supplier_dialog.dart';
 import 'supplier_row.dart';
 import 'suppliers.dart';
 import '../ui/list_search.dart';
+import '../ui/search_scope.dart';
 import '../words/word_fill.dart';
 import '../format/parts_line.dart';
 
@@ -92,21 +93,23 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
     final words = Words.of(context);
     final project = widget.project;
     final suppliers = widget.suppliers;
-    return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.suppliersTitle, subject: project.name)),
-      bottomNavigationBar: BottomButton(
-        buttonKey: SuppliersScreen.addKey,
-        label: words.suppliersNew,
-        onPressed: project.mayManageSettings ? () => showDialog<void>(context: context, builder: (_) => SupplierDialog(supplier: Supplier.none(), suppliers: suppliers, items: widget.items)) : null,
-      ),
-      body: ApiListBody<Supplier>(
-        list: suppliers,
-        emptyText: words.suppliersEmpty,
-        search: ListSearch(
-          hint: words.commonSearchIn.fill([words.suppliersTitle]),
-          textOf: (supplier) => partsLine([supplier.name, supplier.vatNumber, supplier.mobile, supplier.defaultItemName]),
+    return SearchScope(
+      child: Scaffold(
+        appBar: AppBar(title: ScreenTitle(words.suppliersTitle, subject: project.name), actions: const [SearchIcons()]),
+        bottomNavigationBar: BottomButton(
+          buttonKey: SuppliersScreen.addKey,
+          label: words.suppliersNew,
+          onPressed: project.mayManageSettings ? () => showDialog<void>(context: context, builder: (_) => SupplierDialog(supplier: Supplier.none(), suppliers: suppliers, items: widget.items)) : null,
         ),
-        itemBuilder: (supplier) => SupplierRow(supplier: supplier, suppliers: suppliers, items: widget.items, mayChange: project.mayManageSettings),
+        body: ApiListBody<Supplier>(
+          list: suppliers,
+          emptyText: words.suppliersEmpty,
+          search: ListSearch(
+            hint: words.commonSearchIn.fill([words.suppliersTitle]),
+            textOf: (supplier) => partsLine([supplier.name, supplier.vatNumber, supplier.mobile, supplier.defaultItemName]),
+          ),
+          itemBuilder: (supplier) => SupplierRow(supplier: supplier, suppliers: suppliers, items: widget.items, mayChange: project.mayManageSettings),
+        ),
       ),
     );
   }

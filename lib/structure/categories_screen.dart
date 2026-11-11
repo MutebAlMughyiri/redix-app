@@ -11,6 +11,7 @@ import 'categories.dart';
 import 'category.dart';
 import 'category_card.dart';
 import '../ui/list_search.dart';
+import '../ui/search_scope.dart';
 import '../words/word_fill.dart';
 import '../format/parts_line.dart';
 
@@ -140,51 +141,53 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     final words = Words.of(context);
     final categories = widget.categories;
     final project = widget.project;
-    return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.categoriesTitle, subject: project.name)),
-      bottomNavigationBar: BottomButton(
-        buttonKey: CategoriesScreen.addCategoryKey,
-        label: words.categoriesNew,
-        onPressed: project.mayChangeStructure
-            ? () => showDialog<void>(
-                context: context,
-                builder: (_) => NameDialog(title: words.categoriesNew, label: words.categoriesCategoryName, saveLabel: words.categoriesNew, onSave: categories.addCategory),
-              )
-            : null,
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (project.mayChangeStructure)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Text(words.categoriesHint, key: CategoriesScreen.hintKey, style: Theme.of(context).textTheme.bodySmall),
+    return SearchScope(
+      child: Scaffold(
+        appBar: AppBar(title: ScreenTitle(words.categoriesTitle, subject: project.name), actions: const [SearchIcons()]),
+        bottomNavigationBar: BottomButton(
+          buttonKey: CategoriesScreen.addCategoryKey,
+          label: words.categoriesNew,
+          onPressed: project.mayChangeStructure
+              ? () => showDialog<void>(
+                  context: context,
+                  builder: (_) => NameDialog(title: words.categoriesNew, label: words.categoriesCategoryName, saveLabel: words.categoriesNew, onSave: categories.addCategory),
+                )
+              : null,
+        ),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (project.mayChangeStructure)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                child: Text(words.categoriesHint, key: CategoriesScreen.hintKey, style: Theme.of(context).textTheme.bodySmall),
+              ),
+            Expanded(
+              child: ApiListBody<Category>(
+                list: categories,
+                emptyText: words.categoriesEmpty,
+                search: ListSearch(
+                  hint: words.commonSearchIn.fill([words.categoriesTitle]),
+                  textOf: (category) => partsLine([category.name, for (final item in category.items) item.name]),
+                ),
+                itemBuilder: (category) => CategoryCard(
+                  key: CategoriesScreen.cardKey(category.id),
+                  category: category,
+                  index: categories.all.indexOf(category),
+                  project: project,
+                  categories: categories,
+                ),
+                listOf: (cards) => ReorderableListView(
+                  padding: ApiListBody.padding,
+                  physics: ApiListBody.physics,
+                  buildDefaultDragHandles: false,
+                  onReorderItem: (from, to) => showRefusalOf(context, categories.moveCategory(from, to)),
+                  children: cards,
+                ),
+              ),
             ),
-          Expanded(
-            child: ApiListBody<Category>(
-              list: categories,
-              emptyText: words.categoriesEmpty,
-              search: ListSearch(
-                hint: words.commonSearchIn.fill([words.categoriesTitle]),
-                textOf: (category) => partsLine([category.name, for (final item in category.items) item.name]),
-              ),
-              itemBuilder: (category) => CategoryCard(
-                key: CategoriesScreen.cardKey(category.id),
-                category: category,
-                index: categories.all.indexOf(category),
-                project: project,
-                categories: categories,
-              ),
-              listOf: (cards) => ReorderableListView(
-                padding: ApiListBody.padding,
-                physics: ApiListBody.physics,
-                buildDefaultDragHandles: false,
-                onReorderItem: (from, to) => showRefusalOf(context, categories.moveCategory(from, to)),
-                children: cards,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -6,23 +6,73 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/search_line.dart';
+import 'package:redix/ui/search_scope.dart';
 import 'package:redix/ui/app_color.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 
-/// redix-app #104 step 1: a search line on every list that grows, its filters folded under the line's arrow.
+/// redix-app #104: a search line on every list that grows, shown from the title bar's search icon, and its filters from the filter icon beside it (version 3).
 void main() {
-  IconData arrow(WidgetTester tester) => tester.widget<Icon>(find.byKey(SearchLine.filtersKey.icon)).icon!;
+  IconData filterIcon(WidgetTester tester) => tester.widget<Icon>(find.byKey(SearchIcons.filtersKey.icon)).icon!;
 
-  testWidgets('Suppliers: typing keeps the suppliers holding it, whichever way an Arabic name is spelled, by name or VAT number; cleared, every one', (tester) async {
+  /// Signs in, opens Suppliers holding مؤسسة الأفق and شركة النخيل, and answers the API and their ids.
+  Future<(FakeApi, String, String)> onSuppliers(WidgetTester tester) async {
     final api = FakeApi()..addProject('غصون 6');
     final horizon = api.addSupplier('project-0', 'مؤسسة الأفق', vatNumber: '300000000000003')['id']! as String;
     final palm = api.addSupplier('project-0', 'شركة النخيل', vatNumber: '311111111111113')['id']! as String;
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.suppliersKey('project-0'));
+    return (api, horizon, palm);
+  }
 
-    expect(find.byKey(SearchLine.filtersKey), findsNothing);
+  testWidgets('R2: a screen with search opens on its rows, with no search line', (tester) async {
+    final (_, horizon, _) = await onSuppliers(tester);
+
+    expect(find.byKey(SearchLine.searchKey), findsNothing);
+    expect(find.byKey(SearchIcons.searchKey), findsOneWidget);
+    expect(find.byKey(SuppliersScreen.rowKey(horizon)), findsOneWidget);
+  });
+
+  testWidgets('R1, R3: the search icon shows the line ready to type, and its ✕ closes it and shows every row again', (tester) async {
+    final (api, horizon, palm) = await onSuppliers(tester);
+    await act(tester, api, () => tester.tap(find.byKey(SearchIcons.searchKey)));
+
+    expect(find.byKey(SearchLine.searchKey), findsOneWidget);
+    expect(tester.widget<EditableText>(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(EditableText))).focusNode.hasFocus, isTrue);
+    await searchFor(tester, api, 'الافق');
+    expect(find.byKey(SuppliersScreen.rowKey(palm)), findsNothing);
+
+    await act(tester, api, () => tester.tap(find.byKey(SearchLine.closeKey)));
+    expect(find.byKey(SearchLine.searchKey), findsNothing);
+    expect(find.byKey(SuppliersScreen.rowKey(horizon)), findsOneWidget);
+    expect(find.byKey(SuppliersScreen.rowKey(palm)), findsOneWidget);
+  });
+
+  testWidgets('R4: while something is typed the search icon leaves the line open, and leaving the screen clears it', (tester) async {
+    final (api, _, palm) = await onSuppliers(tester);
+    await searchFor(tester, api, 'الافق');
+    await act(tester, api, () => tester.tap(find.byKey(SearchIcons.searchKey)));
+
+    expect(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.text('الافق')), findsOneWidget);
+    expect(find.byKey(SuppliersScreen.rowKey(palm)), findsNothing);
+
+    await act(tester, api, () => tester.pageBack());
+    await scrollAndTap(tester, api, HomeScreen.suppliersKey('project-0'));
+    expect(find.byKey(SearchLine.searchKey), findsNothing);
+    expect(find.byKey(SuppliersScreen.rowKey(palm)), findsOneWidget);
+  });
+
+  testWidgets('R7: a search line with no SearchScope over its screen says so rather than showing nothing', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: Scaffold(body: SearchLine(hint: 'search'))));
+
+    expect(tester.takeException(), isA<FlutterError>());
+  });
+
+  testWidgets('Suppliers: typing keeps the suppliers holding it, whichever way an Arabic name is spelled, by name or VAT number; cleared, every one', (tester) async {
+    final (api, horizon, palm) = await onSuppliers(tester);
+
+    expect(find.byKey(SearchIcons.filtersKey), findsNothing);
     await searchFor(tester, api, 'الافق');
     expect(find.byKey(SuppliersScreen.rowKey(horizon)), findsOneWidget);
     expect(find.byKey(SuppliersScreen.rowKey(palm)), findsNothing);
@@ -36,7 +86,7 @@ void main() {
     expect(find.byKey(SuppliersScreen.rowKey(palm)), findsOneWidget);
   });
 
-  testWidgets('Contracts: the arrow opens the filters and folds them; folded with a filter in use it is a filled filter, folded with none it points down', (tester) async {
+  testWidgets('D8, R6: on Contracts the filter icon opens the filters and folds them, without the search line; folded with a filter in use it is filled, with none outlined', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     api
       ..addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000)
@@ -44,20 +94,21 @@ void main() {
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
 
-    expect(arrow(tester), Icons.arrow_drop_down);
+    expect(filterIcon(tester), Icons.filter_alt_outlined);
     expect(find.byKey(ContractsScreen.filterKey(ContractFilter.overrun)), findsNothing);
 
     await openFilters(tester, api);
-    expect(arrow(tester), Icons.arrow_drop_up);
+    expect(find.byKey(ContractsScreen.filterKey(ContractFilter.overrun)), findsOneWidget);
+    expect(find.byKey(SearchLine.searchKey), findsNothing);
     await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.filterKey(ContractFilter.overrun))));
     await foldFilters(tester, api);
     expect(find.byKey(ContractsScreen.filterKey(ContractFilter.overrun)), findsNothing);
-    expect(arrow(tester), Icons.filter_alt);
+    expect(filterIcon(tester), Icons.filter_alt);
 
     await openFilters(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.filterKey(ContractFilter.all))));
     await foldFilters(tester, api);
-    expect(arrow(tester), Icons.arrow_drop_down);
+    expect(filterIcon(tester), Icons.filter_alt_outlined);
   });
 
   testWidgets('Categories: while a search holds text every drag handle stays in place, grayed, and drags nothing; cleared, they drag again', (tester) async {

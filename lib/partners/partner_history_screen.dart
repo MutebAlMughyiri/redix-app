@@ -4,6 +4,7 @@ import '../history/history_view.dart';
 import '../projects/project.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
+import '../ui/search_scope.dart';
 import 'partner_history.dart';
 import 'partners.dart';
 
@@ -62,21 +63,27 @@ class _PartnerHistoryScreenState extends State<PartnerHistoryScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final history = widget.history;
-    return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.partnersHistory, subject: widget.project.name)),
-      body: ListenableBuilder(
-        listenable: Listenable.merge([history, widget.partners]),
-        builder: (context, _) => HistoryView(
-          history: history,
-          title: words.partnersHistory,
-          choiceLabel: words.historyPartner,
-          choices: [for (final partner in widget.partners.all) (partner.id, partner.name)],
-          choiceChipKey: PartnerHistoryScreen.partnerChoiceKey,
-          allKey: PartnerHistoryScreen.allKey,
-          choiceKey: PartnerHistoryScreen.partnerKey,
-          mineKey: PartnerHistoryScreen.mineKey,
-          lineKey: PartnerHistoryScreen.lineKey,
-          moreKey: PartnerHistoryScreen.moreKey,
+    return SearchScope(
+      onTyped: history.search,
+      child: Scaffold(
+        appBar: AppBar(
+          title: ScreenTitle(words.partnersHistory, subject: widget.project.name),
+          actions: [ListenableBuilder(listenable: history, builder: (context, _) => SearchIcons.andFilters(filtersInUse: history.isFiltered))],
+        ),
+        body: ListenableBuilder(
+          listenable: Listenable.merge([history, widget.partners]),
+          builder: (context, _) => HistoryView(
+            history: history,
+            title: words.partnersHistory,
+            choiceLabel: words.historyPartner,
+            choices: [for (final partner in widget.partners.all) (partner.id, partner.name)],
+            choiceChipKey: PartnerHistoryScreen.partnerChoiceKey,
+            allKey: PartnerHistoryScreen.allKey,
+            choiceKey: PartnerHistoryScreen.partnerKey,
+            mineKey: PartnerHistoryScreen.mineKey,
+            lineKey: PartnerHistoryScreen.lineKey,
+            moreKey: PartnerHistoryScreen.moreKey,
+          ),
         ),
       ),
     );

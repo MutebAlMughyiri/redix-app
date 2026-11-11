@@ -1,25 +1,20 @@
 import 'package:flutter/widgets.dart';
 
 import 'arabic_spelling.dart';
+import 'search_scope.dart';
 
-/// What a list that grows is searched by, and the filters folded under its search line (redix-app #104): the one way a screen asks for search. [ListSearch.none] is a
-/// list with no search line.
+/// What a list that grows is searched by, and what its search line draws (redix-app #104): the one way a list asks for search. Whether the line shows and what is
+/// typed belong to the screen's [ScreenSearch]. [ListSearch.none] is a list with no search.
 class ListSearch<T> {
-  /// A search line saying [hint], keeping the items whose [textOf] holds what was typed, whichever way an Arabic word is spelled, with [filters] folded under its arrow;
-  /// [filtersInUse] while one of them differs from how the screen opens, so the folded arrow says so.
-  const ListSearch({required this.hint, required this.textOf, this.filters = const [], this.filtersInUse = false})
-    : onTyped = _keptHere,
-      searchesOnApi = false,
-      autoFocus = false;
+  /// A search line saying [hint], keeping the items whose [textOf] holds what was typed, whichever way an Arabic word is spelled, with [filters] under it.
+  const ListSearch({required this.hint, required this.textOf, this.filters = const []}) : searchesOnApi = false;
 
-  /// A search line saying [hint] whose list the API searches: what is typed goes to [onTyped], which reads the list again, and every item it answers shows, ready to
-  /// type at once when [autoFocus]. [filters] and [filtersInUse] as a list searched here.
-  const ListSearch.onApi({required this.hint, required this.onTyped, this.filters = const [], this.filtersInUse = false, this.autoFocus = false})
-    : textOf = _nothing,
-      searchesOnApi = true;
+  /// A search line saying [hint] whose list the API searches: the screen's [SearchScope] hands what is typed to what reads the list again, and every item the API
+  /// answers shows. [filters] as a list searched here.
+  const ListSearch.onApi({required this.hint, this.filters = const []}) : textOf = _nothing, searchesOnApi = true;
 
-  /// No search line.
-  const ListSearch.none() : hint = '', textOf = _nothing, filters = const [], filtersInUse = false, onTyped = _keptHere, searchesOnApi = false, autoFocus = false;
+  /// No search.
+  const ListSearch.none() : hint = '', textOf = _nothing, filters = const [], searchesOnApi = false;
 
   /// What the empty search line says.
   final String hint;
@@ -27,20 +22,11 @@ class ListSearch<T> {
   /// The text an item is searched by.
   final String Function(T item) textOf;
 
-  /// The members of the filter line folded under the search line's arrow; none, and the line has no arrow.
+  /// The members of the filter line, which the title bar's filter icon opens; none on a list without filters.
   final List<Widget> filters;
-
-  /// True while a filter differs from how the screen opens, so the folded arrow says the list is not as it opened.
-  final bool filtersInUse;
-
-  /// What is typed, for a list the API searches.
-  final ValueChanged<String> onTyped;
 
   /// True when the API searches the list, so every item it answers shows.
   final bool searchesOnApi;
-
-  /// True to open ready to type.
-  final bool autoFocus;
 
   /// True for a list with no search line.
   bool get isNone => hint.isEmpty;
@@ -63,8 +49,6 @@ class ListSearch<T> {
   }
 
   static String _nothing(Object? item) => '';
-
-  static void _keptHere(String typed) {}
 }
 
 /// Tells the rows of a list whether a search narrows it, so what works only on the whole list, such as dragging rows into order, waits until it is cleared.

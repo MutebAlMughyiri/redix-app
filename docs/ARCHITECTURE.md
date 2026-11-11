@@ -89,7 +89,7 @@ lib/
     qr_summary.dart         What was read from the invoice's QR code: its five fields, and an offer to add the seller when no supplier holds its number
   history/
     history_list.dart       A history, newest first, a page at a time: of every thing it covers or one, everyone's lines or the user's own, and those holding what was typed
-    history_view.dart       The one look of a history, the accounts' and the partners': the search line, its filters under the arrow, the lines and المزيد
+    history_view.dart       The one look of a history, the accounts' and the partners': the search line, its filters, the lines and المزيد
   format/
     date_format.dart        A date as the app shows it, in both languages: Gregorian dd.MM.yyyy
     number_format.dart      A number as a person types it: no separators, and as few decimals as it needs, at most two, so 15 is 15 and 7.5 is 7.5
@@ -211,7 +211,7 @@ lib/
     form_button_style.dart  The one style of a form's full-width main button, which stays inside the form
     form_section.dart       One section of a long form: its children on a card, evenly spaced
     labelled_chips.dart     A choice among a few, drawn as chips under what is being chosen
-    list_search.dart        What a list is searched by, on the phone or on the API, with the filters folded under its search line, and how the phone matches what was typed
+    list_search.dart        What a list is searched by, on the phone or on the API, what its search line says and its filters, and how the phone matches what was typed
     name_dialog.dart        Asks for one name, for adding or renaming anything in a project
     part_keys.dart          The keys of the parts inside a keyed element: its label, icon, title, subtitle and the field it is drawn as
     picker_field.dart       A field whose value is chosen elsewhere: it looks like a text field, shows what was chosen, and opens the choice when tapped
@@ -221,7 +221,8 @@ lib/
     row_stripe.dart         Rows one under another a shade apart: an odd row takes the scheme's next tone
     refusal_snack_bar.dart  The key of the SnackBar saying the word wordKey: every message has its own key, made from what it says, so a test finds it by key
     screen_title.dart       A screen's title in the app bar, with what it belongs to on a line beneath, so a long title on a narrow phone never cuts the name to a letter
-    search_line.dart        The one search line: what is typed, and the filters folded under the arrow at its end, closed as the screen opens
+    search_line.dart        The one search line, shown while its screen's search is open, ready to type, its ✕ closing it and clearing what was typed; the filter line under it while open
+    search_scope.dart       One screen's search (redix-app #104, version 3): SearchScope over its Scaffold holds whether the line and the filters show and what is typed; SearchIcons in the title bar opens them, the filter icon filled while a filter is in use
     swipe_to_remove.dart    The one way a row is removed, and the one frame of a row that can be: an outlined card with a red bar inside its end edge where it may be removed, swiped from that edge toward its start past 40% of its width, with no question
     title_bar_add.dart      The plus in a title bar, for what is added rarely, grayed without the permission
     two_fields.dart         Two fields of a form, side by side and of equal width

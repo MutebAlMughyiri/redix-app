@@ -48,6 +48,9 @@ abstract class HistoryList<T extends HistoryLine> extends ApiList<T> {
   /// True while only the signed-in user's own lines show.
   bool get mine => _mine;
 
+  /// True while a filter narrows the lines, so the title bar's filter icon says so (redix-app #104, R6).
+  bool get isFiltered => _chosenId.isNotEmpty || _mine;
+
   /// True while the last page read was full, so another may follow.
   bool get mayHaveMore => all.isNotEmpty && all.length % pageSize == 0;
 

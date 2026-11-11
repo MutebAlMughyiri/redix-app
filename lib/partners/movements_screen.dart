@@ -14,6 +14,7 @@ import 'capital.dart';
 import 'capital_movement.dart';
 import 'capital_movements.dart';
 import '../ui/list_search.dart';
+import '../ui/search_scope.dart';
 import '../words/word_fill.dart';
 import '../format/parts_line.dart';
 
@@ -112,16 +113,18 @@ class _MovementsScreenState extends State<MovementsScreen> {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.capitalMovements, subject: widget.partnerName)),
-      body: ApiListBody<CapitalMovement>(
-        list: widget.movements,
-        emptyText: words.capitalNoMovements,
-        search: ListSearch(
-          hint: words.commonSearchIn.fill([words.capitalMovements]),
-          textOf: (movement) => partsLine([words.text('capital.${movement.type}'), movement.description, movement.accountName, formatDate(movement.date), searchableAmount(movement.amount)]),
+    return SearchScope(
+      child: Scaffold(
+        appBar: AppBar(title: ScreenTitle(words.capitalMovements, subject: widget.partnerName), actions: const [SearchIcons()]),
+        body: ApiListBody<CapitalMovement>(
+          list: widget.movements,
+          emptyText: words.capitalNoMovements,
+          search: ListSearch(
+            hint: words.commonSearchIn.fill([words.capitalMovements]),
+            textOf: (movement) => partsLine([words.text('capital.${movement.type}'), movement.description, movement.accountName, formatDate(movement.date), searchableAmount(movement.amount)]),
+          ),
+          itemBuilder: _row,
         ),
-        itemBuilder: _row,
       ),
     );
   }

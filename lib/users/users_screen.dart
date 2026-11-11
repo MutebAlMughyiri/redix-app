@@ -17,6 +17,7 @@ import 'user_permissions_screen.dart';
 import 'user_row.dart';
 import 'users.dart';
 import '../ui/list_search.dart';
+import '../ui/search_scope.dart';
 import '../words/word_fill.dart';
 import '../format/parts_line.dart';
 
@@ -126,39 +127,42 @@ class _UsersScreenState extends State<UsersScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final users = widget.users;
-    return Scaffold(
-      appBar: AppBar(
-        title: ScreenTitle(words.usersTitle, subject: widget.projectName),
-        actions: [
-          TitleBarAdd(buttonKey: UsersScreen.newUserKey, tooltip: words.usersNew, onPressed: () => context.push(NewUserScreen.pathOf(users.projectId))),
-          IconButton(
-            key: UsersScreen.addExistingKey,
-            icon: Icon(Icons.person_search_outlined, key: UsersScreen.addExistingKey.icon),
-            tooltip: words.usersAddExisting,
-            onPressed: () => showDialog<void>(
-              context: context,
-              builder: (_) => AddExistingUserDialog(users: users),
+    return SearchScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: ScreenTitle(words.usersTitle, subject: widget.projectName),
+          actions: [
+            const SearchIcons(),
+            TitleBarAdd(buttonKey: UsersScreen.newUserKey, tooltip: words.usersNew, onPressed: () => context.push(NewUserScreen.pathOf(users.projectId))),
+            IconButton(
+              key: UsersScreen.addExistingKey,
+              icon: Icon(Icons.person_search_outlined, key: UsersScreen.addExistingKey.icon),
+              tooltip: words.usersAddExisting,
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) => AddExistingUserDialog(users: users),
+              ),
             ),
+          ],
+        ),
+        body: ApiListBody<User>(
+          list: widget.users,
+          emptyText: words.usersNoMatch,
+          search: ListSearch(hint: words.commonSearchIn.fill([words.usersTitle]), textOf: (user) => partsLine([user.displayName, user.username, user.mobile, user.roleName])),
+          itemBuilder: (user) => UserRow(
+            user: user,
+            onEdit: () => showDialog<void>(
+              context: context,
+              builder: (_) => EditUserDialog(user: user, users: widget.users),
+            ),
+            onPermissions: () => context.push(UserPermissionsScreen.pathOf(users.projectId, user.id), extra: widget.projectName),
+            onResetPassword: () => showDialog<void>(
+              context: context,
+              builder: (_) => ResetPasswordDialog(user: user, users: widget.users),
+            ),
+            onDisable: () => _askToDisable(user),
+            onEnable: () => showRefusalOf(context, widget.users.enable(user)),
           ),
-        ],
-      ),
-      body: ApiListBody<User>(
-        list: widget.users,
-        emptyText: words.usersNoMatch,
-        search: ListSearch(hint: words.commonSearchIn.fill([words.usersTitle]), textOf: (user) => partsLine([user.displayName, user.username, user.mobile, user.roleName])),
-        itemBuilder: (user) => UserRow(
-          user: user,
-          onEdit: () => showDialog<void>(
-            context: context,
-            builder: (_) => EditUserDialog(user: user, users: widget.users),
-          ),
-          onPermissions: () => context.push(UserPermissionsScreen.pathOf(users.projectId, user.id), extra: widget.projectName),
-          onResetPassword: () => showDialog<void>(
-            context: context,
-            builder: (_) => ResetPasswordDialog(user: user, users: widget.users),
-          ),
-          onDisable: () => _askToDisable(user),
-          onEnable: () => showRefusalOf(context, widget.users.enable(user)),
         ),
       ),
     );

@@ -5,9 +5,10 @@ import 'list_search.dart';
 import 'load_failure.dart';
 import 'row_stripe.dart';
 import 'search_line.dart';
+import 'search_scope.dart';
 
 /// The body of a screen that shows an [ApiList]: why it could not load with a way to try again, loading, empty, or its items, which are read again when pulled down. A
-/// list that grows has the [SearchLine] over it (redix-app #104).
+/// list that grows has the [SearchLine] over it, shown and filled through its screen's [ScreenSearch] (redix-app #104).
 class ApiListBody<T> extends StatefulWidget {
   /// The body of a screen showing [list], with [itemBuilder] drawing each item [keeps] and [emptyText] said while it keeps none. A screen whose rows are dragged gives
   /// [listOf]; one that shows more than its list gives [alsoRefresh], read again with it; one whose list grows gives its [search].
@@ -42,7 +43,7 @@ class ApiListBody<T> extends StatefulWidget {
   /// What else the screen reads again when the list is pulled down.
   final Future<void> Function() alsoRefresh;
 
-  /// What the list is searched by, and the filters folded under its search line; none for a list that stays short.
+  /// What the list is searched by, and the filters under its search line; none for a list that stays short.
   final ListSearch<T> search;
 
   /// The group an item is listed under, for a list drawn in groups with [headingOf] over the first item of each that shows; empty for no group.
@@ -92,19 +93,17 @@ class ApiListBody<T> extends StatefulWidget {
 }
 
 class _ApiListBodyState<T> extends State<ApiListBody<T>> {
-  var _typed = '';
-
   /// Reads the list, and whatever the screen shows besides it, again.
   Future<void> _refresh() => Future.wait([widget.list.load(), widget.alsoRefresh()]);
 
-  bool _keeps(T item) => widget.keeps(item) && (_typed.trim().isEmpty || widget.search.matches(item, _typed));
+  bool _keeps(T item, String typed) => widget.keeps(item) && (typed.trim().isEmpty || widget.search.matches(item, typed));
 
-  Widget _state(BuildContext context) {
+  Widget _state(BuildContext context, String typed) {
     final list = widget.list;
     if (list.message.isNotEmpty) {
       return Center(child: LoadFailure(message: list.message, onRetry: list.load));
     }
-    final kept = list.all.where(_keeps).toList();
+    final kept = [for (final item in list.all) if (_keeps(item, typed)) item];
     if (kept.isEmpty) {
       return Center(
         child: list.isLoading && list.all.isEmpty
@@ -126,27 +125,20 @@ class _ApiListBodyState<T> extends State<ApiListBody<T>> {
     return RowStripe(index: index, child: startsGroup ? Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [widget.headingOf(group), row]) : row);
   }
 
+  Widget _items(String typed) =>
+      ListNarrowed(isNarrowed: typed.trim().isNotEmpty, child: ListenableBuilder(listenable: widget.list, builder: (context, _) => _state(context, typed)));
+
   @override
   Widget build(BuildContext context) {
-    final items = ListNarrowed(isNarrowed: _typed.trim().isNotEmpty, child: ListenableBuilder(listenable: widget.list, builder: (context, _) => _state(context)));
     final search = widget.search;
     if (search.isNone) {
-      return items;
+      return _items('');
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SearchLine(
-          hint: search.hint,
-          filters: search.filters,
-          filtersInUse: search.filtersInUse,
-          autoFocus: search.autoFocus,
-          onTyped: (typed) {
-            setState(() => _typed = typed);
-            search.onTyped(typed);
-          },
-        ),
-        Expanded(child: items),
+        SearchLine(hint: search.hint, filters: search.filters),
+        Expanded(child: _items(ScreenSearch.of(context).typed)),
       ],
     );
   }

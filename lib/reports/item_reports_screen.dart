@@ -6,6 +6,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/api_object_body.dart';
 import '../ui/list_search.dart';
+import '../ui/search_scope.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/search_line.dart';
@@ -118,40 +119,43 @@ class _ItemReportsScreenState extends State<ItemReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.reportsRevenueAndExpenses, subject: widget.project.name)),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          SearchLine(hint: words.commonSearchIn.fill([words.reportsRevenueAndExpenses]), onTyped: _search),
-          Expanded(
-            child: ApiObjectBody(
-              object: widget.summary,
-              builder: (figures) => RefreshIndicator(
-                onRefresh: widget.summary.load,
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  physics: ApiListBody.physics,
-                  children: [
-                    SegmentedButton<SummarySide>(
-                      key: ItemReportsScreen.sideKey,
-                      segments: [
-                        ButtonSegment(value: SummarySide.revenue, label: Text(words.summaryRevenue, key: ItemReportsScreen.sideOptionKey(SummarySide.revenue))),
-                        ButtonSegment(value: SummarySide.expenses, label: Text(words.summaryExpenses, key: ItemReportsScreen.sideOptionKey(SummarySide.expenses))),
-                      ],
-                      selected: {_side},
-                      onSelectionChanged: (selection) => setState(() => _side = selection.single),
-                    ),
-                    const SizedBox(height: 8),
-                    for (final category in _side.categoriesOf(figures))
-                      if (ListSearch.groupOf(category.name, category.items, (item) => item.name, _typed) case (isShown: true, :final children))
-                        _category(category, children, _side.totalOf(figures)),
-                  ],
+    return SearchScope(
+      onTyped: _search,
+      child: Scaffold(
+        appBar: AppBar(title: ScreenTitle(words.reportsRevenueAndExpenses, subject: widget.project.name), actions: const [SearchIcons()]),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SearchLine(hint: words.commonSearchIn.fill([words.reportsRevenueAndExpenses])),
+            Expanded(
+              child: ApiObjectBody(
+                object: widget.summary,
+                builder: (figures) => RefreshIndicator(
+                  onRefresh: widget.summary.load,
+                  child: ListView(
+                    padding: const EdgeInsets.all(16),
+                    physics: ApiListBody.physics,
+                    children: [
+                      SegmentedButton<SummarySide>(
+                        key: ItemReportsScreen.sideKey,
+                        segments: [
+                          ButtonSegment(value: SummarySide.revenue, label: Text(words.summaryRevenue, key: ItemReportsScreen.sideOptionKey(SummarySide.revenue))),
+                          ButtonSegment(value: SummarySide.expenses, label: Text(words.summaryExpenses, key: ItemReportsScreen.sideOptionKey(SummarySide.expenses))),
+                        ],
+                        selected: {_side},
+                        onSelectionChanged: (selection) => setState(() => _side = selection.single),
+                      ),
+                      const SizedBox(height: 8),
+                      for (final category in _side.categoriesOf(figures))
+                        if (ListSearch.groupOf(category.name, category.items, (item) => item.name, _typed) case (isShown: true, :final children))
+                          _category(category, children, _side.totalOf(figures)),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

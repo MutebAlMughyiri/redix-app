@@ -623,8 +623,14 @@ mixin WordGetters {
   /// The word `common.cancel`.
   String get commonCancel => text('common.cancel');
 
+  /// The word `common.filter`.
+  String get commonFilter => text('common.filter');
+
   /// The word `common.retry`.
   String get commonRetry => text('common.retry');
+
+  /// The word `common.search`.
+  String get commonSearch => text('common.search');
 
   /// The word `common.searchIn`.
   String get commonSearchIn => text('common.searchIn');

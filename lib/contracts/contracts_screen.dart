@@ -17,6 +17,7 @@ import '../reports/report_files.dart';
 import '../auth/permission.dart';
 import '../ui/filter_line.dart';
 import '../ui/list_search.dart';
+import '../ui/search_scope.dart';
 import '../words/word_fill.dart';
 import '../format/parts_line.dart';
 import '../format/number_format.dart';
@@ -168,44 +169,45 @@ class _ContractsScreenState extends State<ContractsScreen> {
     final words = Words.of(context);
     final project = widget.project;
     final contracts = widget.contracts;
-    return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.contractsTitle, subject: project.name)),
-      bottomNavigationBar: BottomButton(buttonKey: ContractsScreen.addKey, label: words.contractsNew, onPressed: project.mayManageSettings ? () => _ask(Contract.none()) : null),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (project.may(Permission.seeAllCapital))
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: ReportFileButtons(files: widget.files, address: '/projects/${project.id}/reports/contracts', name: 'contracts', kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
-            ),
-          Expanded(
-            child: ListenableBuilder(
-              listenable: contracts,
-              builder: (context, _) => ApiListBody<Contract>(
-                list: contracts,
-                emptyText: words.contractsEmpty,
-                keeps: _filter.keeps,
-                search: ListSearch(
-                  hint: words.commonSearchIn.fill([words.contractsTitle]),
-                  textOf: (contract) => partsLine([contract.supplierName, contract.itemName, contract.notes, searchableAmount(contract.value)]),
-                  filtersInUse: _filter != ContractFilter.all,
-                  filters: [
-                    FilterLine.segmented(
-                      key: ContractsScreen.filterChoiceKey,
-                      values: ContractFilter.values,
-                      selected: _filter,
-                      labelOf: (filter) => '${words.text(filter.wordKey)} · ${contracts.all.where(filter.keeps).length}',
-                      keyOf: ContractsScreen.filterKey,
-                      onChanged: (filter) => setState(() => _filter = filter),
-                    ),
-                  ],
+    return SearchScope(
+      child: Scaffold(
+        appBar: AppBar(title: ScreenTitle(words.contractsTitle, subject: project.name), actions: [SearchIcons.andFilters(filtersInUse: _filter != ContractFilter.all)]),
+        bottomNavigationBar: BottomButton(buttonKey: ContractsScreen.addKey, label: words.contractsNew, onPressed: project.mayManageSettings ? () => _ask(Contract.none()) : null),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (project.may(Permission.seeAllCapital))
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: ReportFileButtons(files: widget.files, address: '/projects/${project.id}/reports/contracts', name: 'contracts', kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
+              ),
+            Expanded(
+              child: ListenableBuilder(
+                listenable: contracts,
+                builder: (context, _) => ApiListBody<Contract>(
+                  list: contracts,
+                  emptyText: words.contractsEmpty,
+                  keeps: _filter.keeps,
+                  search: ListSearch(
+                    hint: words.commonSearchIn.fill([words.contractsTitle]),
+                    textOf: (contract) => partsLine([contract.supplierName, contract.itemName, contract.notes, searchableAmount(contract.value)]),
+                    filters: [
+                      FilterLine.segmented(
+                        key: ContractsScreen.filterChoiceKey,
+                        values: ContractFilter.values,
+                        selected: _filter,
+                        labelOf: (filter) => '${words.text(filter.wordKey)} · ${contracts.all.where(filter.keeps).length}',
+                        keyOf: ContractsScreen.filterKey,
+                        onChanged: (filter) => setState(() => _filter = filter),
+                      ),
+                    ],
+                  ),
+                  itemBuilder: (contract) => ContractCard(contract: contract, contracts: contracts, mayChange: project.mayManageSettings, onAmend: () => _ask(contract)),
                 ),
-                itemBuilder: (contract) => ContractCard(contract: contract, contracts: contracts, mayChange: project.mayManageSettings, onAmend: () => _ask(contract)),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -6,6 +6,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/filter_line.dart';
 import '../ui/list_search.dart';
+import '../ui/search_scope.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
@@ -149,35 +150,36 @@ class _EntriesScreenState extends State<EntriesScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final entries = widget.entries;
-    return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.entriesTitle, subject: widget.project.name)),
-      body: ApiListBody<EntryRow>(
-        list: entries,
-        emptyText: words.entriesEmpty,
-        search: ListSearch.onApi(
-          hint: words.entriesSearchHint,
-          autoFocus: widget.startsSearching,
-          onTyped: (typed) => _change(() => _filter.text = typed),
-          filters: _filters(words),
-          filtersInUse: _filter.isNarrowed || !_filter.onlyMine,
-        ),
-        listOf: (rows) => ListView(
-          padding: ApiListBody.padding,
-          physics: ApiListBody.physics,
-          children: [
-            ...rows,
-            if (entries.mayHaveMore)
-              Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: TextButton(
-                  key: EntriesScreen.moreKey,
-                  onPressed: () => showRefusalOf(context, entries.showMore()),
-                  child: Text(words.entriesShowMore, key: EntriesScreen.moreKey.label),
+    return SearchScope(
+      startsOpen: widget.startsSearching,
+      onTyped: (typed) => _change(() => _filter.text = typed),
+      child: Scaffold(
+        appBar: AppBar(title: ScreenTitle(words.entriesTitle, subject: widget.project.name), actions: [SearchIcons.andFilters(filtersInUse: _filter.isNarrowed || !_filter.onlyMine)]),
+        body: ApiListBody<EntryRow>(
+          list: entries,
+          emptyText: words.entriesEmpty,
+          search: ListSearch.onApi(
+            hint: words.entriesSearchHint,
+            filters: _filters(words),
+          ),
+          listOf: (rows) => ListView(
+            padding: ApiListBody.padding,
+            physics: ApiListBody.physics,
+            children: [
+              ...rows,
+              if (entries.mayHaveMore)
+                Align(
+                  alignment: AlignmentDirectional.centerEnd,
+                  child: TextButton(
+                    key: EntriesScreen.moreKey,
+                    onPressed: () => showRefusalOf(context, entries.showMore()),
+                    child: Text(words.entriesShowMore, key: EntriesScreen.moreKey.label),
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
+          itemBuilder: (entry) => SwipeableEntryCard(project: widget.project, entries: entries, entry: entry, onOpen: _open),
         ),
-        itemBuilder: (entry) => SwipeableEntryCard(project: widget.project, entries: entries, entry: entry, onOpen: _open),
       ),
     );
   }

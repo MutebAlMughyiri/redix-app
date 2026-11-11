@@ -21,6 +21,7 @@ import '../words/words.dart';
 import 'documents.dart';
 import '../ui/act_once.dart';
 import '../ui/list_search.dart';
+import '../ui/search_scope.dart';
 import '../words/word_fill.dart';
 import '../format/parts_line.dart';
 
@@ -117,25 +118,28 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: ScreenTitle(words.documentsTitle, subject: widget.project.name),
-        actions: [
-          TitleBarAdd(buttonKey: DocumentsScreen.addKey, tooltip: words.documentsAdd, onPressed: widget.project.mayManageProject ? () => showDialog<void>(context: context, builder: (_) => _DocumentDialog(documents: widget.documents, capture: widget.capture)) : null),
-        ],
-      ),
-      body: ApiListBody<Document>(
-        list: widget.documents,
-        emptyText: words.documentsNone,
-        search: ListSearch(hint: words.commonSearchIn.fill([words.documentsTitle]), textOf: (document) => partsLine([document.name, document.group, document.fileName])),
-        listOf: (tiles) => ListView(
-          padding: ApiListBody.padding,
-          physics: ApiListBody.physics,
-          children: tiles,
+    return SearchScope(
+      child: Scaffold(
+        appBar: AppBar(
+          title: ScreenTitle(words.documentsTitle, subject: widget.project.name),
+          actions: [
+            const SearchIcons(),
+            TitleBarAdd(buttonKey: DocumentsScreen.addKey, tooltip: words.documentsAdd, onPressed: widget.project.mayManageProject ? () => showDialog<void>(context: context, builder: (_) => _DocumentDialog(documents: widget.documents, capture: widget.capture)) : null),
+          ],
         ),
-        groupOf: (document) => document.group,
-        headingOf: _heading,
-        itemBuilder: (document) => _tile(document, words),
+        body: ApiListBody<Document>(
+          list: widget.documents,
+          emptyText: words.documentsNone,
+          search: ListSearch(hint: words.commonSearchIn.fill([words.documentsTitle]), textOf: (document) => partsLine([document.name, document.group, document.fileName])),
+          listOf: (tiles) => ListView(
+            padding: ApiListBody.padding,
+            physics: ApiListBody.physics,
+            children: tiles,
+          ),
+          groupOf: (document) => document.group,
+          headingOf: _heading,
+          itemBuilder: (document) => _tile(document, words),
+        ),
       ),
     );
   }

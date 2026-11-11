@@ -4,6 +4,7 @@ import '../projects/project.dart';
 import '../history/history_view.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
+import '../ui/search_scope.dart';
 import 'account_history.dart';
 import 'accounts.dart';
 
@@ -62,21 +63,27 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final history = widget.history;
-    return Scaffold(
-      appBar: AppBar(title: ScreenTitle(words.accountsHistory, subject: widget.project.name)),
-      body: ListenableBuilder(
-        listenable: Listenable.merge([history, widget.accounts]),
-        builder: (context, _) => HistoryView(
-          history: history,
-          title: words.accountsHistory,
-          choiceLabel: words.historyAccount,
-          choices: [for (final account in widget.accounts.all) (account.id, account.name)],
-          choiceChipKey: AccountHistoryScreen.accountChoiceKey,
-          allKey: AccountHistoryScreen.allKey,
-          choiceKey: AccountHistoryScreen.accountKey,
-          mineKey: AccountHistoryScreen.mineKey,
-          lineKey: AccountHistoryScreen.lineKey,
-          moreKey: AccountHistoryScreen.moreKey,
+    return SearchScope(
+      onTyped: history.search,
+      child: Scaffold(
+        appBar: AppBar(
+          title: ScreenTitle(words.accountsHistory, subject: widget.project.name),
+          actions: [ListenableBuilder(listenable: history, builder: (context, _) => SearchIcons.andFilters(filtersInUse: history.isFiltered))],
+        ),
+        body: ListenableBuilder(
+          listenable: Listenable.merge([history, widget.accounts]),
+          builder: (context, _) => HistoryView(
+            history: history,
+            title: words.accountsHistory,
+            choiceLabel: words.historyAccount,
+            choices: [for (final account in widget.accounts.all) (account.id, account.name)],
+            choiceChipKey: AccountHistoryScreen.accountChoiceKey,
+            allKey: AccountHistoryScreen.allKey,
+            choiceKey: AccountHistoryScreen.accountKey,
+            mineKey: AccountHistoryScreen.mineKey,
+            lineKey: AccountHistoryScreen.lineKey,
+            moreKey: AccountHistoryScreen.moreKey,
+          ),
         ),
       ),
     );

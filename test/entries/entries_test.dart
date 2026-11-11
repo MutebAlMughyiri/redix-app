@@ -7,6 +7,7 @@ import 'package:redix/config/app_config.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/ui/search_line.dart';
+import 'package:redix/ui/search_scope.dart';
 import 'package:redix/entries/table_picker.dart';
 import 'package:redix/home/home_screen.dart';
 
@@ -712,7 +713,7 @@ void main() {
 
       expect(api.entryQueries.last, {'mine': ['true'], 'take': ['5']});
       expect(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.text('احمد')), findsNothing);
-      expect(tester.widget<Icon>(find.byKey(SearchLine.filtersKey.icon)).icon, Icons.arrow_drop_down);
+      expect(tester.widget<Icon>(find.byKey(SearchIcons.filtersKey.icon)).icon, Icons.filter_alt_outlined);
     });
 
     testWidgets('R8, redix-app #104: a period chosen under the arrow is asked of the API as its first and last day, both kept', (tester) async {

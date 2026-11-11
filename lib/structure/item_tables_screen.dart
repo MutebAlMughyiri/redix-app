@@ -14,6 +14,7 @@ import 'item_tables.dart';
 import '../ui/drag_handle.dart';
 import '../ui/api_list_body.dart';
 import '../ui/list_search.dart';
+import '../ui/search_scope.dart';
 import '../words/word_fill.dart';
 
 /// An item's tables (AC-46.8), in the order its sheet prints them: its general table, each subgroup a person named, and each contract's payments, each with how many approved
@@ -116,42 +117,44 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
     final words = Words.of(context);
     return ListenableBuilder(
       listenable: widget.tables,
-      builder: (context, _) => Scaffold(
-        appBar: AppBar(title: ScreenTitle(words.categoriesTables, subject: widget.categories.itemOf(widget.itemId).name)),
-        bottomNavigationBar: BottomButton(
-          buttonKey: ItemTablesScreen.addKey,
-          label: words.subgroupsNew,
-          onPressed: widget.project.mayChangeStructure && widget.categories.itemOf(widget.itemId).type.takesPurchases
-              ? () => _ask(title: words.subgroupsNew, saveLabel: words.subgroupsNew, onSave: widget.tables.addSubgroup)
-              : null,
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(words.categoriesTablesHint, key: ItemTablesScreen.hintKey, style: Theme.of(context).textTheme.bodySmall),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ApiListBody<ItemTable>(
-                list: widget.tables,
-                emptyText: words.categoriesNoTableMatch,
-                search: ListSearch(hint: words.commonSearchIn.fill([words.categoriesTables]), textOf: (table) => table.name),
-                itemBuilder: (table) => _row(table, widget.tables.all.indexOf(table)),
-                listOf: (rows) => ReorderableListView(
-                  padding: const EdgeInsets.only(bottom: 96),
-                  buildDefaultDragHandles: false,
-                  onReorderItem: (from, to) => showRefusalOf(context, widget.tables.move(from, to)),
-                  children: rows,
+      builder: (context, _) => SearchScope(
+        child: Scaffold(
+          appBar: AppBar(title: ScreenTitle(words.categoriesTables, subject: widget.categories.itemOf(widget.itemId).name), actions: const [SearchIcons()]),
+          bottomNavigationBar: BottomButton(
+            buttonKey: ItemTablesScreen.addKey,
+            label: words.subgroupsNew,
+            onPressed: widget.project.mayChangeStructure && widget.categories.itemOf(widget.itemId).type.takesPurchases
+                ? () => _ask(title: words.subgroupsNew, saveLabel: words.subgroupsNew, onSave: widget.tables.addSubgroup)
+                : null,
+          ),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(words.categoriesTablesHint, key: ItemTablesScreen.hintKey, style: Theme.of(context).textTheme.bodySmall),
+                  ],
                 ),
               ),
-            ),
-          ],
+              Expanded(
+                child: ApiListBody<ItemTable>(
+                  list: widget.tables,
+                  emptyText: words.categoriesNoTableMatch,
+                  search: ListSearch(hint: words.commonSearchIn.fill([words.categoriesTables]), textOf: (table) => table.name),
+                  itemBuilder: (table) => _row(table, widget.tables.all.indexOf(table)),
+                  listOf: (rows) => ReorderableListView(
+                    padding: const EdgeInsets.only(bottom: 96),
+                    buildDefaultDragHandles: false,
+                    onReorderItem: (from, to) => showRefusalOf(context, widget.tables.move(from, to)),
+                    children: rows,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
