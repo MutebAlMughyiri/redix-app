@@ -43,7 +43,7 @@ void main() {
       final manager = await Given.manager();
       await $.onTheHome(manager);
       await $(HomeScreen.sharedSettingsKey(manager.projectId)).tap();
-      await $.reach($(SharedSettingsScreen.signOutKey));
+      await $.reach($(SharedSettingsScreen.whoKey));
       for (final key in [HomeScreen.projectInfoKey(manager.projectId), HomeScreen.usersKey(manager.projectId), HomeScreen.categoriesKey(manager.projectId), HomeScreen.paymentMethodsKey(manager.projectId)]) {
         expect($(key), findsNothing);
       }

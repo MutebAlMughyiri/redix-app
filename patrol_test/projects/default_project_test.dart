@@ -117,7 +117,7 @@ void main() {
       expect($(HomeScreen.titleKey), findsNothing);
     });
 
-    phoneCase('Switch project from a default stays on the list', ($) async {
+    phoneCase('Switch project from a default opens the list, with the back arrow to Settings (Muteb, 11 Nov 2026)', ($) async {
       final manager = await Given.manager();
       await Given.defaultProject(manager);
       await $.startApp();
@@ -126,7 +126,9 @@ void main() {
       await $(HomeScreen.sharedSettingsKey(manager.projectId)).tap();
       await $.tapOn(SharedSettingsScreen.switchProjectKey);
       await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
-      expect($.canGoBack, isFalse);
+      expect($.canGoBack, isTrue);
+      await $.back();
+      await $.reach($(SharedSettingsScreen.whoKey));
     });
 
     phoneCase('waiting and rejected projects are not offered in Default project', ($) async {

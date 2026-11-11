@@ -92,7 +92,7 @@ void main() {
       final manager = await Given.manager();
       await $.onTheList(manager);
       await $(ProjectsScreen.sharedSettingsKey).tap();
-      await $.reach($(SharedSettingsScreen.signOutKey));
+      await $.reach($(SharedSettingsScreen.whoKey));
       expect($(SharedSettingsScreen.registeredKey), findsNothing);
     });
 
