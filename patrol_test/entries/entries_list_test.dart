@@ -18,9 +18,6 @@ Future<void> onEntries(PatrolIntegrationTester $, Person person) async {
   await $.reach($(SearchLine.searchKey));
 }
 
-/// How many entry rows show.
-int rowsShown() => find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith('entries.row.')).evaluate().length;
-
 void main() {
   phoneClass('The list of entries (UC-033)', () {
     phoneCase('everyone sees all entries, and starts on their own', ($) async {
@@ -136,15 +133,18 @@ void main() {
     phoneCase('redix-app #104: the entries come five at a time, as Settings chooses by default, and Show more reads the next', ($) async {
       final manager = await Given.manager();
       final account = await Given.account(manager);
-      for (var entry = 1; entry <= 6; entry++) {
-        await Given.entry(manager, amount: entry, accountId: account);
-      }
+      final oldestFirst = [for (var entry = 1; entry <= 6; entry++) await Given.entry(manager, amount: entry, accountId: account)];
       await onEntries($, manager);
       await $.goTo($(EntriesScreen.moreKey));
-      expect(rowsShown(), 5);
+      expect($(EntriesScreen.rowKey(oldestFirst.first)), findsNothing);
+      for (final id in oldestFirst.skip(1)) {
+        await $.goUpTo($(EntriesScreen.rowKey(id)));
+        expect($(EntriesScreen.rowKey(id)), findsOneWidget);
+      }
       await $.tapOn(EntriesScreen.moreKey);
       await $.gone($(EntriesScreen.moreKey));
-      expect(rowsShown(), 6);
+      await $.goTo($(EntriesScreen.rowKey(oldestFirst.first)));
+      expect($(EntriesScreen.rowKey(oldestFirst.first)), findsOneWidget);
     });
 
     phoneCase('a search that finds nothing says so', ($) async {
