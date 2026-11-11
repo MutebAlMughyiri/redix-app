@@ -56,43 +56,64 @@ class _ItemReportsScreenState extends State<ItemReportsScreen> {
   var _side = SummarySide.expenses;
   var _typed = '';
 
+  /// Each category's tile: opened while a search narrows the categories, folded once it is cleared.
+  final _tiles = <String, ExpansibleController>{};
+
   @override
   void initState() {
     super.initState();
     widget.summary.loadOnOpen();
   }
 
-  /// The tile of [category], with its share of [sideTotal], listing the items [shown]: those holding what was typed, or all of them when its own name holds it, open while
-  /// a search narrows them. A search opens it afresh and clearing it folds it again.
-  Widget _category(CategoryTotal category, List<ItemTotal> shown, double sideTotal) {
-    final narrowed = _typed.trim().isNotEmpty;
-    return KeyedSubtree(
-      key: ValueKey((category.id, narrowed)),
-      child: ExpansionTile(
-        key: ItemReportsScreen.categoryKey(category.id),
-        initiallyExpanded: narrowed,
-        title: CategoryShare(category: category, sideTotal: sideTotal, parts: ItemReportsScreen.categoryKey(category.id)),
-        children: [
-          for (final (index, item) in shown.indexed)
-            RowStripe(
-              index: index,
-              child: ListTile(
-                key: ItemReportsScreen.itemKey(item.id),
-                title: Text(item.name, key: ItemReportsScreen.itemKey(item.id).title),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(formatMoney(item.total), key: ItemReportsScreen.itemKey(item.id).trailing),
-                    Icon(Icons.chevron_right, key: ItemReportsScreen.itemKey(item.id).icon),
-                  ],
-                ),
-                onTap: () => context.push(ItemReportScreen.pathOf(widget.project.id, item.id), extra: widget.project),
-              ),
-            ),
-        ],
-      ),
-    );
+  @override
+  void dispose() {
+    for (final tile in _tiles.values) {
+      tile.dispose();
+    }
+    super.dispose();
   }
+
+  bool get _isNarrowed => _typed.trim().isNotEmpty;
+
+  /// The tile of the category [id], open from the start while a search narrows the categories.
+  ExpansibleController _tileOf(String id) => _tiles.putIfAbsent(id, () => _isNarrowed ? (ExpansibleController()..expand()) : ExpansibleController());
+
+  /// Keeps what was typed, opening every category while it narrows them and folding them once it is cleared.
+  void _search(String typed) {
+    setState(() => _typed = typed);
+    for (final tile in _tiles.values) {
+      if (_isNarrowed) {
+        tile.expand();
+      } else {
+        tile.collapse();
+      }
+    }
+  }
+
+  /// The tile of [category], with its share of [sideTotal], listing the items [shown]: those holding what was typed, or all of them when its own name holds it.
+  Widget _category(CategoryTotal category, List<ItemTotal> shown, double sideTotal) => ExpansionTile(
+    key: ItemReportsScreen.categoryKey(category.id),
+    controller: _tileOf(category.id),
+    title: CategoryShare(category: category, sideTotal: sideTotal, parts: ItemReportsScreen.categoryKey(category.id)),
+    children: [
+      for (final (index, item) in shown.indexed)
+        RowStripe(
+          index: index,
+          child: ListTile(
+            key: ItemReportsScreen.itemKey(item.id),
+            title: Text(item.name, key: ItemReportsScreen.itemKey(item.id).title),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(formatMoney(item.total), key: ItemReportsScreen.itemKey(item.id).trailing),
+                Icon(Icons.chevron_right, key: ItemReportsScreen.itemKey(item.id).icon),
+              ],
+            ),
+            onTap: () => context.push(ItemReportScreen.pathOf(widget.project.id, item.id), extra: widget.project),
+          ),
+        ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -102,10 +123,7 @@ class _ItemReportsScreenState extends State<ItemReportsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SearchLine(
-            search: ListSearch<String>(hint: words.commonSearchIn.fill([words.reportsRevenueAndExpenses]), textOf: (name) => name),
-            onTyped: (typed) => setState(() => _typed = typed),
-          ),
+          SearchLine(hint: words.commonSearchIn.fill([words.reportsRevenueAndExpenses]), onTyped: _search),
           Expanded(
             child: ApiObjectBody(
               object: widget.summary,

@@ -140,7 +140,7 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
             Expanded(
               child: ApiListBody<ItemTable>(
                 list: widget.tables,
-                emptyText: '',
+                emptyText: words.categoriesNoTableMatch,
                 search: ListSearch(hint: words.commonSearchIn.fill([words.categoriesTables]), textOf: (table) => table.name),
                 itemBuilder: (table) => _row(table, widget.tables.all.indexOf(table)),
                 listOf: (rows) => ReorderableListView(

@@ -82,8 +82,13 @@ class _EntryLinkScreenState extends State<EntryLinkScreen> {
       return;
     }
     final router = GoRouter.of(context);
+    final path = found.single.isPending && project.mayApproveEntries ? ApprovalsScreen.pathOfEntry(project.id, widget.entryId) : EntriesScreen.entryPathOf(project.id, found.single);
+    if (router.canPop()) {
+      unawaited(router.pushReplacement(path, extra: project));
+      return;
+    }
     router.go(HomeScreen.pathOf(project.id));
-    unawaited(router.push(found.single.isPending && project.mayApproveEntries ? ApprovalsScreen.pathOfEntry(project.id, widget.entryId) : EntriesScreen.entryPathOf(project.id, found.single), extra: project));
+    unawaited(router.push(path, extra: project));
   }
 
   @override

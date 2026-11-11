@@ -82,7 +82,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
   }
 
   /// What a row is searched by: what it says and its amount.
-  static String _textOf(ItemEntryRow row) => [row.description, row.supplierName, row.invoiceNumber, ...row.values, formatDate(row.date), formatPlain(row.amount), formatMoney(row.amount)].join(' ');
+  static String _textOf(ItemEntryRow row) => [row.description, row.supplierName, row.invoiceNumber, ...row.values, formatDate(row.date), searchableAmount(row.amount)].join(' ');
 
   Widget _row(ItemEntryRow row, List<String> columns) {
     final words = Words.of(context);
@@ -190,10 +190,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SearchLine(
-                search: ListSearch<String>(hint: words.commonSearchIn.fill([report.itemName]), textOf: (text) => text),
-                onTyped: (typed) => setState(() => _typed = typed),
-              ),
+              SearchLine(hint: words.commonSearchIn.fill([report.itemName]), onTyped: (typed) => setState(() => _typed = typed)),
               Expanded(
                 child: ListView(
                   padding: const EdgeInsets.all(16),

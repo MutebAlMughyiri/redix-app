@@ -40,9 +40,9 @@ class NewestEntries extends ProjectEntries {
 
   /// Reads as many again as show at a time. Returns an empty string once read, otherwise the word key saying they could not be; what showed stays, and Show more with it.
   Future<String> showMore() async {
-    _pages++;
+    final asked = ++_pages;
     await load();
-    if (message.isNotEmpty) {
+    if (message.isNotEmpty && _pages == asked) {
       _pages--;
     }
     return message;

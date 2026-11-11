@@ -6,7 +6,7 @@ import 'arabic_spelling.dart';
 /// list with no search line.
 class ListSearch<T> {
   /// A search line saying [hint], keeping the items whose [textOf] holds what was typed, whichever way an Arabic word is spelled, with [filters] folded under its arrow;
-  /// [filtersInUse] while one of them narrows the list, so the folded arrow says so.
+  /// [filtersInUse] while one of them differs from how the screen opens, so the folded arrow says so.
   const ListSearch({required this.hint, required this.textOf, this.filters = const [], this.filtersInUse = false})
     : onTyped = _keptHere,
       searchesOnApi = false,
@@ -30,7 +30,7 @@ class ListSearch<T> {
   /// The members of the filter line folded under the search line's arrow; none, and the line has no arrow.
   final List<Widget> filters;
 
-  /// True while a filter narrows the list.
+  /// True while a filter differs from how the screen opens, so the folded arrow says the list is not as it opened.
   final bool filtersInUse;
 
   /// What is typed, for a list the API searches.

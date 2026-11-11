@@ -85,7 +85,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
   @override
   void initState() {
     super.initState();
-    widget.entries.openFirstPage();
+    widget.entries.open();
   }
 
   /// Changes the filter by [change] and reads the entries again from the first page.
@@ -151,36 +151,33 @@ class _EntriesScreenState extends State<EntriesScreen> {
     final entries = widget.entries;
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.entriesTitle, subject: widget.project.name)),
-      body: ListenableBuilder(
-        listenable: entries,
-        builder: (context, _) => ApiListBody<EntryRow>(
-          list: entries,
-          emptyText: words.entriesEmpty,
-          search: ListSearch.onApi(
-            hint: words.entriesSearchHint,
-            autoFocus: widget.startsSearching,
-            onTyped: (typed) => _change(() => _filter.text = typed),
-            filters: _filters(words),
-            filtersInUse: _filter.isNarrowed || !_filter.onlyMine,
-          ),
-          listOf: (rows) => ListView(
-            padding: ApiListBody.padding,
-            physics: ApiListBody.physics,
-            children: [
-              ...rows,
-              if (entries.mayHaveMore)
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: TextButton(
-                    key: EntriesScreen.moreKey,
-                    onPressed: () => showRefusalOf(context, entries.showMore()),
-                    child: Text(words.entriesShowMore, key: EntriesScreen.moreKey.label),
-                  ),
-                ),
-            ],
-          ),
-          itemBuilder: (entry) => SwipeableEntryCard(project: widget.project, entries: entries, entry: entry, onOpen: _open),
+      body: ApiListBody<EntryRow>(
+        list: entries,
+        emptyText: words.entriesEmpty,
+        search: ListSearch.onApi(
+          hint: words.entriesSearchHint,
+          autoFocus: widget.startsSearching,
+          onTyped: (typed) => _change(() => _filter.text = typed),
+          filters: _filters(words),
+          filtersInUse: _filter.isNarrowed || !_filter.onlyMine,
         ),
+        listOf: (rows) => ListView(
+          padding: ApiListBody.padding,
+          physics: ApiListBody.physics,
+          children: [
+            ...rows,
+            if (entries.mayHaveMore)
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton(
+                  key: EntriesScreen.moreKey,
+                  onPressed: () => showRefusalOf(context, entries.showMore()),
+                  child: Text(words.entriesShowMore, key: EntriesScreen.moreKey.label),
+                ),
+              ),
+          ],
+        ),
+        itemBuilder: (entry) => SwipeableEntryCard(project: widget.project, entries: entries, entry: entry, onOpen: _open),
       ),
     );
   }

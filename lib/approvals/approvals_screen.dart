@@ -201,6 +201,56 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
     );
   }
 
+  Widget _card(PendingApproval entry, bool mayDecide, Words words) => Card.outlined(
+    key: ApprovalsScreen.cardKey(entry.id),
+    margin: const EdgeInsets.only(bottom: 8),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: EntryStatus.pendingApproval.sideIn(context)),
+    child: Padding(
+      padding: const EdgeInsetsDirectional.fromSTEB(4, 8, 12, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Checkbox(
+                key: ApprovalsScreen.selectKey(entry.id),
+                value: _selected.contains(entry.id),
+                onChanged: mayDecide ? (on) => setState(() => on == true ? _selected.add(entry.id) : _selected.remove(entry.id)) : null,
+              ),
+              Expanded(child: _details(context, entry)),
+            ],
+          ),
+          if (_failed.containsKey(entry.id)) Padding(
+            padding: const EdgeInsetsDirectional.only(start: 12, top: 4),
+            child: refusalText(context, words.text(_failed[entry.id]!), ApprovalsScreen.failedKey(entry.id)),
+          ),
+          ActOnce(builder: (once) => Wrap(
+            alignment: WrapAlignment.end,
+            spacing: 8,
+            children: [
+              if (entry.hasFile)
+                TextButton(
+                  key: ApprovalsScreen.fileKey(entry.id),
+                  onPressed: () => context.push(AttachmentScreen.pathOf(widget.project.id, entry.attachmentId, fileName: entry.fileName), extra: entry.contentType),
+                  child: Text(words.approvalsOpenFile, key: ApprovalsScreen.fileKey(entry.id).label),
+                ),
+              if (mayDecide) ...[
+                OutlinedButton(
+                  key: ApprovalsScreen.rejectKey(entry.id),
+                  style: OutlinedButton.styleFrom(foregroundColor: AppColor.refusal.of(context)),
+                  onPressed: once(() => _askToReject(entry)),
+                  child: Text(words.approvalsReject, key: ApprovalsScreen.rejectKey(entry.id).label),
+                ),
+                FilledButton(key: ApprovalsScreen.approveKey(entry.id), onPressed: once(() => _approve([entry.id])), child: Text(words.approvalsApprove, key: ApprovalsScreen.approveKey(entry.id).label)),
+              ],
+            ],
+          )),
+        ],
+      ),
+    ),
+  );
+
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
@@ -221,73 +271,25 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
             child: ListenableBuilder(
               listenable: widget.approvals,
               builder: (context, _) => ApiListBody<PendingApproval>(
-              list: widget.approvals,
-              emptyText: words.approvalsEmpty,
-              keeps: (entry) => (_focus.isEmpty || entry.id == _focus) && _filter.keeps(entry),
-              search: ListSearch(
-                hint: words.commonSearchIn.fill([words.approvalsTitle]),
-                textOf: (entry) => partsLine([entry.itemName, entry.supplierName, entry.partnerName, entry.authorName, entry.accountName, entry.invoiceNumber, entry.notes, formatPlain(entry.amount), formatMoney(entry.amount)]),
-                filtersInUse: _filter != _Filter.all,
-                filters: [
-                  FilterLine.segmented(
-                    key: ApprovalsScreen.filterChoiceKey,
-                    values: _Filter.values,
-                    selected: _filter,
-                    labelOf: (filter) => '${words.text(filter.wordKey)} · ${widget.approvals.all.where(filter.keeps).length}',
-                    keyOf: (filter) => filter.key,
-                    onChanged: (filter) => setState(() => _filter = filter),
-                  ),
-                ],
-              ),
-              itemBuilder: (entry) => Card.outlined(
-                      key: ApprovalsScreen.cardKey(entry.id),
-                      margin: const EdgeInsets.only(bottom: 8),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: EntryStatus.pendingApproval.sideIn(context)),
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(4, 8, 12, 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Checkbox(
-                                  key: ApprovalsScreen.selectKey(entry.id),
-                                  value: _selected.contains(entry.id),
-                                  onChanged: mayDecide ? (on) => setState(() => on == true ? _selected.add(entry.id) : _selected.remove(entry.id)) : null,
-                                ),
-                                Expanded(child: _details(context, entry)),
-                              ],
-                            ),
-                            if (_failed.containsKey(entry.id)) Padding(
-                              padding: const EdgeInsetsDirectional.only(start: 12, top: 4),
-                              child: refusalText(context, words.text(_failed[entry.id]!), ApprovalsScreen.failedKey(entry.id)),
-                            ),
-                            ActOnce(builder: (once) => Wrap(
-                              alignment: WrapAlignment.end,
-                              spacing: 8,
-                              children: [
-                                if (entry.hasFile)
-                                  TextButton(
-                                    key: ApprovalsScreen.fileKey(entry.id),
-                                    onPressed: () => context.push(AttachmentScreen.pathOf(widget.project.id, entry.attachmentId, fileName: entry.fileName), extra: entry.contentType),
-                                    child: Text(words.approvalsOpenFile, key: ApprovalsScreen.fileKey(entry.id).label),
-                                  ),
-                                if (mayDecide) ...[
-                                  OutlinedButton(
-                                    key: ApprovalsScreen.rejectKey(entry.id),
-                                    style: OutlinedButton.styleFrom(foregroundColor: AppColor.refusal.of(context)),
-                                    onPressed: once(() => _askToReject(entry)),
-                                    child: Text(words.approvalsReject, key: ApprovalsScreen.rejectKey(entry.id).label),
-                                  ),
-                                  FilledButton(key: ApprovalsScreen.approveKey(entry.id), onPressed: once(() => _approve([entry.id])), child: Text(words.approvalsApprove, key: ApprovalsScreen.approveKey(entry.id).label)),
-                                ],
-                              ],
-                            )),
-                          ],
-                        ),
-                      ),
+                list: widget.approvals,
+                emptyText: words.approvalsEmpty,
+                keeps: (entry) => (_focus.isEmpty || entry.id == _focus) && _filter.keeps(entry),
+                search: ListSearch(
+                  hint: words.commonSearchIn.fill([words.approvalsTitle]),
+                  textOf: (entry) => partsLine([entry.itemName, entry.supplierName, entry.partnerName, entry.authorName, entry.accountName, entry.invoiceNumber, entry.notes, searchableAmount(entry.amount)]),
+                  filtersInUse: _filter != _Filter.all,
+                  filters: [
+                    FilterLine.segmented(
+                      key: ApprovalsScreen.filterChoiceKey,
+                      values: _Filter.values,
+                      selected: _filter,
+                      labelOf: (filter) => '${words.text(filter.wordKey)} · ${widget.approvals.all.where(filter.keeps).length}',
+                      keyOf: (filter) => filter.key,
+                      onChanged: (filter) => setState(() => _filter = filter),
                     ),
+                  ],
+                ),
+                itemBuilder: (entry) => _card(entry, mayDecide, words),
               ),
             ),
           ),

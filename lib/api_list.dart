@@ -19,15 +19,19 @@ abstract class ApiList<T> extends ApiObject<List<T>> {
   /// Every item, in the order the API gives.
   List<T> get all => value;
 
-  /// Adds the page the API [path] answers after the items shown, for a list read a page at a time (redix-app #89). Returns an empty string once added, otherwise
-  /// the word key saying it could not be read; what is shown stays.
+  /// Adds the page the API [pagePath] answers after the items shown, for a list read a page at a time (redix-app #89). Returns an empty string once added, otherwise
+  /// the word key saying it could not be read; what is shown stays. A page that arrives once the list reads elsewhere, as a new search makes it, is dropped.
   @protected
-  Future<String> loadMore(String path) async {
+  Future<String> loadMore(String pagePath) async {
+    final readFrom = pointedAt;
     try {
-      show([...all, ...await readAt(path)]);
+      final page = await readAt(pagePath);
+      if (pointedAt == readFrom) {
+        show([...all, ...page]);
+      }
       return '';
     } on Exception catch (error) {
-      debugPrint('$path not read: $error');
+      debugPrint('$pagePath not read: $error');
       return loadFailedKey;
     }
   }

@@ -89,15 +89,12 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
     showMessage(messenger, words, said);
   }
 
-  Widget _tile(Document document, bool startsItsGroup, Words words) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      if (startsItsGroup && document.group.isNotEmpty)
-        Padding(
-          padding: const EdgeInsets.only(top: 12, bottom: 4),
-          child: Text(document.group, key: DocumentsScreen.groupHeadingKey(document.group), style: Theme.of(context).textTheme.titleSmall),
-        ),
-      SwipeToRemove(
+  Widget _heading(String group) => Padding(
+    padding: const EdgeInsets.only(top: 12, bottom: 4),
+    child: Text(group, key: DocumentsScreen.groupHeadingKey(group), style: Theme.of(context).textTheme.titleSmall),
+  );
+
+  Widget _tile(Document document, Words words) => SwipeToRemove(
         rowKey: DocumentsScreen.documentKey(document.id),
         mayRemove: widget.project.mayManageProject,
         onRemove: () => widget.documents.remove(document),
@@ -114,9 +111,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           )),
           onTap: () => context.push(AttachmentScreen.pathOf(widget.project.id, document.attachmentId, fileName: document.fileName), extra: document.contentType),
         ),
-      ),
-    ],
-  );
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -142,11 +137,9 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
           physics: ApiListBody.physics,
           children: tiles,
         ),
-        itemBuilder: (document) {
-          final all = widget.documents.all;
-          final index = all.indexOf(document);
-          return _tile(document, index == 0 || all[index - 1].group != document.group, words);
-        },
+        groupOf: (document) => document.group,
+        headingOf: _heading,
+        itemBuilder: (document) => _tile(document, words),
       ),
     );
   }

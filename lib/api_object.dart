@@ -40,6 +40,10 @@ abstract class ApiObject<T> extends ChangeNotifier {
   @protected
   void pointAt(String path) => _path = path;
 
+  /// The API path it reads now.
+  @protected
+  String get pointedAt => _path;
+
   /// Shows [value], found some other way than by reading the API.
   @protected
   void show(T value) {

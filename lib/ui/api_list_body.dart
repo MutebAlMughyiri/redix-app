@@ -20,6 +20,8 @@ class ApiListBody<T> extends StatefulWidget {
     this.listOf = plainList,
     this.alsoRefresh = nothingMore,
     this.search = const ListSearch.none(),
+    this.groupOf = noGroup,
+    this.headingOf = noHeading,
   });
 
   /// The list this body shows.
@@ -43,6 +45,12 @@ class ApiListBody<T> extends StatefulWidget {
   /// What the list is searched by, and the filters folded under its search line; none for a list that stays short.
   final ListSearch<T> search;
 
+  /// The group an item is listed under, for a list drawn in groups with [headingOf] over the first item of each that shows; empty for no group.
+  final String Function(T item) groupOf;
+
+  /// The heading over a group's items.
+  final Widget Function(String group) headingOf;
+
   /// How every list scrolls: always, so a list shorter than the screen can still be pulled down.
   static const physics = AlwaysScrollableScrollPhysics();
 
@@ -58,6 +66,11 @@ class ApiListBody<T> extends StatefulWidget {
   /// Nothing besides the list.
   static Future<void> nothingMore() async {}
 
+  /// No group: a list not drawn in groups.
+  static String noGroup(Object? item) => '';
+
+  /// No heading.
+  static Widget noHeading(String group) => const SizedBox.shrink();
 
   /// The line that says the list could not be read.
   static const messageKey = Key('apiList.message');
@@ -70,6 +83,9 @@ class ApiListBody<T> extends StatefulWidget {
 
   /// The spinner shown while the list is first read.
   static const loadingKey = Key('apiList.loading');
+
+  /// What scrolls the rows, pulled down to read them again.
+  static const rowsKey = Key('apiList.rows');
 
   @override
   State<ApiListBody<T>> createState() => _ApiListBodyState<T>();
@@ -99,7 +115,15 @@ class _ApiListBodyState<T> extends State<ApiListBody<T>> {
               ),
       );
     }
-    return RefreshIndicator(onRefresh: _refresh, child: widget.listOf([for (final (index, item) in kept.indexed) RowStripe(index: index, child: widget.itemBuilder(item))]));
+    return RefreshIndicator(key: ApiListBody.rowsKey, onRefresh: _refresh, child: widget.listOf([for (var index = 0; index < kept.length; index++) _row(kept, index)]));
+  }
+
+  /// The row of the [index]th item [kept], under its group's heading when it is the first of its group that shows.
+  Widget _row(List<T> kept, int index) {
+    final group = widget.groupOf(kept[index]);
+    final row = widget.itemBuilder(kept[index]);
+    final startsGroup = group.isNotEmpty && (index == 0 || widget.groupOf(kept[index - 1]) != group);
+    return RowStripe(index: index, child: startsGroup ? Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [widget.headingOf(group), row]) : row);
   }
 
   @override
@@ -113,7 +137,10 @@ class _ApiListBodyState<T> extends State<ApiListBody<T>> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SearchLine(
-          search: search,
+          hint: search.hint,
+          filters: search.filters,
+          filtersInUse: search.filtersInUse,
+          autoFocus: search.autoFocus,
           onTyped: (typed) {
             setState(() => _typed = typed);
             search.onTyped(typed);

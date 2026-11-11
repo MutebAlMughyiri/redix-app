@@ -119,7 +119,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
         emptyText: words.capitalNoMovements,
         search: ListSearch(
           hint: words.commonSearchIn.fill([words.capitalMovements]),
-          textOf: (movement) => partsLine([words.text('capital.${movement.type}'), movement.description, movement.accountName, formatDate(movement.date), formatPlain(movement.amount), formatMoney(movement.amount)]),
+          textOf: (movement) => partsLine([words.text('capital.${movement.type}'), movement.description, movement.accountName, formatDate(movement.date), searchableAmount(movement.amount)]),
         ),
         itemBuilder: _row,
       ),

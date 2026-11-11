@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api_list.dart';
 import '../auth/session.dart';
-import '../format/number_format.dart';
+import '../ui/arabic_spelling.dart';
 import '../words/words.dart';
 
 /// One line of a history: what was done, by whom and when (redix-app #89, #101).
@@ -68,7 +68,7 @@ abstract class HistoryList<T extends HistoryLine> extends ApiList<T> {
 
   /// Shows only the lines holding [typed], in Western digits as the API reads them, from the newest, keeping the filters.
   Future<void> search(String typed) {
-    _text = westernDigits(typed.trim());
+    _text = typedForApi(typed);
     return _readNewest();
   }
 

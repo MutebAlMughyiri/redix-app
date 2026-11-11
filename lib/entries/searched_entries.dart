@@ -1,5 +1,5 @@
 import '../format/date_format.dart';
-import '../format/number_format.dart';
+import '../ui/arabic_spelling.dart';
 import 'entry_filter.dart';
 import 'newest_entries.dart';
 
@@ -10,17 +10,23 @@ class SearchedEntries extends NewestEntries {
   SearchedEntries(super.session, super.projectId, super.localConfig);
 
   /// What narrows the entries; [search] reads them again once it changes.
-  final filter = EntryFilter();
+  var filter = EntryFilter();
 
   @override
   Map<String, Object> get query => {
-    if (filter.text.trim().isNotEmpty) 'text': westernDigits(filter.text.trim()),
+    if (filter.text.trim().isNotEmpty) 'text': typedForApi(filter.text),
     if (filter.onlyMine) 'mine': 'true',
     if (filter.chosenKinds.isNotEmpty) 'kinds': [for (final kind in filter.chosenKinds) kind.name],
     if (filter.chosenStatuses.isNotEmpty) 'statuses': [for (final status in filter.chosenStatuses) status.replaceFirst('entries.', '')],
     if (filter.hasPeriod) 'from': apiDate(filter.period.start),
     if (filter.hasPeriod) 'to': apiDate(filter.period.end),
   };
+
+  /// Shows the first page with nothing typed or chosen, as the Entries screen opens: a search does not outlive its screen (redix-app #104, D4).
+  void open() {
+    filter = EntryFilter();
+    openFirstPage();
+  }
 
   /// Reads the first page again with [filter] as it now stands.
   Future<void> search() => readFirstPage();

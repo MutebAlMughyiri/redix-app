@@ -404,6 +404,9 @@ mixin WordGetters {
   /// The word `categories.rename`.
   String get categoriesRename => text('categories.rename');
 
+  /// The word `categories.noTableMatch`.
+  String get categoriesNoTableMatch => text('categories.noTableMatch');
+
   /// The word `categories.save`.
   String get categoriesSave => text('categories.save');
 
@@ -880,9 +883,6 @@ mixin WordGetters {
 
   /// The word `entries.fix`.
   String get entriesFix => text('entries.fix');
-
-  /// The word `entries.found`.
-  String get entriesFound => text('entries.found');
 
   /// The word `entries.kind`.
   String get entriesKind => text('entries.kind');
@@ -2365,6 +2365,9 @@ mixin WordGetters {
 
   /// The word `users.temporaryPasswordHint`.
   String get usersTemporaryPasswordHint => text('users.temporaryPasswordHint');
+
+  /// The word `users.noMatch`.
+  String get usersNoMatch => text('users.noMatch');
 
   /// The word `users.title`.
   String get usersTitle => text('users.title');

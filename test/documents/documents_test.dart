@@ -35,6 +35,19 @@ void main() {
     return (api: api, capture: capture);
   }
 
+  testWidgets('redix-app #104: a search keeps each group\'s heading over the first of its documents that it keeps', (tester) async {
+    final (:api, capture: _) = await openDocuments(tester, permissions: field, arrange: (api) {
+      api.documentRows.addAll([document('building', 'عقد البناء', 'عقود'), document('power', 'عقد الكهرباء', 'عقود'), document('permit', 'رخصة البناء', 'التراخيص')]);
+    });
+
+    await searchFor(tester, api, 'الكهرباء');
+
+    expect(find.byKey(DocumentsScreen.documentKey('building')), findsNothing);
+    expect(find.byKey(DocumentsScreen.groupHeadingKey('عقود')), findsOneWidget);
+    expect(tester.getTopLeft(find.byKey(DocumentsScreen.groupHeadingKey('عقود'))).dy, lessThan(tester.getTopLeft(find.byKey(DocumentsScreen.documentKey('power'))).dy));
+    expect(find.byKey(DocumentsScreen.groupHeadingKey('التراخيص')), findsNothing);
+  });
+
   Future<void> openDialog(WidgetTester tester, FakeApi api, String name) async {
     await act(tester, api, () => tester.tap(find.byKey(DocumentsScreen.addKey)));
     await tester.enterText(find.byKey(DocumentsScreen.nameKey), name);

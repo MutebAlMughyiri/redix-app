@@ -188,7 +188,7 @@ class _ContractsScreenState extends State<ContractsScreen> {
                 keeps: _filter.keeps,
                 search: ListSearch(
                   hint: words.commonSearchIn.fill([words.contractsTitle]),
-                  textOf: (contract) => partsLine([contract.supplierName, contract.itemName, contract.notes, formatMoney(contract.value)]),
+                  textOf: (contract) => partsLine([contract.supplierName, contract.itemName, contract.notes, searchableAmount(contract.value)]),
                   filtersInUse: _filter != ContractFilter.all,
                   filters: [
                     FilterLine.segmented(

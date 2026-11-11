@@ -148,7 +148,7 @@ class _UsersScreenState extends State<UsersScreen> {
       ),
       body: ApiListBody<User>(
         list: widget.users,
-        emptyText: '',
+        emptyText: words.usersNoMatch,
         search: ListSearch(hint: words.commonSearchIn.fill([words.usersTitle]), textOf: (user) => partsLine([user.displayName, user.username, user.mobile, user.roleName])),
         itemBuilder: (user) => UserRow(
           user: user,

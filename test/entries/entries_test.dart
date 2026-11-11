@@ -702,6 +702,36 @@ void main() {
       expect(api.entryQueries.last['mine'], ['true']);
     });
 
+    testWidgets('redix-app #104, D4: a search does not outlive the Entries screen; opened again, nothing is typed or chosen', (tester) async {
+      final api = await openSearch(tester);
+      await searchFor(tester, api, 'احمد');
+      await choose(tester, api, EntriesScreen.kindChoiceKey, EntriesScreen.kindKey('purchase'));
+
+      await act(tester, api, () => tester.pageBack());
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
+
+      expect(api.entryQueries.last, {'mine': ['true'], 'take': ['5']});
+      expect(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.text('احمد')), findsNothing);
+      expect(tester.widget<Icon>(find.byKey(SearchLine.filtersKey.icon)).icon, Icons.arrow_drop_down);
+    });
+
+    testWidgets('R8, redix-app #104: a period chosen under the arrow is asked of the API as its first and last day, both kept', (tester) async {
+      final api = await openSearch(tester);
+
+      await openFilters(tester, api);
+      await scrollAndTap(tester, api, EntriesScreen.periodKey);
+      await tester.tap(find.byIcon(Icons.edit_outlined));
+      await tester.pumpAndSettle();
+      final fields = find.descendant(of: find.byType(DateRangePickerDialog), matching: find.byType(TextField));
+      await tester.enterText(fields.first, '10/20/2026');
+      await tester.enterText(fields.last, '11/04/2026');
+      await act(tester, api, () => tester.tap(find.text(MaterialLocalizations.of(tester.element(fields.first)).okButtonLabel)));
+
+      expect(api.entryQueries.last['from'], ['2026-10-20']);
+      expect(api.entryQueries.last['to'], ['2026-11-04']);
+      expect(shownRows(tester), ['entry-3']);
+    });
+
     testWidgets('redix-app #104: clearing the filters keeps what was typed, which the search line still shows', (tester) async {
       final api = await openSearch(tester);
 
@@ -732,6 +762,26 @@ void main() {
 
       expect(find.byKey(EntriesScreen.moreKey), findsNothing);
       expect(api.entryReads.last, 10);
+    });
+
+    testWidgets('redix-app #104: Show more asks for as many again with what was typed and chosen still asked', (tester) async {
+      final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
+      for (var entry = 0; entry < 7; entry++) {
+        api.addEntry();
+      }
+      await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: {'entriesShown_count': 5});
+      await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
+      await openFilters(tester, api);
+      await choose(tester, api, EntriesScreen.kindChoiceKey, EntriesScreen.kindKey('purchase'));
+      await foldFilters(tester, api);
+
+      await tester.scrollUntilVisible(find.byKey(EntriesScreen.moreKey), 200, scrollable: listRows);
+      await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.moreKey)));
+
+      expect(api.entryReads.last, 10);
+      expect(api.entryQueries.last['kinds'], ['purchase']);
+      expect(api.entryQueries.last['mine'], ['true']);
     });
   });
 

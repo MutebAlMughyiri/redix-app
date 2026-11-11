@@ -50,6 +50,9 @@ void main() {
 
     expect(find.byKey(AddEntryScreen.changeKey), findsOneWidget);
     expect(api.notificationRows.single['isRead'], isTrue);
+
+    await act(tester, api, () => tester.pageBack());
+    expect(find.byKey(NotificationsScreen.rowKey('notification-0')), findsOneWidget);
   });
 
   testWidgets('tapping what waits for a decision opens the inbox', (tester) async {

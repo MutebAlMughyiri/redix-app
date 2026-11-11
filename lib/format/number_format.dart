@@ -20,3 +20,6 @@ String westernDigits(String typed) => typed.replaceAllMapped(RegExp('[$_easternD
 
 /// The number in what a person [typed], in Arabic or Western digits and with any thousands separators; not a number ([double.nan]) when it holds none.
 double parseNumber(String typed) => double.tryParse(westernDigits(typed.trim().replaceAll(',', '').replaceAll('٬', '').replaceAll('٫', '.'))) ?? double.nan;
+
+/// [amount] as a search on the phone reads it, plain and grouped (`1234.5 1,234.50`), so either way of typing it finds it (redix-app #104).
+String searchableAmount(double amount) => '${formatPlain(amount)} ${formatMoney(amount)}';
