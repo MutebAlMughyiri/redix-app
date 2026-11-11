@@ -76,7 +76,7 @@ Map<String, String> wordsIn(String language) => {
     'paymentMethods.invalidName', 'paymentMethods.new', 'paymentMethods.name', 'paymentMethods.rename', 'paymentMethods.save', 'paymentMethods.disable', 'paymentMethods.enable', 'paymentMethods.disabled', 'paymentMethods.paymentMethodUsed',
     'accounts.title', 'accounts.empty', 'accounts.loadFailed', 'accounts.noConnection', 'accounts.refused', 'accounts.projectFinished', 'accounts.invalidName', 'accounts.custodianRequired', 'accounts.unknownCustodian', 'accounts.new', 'accounts.edit', 'accounts.save', 'accounts.type', 'accounts.typeBank', 'accounts.typeCashCustody', 'accounts.name',
     'partners.title', 'partners.empty', 'partners.loadFailed', 'partners.noConnection', 'partners.refused', 'partners.projectFinished', 'partners.invalidName', 'partners.unknownUser', 'partners.userTaken', 'partners.itemNotOffered',
-    'partners.new', 'partners.edit', 'partners.save', 'partners.name', 'partners.history', 'partners.delete', 'partners.deleteQuestion', 'partners.deleteKeepsMovements', 'partners.deleted', 'partners.partnerNotDeletable', 'partners.login', 'partners.noLogin', 'partners.loginHint',
+    'partners.new', 'partners.edit', 'partners.save', 'partners.name', 'partners.history', 'partners.delete', 'partners.deleteQuestion', 'partners.deleteKeepsMovements', 'partners.deleted', 'partners.partnerNotDeletable', 'partners.deleteRemovesMyDrafts', 'partners.login', 'partners.noLogin', 'partners.loginHint',
     'suppliers.title', 'suppliers.empty', 'suppliers.loadFailed', 'suppliers.noConnection', 'suppliers.refused', 'suppliers.projectFinished', 'suppliers.invalidName', 'suppliers.invalidVatNumber',
     'suppliers.invalidMobile', 'suppliers.generalCashSupplier', 'suppliers.vatNumberTaken', 'suppliers.holder', 'suppliers.unknownItem', 'suppliers.new', 'suppliers.edit', 'suppliers.save', 'suppliers.name', 'suppliers.vatNumber',
     'suppliers.mobile', 'suppliers.defaultItem', 'suppliers.noDefaultItem', 'suppliers.pendingApproval', 'suppliers.disable', 'suppliers.enable', 'suppliers.disabled',
@@ -108,6 +108,7 @@ Map<String, String> wordsIn(String language) => {
     'accounts.custodian', 'accounts.noCustodian', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.counted', 'accounts.history', 'accounts.delete', 'accounts.deleteQuestion', 'accounts.deleteCannotUndo', 'accounts.accountInUse', 'accounts.deleted', 'accounts.banks', 'accounts.custodies', 'transfers.title', 'transfers.button', 'transfers.from', 'transfers.to', 'transfers.balanceNow', 'transfers.amount', 'transfers.date', 'transfers.notes', 'transfers.save', 'transfers.sameAccount', 'transfers.invalidAmount', 'transfers.accountDisabled', 'transfers.insufficientBalance', 'transfers.unknownAccount', 'transfers.invalidNotes', 'transfers.noConnection', 'transfers.refused', 'transfers.projectFinished', 'approvals.accountShort', 'entryShare.accountShort', 'history.allAccounts', 'history.allPartners', 'history.partnerCreated', 'history.partnerChanged', 'history.partnerAccount', 'history.partnerDeleted', 'history.capitalIn', 'history.capitalOut', 'history.mine', 'history.empty', 'history.loadFailed', 'history.unknownAccount', 'history.accountCreated', 'history.accountChanged', 'history.nameWas', 'history.accountDisabled', 'history.accountEnabled', 'history.accountDeleted', 'history.custodianChanged', 'history.transfer', 'history.entryIn', 'history.entryOut', 'history.reversed', 'history.check', 'history.approvedBy', 'history.more', 'accounts.riyal',
   ])
     key: '$language $key',
+  'partners.draftsBy': '$language partners.draftsBy {0}',
 };
 
 /// A kept session, as the secure storage holds it after a sign-in.
@@ -999,8 +1000,26 @@ class FakeApi {
 
   /// Adds a partner to the project [projectId], as the API holds them: a table of the capital item [itemId] (redix-api #109), whose own account is [userId], called [userName]. Who sees
   /// them is chosen on people's permissions (redix-api #106).
-  Map<String, Object> addPartner(String projectId, String name, {String userId = '', String userName = '', String itemId = 'item-capital', bool mayDelete = true}) {
-    final partner = <String, Object>{'id': 'partner-${_nextStructureId++}', 'name': name, 'userId': userId, 'userName': userName, 'itemId': itemId, 'mayDelete': mayDelete};
+  Map<String, Object> addPartner(
+    String projectId,
+    String name, {
+    String userId = '',
+    String userName = '',
+    String itemId = 'item-capital',
+    bool mayDelete = true,
+    List<String> othersDrafts = const [],
+    List<Map<String, Object>> myDrafts = const [],
+  }) {
+    final partner = <String, Object>{
+      'id': 'partner-${_nextStructureId++}',
+      'name': name,
+      'userId': userId,
+      'userName': userName,
+      'itemId': itemId,
+      'mayDelete': mayDelete,
+      'othersDrafts': othersDrafts,
+      'myDrafts': myDrafts,
+    };
     partners.putIfAbsent(projectId, () => []).add(partner);
     return partner;
   }

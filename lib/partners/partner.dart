@@ -6,10 +6,12 @@ class Partner {
       name = json['name'] as String,
       userId = json['userId'] as String,
       userName = json['userName'] as String,
-      mayDelete = json['mayDelete'] as bool;
+      mayDelete = json['mayDelete'] as bool,
+      othersDrafts = [for (final author in json['othersDrafts'] as List<dynamic>) author as String],
+      myDrafts = [for (final draft in json['myDrafts'] as List<dynamic>) PartnerDraft.fromJson(draft as Map<String, dynamic>)];
 
   /// No partner yet, for the dialog that adds one.
-  Partner.none() : id = '', name = '', userId = '', userName = '', mayDelete = false;
+  Partner.none() : id = '', name = '', userId = '', userName = '', mayDelete = false, othersDrafts = const [], myDrafts = const [];
 
   /// The partner's id; empty for a partner not added yet.
   final String id;
@@ -23,6 +25,24 @@ class Partner {
   /// That login's name; empty for a partner with no login.
   final String userName;
 
-  /// True at zero capital with nothing waiting, when Delete is offered (redix-api #100); the API decides it.
+  /// True when the signed-in person may delete them: at zero capital with nothing waiting and no one else's draft (redix-api #100, findings row 199); the API decides it.
   final bool mayDelete;
+
+  /// Who else holds a draft naming them, which keeps Delete gray until it is sent or deleted (findings row 199).
+  final List<String> othersDrafts;
+
+  /// The signed-in person's own drafts naming them, which deleting them deletes too (findings row 199).
+  final List<PartnerDraft> myDrafts;
+}
+
+/// One of the signed-in person's own drafts naming a partner (findings row 199).
+class PartnerDraft {
+  /// The draft the API describes in [json].
+  PartnerDraft.fromJson(Map<String, dynamic> json) : entryDate = DateTime.parse(json['entryDate'] as String), amount = (json['amount'] as num).toDouble();
+
+  /// The draft's date.
+  final DateTime entryDate;
+
+  /// Its amount.
+  final double amount;
 }

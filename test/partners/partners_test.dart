@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/format/date_format.dart';
+import 'package:redix/format/number_format.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partner_history_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
+import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/bottom_button.dart';
 
 import '../app_harness.dart';
@@ -135,6 +138,30 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.deleteKey), warnIfMissed: false));
 
     expect(opened.api.sentSettingsChanges, isEmpty);
+  });
+
+  testWidgets("findings row 199: a partner held by someone else's draft has Delete gray, saying whose draft holds them", (tester) async {
+    final opened = await openPartners(tester);
+    final nour = opened.api.addPartner('project-0', 'نور', mayDelete: false, othersDrafts: ['نواف'])['id']! as String;
+    await act(tester, opened.api, () => tester.pageBack());
+    await scrollAndTap(tester, opened.api, HomeScreen.partnersKey('project-0'));
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.menuKey(nour))));
+
+    expect(tester.widget<PopupMenuItem<VoidCallback>>(find.byKey(PartnersScreen.deleteKey)).enabled, isFalse);
+    expect(text(tester, PartnersScreen.deleteKey.subtitle), 'en partners.partnerNotDeletable · en partners.draftsBy نواف');
+  });
+
+  testWidgets("findings row 199: Delete lists the person's own drafts naming the partner, which go with them", (tester) async {
+    final opened = await openPartners(tester);
+    final nour = opened.api.addPartner('project-0', 'نور', myDrafts: [{'entryDate': '2026-11-10', 'amount': 300}])['id']! as String;
+    await act(tester, opened.api, () => tester.pageBack());
+    await scrollAndTap(tester, opened.api, HomeScreen.partnersKey('project-0'));
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.menuKey(nour))));
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.deleteKey)));
+
+    expect(find.text('en partners.deleteKeepsMovements\n\nen partners.deleteRemovesMyDrafts\n${formatDate(DateTime(2026, 11, 10))} · ${formatMoney(300)}'), findsOneWidget);
   });
 
   testWidgets('redix-app #101: Partners has + and History in the title bar and no bottom button; + adds a partner', (tester) async {

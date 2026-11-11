@@ -1358,8 +1358,14 @@ mixin WordGetters {
   /// The word `partners.deleteQuestion`.
   String get partnersDeleteQuestion => text('partners.deleteQuestion');
 
+  /// The word `partners.deleteRemovesMyDrafts`.
+  String get partnersDeleteRemovesMyDrafts => text('partners.deleteRemovesMyDrafts');
+
   /// The word `partners.deleted`.
   String get partnersDeleted => text('partners.deleted');
+
+  /// The word `partners.draftsBy`.
+  String get partnersDraftsBy => text('partners.draftsBy');
 
   /// The word `partners.edit`.
   String get partnersEdit => text('partners.edit');
