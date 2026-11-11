@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'project_entries.dart';
+import 'opened_entry.dart';
 import '../accounts/account.dart';
 import '../accounts/accounts.dart';
 import '../api_list.dart';
@@ -66,7 +66,7 @@ import '../ui/act_once.dart';
 class AddEntryScreen extends StatefulWidget {
   /// The screen entering an entry in [project], recorded through [recording], into one of [tables], showing a contract's figures from [contracts], picking from [accounts] or
   /// [projectAccounts], [paymentMethods], [suppliers] and, for a credit note, [creditableInvoices], asking what [columnsOf] an item says, keeping the file through [attachments]
-  /// from what [capture] gives, and offering to share it from [entries] once recorded.
+  /// from what [capture] gives, and offering to share it, read through [opened], once recorded.
   const AddEntryScreen({
     super.key,
     this.editingId = '',
@@ -84,7 +84,7 @@ class AddEntryScreen extends StatefulWidget {
     required this.columnsOf,
     required this.attachments,
     required this.capture,
-    required this.entries,
+    required this.opened,
     required this.approvals,
     required this.projectAccounts,
   });
@@ -134,8 +134,9 @@ class AddEntryScreen extends StatefulWidget {
   /// The phone's camera and files.
   final InvoiceCapture capture;
 
-  /// The project's entries, from which a recorded one is shared.
-  final ProjectEntries entries;
+  /// The entry read by its id: an entry read only says where it stands and offers what can be done to it from it, whichever list opened it (findings row 201), and a
+  /// recorded one is shared from it.
+  final OpenedEntry opened;
 
   /// The entries waiting for a decision, through which an entry read only is approved (Muteb, 9 Nov 2026).
   final Approvals approvals;
@@ -372,7 +373,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   /// Fills the form from the entry being changed (UC-033), in its table, whatever its kind. A credit note's total shows as typed, without its sign.
   Future<void> _openEntry() async {
     final saved = await widget.recording.read(widget.editingId);
-    await Future.wait([widget.tables.load(), widget.contracts.load(), widget.accounts.load(), widget.projectAccounts.load(), widget.suppliers.load(), widget.entries.load()]);
+    await Future.wait([widget.tables.load(), widget.contracts.load(), widget.accounts.load(), widget.projectAccounts.load(), widget.suppliers.load(), widget.opened.open(widget.editingId)]);
     if (!mounted || saved.isNone) {
       return;
     }
@@ -612,8 +613,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   /// Says [wordKey] once the entry [entryId] is kept by the API, offering to share it (redix-app #83, R1). Everything the action needs is taken now, since the screen closes.
   void _offerShare(ScaffoldMessengerState messenger, Words words, String wordKey, String entryId) {
-    final (capture, project, entries) = (widget.capture, widget.project, widget.entries);
-    showMessage(messenger, words, wordKey, actionLabel: words.entriesShare, onAction: () => EntryShare.shareSaved(capture, project, entries, entryId, words));
+    final (capture, project, opened) = (widget.capture, widget.project, widget.opened);
+    showMessage(messenger, words, wordKey, actionLabel: words.entriesShare, onAction: () => EntryShare.shareSaved(capture, project, opened, entryId, words));
   }
 
   Future<void> _save(bool submit) async {
@@ -628,7 +629,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       if (widget.recording.wasKept) {
         showMessage(messenger, words, 'expenses.keptOnPhone');
       } else {
-        unawaited(widget.entries.load());
         _offerShare(messenger, words, sent, _entryId);
       }
       context.pop(true);
@@ -749,8 +749,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   Widget _tablePicker() => TablePicker(key: AddEntryScreen.tableKey, tables: widget.tables, chosen: _table, onChanged: _chooseTable);
 
-  /// The entry read only, as the project's entries list it; none until they are read.
-  EntryRow get _row => widget.entries.all.where((row) => row.id == widget.editingId).firstOrNull ?? EntryRow.none();
+  /// The entry read only, as the lists show it, read by its id (findings row 201); none until it answers.
+  EntryRow get _row => widget.opened.value;
 
   String get _title {
     final words = Words.of(context);
@@ -762,7 +762,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     final words = Words.of(context);
     final ownFields = _itemsOwnFields(words);
     return ListenableBuilder(
-      listenable: widget.entries,
+      listenable: widget.opened,
       builder: (context, _) => Scaffold(
       appBar: AppBar(
         title: ScreenTitle(_title, subject: widget.project.name),
@@ -834,10 +834,10 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
               Expanded(
                 child: FilledButton.tonal(key: AddEntryScreen.approveKey, onPressed: once(widget.project.mayApproveEntries ? () => _approve(row) : null), child: Text(words.approvalsApprove, key: AddEntryScreen.approveKey.label)),
               ),
-            if (row.isDraft && mayChange) Expanded(child: OutlinedButton(key: AddEntryScreen.sendDraftKey, onPressed: once(() => _sendDraft(row)), child: Text(words.entriesSend, key: AddEntryScreen.sendDraftKey.label))),
+            if (row.isDraft && mayChange) Expanded(child: OutlinedButton(key: AddEntryScreen.sendDraftKey, onPressed: once(_sendDraft), child: Text(words.entriesSend, key: AddEntryScreen.sendDraftKey.label))),
             if (mayReverse)
               Expanded(
-                child: OutlinedButton(key: AddEntryScreen.reverseKey, onPressed: once(() => ReverseSheet.show(context, (reason) => widget.entries.reverse(row, reason))), child: Text(words.entriesReverse, key: AddEntryScreen.reverseKey.label)),
+                child: OutlinedButton(key: AddEntryScreen.reverseKey, onPressed: once(() => ReverseSheet.show(context, widget.opened.reverse)), child: Text(words.entriesReverse, key: AddEntryScreen.reverseKey.label)),
               ),
           ],
         )),
@@ -846,7 +846,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     );
   }
 
-  /// Approves [row] as Approvals does, then reads the entries again and goes back to them; what the API could not approve shows why, and the page stays.
+  /// Approves [row] as Approvals does, then goes back to the list, which reads itself again (findings row 207); what the API could not approve shows why, and the page stays.
   Future<void> _approve(EntryRow row) async {
     final refusal = await showRefusalOf(context, widget.approvals.approve([row.id]));
     if (refusal.isNotEmpty || !mounted) {
@@ -857,14 +857,11 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       showMessage(ScaffoldMessenger.of(context), Words.of(context), failed);
       return;
     }
-    await widget.entries.load();
-    if (mounted) {
-      context.pop(true);
-    }
+    context.pop(true);
   }
 
-  Future<void> _sendDraft(EntryRow row) async {
-    final refusal = await showRefusalOf(context, widget.entries.send(row));
+  Future<void> _sendDraft() async {
+    final refusal = await showRefusalOf(context, widget.opened.send());
     if (refusal.isEmpty && mounted) {
       context.pop(true);
     }

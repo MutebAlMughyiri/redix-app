@@ -37,6 +37,7 @@ import 'entries/add_entry_screen.dart';
 import 'entries/entries_screen.dart';
 import 'entries/entry_tables.dart';
 import 'entries/newest_entries.dart';
+import 'entries/opened_entry.dart';
 import 'entries/project_entries.dart';
 import 'notifications/notifications.dart';
 import 'notifications/notifications_screen.dart';
@@ -160,6 +161,7 @@ class _RedixAppState extends State<RedixApp> {
   late final _entriesOf = _kept((projectId) => ProjectEntries(widget.session, projectId));
   late final _newestEntriesOf = _kept((projectId) => NewestEntries(widget.session, projectId, widget.localConfig));
   late final _searchedEntriesOf = _kept((projectId) => SearchedEntries(widget.session, projectId, widget.localConfig));
+  late final _openedEntryOf = _kept((projectId) => OpenedEntry(widget.session, projectId));
   late final _approvalsOf = _kept((projectId) => Approvals(widget.session, projectId));
   late final _offeredAccountsOf = _kept((projectId) => OfferedAccounts(widget.session, projectId));
   late final _columnsAt = _kept((path) => Columns(widget.session, path));
@@ -403,19 +405,10 @@ class _RedixAppState extends State<RedixApp> {
     columnsOf: (itemId) => _columnsAt(Columns.itemPath(projectId, itemId)),
     attachments: _attachmentsOf(projectId),
     capture: widget.capture,
-    entries: _entriesHolding(projectId, query['entry'] ?? ''),
+    opened: _openedEntryOf(projectId),
     approvals: _approvalsOf(projectId),
     projectAccounts: _accountsOf(projectId),
   );
-
-  /// The entries list that holds the entry [entryId], for Add entry to read again when it opens and once saved (redix-app #105, #104): the home's newest when they hold it,
-  /// as every entry the home shows and a new one; otherwise the Entries screen's search, which it was opened from; otherwise the whole list, which a shared link read.
-  ProjectEntries _entriesHolding(String projectId, String entryId) {
-    final newest = _newestEntriesOf(projectId);
-    final searched = _searchedEntriesOf(projectId);
-    bool holds(ProjectEntries entries) => entries.all.any((row) => row.id == entryId);
-    return holds(newest) || entryId.isEmpty ? newest : (holds(searched) ? searched : _entriesOf(projectId));
-  }
 
   ItemColumnsScreen _itemColumnsScreen(String projectId, String itemId, Project project) {
     final categories = _categoriesOf(projectId);

@@ -7,7 +7,7 @@ import '../words/words.dart';
 import 'entry_kind.dart';
 import 'entry_link_screen.dart';
 import 'entry_row.dart';
-import 'project_entries.dart';
+import 'opened_entry.dart';
 
 /// An entry as text for any app the phone shares to, ending in its link (redix-app #83): the one owner of that text and that link, for every kind.
 abstract final class EntryShare {
@@ -34,11 +34,12 @@ abstract final class EntryShare {
   /// Hands [entry]'s text, and nothing else, to the phone's share sheet through [capture] (R2, R5).
   static Future<void> share(InvoiceCapture capture, Project project, EntryRow entry, Words words) => capture.shareText(textOf(project, entry, words));
 
-  /// Reads [entries] again and shares the entry [entryId] among them: what the message after saving offers (R1). An entry the list does not hold shares nothing.
-  static Future<void> shareSaved(InvoiceCapture capture, Project project, ProjectEntries entries, String entryId, Words words) async {
-    await entries.load();
-    for (final entry in entries.all.where((row) => row.id == entryId)) {
-      await share(capture, project, entry, words);
+  /// Reads the entry [entryId] through [opened] and shares it: what the message after saving offers (R1), whichever list the entry would show in (findings row 207). An
+  /// entry that cannot be read shares nothing.
+  static Future<void> shareSaved(InvoiceCapture capture, Project project, OpenedEntry opened, String entryId, Words words) async {
+    await opened.open(entryId);
+    if (!opened.value.isNone) {
+      await share(capture, project, opened.value, words);
     }
   }
 }

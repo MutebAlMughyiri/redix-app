@@ -155,6 +155,50 @@ void main() {
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
   });
 
+  testWidgets('findings row 207: approving an entry read only reads the list once, by the screen gone back to', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(), permissions: managerAndFinance);
+    await openActions(tester, api, 'entry-0');
+    final readsBefore = api.entryReads.length;
+
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.approveKey)));
+
+    expect(api.entryReads.sublist(readsBefore), hasLength(1));
+  });
+
+  testWidgets("findings row 201: the home's fifth entry, reversed while someone records another, still says it was reversed, since it reads itself by its id", (tester) async {
+    final api = await openHome(tester, (api) {
+      api.addEntry(status: 'approved');
+      for (var entry = 1; entry < 5; entry++) {
+        api.addEntry();
+      }
+    }, permissions: managerAndFinance);
+    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0'))));
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.approved');
+    api.addEntry(isMine: false);
+
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
+    await act(tester, api, () async {
+      await tester.enterText(find.byKey(ReasonSheet.reasonKey), 'إدخال خاطئ');
+      await tester.tap(find.byKey(ReasonSheet.sendKey));
+    });
+
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.reversed');
+    expect(find.byKey(AddEntryScreen.shareKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.reverseKey), findsNothing);
+    expect(api.entryRowReads, ['entry-0', 'entry-0']);
+  });
+
+  testWidgets("findings row 201: an entry that cannot be read shows no status and offers nothing, rather than another entry's", (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: managerAndFinance);
+    api.entryRows.clear();
+
+    await openActions(tester, api, 'entry-0');
+
+    expect(find.byKey(AddEntryScreen.statusKey), findsNothing);
+    expect(find.byKey(AddEntryScreen.changeKey), findsNothing);
+    expect(find.byKey(AddEntryScreen.shareKey), findsNothing);
+  });
+
   testWidgets('Muteb, 9 Nov 2026: without Approve entries, اعتماد on a waiting entry shows grayed', (tester) async {
     final field_ = await openEntries(tester, (api) => api.addEntry());
     await openActions(tester, field_, 'entry-0');

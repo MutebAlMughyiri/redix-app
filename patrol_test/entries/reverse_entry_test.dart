@@ -37,6 +37,24 @@ void main() {
       await $.says(AddEntryScreen.statusKey, $.words.entriesReversed);
     });
 
+    phoneCase("findings row 201: the home's fifth entry, reversed while someone records another, still says it was reversed", ($) async {
+      final manager = await Given.manager();
+      final entry = await Given.entry(manager);
+      await Given.entriesApproved(manager, [entry]);
+      for (var newer = 1; newer < 5; newer++) {
+        await Given.entry(manager);
+      }
+      await $.onTheHome(manager);
+      await $.tapOn(EntriesScreen.rowKey(entry));
+      await $.reach($(AddEntryScreen.statusKey));
+      await Given.entry(manager);
+      await $.tapOn(AddEntryScreen.reverseKey);
+      await $.fill(ReasonSheet.reasonKey, 'أدخل بالخطأ');
+      await $.tapOn(ReasonSheet.sendKey);
+      await $.says(AddEntryScreen.statusKey, $.words.entriesReversed);
+      expect($(AddEntryScreen.reverseKey), findsNothing);
+    });
+
     phoneCase('AC-50.1: a reverse with no reason is refused', ($) async {
       await onApproved($);
       await $.tapOn(AddEntryScreen.reverseKey);

@@ -71,6 +71,7 @@ lib/
     entry_card.dart         An entry on a list of project's entries: tapping it opens its actions, and swiping it removes it where the user may delete it
     latest_entries.dart     The project's entries on its home: the newest by anyone, as many at a time as Settings chooses, a search beside the heading, and Show more for as many again
     newest_entries.dart     The one owner of reading entries a page at a time: the home's newest, each Show more reading as many again
+    opened_entry.dart       The entry a page opened, read by its id as the lists show it, whichever list opened it: where it stands, sending and reversing it (findings row 201)
     project_entries.dart    A project's entries, newest first: everyone who reads the project sees them all, and only their own drafts
     searched_entries.dart   The Entries screen's search: the newest entries with what was typed and chosen sent to the API, a page at a time
     reverse_sheet.dart      Asks why something approved is reversed, and reverses it

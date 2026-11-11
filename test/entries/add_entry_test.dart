@@ -247,6 +247,20 @@ void main() {
     expect((lines.first, lines[1], lines.last), ('en entries.purchases · غصون 6', 'en entryShare.item: البلاط', 'https://redix.test/projects/project-0/entries/$entryId/open'));
   });
 
+  testWidgets('findings row 207: a sent entry has the home read its entries once, on coming back, and Share still finds it', (tester) async {
+    final opened = await openExpense(tester);
+    await fill(tester, opened);
+    final readsBefore = opened.api.entryReads.length;
+
+    await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
+    final entryId = opened.api.sentEntries.single['id']! as String;
+    opened.api.addEntry(id: entryId, itemName: 'البلاط', amount: 6000);
+    await act(tester, opened.api, () => tester.tap(find.byKey(messageKeyOf('expenses.sent').icon)));
+
+    expect(opened.api.entryReads.sublist(readsBefore), hasLength(1));
+    expect(opened.capture.sharedTexts.single.split('\n')[1], 'en entryShare.item: البلاط');
+  });
+
   testWidgets('AC-16.1: five expenses with their photos, entered with no network, all go within a minute of it returning', (tester) async {
     final opened = await openExpense(tester, camera: PickedFile('invoice.png', '/phone/invoice.png', Uint8List.fromList(onePixelPng)));
     for (var entered = 1; entered <= 5; entered++) {

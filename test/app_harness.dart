@@ -481,6 +481,9 @@ class FakeApi {
   /// What each read of the entries list asked for besides how many: the search and the filters (redix-app #104).
   final entryQueries = <Map<String, List<String>>>[];
 
+  /// The entries read one at a time, as an opened entry reads itself (findings row 201).
+  final entryRowReads = <String>[];
+
   /// Whether the entry [row] holds to the search [address] asks, as the API's EntrySearch decides.
   static bool _searchKeeps(Map<String, Object> row, Uri address) {
     final query = address.queryParametersAll;
@@ -1699,6 +1702,11 @@ class FakeApi {
     }
     if (segments.length == 5 && segments[2] == 'entries' && const ['submit', 'delete', 'reverse'].contains(segments[4])) {
       return _changeEntry(request);
+    }
+    if (request.method == 'GET' && segments.length == 5 && segments[2] == 'entries' && segments[4] == 'row') {
+      entryRowReads.add(segments[3]);
+      final row = entryRows.where((row) => row['id'] == segments[3]).firstOrNull;
+      return _json(row ?? const {'code': 'notFound'}, row == null ? 404 : 200);
     }
     if (const ['pdf', 'xlsx'].contains(segments.last)) {
       sentFileReads.add(request.url.toString().replaceFirst('${request.url.scheme}://${request.url.authority}', ''));
