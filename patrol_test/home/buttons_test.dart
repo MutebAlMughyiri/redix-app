@@ -20,10 +20,10 @@ Future<Person> onTheHomeHolding(PatrolIntegrationTester $, List<Permission> perm
   return member;
 }
 
-/// Checks the button [button] of the home is not there, reaching the last button first so that the whole list was built.
+/// Checks the button [button] of the home is on no page of the Project settings.
 Future<void> noButton(PatrolIntegrationTester $, Person member, Key button) async {
   await $.goTo($(HomeScreen.importSettingsKey(member.projectId)));
-  expect($(button), findsNothing);
+  expect(await $.anyProjectSettingPage(button), isFalse);
 }
 
 void main() {

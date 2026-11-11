@@ -59,7 +59,7 @@ void main() {
       await $.back();
       await $.switchPersonTo(member, projectId: manager.projectId);
       await $.goTo($(HomeScreen.documentsKey(member.projectId)));
-      expect($(HomeScreen.approvalsKey(member.projectId)), findsNothing);
+      expect(await $.anyProjectSettingPage(HomeScreen.approvalsKey(member.projectId)), isFalse);
     });
 
     phoneCase('unticking See the project takes them off the list', ($) async {

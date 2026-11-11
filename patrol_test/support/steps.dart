@@ -10,6 +10,7 @@ import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
 import 'package:redix/projects/member_picker.dart';
+import 'package:redix/projects/project_settings_card.dart';
 import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/shared_settings_screen.dart';
@@ -276,15 +277,48 @@ extension Steps on PatrolIntegrationTester {
     await pumpAndSettle();
   }
 
-  /// Brings [finder] into view, above or below what shows now: one not built yet is further down the list.
+  /// The pages of the home's Project settings, four buttons each, swiped sideways and going round (Muteb, 11 Nov 2026).
+  Finder get projectSettingPages => find.descendant(of: find.byType(ProjectSettingsCard), matching: find.byType(PageView));
+
+  /// What brings [finder] into view: the Project settings' card for one of their buttons, since scrolling the button would also turn the pages; else [finder] itself.
+  Finder _scrolledFor(Finder finder) => find.descendant(of: projectSettingPages, matching: finder).evaluate().isNotEmpty ? projectSettingPages : finder;
+
+  /// Swipes the home's Project settings one page on, toward the start of the reading line, as a person does.
+  Future<void> swipeProjectSettings() async {
+    await tester.ensureVisible(projectSettingPages);
+    await pumpAndSettle();
+    final width = tester.getSize(projectSettingPages).width;
+    final rightToLeft = Directionality.of(tester.element(projectSettingPages)) == TextDirection.rtl;
+    await tester.drag(projectSettingPages, Offset((rightToLeft ? width : -width) * 0.8, 0));
+    await pumpAndSettle();
+  }
+
+  /// Swipes the home's Project settings round until [finder] shows; nothing when it shows already or no Project settings are on screen.
+  Future<void> _swipeTo(Finder finder) async {
+    for (var turn = 0; turn < 4 && finder.evaluate().isEmpty && projectSettingPages.evaluate().isNotEmpty; turn++) {
+      await swipeProjectSettings();
+    }
+  }
+
+  /// Whether any page of the home's Project settings holds the button keyed [key]: looks at every page, as many as their dots, and stands where it stops.
+  Future<bool> anyProjectSettingPage(Key key) async {
+    final pages = find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith('home.settingsDot.')).evaluate().length;
+    for (var page = 1; page < pages && find.byKey(key).evaluate().isEmpty; page++) {
+      await swipeProjectSettings();
+    }
+    return find.byKey(key).evaluate().isNotEmpty;
+  }
+
+  /// Brings [finder] into view, above or below what shows now: one not built yet is further down the list, or on another page of the Project settings.
   Future<void> goTo(PatrolFinder finder) async {
     await pumpAndSettle();
+    await _swipeTo(finder);
     if (finder.evaluate().isEmpty) {
       await finder.scrollTo();
       return;
     }
     for (var attempt = 0; attempt < 10 && finder.hitTestable().evaluate().isEmpty; attempt++) {
-      await tester.ensureVisible(finder);
+      await tester.ensureVisible(_scrolledFor(finder));
       await pumpAndSettle();
       if (finder.hitTestable().evaluate().isEmpty) {
         await Future<void>.delayed(const Duration(milliseconds: 300));
@@ -302,10 +336,12 @@ extension Steps on PatrolIntegrationTester {
 
   /// Waits for [finder], and brings it into view: a phone 360 points wide shows less than the emulator.
   Future<void> reach(PatrolFinder finder) async {
+    await pumpAndSettle();
+    await _swipeTo(finder);
     await finder.waitUntilExists();
     await pumpAndSettle();
     if (finder.hitTestable().evaluate().isEmpty) {
-      await tester.ensureVisible(finder);
+      await tester.ensureVisible(_scrolledFor(finder));
       await pumpAndSettle();
     }
   }

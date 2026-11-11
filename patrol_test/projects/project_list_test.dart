@@ -75,7 +75,7 @@ void main() {
       final manager = await Given.manager();
       await $.onTheList(manager);
       expect($(HomeScreen.sharedSettingsKey(manager.projectId)), findsNothing);
-      expect($(HomeScreen.usersKey(manager.projectId)), findsNothing);
+      expect(await $.anyProjectSettingPage(HomeScreen.usersKey(manager.projectId)), isFalse);
     });
 
     phoneCase('a project taken away while it is open returns to the list', ($) async {
