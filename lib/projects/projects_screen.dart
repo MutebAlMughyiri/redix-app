@@ -80,12 +80,11 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
     final session = widget.session;
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         actions: [
           NotificationsBell(notifications: widget.notifications),
           IconButton(
             key: ProjectsScreen.generalSettingsKey,
-            icon: Icon(Icons.tune, key: ProjectsScreen.generalSettingsKey.icon),
+            icon: Icon(Icons.settings_outlined, key: ProjectsScreen.generalSettingsKey.icon),
             tooltip: words.generalSettingsTitle,
             onPressed: () => context.push(GeneralSettingsScreen.path),
           ),

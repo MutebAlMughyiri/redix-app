@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../ui/api_list_body.dart';
-import '../ui/bottom_button.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
@@ -128,6 +127,12 @@ class _UsersScreenState extends State<UsersScreen> {
         title: ScreenTitle(words.usersTitle, subject: widget.projectName),
         actions: [
           IconButton(
+            key: UsersScreen.newUserKey,
+            tooltip: words.usersNew,
+            icon: Icon(Icons.add, key: UsersScreen.newUserKey.icon),
+            onPressed: () => context.push(NewUserScreen.pathOf(users.projectId)),
+          ),
+          IconButton(
             key: UsersScreen.addExistingKey,
             icon: Icon(Icons.person_search_outlined, key: UsersScreen.addExistingKey.icon),
             tooltip: words.usersAddExisting,
@@ -137,11 +142,6 @@ class _UsersScreenState extends State<UsersScreen> {
             ),
           ),
         ],
-      ),
-      bottomNavigationBar: BottomButton(
-        buttonKey: UsersScreen.newUserKey,
-        label: words.usersNew,
-        onPressed: () => context.push(NewUserScreen.pathOf(users.projectId)),
       ),
       body: ApiListBody(
         list: widget.users,

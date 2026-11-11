@@ -32,7 +32,7 @@ void main() {
 
   Future<FakeApi> openEntries(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field, String status = 'active'}) async {
     final api = await openHome(tester, arrange, permissions: permissions, status: status);
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.entriesKey('project-0'))));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
     return api;
   }
 
@@ -88,7 +88,7 @@ void main() {
     await openHome(tester, (api) => api.addEntry(isMine: false));
 
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
-    expect(find.byKey(HomeScreen.entriesKey('project-0')), findsOneWidget);
+    expect(find.byKey(HomeScreen.searchEntriesKey('project-0')), findsOneWidget);
   });
 
   testWidgets('the home shows a spinner under القيود while its entries are first read, and the rows once they come', (tester) async {
@@ -109,13 +109,13 @@ void main() {
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
   });
 
-  testWidgets('R14: a project with no entries keeps its heading, its search and the way to all, and says it has none', (tester) async {
+  testWidgets('R14: a project with no entries keeps its heading and its search, says it has none, and offers no Show more', (tester) async {
     await openHome(tester, (api) {});
 
     expect(find.text('en entries.title'), findsOneWidget);
     expect(find.text('en entries.empty'), findsOneWidget);
     expect(find.byKey(HomeScreen.searchEntriesKey('project-0')), findsOneWidget);
-    expect(find.byKey(HomeScreen.entriesKey('project-0')), findsOneWidget);
+    expect(find.byKey(HomeScreen.moreEntriesKey('project-0')), findsNothing);
   });
 
   testWidgets('everyone sees all entries, and starts on their own', (tester) async {

@@ -12,7 +12,7 @@ import '../support/steps.dart';
 
 /// Signs [person] in and opens the whole list of entries.
 Future<void> onEntries(PatrolIntegrationTester $, Person person) async {
-  await $.fromTheHome(person, HomeScreen.entriesKey(person.projectId));
+  await $.fromTheHome(person, HomeScreen.searchEntriesKey(person.projectId));
   await $.reach($(EntriesScreen.searchKey));
 }
 

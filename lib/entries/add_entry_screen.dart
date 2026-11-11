@@ -627,6 +627,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       if (widget.recording.wasKept) {
         showMessage(messenger, words, 'expenses.keptOnPhone');
       } else {
+        unawaited(widget.entries.load());
         _offerShare(messenger, words, sent, _entryId);
       }
       context.pop(true);

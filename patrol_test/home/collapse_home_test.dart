@@ -50,7 +50,7 @@ void main() {
       await onAnExpandedHome($, manager);
       await tapCollapse($);
       await isCollapsed($, manager.projectId);
-      await $.reach($(HomeScreen.entriesKey(manager.projectId)));
+      await $.reach($(HomeScreen.searchEntriesKey(manager.projectId)));
       await $.goTo($(EntriesScreen.rowKey(entry)));
     });
 

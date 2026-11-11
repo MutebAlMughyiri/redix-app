@@ -9,7 +9,7 @@ import '../auth/session.dart';
 import '../approvals/approvals_screen.dart';
 import '../entries/add_entry_screen.dart';
 import '../entries/latest_entries.dart';
-import '../entries/project_entries.dart';
+import '../entries/newest_entries.dart';
 import '../notifications/notifications.dart';
 import '../notifications/notifications_bell.dart';
 import '../offline/outbox.dart';
@@ -42,8 +42,8 @@ class HomeScreen extends StatefulWidget {
   /// What the user was told.
   final Notifications notifications;
 
-  /// The project's entries.
-  final ProjectEntries entries;
+  /// The project's newest entries, as many at a time as this phone shows (redix-app #105).
+  final NewestEntries entries;
 
   /// What waits on this phone for the network.
   final Outbox outbox;
@@ -96,8 +96,8 @@ class HomeScreen extends StatefulWidget {
   /// The button beside the entries that searches them, in the project [id].
   static Key searchEntriesKey(String id) => Key('home.searchEntries.$id');
 
-  /// The way to the entries of the project [id].
-  static Key entriesKey(String id) => Key('home.entries.$id');
+  /// Show more, under the entries of the project [id]: as many again as show at a time (redix-app #105).
+  static Key moreEntriesKey(String id) => Key('home.moreEntries.$id');
 
   /// The spinner under the entries' heading while they are first read.
   static const entriesLoadingKey = Key('home.entriesLoading');
@@ -169,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     widget.projects.loadOnOpen();
     widget.accounts.loadOnOpen();
-    widget.entries.loadOnOpen();
+    widget.entries.openFirstPage();
     widget.projects.addListener(_leaveIfGone);
     unawaited(widget.sync.refresh(widget.projectId));
   }
@@ -194,12 +194,12 @@ class _HomeScreenState extends State<HomeScreen> {
     await Future.wait([widget.projects.load(), _readAgain()]);
   }
 
-  /// Reads again what home shows besides the project: its figures, the latest entries and the accounts.
   void _toggleDetails() {
     widget.localConfig.toggleHomeDetails();
     setState(() {});
   }
 
+  /// Reads again what home shows besides the project: its figures, the latest entries and the accounts.
   Future<void> _readAgain() => Future.wait([widget.summary.load(), widget.entries.load(), widget.accounts.load()]);
 
   @override

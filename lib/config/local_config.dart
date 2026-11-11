@@ -12,16 +12,23 @@ class LocalConfig extends ChangeNotifier {
   static const _themeModes = [ThemeMode.light, ThemeMode.dark, ThemeMode.system];
   static const _themeModeKey = 'themeMode_state';
 
+  /// How many entries the home may show at a time (redix-app #105): any number from 5 to 20, the first until one is chosen.
+  static const entriesShownChoices = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+  static const _entriesShownKey = 'entriesShown_count';
+
   var _homeDetails = _expanded;
   var _themeMode = ThemeMode.system;
+  var _entriesShown = entriesShownChoices.first;
 
   /// Reads what was kept before the first frame, so the home never flashes open and the app never flashes light. A key not found yet is set to its default and kept.
-  /// A number no build kept reads as the phone's.
+  /// A number no build kept reads as the phone's appearance, or as the fewest entries shown.
   Future<void> restore() async {
     final preferences = await SharedPreferences.getInstance();
     _homeDetails = await preferences.restoreOrDefault(_homeDetailsKey, _expanded);
     final kept = await preferences.restoreOrDefault(_themeModeKey, _themeModes.indexOf(ThemeMode.system));
     _themeMode = _themeModes.asMap()[kept] ?? ThemeMode.system;
+    final shown = await preferences.restoreOrDefault(_entriesShownKey, entriesShownChoices.first);
+    _entriesShown = entriesShownChoices.contains(shown) ? shown : entriesShownChoices.first;
   }
 
   /// True while the home shows the conclusion and the project's buttons.
@@ -41,6 +48,16 @@ class LocalConfig extends ChangeNotifier {
     _themeMode = mode;
     notifyListeners();
     await (await SharedPreferences.getInstance()).setInt(_themeModeKey, _themeModes.indexOf(mode));
+  }
+
+  /// How many entries the home shows at first, and how many each Show more adds (redix-app #105).
+  int get entriesShown => _entriesShown;
+
+  /// Shows [count] entries at a time, one of [entriesShownChoices], and keeps it for the next start.
+  Future<void> chooseEntriesShown(int count) async {
+    _entriesShown = count;
+    notifyListeners();
+    await (await SharedPreferences.getInstance()).setInt(_entriesShownKey, count);
   }
 }
 

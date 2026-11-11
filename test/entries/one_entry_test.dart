@@ -309,8 +309,8 @@ void main() {
         'links': const <Object>[],
       };
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.entriesKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.entriesKey('project-0'))));
+    await tester.ensureVisible(find.byKey(HomeScreen.searchEntriesKey('project-0')));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
     await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0'))));
 
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.changeKey)));

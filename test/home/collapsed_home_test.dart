@@ -90,7 +90,7 @@ void main() {
     final api = await openHome(tester, preferences: {stateKey: 0});
 
     expect(find.byKey(HomeScreen.addEntryKey('project-0')), findsOneWidget);
-    expect(find.byKey(HomeScreen.entriesKey('project-0')), findsOneWidget);
+    expect(find.byKey(HomeScreen.searchEntriesKey('project-0')), findsOneWidget);
     expect(api, isNotNull);
   });
 

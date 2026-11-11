@@ -36,6 +36,7 @@ import 'entries/entry_recording.dart';
 import 'entries/add_entry_screen.dart';
 import 'entries/entries_screen.dart';
 import 'entries/entry_tables.dart';
+import 'entries/newest_entries.dart';
 import 'entries/project_entries.dart';
 import 'notifications/notifications.dart';
 import 'notifications/notifications_screen.dart';
@@ -154,8 +155,9 @@ class _RedixAppState extends State<RedixApp> {
   late final _suppliersOf = _kept((projectId) => Suppliers(widget.session, projectId));
   late final _contractsOf = _kept((projectId) => Contracts(widget.session, projectId));
   late final _attachmentsOf = _kept((projectId) => Attachments(widget.session, projectId));
-  late final _recordingOf = _kept((projectId) => EntryRecording(widget.session, projectId, _outbox, _entriesOf(projectId)));
+  late final _recordingOf = _kept((projectId) => EntryRecording(widget.session, projectId, _outbox));
   late final _entriesOf = _kept((projectId) => ProjectEntries(widget.session, projectId));
+  late final _newestEntriesOf = _kept((projectId) => NewestEntries(widget.session, projectId, widget.localConfig));
   late final _approvalsOf = _kept((projectId) => Approvals(widget.session, projectId));
   late final _offeredAccountsOf = _kept((projectId) => OfferedAccounts(widget.session, projectId));
   late final _columnsAt = _kept((path) => Columns(widget.session, path));
@@ -211,7 +213,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.projectId, projects: _projects, accounts: _accountsOf(state.projectId), outbox: _outbox, sync: _sync, entries: _entriesOf(state.projectId), notifications: _notifications, summary: _summaryOf(state.projectId), localConfig: widget.localConfig),
+        builder: (context, state) => HomeScreen(projectId: state.projectId, projects: _projects, accounts: _accountsOf(state.projectId), outbox: _outbox, sync: _sync, entries: _newestEntriesOf(state.projectId), notifications: _notifications, summary: _summaryOf(state.projectId), localConfig: widget.localConfig),
       ),
       GoRoute(
         path: ApprovalsScreen.path,
@@ -399,10 +401,17 @@ class _RedixAppState extends State<RedixApp> {
     columnsOf: (itemId) => _columnsAt(Columns.itemPath(projectId, itemId)),
     attachments: _attachmentsOf(projectId),
     capture: widget.capture,
-    entries: _entriesOf(projectId),
+    entries: _entriesHolding(projectId, query['entry'] ?? ''),
     approvals: _approvalsOf(projectId),
     projectAccounts: _accountsOf(projectId),
   );
+
+  /// The entries list that holds the entry [entryId], for Add entry to show it and read it again once saved: the whole list once a screen has read it with that entry,
+  /// otherwise the home's newest, which hold every entry the home shows and a new one once read again (redix-app #105).
+  ProjectEntries _entriesHolding(String projectId, String entryId) {
+    final whole = _entriesOf(projectId);
+    return whole.all.any((row) => row.id == entryId) ? whole : _newestEntriesOf(projectId);
+  }
 
   ItemColumnsScreen _itemColumnsScreen(String projectId, String itemId, Project project) {
     final categories = _categoriesOf(projectId);

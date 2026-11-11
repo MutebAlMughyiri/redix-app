@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 
 import '../api.dart';
 import '../attachments/picked_file.dart';
-import 'project_entries.dart';
 import 'saved_entry.dart';
 import '../auth/session.dart';
 import '../offline/outbox.dart';
@@ -12,12 +9,11 @@ import '../offline/outbox.dart';
 /// Records a project's entries on the API, whatever their table (redix-api #110): a purchase, a contractor payment, revenue or a partner's money, all through one route, or
 /// kept in the outbox while there is no network. It sends what was typed; the API computes every figure.
 class EntryRecording {
-  /// The entries of the project [projectId], recorded through [_session], kept in [_outbox] while offline, and read again into [_entries] once recorded.
-  EntryRecording(this._session, this.projectId, this._outbox, this._entries);
+  /// The entries of the project [projectId], recorded through [_session] and kept in [_outbox] while offline.
+  EntryRecording(this._session, this.projectId, this._outbox);
 
   final Session _session;
   final Outbox _outbox;
-  final ProjectEntries _entries;
 
   /// The project these entries belong to.
   final String projectId;
@@ -75,7 +71,6 @@ class EntryRecording {
       final response = await _session.post('/projects/$projectId/$route', body);
       _lastAnswer = answerOf(response);
       if (response.statusCode < 300) {
-        unawaited(_entries.load());
         return '';
       }
       _refusedColumnKey = _lastAnswer['columnKey'] as String? ?? '';

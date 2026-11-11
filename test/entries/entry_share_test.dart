@@ -30,7 +30,7 @@ void main() {
     final capture = FakeCapture();
     await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture, locale: Locale(language));
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.entriesKey('project-0'))));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
     return (api: api, capture: capture);
   }
 
@@ -120,7 +120,7 @@ void main() {
 
       await act(tester, api, () => tester.pageBack());
 
-      expect(find.byKey(HomeScreen.entriesKey('project-0')), findsOneWidget);
+      expect(find.byKey(HomeScreen.searchEntriesKey('project-0')), findsOneWidget);
     });
 
     testWidgets('R8: for someone who cannot decide it, the link opens the entry read only, saying it waits, and never Approvals', (tester) async {

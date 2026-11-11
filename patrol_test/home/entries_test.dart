@@ -98,7 +98,7 @@ void main() {
     phoneCase('the way to all opens the whole list', ($) async {
       final manager = await Given.manager();
       final entry = await Given.entry(manager);
-      await $.fromTheHome(manager, HomeScreen.entriesKey(manager.projectId));
+      await $.fromTheHome(manager, HomeScreen.searchEntriesKey(manager.projectId));
       await $.reach($(EntriesScreen.foundKey));
       await $.goTo($(EntriesScreen.rowKey(entry)));
     });
@@ -145,7 +145,7 @@ void main() {
       await $.says(HomeScreen.entriesEmptyKey(manager.projectId), $.words.entriesEmpty);
       expect($(HomeScreen.entriesHeadingKey(manager.projectId)), findsOneWidget);
       expect($(HomeScreen.searchEntriesKey(manager.projectId)), findsOneWidget);
-      expect($(HomeScreen.entriesKey(manager.projectId)), findsOneWidget);
+      expect($(HomeScreen.searchEntriesKey(manager.projectId)), findsOneWidget);
     });
 
     phoneCase('entries that cannot be read say so, never that there are none', ($) async {

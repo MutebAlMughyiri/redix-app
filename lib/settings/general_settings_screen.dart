@@ -22,7 +22,7 @@ import '../format/parts_line.dart';
 import '../ui/refusal_text.dart';
 
 /// Settings (الإعدادات), all on one screen (Muteb, 9 Nov 2026): who is signed in, the way back to the project list, the default project, the registered projects for the
-/// admin, the language (UC-004), the appearance (redix-app #87, #97), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out
+/// admin, the language (UC-004), the appearance (redix-app #87, #97), how many entries the home shows at a time (redix-app #105), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out
 /// (UC-062), each in its own border (Muteb, 10 Nov 2026: "i like borders for each component"). A project's own screens open from its home.
 class GeneralSettingsScreen extends StatefulWidget {
   /// The screen for the user signed in through [session], opened from [project], whose [projects] the default is chosen among, switching [language] and the mode kept in
@@ -32,7 +32,7 @@ class GeneralSettingsScreen extends StatefulWidget {
   /// The language choice it changes.
   final AppLanguage language;
 
-  /// This phone's choices, where the appearance is kept.
+  /// This phone's choices, where the appearance and the entries shown are kept.
   final LocalConfig localConfig;
 
   /// The session that says who is signed in and what they may do, and that it signs out of.
@@ -76,6 +76,15 @@ class GeneralSettingsScreen extends StatefulWidget {
 
   /// The Dark choice.
   static const themeDarkKey = Key('generalSettings.themeDark');
+
+  /// The row of how many entries the home shows at a time (redix-app #105).
+  static const entriesShownKey = Key('generalSettings.entriesShown');
+
+  /// The choice of that number, from 5 to 20.
+  static const entriesShownChoiceKey = Key('generalSettings.entriesShownChoice');
+
+  /// The number [count] among the choices.
+  static Key entriesShownOptionKey(int count) => Key('generalSettings.entriesShown.$count');
 
   /// The switch that turns fingerprint or face on and off for this phone.
   static const biometricsKey = Key('generalSettings.biometrics');
@@ -146,7 +155,7 @@ class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
                 subtitle: Text(partsLine([session.username, widget.projects.latest(widget.project).roleName]), key: GeneralSettingsScreen.whoKey.subtitle),
               ),
             ]),
-            _row(GeneralSettingsScreen.switchProjectKey, Icons.swap_horiz, words.generalSettingsSwitchProject, () => context.go(ProjectsScreen.path)),
+            _row(GeneralSettingsScreen.switchProjectKey, Icons.swap_horiz, words.generalSettingsSwitchProject, () => context.push(ProjectsScreen.path)),
             _row(GeneralSettingsScreen.defaultProjectKey, Icons.star_outline, words.generalSettingsDefaultProject, () => DefaultProjectSheet.show(context, session, widget.projects)),
             if (session.may(Permission.approveProjects))
               _row(GeneralSettingsScreen.registeredKey, Icons.approval_outlined, words.registeredTitle, () => context.push(RegisteredProjectsScreen.path)),
@@ -175,6 +184,23 @@ class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
                   ],
                   selected: {widget.localConfig.themeMode},
                   onSelectionChanged: (chosen) => widget.localConfig.chooseThemeMode(chosen.single),
+                ),
+              ),
+            ]),
+            _bordered([
+              ListTile(
+                key: GeneralSettingsScreen.entriesShownKey,
+                leading: Icon(Icons.format_list_numbered, key: GeneralSettingsScreen.entriesShownKey.icon),
+                title: Text(words.generalSettingsEntriesShown, key: GeneralSettingsScreen.entriesShownKey.title),
+                subtitle: Text(words.generalSettingsEntriesShownHint, key: GeneralSettingsScreen.entriesShownKey.subtitle),
+                trailing: DropdownButton<int>(
+                  key: GeneralSettingsScreen.entriesShownChoiceKey,
+                  value: widget.localConfig.entriesShown,
+                  items: [
+                    for (final count in LocalConfig.entriesShownChoices)
+                      DropdownMenuItem(key: GeneralSettingsScreen.entriesShownOptionKey(count), value: count, child: Text('$count', key: GeneralSettingsScreen.entriesShownOptionKey(count).title)),
+                  ],
+                  onChanged: (count) => widget.localConfig.chooseEntriesShown(count ?? widget.localConfig.entriesShown),
                 ),
               ),
             ]),

@@ -950,14 +950,14 @@ mixin WordGetters {
   /// The word `entries.searchHint`.
   String get entriesSearchHint => text('entries.searchHint');
 
-  /// The word `entries.seeAll`.
-  String get entriesSeeAll => text('entries.seeAll');
-
   /// The word `entries.send`.
   String get entriesSend => text('entries.send');
 
   /// The word `entries.share`.
   String get entriesShare => text('entries.share');
+
+  /// The word `entries.showMore`.
+  String get entriesShowMore => text('entries.showMore');
 
   /// The word `entries.table`.
   String get entriesTable => text('entries.table');
@@ -1198,6 +1198,12 @@ mixin WordGetters {
 
   /// The word `generalSettings.defaultProjectHint`.
   String get generalSettingsDefaultProjectHint => text('generalSettings.defaultProjectHint');
+
+  /// The word `generalSettings.entriesShown`.
+  String get generalSettingsEntriesShown => text('generalSettings.entriesShown');
+
+  /// The word `generalSettings.entriesShownHint`.
+  String get generalSettingsEntriesShownHint => text('generalSettings.entriesShownHint');
 
   /// The word `generalSettings.switchProject`.
   String get generalSettingsSwitchProject => text('generalSettings.switchProject');

@@ -158,14 +158,14 @@ final List<Gate> _gates = [
     name: 'An enabled Edit on one\'s own draft',
     permission: Permission.recordEntries,
     arrange: (api) => api.addEntry(status: 'draft'),
-    steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
+    steps: [_openProject, _tapKey(HomeScreen.searchEntriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
     control: _enabled(AddEntryScreen.changeKey),
   ),
   (
     name: 'The swipe that deletes one\'s own draft',
     permission: Permission.deleteEntries,
     arrange: (api) => api.addEntry(status: 'draft'),
-    steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project))],
+    steps: [_openProject, _tapKey(HomeScreen.searchEntriesKey(_project))],
     control: _key(EntriesScreen.rowKey('entry-0').swipe),
   ),
   (
@@ -187,7 +187,7 @@ final List<Gate> _gates = [
     name: 'An enabled Edit on someone else\'s entry',
     permission: Permission.manageAnyEntry,
     arrange: (api) => api.addEntry(isMine: false),
-    steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project)), _tapKey(EntriesScreen.allKey), _tapKey(EntriesScreen.rowKey('entry-0'))],
+    steps: [_openProject, _tapKey(HomeScreen.searchEntriesKey(_project)), _tapKey(EntriesScreen.allKey), _tapKey(EntriesScreen.rowKey('entry-0'))],
     control: _enabled(AddEntryScreen.changeKey),
   ),
   (
@@ -241,7 +241,7 @@ final List<Gate> _gates = [
     name: 'Reverse an approved entry',
     permission: Permission.approveEntries,
     arrange: (api) => api.addEntry(status: 'approved'),
-    steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
+    steps: [_openProject, _tapKey(HomeScreen.searchEntriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
     control: _key(AddEntryScreen.reverseKey),
   ),
   (
@@ -257,7 +257,7 @@ final List<Gate> _gates = [
     name: 'Reverse a revenue entry in القيود',
     permission: Permission.approveEntries,
     arrange: (api) => api.addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب'),
-    steps: [_openProject, _tapKey(HomeScreen.entriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
+    steps: [_openProject, _tapKey(HomeScreen.searchEntriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
     control: _key(AddEntryScreen.reverseKey),
   ),
   (
