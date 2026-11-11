@@ -59,16 +59,20 @@ lib/
     documents_screen.dart   A project's documents: each group under its name, those in none first
   entries/
     add_entry_screen.dart   إضافة قيد: one form adds an entry to any table, an expense's, a revenue item's or a partner, asking every entry the same things and each table only its own (redix-api #110); it also opens an entry read only, as it was filled, with what can be done to it (redix-app #90)
-    entries_screen.dart     A project's entries: each person's own, or all of them, searched and filtered, and what can be done to one
-    entry_filter.dart       What the search of a project's entries keeps: every filter set must hold, and a filter left empty keeps everything
+    entries_screen.dart     A project's entries: each person's own, or all of them, searched and filtered on the API a page at a time with Show more, and what can be done to one
+    entry_filter.dart       What the search of a project's entries asks the API to keep: what was typed, whose, which kinds, where they stand and when
+    entry_link_screen.dart  Where a shared entry's link, or a notification about an entry, lands: Approvals on it for whoever may decide it, otherwise its sheet
+    entry_share.dart        An entry as text for any app the phone shares to, ending in its link
     entry_recording.dart    Records a project's entries on the API through one route, whatever their table, or keeps them in the outbox while there is no network
     entry_kind.dart         What an entry is, named as the API names it, with the word key that names it: the one owner the filter, the entries list and Approvals read
     entry_row.dart          An entry on a list
     entry_status.dart       Where an entry stands, named as the API names it, and the color that marks it (redix-app #90)
     entry_tables.dart       One table an entry may go into, and what it asks beyond every entry
     entry_card.dart         An entry on a list of project's entries: tapping it opens its actions, and swiping it removes it where the user may delete it
-    latest_entries.dart       The project's entries on its home: the latest five by anyone, a spinner while they are first read, a search beside the heading, and the way to all of them
+    latest_entries.dart     The project's entries on its home: the newest by anyone, as many at a time as Settings chooses, a search beside the heading, and Show more for as many again
+    newest_entries.dart     The one owner of reading entries a page at a time: the home's newest, each Show more reading as many again
     project_entries.dart    A project's entries, newest first: everyone who reads the project sees them all, and only their own drafts
+    searched_entries.dart   The Entries screen's search: the newest entries with what was typed and chosen sent to the API, a page at a time
     reverse_sheet.dart      Asks why something approved is reversed, and reverses it
     saved_entry.dart        An entry as the API keeps it, whatever its table, read to fill Add entry when it is changed
     table_picker.dart       The field that chooses the table an expense goes into, opening a sheet of every table on offer: by category, each item with its general table first and its named tables and contracts under it, with a search over the items' and the tables' names
@@ -83,6 +87,9 @@ lib/
     payment_choice.dart     What a person chose to pay an entry from, and how
     payment_choices.dart    The account an entry moves money through, for any table, and how an expense was paid: an expense offers only what the signed-in user may pay from
     qr_summary.dart         What was read from the invoice's QR code: its five fields, and an offer to add the seller when no supplier holds its number
+  history/
+    history_list.dart       A history, newest first, a page at a time: of every thing it covers or one, everyone's lines or the user's own, and those holding what was typed
+    history_view.dart       The one look of a history, the accounts' and the partners': the search line, its filters under the arrow, the lines and المزيد
   format/
     date_format.dart        A date as the app shows it, in both languages: Gregorian dd.MM.yyyy
     number_format.dart      A number as a person types it: no separators, and as few decimals as it needs, at most two, so 15 is 15 and 7.5 is 7.5
@@ -109,6 +116,8 @@ lib/
     movements_screen.dart   One partner's movements, each with its receipt, and for whoever decides entries a way to reverse it
     partner.dart            A partner in a project, as the API answers them
     partner_dialog.dart     Asks for a partner's name and their login
+    partner_history*.dart   The partners' history: its lines, their words and icons
+    partner_menu.dart       A partner's ⋮ menu: rename, and Delete, gray saying why while capital, something waiting or someone else's draft holds them
     partners.dart           A project's partners, and the one way to change them
     partners_screen.dart    A project's partners and capital: the total, each line the user may see with its balance and share, and a way into its movements
   projects/
@@ -118,7 +127,7 @@ lib/
     members.dart            The active people of one project, for choosing who holds something in it
     new_project_screen.dart The form that registers a project: its name, its start date and its units
     project.dart            Where a project stands, as the API says it, each knowing its word so no reader needs to tell them apart
-    project_settings_card.dart       The open project's buttons, with what the signed-in user's permissions allow: Accounts, Partners, Suppliers, Contracts, Reports, Settings, Approvals and Documents
+    project_settings_card.dart The open project's buttons, four to a page, swiped sideways and going round, with a dot for each page; the four used most first
     project_choice.dart     One project on the list: its name, units and its status
     project_status_chip.dart Where a project stands, as a chip: the project list and More info draw the same one
     project_info_screen.dart More info (معلومات المشروع, redix-api 93): the project's own record on one page, its name, start date, status, units and description
@@ -176,7 +185,6 @@ lib/
     item_type_choice.dart   What an item is for: its side first, expenses or revenue, then one of that side's types, for the dialogs that add an item and change its type
     offered_items.dart      What an entry of one type may choose from, by category
   suppliers/
-    arabic_spelling.dart    The letters a person may write either way, as `ArabicSpelling` on the API treats them: what a search needs when it has no network to ask
     quick_add_supplier_dialog.dart Asks for a missing supplier's name and VAT number, without leaving what is being entered
     supplier.dart           Where a supplier stands, as the API names it
     supplier_dialog.dart    Asks for a supplier's name, VAT number or that it has none, mobile and default item
@@ -191,29 +199,38 @@ lib/
     amount_line.dart        A label with its amount at the end of the line, each in the style the screen wants
     api_list_body.dart      The body of a screen that shows an ApiList: why it could not load with a way to try again, loading, empty, or its items, which are read again when pulled down
     api_object_body.dart    What shows something the API owns: why it could not load with a way to try again, or what builder draws from it
+    arabic_spelling.dart    The letters a person may write either way, as `ArabicSpelling` on the API treats them, and what was typed as the API is asked it
+    busy.dart               A spinner over the screen while a file is picked, read or sent, removing itself once the work ends
     bottom_button.dart      A screen's main action: one full-width filled button at its bottom, the same on every screen
     change_dialog.dart      A dialog that sends a change: it closes once saved, and a refusal stays in it with what was typed
     confirm_dialog.dart     Asks before a change that deserves a second thought: what it applies to, what it means, and a red button to go ahead
+    drag_handle.dart        The one drag handle of a row put in order, grayed and still while a search narrows its list
+    filter_line.dart        The one line of filters under a search line: a segmented choice, a chip on or off, a chip opening a list of many or of one, an action chip
     entry_field.dart        One typed field of an entry's form, the same on every kind of entry: text, or a number on the phone's number keyboard, which has a minus sign when it isSigned
     form_refusal.dart  A refusal under a long form's main button, which brings itself into view when it appears
     form_button_style.dart  The one style of a form's full-width main button, which stays inside the form
     form_section.dart       One section of a long form: its children on a card, evenly spaced
     labelled_chips.dart     A choice among a few, drawn as chips under what is being chosen
+    list_search.dart        What a list is searched by, on the phone or on the API, with the filters folded under its search line, and how the phone matches what was typed
     name_dialog.dart        Asks for one name, for adding or renaming anything in a project
     part_keys.dart          The keys of the parts inside a keyed element: its label, icon, title, subtitle and the field it is drawn as
     picker_field.dart       A field whose value is chosen elsewhere: it looks like a text field, shows what was chosen, and opens the choice when tapped
     picker_sheet.dart       Opens a sheet of choices, the same for every picker
     refusal_text.dart       A refusal or failure said in words, in the one refusal color
     row_menu.dart           A row's ⋮ menu and its choices; each row lists its own
+    row_stripe.dart         Rows one under another a shade apart: an odd row takes the scheme's next tone
     refusal_snack_bar.dart  The key of the SnackBar saying the word wordKey: every message has its own key, made from what it says, so a test finds it by key
     screen_title.dart       A screen's title in the app bar, with what it belongs to on a line beneath, so a long title on a narrow phone never cuts the name to a letter
+    search_line.dart        The one search line: what is typed, and the filters folded under the arrow at its end, closed as the screen opens
     swipe_to_remove.dart    The one way a row is removed, and the one frame of a row that can be: an outlined card with a red bar inside its end edge where it may be removed, swiped from that edge toward its start past 40% of its width, with no question
+    title_bar_add.dart      The plus in a title bar, for what is added rarely, grayed without the permission
     two_fields.dart         Two fields of a form, side by side and of equal width
   users/
     add_existing_user_dialog.dart Adds someone who already has a login to this project, by their exact username, so a manager never sees another project's people
     edit_user_dialog.dart   Corrects a user's name and mobile
     new_user_screen.dart    The new user form: their name, username, mobile and a temporary password they change at first sign-in
     permission_tick.dart    One permission as a tick: its name and what it allows
+    permission_ticks.dart   Every permission of a project as a tick, the capital ones under their headings with the partners to choose: the one list Permissions, صلاحياتي and the new-person form draw
     my_permissions_screen.dart صلاحياتي, from the home: what the signed-in user may do in the project, ticked, read only
     reset_password_dialog.dart Sets a new temporary password for a user, typed by whoever manages them, who passes it on
     user.dart               A person in a project, as the API answers them
@@ -265,7 +282,7 @@ Settings such as projects keep nothing on the phone: the API owns every rule, th
 | Every element a user sees or acts on has a `Key` constant on its screen, and every label, icon, title, subtitle, card and message has one too: a part inside a keyed element takes its element's key and the part's name (`HomeScreen.accountsKey(id).label`), and a message its word (`messageKeyOf('projects.pendingEntries')`). A test finds an element by its key, never by its text or its place | Each screen, `PartKeys`, `messageKeyOf` |
 | A button that sends something goes through `ActOnce`: the first tap runs its action and the button stays gray until the action ends, so a double tap cannot act twice; buttons that must not run together share one `ActOnce` (Muteb, 10 Nov 2026). `BottomButton` has it built in. A button that only opens a screen needs none, because the new screen covers it from its first frame | `lib/ui/act_once.dart`, `BottomButton` |
 | Light and dark grow from one function, `appThemeOf`, from `AppColor.seed`; Appearance in Shared settings keeps `themeMode_state`, 0 light, 1 dark and 2 the phone's (the default), in `LocalConfig`, which tells `RedixApp` so every screen redraws at once, and on the phone's Flutter redraws with the phone (redix-app #87, #97) | `lib/ui/app_theme.dart`, `LocalConfig`, `SharedSettingsScreen` |
-| A screen's main action is `BottomButton`: one full-width filled button in the `Scaffold`'s `bottomNavigationBar`, a plus unless the action says otherwise; no screen draws a floating button. Without the permission it shows grayed, never hidden | `lib/ui/bottom_button.dart` |
+| A screen's main action is `BottomButton`: one full-width filled button in the `Scaffold`'s `bottomNavigationBar`, a plus unless the action says otherwise; no screen draws a floating button. Adding what is added rarely is `TitleBarAdd`, a plus in the title bar instead (Accounts, Partners, Documents, Payment methods, Users: redix-app #101, #106). Without the permission either shows grayed, never hidden | `lib/ui/bottom_button.dart` |
 | One class to a file: a screen's card, row and dialogs are files of their own | Each feature folder |
 | Every public class and member has a doc comment | The lint `public_member_api_docs` |
 | The environment's config file (`--dart-define-from-file=config/dev.json` or `config/qa.json`, named as the API's environments `Dev` and `QA`) decides the API's address and, through `build.gradle.kts`, the app's id, its name and its link host; none is built in, and without the file the app is `sa.redix`, REDIX, `redix.test`, the production names (redix-app #95) | `apiBaseUrl`, `config/`, `build.gradle.kts` |
