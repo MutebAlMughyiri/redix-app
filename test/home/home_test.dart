@@ -48,15 +48,16 @@ void main() {
       ..addProject('غصون 6')
       ..addProject('غصون 7', permissions: ['readProject']);
     await openHome(tester, api);
+    await showProjectSetting(tester, HomeScreen.usersKey('project-0'));
     expect(find.byKey(HomeScreen.usersKey('project-0')), findsOneWidget);
 
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
-    await openAllProjectSettings(tester, api, projectId: 'project-1');
 
-    expect(find.byKey(HomeScreen.projectInfoKey('project-1')), findsOneWidget);
-    expect(find.byKey(HomeScreen.usersKey('project-1')), findsNothing);
-    expect(find.byKey(HomeScreen.categoriesKey('project-1')), findsNothing);
+    for (final (key, shown) in [(HomeScreen.projectInfoKey('project-1'), findsOneWidget), (HomeScreen.usersKey('project-1'), findsNothing), (HomeScreen.categoriesKey('project-1'), findsNothing)]) {
+      await showProjectSetting(tester, key);
+      expect(find.byKey(key), shown);
+    }
   });
 
   testWidgets('AC-37.1: with a default, the app opens that project at start, with no back arrow', (tester) async {
@@ -116,6 +117,7 @@ void main() {
     for (final key in [ProjectInfoScreen.detailsKey, ProjectInfoScreen.statusKey, ProjectInfoScreen.unitKey('project-0-unit-0'), ProjectInfoScreen.noUnitsKey, HomeScreen.finishedKey('project-0')]) {
       expect(find.byKey(key), findsNothing, reason: '$key');
     }
+    await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
     expect(find.byKey(HomeScreen.accountsKey('project-0')), findsOneWidget);
     expect(find.byKey(HomeScreen.sharedSettingsKey('project-0')), findsOneWidget);
   });
@@ -149,10 +151,15 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: reader);
     await openHome(tester, api);
 
+    await showProjectSetting(tester, HomeScreen.projectInfoKey('project-0'));
     expect(find.byKey(HomeScreen.projectInfoKey('project-0')), findsOneWidget);
+    await showProjectSetting(tester, HomeScreen.myPermissionsKey('project-0'));
     expect(find.byKey(HomeScreen.myPermissionsKey('project-0')), findsOneWidget);
+    await showProjectSetting(tester, HomeScreen.usersKey('project-0'));
     expect(find.byKey(HomeScreen.usersKey('project-0')), findsNothing);
+    await showProjectSetting(tester, HomeScreen.categoriesKey('project-0'));
     expect(find.byKey(HomeScreen.categoriesKey('project-0')), findsNothing);
+    await showProjectSetting(tester, HomeScreen.paymentMethodsKey('project-0'));
     expect(find.byKey(HomeScreen.paymentMethodsKey('project-0')), findsNothing);
   });
 
@@ -160,6 +167,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['manageUsers', 'readProject', 'seeAllCapital']);
     await openHome(tester, api);
 
+    await showProjectSetting(tester, HomeScreen.usersKey('project-0'));
     expect(find.byKey(HomeScreen.usersKey('project-0')), findsOneWidget);
     await scrollAndTap(tester, api, HomeScreen.projectInfoKey('project-0'));
     expect(find.byKey(ProjectInfoScreen.addUnitKey), findsNothing);
@@ -170,6 +178,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject', 'seeAllCapital', 'manageProject']);
     await openHome(tester, api);
 
+    await showProjectSetting(tester, HomeScreen.usersKey('project-0'));
     expect(find.byKey(HomeScreen.usersKey('project-0')), findsNothing);
     await scrollAndTap(tester, api, HomeScreen.projectInfoKey('project-0'));
     expect(find.byKey(ProjectInfoScreen.addUnitKey), findsOneWidget);
@@ -184,6 +193,7 @@ void main() {
     api.projects.single['permissions'] = ['readProject'];
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
+    await showProjectSetting(tester, HomeScreen.usersKey('project-0'));
     expect(find.byKey(HomeScreen.usersKey('project-0')), findsNothing);
   });
 }

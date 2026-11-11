@@ -99,8 +99,11 @@ class HomeScreen extends StatefulWidget {
   /// Show more, under the entries of the project [id]: as many again as show at a time (redix-app #105).
   static Key moreEntriesKey(String id) => Key('home.moreEntries.$id');
 
-  /// The arrow under the Project settings of the project [id], opening them on every button and closing them on the four used most.
-  static Key moreSettingsKey(String id) => Key('home.moreSettings.$id');
+  /// The pages of the Project settings of the project [id], four buttons each, swiped sideways.
+  static Key settingsPagesKey(String id) => Key('home.settingsPages.$id');
+
+  /// The dot under the Project settings of the project [id] that stands for their page [index], from 0.
+  static Key settingsDotKey(String id, int index) => Key('home.settingsDot.$id.$index');
 
   /// The spinner under the entries' heading while they are first read.
   static const entriesLoadingKey = Key('home.entriesLoading');

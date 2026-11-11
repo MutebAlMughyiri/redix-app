@@ -15,6 +15,7 @@ import 'package:redix/auth/session.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/main.dart';
 import 'package:redix/projects/member_picker.dart';
+import 'package:redix/projects/project_settings_card.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/words/app_language.dart';
@@ -1840,29 +1841,48 @@ bool isEnabled(WidgetTester tester, Key key) => switch (tester.widget(find.byKey
 Future<void> openProject(WidgetTester tester, FakeApi api, {InvoiceCapture? capture, LocalStore? store}) async {
   await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture, store: store);
   await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
-  await openAllProjectSettings(tester, api);
 }
 
-/// Opens the home's Project settings of the project [projectId] on every button, as a person taps their arrow to reach one used rarely (Muteb, 11 Nov 2026); nothing
-/// when they show no arrow or are open already.
-Future<void> openAllProjectSettings(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) async {
-  final arrow = find.byKey(HomeScreen.moreSettingsKey(projectId));
-  if (arrow.evaluate().isEmpty || tester.widget<Icon>(find.byKey(HomeScreen.moreSettingsKey(projectId).icon)).icon == Icons.expand_less) {
-    return;
+/// The pages of the home's Project settings, four buttons each (Muteb, 11 Nov 2026).
+final projectSettingPages = find.descendant(of: find.byType(ProjectSettingsCard), matching: find.byType(PageView));
+
+/// Swipes the home's Project settings one page on, as a person does: toward the start of the reading line, so in Arabic the next page comes from the left; back a page
+/// when [back].
+Future<void> swipeProjectSettings(WidgetTester tester, {bool back = false}) async {
+  await tester.ensureVisible(projectSettingPages);
+  await tester.pumpAndSettle();
+  final width = tester.getSize(projectSettingPages).width;
+  final rightToLeft = Directionality.of(tester.element(projectSettingPages)) == TextDirection.rtl;
+  await tester.drag(projectSettingPages, Offset((rightToLeft != back ? width : -width) * 0.8, 0));
+  await tester.pumpAndSettle();
+}
+
+/// Swipes the home's Project settings page by page until the button keyed [key] shows: on to the last page, then back to the first. Left where it ends, showing [key]
+/// whenever any page holds it, so a key still not found after it is on none of them. Nothing when it shows already or no Project settings are on screen.
+Future<void> showProjectSetting(WidgetTester tester, Key key) async {
+  for (final back in [false, true]) {
+    for (var turn = 0; turn < 4 && find.byKey(key).evaluate().isEmpty && projectSettingPages.evaluate().isNotEmpty; turn++) {
+      await swipeProjectSettings(tester, back: back);
+    }
   }
-  await tester.ensureVisible(arrow);
-  await tester.pumpAndSettle();
-  await act(tester, api, () => tester.tap(arrow));
 }
 
-/// Opens Settings from the card of the open project [projectId].
-/// Taps the widget keyed [key], scrolled into view first.
-Future<void> scrollAndTap(WidgetTester tester, FakeApi api, Key key) async {
-  await tester.ensureVisible(find.byKey(key));
+/// Scrolls [target] into view. A button of the home's Project settings is brought in by scrolling their card, since scrolling the button itself would also turn
+/// their pages and leave them between two.
+Future<void> bringIntoView(WidgetTester tester, Finder target) async {
+  final inSettings = find.descendant(of: projectSettingPages, matching: target).evaluate().isNotEmpty;
+  await tester.ensureVisible(inSettings ? projectSettingPages : target);
   await tester.pumpAndSettle();
+}
+
+/// Taps the widget keyed [key], scrolled into view first; a button of the home's Project settings is swiped to first.
+Future<void> scrollAndTap(WidgetTester tester, FakeApi api, Key key) async {
+  await showProjectSetting(tester, key);
+  await bringIntoView(tester, find.byKey(key));
   await act(tester, api, () => tester.tap(find.byKey(key)));
 }
 
+/// Opens Settings from the card of the open project [projectId].
 Future<void> openSettings(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) async {
   await tester.ensureVisible(find.byKey(HomeScreen.sharedSettingsKey(projectId)));
   await tester.pumpAndSettle();

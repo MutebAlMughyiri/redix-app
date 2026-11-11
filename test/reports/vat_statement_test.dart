@@ -21,8 +21,9 @@ void main() {
 
   Future<FakeApi> openVat(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance}) async {
     final api = await openHome(tester, arrange, permissions: permissions);
-    await tester.ensureVisible(find.byKey(HomeScreen.vatKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.vatKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.vatKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, api, HomeScreen.vatKey('project-0'));
     return api;
   }
 

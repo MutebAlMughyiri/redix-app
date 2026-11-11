@@ -92,11 +92,8 @@ void main() {
       await act(tester, api, () async {});
     }
     for (final step in action.reach) {
-      if (find.byKey(step).evaluate().isEmpty) {
-        await openAllProjectSettings(tester, api);
-      }
-      await tester.ensureVisible(find.byKey(step));
-      await tester.pumpAndSettle();
+      await showProjectSetting(tester, step);
+      await bringIntoView(tester, find.byKey(step));
       await act(tester, api, () => tester.tap(find.byKey(step)));
     }
     return api;
@@ -182,9 +179,10 @@ void main() {
       last = api.addSupplier(_project, 'مورد $index')['id']! as String;
     }
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.suppliersKey(_project)));
+    await showProjectSetting(tester, HomeScreen.suppliersKey(_project));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey(_project))));
+    await scrollAndTap(tester, api, HomeScreen.suppliersKey(_project));
 
     await tester.scrollUntilVisible(find.byKey(SuppliersScreen.rowKey(last)), 200, scrollable: find.byType(Scrollable).first);
     await tester.pumpAndSettle();

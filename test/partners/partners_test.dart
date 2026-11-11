@@ -22,8 +22,9 @@ void main() {
     final mutab = api.addPartner('project-0', 'متعب', userId: 'user-mutab', userName: 'متعب المغيري', itemId: capital);
     final haitham = api.addPartner('project-0', 'هيثم', itemId: capital, mayDelete: false);
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.partnersKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, api, HomeScreen.partnersKey('project-0'));
     return (api: api, mutab: mutab['id'] as String, haitham: haitham['id'] as String);
   }
 
@@ -166,8 +167,9 @@ void main() {
   testWidgets('a project with no partners says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.partnersKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, api, HomeScreen.partnersKey('project-0'));
 
     expect(text(tester, ApiListBody.emptyKey), 'en partners.empty');
   });
@@ -192,6 +194,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
     await openProject(tester, api);
 
+    await showProjectSetting(tester, HomeScreen.partnersKey('project-0'));
     expect(find.byKey(HomeScreen.partnersKey('project-0')), findsOneWidget);
   });
 
@@ -200,8 +203,9 @@ void main() {
     opened.api.online = false;
 
     await act(tester, opened.api, () => tester.tap(find.byType(BackButton)));
-    await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
-    await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.partnersKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, opened.api, HomeScreen.partnersKey('project-0'));
 
     expect(find.byKey(ApiListBody.messageKey), findsNothing);
   });

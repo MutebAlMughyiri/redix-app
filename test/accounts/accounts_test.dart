@@ -20,8 +20,9 @@ void main() {
     final bank = api.addAccount('project-0', 'حساب المؤسسة', balance: 64250.75);
     final custody = api.addAccount('project-0', 'كاش مع نواف', type: 'cashCustody', balance: 2750, custodianId: 'user-nawaf', custodianName: 'نواف');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.accountsKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, api, HomeScreen.accountsKey('project-0'));
     return (api: api, bank: bank['id'] as String, custody: custody['id'] as String);
   }
 
@@ -124,8 +125,9 @@ void main() {
     final api = FakeApi()..addProject('غصون 6');
     final custody = api.addAccount('project-0', 'كاش مع هيثم', type: 'cashCustody', custodianId: 'user-gone', custodianName: 'هيثم');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.accountsKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, api, HomeScreen.accountsKey('project-0'));
 
     await chooseInMenu(tester, api, custody['id'] as String, AccountsScreen.editKey);
 
@@ -184,8 +186,9 @@ void main() {
     opened.api.online = false;
 
     await act(tester, opened.api, () => tester.tap(find.byType(BackButton)));
-    await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));
-    await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.accountsKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, opened.api, HomeScreen.accountsKey('project-0'));
 
     expect(find.byKey(ApiListBody.messageKey), findsNothing);
   });

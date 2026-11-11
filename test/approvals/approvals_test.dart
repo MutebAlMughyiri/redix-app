@@ -16,9 +16,10 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status);
     arrange(api);
     await openProject(tester, api, capture: capture);
-    await tester.ensureVisible(find.byKey(HomeScreen.approvalsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.approvalsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.approvalsKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.approvalsKey('project-0'));
     return api;
   }
 
@@ -26,6 +27,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: field);
     await openProject(tester, api);
 
+    await showProjectSetting(tester, HomeScreen.approvalsKey('project-0'));
     expect(find.byKey(HomeScreen.approvalsKey('project-0')), findsNothing);
   });
 

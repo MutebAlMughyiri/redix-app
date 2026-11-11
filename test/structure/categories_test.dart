@@ -444,6 +444,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
     await openProject(tester, api);
 
+    await showProjectSetting(tester, HomeScreen.categoriesKey('project-0'));
     expect(find.byKey(HomeScreen.categoriesKey('project-0')), findsNothing);
   });
 

@@ -28,8 +28,9 @@ void main() {
     final custody = api.addAccount('project-0', 'كاش مع نواف', type: 'cashCustody', balance: 200, custodianId: 'user-nawaf', custodianName: 'نواف');
     arrange?.call(api);
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.accountsKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, api, HomeScreen.accountsKey('project-0'));
     return (api: api, bank: bank['id'] as String, custody: custody['id'] as String);
   }
 

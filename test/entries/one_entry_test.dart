@@ -229,8 +229,9 @@ void main() {
       final (:api, capture: _, refund: _, :partner, account: _) = await openAddEntry(tester);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-      await tester.ensureVisible(find.byKey(HomeScreen.partnersKey('project-0')));
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
+      await showProjectSetting(tester, HomeScreen.partnersKey('project-0'));
+      await tester.ensureVisible(projectSettingPages);
+      await scrollAndTap(tester, api, HomeScreen.partnersKey('project-0'));
 
       expect(find.byKey(PartnersScreen.totalKey), findsOneWidget);
       expect(find.byKey(PartnersScreen.nameKey(partner)), findsOneWidget);

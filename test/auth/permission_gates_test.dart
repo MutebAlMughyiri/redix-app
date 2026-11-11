@@ -43,18 +43,20 @@ const _project = 'project-0';
 const _every = [...admin, ...managerAndFinance];
 
 Step _tap(Finder Function(FakeApi api) target) => (tester, api, capture) async {
-  await tester.ensureVisible(target(api).last);
-  await tester.pumpAndSettle();
+  await bringIntoView(tester, target(api).last);
   await act(tester, api, () => tester.tap(target(api).last));
 };
 
-Step _tapKey(Key key) => _tap((_) => find.byKey(key));
+/// Taps the widget keyed [key], swiping the home's Project settings to its page first when it is one of their buttons.
+Step _tapKey(Key key) => (tester, api, capture) async {
+  await showProjectSetting(tester, key);
+  await _tap((_) => find.byKey(key))(tester, api, capture);
+};
 
-/// Opens the project's home and its Project settings on every button, as a person does to reach one used rarely.
-Future<void> _openProject(WidgetTester tester, FakeApi api, FakeCapture capture) async {
-  await _tapKey(ProjectsScreen.cardKey(_project))(tester, api, capture);
-  await openAllProjectSettings(tester, api);
-}
+/// Swipes the home's Project settings to the page of the button keyed [key], through every page when no page holds it.
+Step _swipeTo(Key key) => (tester, api, capture) => showProjectSetting(tester, key);
+
+final _openProject = _tapKey(ProjectsScreen.cardKey(_project));
 
 Future<void> _shareAPicture(WidgetTester tester, FakeApi api, FakeCapture capture) async {
   capture.share(PickedFile('receipt.png', '', Uint8List.fromList(onePixelPng)));
@@ -87,7 +89,7 @@ final _summaryWithAnItem = <String, Object>{
 
 final List<Gate> _gates = [
   (name: 'Registered projects in the settings', permission: Permission.approveProjects, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.sharedSettingsKey(_project))], control: _key(SharedSettingsScreen.registeredKey)),
-  (name: 'Users on the home', permission: Permission.manageUsers, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.usersKey(_project))),
+  (name: 'Users on the home', permission: Permission.manageUsers, arrange: _nothing, steps: [_openProject, _swipeTo(HomeScreen.usersKey(_project))], control: _key(HomeScreen.usersKey(_project))),
   (name: 'Add unit in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.addUnitKey)),
   (name: 'Rename project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.nameMenuKey)),
   (name: 'Close project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.closeKey)),
@@ -116,8 +118,8 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.documentsKey(_project))],
     control: _key(DocumentsScreen.documentKey('permit').swipe),
   ),
-  (name: 'Categories and items on the home', permission: Permission.manageStructure, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.categoriesKey(_project))),
-  (name: 'Payment methods on the home', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.paymentMethodsKey(_project))),
+  (name: 'Categories and items on the home', permission: Permission.manageStructure, arrange: _nothing, steps: [_openProject, _swipeTo(HomeScreen.categoriesKey(_project))], control: _key(HomeScreen.categoriesKey(_project))),
+  (name: 'Payment methods on the home', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _swipeTo(HomeScreen.paymentMethodsKey(_project))], control: _key(HomeScreen.paymentMethodsKey(_project))),
   (name: 'An enabled Add an account', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))], control: _enabled(AccountsScreen.addKey)),
   (
     name: 'An account\'s menu',
@@ -224,7 +226,7 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.itemReportsKey(_project)), _tapKey(ItemReportsScreen.categoryKey('category-1')), _tapKey(ItemReportsScreen.itemKey('item-1'))],
     control: (_) => find.byType(ReportFileButtons),
   ),
-  (name: 'Approvals on the project card', permission: Permission.approveEntries, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.approvalsKey(_project))),
+  (name: 'Approvals on the project card', permission: Permission.approveEntries, arrange: _nothing, steps: [_openProject, _swipeTo(HomeScreen.approvalsKey(_project))], control: _key(HomeScreen.approvalsKey(_project))),
   (
     name: 'Approve, reached from a notification',
     permission: Permission.approveEntries,

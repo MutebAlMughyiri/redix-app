@@ -263,8 +263,9 @@ void main() {
           ],
         };
     });
-    await tester.ensureVisible(find.byKey(HomeScreen.itemReportsKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.itemReportsKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.itemReportsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0'));
     await act(tester, api, () => tester.tap(find.text('التشطيب')));
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
 
@@ -277,19 +278,23 @@ void main() {
 
   testWidgets('Muteb, 9 Nov 2026: Reports holds the periodic reports alone; the home opens the item reports and the VAT refund, and Contracts holds the contracts report\'s files', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
+    await showProjectSetting(tester, HomeScreen.vatKey('project-0'));
     expect(tester.widget<Text>(find.byKey(HomeScreen.vatKey('project-0').label)).data, 'en vat.title');
+    await showProjectSetting(tester, HomeScreen.itemReportsKey('project-0'));
     expect(find.byKey(HomeScreen.itemReportsKey('project-0')), findsOneWidget);
 
-    await tester.ensureVisible(find.byKey(HomeScreen.reportsKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.reportsKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.reportsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, api, HomeScreen.reportsKey('project-0'));
     expect(find.byKey(ReportsScreen.periodicCardKey), findsOneWidget);
     for (final gone in ['en reports.contracts', 'en reports.partners', 'en vat.title', 'en reports.revenueAndExpenses']) {
       expect(find.text(gone), findsNothing, reason: gone);
     }
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
     expect(find.byType(ContractsScreen), findsOneWidget);
     expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)), findsOneWidget);
     expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.excel)), findsOneWidget);

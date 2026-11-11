@@ -368,13 +368,13 @@ void main() {
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey(runningId))));
       [HomeScreen.titleKey, HomeScreen.sharedSettingsKey(runningId)].forEach(expectFits);
-      await openAllProjectSettings(tester, api, projectId: runningId);
-      expectFits(HomeScreen.moreSettingsKey(runningId));
+      expectFits(HomeScreen.settingsPagesKey(runningId));
 
-      await tester.ensureVisible(find.byKey(HomeScreen.projectInfoKey(runningId)));
+      await showProjectSetting(tester, HomeScreen.projectInfoKey(runningId));
+      await tester.ensureVisible(projectSettingPages);
       await tester.pumpAndSettle();
       expectFits(HomeScreen.projectInfoKey(runningId));
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.projectInfoKey(runningId))));
+      await scrollAndTap(tester, api, HomeScreen.projectInfoKey(runningId));
       [ProjectInfoScreen.nameKey, ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.detailsKey, ProjectInfoScreen.statusKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.unitMenuKey('$runningId-unit-0')]
           .forEach(expectFits);
       await tester.scrollUntilVisible(find.byKey(ProjectInfoScreen.closeKey), 80, scrollable: find.byType(Scrollable).first);
@@ -466,11 +466,11 @@ void main() {
       final cardMethod = api.addPaymentMethod(runningId, 'شبكة')['id'] as String;
       final longMethod = api.addPaymentMethod(runningId, 'تحويل بنكي عن طريق الحساب الجاري للمؤسسة', isActive: false)['id'] as String;
       for (final key in [HomeScreen.myPermissionsKey(runningId), HomeScreen.usersKey(runningId), HomeScreen.categoriesKey(runningId), HomeScreen.importSettingsKey(runningId), HomeScreen.paymentMethodsKey(runningId)]) {
-        await tester.ensureVisible(find.byKey(key));
-        await tester.pumpAndSettle();
+        await showProjectSetting(tester, key);
+        await bringIntoView(tester, find.byKey(key));
         expectFits(key);
       }
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.paymentMethodsKey(runningId))));
+      await scrollAndTap(tester, api, HomeScreen.paymentMethodsKey(runningId));
       [
         PaymentMethodsScreen.addKey,
         PaymentMethodsScreen.nameKey(cardMethod),
@@ -490,10 +490,11 @@ void main() {
       final bankAccount = api.addAccount(runningId, 'حساب جارٍ باسم طويل جداً في بنك من البنوك المحلية', balance: 64250.75)['id'] as String;
       final custody = api.addAccount(runningId, 'كاش مع نواف', type: 'cashCustody', balance: 2750.5, custodianId: 'user-nawaf', custodianName: 'نواف بن عبدالله', isMine: true)['id'] as String;
       final oldAccount = api.addAccount(runningId, 'حساب قديم', balance: -120.40, isActive: false)['id'] as String;
-      await tester.ensureVisible(find.byKey(HomeScreen.accountsKey(runningId)));
+      await showProjectSetting(tester, HomeScreen.accountsKey(runningId));
+      await tester.ensureVisible(projectSettingPages);
       await tester.pumpAndSettle();
       expectFits(HomeScreen.accountsKey(runningId));
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.accountsKey(runningId))));
+      await scrollAndTap(tester, api, HomeScreen.accountsKey(runningId));
       [
         AccountsScreen.addKey,
         AccountsScreen.nameKey(bankAccount),
@@ -529,10 +530,11 @@ void main() {
 
       final partner = api.addPartner(runningId, 'متعب بن عبدالله بن محمد المغيري الشريك المؤسس في المشروع', userId: 'user-nawaf', userName: 'نواف بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني')['id'] as String;
       final partnerWithNoLogin = api.addPartner(runningId, 'هيثم')['id'] as String;
-      await tester.ensureVisible(find.byKey(HomeScreen.partnersKey(runningId)));
+      await showProjectSetting(tester, HomeScreen.partnersKey(runningId));
+      await tester.ensureVisible(projectSettingPages);
       await tester.pumpAndSettle();
       expectFits(HomeScreen.partnersKey(runningId));
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.partnersKey(runningId))));
+      await scrollAndTap(tester, api, HomeScreen.partnersKey(runningId));
       [
         PartnersScreen.addKey,
         PartnersScreen.nameKey(partner),
@@ -550,10 +552,11 @@ void main() {
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       final supplier = api.addSupplier(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', vatNumber: '322222222222223', defaultItemName: 'البلاط والرخام')['id'] as String;
-      await tester.ensureVisible(find.byKey(HomeScreen.suppliersKey(runningId)));
+      await showProjectSetting(tester, HomeScreen.suppliersKey(runningId));
+      await tester.ensureVisible(projectSettingPages);
       await tester.pumpAndSettle();
       expectFits(HomeScreen.suppliersKey(runningId));
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey(runningId))));
+      await scrollAndTap(tester, api, HomeScreen.suppliersKey(runningId));
       [SuppliersScreen.addKey, SuppliersScreen.nameKey(supplier), SuppliersScreen.detailsKey(supplier), SuppliersScreen.menuKey(supplier)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(SuppliersScreen.addKey)));
       [SuppliersScreen.supplierNameKey, SuppliersScreen.vatNumberKey, SuppliersScreen.mobileKey, SuppliersScreen.defaultItemKey, ChangeDialog.saveKey].forEach(expectFits);
@@ -570,10 +573,11 @@ void main() {
       final overrun = api.addContract(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', itemName: 'البلاط والرخام للواجهات الداخلية', value: 999999999.99, paid: 1099999999.99, unitPrice: 380, quantity: 50, notes: 'زيادة بملحق', hasPayments: true)['id'] as String;
       final open = api.addContract(runningId, 'دهان داخلي', isOpenValue: true, paid: 12000)['id'] as String;
       api.addColumn('/projects/$runningId/items/item-of-contract/columns', 'notes');
-      await tester.ensureVisible(find.byKey(HomeScreen.contractsKey(runningId)));
+      await showProjectSetting(tester, HomeScreen.contractsKey(runningId));
+      await tester.ensureVisible(projectSettingPages);
       await tester.pumpAndSettle();
       expectFits(HomeScreen.contractsKey(runningId));
-      await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey(runningId))));
+      await scrollAndTap(tester, api, HomeScreen.contractsKey(runningId));
       List<Key> contractKeys(String id) => [
         ContractsScreen.nameKey(id),
         ContractsScreen.termsKey(id),
@@ -597,6 +601,7 @@ void main() {
       contractKeys(open).forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
+      await showProjectSetting(tester, HomeScreen.addEntryKey(runningId));
       await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey(runningId)));
       await tester.pumpAndSettle();
       expectFits(HomeScreen.addEntryKey(runningId));

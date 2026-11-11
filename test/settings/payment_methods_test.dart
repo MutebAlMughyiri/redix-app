@@ -131,6 +131,7 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
     await openProject(tester, api);
 
+    await showProjectSetting(tester, HomeScreen.paymentMethodsKey('project-0'));
     expect(find.byKey(HomeScreen.paymentMethodsKey('project-0')), findsNothing);
   });
 

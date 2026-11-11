@@ -28,9 +28,10 @@ void main() {
     arrange?.call(api);
     final capture = FakeCapture();
     await openProject(tester, api, capture: capture);
-    await tester.ensureVisible(find.byKey(HomeScreen.documentsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.documentsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.documentsKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.documentsKey('project-0'));
     return (api: api, capture: capture);
   }
 
@@ -163,9 +164,10 @@ void main() {
     final api = FakeApi()..addProject('غصون 5', status: 'finished', units: ['الفلة الغربية']);
     api.documentRows.add(document('permit', 'رخصة البناء', 'التراخيص'));
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.documentsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.documentsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.documentsKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.documentsKey('project-0'));
 
     expect(find.byKey(DocumentsScreen.documentKey('permit')), findsOneWidget);
     expect(isEnabled(tester, DocumentsScreen.addKey), isFalse);

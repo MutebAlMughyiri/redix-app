@@ -29,9 +29,10 @@ void main() {
   /// Opens Accounts from the home, where the actual balances are since redix-app #89.
   Future<({FakeApi api, FakeCapture capture})> openBalances(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance}) async {
     final opened = await openHome(tester, arrange, permissions: permissions);
-    await tester.ensureVisible(find.byKey(HomeScreen.accountsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
-    await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.accountsKey('project-0'))));
+    await scrollAndTap(tester, opened.api, HomeScreen.accountsKey('project-0'));
     return opened;
   }
 
@@ -39,7 +40,7 @@ void main() {
 
   Future<({FakeApi api, FakeCapture capture})> openPartners(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance}) async {
     final opened = await openHome(tester, arrange, permissions: permissions);
-    await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.partnersKey('project-0'))));
+    await scrollAndTap(tester, opened.api, HomeScreen.partnersKey('project-0'));
     return opened;
   }
 
@@ -67,11 +68,8 @@ void main() {
     final partner = api.addPartner('project-0', 'متعب بن عبدالله بن محمد المغيري الشريك المؤسس في المشروع', userId: 'user-1', userName: 'نواف بن عبدالله بن محمد العتيبي');
     api.addCapitalLine(partner['id']! as String, 9999999.99, 66.6666666667);
     await openProject(tester, api);
-    final project = find.byKey(HomeScreen.accountsKey('project-0'));
 
-    await tester.ensureVisible(project);
-    await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(project));
+    await scrollAndTap(tester, api, HomeScreen.accountsKey('project-0'));
     expect(find.byKey(ReconciliationCard.differenceKey), findsOneWidget);
 
     await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.updateKey)));
@@ -80,10 +78,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
-    final partners = find.byKey(HomeScreen.partnersKey('project-0'));
-    await tester.ensureVisible(partners);
-    await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(partners));
+    await scrollAndTap(tester, api, HomeScreen.partnersKey('project-0'));
     expect(find.byKey(PartnersScreen.totalKey), findsOneWidget);
 
     await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.nameKey(partner['id']! as String))));

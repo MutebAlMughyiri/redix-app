@@ -29,9 +29,10 @@ void main() {
     final overrun = api.addContract('project-0', 'مبلط الجنوبية', value: 34000, paid: 35000);
     final open = api.addContract('project-0', 'دهان داخلي', isOpenValue: true, paid: 12000);
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
     return (api: api, running: running['id'] as String, overrun: overrun['id'] as String, open: open['id'] as String, contractor: contractor['id'] as String, item: item['id'] as String);
   }
 
@@ -62,9 +63,10 @@ void main() {
     ];
     apiOfDocuments = api;
     await openProject(tester, api, capture: capture);
-    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
     await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.menuKey(contract['id']! as String))));
     await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
     return capture;
@@ -76,10 +78,11 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة الغربية']);
     final contract = api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000, pending: 2000);
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
 
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
 
     final id = contract['id']! as String;
     expect(text(tester, ContractsScreen.pendingKey(id)), 'en contracts.pending 2,000.00 · 2,000.00 en contracts.afterApproval');
@@ -159,10 +162,11 @@ void main() {
     final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة الغربية']);
     final contract = api.addContract('project-0', 'دهان داخلي', isOpenValue: true, paid: 12000, pending: 500);
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
 
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
 
     expect(text(tester, ContractsScreen.pendingKey(contract['id']! as String)), 'en contracts.pending 500.00');
   });
@@ -180,9 +184,10 @@ void main() {
     final api = FakeApi()..addProject('غصون 6');
     final contract = api.addContract('project-0', 'الدرابزين', value: 19000, unitPrice: 380, quantity: 50)['id'] as String;
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
 
     expect(find.descendant(of: find.byKey(ContractsScreen.standingKey(contract)), matching: find.text('en contracts.notStarted')), findsOneWidget);
     expect(text(tester, ContractsScreen.termsKey(contract)), 'البلاط · 380 × 50');
@@ -208,9 +213,10 @@ void main() {
     final api = FakeApi()..addProject('غصون 6');
     api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000);
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
 
     await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.filterKey(ContractFilter.overrun))));
 
@@ -382,9 +388,10 @@ void main() {
   testWidgets('a project with no contracts says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
 
     expect(text(tester, ApiListBody.emptyKey), 'en contracts.empty');
   });
@@ -407,10 +414,11 @@ void main() {
   testWidgets('a list that cannot be read says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.contractsKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     await tester.pumpAndSettle();
     api.online = false;
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.contractsKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
 
     expect(text(tester, ApiListBody.messageKey), 'en contracts.loadFailed');
   });

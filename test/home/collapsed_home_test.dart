@@ -56,6 +56,7 @@ void main() {
     await tapCollapse(tester, api);
 
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsNothing);
+    await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
     expect(find.byKey(HomeScreen.accountsKey('project-0')), findsNothing);
   });
 

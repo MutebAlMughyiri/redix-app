@@ -21,8 +21,9 @@ void main() {
     final approved = api.addSupplier('project-0', 'شركة النخيل', vatNumber: vatNumber, defaultItemName: 'اللياسة');
     final pending = api.addSupplier('project-0', 'بقالة الحي', status: 'pendingApproval');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.suppliersKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.suppliersKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, api, HomeScreen.suppliersKey('project-0'));
     return (api: api, approved: approved['id'] as String, pending: pending['id'] as String);
   }
 
@@ -180,8 +181,9 @@ void main() {
   testWidgets('a project with no suppliers says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.suppliersKey('project-0')));
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey('project-0'))));
+    await showProjectSetting(tester, HomeScreen.suppliersKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
+    await scrollAndTap(tester, api, HomeScreen.suppliersKey('project-0'));
 
     expect(text(tester, ApiListBody.emptyKey), 'en suppliers.empty');
   });
@@ -204,9 +206,10 @@ void main() {
   testWidgets('a list that cannot be read says so', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
-    await tester.ensureVisible(find.byKey(HomeScreen.suppliersKey('project-0')));
+    await showProjectSetting(tester, HomeScreen.suppliersKey('project-0'));
+    await tester.ensureVisible(projectSettingPages);
     api.online = false;
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.suppliersKey('project-0'))));
+    await scrollAndTap(tester, api, HomeScreen.suppliersKey('project-0'));
 
     expect(text(tester, ApiListBody.messageKey), 'en suppliers.loadFailed');
   });

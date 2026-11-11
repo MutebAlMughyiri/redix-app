@@ -153,8 +153,10 @@ void main() {
     await openProject(tester, api);
 
     for (final key in [HomeScreen.projectInfoKey('project-0'), HomeScreen.myPermissionsKey('project-0'), HomeScreen.usersKey('project-0'), HomeScreen.categoriesKey('project-0'), HomeScreen.paymentMethodsKey('project-0')]) {
+      await showProjectSetting(tester, key);
       expect(isEnabled(tester, key), isTrue, reason: '$key');
     }
+    await showProjectSetting(tester, HomeScreen.importSettingsKey('project-0'));
     expect(isEnabled(tester, HomeScreen.importSettingsKey('project-0')), isFalse);
     expect(tester.widget<Text>(find.byKey(HomeScreen.importSettingsKey('project-0').label)).data, 'en projects.importSettings');
 
@@ -167,6 +169,7 @@ void main() {
   testWidgets('Muteb, 9 Nov 2026: صلاحياتي on the home shows every permission, those the person holds ticked, and none can be changed there', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: field);
     await openProject(tester, api);
+    await showProjectSetting(tester, HomeScreen.myPermissionsKey('project-0'));
     expect(tester.widget<Text>(find.byKey(HomeScreen.myPermissionsKey('project-0').label)).data, 'en permissions.mine');
 
     await scrollAndTap(tester, api, HomeScreen.myPermissionsKey('project-0'));
