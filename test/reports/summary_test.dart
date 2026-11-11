@@ -243,6 +243,53 @@ void main() {
     expect(find.byKey(ItemReportsScreen.itemKey('item-1')), findsNothing);
   });
 
+  testWidgets('redix-app #104: an item\'s report keeps the rows holding what was typed, and every row of a subgroup or contract whose name holds it; the total stays', (tester) async {
+    Map<String, Object> line(String id, String description, double amount) => {
+      'entryId': id,
+      'date': '2026-11-02',
+      'description': description,
+      'supplierName': 'مؤسسة الرواد',
+      'invoiceNumber': '',
+      'unitPrice': 0,
+      'quantity': 0,
+      'amount': amount,
+      'isOutsideContract': false,
+      'values': const <String>[],
+    };
+    final api = await openHome(tester, (api) => api.summaryAnswer = figures());
+    api.itemReportAnswer = {
+      'itemName': 'البلاط',
+      'categoryName': 'التشطيب',
+      'total': 5600,
+      'columns': const <String>[],
+      'subgroups': [
+        {'id': 'subgroup-1', 'name': 'الدور الأرضي', 'total': 1600, 'rows': [line('entry-a', 'بلاط المطبخ', 1000), line('entry-b', 'بلاط الحمام', 600)]},
+      ],
+      'contracts': [
+        {'id': 'contract-1', 'contractorName': 'مقاول البلاط', 'value': 5000, 'isOpenValue': false, 'paid': 4000, 'remaining': 1000, 'isOverrun': false, 'paymentsTotal': 4000, 'payments': [line('entry-c', 'دفعة أولى', 4000)]},
+      ],
+    };
+    await openRevenueAndExpenses(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.categoryKey('category-1'))));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
+
+    await searchFor(tester, api, 'الحمّام');
+    expect(find.byKey(ItemReportScreen.rowKey('entry-b')), findsOneWidget);
+    expect(find.byKey(ItemReportScreen.rowKey('entry-a')), findsNothing);
+    expect(find.byKey(ItemReportScreen.contractCardKey('contract-1')), findsNothing);
+    expect(text(tester, ItemReportScreen.totalKey), formatMoney(5600));
+
+    await searchFor(tester, api, '٤٠٠٠');
+    expect(find.byKey(ItemReportScreen.rowKey('entry-c')), findsOneWidget);
+    expect(find.byKey(ItemReportScreen.subgroupKey('subgroup-1')), findsNothing);
+
+    await searchFor(tester, api, 'مقاول');
+    expect(find.byKey(ItemReportScreen.rowKey('entry-c')), findsOneWidget);
+    await searchFor(tester, api, 'الأرضي');
+    expect(find.byKey(ItemReportScreen.rowKey('entry-a')), findsOneWidget);
+    expect(find.byKey(ItemReportScreen.rowKey('entry-b')), findsOneWidget);
+  });
+
   testWidgets('a category opens to its items with their totals, and an item opens its report', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
     await openRevenueAndExpenses(tester, api);

@@ -5,8 +5,11 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/api_object_body.dart';
+import '../ui/list_search.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
+import '../ui/search_line.dart';
+import '../words/word_fill.dart';
 import '../words/words.dart';
 import 'item_report.dart';
 import 'report_files.dart';
@@ -14,7 +17,8 @@ import '../ui/refusal_text.dart';
 import '../ui/amount_line.dart';
 import '../ui/row_stripe.dart';
 
-/// Everything spent on one item (UC-050): a table per subgroup, then each contract with its value, paid and remaining.
+/// Everything spent on one item (UC-050): a table per subgroup, then each contract with its value, paid and remaining. The search line over them keeps the rows holding
+/// what was typed, and every row of a subgroup or contract whose own name holds it (redix-app #104); the totals stay the item's.
 class ItemReportScreen extends StatefulWidget {
   /// The report of an item of [project], read through [report].
   const ItemReportScreen({super.key, required this.project, required this.itemId, required this.report, required this.files});
@@ -69,11 +73,16 @@ class ItemReportScreen extends StatefulWidget {
 }
 
 class _ItemReportScreenState extends State<ItemReportScreen> {
+  var _typed = '';
+
   @override
   void initState() {
     super.initState();
     widget.report.loadOnOpen();
   }
+
+  /// What a row is searched by: what it says and its amount.
+  static String _textOf(ItemEntryRow row) => [row.description, row.supplierName, row.invoiceNumber, ...row.values, formatDate(row.date), formatPlain(row.amount), formatMoney(row.amount)].join(' ');
 
   Widget _row(ItemEntryRow row, List<String> columns) {
     final words = Words.of(context);
@@ -96,7 +105,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
     );
   }
 
-  Widget _subgroup(SubgroupReport subgroup, List<String> columns) {
+  Widget _subgroup(SubgroupReport subgroup, List<ItemEntryRow> rows, List<String> columns) {
     final words = Words.of(context);
     return Card.outlined(
       key: ItemReportScreen.subgroupKey(subgroup.id),
@@ -108,18 +117,21 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
           children: [
             Row(
               children: [
-                Expanded(child: Text(subgroup.name.isEmpty ? words.reportsGeneralSubgroup : subgroup.name, key: ItemReportScreen.subgroupKey(subgroup.id).title, style: Theme.of(context).textTheme.titleSmall)),
+                Expanded(child: Text(_nameOf(subgroup, words), key: ItemReportScreen.subgroupKey(subgroup.id).title, style: Theme.of(context).textTheme.titleSmall)),
                 Text(formatMoney(subgroup.total), key: ItemReportScreen.subgroupTotalKey(subgroup.id), style: Theme.of(context).textTheme.titleSmall),
               ],
             ),
-            for (final (index, row) in subgroup.rows.indexed) RowStripe(index: index, child: _row(row, columns)),
+            for (final (index, row) in rows.indexed) RowStripe(index: index, child: _row(row, columns)),
           ],
         ),
       ),
     );
   }
 
-  Widget _contract(ContractReport contract, List<String> columns) {
+  /// What the subgroup is called: its name, or the general one's word.
+  static String _nameOf(SubgroupReport subgroup, Words words) => subgroup.name.isEmpty ? words.reportsGeneralSubgroup : subgroup.name;
+
+  Widget _contract(ContractReport contract, List<ItemEntryRow> payments, List<String> columns) {
     final words = Words.of(context);
     final theme = Theme.of(context);
     return Card.outlined(
@@ -140,13 +152,31 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
               key: ItemReportScreen.contractKey(contract.id),
             ),
             if (contract.isOverrun) refusalText(context, words.reportsOverrun, ItemReportScreen.overrunKey(contract.id)),
-            for (final (index, row) in contract.payments.indexed) RowStripe(index: index, child: _row(row, columns)),
+            for (final (index, row) in payments.indexed) RowStripe(index: index, child: _row(row, columns)),
             Align(alignment: AlignmentDirectional.centerEnd, child: Text('${words.reportsGrandTotal}: ${formatMoney(contract.paymentsTotal)}', key: ItemReportScreen.contractTotalKey(contract.id))),
           ],
         ),
       ),
     );
   }
+
+  /// The report as [report] holds it: the item's total, its files, and the subgroups and contracts holding what was typed.
+  Widget _report(ItemReportFigures report, Words words) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      amountLine(ItemReportScreen.totalKey, words.reportsItemTotal, report.total, labelStyle: Theme.of(context).textTheme.titleMedium, amountStyle: Theme.of(context).textTheme.titleLarge),
+      const SizedBox(height: 12),
+      if (widget.project.may(Permission.seeAllCapital))
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: ReportFileButtons(files: widget.files, address: '/projects/${widget.project.id}/reports/items/${widget.itemId}', name: report.itemName, kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
+        ),
+      for (final subgroup in report.subgroups)
+        if (ListSearch.groupOf(_nameOf(subgroup, words), subgroup.rows, _textOf, _typed) case (isShown: true, :final children)) _subgroup(subgroup, children, report.columns),
+      for (final contract in report.contracts)
+        if (ListSearch.groupOf(contract.contractorName, contract.payments, _textOf, _typed) case (isShown: true, :final children)) _contract(contract, children, report.columns),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -157,24 +187,17 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
         final report = widget.report.value;
         return Scaffold(
           appBar: AppBar(title: ScreenTitle(report.itemName, subject: report.categoryName)),
-          body: ListView(
-            padding: const EdgeInsets.all(16),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              ApiObjectBody(
-                object: widget.report,
-                builder: (report) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    amountLine(ItemReportScreen.totalKey, words.reportsItemTotal, report.total, labelStyle: Theme.of(context).textTheme.titleMedium, amountStyle: Theme.of(context).textTheme.titleLarge),
-                    const SizedBox(height: 12),
-                    if (widget.project.may(Permission.seeAllCapital))
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: ReportFileButtons(files: widget.files, address: '/projects/${widget.project.id}/reports/items/${widget.itemId}', name: report.itemName, kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
-                      ),
-                    for (final subgroup in report.subgroups) _subgroup(subgroup, report.columns),
-                    for (final contract in report.contracts) _contract(contract, report.columns),
-                  ],
+              SearchLine(
+                search: ListSearch<String>(hint: words.commonSearchIn.fill([report.itemName]), textOf: (text) => text),
+                onTyped: (typed) => setState(() => _typed = typed),
+              ),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [ApiObjectBody(object: widget.report, builder: (report) => _report(report, words))],
                 ),
               ),
             ],

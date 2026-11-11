@@ -62,14 +62,10 @@ class _ItemReportsScreenState extends State<ItemReportsScreen> {
     widget.summary.loadOnOpen();
   }
 
-  /// Whether [name] holds what was typed, whichever way an Arabic word is spelled.
-  bool _holds(String name) => ListSearch.matchesText(name, _typed);
-
-  /// The tile of [category], with its share of [sideTotal], open on its items holding what was typed while a search narrows them, or on all of them when its own name
-  /// holds it. A search opens it afresh and clearing it folds it again.
-  Widget _category(CategoryTotal category, double sideTotal) {
+  /// The tile of [category], with its share of [sideTotal], listing the items [shown]: those holding what was typed, or all of them when its own name holds it, open while
+  /// a search narrows them. A search opens it afresh and clearing it folds it again.
+  Widget _category(CategoryTotal category, List<ItemTotal> shown, double sideTotal) {
     final narrowed = _typed.trim().isNotEmpty;
-    final shown = _holds(category.name) ? category.items : category.items.where((item) => _holds(item.name)).toList();
     return KeyedSubtree(
       key: ValueKey((category.id, narrowed)),
       child: ExpansionTile(
@@ -130,7 +126,8 @@ class _ItemReportsScreenState extends State<ItemReportsScreen> {
                     ),
                     const SizedBox(height: 8),
                     for (final category in _side.categoriesOf(figures))
-                      if (_holds(category.name) || category.items.any((item) => _holds(item.name))) _category(category, _side.totalOf(figures)),
+                      if (ListSearch.groupOf(category.name, category.items, (item) => item.name, _typed) case (isShown: true, :final children))
+                        _category(category, children, _side.totalOf(figures)),
                   ],
                 ),
               ),

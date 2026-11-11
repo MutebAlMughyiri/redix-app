@@ -52,6 +52,16 @@ class ListSearch<T> {
   /// is not one, such as الإيرادات والمصروفات.
   static bool matchesText(String text, String typed) => searchable(text).contains(searchable(typed));
 
+  /// What shows of a group named [groupName] for [typed], on a screen that groups what it lists: all its [children] when its name holds it, otherwise those whose
+  /// [textOf] does. [isShown] is false only when neither does, so a group with nothing in it still shows until a search leaves it out.
+  static ({bool isShown, List<C> children}) groupOf<C>(String groupName, List<C> children, String Function(C child) textOf, String typed) {
+    if (matchesText(groupName, typed)) {
+      return (isShown: true, children: children);
+    }
+    final kept = [for (final child in children) if (matchesText(textOf(child), typed)) child];
+    return (isShown: kept.isNotEmpty, children: kept);
+  }
+
   static String _nothing(Object? item) => '';
 
   static void _keptHere(String typed) {}
