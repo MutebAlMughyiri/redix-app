@@ -8,18 +8,20 @@ import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/search_line.dart';
 
 import '../support/entry_steps.dart';
 import '../support/given.dart';
 import '../support/made_up_invoice.dart';
 import '../support/phone_case.dart';
 import '../support/phone_screens.dart';
+import '../support/search_steps.dart';
 import '../support/steps.dart';
 
 /// Signs [manager] in and opens what waits.
 Future<void> onApprovals(PatrolIntegrationTester $, Person manager) async {
   await $.fromTheHome(manager, HomeScreen.approvalsKey(manager.projectId));
-  await $.reach($(ApprovalsScreen.allKey));
+  await $.reach($(SearchLine.searchKey));
 }
 
 /// A purchase with a file sent for approval through the screens, whose id is answered.
@@ -89,6 +91,7 @@ void main() {
       await Given.entry(manager);
       await Given.contractorPayment(manager, await Given.contract(manager));
       await onApprovals($, manager);
+      await $.openFilters();
       await $(find.textContaining('3')).waitUntilExists();
       expect($.tester.widget<Text>(find.byKey(ApprovalsScreen.purchasesKey.label)).data, contains('2'));
       expect($.tester.widget<Text>(find.byKey(ApprovalsScreen.contractorPaymentsKey.label)).data, contains('1'));

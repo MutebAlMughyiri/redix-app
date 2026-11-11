@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/ui/search_line.dart';
 
 import '../support/given.dart';
 import '../support/phone_case.dart';
@@ -11,7 +12,7 @@ import '../support/steps.dart';
 /// Signs [manager] in and opens what waits.
 Future<void> onApprovals(PatrolIntegrationTester $, Person manager) async {
   await $.fromTheHome(manager, HomeScreen.approvalsKey(manager.projectId));
-  await $.reach($(ApprovalsScreen.allKey));
+  await $.reach($(SearchLine.searchKey));
 }
 
 void main() {

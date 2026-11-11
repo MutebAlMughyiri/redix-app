@@ -12,11 +12,13 @@ import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/search_line.dart';
 import 'package:redix/words/word_fill.dart';
 
 import '../support/given.dart';
 import '../support/money_steps.dart';
 import '../support/phone_case.dart';
+import '../support/search_steps.dart';
 import '../support/steps.dart';
 
 /// Signs [person] in and opens Accounts.
@@ -36,7 +38,7 @@ Future<void> transferOnThePhone(PatrolIntegrationTester $, String amount) async 
 /// From Accounts, opens History.
 Future<void> onHistory(PatrolIntegrationTester $) async {
   await $.tapOn(AccountsScreen.historyKey);
-  await $.reach($(AccountHistoryScreen.allKey));
+  await $.reach($(SearchLine.searchKey));
 }
 
 /// Waits until a line of History says [text].
@@ -208,6 +210,31 @@ void main() {
       expect(find.textContaining($.words.capitalContribution), findsNothing);
     });
 
+    phoneCase('redix-app #104: History asks the API for what was typed, and choosing an account under the arrow keeps it', ($) async {
+      final manager = await Given.manager();
+      final firstName = 'بنك ${Given.unique()}';
+      final secondName = 'كاش ${Given.unique()}';
+      final first = await Given.account(manager, name: firstName);
+      final second = await Given.account(manager, name: secondName);
+      await Given.funded(manager, first, 1000);
+      await Given.transferred(manager, first, second, 100);
+      await Given.account(manager, name: 'صندوق ${Given.unique()}');
+      await onAccounts($, manager);
+      await onHistory($);
+      final transfer = $.words.historyTransfer.fill([formatMoney(100), firstName, secondName]);
+      final firstAdded = $.words.historyAccountCreated.fill([firstName]);
+      await historySays($, firstAdded);
+
+      await $.searchFor(secondName);
+      await historySays($, transfer);
+      await $.until(() => find.text(firstAdded).evaluate().isEmpty);
+
+      await $.chooseIn(AccountHistoryScreen.accountChoiceKey, AccountHistoryScreen.accountKey(first));
+      await $.saysContaining(AccountHistoryScreen.accountChoiceKey.label, firstName);
+      await historySays($, transfer);
+      expect(find.text($.words.historyAccountCreated.fill([secondName])), findsNothing);
+    });
+
     phoneCase('H10: What I did keeps the signed-in person\'s own lines', ($) async {
       final manager = await Given.manager();
       final mover = await Given.member(manager, permissions: [Permission.moveMoney]);
@@ -220,7 +247,7 @@ void main() {
       await Given.transferred(manager, first, second, 50);
       await onAccounts($, mover);
       await onHistory($);
-      await $.tapOn(AccountHistoryScreen.mineKey);
+      await $.filterBy(AccountHistoryScreen.mineKey);
       await historySays($, $.words.historyTransfer.fill([formatMoney(100), firstName, secondName]));
       expect(find.textContaining(formatMoney(50)), findsNothing);
     });

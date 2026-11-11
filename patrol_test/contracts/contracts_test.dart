@@ -18,6 +18,7 @@ import '../support/made_up_invoice.dart';
 import '../support/pc.dart';
 import '../support/phone_case.dart';
 import '../support/phone_screens.dart';
+import '../support/search_steps.dart';
 import '../support/steps.dart';
 
 /// Signs [person] in and opens Contracts.
@@ -145,6 +146,7 @@ void main() {
       await paid(manager, overrun, 200);
       await onContracts($, manager);
       await $.reach($(ContractsScreen.nameKey(running.id)));
+      await $.openFilters();
       await $(find.text('${$.words.contractsFilterOverrun} · 1')).waitUntilExists();
       await $.tapOn(ContractsScreen.filterKey(ContractFilter.overrun));
       await $.gone($(ContractsScreen.nameKey(running.id)));
@@ -222,7 +224,7 @@ void main() {
       final manager = await Given.manager();
       await Given.contract(manager);
       await onContracts($, manager);
-      await $.tapOn(ContractsScreen.filterKey(ContractFilter.overrun));
+      await $.filterBy(ContractsScreen.filterKey(ContractFilter.overrun));
       await $.says(ApiListBody.emptyKey, $.words.contractsEmpty);
     });
 

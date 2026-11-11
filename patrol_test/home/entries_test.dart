@@ -7,6 +7,7 @@ import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/home/summary_card.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/ui/search_line.dart';
 import 'package:redix/ui/app_color.dart';
 import 'package:redix/ui/part_keys.dart';
 
@@ -91,15 +92,15 @@ void main() {
     phoneCase('R4: the search opens the list ready to type', ($) async {
       final manager = await Given.manager();
       await $.fromTheHome(manager, HomeScreen.searchEntriesKey(manager.projectId));
-      await $.reach($(EntriesScreen.searchKey));
-      expect($.tester.widget<SearchBar>(find.byKey(EntriesScreen.searchKey)).autoFocus, isTrue);
+      await $.reach($(SearchLine.searchKey));
+      expect($.tester.widget<SearchBar>(find.byKey(SearchLine.searchKey)).autoFocus, isTrue);
     });
 
-    phoneCase('the way to all opens the whole list', ($) async {
+    phoneCase('the way to all opens the list of entries', ($) async {
       final manager = await Given.manager();
       final entry = await Given.entry(manager);
       await $.fromTheHome(manager, HomeScreen.searchEntriesKey(manager.projectId));
-      await $.reach($(EntriesScreen.foundKey));
+      await $.reach($(SearchLine.searchKey));
       await $.goTo($(EntriesScreen.rowKey(entry)));
     });
 
