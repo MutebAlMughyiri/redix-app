@@ -30,8 +30,8 @@ Map<String, String> wordsIn(String language) => {
     'entries.share', 'entries.notFound', 'approvals.showAll', 'entryShare.item', 'entryShare.partner', 'entryShare.supplier', 'entryShare.contractor', 'entryShare.amount',
     'entryShare.date', 'entryShare.status', 'entryShare.account', 'entryShare.paymentMethod', 'entryShare.author', 'entryShare.notes',
     'biometrics.signIn', 'biometrics.hint', 'biometrics.or', 'biometrics.failed', 'biometrics.usePassword', 'biometrics.promptTitle', 'biometrics.promptCancel', 'biometrics.notAvailable', 'biometrics.notChanged',
-    'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.defaultSet', 'generalSettings.defaultProject', 'generalSettings.defaultProjectHint', 'generalSettings.switchProject',
-    'generalSettings.appearance', 'generalSettings.themeSystem', 'generalSettings.themeLight', 'generalSettings.themeDark', 'generalSettings.entriesShown', 'generalSettings.entriesShownHint',
+    'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.defaultSet', 'sharedSettings.defaultProject', 'sharedSettings.defaultProjectHint', 'sharedSettings.switchProject',
+    'sharedSettings.appearance', 'sharedSettings.themeSystem', 'sharedSettings.themeLight', 'sharedSettings.themeDark', 'sharedSettings.entriesShown', 'sharedSettings.entriesShownHint',
     'signIn.username', 'signIn.password', 'signIn.hint', 'signIn.submit', 'signIn.forgotPassword',
     'signIn.invalidCredentials', 'signIn.accountLocked', 'signIn.sessionExpired', 'signIn.noConnection', 'signIn.refused',
     'changePassword.title', 'changePassword.hint', 'changePassword.current', 'changePassword.new', 'changePassword.confirm',
@@ -46,7 +46,7 @@ Map<String, String> wordsIn(String language) => {
     'projects.pending', 'projects.rejected', 'registered.title', 'registered.empty', 'registered.loadFailed', 'registered.approve', 'registered.reject',
     'registered.reason', 'registered.invalidReason', 'registered.notPending', 'registered.noConnection', 'registered.refused',
     'myAccount.changePassword', 'myAccount.signOut', 'myAccount.signOutQuestion', 'myAccount.signOutExplain',
-    'generalSettings.title', 'projects.new', 'projects.manager', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.active',
+    'sharedSettings.title', 'projects.new', 'projects.manager', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.active',
     'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
     'projects.unitName', 'projects.addUnit', 'projects.create', 'common.cancel', 'projects.close',
     'projects.closeQuestion', 'projects.closeExplain', 'projects.pendingEntries', 'projects.rename', 'projects.renameUnit', 'projects.save', 'projects.invalidName', 'projects.projectFinished', 'projects.noConnection',
@@ -1864,9 +1864,9 @@ Future<void> scrollAndTap(WidgetTester tester, FakeApi api, Key key) async {
 }
 
 Future<void> openSettings(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) async {
-  await tester.ensureVisible(find.byKey(HomeScreen.generalSettingsKey(projectId)));
+  await tester.ensureVisible(find.byKey(HomeScreen.sharedSettingsKey(projectId)));
   await tester.pumpAndSettle();
-  await act(tester, api, () => tester.tap(find.byKey(HomeScreen.generalSettingsKey(projectId))));
+  await act(tester, api, () => tester.tap(find.byKey(HomeScreen.sharedSettingsKey(projectId))));
 }
 
 /// Swipes the row keyed [rowKey] from its end toward its start, as removing it does (redix-api #102): right to left in English, left to right in Arabic, over [share] of

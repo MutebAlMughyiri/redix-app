@@ -22,7 +22,7 @@ import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/sharing/share_screen.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
@@ -86,7 +86,7 @@ final _summaryWithAnItem = <String, Object>{
 };
 
 final List<Gate> _gates = [
-  (name: 'Registered projects in the settings', permission: Permission.approveProjects, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.generalSettingsKey(_project))], control: _key(GeneralSettingsScreen.registeredKey)),
+  (name: 'Registered projects in the settings', permission: Permission.approveProjects, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.sharedSettingsKey(_project))], control: _key(SharedSettingsScreen.registeredKey)),
   (name: 'Users on the home', permission: Permission.manageUsers, arrange: _nothing, steps: [_openProject], control: _key(HomeScreen.usersKey(_project))),
   (name: 'Add unit in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.addUnitKey)),
   (name: 'Rename project in More info', permission: Permission.manageProject, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.projectInfoKey(_project))], control: _key(ProjectInfoScreen.nameMenuKey)),

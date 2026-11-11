@@ -3,7 +3,7 @@ import 'package:patrol/patrol.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/reason_sheet.dart';
@@ -18,14 +18,14 @@ Future<void> onSettingsAsAdmin(PatrolIntegrationTester $) async {
   final admin = await Given.admin();
   await $.startApp();
   await $.signIn(admin.username, admin.password);
-  await $.reach($(ProjectsScreen.generalSettingsKey));
-  await $(ProjectsScreen.generalSettingsKey).tap();
+  await $.reach($(ProjectsScreen.sharedSettingsKey));
+  await $(ProjectsScreen.sharedSettingsKey).tap();
 }
 
 /// Signs the admin in and opens Registered projects.
 Future<void> onRegisteredProjects(PatrolIntegrationTester $) async {
   await onSettingsAsAdmin($);
-  await $.tapOn(GeneralSettingsScreen.registeredKey);
+  await $.tapOn(SharedSettingsScreen.registeredKey);
 }
 
 void main() {
@@ -91,9 +91,9 @@ void main() {
     phoneCase('whoever does not approve projects has no Registered projects in Settings', ($) async {
       final manager = await Given.manager();
       await $.onTheList(manager);
-      await $(ProjectsScreen.generalSettingsKey).tap();
-      await $.reach($(GeneralSettingsScreen.signOutKey));
-      expect($(GeneralSettingsScreen.registeredKey), findsNothing);
+      await $(ProjectsScreen.sharedSettingsKey).tap();
+      await $.reach($(SharedSettingsScreen.signOutKey));
+      expect($(SharedSettingsScreen.registeredKey), findsNothing);
     });
 
     phoneCase('a rejected project offers its owner nothing', ($) async {
@@ -120,7 +120,7 @@ void main() {
       final manager = await Given.registered();
       await onSettingsAsAdmin($);
       await Pc.cutNetwork();
-      await $.tapOn(GeneralSettingsScreen.registeredKey);
+      await $.tapOn(SharedSettingsScreen.registeredKey);
       await $.says(ApiListBody.messageKey, $.words.registeredLoadFailed);
       await Pc.restoreNetwork();
       await $.tapOn(ApiListBody.retryKey);

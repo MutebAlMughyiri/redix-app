@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/users/users_screen.dart';
@@ -24,8 +24,8 @@ void main() {
       await $.back();
       await $.switchPersonTo(member, projectId: manager.projectId);
       await $.says(HomeScreen.roleNameKey, 'مهندس موقع');
-      await $(HomeScreen.generalSettingsKey(member.projectId)).tap();
-      await $.says(GeneralSettingsScreen.whoKey.subtitle, '${member.username} · مهندس موقع');
+      await $(HomeScreen.sharedSettingsKey(member.projectId)).tap();
+      await $.says(SharedSettingsScreen.whoKey.subtitle, '${member.username} · مهندس موقع');
     });
 
     phoneCase('another project keeps its own role name', ($) async {
@@ -59,8 +59,8 @@ void main() {
       final member = await Given.member(manager);
       await $.onTheHome(member);
       expect($(HomeScreen.roleNameKey), findsNothing);
-      await $(HomeScreen.generalSettingsKey(member.projectId)).tap();
-      await $.says(GeneralSettingsScreen.whoKey.subtitle, member.username);
+      await $(HomeScreen.sharedSettingsKey(member.projectId)).tap();
+      await $.says(SharedSettingsScreen.whoKey.subtitle, member.username);
       expect($(ProjectsScreen.titleKey), findsNothing);
     });
   });

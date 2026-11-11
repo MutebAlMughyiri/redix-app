@@ -5,7 +5,7 @@ import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/home/summary_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/words/language_switch.dart';
 
@@ -40,7 +40,7 @@ Future<void> isCollapsed(PatrolIntegrationTester $, String projectId) async {
 
 /// How far the button beside Settings is from Settings, along the top bar: positive when it sits to the right.
 double collapseFromSettings(PatrolIntegrationTester $, String projectId) =>
-    $.tester.getCenter(find.byKey(HomeScreen.collapseKey)).dx - $.tester.getCenter(find.byKey(HomeScreen.generalSettingsKey(projectId))).dx;
+    $.tester.getCenter(find.byKey(HomeScreen.collapseKey)).dx - $.tester.getCenter(find.byKey(HomeScreen.sharedSettingsKey(projectId))).dx;
 
 void main() {
   phoneClass('Collapse the home\'s summary (redix-app #91)', () {
@@ -112,8 +112,8 @@ void main() {
       await onAnExpandedHome($, manager);
       await tapCollapse($);
       await $.gone($(SummaryCard.cardKey));
-      await $.tapOn(HomeScreen.generalSettingsKey(manager.projectId));
-      await $.tapOn(GeneralSettingsScreen.switchProjectKey);
+      await $.tapOn(HomeScreen.sharedSettingsKey(manager.projectId));
+      await $.tapOn(SharedSettingsScreen.switchProjectKey);
       await $.openProject(other.projectId);
       await isCollapsed($, other.projectId);
     });
@@ -138,11 +138,11 @@ void main() {
     phoneCase('R1: in Arabic the button sits just before Settings, to its right', ($) async {
       final manager = await Given.manager();
       await $.onTheList(manager);
-      await $(ProjectsScreen.generalSettingsKey).tap();
+      await $(ProjectsScreen.sharedSettingsKey).tap();
       await $.goTo($(LanguageSwitch.arabicKey));
       await $(LanguageSwitch.arabicKey).tap();
-      await $.until(() => Directionality.of($.tester.element(find.byKey(GeneralSettingsScreen.languageKey))) == TextDirection.rtl);
-      await $.tapOn(GeneralSettingsScreen.switchProjectKey);
+      await $.until(() => Directionality.of($.tester.element(find.byKey(SharedSettingsScreen.languageKey))) == TextDirection.rtl);
+      await $.tapOn(SharedSettingsScreen.switchProjectKey);
       await $.openProject(manager.projectId);
       await $.reach($(HomeScreen.collapseKey));
       expect(collapseFromSettings($, manager.projectId), inInclusiveRange(1, 60));

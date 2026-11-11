@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/app_color.dart';
 import 'package:redix/ui/app_theme.dart';
 import 'package:redix/ui/part_keys.dart';
@@ -21,7 +21,7 @@ void main() {
   Future<FakeApi> openSettings(WidgetTester tester, {Map<String, Object> preferences = const {}, Locale locale = const Locale('en')}) async {
     final api = FakeApi();
     await pumpRedix(tester, api, locale: locale, stored: {'session': keptSession}, preferences: preferences);
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.generalSettingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
     return api;
   }
 
@@ -36,9 +36,9 @@ void main() {
 
   Brightness brightnessAt(WidgetTester tester, Finder finder) => Theme.of(tester.element(finder)).brightness;
 
-  Brightness settingsBrightness(WidgetTester tester) => brightnessAt(tester, find.byKey(GeneralSettingsScreen.appearanceKey));
+  Brightness settingsBrightness(WidgetTester tester) => brightnessAt(tester, find.byKey(SharedSettingsScreen.appearanceKey));
 
-  SegmentedButton<ThemeMode> themeChoice(WidgetTester tester) => tester.widget<SegmentedButton<ThemeMode>>(find.byKey(GeneralSettingsScreen.themeChoiceKey));
+  SegmentedButton<ThemeMode> themeChoice(WidgetTester tester) => tester.widget<SegmentedButton<ThemeMode>>(find.byKey(SharedSettingsScreen.themeChoiceKey));
 
   Future<int?> kept() async => (await SharedPreferences.getInstance()).getInt(stateKey);
 
@@ -56,7 +56,7 @@ void main() {
 
   testWidgets('T2, R3: on System, the app turns dark and light with the phone while it is open', (tester) async {
     final api = await openSettings(tester, preferences: {stateKey: 0});
-    await choose(tester, api, GeneralSettingsScreen.themeSystemKey);
+    await choose(tester, api, SharedSettingsScreen.themeSystemKey);
     expect(settingsBrightness(tester), Brightness.light);
 
     await phoneIs(tester, Brightness.dark);
@@ -69,11 +69,11 @@ void main() {
   testWidgets('T3, R2: Light stays light on a dark phone, and Dark stays dark on a light one', (tester) async {
     await phoneIs(tester, Brightness.dark);
     final api = await openSettings(tester);
-    await choose(tester, api, GeneralSettingsScreen.themeLightKey);
+    await choose(tester, api, SharedSettingsScreen.themeLightKey);
     expect(settingsBrightness(tester), Brightness.light);
 
     await phoneIs(tester, Brightness.light);
-    await choose(tester, api, GeneralSettingsScreen.themeDarkKey);
+    await choose(tester, api, SharedSettingsScreen.themeDarkKey);
     expect(settingsBrightness(tester), Brightness.dark);
     expect(themeChoice(tester).selected, {ThemeMode.dark});
   });
@@ -81,11 +81,11 @@ void main() {
   testWidgets('T4, R4: each choice keeps its number, 0 Light, 1 Dark and 2 System', (tester) async {
     final api = await openSettings(tester);
 
-    await choose(tester, api, GeneralSettingsScreen.themeLightKey);
+    await choose(tester, api, SharedSettingsScreen.themeLightKey);
     expect(await kept(), 0);
-    await choose(tester, api, GeneralSettingsScreen.themeDarkKey);
+    await choose(tester, api, SharedSettingsScreen.themeDarkKey);
     expect(await kept(), 1);
-    await choose(tester, api, GeneralSettingsScreen.themeSystemKey);
+    await choose(tester, api, SharedSettingsScreen.themeSystemKey);
     expect(await kept(), 2);
   });
 
@@ -137,7 +137,7 @@ void main() {
       await openSettings(tester, locale: Locale(language));
 
       expect(tester.takeException(), isNull);
-      for (final key in [GeneralSettingsScreen.appearanceKey, GeneralSettingsScreen.themeSystemKey, GeneralSettingsScreen.themeLightKey, GeneralSettingsScreen.themeDarkKey]) {
+      for (final key in [SharedSettingsScreen.appearanceKey, SharedSettingsScreen.themeSystemKey, SharedSettingsScreen.themeLightKey, SharedSettingsScreen.themeDarkKey]) {
         final rect = tester.getRect(find.byKey(key));
         expect(rect.left, greaterThanOrEqualTo(0), reason: '$key starts off the screen');
         expect(rect.right, lessThanOrEqualTo(360), reason: '$key ends off the screen');
@@ -148,11 +148,11 @@ void main() {
   testWidgets('T11, R8: the three choices read System, Light and Dark, words only, under the heading Appearance with its icon', (tester) async {
     await openSettings(tester);
 
-    expect(text(tester, GeneralSettingsScreen.appearanceKey.title), 'en generalSettings.appearance');
-    expect(tester.widget<Icon>(find.byKey(GeneralSettingsScreen.appearanceKey.icon)).icon, Icons.dark_mode_outlined);
-    expect(text(tester, GeneralSettingsScreen.themeSystemKey), 'en generalSettings.themeSystem');
-    expect(text(tester, GeneralSettingsScreen.themeLightKey), 'en generalSettings.themeLight');
-    expect(text(tester, GeneralSettingsScreen.themeDarkKey), 'en generalSettings.themeDark');
+    expect(text(tester, SharedSettingsScreen.appearanceKey.title), 'en sharedSettings.appearance');
+    expect(tester.widget<Icon>(find.byKey(SharedSettingsScreen.appearanceKey.icon)).icon, Icons.dark_mode_outlined);
+    expect(text(tester, SharedSettingsScreen.themeSystemKey), 'en sharedSettings.themeSystem');
+    expect(text(tester, SharedSettingsScreen.themeLightKey), 'en sharedSettings.themeLight');
+    expect(text(tester, SharedSettingsScreen.themeDarkKey), 'en sharedSettings.themeDark');
     expect([for (final segment in themeChoice(tester).segments) segment.value], [ThemeMode.system, ThemeMode.light, ThemeMode.dark]);
     expect(themeChoice(tester).segments.every((segment) => segment.icon == null), isTrue);
   });
@@ -161,8 +161,8 @@ void main() {
     await openSettings(tester);
 
     final language = tester.getTopLeft(find.byKey(LanguageSwitch.choiceKey)).dy;
-    final appearance = tester.getTopLeft(find.byKey(GeneralSettingsScreen.appearanceKey)).dy;
-    final biometrics = tester.getTopLeft(find.byKey(GeneralSettingsScreen.biometricsKey)).dy;
+    final appearance = tester.getTopLeft(find.byKey(SharedSettingsScreen.appearanceKey)).dy;
+    final biometrics = tester.getTopLeft(find.byKey(SharedSettingsScreen.biometricsKey)).dy;
     expect(language < appearance && appearance < biometrics, isTrue);
   });
 
@@ -170,14 +170,14 @@ void main() {
     await openSettings(tester);
 
     final components = [
-      GeneralSettingsScreen.whoKey,
-      GeneralSettingsScreen.switchProjectKey,
-      GeneralSettingsScreen.defaultProjectKey,
-      GeneralSettingsScreen.languageKey,
-      GeneralSettingsScreen.appearanceKey,
-      GeneralSettingsScreen.biometricsKey,
-      GeneralSettingsScreen.changePasswordKey,
-      GeneralSettingsScreen.signOutKey,
+      SharedSettingsScreen.whoKey,
+      SharedSettingsScreen.switchProjectKey,
+      SharedSettingsScreen.defaultProjectKey,
+      SharedSettingsScreen.languageKey,
+      SharedSettingsScreen.appearanceKey,
+      SharedSettingsScreen.biometricsKey,
+      SharedSettingsScreen.changePasswordKey,
+      SharedSettingsScreen.signOutKey,
     ];
     Finder cardOf(Finder finder) => find.ancestor(of: finder, matching: find.byType(Card));
     for (final key in components) {
@@ -188,18 +188,18 @@ void main() {
       expect((frame.shape! as OutlinedBorder).side.color, AppColor.frame.of(tester.element(find.byKey(key))), reason: '$key');
     }
     expect({for (final key in components) tester.widget<Card>(cardOf(find.byKey(key)))}.length, components.length);
-    expect(tester.widget<Card>(cardOf(find.byKey(LanguageSwitch.choiceKey))), same(tester.widget<Card>(cardOf(find.byKey(GeneralSettingsScreen.languageKey)))));
-    expect(tester.widget<Card>(cardOf(find.byKey(GeneralSettingsScreen.themeChoiceKey))), same(tester.widget<Card>(cardOf(find.byKey(GeneralSettingsScreen.appearanceKey)))));
-    expect(find.descendant(of: find.byType(GeneralSettingsScreen), matching: find.byType(Divider)), findsNothing);
+    expect(tester.widget<Card>(cardOf(find.byKey(LanguageSwitch.choiceKey))), same(tester.widget<Card>(cardOf(find.byKey(SharedSettingsScreen.languageKey)))));
+    expect(tester.widget<Card>(cardOf(find.byKey(SharedSettingsScreen.themeChoiceKey))), same(tester.widget<Card>(cardOf(find.byKey(SharedSettingsScreen.appearanceKey)))));
+    expect(find.descendant(of: find.byType(SharedSettingsScreen), matching: find.byType(Divider)), findsNothing);
   });
 
   testWidgets('#87 R7: the change reaches the screen behind Settings too, with no restart', (tester) async {
     final api = await openSettings(tester);
 
-    await choose(tester, api, GeneralSettingsScreen.themeDarkKey);
+    await choose(tester, api, SharedSettingsScreen.themeDarkKey);
     await act(tester, api, () => tester.pageBack());
 
-    expect(brightnessAt(tester, find.byKey(ProjectsScreen.generalSettingsKey)), Brightness.dark);
+    expect(brightnessAt(tester, find.byKey(ProjectsScreen.sharedSettingsKey)), Brightness.dark);
   });
 
   testWidgets('#87 R9: sign-in follows the choice', (tester) async {
@@ -217,11 +217,11 @@ void main() {
   testWidgets('T9, R7: choosing a language leaves the appearance as it is, and choosing the appearance leaves the language as it is', (tester) async {
     final api = await openSettings(tester);
 
-    await choose(tester, api, GeneralSettingsScreen.themeDarkKey);
-    expect(Localizations.localeOf(tester.element(find.byKey(GeneralSettingsScreen.appearanceKey))).languageCode, 'en');
+    await choose(tester, api, SharedSettingsScreen.themeDarkKey);
+    expect(Localizations.localeOf(tester.element(find.byKey(SharedSettingsScreen.appearanceKey))).languageCode, 'en');
 
     await act(tester, api, () => tester.tap(find.byKey(LanguageSwitch.arabicKey)));
-    expect(text(tester, GeneralSettingsScreen.appearanceKey.title), 'ar generalSettings.appearance');
+    expect(text(tester, SharedSettingsScreen.appearanceKey.title), 'ar sharedSettings.appearance');
     expect(settingsBrightness(tester), Brightness.dark);
     expect(await kept(), 1);
   });

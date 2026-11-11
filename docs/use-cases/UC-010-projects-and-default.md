@@ -24,10 +24,10 @@ The list, `ProjectsScreen` at `/`:
 | Choose a project | `ProjectsScreen.titleKey` | The heading |
 | A project's card | `ProjectsScreen.cardKey(id)` | Opens its home |
 | Its star | `ProjectsScreen.starKey(id)` | Makes it the default, saying so in a message (`messageKeyOf('projects.defaultSet')`), or clears it |
-| Settings | `ProjectsScreen.generalSettingsKey` | Opens Settings |
+| Settings | `ProjectsScreen.sharedSettingsKey` | Opens Settings |
 | Register new project | `ProjectsScreen.newProjectKey` | Opens the form (UC-066) |
 
-Settings, `GeneralSettingsScreen`, has **Default project** (`GeneralSettingsScreen.defaultProjectKey`), which opens `DefaultProjectSheet`:
+Settings, `SharedSettingsScreen`, has **Default project** (`SharedSettingsScreen.defaultProjectKey`), which opens `DefaultProjectSheet`:
 
 | Element | `Key` | Does |
 | --- | --- | --- |
@@ -36,7 +36,7 @@ Settings, `GeneralSettingsScreen`, has **Default project** (`GeneralSettingsScre
 
 The star and the tick change the default through one owner, `toggleDefaultProject`.
 
-The home, `HomeScreen` at `/projects/:projectId`, shows the project's card; its Settings hold Users (`manageUsers`) and More info, where Add unit and Close project are (`manageProject`, UC-006). Settings has **Switch project** (`GeneralSettingsScreen.switchProjectKey`), which goes to the list.
+The home, `HomeScreen` at `/projects/:projectId`, shows the project's card; its Settings hold Users (`manageUsers`) and More info, where Add unit and Close project are (`manageProject`, UC-006). Settings has **Switch project** (`SharedSettingsScreen.switchProjectKey`), which goes to the list.
 
 The button beside Settings, `HomeScreen.collapseKey`, hides the conclusion (`SummaryCard`) and the project's buttons (`ProjectSettingsCard`) completely, and shows them again. The phone keeps it as `summary_projectSetting_state`, 1 expanded and 0 collapsed, through `LocalConfig`.
 
@@ -56,8 +56,8 @@ The button beside Settings, `HomeScreen.collapseKey`, hides the conclusion (`Sum
 | The buttons follow the role in the open project (AC-36.2) | `home_test.dart` |
 | The list has no change buttons | `projects_test.dart` |
 | AC-37.1: the star makes a project the default and a message says so; it moves and clears the default; a refusal says why | `projects_test.dart` |
-| Default project in Settings lists every approved project with a tick, none waiting or rejected; ticking sets and moves the default and says so, unticking clears it, a refusal says why | `general_settings_test.dart` |
+| Default project in Settings lists every approved project with a tick, none waiting or rejected; ticking sets and moves the default and says so, unticking clears it, a refusal says why | `shared_settings_test.dart` |
 | AC-37.1: a default opens directly at sign-in and at start | `home_test.dart` |
 | A project gone while open returns to the list | `home_test.dart` |
-| Switch project reaches the list | `general_settings_test.dart` |
+| Switch project reaches the list | `shared_settings_test.dart` |
 | On a real phone, against the real API | `patrol_test/projects/project_list_test.dart`, `patrol_test/projects/default_project_test.dart`, `patrol_test/home/collapse_home_test.dart` |

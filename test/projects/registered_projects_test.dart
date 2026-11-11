@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/api_list_body.dart';
@@ -16,8 +16,8 @@ void main() {
       ..permissions = admin
       ..addRegistered('غصون 8');
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.generalSettingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.registeredKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.registeredKey)));
     return api;
   }
 
@@ -34,8 +34,8 @@ void main() {
       ..permissions = admin
       ..addRegistered('غصون 8', description: 'ثلاث فلل في حي الياسمين، التمويل من الشركاء.');
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.generalSettingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.registeredKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.registeredKey)));
 
     expect(text(tester, RegisteredProjectsScreen.descriptionKey('registered-0')), 'ثلاث فلل في حي الياسمين، التمويل من الشركاء.');
   });
@@ -49,8 +49,8 @@ void main() {
   testWidgets('with nothing waiting, the list says so', (tester) async {
     final api = FakeApi()..permissions = admin;
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.generalSettingsKey)));
-    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.registeredKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.registeredKey)));
 
     expect(text(tester, ApiListBody.emptyKey), 'en registered.empty');
   });
@@ -104,10 +104,10 @@ void main() {
       ..permissions = admin
       ..addRegistered('غصون 8');
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.generalSettingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
 
     api.online = false;
-    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.registeredKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.registeredKey)));
     expect(text(tester, ApiListBody.messageKey), 'en registered.loadFailed');
 
     api.online = true;

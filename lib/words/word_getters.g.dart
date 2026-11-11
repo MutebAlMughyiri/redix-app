@@ -1190,36 +1190,6 @@ mixin WordGetters {
   /// The word `expenses.unknownTable`.
   String get expensesUnknownTable => text('expenses.unknownTable');
 
-  /// The word `generalSettings.appearance`.
-  String get generalSettingsAppearance => text('generalSettings.appearance');
-
-  /// The word `generalSettings.defaultProject`.
-  String get generalSettingsDefaultProject => text('generalSettings.defaultProject');
-
-  /// The word `generalSettings.defaultProjectHint`.
-  String get generalSettingsDefaultProjectHint => text('generalSettings.defaultProjectHint');
-
-  /// The word `generalSettings.entriesShown`.
-  String get generalSettingsEntriesShown => text('generalSettings.entriesShown');
-
-  /// The word `generalSettings.entriesShownHint`.
-  String get generalSettingsEntriesShownHint => text('generalSettings.entriesShownHint');
-
-  /// The word `generalSettings.switchProject`.
-  String get generalSettingsSwitchProject => text('generalSettings.switchProject');
-
-  /// The word `generalSettings.themeDark`.
-  String get generalSettingsThemeDark => text('generalSettings.themeDark');
-
-  /// The word `generalSettings.themeLight`.
-  String get generalSettingsThemeLight => text('generalSettings.themeLight');
-
-  /// The word `generalSettings.themeSystem`.
-  String get generalSettingsThemeSystem => text('generalSettings.themeSystem');
-
-  /// The word `generalSettings.title`.
-  String get generalSettingsTitle => text('generalSettings.title');
-
   /// The word `history.accountChanged`.
   String get historyAccountChanged => text('history.accountChanged');
 
@@ -2044,6 +2014,36 @@ mixin WordGetters {
 
   /// The word `share.unknownAttachment`.
   String get shareUnknownAttachment => text('share.unknownAttachment');
+
+  /// The word `sharedSettings.appearance`.
+  String get sharedSettingsAppearance => text('sharedSettings.appearance');
+
+  /// The word `sharedSettings.defaultProject`.
+  String get sharedSettingsDefaultProject => text('sharedSettings.defaultProject');
+
+  /// The word `sharedSettings.defaultProjectHint`.
+  String get sharedSettingsDefaultProjectHint => text('sharedSettings.defaultProjectHint');
+
+  /// The word `sharedSettings.entriesShown`.
+  String get sharedSettingsEntriesShown => text('sharedSettings.entriesShown');
+
+  /// The word `sharedSettings.entriesShownHint`.
+  String get sharedSettingsEntriesShownHint => text('sharedSettings.entriesShownHint');
+
+  /// The word `sharedSettings.switchProject`.
+  String get sharedSettingsSwitchProject => text('sharedSettings.switchProject');
+
+  /// The word `sharedSettings.themeDark`.
+  String get sharedSettingsThemeDark => text('sharedSettings.themeDark');
+
+  /// The word `sharedSettings.themeLight`.
+  String get sharedSettingsThemeLight => text('sharedSettings.themeLight');
+
+  /// The word `sharedSettings.themeSystem`.
+  String get sharedSettingsThemeSystem => text('sharedSettings.themeSystem');
+
+  /// The word `sharedSettings.title`.
+  String get sharedSettingsTitle => text('sharedSettings.title');
 
   /// The word `signIn.accountLocked`.
   String get signInAccountLocked => text('signIn.accountLocked');

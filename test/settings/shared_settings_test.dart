@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/default_project_sheet.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/words/language_switch.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/refusal_snack_bar.dart';
@@ -17,38 +17,38 @@ import 'package:redix/ui/api_list_body.dart';
 void main() {
   Future<void> openSettings(WidgetTester tester, FakeApi api) async {
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.generalSettingsKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
   }
 
   testWidgets('Muteb, 8 and 9 Nov 2026: the home opens Settings from a gear in its top bar, colored by the theme, and the project card has no Settings button', (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
 
-    final icon = find.descendant(of: find.byType(AppBar), matching: find.byKey(HomeScreen.generalSettingsKey('project-0')));
+    final icon = find.descendant(of: find.byType(AppBar), matching: find.byKey(HomeScreen.sharedSettingsKey('project-0')));
     expect(icon, findsOneWidget);
-    final gear = tester.widget<Icon>(find.byKey(HomeScreen.generalSettingsKey('project-0').icon));
+    final gear = tester.widget<Icon>(find.byKey(HomeScreen.sharedSettingsKey('project-0').icon));
     expect((gear.icon, gear.color), (Icons.settings_outlined, null), reason: 'a color of its own would not follow a light or a dark theme');
-    expect(find.byKey(HomeScreen.generalSettingsKey('project-0').label), findsNothing);
+    expect(find.byKey(HomeScreen.sharedSettingsKey('project-0').label), findsNothing);
 
     await act(tester, api, () => tester.tap(icon));
 
-    expect(find.byKey(GeneralSettingsScreen.switchProjectKey), findsOneWidget);
+    expect(find.byKey(SharedSettingsScreen.switchProjectKey), findsOneWidget);
   });
 
   testWidgets('the admin sees Switch project, the default project and Registered projects', (tester) async {
     await openSettings(tester, FakeApi()..permissions = admin);
 
-    expect(find.byKey(GeneralSettingsScreen.switchProjectKey), findsOneWidget);
-    expect(find.byKey(GeneralSettingsScreen.defaultProjectKey), findsOneWidget);
-    expect(find.byKey(GeneralSettingsScreen.registeredKey), findsOneWidget);
+    expect(find.byKey(SharedSettingsScreen.switchProjectKey), findsOneWidget);
+    expect(find.byKey(SharedSettingsScreen.defaultProjectKey), findsOneWidget);
+    expect(find.byKey(SharedSettingsScreen.registeredKey), findsOneWidget);
   });
 
   testWidgets('anyone else sees Switch project and the default project, and not the registered projects', (tester) async {
     await openSettings(tester, FakeApi());
 
-    expect(find.byKey(GeneralSettingsScreen.switchProjectKey), findsOneWidget);
-    expect(find.byKey(GeneralSettingsScreen.defaultProjectKey), findsOneWidget);
-    expect(find.byKey(GeneralSettingsScreen.registeredKey), findsNothing);
+    expect(find.byKey(SharedSettingsScreen.switchProjectKey), findsOneWidget);
+    expect(find.byKey(SharedSettingsScreen.defaultProjectKey), findsOneWidget);
+    expect(find.byKey(SharedSettingsScreen.registeredKey), findsNothing);
   });
 
   testWidgets('Muteb, 9 Nov 2026: opened from a project, Settings shows the role name typed there beside the username; from the project list, the username alone', (tester) async {
@@ -56,17 +56,17 @@ void main() {
     await openProject(tester, api);
     await harness.openSettings(tester, api);
 
-    expect(tester.widget<Text>(find.byKey(GeneralSettingsScreen.whoKey.subtitle)).data, 'muteb · مدير المشروع');
+    expect(tester.widget<Text>(find.byKey(SharedSettingsScreen.whoKey.subtitle)).data, 'muteb · مدير المشروع');
 
-    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.switchProjectKey)));
-    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.generalSettingsKey)));
-    expect(tester.widget<Text>(find.byKey(GeneralSettingsScreen.whoKey.subtitle)).data, 'muteb');
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.switchProjectKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
+    expect(tester.widget<Text>(find.byKey(SharedSettingsScreen.whoKey.subtitle)).data, 'muteb');
   });
 
   testWidgets('Muteb, 9 Nov 2026: Settings shows the account itself, with no My account or language row to open first', (tester) async {
     await openSettings(tester, FakeApi());
 
-    for (final key in [GeneralSettingsScreen.whoKey, GeneralSettingsScreen.languageKey, LanguageSwitch.choiceKey, GeneralSettingsScreen.biometricsKey, GeneralSettingsScreen.changePasswordKey, GeneralSettingsScreen.signOutKey]) {
+    for (final key in [SharedSettingsScreen.whoKey, SharedSettingsScreen.languageKey, LanguageSwitch.choiceKey, SharedSettingsScreen.biometricsKey, SharedSettingsScreen.changePasswordKey, SharedSettingsScreen.signOutKey]) {
       expect(find.byKey(key), findsOneWidget, reason: '$key');
     }
     expect(find.text('en myAccount.title'), findsNothing);
@@ -76,17 +76,17 @@ void main() {
     final api = FakeApi();
     await openSettings(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.switchProjectKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.switchProjectKey)));
 
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
-    expect(find.byKey(GeneralSettingsScreen.switchProjectKey), findsNothing);
+    expect(find.byKey(SharedSettingsScreen.switchProjectKey), findsNothing);
   });
 
   testWidgets('Registered projects opens from Settings', (tester) async {
     final api = FakeApi()..permissions = admin;
     await openSettings(tester, api);
 
-    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.registeredKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.registeredKey)));
 
     expect(find.byKey(ApiListBody.emptyKey), findsOneWidget);
   });
@@ -100,7 +100,7 @@ void main() {
       ..addProject('غصون 8', status: 'pendingApproval')
       ..addProject('غصون 9', status: 'rejected');
     await openSettings(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.defaultProjectKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.defaultProjectKey)));
     return api;
   }
 

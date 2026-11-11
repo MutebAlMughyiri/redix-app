@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/words/language_switch.dart';
@@ -24,11 +24,11 @@ void main() {
       final manager = await Given.manager(project: 'غصون 7', units: ['الفلة الشرقية', 'الفلة الشمالية']);
       await $.onTheList(manager);
       await $.says(ProjectsScreen.nameKey(manager.projectId), 'غصون 7');
-      await $(ProjectsScreen.generalSettingsKey).tap();
+      await $(ProjectsScreen.sharedSettingsKey).tap();
       await $.goTo($(LanguageSwitch.arabicKey));
       await $(LanguageSwitch.arabicKey).tap();
-      await $.until(() => Directionality.of($.tester.element(find.byKey(GeneralSettingsScreen.languageKey))) == TextDirection.rtl);
-      await $.tapOn(GeneralSettingsScreen.switchProjectKey);
+      await $.until(() => Directionality.of($.tester.element(find.byKey(SharedSettingsScreen.languageKey))) == TextDirection.rtl);
+      await $.tapOn(SharedSettingsScreen.switchProjectKey);
       await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
       await $.picture('projects-arabic');
     });
@@ -74,7 +74,7 @@ void main() {
     phoneCase('the list has no change buttons', ($) async {
       final manager = await Given.manager();
       await $.onTheList(manager);
-      expect($(HomeScreen.generalSettingsKey(manager.projectId)), findsNothing);
+      expect($(HomeScreen.sharedSettingsKey(manager.projectId)), findsNothing);
       expect($(HomeScreen.usersKey(manager.projectId)), findsNothing);
     });
 
@@ -82,8 +82,8 @@ void main() {
       final manager = await Given.manager();
       final member = await Given.member(manager);
       await $.onTheHome(member);
-      await $(HomeScreen.generalSettingsKey(member.projectId)).tap();
-      await $.reach($(GeneralSettingsScreen.signOutKey));
+      await $(HomeScreen.sharedSettingsKey(member.projectId)).tap();
+      await $.reach($(SharedSettingsScreen.signOutKey));
       await Given.removed(member, by: manager);
       await $.back();
       await $.reach($(ProjectsScreen.titleKey));

@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/summary_card.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,8 +45,8 @@ void main() {
 
     final actions = tester.widget<AppBar>(find.byType(AppBar)).actions!;
     expect((actions[0] as IconButton).key, HomeScreen.collapseKey);
-    expect(find.byKey(HomeScreen.generalSettingsKey('project-0')), findsOneWidget);
-    expect(tester.getCenter(find.byKey(HomeScreen.collapseKey)).dx, lessThan(tester.getCenter(find.byKey(HomeScreen.generalSettingsKey('project-0'))).dx));
+    expect(find.byKey(HomeScreen.sharedSettingsKey('project-0')), findsOneWidget);
+    expect(tester.getCenter(find.byKey(HomeScreen.collapseKey)).dx, lessThan(tester.getCenter(find.byKey(HomeScreen.sharedSettingsKey('project-0'))).dx));
   });
 
   testWidgets('R4: collapsed, the project\'s buttons are gone too', (tester) async {
@@ -121,10 +121,10 @@ void main() {
   testWidgets('R9: it survives signing out', (tester) async {
     final api = await openHome(tester, preferences: {stateKey: 0});
 
-    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.generalSettingsKey('project-0'))));
-    await tester.ensureVisible(find.byKey(GeneralSettingsScreen.signOutKey));
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.sharedSettingsKey('project-0'))));
+    await tester.ensureVisible(find.byKey(SharedSettingsScreen.signOutKey));
     await tester.pumpAndSettle();
-    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.signOutKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.signOutKey)));
     await tester.pumpAndSettle();
 
     expect(await kept(), 0);

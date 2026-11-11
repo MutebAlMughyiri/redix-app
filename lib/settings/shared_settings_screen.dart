@@ -24,10 +24,10 @@ import '../ui/refusal_text.dart';
 /// Settings (الإعدادات), all on one screen (Muteb, 9 Nov 2026): who is signed in, the way back to the project list, the default project, the registered projects for the
 /// admin, the language (UC-004), the appearance (redix-app #87, #97), how many entries the home shows at a time (redix-app #105), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out
 /// (UC-062), each in its own border (Muteb, 10 Nov 2026: "i like borders for each component"). A project's own screens open from its home.
-class GeneralSettingsScreen extends StatefulWidget {
+class SharedSettingsScreen extends StatefulWidget {
   /// The screen for the user signed in through [session], opened from [project], whose [projects] the default is chosen among, switching [language] and the mode kept in
   /// [localConfig].
-  const GeneralSettingsScreen({super.key, required this.session, required this.projects, required this.project, required this.language, required this.localConfig});
+  const SharedSettingsScreen({super.key, required this.session, required this.projects, required this.project, required this.language, required this.localConfig});
 
   /// The language choice it changes.
   final AppLanguage language;
@@ -45,64 +45,64 @@ class GeneralSettingsScreen extends StatefulWidget {
   final Project project;
 
   /// The screen's route.
-  static const path = '/general-settings';
+  static const path = '/shared-settings';
 
   /// Who is signed in: their name over the name they sign in with and, opened from a project, what they are called there.
-  static const whoKey = Key('generalSettings.who');
+  static const whoKey = Key('sharedSettings.who');
 
   /// The way back to the project list.
-  static const switchProjectKey = Key('generalSettings.switchProject');
+  static const switchProjectKey = Key('sharedSettings.switchProject');
 
   /// The way into the registered projects, for whoever approves them.
-  static const registeredKey = Key('generalSettings.registered');
+  static const registeredKey = Key('sharedSettings.registered');
 
   /// The way into the choice of the default project.
-  static const defaultProjectKey = Key('generalSettings.defaultProject');
+  static const defaultProjectKey = Key('sharedSettings.defaultProject');
 
   /// The heading over the choice of the language.
-  static const languageKey = Key('generalSettings.language');
+  static const languageKey = Key('sharedSettings.language');
 
   /// The heading over the choice of the appearance.
-  static const appearanceKey = Key('generalSettings.appearance');
+  static const appearanceKey = Key('sharedSettings.appearance');
 
   /// The choice of the appearance for this phone: System, Light or Dark.
-  static const themeChoiceKey = Key('generalSettings.themeChoice');
+  static const themeChoiceKey = Key('sharedSettings.themeChoice');
 
   /// The System choice, light or dark as the phone is.
-  static const themeSystemKey = Key('generalSettings.themeSystem');
+  static const themeSystemKey = Key('sharedSettings.themeSystem');
 
   /// The Light choice.
-  static const themeLightKey = Key('generalSettings.themeLight');
+  static const themeLightKey = Key('sharedSettings.themeLight');
 
   /// The Dark choice.
-  static const themeDarkKey = Key('generalSettings.themeDark');
+  static const themeDarkKey = Key('sharedSettings.themeDark');
 
   /// The row of how many entries the home shows at a time (redix-app #105).
-  static const entriesShownKey = Key('generalSettings.entriesShown');
+  static const entriesShownKey = Key('sharedSettings.entriesShown');
 
   /// The choice of that number, from 5 to 20.
-  static const entriesShownChoiceKey = Key('generalSettings.entriesShownChoice');
+  static const entriesShownChoiceKey = Key('sharedSettings.entriesShownChoice');
 
   /// The number [count] among the choices.
-  static Key entriesShownOptionKey(int count) => Key('generalSettings.entriesShown.$count');
+  static Key entriesShownOptionKey(int count) => Key('sharedSettings.entriesShown.$count');
 
   /// The switch that turns fingerprint or face on and off for this phone.
-  static const biometricsKey = Key('generalSettings.biometrics');
+  static const biometricsKey = Key('sharedSettings.biometrics');
 
   /// The line that says why fingerprint or face did not change.
-  static const biometricsMessageKey = Key('generalSettings.biometricsMessage');
+  static const biometricsMessageKey = Key('sharedSettings.biometricsMessage');
 
   /// The way into the password change.
-  static const changePasswordKey = Key('generalSettings.changePassword');
+  static const changePasswordKey = Key('sharedSettings.changePassword');
 
   /// The row that signs out, after asking.
-  static const signOutKey = Key('generalSettings.signOut');
+  static const signOutKey = Key('sharedSettings.signOut');
 
   @override
-  State<GeneralSettingsScreen> createState() => _GeneralSettingsScreenState();
+  State<SharedSettingsScreen> createState() => _SharedSettingsScreenState();
 }
 
-class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
+class _SharedSettingsScreenState extends State<SharedSettingsScreen> {
   var _biometricsMessage = '';
 
   /// Nothing waits on the prompt, because a cancelled one may never answer: the switch can always be tapped again.
@@ -141,7 +141,7 @@ class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
     final words = Words.of(context);
     final session = widget.session;
     return Scaffold(
-      appBar: AppBar(title: Text(words.generalSettingsTitle, key: ScreenTitle.titleKey)),
+      appBar: AppBar(title: Text(words.sharedSettingsTitle, key: ScreenTitle.titleKey)),
       body: ListenableBuilder(
         listenable: Listenable.merge([session, widget.projects, widget.localConfig]),
         builder: (context, _) => ListView(
@@ -149,38 +149,38 @@ class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
           children: [
             _bordered([
               ListTile(
-                key: GeneralSettingsScreen.whoKey,
-                leading: Icon(Icons.account_circle_outlined, key: GeneralSettingsScreen.whoKey.icon),
-                title: Text(session.displayName, key: GeneralSettingsScreen.whoKey.title),
-                subtitle: Text(partsLine([session.username, widget.projects.latest(widget.project).roleName]), key: GeneralSettingsScreen.whoKey.subtitle),
+                key: SharedSettingsScreen.whoKey,
+                leading: Icon(Icons.account_circle_outlined, key: SharedSettingsScreen.whoKey.icon),
+                title: Text(session.displayName, key: SharedSettingsScreen.whoKey.title),
+                subtitle: Text(partsLine([session.username, widget.projects.latest(widget.project).roleName]), key: SharedSettingsScreen.whoKey.subtitle),
               ),
             ]),
-            _row(GeneralSettingsScreen.switchProjectKey, Icons.swap_horiz, words.generalSettingsSwitchProject, () => context.push(ProjectsScreen.path)),
-            _row(GeneralSettingsScreen.defaultProjectKey, Icons.star_outline, words.generalSettingsDefaultProject, () => DefaultProjectSheet.show(context, session, widget.projects)),
+            _row(SharedSettingsScreen.switchProjectKey, Icons.swap_horiz, words.sharedSettingsSwitchProject, () => context.push(ProjectsScreen.path)),
+            _row(SharedSettingsScreen.defaultProjectKey, Icons.star_outline, words.sharedSettingsDefaultProject, () => DefaultProjectSheet.show(context, session, widget.projects)),
             if (session.may(Permission.approveProjects))
-              _row(GeneralSettingsScreen.registeredKey, Icons.approval_outlined, words.registeredTitle, () => context.push(RegisteredProjectsScreen.path)),
+              _row(SharedSettingsScreen.registeredKey, Icons.approval_outlined, words.registeredTitle, () => context.push(RegisteredProjectsScreen.path)),
             _bordered([
               ListTile(
-                key: GeneralSettingsScreen.languageKey,
-                leading: Icon(Icons.language, key: GeneralSettingsScreen.languageKey.icon),
-                title: Text(words.myAccountLanguage, key: GeneralSettingsScreen.languageKey.title),
+                key: SharedSettingsScreen.languageKey,
+                leading: Icon(Icons.language, key: SharedSettingsScreen.languageKey.icon),
+                title: Text(words.myAccountLanguage, key: SharedSettingsScreen.languageKey.title),
               ),
               Padding(padding: const EdgeInsets.fromLTRB(16, 0, 16, 16), child: LanguageSwitch(language: widget.language)),
             ]),
             _bordered([
               ListTile(
-                key: GeneralSettingsScreen.appearanceKey,
-                leading: Icon(Icons.dark_mode_outlined, key: GeneralSettingsScreen.appearanceKey.icon),
-                title: Text(words.generalSettingsAppearance, key: GeneralSettingsScreen.appearanceKey.title),
+                key: SharedSettingsScreen.appearanceKey,
+                leading: Icon(Icons.dark_mode_outlined, key: SharedSettingsScreen.appearanceKey.icon),
+                title: Text(words.sharedSettingsAppearance, key: SharedSettingsScreen.appearanceKey.title),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 child: SegmentedButton<ThemeMode>(
-                  key: GeneralSettingsScreen.themeChoiceKey,
+                  key: SharedSettingsScreen.themeChoiceKey,
                   segments: [
-                    ButtonSegment(value: ThemeMode.system, label: Text(words.generalSettingsThemeSystem, key: GeneralSettingsScreen.themeSystemKey)),
-                    ButtonSegment(value: ThemeMode.light, label: Text(words.generalSettingsThemeLight, key: GeneralSettingsScreen.themeLightKey)),
-                    ButtonSegment(value: ThemeMode.dark, label: Text(words.generalSettingsThemeDark, key: GeneralSettingsScreen.themeDarkKey)),
+                    ButtonSegment(value: ThemeMode.system, label: Text(words.sharedSettingsThemeSystem, key: SharedSettingsScreen.themeSystemKey)),
+                    ButtonSegment(value: ThemeMode.light, label: Text(words.sharedSettingsThemeLight, key: SharedSettingsScreen.themeLightKey)),
+                    ButtonSegment(value: ThemeMode.dark, label: Text(words.sharedSettingsThemeDark, key: SharedSettingsScreen.themeDarkKey)),
                   ],
                   selected: {widget.localConfig.themeMode},
                   onSelectionChanged: (chosen) => widget.localConfig.chooseThemeMode(chosen.single),
@@ -189,16 +189,16 @@ class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
             ]),
             _bordered([
               ListTile(
-                key: GeneralSettingsScreen.entriesShownKey,
-                leading: Icon(Icons.format_list_numbered, key: GeneralSettingsScreen.entriesShownKey.icon),
-                title: Text(words.generalSettingsEntriesShown, key: GeneralSettingsScreen.entriesShownKey.title),
-                subtitle: Text(words.generalSettingsEntriesShownHint, key: GeneralSettingsScreen.entriesShownKey.subtitle),
+                key: SharedSettingsScreen.entriesShownKey,
+                leading: Icon(Icons.format_list_numbered, key: SharedSettingsScreen.entriesShownKey.icon),
+                title: Text(words.sharedSettingsEntriesShown, key: SharedSettingsScreen.entriesShownKey.title),
+                subtitle: Text(words.sharedSettingsEntriesShownHint, key: SharedSettingsScreen.entriesShownKey.subtitle),
                 trailing: DropdownButton<int>(
-                  key: GeneralSettingsScreen.entriesShownChoiceKey,
+                  key: SharedSettingsScreen.entriesShownChoiceKey,
                   value: widget.localConfig.entriesShown,
                   items: [
                     for (final count in LocalConfig.entriesShownChoices)
-                      DropdownMenuItem(key: GeneralSettingsScreen.entriesShownOptionKey(count), value: count, child: Text('$count', key: GeneralSettingsScreen.entriesShownOptionKey(count).title)),
+                      DropdownMenuItem(key: SharedSettingsScreen.entriesShownOptionKey(count), value: count, child: Text('$count', key: SharedSettingsScreen.entriesShownOptionKey(count).title)),
                   ],
                   onChanged: (count) => widget.localConfig.chooseEntriesShown(count ?? widget.localConfig.entriesShown),
                 ),
@@ -206,27 +206,27 @@ class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
             ]),
             _bordered([
               SwitchListTile(
-                key: GeneralSettingsScreen.biometricsKey,
-                secondary: Icon(Icons.fingerprint, key: GeneralSettingsScreen.biometricsKey.icon),
-                title: Text(words.biometricsSignIn, key: GeneralSettingsScreen.biometricsKey.title),
-                subtitle: Text(words.biometricsHint, key: GeneralSettingsScreen.biometricsKey.subtitle),
+                key: SharedSettingsScreen.biometricsKey,
+                secondary: Icon(Icons.fingerprint, key: SharedSettingsScreen.biometricsKey.icon),
+                title: Text(words.biometricsSignIn, key: SharedSettingsScreen.biometricsKey.title),
+                subtitle: Text(words.biometricsHint, key: SharedSettingsScreen.biometricsKey.subtitle),
                 value: session.usesBiometrics,
                 onChanged: _setBiometrics,
               ),
               if (_biometricsMessage.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: refusalText(context, words.text(_biometricsMessage), GeneralSettingsScreen.biometricsMessageKey),
+                  child: refusalText(context, words.text(_biometricsMessage), SharedSettingsScreen.biometricsMessageKey),
                 ),
             ]),
-            _row(GeneralSettingsScreen.changePasswordKey, Icons.lock_outline, words.myAccountChangePassword, () => context.push(ChangePasswordScreen.path)),
+            _row(SharedSettingsScreen.changePasswordKey, Icons.lock_outline, words.myAccountChangePassword, () => context.push(ChangePasswordScreen.path)),
             _bordered([
               ListTile(
-                key: GeneralSettingsScreen.signOutKey,
+                key: SharedSettingsScreen.signOutKey,
                 iconColor: AppColor.refusal.of(context),
                 textColor: AppColor.refusal.of(context),
-                leading: Icon(Icons.logout, key: GeneralSettingsScreen.signOutKey.icon),
-                title: Text(words.myAccountSignOut, key: GeneralSettingsScreen.signOutKey.title),
+                leading: Icon(Icons.logout, key: SharedSettingsScreen.signOutKey.icon),
+                title: Text(words.myAccountSignOut, key: SharedSettingsScreen.signOutKey.title),
                 onTap: _askToSignOut,
               ),
             ]),

@@ -15,7 +15,7 @@
 | Projects | `ProjectsScreen.newProjectKey` | The same for someone signed in, with their own login |
 | A waiting project | `ProjectsScreen.statusKey(id)` | Says it is waiting, with nothing to do |
 | A rejected project | `ProjectsScreen.reasonKey(id)` | Says why |
-| Settings | `GeneralSettingsScreen.registeredKey` | With `approveProjects`: opens Registered projects |
+| Settings | `SharedSettingsScreen.registeredKey` | With `approveProjects`: opens Registered projects |
 | Registered projects, at `/registered-projects` | `RegisteredProjectsScreen.approveKey(id)`, `rejectKey(id)` | What is waiting, with the manager's details |
 
 ## Rules and where they are proven
@@ -27,6 +27,6 @@
 | A refusal under the send button comes into view, since on a phone it would fall below the screen | `patrol_test/projects/register_project_test.dart`, `new_project_test.dart` |
 | Once sent, it returns to sign-in and says so | `register_project_test.dart` |
 | A waiting or rejected project offers nothing | `projects_test.dart` |
-| Only `approveProjects` sees Registered projects | `general_settings_test.dart` |
+| Only `approveProjects` sees Registered projects | `shared_settings_test.dart` |
 | Approve, and Reject with a reason | `registered_projects_test.dart` |
 | On a real phone, against the real API | `patrol_test/projects/register_project_test.dart`, `patrol_test/projects/approve_projects_test.dart` |

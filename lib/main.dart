@@ -62,7 +62,7 @@ import 'projects/registered_projects_screen.dart';
 import 'projects/project.dart';
 import 'settings/payment_methods.dart';
 import 'settings/payment_methods_screen.dart';
-import 'settings/general_settings_screen.dart';
+import 'settings/shared_settings_screen.dart';
 import 'sharing/attachable_entries.dart';
 import 'sharing/share_screen.dart';
 import 'structure/categories.dart';
@@ -196,8 +196,8 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session, language: widget.language)),
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
       GoRoute(
-        path: GeneralSettingsScreen.path,
-        builder: (context, state) => GeneralSettingsScreen(
+        path: SharedSettingsScreen.path,
+        builder: (context, state) => SharedSettingsScreen(
           session: widget.session,
           projects: _projects,
           project: switch (state.extra) {

@@ -12,7 +12,7 @@ import 'package:redix/main.dart';
 import 'package:redix/projects/member_picker.dart';
 import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/name_dialog.dart';
@@ -90,12 +90,12 @@ extension Steps on PatrolIntegrationTester {
     final context = tester.element(find.byType(Scaffold).first);
     ScaffoldMessenger.of(context).clearSnackBars();
     await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
-    GoRouter.of(context).go(GeneralSettingsScreen.path);
+    GoRouter.of(context).go(SharedSettingsScreen.path);
     await pumpAndSettle();
     final signIn = find.byKey(SignInScreen.usernameKey);
-    final signOut = find.byKey(GeneralSettingsScreen.signOutKey);
+    final signOut = find.byKey(SharedSettingsScreen.signOutKey);
     final changePassword = find.byKey(ChangePasswordScreen.currentKey);
-    await until(() => signIn.evaluate().isNotEmpty || changePassword.evaluate().isNotEmpty || find.byKey(GeneralSettingsScreen.whoKey).evaluate().isNotEmpty);
+    await until(() => signIn.evaluate().isNotEmpty || changePassword.evaluate().isNotEmpty || find.byKey(SharedSettingsScreen.whoKey).evaluate().isNotEmpty);
     if (signIn.evaluate().isEmpty && changePassword.evaluate().isEmpty) {
       await goTo(this(signOut));
       await signOutFromSettings();
@@ -175,7 +175,7 @@ extension Steps on PatrolIntegrationTester {
 
   /// Signs out from the home of the project [projectId], through Settings.
   Future<void> signOutFromTheHome(String projectId) async {
-    await this(HomeScreen.generalSettingsKey(projectId)).tap();
+    await this(HomeScreen.sharedSettingsKey(projectId)).tap();
     await signOutFromSettings();
   }
 
@@ -203,13 +203,13 @@ extension Steps on PatrolIntegrationTester {
 
   /// Signs out from Settings, answering the question with yes.
   Future<void> signOutFromSettings() async {
-    await tapOn(GeneralSettingsScreen.signOutKey);
+    await tapOn(SharedSettingsScreen.signOutKey);
     await this(ConfirmDialog.confirmKey).tap();
   }
 
   /// Signs out from the project list, through Settings.
   Future<void> signOutFromTheList() async {
-    await this(ProjectsScreen.generalSettingsKey).tap();
+    await this(ProjectsScreen.sharedSettingsKey).tap();
     await signOutFromSettings();
   }
 

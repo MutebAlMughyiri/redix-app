@@ -4,7 +4,7 @@ import 'package:patrol/patrol.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/default_project_sheet.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/refusal_snack_bar.dart';
 
@@ -20,8 +20,8 @@ bool isTicked(PatrolIntegrationTester $, String projectId) => $.tester.widget<Ch
 
 /// Opens Default project from the list, standing on the sheet.
 Future<void> openSheet(PatrolIntegrationTester $, String projectId) async {
-  await $(ProjectsScreen.generalSettingsKey).tap();
-  await $.tapOn(GeneralSettingsScreen.defaultProjectKey);
+  await $(ProjectsScreen.sharedSettingsKey).tap();
+  await $.tapOn(SharedSettingsScreen.defaultProjectKey);
   await $.reach($(DefaultProjectSheet.optionKey(projectId)));
 }
 
@@ -106,8 +106,8 @@ void main() {
       await $.startApp();
       await $.signIn(manager.username, manager.password);
       await $.reach($(HomeScreen.titleKey));
-      await $(HomeScreen.generalSettingsKey(manager.projectId)).tap();
-      await $.tapOn(GeneralSettingsScreen.defaultProjectKey);
+      await $(HomeScreen.sharedSettingsKey(manager.projectId)).tap();
+      await $.tapOn(SharedSettingsScreen.defaultProjectKey);
       await $.reach($(DefaultProjectSheet.optionKey(manager.projectId)));
       await tick($, manager.projectId, ticked: false);
       await $.back();
@@ -123,8 +123,8 @@ void main() {
       await $.startApp();
       await $.signIn(manager.username, manager.password);
       await $.reach($(HomeScreen.titleKey));
-      await $(HomeScreen.generalSettingsKey(manager.projectId)).tap();
-      await $.tapOn(GeneralSettingsScreen.switchProjectKey);
+      await $(HomeScreen.sharedSettingsKey(manager.projectId)).tap();
+      await $.tapOn(SharedSettingsScreen.switchProjectKey);
       await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
       expect($.canGoBack, isFalse);
     });

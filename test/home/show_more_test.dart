@@ -5,7 +5,7 @@ import 'package:redix/entries/entry_card.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../app_harness.dart';
@@ -35,9 +35,9 @@ void main() {
   }
 
   Future<void> chooseCount(WidgetTester tester, FakeApi api, int count) async {
-    await tester.ensureVisible(find.byKey(GeneralSettingsScreen.entriesShownChoiceKey));
-    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.entriesShownChoiceKey)));
-    await act(tester, api, () => tester.tap(find.byKey(GeneralSettingsScreen.entriesShownOptionKey(count)).last));
+    await tester.ensureVisible(find.byKey(SharedSettingsScreen.entriesShownChoiceKey));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.entriesShownChoiceKey)));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.entriesShownOptionKey(count)).last));
   }
 
   testWidgets('R1: Settings offers any number from 5 to 20, shows 5 until one is chosen, and keeps the choice on the phone', (tester) async {
@@ -45,13 +45,13 @@ void main() {
     await openSettings(tester, api);
 
     expect((await SharedPreferences.getInstance()).getInt(countKey), 5);
-    final choice = tester.widget<DropdownButton<int>>(find.byKey(GeneralSettingsScreen.entriesShownChoiceKey));
+    final choice = tester.widget<DropdownButton<int>>(find.byKey(SharedSettingsScreen.entriesShownChoiceKey));
     expect(choice.value, 5);
     expect([for (final item in choice.items!) item.value], [for (var count = 5; count <= 20; count++) count]);
 
     await chooseCount(tester, api, 12);
 
-    expect(tester.widget<DropdownButton<int>>(find.byKey(GeneralSettingsScreen.entriesShownChoiceKey)).value, 12);
+    expect(tester.widget<DropdownButton<int>>(find.byKey(SharedSettingsScreen.entriesShownChoiceKey)).value, 12);
     expect((await SharedPreferences.getInstance()).getInt(countKey), 12);
   });
 

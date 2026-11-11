@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/projects/projects_screen.dart';
-import 'package:redix/settings/general_settings_screen.dart';
+import 'package:redix/settings/shared_settings_screen.dart';
 
 import '../support/given.dart';
 import '../support/pc.dart';
@@ -12,8 +12,8 @@ import '../support/steps.dart';
 Future<Person> onSettings(PatrolIntegrationTester $) async {
   final manager = await Given.manager();
   await $.onTheList(manager);
-  await $(ProjectsScreen.generalSettingsKey).tap();
-  await $.reach($(GeneralSettingsScreen.themeChoiceKey));
+  await $(ProjectsScreen.sharedSettingsKey).tap();
+  await $.reach($(SharedSettingsScreen.themeChoiceKey));
   return manager;
 }
 
@@ -36,7 +36,7 @@ void main() {
   phoneClass('Appearance (redix-app #87, #97)', () {
     phoneCase('#97 T1, T2, R1, R3: on System, the app turns dark with the phone while it is open, and light again', ($) async {
       await onSettings($);
-      await $.tapOn(GeneralSettingsScreen.themeSystemKey);
+      await $.tapOn(SharedSettingsScreen.themeSystemKey);
       await keepingThePhone(() async {
         await phoneTurns($, dark: false);
         await $.until(() => !$.isDark);
@@ -52,7 +52,7 @@ void main() {
       await keepingThePhone(() async {
         await phoneTurns($, dark: true);
         expect($.isDark, isFalse);
-        await $.tapOn(GeneralSettingsScreen.themeDarkKey);
+        await $.tapOn(SharedSettingsScreen.themeDarkKey);
         await $.until(() => $.isDark);
         await phoneTurns($, dark: false);
         expect($.isDark, isTrue);
@@ -62,15 +62,15 @@ void main() {
     phoneCase('#87 R1, R2: Dark in Settings turns the app dark at once, and Light turns it light', ($) async {
       await onSettings($);
       expect($.isDark, isFalse);
-      await $.tapOn(GeneralSettingsScreen.themeDarkKey);
+      await $.tapOn(SharedSettingsScreen.themeDarkKey);
       await $.until(() => $.isDark);
-      await $.tapOn(GeneralSettingsScreen.themeLightKey);
+      await $.tapOn(SharedSettingsScreen.themeLightKey);
       await $.until(() => !$.isDark);
     });
 
     phoneCase('#87 R6: the choice is kept for the next start', ($) async {
       await onSettings($);
-      await $.tapOn(GeneralSettingsScreen.themeDarkKey);
+      await $.tapOn(SharedSettingsScreen.themeDarkKey);
       await $.until(() => $.isDark);
       await $.restartApp();
       await $.reach($(ProjectsScreen.titleKey));
@@ -79,7 +79,7 @@ void main() {
 
     phoneCase('#87 R6: signing out and in keeps the choice', ($) async {
       final manager = await onSettings($);
-      await $.tapOn(GeneralSettingsScreen.themeDarkKey);
+      await $.tapOn(SharedSettingsScreen.themeDarkKey);
       await $.until(() => $.isDark);
       await $.signOutFromSettings();
       await $.signIn(manager.username, manager.password);

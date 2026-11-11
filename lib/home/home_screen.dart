@@ -21,7 +21,7 @@ import '../projects/project.dart';
 import '../projects/project_settings_card.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
-import '../settings/general_settings_screen.dart';
+import '../settings/shared_settings_screen.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
@@ -118,7 +118,7 @@ class HomeScreen extends StatefulWidget {
   static const roleNameKey = Key('home.roleName');
 
   /// The way into the settings of the project [id]: a gear in the top bar (Muteb, 8 and 9 Nov 2026).
-  static Key generalSettingsKey(String id) => Key('home.generalSettings.$id');
+  static Key sharedSettingsKey(String id) => Key('home.sharedSettings.$id');
 
   /// The way to what waits for a decision in the project [id].
   static Key approvalsKey(String id) => Key('home.approvals.$id');
@@ -237,10 +237,10 @@ class _HomeScreenState extends State<HomeScreen> {
             builder: (context, _) {
               final project = widget.projects.byId(widget.projectId);
               return IconButton(
-                key: HomeScreen.generalSettingsKey(widget.projectId),
-                tooltip: words.generalSettingsTitle,
-                icon: Icon(Icons.settings_outlined, key: HomeScreen.generalSettingsKey(widget.projectId).icon),
-                onPressed: project.isNone ? null : () => _open(GeneralSettingsScreen.path, project),
+                key: HomeScreen.sharedSettingsKey(widget.projectId),
+                tooltip: words.sharedSettingsTitle,
+                icon: Icon(Icons.settings_outlined, key: HomeScreen.sharedSettingsKey(widget.projectId).icon),
+                onPressed: project.isNone ? null : () => _open(SharedSettingsScreen.path, project),
               );
             },
           ),

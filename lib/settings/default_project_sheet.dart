@@ -53,8 +53,8 @@ class _DefaultProjectSheetState extends State<DefaultProjectSheet> {
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 24),
         children: [
-          Text(words.generalSettingsDefaultProject, key: DefaultProjectSheet.titleKey, style: theme.textTheme.titleLarge),
-          Text(words.generalSettingsDefaultProjectHint, key: DefaultProjectSheet.hintKey, style: theme.textTheme.bodySmall),
+          Text(words.sharedSettingsDefaultProject, key: DefaultProjectSheet.titleKey, style: theme.textTheme.titleLarge),
+          Text(words.sharedSettingsDefaultProjectHint, key: DefaultProjectSheet.hintKey, style: theme.textTheme.bodySmall),
           const SizedBox(height: 8),
           for (final project in widget.projects.all.where((project) => project.isApproved))
             CheckboxListTile(
