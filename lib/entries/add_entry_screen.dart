@@ -36,6 +36,7 @@ import '../suppliers/quick_add_supplier_dialog.dart';
 import '../suppliers/supplier.dart';
 import '../suppliers/supplier_picker.dart';
 import '../suppliers/suppliers.dart';
+import '../ui/busy.dart';
 import '../ui/entry_field.dart';
 import '../ui/form_section.dart';
 import '../ui/part_keys.dart';
@@ -398,7 +399,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       _customValues.addAll(saved.customValues);
     });
     if (saved.attachmentId.isNotEmpty) {
-      final kept = await widget.attachments.read(saved.attachmentId);
+      final kept = await whileBusy(context, widget.attachments.read(saved.attachmentId));
       if (mounted) {
         setState(() => _file.showKept(kept));
       }
@@ -432,7 +433,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   /// Fills the date, the total and a purchase's supplier from the file's QR code (redix-api #96, D21).
   Future<void> _readQr(PickedFile file) async {
-    final qr = InvoiceQr.parse(await widget.capture.qrTextOf(file));
+    final qr = InvoiceQr.parse(await whileBusy(context, widget.capture.qrTextOf(file)));
     if (!mounted) {
       return;
     }
@@ -599,7 +600,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     if (_whatIsWrong.isNotEmpty) {
       return _whatIsWrong;
     }
-    final refusal = await _file.keep(widget.attachments);
+    final refusal = await whileBusy(context, _file.keep(widget.attachments));
     if (refusal == 'attachments.noConnection') {
       return widget.recording.keep(_body(submit), _file.picked, editing: widget.editingId, title: _table.label, details: _supplier.name);
     }
@@ -781,8 +782,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
               file: _file.picked,
               emptyLabel: words.text(_table.fileWordKey),
               message: _file.message,
-              onCamera: () => _takeFrom(widget.capture.fromCamera),
-              onFiles: () => _takeFrom(widget.capture.fromFiles),
+              onCamera: () => _takeFrom(() => whileBusy(context, widget.capture.fromCamera())),
+              onFiles: () => _takeFrom(() => whileBusy(context, widget.capture.fromFiles())),
               isReading: _reading,
             ),
             IgnorePointer(ignoring: _reading, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: _entryFields(words, ownFields))),

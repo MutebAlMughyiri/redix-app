@@ -11,6 +11,7 @@ import '../structure/item_picker.dart';
 import '../structure/offered_items.dart';
 import '../suppliers/supplier_picker.dart';
 import '../suppliers/suppliers.dart';
+import '../ui/busy.dart';
 import '../ui/change_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
@@ -95,8 +96,11 @@ class _ContractDialogState extends State<ContractDialog> {
   }
 
   Future<void> _addDocument() async {
-    final file = await widget.capture.fromAnyFile();
-    final refusal = file.isNone ? file.failure : await widget.attachments.keepDocument(file);
+    final file = await whileBusy(context, widget.capture.fromAnyFile());
+    if (!mounted) {
+      return;
+    }
+    final refusal = file.isNone ? file.failure : await whileBusy(context, widget.attachments.keepDocument(file));
     if (!mounted) {
       return;
     }

@@ -8,6 +8,7 @@ import '../attachments/picked_file.dart';
 import '../format/date_format.dart';
 import '../projects/project.dart';
 import '../reports/report_files.dart';
+import '../ui/busy.dart';
 import '../ui/api_list_body.dart';
 import '../ui/change_dialog.dart';
 import '../ui/entry_field.dart';
@@ -81,7 +82,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
   Future<void> _download(Document document) async {
     final words = Words.of(context);
     final messenger = ScaffoldMessenger.of(context);
-    final said = await widget.files.handFile(AttachmentScreen.pathOf(widget.project.id, document.attachmentId), document.fileName, document.contentType, FileHandling.save);
+    final said = await whileBusy(context, widget.files.handFile(AttachmentScreen.pathOf(widget.project.id, document.attachmentId), document.fileName, document.contentType, FileHandling.save));
     showMessage(messenger, words, said);
   }
 
@@ -170,7 +171,7 @@ class _DocumentDialogState extends State<_DocumentDialog> {
   }
 
   Future<void> _pickFile() async {
-    final file = await widget.capture.fromAnyFile();
+    final file = await whileBusy(context, widget.capture.fromAnyFile());
     if (mounted) {
       setState(() {
         _fileMessage = file.failure;
@@ -185,7 +186,7 @@ class _DocumentDialogState extends State<_DocumentDialog> {
     if (_file.isNone) {
       return 'documents.fileRequired';
     }
-    final refusal = await widget.documents.add(_file, _name.text, _group);
+    final refusal = await whileBusy(context, widget.documents.add(_file, _name.text, _group));
     if (refusal.isEmpty) {
       showMessage(messenger, words, 'documents.saved');
     }

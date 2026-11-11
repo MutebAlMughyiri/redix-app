@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../attachments/invoice_capture.dart';
 import '../auth/session.dart';
+import '../ui/busy.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
@@ -127,7 +128,7 @@ class ReportFileButtons extends StatelessWidget {
   /// Which buttons show.
   final List<ReportFileKind> kinds;
 
-  Future<void> _run(BuildContext context, ReportFileKind kind, FileHandling handing) => showRefusalOf(context, files.hand(address, name, kind, handing));
+  Future<void> _run(BuildContext context, ReportFileKind kind, FileHandling handing) => showRefusalOf(context, whileBusy(context, files.hand(address, name, kind, handing)));
 
   void _ask(BuildContext context, ReportFileKind kind) {
     final words = Words.of(context);

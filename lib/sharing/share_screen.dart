@@ -13,6 +13,7 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../projects/projects.dart';
+import '../ui/busy.dart';
 import '../ui/bottom_button.dart';
 import '../ui/form_section.dart';
 import '../ui/labelled_chips.dart';
@@ -175,7 +176,7 @@ class _ShareScreenState extends State<ShareScreen> {
     final entries = widget.entriesOf(_project.id);
     final entry = entries.all.firstWhere((entry) => entry.id == _chosen);
     final attachments = widget.attachmentsOf(_project.id);
-    var refusal = await attachments.keep(widget.file);
+    var refusal = await whileBusy(context, attachments.keep(widget.file));
     if (refusal.isEmpty) {
       refusal = await entries.attach(entry, attachments.kept.id);
     }
