@@ -3,7 +3,7 @@ import 'dart:convert';
 import '../api_list.dart';
 import '../auth/session.dart';
 import '../format/number_format.dart';
-import 'arabic_spelling.dart';
+import '../ui/arabic_spelling.dart';
 import 'supplier.dart';
 
 /// What an entry may pick from a project's register (UC-018): what the API finds for what was typed. Nothing about what matches is decided here.

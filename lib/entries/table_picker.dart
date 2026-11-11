@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../suppliers/arabic_spelling.dart';
+import '../ui/arabic_spelling.dart';
 import '../ui/api_list_body.dart';
 import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';

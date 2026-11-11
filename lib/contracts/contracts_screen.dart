@@ -7,7 +7,6 @@ import '../structure/offered_items.dart';
 import '../suppliers/suppliers.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
-import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'contract.dart';
@@ -16,6 +15,11 @@ import 'contract_dialog.dart';
 import 'contracts.dart';
 import '../reports/report_files.dart';
 import '../auth/permission.dart';
+import '../ui/filter_line.dart';
+import '../ui/list_search.dart';
+import '../words/word_fill.dart';
+import '../format/parts_line.dart';
+import '../format/number_format.dart';
 
 /// A project's contracts (UC-020): everyone with access follows each one's value, paid and remaining, and whoever keeps the settings adds, amends and disables them. Nothing is deleted.
 class ContractsScreen extends StatefulWidget {
@@ -97,6 +101,9 @@ class ContractsScreen extends StatefulWidget {
   /// The choice of the filter [filter].
   static Key filterKey(ContractFilter filter) => Key('contracts.filter.${filter.name}');
 
+  /// The choice among the filters, folded under the search line (redix-app #104).
+  static const filterChoiceKey = Key('contracts.filterChoice');
+
   /// The contractor of the contract [id].
   static Key nameKey(String id) => Key('contracts.name.$id');
 
@@ -167,35 +174,35 @@ class _ContractsScreenState extends State<ContractsScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ListenableBuilder(
-            listenable: contracts,
-            builder: (context, _) => Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Wrap(
-                spacing: 8,
-                children: [
-                  for (final filter in ContractFilter.values)
-                    ChoiceChip(
-                      key: ContractsScreen.filterKey(filter),
-                      label: Text('${words.text(filter.wordKey)} · ${contracts.all.where(filter.keeps).length}', key: ContractsScreen.filterKey(filter).label),
-                      selected: _filter == filter,
-                      onSelected: (_) => setState(() => _filter = filter),
-                    ),
-                ],
-              ),
-            ),
-          ),
           if (project.may(Permission.seeAllCapital))
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: ReportFileButtons(files: widget.files, address: '/projects/${project.id}/reports/contracts', name: 'contracts', kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
             ),
           Expanded(
-            child: ApiListBody(
-              list: contracts,
-              emptyText: words.contractsEmpty,
-              keeps: _filter.keeps,
-              itemBuilder: (contract) => ContractCard(contract: contract, contracts: contracts, mayChange: project.mayManageSettings, onAmend: () => _ask(contract)),
+            child: ListenableBuilder(
+              listenable: contracts,
+              builder: (context, _) => ApiListBody<Contract>(
+                list: contracts,
+                emptyText: words.contractsEmpty,
+                keeps: _filter.keeps,
+                search: ListSearch(
+                  hint: words.commonSearchIn.fill([words.contractsTitle]),
+                  textOf: (contract) => partsLine([contract.supplierName, contract.itemName, contract.notes, formatMoney(contract.value)]),
+                  filtersInUse: _filter != ContractFilter.all,
+                  filters: [
+                    FilterLine.segmented(
+                      key: ContractsScreen.filterChoiceKey,
+                      values: ContractFilter.values,
+                      selected: _filter,
+                      labelOf: (filter) => '${words.text(filter.wordKey)} · ${contracts.all.where(filter.keeps).length}',
+                      keyOf: ContractsScreen.filterKey,
+                      onChanged: (filter) => setState(() => _filter = filter),
+                    ),
+                  ],
+                ),
+                itemBuilder: (contract) => ContractCard(contract: contract, contracts: contracts, mayChange: project.mayManageSettings, onAmend: () => _ask(contract)),
+              ),
             ),
           ),
         ],

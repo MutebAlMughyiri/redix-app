@@ -14,6 +14,9 @@ import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'notification_row.dart';
 import 'notifications.dart';
+import '../ui/list_search.dart';
+import '../words/word_fill.dart';
+import '../format/parts_line.dart';
 
 /// What the person was told (UC-036), newest first. Tapping one opens what it is about.
 class NotificationsScreen extends StatefulWidget {
@@ -59,9 +62,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     final words = Words.of(context);
     return Scaffold(
       appBar: AppBar(title: Text(words.notificationsTitle, key: ScreenTitle.titleKey)),
-      body: ApiListBody(
+      body: ApiListBody<NotificationRow>(
         list: widget.notifications,
         emptyText: words.notificationsEmpty,
+        search: ListSearch(hint: words.commonSearchIn.fill([words.notificationsTitle]), textOf: (row) => partsLine([words.text('notifications.${row.kind}'), row.projectName])),
         itemBuilder: (row) => ListTile(
           key: NotificationsScreen.rowKey(row.id),
           leading: Icon(row.isRead ? Icons.notifications_none : Icons.notifications_active, key: NotificationsScreen.rowKey(row.id).icon),

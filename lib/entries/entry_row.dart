@@ -1,7 +1,7 @@
 import '../auth/permission.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
-import '../suppliers/arabic_spelling.dart';
+import '../ui/arabic_spelling.dart';
 import 'entry_kind.dart';
 import 'entry_status.dart';
 

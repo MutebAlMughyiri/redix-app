@@ -15,6 +15,9 @@ import 'user.dart';
 import 'user_permissions_screen.dart';
 import 'user_row.dart';
 import 'users.dart';
+import '../ui/list_search.dart';
+import '../words/word_fill.dart';
+import '../format/parts_line.dart';
 
 /// The people of one project, for its manager (UC-007, UC-008): one row per user, with a menu to edit, tick permissions, reset the password, and disable or enable.
 class UsersScreen extends StatefulWidget {
@@ -143,9 +146,10 @@ class _UsersScreenState extends State<UsersScreen> {
           ),
         ],
       ),
-      body: ApiListBody(
+      body: ApiListBody<User>(
         list: widget.users,
         emptyText: '',
+        search: ListSearch(hint: words.commonSearchIn.fill([words.usersTitle]), textOf: (user) => partsLine([user.displayName, user.username, user.mobile, user.roleName])),
         itemBuilder: (user) => UserRow(
           user: user,
           onEdit: () => showDialog<void>(

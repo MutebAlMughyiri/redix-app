@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
@@ -588,7 +589,8 @@ void main() {
         ContractsScreen.progressKey(id),
         ContractsScreen.menuKey(id),
       ];
-      [ContractsScreen.addKey, for (final filter in ContractFilter.values) ContractsScreen.filterKey(filter), ...contractKeys(overrun)].forEach(expectFits);
+      await openFilters(tester, api);
+      [ContractsScreen.addKey, ApiListBody.searchKey, for (final filter in ContractFilter.values) ContractsScreen.filterKey(filter), ...contractKeys(overrun)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
       [ContractsScreen.contractorKey, ContractsScreen.itemKey, ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.unitPriceKey, ContractsScreen.quantityKey, ContractsScreen.notesKey, ContractsScreen.addDocumentKey, ChangeDialog.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
@@ -597,7 +599,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
       [ContractsScreen.partiesKey, ContractsScreen.openValueKey, ContractsScreen.valueKey, ChangeDialog.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
-      await tester.scrollUntilVisible(find.byKey(ContractsScreen.menuKey(open)), 200);
+      await tester.scrollUntilVisible(find.byKey(ContractsScreen.menuKey(open)), 200, scrollable: listRows);
       contractKeys(open).forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 

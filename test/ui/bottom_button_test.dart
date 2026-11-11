@@ -184,9 +184,9 @@ void main() {
     await tester.pumpAndSettle();
     await scrollAndTap(tester, api, HomeScreen.suppliersKey(_project));
 
-    await tester.scrollUntilVisible(find.byKey(SuppliersScreen.rowKey(last)), 200, scrollable: find.byType(Scrollable).first);
+    await tester.scrollUntilVisible(find.byKey(SuppliersScreen.rowKey(last)), 200, scrollable: listRows);
     await tester.pumpAndSettle();
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, -400));
+    await tester.drag(listRows, const Offset(0, -400));
     await tester.pumpAndSettle();
 
     final buttonTop = tester.getTopLeft(find.byType(BottomButton)).dy;

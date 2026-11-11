@@ -19,6 +19,9 @@ import '../ui/refusal_snack_bar.dart';
 import '../words/words.dart';
 import 'documents.dart';
 import '../ui/act_once.dart';
+import '../ui/list_search.dart';
+import '../words/word_fill.dart';
+import '../format/parts_line.dart';
 
 /// A project's documents (UC-064): each group under its name, those in none first. Everyone opens them; whoever manages the project keeps and removes them.
 class DocumentsScreen extends StatefulWidget {
@@ -133,6 +136,7 @@ class _DocumentsScreenState extends State<DocumentsScreen> {
       body: ApiListBody<Document>(
         list: widget.documents,
         emptyText: words.documentsNone,
+        search: ListSearch(hint: words.commonSearchIn.fill([words.documentsTitle]), textOf: (document) => partsLine([document.name, document.group, document.fileName])),
         listOf: (tiles) => ListView(
           padding: ApiListBody.padding,
           physics: ApiListBody.physics,

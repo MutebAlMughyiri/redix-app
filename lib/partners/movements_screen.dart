@@ -13,6 +13,9 @@ import '../words/words.dart';
 import 'capital.dart';
 import 'capital_movement.dart';
 import 'capital_movements.dart';
+import '../ui/list_search.dart';
+import '../words/word_fill.dart';
+import '../format/parts_line.dart';
 
 /// One partner's movements (UC-044), each with its receipt, and for whoever decides entries a way to reverse it (BR-11).
 class MovementsScreen extends StatefulWidget {
@@ -111,7 +114,15 @@ class _MovementsScreenState extends State<MovementsScreen> {
     final words = Words.of(context);
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.capitalMovements, subject: widget.partnerName)),
-      body: ApiListBody(list: widget.movements, emptyText: words.capitalNoMovements, itemBuilder: _row),
+      body: ApiListBody<CapitalMovement>(
+        list: widget.movements,
+        emptyText: words.capitalNoMovements,
+        search: ListSearch(
+          hint: words.commonSearchIn.fill([words.capitalMovements]),
+          textOf: (movement) => partsLine([words.text('capital.${movement.type}'), movement.description, movement.accountName, formatDate(movement.date), formatPlain(movement.amount), formatMoney(movement.amount)]),
+        ),
+        itemBuilder: _row,
+      ),
     );
   }
 }

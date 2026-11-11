@@ -10,6 +10,9 @@ import 'supplier.dart';
 import 'supplier_dialog.dart';
 import 'supplier_row.dart';
 import 'suppliers.dart';
+import '../ui/list_search.dart';
+import '../words/word_fill.dart';
+import '../format/parts_line.dart';
 
 /// A project's supplier register (UC-017): everyone with access sees it, and whoever keeps the settings adds, changes and disables its suppliers.
 class SuppliersScreen extends StatefulWidget {
@@ -96,9 +99,13 @@ class _SuppliersScreenState extends State<SuppliersScreen> {
         label: words.suppliersNew,
         onPressed: project.mayManageSettings ? () => showDialog<void>(context: context, builder: (_) => SupplierDialog(supplier: Supplier.none(), suppliers: suppliers, items: widget.items)) : null,
       ),
-      body: ApiListBody(
+      body: ApiListBody<Supplier>(
         list: suppliers,
         emptyText: words.suppliersEmpty,
+        search: ListSearch(
+          hint: words.commonSearchIn.fill([words.suppliersTitle]),
+          textOf: (supplier) => partsLine([supplier.name, supplier.vatNumber, supplier.mobile, supplier.defaultItemName]),
+        ),
         itemBuilder: (supplier) => SupplierRow(supplier: supplier, suppliers: suppliers, items: widget.items, mayChange: project.mayManageSettings),
       ),
     );

@@ -23,6 +23,8 @@ import '../format/parts_line.dart';
 import '../ui/refusal_text.dart';
 import '../ui/act_once.dart';
 import '../words/word_fill.dart';
+import '../ui/filter_line.dart';
+import '../ui/list_search.dart';
 
 /// Finance's inbox (UC-031, UC-032): what waits, oldest first, to approve one at a time or many at once, or to reject saying why.
 class ApprovalsScreen extends StatefulWidget {
@@ -46,6 +48,9 @@ class ApprovalsScreen extends StatefulWidget {
 
   /// The filter showing everything.
   static const allKey = Key('approvals.all');
+
+  /// The choice among the filters, folded under the search line (redix-app #104).
+  static const filterChoiceKey = Key('approvals.filterChoice');
 
   /// What a capital movement or a revenue entry is, on the card of the entry [id] (redix-api #101).
   static Key kindKey(String id) => Key('approvals.kind.$id');
@@ -112,9 +117,17 @@ class ApprovalsScreen extends StatefulWidget {
 }
 
 enum _Filter {
-  all,
-  purchases,
-  contractorPayments;
+  all(ApprovalsScreen.allKey, 'approvals.all'),
+  purchases(ApprovalsScreen.purchasesKey, 'approvals.purchases'),
+  contractorPayments(ApprovalsScreen.contractorPaymentsKey, 'approvals.contractorPayments');
+
+  const _Filter(this.key, this.wordKey);
+
+  /// Its segment's key.
+  final Key key;
+
+  /// The key of the word that names it.
+  final String wordKey;
 
   bool keeps(PendingApproval entry) => switch (this) {
     all => true,
@@ -204,36 +217,28 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
               alignment: AlignmentDirectional.centerStart,
               child: TextButton(key: ApprovalsScreen.showAllKey, onPressed: () => setState(() => _focus = ''), child: Text(words.approvalsShowAll, key: ApprovalsScreen.showAllKey.label)),
             ),
-          ListenableBuilder(
-            listenable: widget.approvals,
-            builder: (context, _) => Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: SizedBox(
-                width: double.infinity,
-                child: Wrap(
-                  spacing: 8,
-                  children: [
-                    for (final (filter, key, label) in [
-                      (_Filter.all, ApprovalsScreen.allKey, words.approvalsAll),
-                      (_Filter.purchases, ApprovalsScreen.purchasesKey, words.approvalsPurchases),
-                      (_Filter.contractorPayments, ApprovalsScreen.contractorPaymentsKey, words.approvalsContractorPayments),
-                    ])
-                      ChoiceChip(
-                        key: key,
-                        label: Text('$label · ${widget.approvals.all.where(filter.keeps).length}', key: key.label),
-                        selected: _filter == filter,
-                        onSelected: (_) => setState(() => _filter = filter),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ),
           Expanded(
-            child: ApiListBody(
+            child: ListenableBuilder(
+              listenable: widget.approvals,
+              builder: (context, _) => ApiListBody<PendingApproval>(
               list: widget.approvals,
               emptyText: words.approvalsEmpty,
               keeps: (entry) => (_focus.isEmpty || entry.id == _focus) && _filter.keeps(entry),
+              search: ListSearch(
+                hint: words.commonSearchIn.fill([words.approvalsTitle]),
+                textOf: (entry) => partsLine([entry.itemName, entry.supplierName, entry.partnerName, entry.authorName, entry.accountName, entry.invoiceNumber, entry.notes, formatPlain(entry.amount), formatMoney(entry.amount)]),
+                filtersInUse: _filter != _Filter.all,
+                filters: [
+                  FilterLine.segmented(
+                    key: ApprovalsScreen.filterChoiceKey,
+                    values: _Filter.values,
+                    selected: _filter,
+                    labelOf: (filter) => '${words.text(filter.wordKey)} · ${widget.approvals.all.where(filter.keeps).length}',
+                    keyOf: (filter) => filter.key,
+                    onChanged: (filter) => setState(() => _filter = filter),
+                  ),
+                ],
+              ),
               itemBuilder: (entry) => Card.outlined(
                       key: ApprovalsScreen.cardKey(entry.id),
                       margin: const EdgeInsets.only(bottom: 8),
@@ -283,6 +288,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
                         ),
                       ),
                     ),
+              ),
             ),
           ),
         ],

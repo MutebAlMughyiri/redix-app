@@ -59,6 +59,7 @@ void main() {
         ..addPending(kind: 'contractorPayment');
     });
 
+    await openFilters(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.contractorPaymentsKey)));
     expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsNothing);
     expect(find.byKey(ApprovalsScreen.cardKey('entry-1')), findsOneWidget);
@@ -75,6 +76,7 @@ void main() {
         ..addPending();
     });
 
+    await openFilters(tester, api);
     expect(text(tester, ApprovalsScreen.allKey.label), 'en approvals.all · 2');
     expect(text(tester, ApprovalsScreen.purchasesKey.label), 'en approvals.purchases · 2');
     expect(text(tester, ApprovalsScreen.contractorPaymentsKey.label), 'en approvals.contractorPayments · 0');
@@ -107,6 +109,7 @@ void main() {
     });
     expect(find.byKey(ApprovalsScreen.kindKey('entry-0')), findsNothing);
 
+    await openFilters(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.purchasesKey)));
 
     expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsOneWidget);

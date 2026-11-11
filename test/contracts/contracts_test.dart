@@ -195,6 +195,7 @@ void main() {
 
   testWidgets('the filters count their contracts and keep only those', (tester) async {
     final opened = await openContracts(tester);
+    await openFilters(tester, opened.api);
 
     expect(find.text('en contracts.filterAll · 3'), findsOneWidget);
     expect(find.text('en contracts.filterOverrun · 1'), findsOneWidget);
@@ -218,6 +219,7 @@ void main() {
     await tester.pumpAndSettle();
     await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
 
+    await openFilters(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.filterKey(ContractFilter.overrun))));
 
     expect(text(tester, ApiListBody.emptyKey), 'en contracts.empty');
