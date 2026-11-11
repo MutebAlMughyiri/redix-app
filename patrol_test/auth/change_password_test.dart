@@ -63,7 +63,7 @@ void main() {
       await $.reach($(ChangePasswordScreen.currentKey));
       expect($.canGoBack, isTrue);
       await $.back();
-      await $.reach($(SharedSettingsScreen.changePasswordKey));
+      await $.goTo($(SharedSettingsScreen.changePasswordKey));
       await $(SharedSettingsScreen.changePasswordKey).tap();
       final chosen = 'Chosen-${Given.unique()}';
       await sendChange($, manager.password, chosen, chosen);

@@ -60,7 +60,7 @@ void main() {
       await $.goTo($(SharedSettingsScreen.signOutKey));
       await $(SharedSettingsScreen.signOutKey).tap();
       await $(ConfirmDialog.cancelKey).tap();
-      await $.reach($(SharedSettingsScreen.signOutKey));
+      await $.goTo($(SharedSettingsScreen.signOutKey));
       expect($(SignInScreen.usernameKey), findsNothing);
     });
 
