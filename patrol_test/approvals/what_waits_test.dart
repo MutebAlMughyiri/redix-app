@@ -80,7 +80,7 @@ void main() {
       final payment = await Given.contractorPayment(manager, await Given.contract(manager));
       await onApprovals($, manager);
       await $.reach($(ApprovalsScreen.cardKey(purchase)));
-      await $.tapOn(ApprovalsScreen.contractorPaymentsKey);
+      await $.filterBy(ApprovalsScreen.contractorPaymentsKey);
       await $.gone($(ApprovalsScreen.cardKey(purchase)));
       await $.reach($(ApprovalsScreen.cardKey(payment)));
     });
@@ -111,7 +111,7 @@ void main() {
       final manager = await Given.manager();
       await Given.entry(manager);
       await onApprovals($, manager);
-      await $.tapOn(ApprovalsScreen.contractorPaymentsKey);
+      await $.filterBy(ApprovalsScreen.contractorPaymentsKey);
       await $.says(ApiListBody.emptyKey, $.words.approvalsEmpty);
     });
 

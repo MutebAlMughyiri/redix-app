@@ -72,7 +72,7 @@ void main() {
       await onAnExpandedHome($, manager);
       await tapCollapse($);
       await isCollapsed($, manager.projectId);
-      await $.tester.fling(find.byType(Scrollable).first, const Offset(0, -2000), 2000);
+      await $.tester.fling($.scrolledList, const Offset(0, -2000), 2000);
       await $.pumpAndSettle();
       expect($(HomeScreen.accountsKey(manager.projectId)), findsNothing);
       expect($(HomeScreen.contractsKey(manager.projectId)), findsNothing);

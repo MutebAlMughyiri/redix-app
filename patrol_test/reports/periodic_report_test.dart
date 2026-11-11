@@ -92,7 +92,7 @@ void main() {
       expect($.isEnabled(ReportsScreen.issueKey), isFalse);
     });
 
-    phoneCase('BR-31: whoever sees only their own capital reads the report and gets no files', ($) async {
+    phoneCase('BR-31: whoever does not see all capital reads the report and gets no files', ($) async {
       final manager = await Given.manager();
       await Given.reportIssued(manager);
       final member = await Given.member(manager, permissions: const <Permission>[]);

@@ -309,12 +309,15 @@ extension Steps on PatrolIntegrationTester {
     return find.byKey(key).evaluate().isNotEmpty;
   }
 
+  /// The list a step scrolls: the first that scrolls up and down, since the text field of a search line above a list scrolls sideways (redix-app #104).
+  Finder get scrolledList => find.byWidgetPredicate((widget) => widget is Scrollable && axisDirectionToAxis(widget.axisDirection) == Axis.vertical).first;
+
   /// Brings [finder] into view, above or below what shows now: one not built yet is further down the list, or on another page of the Project settings.
   Future<void> goTo(PatrolFinder finder) async {
     await pumpAndSettle();
     await _swipeTo(finder);
     if (finder.evaluate().isEmpty) {
-      await finder.scrollTo();
+      await finder.scrollTo(view: scrolledList);
       return;
     }
     for (var attempt = 0; attempt < 10 && finder.hitTestable().evaluate().isEmpty; attempt++) {
@@ -330,7 +333,7 @@ extension Steps on PatrolIntegrationTester {
   Future<void> goUpTo(PatrolFinder finder) async {
     await pumpAndSettle();
     if (finder.evaluate().isEmpty) {
-      await finder.scrollTo(scrollDirection: AxisDirection.up);
+      await finder.scrollTo(view: scrolledList, scrollDirection: AxisDirection.up);
     }
   }
 
@@ -350,7 +353,7 @@ extension Steps on PatrolIntegrationTester {
   Future<String> idShowing(String prefix, String text) async {
     await pumpAndSettle();
     if (find.text(text).evaluate().isEmpty) {
-      await this(find.text(text)).scrollTo();
+      await this(find.text(text)).scrollTo(view: scrolledList);
     }
     final keyed = this(find.ancestor(of: find.text(text), matching: keyStartingWith(prefix), matchRoot: true));
     await keyed.waitUntilExists();
@@ -387,7 +390,7 @@ extension Steps on PatrolIntegrationTester {
 
   /// Pulls the list showing now down, which reads it again.
   Future<void> pullDown() async {
-    await tester.fling(find.byType(Scrollable).first, const Offset(0, 500), 1200);
+    await tester.fling(scrolledList, const Offset(0, 500), 1200);
     await pumpAndSettle();
   }
 

@@ -104,11 +104,12 @@ void main() {
       expect(find.text(table.itemName), findsNothing);
     });
 
-    phoneCase('BR-31: whoever sees only their own capital sees only their own table', ($) async {
+    phoneCase('BR-31, redix-api #106: with a chosen partner someone sees only that partner\'s table',($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager, permissions: const <Permission>[]);
-      final own = await Given.partner(manager, 'نواف', login: member);
+      final own = await Given.partner(manager, 'نواف');
       final other = await Given.partner(manager, 'هيثم');
+      await Given.choosePartner(manager, member, own);
       await Given.entriesApproved(manager, [await Given.partnerMoney(manager, own), await Given.partnerMoney(manager, other)]);
       await onReports($, member);
       await $.tapOn(ItemReportsScreen.sideOptionKey(SummarySide.revenue));

@@ -81,7 +81,7 @@ void main() {
     expect(find.text('en reports.downloaded'), findsOneWidget);
   });
 
-  testWidgets('BR-31: someone who sees only their own capital reads the report and gets no files', (tester) async {
+  testWidgets('BR-31: someone who does not see all capital reads the report and gets no files', (tester) async {
     final (:api, capture: _) = await openReports(tester, (api) {
       api
         ..periodicRows.add({'number': 1, 'issuedAt': '2026-11-05T20:00:00Z', 'expenses': 140})
