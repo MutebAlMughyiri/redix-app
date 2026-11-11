@@ -22,7 +22,7 @@ import 'project.dart';
 import 'project_info_screen.dart';
 
 /// The open project's buttons, with what the signed-in user's permissions allow, four to a page, two by two, swiped sideways page by page with dots under them (Muteb,
-/// 11 Nov 2026). The first page holds the four used most: Contracts, Reports, the item reports and Suppliers; then Accounts, Partners, the VAT refund, Approvals and
+/// 11 Nov 2026), going round: on from the last page comes the first, and back from the first the last. The first page holds the four used most: Contracts, Reports, the item reports and Suppliers; then Accounts, Partners, the VAT refund, Approvals and
 /// Documents, then the project's own: More info, the user's own permissions, its users, its categories and items, its payment methods, and importing its settings, grayed
 /// until it is built. Nothing is kept: the card opens on its first page. Settings is an icon in the home's top bar. A finished project says first, in one line, that it is
 /// read-only (redix-api 93).
@@ -45,6 +45,15 @@ class ProjectSettingsCard extends StatefulWidget {
 
 class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
   var _page = 0;
+
+  /// Far from both ends, on a multiple of every page count the card can have (one to four), so it opens on the first page and goes round either way.
+  final _pages = PageController(initialPage: 12000);
+
+  @override
+  void dispose() {
+    _pages.dispose();
+    super.dispose();
+  }
 
   /// A button opening [path]; an empty path is a screen not built yet, so the button shows grayed. Its name takes two lines at most.
   Widget _button(Key key, IconData icon, String label, String path) => TextButton.icon(
@@ -115,10 +124,11 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
           ],
           SizedBox(
             height: _rowHeight(context) * 2,
-            child: PageView(
+            child: PageView.builder(
               key: HomeScreen.settingsPagesKey(id),
-              onPageChanged: (page) => setState(() => _page = page),
-              children: [for (final page in pages) Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: _twoByTwo(page))],
+              controller: _pages,
+              onPageChanged: (index) => setState(() => _page = index % pages.length),
+              itemBuilder: (context, index) => Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: _twoByTwo(pages[index % pages.length])),
             ),
           ),
           Padding(

@@ -66,6 +66,18 @@ void main() {
     });
   }
 
+  testWidgets('the pages go round: back from the first shows the last, and on from the last shows the first', (tester) async {
+    await openHome(tester);
+
+    await swipeProjectSettings(tester, back: true);
+    expectPage(fourth, [first, second, third]);
+    expect(pageShown(tester, 4), 3);
+
+    await swipeProjectSettings(tester);
+    expectPage(first, [second, third, fourth]);
+    expect(pageShown(tester, 4), 0);
+  });
+
   testWidgets('a page swiped to stays on coming back from a screen it opened, and the next start opens on the first page', (tester) async {
     final api = await openHome(tester);
     await scrollAndTap(tester, api, HomeScreen.accountsKey(project));
