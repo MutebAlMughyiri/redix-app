@@ -31,6 +31,9 @@ enum AppColor {
   /// The ground of something empty or neutral: the empty photo box, the figures band, a user's initial.
   mutedSurface(_surfaceContainerHighest),
 
+  /// The ground of an odd row among rows one under another, the scheme's next tone after the page's: a shade darker in light, a shade lighter in dark (redix-app #108).
+  oddRow(_surfaceContainerLow),
+
   /// The ground of what is active or the user's own: an active project's chip, my custody, the QR code's reading.
   activeSurface(_primaryContainer),
 
@@ -73,6 +76,8 @@ enum AppColor {
   static Color _outlineVariant(ColorScheme colors) => colors.outlineVariant;
 
   static Color _surfaceContainerHighest(ColorScheme colors) => colors.surfaceContainerHighest;
+
+  static Color _surfaceContainerLow(ColorScheme colors) => colors.surfaceContainerLow;
 
   static Color _primaryContainer(ColorScheme colors) => colors.primaryContainer;
 

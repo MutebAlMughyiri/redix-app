@@ -12,6 +12,7 @@ import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'outbox.dart';
 import 'pending_entry.dart';
+import '../ui/row_stripe.dart';
 
 /// What waits on this phone for the project (UC-029): an entry the network has not taken yet, or one the API refused, which waits for its author. Each row reads like the entry it
 /// will become, across the screen: its table, amount, supplier, date and whether its bill waits too (redix-app #103); only a refused one says more, and why.
@@ -105,7 +106,7 @@ class WaitingScreen extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 8),
                       child: Text(words.offlineAutoSend, key: autoSendKey, style: Theme.of(context).textTheme.bodySmall),
                     ),
-                    for (final entry in entries) _row(context, entry, words),
+                    for (final (index, entry) in entries.indexed) RowStripe(index: index, child: _row(context, entry, words)),
                   ],
                 ),
         );

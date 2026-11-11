@@ -11,6 +11,7 @@ import '../words/words.dart';
 import 'summary.dart';
 import 'item_report_screen.dart';
 import 'category_share.dart';
+import '../ui/row_stripe.dart';
 
 /// الإيرادات والمصروفات (FR-33), on its own from the home (Muteb, 9 Nov 2026): a choice between the revenue categories and the expense categories, like the language's, then
 /// every category of that side with its total and its share of the side, opening on its items with theirs, each opening its report. The expenses show first. The home's
@@ -86,18 +87,21 @@ class _ItemReportsScreenState extends State<ItemReportsScreen> {
                   key: ItemReportsScreen.categoryKey(category.id),
                   title: CategoryShare(category: category, sideTotal: _side.totalOf(figures), parts: ItemReportsScreen.categoryKey(category.id)),
                   children: [
-                    for (final item in category.items)
-                      ListTile(
-                        key: ItemReportsScreen.itemKey(item.id),
-                        title: Text(item.name, key: ItemReportsScreen.itemKey(item.id).title),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(formatMoney(item.total), key: ItemReportsScreen.itemKey(item.id).trailing),
-                            Icon(Icons.chevron_right, key: ItemReportsScreen.itemKey(item.id).icon),
-                          ],
+                    for (final (index, item) in category.items.indexed)
+                      RowStripe(
+                        index: index,
+                        child: ListTile(
+                          key: ItemReportsScreen.itemKey(item.id),
+                          title: Text(item.name, key: ItemReportsScreen.itemKey(item.id).title),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(formatMoney(item.total), key: ItemReportsScreen.itemKey(item.id).trailing),
+                              Icon(Icons.chevron_right, key: ItemReportsScreen.itemKey(item.id).icon),
+                            ],
+                          ),
+                          onTap: () => context.push(ItemReportScreen.pathOf(project.id, item.id), extra: project),
                         ),
-                        onTap: () => context.push(ItemReportScreen.pathOf(project.id, item.id), extra: project),
                       ),
                   ],
                 ),

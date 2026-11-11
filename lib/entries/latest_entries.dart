@@ -8,6 +8,7 @@ import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_card.dart';
 import 'newest_entries.dart';
+import '../ui/row_stripe.dart';
 
 /// The project's entries on its home (UC-037, redix-app #84): the newest by anyone, as many at a time as this phone shows, a spinner while they are first read, a search beside the
 /// heading, and Show more for as many again (redix-app #105). It counts nothing: each row says where it stands (Muteb, 7 Nov 2026).
@@ -57,7 +58,8 @@ class LatestEntries extends StatelessWidget {
                 child: Center(child: CircularProgressIndicator(key: HomeScreen.entriesLoadingKey)),
               ),
             if (!entries.isLoading && entries.all.isEmpty) Text(entries.message.isEmpty ? words.entriesEmpty : words.text(entries.message), key: HomeScreen.entriesEmptyKey(project.id)),
-            for (final entry in entries.all) SwipeableEntryCard(project: project, entries: entries, entry: entry, onOpen: onOpen, onRemoved: onRemoved),
+            for (final (index, entry) in entries.all.indexed)
+              RowStripe(index: index, child: SwipeableEntryCard(project: project, entries: entries, entry: entry, onOpen: onOpen, onRemoved: onRemoved)),
             if (entries.mayHaveMore)
               Align(
                 alignment: AlignmentDirectional.centerEnd,

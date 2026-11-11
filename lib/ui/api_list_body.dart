@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api_list.dart';
 import 'load_failure.dart';
+import 'row_stripe.dart';
 
 /// The body of a screen that shows an [ApiList]: why it could not load with a way to try again, loading, empty, or its items, which are read again when pulled down.
 class ApiListBody<T> extends StatelessWidget {
@@ -72,7 +73,7 @@ class ApiListBody<T> extends StatelessWidget {
               ),
       );
     }
-    return RefreshIndicator(onRefresh: refresh, child: listOf([for (final item in kept) itemBuilder(item)]));
+    return RefreshIndicator(onRefresh: refresh, child: listOf([for (final (index, item) in kept.indexed) RowStripe(index: index, child: itemBuilder(item))]));
   }
 
   @override

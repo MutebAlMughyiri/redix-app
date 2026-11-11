@@ -12,6 +12,7 @@ import 'item_report.dart';
 import 'report_files.dart';
 import '../ui/refusal_text.dart';
 import '../ui/amount_line.dart';
+import '../ui/row_stripe.dart';
 
 /// Everything spent on one item (UC-050): a table per subgroup, then each contract with its value, paid and remaining.
 class ItemReportScreen extends StatefulWidget {
@@ -111,7 +112,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
                 Text(formatMoney(subgroup.total), key: ItemReportScreen.subgroupTotalKey(subgroup.id), style: Theme.of(context).textTheme.titleSmall),
               ],
             ),
-            for (final row in subgroup.rows) _row(row, columns),
+            for (final (index, row) in subgroup.rows.indexed) RowStripe(index: index, child: _row(row, columns)),
           ],
         ),
       ),
@@ -139,7 +140,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
               key: ItemReportScreen.contractKey(contract.id),
             ),
             if (contract.isOverrun) refusalText(context, words.reportsOverrun, ItemReportScreen.overrunKey(contract.id)),
-            for (final row in contract.payments) _row(row, columns),
+            for (final (index, row) in contract.payments.indexed) RowStripe(index: index, child: _row(row, columns)),
             Align(alignment: AlignmentDirectional.centerEnd, child: Text('${words.reportsGrandTotal}: ${formatMoney(contract.paymentsTotal)}', key: ItemReportScreen.contractTotalKey(contract.id))),
           ],
         ),
