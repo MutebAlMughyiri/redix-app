@@ -28,10 +28,13 @@ class PartnerHistoryScreen extends StatefulWidget {
   /// The route of the partner history of the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId/partners/history';
 
-  /// The filter showing every partner.
+  /// The chip opening the list of partners, under the search line.
+  static const partnerChoiceKey = Key('partnerHistory.partnerChoice');
+
+  /// Every partner, in that list.
   static const allKey = Key('partnerHistory.all');
 
-  /// The filter showing the partner [id] alone.
+  /// The partner [id] alone, in that list.
   static Key partnerKey(String id) => Key('partnerHistory.partner.$id');
 
   /// The filter showing what the signed-in user did.
@@ -51,7 +54,7 @@ class _PartnerHistoryScreenState extends State<PartnerHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    widget.history.filter('', false);
+    widget.history.open();
     widget.partners.loadOnOpen();
   }
 
@@ -65,8 +68,10 @@ class _PartnerHistoryScreenState extends State<PartnerHistoryScreen> {
         listenable: Listenable.merge([history, widget.partners]),
         builder: (context, _) => HistoryView(
           history: history,
+          title: words.partnersHistory,
           allLabel: words.historyAllPartners,
           choices: [for (final partner in widget.partners.all) (partner.id, partner.name)],
+          choiceChipKey: PartnerHistoryScreen.partnerChoiceKey,
           allKey: PartnerHistoryScreen.allKey,
           choiceKey: PartnerHistoryScreen.partnerKey,
           mineKey: PartnerHistoryScreen.mineKey,

@@ -28,10 +28,13 @@ class AccountHistoryScreen extends StatefulWidget {
   /// The route of the account history of the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId/accounts/history';
 
-  /// The filter showing every account.
+  /// The chip opening the list of accounts, under the search line.
+  static const accountChoiceKey = Key('history.accountChoice');
+
+  /// Every account, in that list.
   static const allKey = Key('history.all');
 
-  /// The filter showing the account [id] alone.
+  /// The account [id] alone, in that list.
   static Key accountKey(String id) => Key('history.account.$id');
 
   /// The filter showing what the signed-in user did.
@@ -51,7 +54,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    widget.history.filter('', false);
+    widget.history.open();
     widget.accounts.loadOnOpen();
   }
 
@@ -65,8 +68,10 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
         listenable: Listenable.merge([history, widget.accounts]),
         builder: (context, _) => HistoryView(
           history: history,
+          title: words.accountsHistory,
           allLabel: words.historyAllAccounts,
           choices: [for (final account in widget.accounts.all) (account.id, account.name)],
+          choiceChipKey: AccountHistoryScreen.accountChoiceKey,
           allKey: AccountHistoryScreen.allKey,
           choiceKey: AccountHistoryScreen.accountKey,
           mineKey: AccountHistoryScreen.mineKey,

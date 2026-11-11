@@ -184,6 +184,8 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.historyKey)));
     expect(find.byKey(PartnerHistoryScreen.lineKey(2000)), findsOneWidget);
     expect(find.byKey(PartnerHistoryScreen.lineKey(1999)), findsOneWidget);
+    await openFilters(tester, opened.api);
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnerHistoryScreen.partnerChoiceKey)));
     expect(find.byKey(PartnerHistoryScreen.partnerKey(opened.haitham)), findsOneWidget);
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnerHistoryScreen.partnerKey(opened.mutab))));
 

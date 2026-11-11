@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 
 import '../ui/api_list_body.dart';
+import '../ui/filter_line.dart';
+import '../ui/list_search.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
+import '../words/word_fill.dart';
 import '../words/words.dart';
 import 'history_list.dart';
 
-/// The one look of a history (redix-app #101): a chip for every thing it covers and one each, a chip for what I did, the lines newest first, and المزيد while more may follow.
-/// The accounts' and the partners' history screens each give it their list, their things and their keys.
+/// The one look of a history (redix-app #101, #104): the shared search line, which the API searches, with its filters folded under the arrow, a chip choosing every thing it
+/// covers or one and a chip for what I did; the lines newest first, and المزيد while more may follow. The accounts' and the partners' history screens each give it their
+/// list, their things and their keys.
 class HistoryView extends StatelessWidget {
-  /// The view of [history], whose things are [choices] (id and name), the first chip saying [allLabel], each part keyed by its screen.
+  /// The view of [history], called [title], whose things are [choices] (id and name), the choice of every one saying [allLabel], each part keyed by its screen.
   const HistoryView({
     super.key,
     required this.history,
+    required this.title,
     required this.allLabel,
     required this.choices,
+    required this.choiceChipKey,
     required this.allKey,
     required this.choiceKey,
     required this.mineKey,
@@ -25,16 +31,22 @@ class HistoryView extends StatelessWidget {
   /// The history shown.
   final HistoryList history;
 
-  /// What the chip of every thing says.
+  /// What the history is called, which the empty search line names.
+  final String title;
+
+  /// What the choice of every thing says.
   final String allLabel;
 
   /// The things to filter by, each its id and its name.
   final List<(String, String)> choices;
 
-  /// The chip of every thing.
+  /// The chip opening the list of things.
+  final Key choiceChipKey;
+
+  /// Every thing, in that list.
   final Key allKey;
 
-  /// The chip of the thing [id].
+  /// The thing [id], in that list.
   final Key Function(String id) choiceKey;
 
   /// The chip of what the signed-in user did.
@@ -46,16 +58,20 @@ class HistoryView extends StatelessWidget {
   /// The button reading the next page.
   final Key moreKey;
 
-  Widget _filters(Words words) => Wrap(
-    spacing: 6,
-    runSpacing: 6,
-    children: [
-      ChoiceChip(key: allKey, label: Text(allLabel, key: allKey.label), selected: history.chosenId.isEmpty, onSelected: (_) => history.filter('', history.mine)),
-      for (final (id, name) in choices)
-        ChoiceChip(key: choiceKey(id), label: Text(name, key: choiceKey(id).label), selected: history.chosenId == id, onSelected: (_) => history.filter(id, history.mine)),
-      FilterChip(key: mineKey, label: Text(words.historyMine, key: mineKey.label), selected: history.mine, onSelected: (mine) => history.filter(history.chosenId, mine)),
-    ],
-  );
+  List<Widget> _filters(Words words) {
+    final values = [('', allLabel), ...choices];
+    return [
+      FilterLine.choice<(String, String)>(
+        key: choiceChipKey,
+        values: values,
+        chosen: values.firstWhere((value) => value.$1 == history.chosenId, orElse: () => values.first),
+        labelOf: (value) => value.$2,
+        keyOf: (value) => value.$1.isEmpty ? allKey : choiceKey(value.$1),
+        onChanged: (value) => history.filter(value.$1, history.mine),
+      ),
+      FilterLine.toggle(key: mineKey, label: words.historyMine, isOn: history.mine, onChanged: (mine) => history.filter(history.chosenId, mine)),
+    ];
+  }
 
   Widget _line(HistoryLine line, Words words) => Card.outlined(
     key: lineKey(line.id),
@@ -70,26 +86,24 @@ class HistoryView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: _filters(words)),
-        Expanded(
-          child: ApiListBody(
-            list: history,
-            emptyText: words.historyEmpty,
-            itemBuilder: (line) => _line(line, words),
-            listOf: (items) => ListView(
-              padding: ApiListBody.padding,
-              physics: ApiListBody.physics,
-              children: [
-                ...items,
-                if (history.mayHaveMore) TextButton(key: moreKey, onPressed: () => showRefusalOf(context, history.more()), child: Text(words.historyMore, key: moreKey.label)),
-              ],
-            ),
-          ),
-        ),
-      ],
+    return ApiListBody<HistoryLine>(
+      list: history,
+      emptyText: words.historyEmpty,
+      search: ListSearch.onApi(
+        hint: words.commonSearchIn.fill([title]),
+        onTyped: history.search,
+        filters: _filters(words),
+        filtersInUse: history.chosenId.isNotEmpty || history.mine,
+      ),
+      itemBuilder: (line) => _line(line, words),
+      listOf: (items) => ListView(
+        padding: ApiListBody.padding,
+        physics: ApiListBody.physics,
+        children: [
+          ...items,
+          if (history.mayHaveMore) TextButton(key: moreKey, onPressed: () => showRefusalOf(context, history.more()), child: Text(words.historyMore, key: moreKey.label)),
+        ],
+      ),
     );
   }
 }

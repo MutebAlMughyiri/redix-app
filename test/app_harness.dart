@@ -488,15 +488,17 @@ class FakeApi {
     final statuses = query['statuses'] ?? const [];
     final standing = row['isReversed'] == true ? 'reversed' : row['status'] as String;
     final date = row['entryDate'] as String;
-    final amount = (row['amount'] as num).toDouble();
-    final text = sameSpelling([row['itemName'], row['partnerName'], row['supplierName'], row['authorName'], row['invoiceNumber'], formatPlain(amount), formatMoney(amount)].join(' '));
     return (one('mine') != 'true' || row['isMine'] == true) &&
         (kinds.isEmpty || kinds.contains(row['kind'])) &&
         (statuses.isEmpty || statuses.contains(standing)) &&
         (one('from').isEmpty || date.compareTo(one('from')) >= 0) &&
         (one('to').isEmpty || date.compareTo(one('to')) <= 0) &&
-        text.contains(sameSpelling(one('text')));
+        _holds(address, row['amount']! as num, [row['itemName'], row['partnerName'], row['supplierName'], row['authorName'], row['invoiceNumber']]);
   }
+
+  /// Whether what [address] says was typed is in one of [words] or in [amount], as the API's ArabicSpelling.Holds decides (redix-app #104).
+  static bool _holds(Uri address, num amount, List<Object?> words) =>
+      sameSpelling([...words, formatPlain(amount.toDouble()), formatMoney(amount.toDouble())].join(' ')).contains(sameSpelling(address.queryParameters['text'] ?? ''));
 
   /// What each entry holds, read to change it.
   final entryDetails = <String, Object>{};
@@ -996,6 +998,7 @@ class FakeApi {
     final lines = (accountHistory[request.url.pathSegments[1]] ?? const <Map<String, Object>>[])
         .where((line) => before == 0 || (line['id']! as int) < before)
         .where((line) => (query['account'] ?? '').isEmpty || line['account'] == query['account'])
+        .where((line) => _holds(request.url, line['amount']! as num, [line['by'], line['account'], line['otherAccount'], line['nameWas'], line['custodian']]))
         .take(50)
         .toList();
     return _json(lines, 200);
@@ -1017,6 +1020,7 @@ class FakeApi {
     final query = request.url.queryParameters;
     final lines = (partnerHistory[request.url.pathSegments[1]] ?? const <Map<String, Object>>[])
         .where((line) => (query['partner'] ?? '').isEmpty || line['partnerId'] == query['partner'])
+        .where((line) => _holds(request.url, line['amount']! as num, [line['by'], line['partner'], line['account'], line['nameWas'], line['login']]))
         .take(50)
         .toList();
     return _json(lines, 200);

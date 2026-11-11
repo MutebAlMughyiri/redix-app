@@ -183,27 +183,70 @@ void main() {
       expect(tester.getTopLeft(find.byKey(AccountHistoryScreen.lineKey(1000))).dy, lessThan(tester.getTopLeft(find.byKey(AccountHistoryScreen.lineKey(999))).dy));
     });
 
-    testWidgets('R22: an account\'s chip reads that account\'s lines, and All accounts reads every account again', (tester) async {
+    Future<void> chooseAccount(WidgetTester tester, FakeApi api, Key account) async {
+      await openFilters(tester, api);
+      await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.accountChoiceKey)));
+      await act(tester, api, () => tester.tap(find.byKey(account)));
+    }
+
+    testWidgets('R22, redix-app #104: the account chip under the search line reads one account\'s lines and says its name, and All accounts reads every account again', (tester) async {
       late String bankId;
-      final api = await openHistory(tester, arrange: (api) => bankId = (api.accounts['project-0']!.first['id']! as String));
+      late String bankName;
+      final api = await openHistory(tester, arrange: (api) {
+        bankId = api.accounts['project-0']!.first['id']! as String;
+        bankName = api.accounts['project-0']!.first['name']! as String;
+      });
 
-      await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.accountKey(bankId))));
+      await chooseAccount(tester, api, AccountHistoryScreen.accountKey(bankId));
       expect(api.historyReads.last.queryParameters['account'], bankId);
-      expect(tester.widget<ChoiceChip>(find.byKey(AccountHistoryScreen.accountKey(bankId))).selected, isTrue);
+      expect(tester.widget<FilterChip>(find.byKey(AccountHistoryScreen.accountChoiceKey)).selected, isTrue);
+      expect(text(tester, AccountHistoryScreen.accountChoiceKey.label), bankName);
 
-      await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.allKey)));
+      await chooseAccount(tester, api, AccountHistoryScreen.allKey);
       expect(api.historyReads.last.queryParameters['account'], '');
+      expect(tester.widget<FilterChip>(find.byKey(AccountHistoryScreen.accountChoiceKey)).selected, isFalse);
     });
 
     testWidgets('H10: What I did reads only the signed-in user\'s lines, and the filters stay when nothing is found', (tester) async {
       final api = await openHistory(tester);
 
+      await openFilters(tester, api);
       await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.mineKey)));
 
       expect(api.historyReads.last.queryParameters['mine'], 'true');
       expect(find.byKey(ApiListBody.emptyKey), findsOneWidget);
       expect(find.byKey(AccountHistoryScreen.mineKey), findsOneWidget);
-      expect(find.byKey(AccountHistoryScreen.allKey), findsOneWidget);
+      expect(find.byKey(AccountHistoryScreen.accountChoiceKey), findsOneWidget);
+    });
+
+    testWidgets('redix-app #104: what is typed is asked of the API in Western digits, only the lines holding it show, and choosing an account keeps it', (tester) async {
+      late String bankId;
+      final api = await openHistory(tester, arrange: (api) {
+        bankId = api.accounts['project-0']!.first['id']! as String;
+        api
+          ..addHistoryLine('project-0', 'transfer', by: 'ريم', amount: 500, otherAccount: 'كاش مع نواف')
+          ..addHistoryLine('project-0', 'entryOut', amount: 300);
+      });
+
+      await searchFor(tester, api, 'نواف');
+      expect(find.byKey(AccountHistoryScreen.lineKey(1000)), findsOneWidget);
+      expect(find.byKey(AccountHistoryScreen.lineKey(999)), findsNothing);
+
+      await searchFor(tester, api, '٥٠٠');
+      await chooseAccount(tester, api, AccountHistoryScreen.accountKey(bankId));
+      expect(api.historyReads.last.queryParameters, {'account': bankId, 'mine': 'false', 'before': '0', 'text': '500'});
+    });
+
+    testWidgets('redix-app #104, D4: a search does not outlive its screen; History opens again with every line', (tester) async {
+      final api = await openHistory(tester, arrange: (api) => api.addHistoryLine('project-0', 'entryOut', amount: 300));
+
+      await searchFor(tester, api, 'نواف');
+      expect(find.byKey(AccountHistoryScreen.lineKey(1000)), findsNothing);
+      await act(tester, api, () => tester.pageBack());
+      await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.historyKey)));
+
+      expect(api.historyReads.last.queryParameters.containsKey('text'), isFalse);
+      expect(find.byKey(AccountHistoryScreen.lineKey(1000)), findsOneWidget);
     });
 
     testWidgets('R22: a full page offers More, which reads the page after its last line and adds it below', (tester) async {
@@ -213,11 +256,11 @@ void main() {
         }
       });
 
-      await tester.scrollUntilVisible(find.byKey(AccountHistoryScreen.moreKey), 400);
+      await tester.scrollUntilVisible(find.byKey(AccountHistoryScreen.moreKey), 400, scrollable: listRows);
       await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.moreKey)));
 
       expect(api.historyReads.last.queryParameters['before'], '951');
-      await tester.scrollUntilVisible(find.byKey(AccountHistoryScreen.lineKey(941)), 400);
+      await tester.scrollUntilVisible(find.byKey(AccountHistoryScreen.lineKey(941)), 400, scrollable: listRows);
       expect(find.byKey(AccountHistoryScreen.lineKey(941)), findsOneWidget);
       expect(find.byKey(AccountHistoryScreen.moreKey), findsNothing);
     });
