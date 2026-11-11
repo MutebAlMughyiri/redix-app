@@ -165,6 +165,29 @@ void main() {
     expect(find.text('en partners.deleteKeepsMovements\n\nen partners.deleteRemovesMyDrafts\n${formatDate(DateTime(2026, 11, 10))} · ${formatMoney(300)}'), findsOneWidget);
   });
 
+  testWidgets("findings row 202: without Delete entries, a partner one's own draft names has Delete gray, saying that deleting the draft needs it", (tester) async {
+    final opened = await openPartners(tester, permissions: [for (final permission in managerAndFinance) if (permission != 'deleteEntries') permission]);
+    final nour = opened.api.addPartner('project-0', 'نور', mayDelete: false, myDrafts: [{'entryDate': '2026-11-10', 'amount': 300}])['id']! as String;
+    await act(tester, opened.api, () => tester.pageBack());
+    await scrollAndTap(tester, opened.api, HomeScreen.partnersKey('project-0'));
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.menuKey(nour))));
+
+    expect(tester.widget<PopupMenuItem<VoidCallback>>(find.byKey(PartnersScreen.deleteKey)).enabled, isFalse);
+    expect(text(tester, PartnersScreen.deleteKey.subtitle), 'en partners.partnerNotDeletable · en partners.myDraftsNeedDeleteEntries');
+  });
+
+  testWidgets('findings row 202: a partner held for another reason does not blame Delete entries on whoever holds it', (tester) async {
+    final opened = await openPartners(tester);
+    final nour = opened.api.addPartner('project-0', 'نور', mayDelete: false, myDrafts: [{'entryDate': '2026-11-10', 'amount': 300}])['id']! as String;
+    await act(tester, opened.api, () => tester.pageBack());
+    await scrollAndTap(tester, opened.api, HomeScreen.partnersKey('project-0'));
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.menuKey(nour))));
+
+    expect(text(tester, PartnersScreen.deleteKey.subtitle), 'en partners.partnerNotDeletable');
+  });
+
   testWidgets('redix-app #101: Partners has + and History in the title bar and no bottom button; + adds a partner', (tester) async {
     final opened = await openPartners(tester);
 

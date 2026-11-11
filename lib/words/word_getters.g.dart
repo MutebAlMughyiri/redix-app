@@ -1406,6 +1406,9 @@ mixin WordGetters {
   /// The word `partners.loginHint`.
   String get partnersLoginHint => text('partners.loginHint');
 
+  /// The word `partners.myDraftsNeedDeleteEntries`.
+  String get partnersMyDraftsNeedDeleteEntries => text('partners.myDraftsNeedDeleteEntries');
+
   /// The word `partners.name`.
   String get partnersName => text('partners.name');
 

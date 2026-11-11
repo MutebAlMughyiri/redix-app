@@ -1,10 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/auth/permission.dart';
+import 'package:redix/format/parts_line.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../support/given.dart';
 import '../support/pc.dart';
@@ -184,6 +187,26 @@ void main() {
       await $.reach($(keyStartingWith('partnerHistory.line.')));
       expect(find.textContaining('1,000.00'), findsWidgets);
       await $.picture('partner-history');
+    });
+
+    phoneCase("findings row 202: without Delete entries, a partner one's own draft names has Delete gray, saying that deleting the draft needs it", ($) async {
+      final manager = await Given.manager();
+      final keeper = await Given.member(manager, permissions: [Permission.seeAllCapital, Permission.manageSettings, Permission.recordEntries, Permission.moveMoney]);
+      final partner = await Given.partner(manager, 'نواف');
+      await Given.partnerMoney(keeper, partner, sent: false, accountId: await Given.account(manager));
+      await onPartners($, keeper);
+      await $.tapOn(PartnersScreen.menuKey(partner));
+      await $.says(PartnersScreen.deleteKey.subtitle, partsLine([$.words.partnersPartnerNotDeletable, $.words.partnersMyDraftsNeedDeleteEntries]));
+    });
+
+    phoneCase("findings rows 199 and 202: with Delete entries, Delete is offered and says the person's own draft goes with the partner", ($) async {
+      final manager = await Given.manager();
+      final keeper = await Given.member(manager, permissions: [Permission.seeAllCapital, Permission.manageSettings, Permission.recordEntries, Permission.moveMoney, Permission.deleteEntries]);
+      final partner = await Given.partner(manager, 'نواف');
+      await Given.partnerMoney(keeper, partner, sent: false, accountId: await Given.account(manager));
+      await onPartners($, keeper);
+      await $.menuChoice(PartnersScreen.menuKey(partner), PartnersScreen.deleteKey);
+      await $.saysContaining(ConfirmDialog.explanationKey, $.words.partnersDeleteRemovesMyDrafts);
     });
 
     phoneCase('a project with no partners says so', ($) async {

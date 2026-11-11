@@ -151,7 +151,7 @@ class _PartnersScreenState extends State<PartnersScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(formatMoney(line.balance), key: PartnersScreen.balanceKey(partner.id), style: Theme.of(context).textTheme.titleSmall),
-                if (project.mayManageSettings) PartnerMenu(partner: partner, partners: widget.partners, onEdit: () => _ask(partner)),
+                if (project.mayManageSettings) PartnerMenu(project: project, partner: partner, partners: widget.partners, onEdit: () => _ask(partner)),
               ],
             ),
           );

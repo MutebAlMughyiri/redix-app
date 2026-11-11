@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../format/parts_line.dart';
+import '../projects/project.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/row_menu.dart';
@@ -14,10 +15,13 @@ import 'partners_screen.dart';
 
 /// What can be done to a partner, for whoever keeps the settings: their ⋮ menu, as an account's (Muteb, 11 Nov 2026: no pencil, no red bar). Delete stays in it gray, saying why,
 /// and whose draft holds them, unless the partner is at zero capital with nothing waiting and no one else's draft (redix-api #100); the person's own drafts naming them are
-/// listed when Delete asks, since they go with them (findings row 199).
+/// listed when Delete asks, since they go with them (findings row 199), so Delete also needs Delete entries while there are some (findings row 202).
 class PartnerMenu extends StatelessWidget {
-  /// The menu of [partner], changed through [partners], opening their dialog through [onEdit].
-  const PartnerMenu({super.key, required this.partner, required this.partners, required this.onEdit});
+  /// The menu of [partner] in [project], changed through [partners], opening their dialog through [onEdit].
+  const PartnerMenu({super.key, required this.project, required this.partner, required this.partners, required this.onEdit});
+
+  /// The project, which says whether the person may delete entries.
+  final Project project;
 
   /// The partner.
   final Partner partner;
@@ -56,7 +60,11 @@ class PartnerMenu extends StatelessWidget {
       rowMenuItem(PartnersScreen.editKey, words.partnersEdit, onEdit),
       rowMenuItem(PartnersScreen.deleteKey, words.partnersDelete, () => _askToDelete(context), reason: partner.mayDelete
             ? ''
-            : partsLine([words.partnersPartnerNotDeletable, if (partner.othersDrafts.isNotEmpty) words.partnersDraftsBy.fill([partsLine(partner.othersDrafts)])])),
+            : partsLine([
+                words.partnersPartnerNotDeletable,
+                if (partner.othersDrafts.isNotEmpty) words.partnersDraftsBy.fill([partsLine(partner.othersDrafts)]),
+                if (partner.myDrafts.isNotEmpty && !project.mayDeleteEntries) words.partnersMyDraftsNeedDeleteEntries,
+              ])),
     ]);
   }
 }
