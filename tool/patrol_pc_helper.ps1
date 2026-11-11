@@ -46,9 +46,10 @@ while ($true) {
       $start = [uri]::UnescapeDataString($query)
       $found = @(adb -s $Device shell "find /sdcard/Download -maxdepth 1 -name '$start*' -mmin -2" 2>&1 | Where-Object { "$_" -like '/sdcard/*' })
       if ($found.Count -eq 0) { $answer = '404 Not Found' }
+      # Deleted through the media store, which owns Download: a shell rm leaves its row behind, and Android 10 then refuses the next file of that name (redix-api #76
+      # row 211). The command goes to the phone's shell on its input, so the quotes around a name holding a space reach it whole.
       foreach ($file in $found) {
-        adb -s $Device shell "rm '$file'" 2>&1 | Out-Null
-        adb -s $Device shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file://$($file -replace ' ', '%20')" 2>&1 | Out-Null
+        "content delete --uri content://media/external/file --where `"_display_name='$(Split-Path $file -Leaf)' AND relative_path='Download/'`"" | adb -s $Device shell 2>&1 | Out-Null
       }
     }
     '/note' { Add-Content -Path $Results -Value ([uri]::UnescapeDataString($query)) -Encoding UTF8 }
