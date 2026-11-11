@@ -395,6 +395,9 @@ mixin WordGetters {
   /// The word `categories.noItems`.
   String get categoriesNoItems => text('categories.noItems');
 
+  /// The word `categories.noTableMatch`.
+  String get categoriesNoTableMatch => text('categories.noTableMatch');
+
   /// The word `categories.projectFinished`.
   String get categoriesProjectFinished => text('categories.projectFinished');
 
@@ -403,9 +406,6 @@ mixin WordGetters {
 
   /// The word `categories.rename`.
   String get categoriesRename => text('categories.rename');
-
-  /// The word `categories.noTableMatch`.
-  String get categoriesNoTableMatch => text('categories.noTableMatch');
 
   /// The word `categories.save`.
   String get categoriesSave => text('categories.save');
@@ -1196,6 +1196,9 @@ mixin WordGetters {
   /// The word `expenses.unknownTable`.
   String get expensesUnknownTable => text('expenses.unknownTable');
 
+  /// The word `history.account`.
+  String get historyAccount => text('history.account');
+
   /// The word `history.accountChanged`.
   String get historyAccountChanged => text('history.accountChanged');
 
@@ -1210,12 +1213,6 @@ mixin WordGetters {
 
   /// The word `history.accountEnabled`.
   String get historyAccountEnabled => text('history.accountEnabled');
-
-  /// The word `history.account`.
-  String get historyAccount => text('history.account');
-
-  /// The word `history.partner`.
-  String get historyPartner => text('history.partner');
 
   /// The word `history.all`.
   String get historyAll => text('history.all');
@@ -1255,6 +1252,9 @@ mixin WordGetters {
 
   /// The word `history.nameWas`.
   String get historyNameWas => text('history.nameWas');
+
+  /// The word `history.partner`.
+  String get historyPartner => text('history.partner');
 
   /// The word `history.partnerAccount`.
   String get historyPartnerAccount => text('history.partnerAccount');
@@ -2342,6 +2342,9 @@ mixin WordGetters {
   /// The word `users.noConnection`.
   String get usersNoConnection => text('users.noConnection');
 
+  /// The word `users.noMatch`.
+  String get usersNoMatch => text('users.noMatch');
+
   /// The word `users.otherProject`.
   String get usersOtherProject => text('users.otherProject');
 
@@ -2365,9 +2368,6 @@ mixin WordGetters {
 
   /// The word `users.temporaryPasswordHint`.
   String get usersTemporaryPasswordHint => text('users.temporaryPasswordHint');
-
-  /// The word `users.noMatch`.
-  String get usersNoMatch => text('users.noMatch');
 
   /// The word `users.title`.
   String get usersTitle => text('users.title');
