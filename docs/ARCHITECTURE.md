@@ -223,7 +223,7 @@ lib/
     screen_title.dart       A screen's title in the app bar, with what it belongs to on a line beneath, so a long title on a narrow phone never cuts the name to a letter
     search_line.dart        The one search line, shown while its screen's search is open, ready to type, handing what is typed on once typing pauses for a list the API searches, its ✕ closing it and clearing what was typed; the filter line under it while open
     search_scope.dart       One screen's search (redix-app #104, version 3): SearchScope over its Scaffold holds whether the line and the filters show and what is typed; SearchIcons in the title bar opens them, the filter icon filled while a filter is in use
-    swipe_to_remove.dart    The one way a row is removed, and the one frame of a row that can be: an outlined card with a red bar inside its end edge where it may be removed, swiped from that edge toward its start past 40% of its width, with no question
+    swipe_to_remove.dart    The one way a row is removed, and the one frame of a row that can be: an outlined card with a red bar inside its end edge where it may be removed, swiped from that edge toward its start past 40% of its width, once confirmed in its row (redix-api #119)
     title_bar_add.dart      The plus in a title bar, for what is added rarely, grayed without the permission
     two_fields.dart         Two fields of a form, side by side and of equal width
   users/

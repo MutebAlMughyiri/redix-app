@@ -188,7 +188,7 @@ void main() {
   testWidgets('redix-api #102: a swipe deletes a column with no question; a short one deletes nothing', (tester) async {
     final opened = await openColumns(tester);
 
-    await swipeToRemove(tester, opened.api, ItemColumnsScreen.rowKey(opened.area), share: 0.2);
+    await swipeToAsk(tester, opened.api, ItemColumnsScreen.rowKey(opened.area), share: 0.2);
     expect(opened.api.sentStructureChanges, isEmpty);
 
     await swipeToRemove(tester, opened.api, ItemColumnsScreen.rowKey(opened.area));

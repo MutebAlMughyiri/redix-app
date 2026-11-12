@@ -10,7 +10,7 @@ import '../support/steps.dart';
 
 void main() {
   phoneClass('Delete an entry by swiping (UC-033)', () {
-    phoneCase('redix-api #102: a swipe deletes a draft with no question', ($) async {
+    phoneCase('redix-api #102, #119: a swipe deletes a draft once confirmed in its row', ($) async {
       final manager = await Given.manager();
       final entry = await Given.entry(manager, sent: false);
       await $.onTheHome(manager);
@@ -20,7 +20,7 @@ void main() {
       expect(await Given.entries(manager), isEmpty);
     });
 
-    phoneCase('redix-api #102: a swipe deletes a rejected entry with no question', ($) async {
+    phoneCase('redix-api #102, #119: a swipe deletes a rejected entry once confirmed in its row', ($) async {
       final manager = await Given.manager();
       final entry = await Given.entry(manager);
       await Given.entryRejected(manager, entry);
@@ -33,7 +33,7 @@ void main() {
       final manager = await Given.manager();
       final entry = await Given.entry(manager, sent: false);
       await $.onTheHome(manager);
-      await $.swipeAway(EntriesScreen.rowKey(entry), share: 0.15);
+      await $.swipeToAsk(EntriesScreen.rowKey(entry), share: 0.15);
       await Future<void>.delayed(const Duration(seconds: 1));
       await $.pumpAndSettle();
       expect($(EntriesScreen.rowKey(entry)), findsOneWidget);

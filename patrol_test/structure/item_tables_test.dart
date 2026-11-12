@@ -42,7 +42,7 @@ void main() {
       await $.picture('tables');
     });
 
-    phoneCase('redix-api #102: a swipe removes it with no question', ($) async {
+    phoneCase('redix-api #102, #119: a swipe removes it once confirmed in its row', ($) async {
       final made = await newItem();
       final table = await Given.subgroup(made.manager, made.item, 'الجلاي');
       await onTables($, made.manager, made.category, made.item);

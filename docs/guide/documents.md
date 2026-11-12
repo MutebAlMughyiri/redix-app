@@ -12,7 +12,7 @@
 | Add a document | Tap **Add a document**, type its name, choose a group if you want one, then **Choose the file** and tap **Keep**. |
 | Open a document | Tap it. A picture opens to zoom into; any other file goes to the phone's own app, under its own name. |
 | Download a document | Tap **Download** on its row; it lands in the phone's Download folder. |
-| Remove a document | Swipe its row from the edge with the red bar. There is no question. A row with no red bar cannot be removed by you. |
+| Remove a document | Swipe its row from the edge with the red bar. It asks in the row: tap **Remove** to confirm, or **Cancel**. A row with no red bar cannot be removed by you. |
 
 Documents in no group come first; each group follows under its name. A closed project keeps its documents to read, with nothing to add or remove.
 

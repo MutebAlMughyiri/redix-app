@@ -12,4 +12,7 @@ class CapitalMovements extends ApiList<CapitalMovement> {
 
   /// Removes [movement], an approved one, softly (redix-api #119). Returns an empty string once removed, otherwise the word key of the refusal.
   Future<String> remove(CapitalMovement movement) => deleteAt('/projects/$projectId/entries/${movement.id}', wordPrefix: 'entries');
+
+  /// Brings [movement] back once removed, the undo of [remove]. Returns an empty string once back, otherwise the word key of the refusal.
+  Future<String> restore(CapitalMovement movement) => change('/projects/$projectId/entries/${movement.id}/restore', {}, wordPrefix: 'entries');
 }

@@ -270,7 +270,7 @@ void main() {
       expect(text(tester, ChangeDialog.messageKey), 'en projects.unitNameTaken');
     });
 
-    testWidgets('BR-38, redix-api #102: a unit is removed by a swipe with no question, and its menu keeps Rename only', (tester) async {
+    testWidgets('BR-38, redix-api #102: a unit is removed by a swipe that asks in the row (redix-api #119), and its menu keeps Rename only', (tester) async {
       final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الشرقية']);
       await openInfo(tester, api);
       expect(find.byKey(ProjectInfoScreen.unitRowKey('project-0-unit-0').bar), findsOneWidget);

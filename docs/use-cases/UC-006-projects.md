@@ -35,7 +35,7 @@ More info opens from a project's home (`HomeScreen.projectInfoKey`), for everyon
 | No units yet | `ProjectInfoScreen.noUnitsKey` | Shown while the project has no units |
 | A unit's menu | `ProjectInfoScreen.unitMenuKey(id)` | Active projects, with `manageProject`; the shared unit is not on the list |
 | Rename unit, in the menu | `ProjectInfoScreen.renameUnitKey` | Asks for the name, starting from the current one |
-| A unit's swipe | `ProjectInfoScreen.unitRowKey(id).swipe` | Active projects, with `manageProject`: swiped from its end toward its start, it is deleted with no question; one in use comes back and the refusal says why (redix-api #102) |
+| A unit's swipe | `ProjectInfoScreen.unitRowKey(id).swipe` | Active projects, with `manageProject`: swiped from its end toward its start, it is deleted once confirmed in its row (redix-api #119); one in use comes back and the refusal says why (redix-api #102) |
 | The red bar | `ProjectInfoScreen.unitRowKey(id).bar` | Inside each unit's card, for whoever may delete it (redix-app #88) |
 | The name, in the rename dialogs | `NameDialog.nameKey` | |
 | Save, in the rename dialogs | `ChangeDialog.saveKey` | Sends the name; a refusal stays in the dialog (`ChangeDialog.messageKey`) |
@@ -123,7 +123,7 @@ All go through `Session`, which renews an expired access token once and sends ag
 | The list is read again after every answer, so someone else's change shows | `ApiList.change` | `project_info_test.dart`: a project someone else closed |
 | A unit's name that repeats is refused with its own word, on the form and in Add unit (BR-37) | The API; the words `projects.unitNameTaken`, `register.unitNameTaken` | `new_project_test.dart`: a unit name the project already has; `project_info_test.dart`: BR-37, two tests |
 | Whoever holds `manageProject` renames the open project and its units, each starting from the current name; More info and the home follow (BR-38) | `Projects.rename`, `Projects.renameUnit`, `NameDialog` | `project_info_test.dart`: whoever manages the project renames it; a unit is renamed from its menu |
-| A unit is deleted by a swipe with no question; a refused one comes back and the refusal says why (BR-38, redix-api #102) | `Projects.deleteUnit`, `SwipeToRemove` | `project_info_test.dart`: a unit is removed by a swipe; a refused unit comes back |
+| A unit is deleted by a swipe once confirmed in its row (redix-api #119); a refused one comes back and the refusal says why (BR-38, redix-api #102) | `Projects.deleteUnit`, `SwipeToRemove` | `project_info_test.dart`: a unit is removed by a swipe; a refused unit comes back |
 | Nothing offers a unit change without `manageProject` or in a finished project | `UnitRow` | `project_info_test.dart`: without manageProject; a finished project shows read-only |
 | More info shows the project it was opened from | `Projects.latest` | `project_info_test.dart`: More info of a second project |
 | A project with entries waiting for approval stays open, and the refusal says why (BR-35) | `showRefusalOf`, the word `projects.pendingEntries` | `project_info_test.dart`: BR-35; Patrol |

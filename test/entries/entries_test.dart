@@ -13,6 +13,7 @@ import 'package:redix/home/home_screen.dart';
 
 
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/refusal_snack_bar.dart';
 import 'package:redix/ui/app_color.dart';
 
 import '../app_harness.dart';
@@ -164,6 +165,7 @@ void main() {
     api.addEntry(isMine: false);
 
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey)));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey.confirm)));
 
     expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2), ('entry-0', 'delete'));
     expect(find.byKey(AddEntryScreen.removeKey), findsNothing);
@@ -283,15 +285,71 @@ void main() {
     await openActions(tester, api, 'entry-0');
     api.heldEntryChange = Completer<void>();
 
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey)));
+
     await act(tester, api, () async {
-      await tester.tap(find.byKey(AddEntryScreen.removeKey));
+      await tester.tap(find.byKey(AddEntryScreen.removeKey.confirm));
       await tester.pump();
-      await tester.tap(find.byKey(AddEntryScreen.removeKey), warnIfMissed: false);
+      await tester.tap(find.byKey(AddEntryScreen.removeKey.confirm), warnIfMissed: false);
     });
 
-    expect(tester.widget<OutlinedButton>(find.byKey(AddEntryScreen.removeKey)).onPressed, isNull);
+    expect(tester.widget<FilledButton>(find.byKey(AddEntryScreen.removeKey.confirm)).onPressed, isNull);
     await act(tester, api, () async => api.heldEntryChange.complete());
     expect(api.sentEntryChanges.length, 1);
+  });
+
+  testWidgets('redix-api #119 (Muteb, 12 Nov 2026): حذف on the page asks in place, with no window, and إلغاء brings the buttons back, sending nothing', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: [...managerAndFinance, 'removeApprovedEntries']);
+    await openActions(tester, api, 'entry-0');
+
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey)));
+
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.removeKey.question)).data, 'en entries.removeQuestion');
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey.cancel)));
+    expect(find.byKey(AddEntryScreen.removeKey), findsOneWidget);
+    expect(api.sentEntryChanges, isEmpty);
+  });
+
+  testWidgets('redix-api #119: an approved entry removed on its page comes back from the bar, and the list shows it again', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: [...managerAndFinance, 'removeApprovedEntries']);
+    await openActions(tester, api, 'entry-0');
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey)));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey.confirm)));
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
+
+    await act(tester, api, () => tester.tap(find.byKey(messageKeyOf('swipe.removed').icon)));
+
+    expect(api.sentEntryChanges.map((change) => change.$2), ['delete', 'restore']);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
+  });
+
+  testWidgets('redix-api #119: a swipe asks in the row, with no window, and إلغاء puts the row back, sending nothing', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'draft'));
+
+    await swipeToAsk(tester, api, EntriesScreen.rowKey('entry-0'));
+
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(tester.widget<Text>(find.byKey(EntriesScreen.rowKey('entry-0').question.label)).data, 'en swipe.question');
+    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0').cancel)));
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').question), findsNothing);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').bar), findsOneWidget);
+    expect(api.sentEntryChanges, isEmpty);
+  });
+
+  testWidgets('redix-api #119: an approved entry swiped away comes back from the bar; a draft, deleted for good, offers no undo', (tester) async {
+    final api = await openEntries(tester, (api) => api
+      ..addEntry(status: 'approved')
+      ..addEntry(status: 'draft'), permissions: [...managerAndFinance, 'removeApprovedEntries']);
+
+    await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
+    expect(find.byKey(messageKeyOf('swipe.removed').icon), findsOneWidget);
+    await act(tester, api, () => tester.tap(find.byKey(messageKeyOf('swipe.removed').icon)));
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
+
+    await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-1'));
+    expect(find.byKey(messageKeyOf('swipe.removed')), findsNothing);
+    expect(api.sentEntryChanges.map((change) => change.$2), ['delete', 'restore', 'delete']);
   });
 
   testWidgets('redix-api #119: a refused removal stays open, saying why', (tester) async {
@@ -303,6 +361,7 @@ void main() {
     await openActions(tester, api, 'entry-0');
 
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey)));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey.confirm)));
 
     expect(find.text('en entries.notYourEntry'), findsOneWidget);
     expect(find.byKey(AddEntryScreen.removeKey), findsOneWidget);
@@ -374,6 +433,7 @@ void main() {
     expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
     expect(tester.widget<Text>(find.byKey(AddEntryScreen.removeKey.label)).data, 'en entries.remove');
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey)));
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey.confirm)));
 
     expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2), ('entry-0', 'delete'));
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
@@ -397,6 +457,7 @@ void main() {
     await act(tester, api, () async {
       await tester.drag(find.byKey(EntriesScreen.rowKey('entry-0').swipe), const Offset(-600, 0));
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(EntriesScreen.rowKey('entry-0').confirm));
       await tester.pump(const Duration(seconds: 11));
       await tester.pumpAndSettle();
     });

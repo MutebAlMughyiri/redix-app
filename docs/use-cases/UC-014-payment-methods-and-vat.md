@@ -45,7 +45,7 @@ The home of a project, `HomeScreen`:
 | A refused name stays in the dialog with its reason | `ChangeDialog` | `a refused name stays in the dialog with its reason` |
 | Renaming starts from the name | `PaymentMethodRow`, `NameDialog` | `renaming starts from the name and sends the new one` |
 | A disabled method stays on the list, and Enable brings it back (AC-40.1) | `PaymentMethods.disable`, `enable` | `disabling keeps the method on the list, and enable brings it back` |
-| A swipe deletes a method with no question; a method an expense was paid with is not deleted, and the refusal says to disable it | `PaymentMethods.delete`, `SwipeToRemove` | `redix-api #102: a swipe deletes a method with no question, and the method leaves the list`, `a method an expense was paid with is not deleted, and the refusal says to disable it` |
+| A swipe deletes a method once confirmed in its row (redix-api #119); a method an expense was paid with is not deleted, and the refusal says to disable it | `PaymentMethods.delete`, `SwipeToRemove` | `redix-api #102: a swipe deletes a method once confirmed in its row (redix-api #119), and the method leaves the list`, `a method an expense was paid with is not deleted, and the refusal says to disable it` |
 | A refused change says why | `showRefusalOf` | `a refused disable says why` |
 | A number may be typed in Arabic digits, since the app is Arabic first | `parseNumber` | `a typed number reads Western and Arabic digits and thousands separators` |
 | A finished project shows them with nothing to change (AC-04.1) | `Project.mayManageSettings` | `a finished project shows its methods with nothing to change` |

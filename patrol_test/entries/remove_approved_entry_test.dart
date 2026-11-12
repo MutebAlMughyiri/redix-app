@@ -4,6 +4,7 @@ import 'package:redix/auth/permission.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/refusal_snack_bar.dart';
 
 import '../support/given.dart';
 import '../support/phone_case.dart';
@@ -28,7 +29,8 @@ void main() {
     phoneCase('AC-50.1: whoever holds the removal removes an approved entry by حذف, and it leaves the list', ($) async {
       final made = await onApproved($);
       await $.tapOn(AddEntryScreen.removeKey);
-      await $.gone($(AddEntryScreen.removeKey));
+      await $.tapOn(AddEntryScreen.removeKey.confirm);
+      await $.gone($(AddEntryScreen.removeKey.confirm));
       await $.gone($(EntriesScreen.rowKey(made.entry)));
       expect((await Given.entries(made.manager)).map((entry) => entry['id']), isNot(contains(made.entry)));
     });
@@ -46,9 +48,33 @@ void main() {
       await $.reach($(AddEntryScreen.statusKey));
       final recorded = await Given.entry(manager);
       await $.tapOn(AddEntryScreen.removeKey);
-      await $.gone($(AddEntryScreen.removeKey));
+      await $.tapOn(AddEntryScreen.removeKey.confirm);
+      await $.gone($(AddEntryScreen.removeKey.confirm));
       final ids = (await Given.entries(manager)).map((row) => row['id']).toList();
       expect((ids.contains(entry), ids.contains(recorded), ids.length), (false, true, 5));
+    });
+
+    phoneCase('redix-api #119: حذف asks in place, and تراجع in the bar brings the entry back to the list', ($) async {
+      final made = await onApproved($);
+      await $.tapOn(AddEntryScreen.removeKey);
+      await $.reach($(AddEntryScreen.removeKey.question));
+      await $.tapOn(AddEntryScreen.removeKey.confirm);
+      await $.gone($(EntriesScreen.rowKey(made.entry)));
+      await $.tapOn(messageKeyOf('swipe.removed').icon);
+      await $.reach($(EntriesScreen.rowKey(made.entry)));
+      expect((await Given.entries(made.manager)).map((entry) => entry['id']), contains(made.entry));
+    });
+
+    phoneCase('redix-api #119: إلغاء in the row puts it back, and nothing is removed', ($) async {
+      final manager = await Given.manager();
+      final entry = await Given.entry(manager);
+      await Given.entriesApproved(manager, [entry]);
+      await Given.ticked(manager, [Permission.removeApprovedEntries], by: manager);
+      await $.onTheHome(manager);
+      await $.swipeToAsk(EntriesScreen.rowKey(entry));
+      await $.tapOn(EntriesScreen.rowKey(entry).cancel);
+      await $.reach($(EntriesScreen.rowKey(entry).bar));
+      expect((await Given.entries(manager)).map((row) => row['id']), contains(entry));
     });
 
     phoneCase('AC-50.1: without the removal an approved entry offers no حذف, even to whoever approves', ($) async {

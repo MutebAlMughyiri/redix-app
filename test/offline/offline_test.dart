@@ -184,7 +184,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
     expect(find.byKey(WaitingScreen.rowKey('entry-1').bar), findsOneWidget);
 
-    await swipeToRemove(tester, api, WaitingScreen.rowKey('entry-1'), share: 0.2);
+    await swipeToAsk(tester, api, WaitingScreen.rowKey('entry-1'), share: 0.2);
     expect(await store.namesIn('outbox'), ['entry-1']);
 
     await swipeToRemove(tester, api, WaitingScreen.rowKey('entry-1'));

@@ -53,6 +53,8 @@ import '../attachments/entry_file.dart';
 import '../ui/form_error.dart';
 import '../ui/refusal_text.dart';
 import '../ui/act_once.dart';
+import '../ui/app_color.dart';
+import '../ui/swipe_to_remove.dart';
 
 /// إضافة قيد (UC-022, UC-027, redix-app #84, redix-api #110): one form adds an entry to any table, and the table chosen says what it is. Every entry asks the same things in the
 /// same place: its file, its table and date, its amount, its account and its notes, and is saved as a draft or sent for approval. A table adds only its own: a purchase its
@@ -81,6 +83,7 @@ class AddEntryScreen extends StatefulWidget {
     required this.capture,
     required this.opened,
     required this.approvals,
+    required this.readAgain,
     required this.projectAccounts,
   });
 
@@ -132,6 +135,9 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The entries waiting for a decision, through which an entry read only is approved (Muteb, 9 Nov 2026).
   final Approvals approvals;
+
+  /// Reads again what the project's lists and figures show, after an approved entry removed here is brought back from the bar (redix-api #119).
+  final Future<void> Function() readAgain;
 
   /// The project's accounts, any active one of which revenue reaches and a partner's money moves through.
   final Accounts projectAccounts;
@@ -325,6 +331,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   var _isCreditNote = false;
   var _isOutside = false;
   var _isWithdrawal = false;
+  var _askingRemove = false;
   final _payment = PaymentChoice();
   var _message = '';
   var _refusedColumn = '';
@@ -798,12 +805,13 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                 child: FilledButton.tonal(key: AddEntryScreen.approveKey, onPressed: once(widget.project.mayApproveEntries ? () => _approve(row) : null), child: Text(words.approvalsApprove, key: AddEntryScreen.approveKey.label)),
               ),
             if (row.isDraft && mayChange) Expanded(child: OutlinedButton(key: AddEntryScreen.sendDraftKey, onPressed: once(_sendDraft), child: Text(words.entriesSend, key: AddEntryScreen.sendDraftKey.label))),
-            if (mayRemove)
+            if (mayRemove && !_askingRemove)
               Expanded(
-                child: OutlinedButton(key: AddEntryScreen.removeKey, onPressed: once(_remove), child: Text(words.entriesRemove, key: AddEntryScreen.removeKey.label)),
+                child: OutlinedButton(key: AddEntryScreen.removeKey, onPressed: once(() => setState(() => _askingRemove = true)), child: Text(words.entriesRemove, key: AddEntryScreen.removeKey.label)),
               ),
           ],
         )),
+        if (mayRemove && _askingRemove) _removeQuestion(words),
         if (!mayChange) Text(words.text(row.isApproved ? 'entries.approvedCannotChange' : 'entries.notYours'), key: AddEntryScreen.cannotChangeKey, style: Theme.of(context).textTheme.bodySmall),
       ],
     );
@@ -823,12 +831,53 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     context.pop(true);
   }
 
-  /// Removes the approved entry read only (redix-api #119), then goes back to the list, which reads itself again; what the API refused shows why, and the page stays.
+  /// حذف asked in place, where its button was, never in a window over the screen (redix-api #119): حذف and إلغاء.
+  Widget _removeQuestion(Words words) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    spacing: 8,
+    children: [
+      Text(words.entriesRemoveQuestion, key: AddEntryScreen.removeKey.question),
+      ActOnce(builder: (once) => Row(
+        spacing: 8,
+        children: [
+          Expanded(
+            child: FilledButton(
+              key: AddEntryScreen.removeKey.confirm,
+              style: FilledButton.styleFrom(backgroundColor: AppColor.refusal.of(context)),
+              onPressed: once(_remove),
+              child: Text(words.swipeRemove, key: AddEntryScreen.removeKey.confirm.label),
+            ),
+          ),
+          Expanded(child: OutlinedButton(key: AddEntryScreen.removeKey.cancel, onPressed: once(() => setState(() => _askingRemove = false)), child: Text(words.commonCancel, key: AddEntryScreen.removeKey.cancel.label))),
+        ],
+      )),
+    ],
+  );
+
+  /// Removes the approved entry read only (redix-api #119), goes back to the list, which reads itself again, and offers تراجع in the bar; what the API refused shows why, and the
+  /// page stays.
   Future<void> _remove() async {
-    final refusal = await showRefusalOf(context, widget.opened.remove());
-    if (refusal.isEmpty && mounted) {
-      context.pop(true);
+    final words = Words.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final opened = widget.opened;
+    final readAgain = widget.readAgain;
+    final refusal = await showRefusalOf(context, opened.remove());
+    if (!mounted) {
+      return;
     }
+    if (refusal.isNotEmpty) {
+      setState(() => _askingRemove = false);
+      return;
+    }
+    context.pop(true);
+    showMessage(messenger, words, 'swipe.removed', actionLabel: words.commonUndo, duration: SwipeToRemove.undoTime, onAction: () async {
+      final undone = await opened.restore();
+      if (undone.isNotEmpty) {
+        showMessage(messenger, words, undone);
+        return;
+      }
+      await readAgain();
+    });
   }
 
   Future<void> _sendDraft() async {

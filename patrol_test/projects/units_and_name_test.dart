@@ -53,7 +53,7 @@ void main() {
       await $.says(ProjectInfoScreen.unitKey(unit), 'ملحق الفلة');
     });
 
-    phoneCase('redix-api #102: a swipe deletes a unit with no question', ($) async {
+    phoneCase('redix-api #102, #119: a swipe deletes a unit once confirmed in its row', ($) async {
       final manager = await Given.manager(units: ['الفلة الغربية', 'الفلة الجنوبية']);
       await $.onMoreInfo(manager);
       final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
@@ -76,7 +76,7 @@ void main() {
       final manager = await Given.manager(units: ['الفلة الغربية']);
       await $.onMoreInfo(manager);
       final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
-      await $.swipeAway(ProjectInfoScreen.unitRowKey(unit), share: 0.15);
+      await $.swipeToAsk(ProjectInfoScreen.unitRowKey(unit), share: 0.15);
       await Future<void>.delayed(const Duration(seconds: 1));
       await $.pumpAndSettle();
       expect($(ProjectInfoScreen.unitKey(unit)), findsOneWidget);

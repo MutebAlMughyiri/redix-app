@@ -33,4 +33,13 @@ extension PartKeys on Key? {
 
   /// The key of the swipe that removes the element (redix-api #102).
   Key get swipe => ValueKey((this, 'swipe'));
+
+  /// The key of the question an element asks before it is removed (redix-api #119).
+  Key get question => ValueKey((this, 'question'));
+
+  /// The key of the button that confirms what the element asks.
+  Key get confirm => ValueKey((this, 'confirm'));
+
+  /// The key of the button that takes back what the element asks.
+  Key get cancel => ValueKey((this, 'cancel'));
 }

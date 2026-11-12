@@ -88,7 +88,7 @@ void main() {
       expect(existing, allOf(contains('شرق'), contains('غرب')));
     });
 
-    phoneCase('redix-api #102: a swipe deletes a column with no question', ($) async {
+    phoneCase('redix-api #102, #119: a swipe deletes a column once confirmed in its row', ($) async {
       await onColumns($);
       await addList($, 'الجهة', 'شرق');
       final id = await $.idShowing('columns.name.', 'الجهة');
@@ -166,7 +166,7 @@ void main() {
       await onColumns($);
       await addList($, 'الجهة', 'شرق');
       final id = await $.idShowing('columns.name.', 'الجهة');
-      await $.swipeAway(ItemColumnsScreen.rowKey(id), share: 0.15);
+      await $.swipeToAsk(ItemColumnsScreen.rowKey(id), share: 0.15);
       await Future<void>.delayed(const Duration(seconds: 1));
       await $.pumpAndSettle();
       expect($(ItemColumnsScreen.nameKey(id)), findsOneWidget);

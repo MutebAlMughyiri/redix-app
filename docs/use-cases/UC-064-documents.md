@@ -36,5 +36,5 @@
 | A file that is not a picture is handed to the phone by its own name, a PDF included (findings row 158) | `AttachmentScreen`, `FileKind`, `InvoiceCapture.shareFile` | `documents_test.dart`: UC-064: a file that is neither a picture nor a PDF; UC-064: a PDF is handed to the phone by its own name too |
 | Any file is kept under a name and a group, sent together; no group is sent empty | `Documents.add` | `documents_test.dart`: UC-064: the manager keeps any file; UC-064: a document with no group |
 | A document needs its file | `DocumentsScreen` | `documents_test.dart`: a document with no file is not kept |
-| A swipe removes a document with no question, and the list says how; a short swipe springs back (redix-api #102) | `SwipeToRemove` | `documents_test.dart`: redix-api #102 R1, R4; redix-api #102 R5 |
+| A swipe removes a document once confirmed in its row (redix-api #119), and the list says how; a short swipe springs back (redix-api #102) | `SwipeToRemove` | `documents_test.dart`: redix-api #102 R1, R4; redix-api #102 R5 |
 | A closed project shows its documents with no Add and no Remove (AC-04.1) | `Project.mayManageProject` | `documents_test.dart`: AC-04.1: a closed project shows its documents |

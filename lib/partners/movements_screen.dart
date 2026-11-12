@@ -58,8 +58,13 @@ class _MovementsScreenState extends State<MovementsScreen> {
     widget.movements.loadOnOpen();
   }
 
-  Future<String> _remove(CapitalMovement movement) async {
-    final refusal = await widget.movements.remove(movement);
+  Future<String> _remove(CapitalMovement movement) => _changed(widget.movements.remove(movement));
+
+  Future<String> _restore(CapitalMovement movement) => _changed(widget.movements.restore(movement));
+
+  /// Waits for [change], a removal or its undo, and reads the capital again once it is made.
+  Future<String> _changed(Future<String> change) async {
+    final refusal = await change;
     if (refusal.isEmpty) {
       await widget.capital.load();
     }
@@ -74,6 +79,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
       rowKey: MovementsScreen.rowKey(movement.id),
       mayRemove: project.mayRemoveApprovedEntries,
       onRemove: () => _remove(movement),
+      onUndo: () => _restore(movement),
       child: ListTile(
         key: MovementsScreen.rowKey(movement.id),
         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),

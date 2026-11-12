@@ -31,7 +31,7 @@ On [Categories and items](../guide/categories.md), `CategoriesScreen`:
 | The choices it has, in the Edit dialog | `ItemColumnsScreen.existingChoicesKey` | A list a person added: they stay, because entries hold them |
 | New choices, in the Edit dialog | `ItemColumnsScreen.newChoicesKey` | One a line, added to those it has |
 | Lock | `ItemColumnsScreen.lockKey(id)` | On a core column, in place of Delete |
-| A column's swipe | `ItemColumnsScreen.rowKey(id).swipe` | Any column but a core one: swiped from its end toward its start, it is deleted with no question; on the template it still asks whether every item takes it (redix-api #102) |
+| A column's swipe | `ItemColumnsScreen.rowKey(id).swipe` | Any column but a core one: swiped from its end toward its start, it is deleted once confirmed in its row (redix-api #119); on the template it still asks whether every item takes it (redix-api #102) |
 | The name, in a dialog | `ItemColumnsScreen.columnNameKey` | |
 | The type, in Add column | `ItemColumnsScreen.dataTypeKey` | The five a person chooses among |
 | The choices, in Add column | `ItemColumnsScreen.choicesKey` | One a line; shown for a pick list |
@@ -68,7 +68,7 @@ The question after a change to the template, `ApplyToAllDialog`:
 | A core column changes its name only | `EditColumnDialog` | `item_columns_test.dart`: a core column changes |
 | No dialog offers a type to change (AC-41.3) | `EditColumnDialog` | `item_columns_test.dart`: another column changes |
 | A list a person added gains choices, one a line, and those it has stay and show; no other column offers it | `EditColumnDialog`, `ItemColumn.gainsChoices`, `Columns.edit` | `item_columns_test.dart`: a list a person added gains choices; only a list a person added |
-| A swipe deletes a column with no question; a short one deletes nothing; a core one does not swipe (redix-api #102) | `SwipeToRemove` | `item_columns_test.dart`: a swipe deletes a column; AC-41.2 |
+| A swipe deletes a column once confirmed in its row (redix-api #119); a short one deletes nothing; a core one does not swipe (redix-api #102) | `SwipeToRemove` | `item_columns_test.dart`: a swipe deletes a column; AC-41.2 |
 | Dragging sends the new order; on an item it asks nothing | `Columns.move`, `ReorderableListView` | `item_columns_test.dart`: dragging a column sends |
 | AC-41.3: every change to the template asks whether it reaches existing items | `_applyToAll`, `ApplyToAllDialog` | `item_columns_test.dart`: AC-41.3: a change to the default template |
 | A finished project shows its columns with nothing to change | `Project.mayChangeStructure` | `item_columns_test.dart`: a finished project |

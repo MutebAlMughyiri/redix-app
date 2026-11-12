@@ -374,13 +374,19 @@ extension Steps on PatrolIntegrationTester {
   }
 
   /// Swipes the row keyed [rowKey] from its end toward its start by [share] of its width, as removing it does, in whichever language the phone reads.
-  Future<void> swipeAway(Key rowKey, {double share = 0.8}) async {
+  Future<void> swipeToAsk(Key rowKey, {double share = 0.8}) async {
     final row = find.byKey(rowKey.swipe);
     await goTo(this(row));
     expectRedBar(rowKey);
     final distance = tester.getSize(row).width * share;
     await tester.drag(row, Offset(Directionality.of(tester.element(row)) == TextDirection.rtl ? distance : -distance, 0));
     await pumpAndSettle();
+  }
+
+  /// Swipes the row [rowKey] and confirms in the row what it asks, removing it (redix-api #119: a swipe asks in place, never in a window).
+  Future<void> swipeAway(Key rowKey) async {
+    await swipeToAsk(rowKey);
+    await tapOn(rowKey.confirm);
   }
 
   /// The row [rowKey], which can be removed, shows its red bar on screen, along the end edge of its card: the right in English, the left in Arabic (redix-app #88).

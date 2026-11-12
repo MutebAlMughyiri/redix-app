@@ -170,7 +170,7 @@ void main() {
   testWidgets('redix-api #102 R5: a swipe shorter than 40% springs back and removes nothing', (tester) async {
     final (:api, capture: _) = await openDocuments(tester, arrange: (api) => api.documentRows.add(document('permit', 'رخصة البناء', 'التراخيص')));
 
-    await swipeToRemove(tester, api, DocumentsScreen.documentKey('permit'), share: 0.2);
+    await swipeToAsk(tester, api, DocumentsScreen.documentKey('permit'), share: 0.2);
 
     expect(api.sentDocuments, isEmpty);
     expect(find.byKey(DocumentsScreen.documentKey('permit')), findsOneWidget);

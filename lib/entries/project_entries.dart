@@ -12,6 +12,9 @@ class ProjectEntries extends ApiList<EntryRow> {
   /// The project these belong to.
   final String projectId;
 
-  /// Deletes an entry never approved. Returns an empty string once deleted, otherwise the word key of the refusal.
+  /// Deletes an entry, or removes an approved one softly (redix-api #119). Returns an empty string once deleted, otherwise the word key of the refusal.
   Future<String> delete(EntryRow entry) => deleteAt('/projects/$projectId/entries/${entry.id}');
+
+  /// Brings back [entry], an approved one removed, the undo of its removal (redix-api #119). Returns an empty string once back, otherwise the word key of the refusal.
+  Future<String> restore(EntryRow entry) => change('/projects/$projectId/entries/${entry.id}/restore', {});
 }

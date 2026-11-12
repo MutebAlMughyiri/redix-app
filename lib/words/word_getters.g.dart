@@ -635,6 +635,9 @@ mixin WordGetters {
   /// The word `common.searchIn`.
   String get commonSearchIn => text('common.searchIn');
 
+  /// The word `common.undo`.
+  String get commonUndo => text('common.undo');
+
   /// The word `contractorPayments.inside`.
   String get contractorPaymentsInside => text('contractorPayments.inside');
 
@@ -931,6 +934,9 @@ mixin WordGetters {
 
   /// The word `entries.remove`.
   String get entriesRemove => text('entries.remove');
+
+  /// The word `entries.removeQuestion`.
+  String get entriesRemoveQuestion => text('entries.removeQuestion');
 
   /// The word `entries.search`.
   String get entriesSearch => text('entries.search');
@@ -2195,8 +2201,14 @@ mixin WordGetters {
   /// The word `suppliers.vatNumberTaken`.
   String get suppliersVatNumberTaken => text('suppliers.vatNumberTaken');
 
+  /// The word `swipe.question`.
+  String get swipeQuestion => text('swipe.question');
+
   /// The word `swipe.remove`.
   String get swipeRemove => text('swipe.remove');
+
+  /// The word `swipe.removed`.
+  String get swipeRemoved => text('swipe.removed');
 
   /// The word `transfers.accountDisabled`.
   String get transfersAccountDisabled => text('transfers.accountDisabled');

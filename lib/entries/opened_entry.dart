@@ -24,5 +24,8 @@ class OpenedEntry extends ApiObject<EntryRow> {
   /// Removes it, an approved entry, softly (redix-api #119). Returns an empty string once removed, otherwise the word key of the refusal.
   Future<String> remove() => deleteAt('/projects/$projectId/entries/${value.id}');
 
+  /// Brings it back once removed, the undo of [remove] (redix-api #119). Returns an empty string once back, otherwise the word key of the refusal.
+  Future<String> restore() => change('/projects/$projectId/entries/${value.id}/restore', {});
+
   static EntryRow _rowOf(Object? json) => EntryRow.fromJson(json! as Map<String, dynamic>);
 }

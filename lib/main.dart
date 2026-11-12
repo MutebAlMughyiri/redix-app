@@ -398,6 +398,7 @@ class _RedixAppState extends State<RedixApp> {
   OfferedItems _offeredItemsOf(String projectId, ItemType type) => _offeredItemLists.putIfAbsent('$projectId/${type.name}', () => OfferedItems(widget.session, projectId, type));
 
   AddEntryScreen _addEntryScreen(String projectId, Project project, Map<String, String> query) => AddEntryScreen(
+    readAgain: () => Future.wait([_newestEntriesOf(projectId).load(), _searchedEntriesOf(projectId).load(), _summaryOf(projectId).load(), _accountsOf(projectId).load()]),
     sharedFile: query.containsKey('shared') ? _shared : PickedFile.none(),
     editingId: query['entry'] ?? '',
     isReading: query.containsKey('read'),

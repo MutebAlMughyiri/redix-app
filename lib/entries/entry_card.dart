@@ -32,17 +32,21 @@ class SwipeableEntryCard extends StatelessWidget {
 
   static void _nothing() {}
 
+  /// Waits for [change], a removal or its undo, and tells [onRemoved] once it is made, so a screen showing figures reads them again.
+  Future<String> _changed(Future<String> change) async {
+    final refusal = await change;
+    if (refusal.isEmpty) {
+      onRemoved();
+    }
+    return refusal;
+  }
+
   @override
   Widget build(BuildContext context) => SwipeToRemove(
     rowKey: EntriesScreen.rowKey(entry.id),
     mayRemove: entry.mayRemoveIn(project),
-    onRemove: () async {
-      final refusal = await entries.delete(entry);
-      if (refusal.isEmpty) {
-        onRemoved();
-      }
-      return refusal;
-    },
+    onRemove: () => _changed(entries.delete(entry)),
+    onUndo: entry.isApproved ? () => _changed(entries.restore(entry)) : SwipeToRemove.noUndo,
     side: entry.status.sideIn(context),
     child: EntryCard(entry: entry, onTap: () => onOpen(EntriesScreen.entryPathOf(project.id, entry))),
   );

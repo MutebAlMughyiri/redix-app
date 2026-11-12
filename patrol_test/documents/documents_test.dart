@@ -71,7 +71,7 @@ void main() {
       expect($(keyStartingWith('documents.group.')), findsNothing);
     });
 
-    phoneCase('redix-api #102: a swipe removes one with no question', ($) async {
+    phoneCase('redix-api #102, #119: a swipe removes one once confirmed in its row', ($) async {
       final manager = await Given.manager();
       final document = await Given.document(manager);
       await onDocuments($, manager);
@@ -92,7 +92,7 @@ void main() {
       final manager = await Given.manager();
       final document = await Given.document(manager);
       await onDocuments($, manager);
-      await $.swipeAway(DocumentsScreen.documentKey(document), share: 0.15);
+      await $.swipeToAsk(DocumentsScreen.documentKey(document), share: 0.15);
       await Future<void>.delayed(const Duration(seconds: 1));
       await $.pumpAndSettle();
       expect($(DocumentsScreen.documentKey(document).title), findsOneWidget);

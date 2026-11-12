@@ -61,7 +61,7 @@ void main() {
       await $.gone($(PaymentMethodsScreen.disabledKey(id)));
     });
 
-    phoneCase('a swipe deletes a method never used, with no question', ($) async {
+    phoneCase('redix-api #119: a swipe deletes a method never used, once confirmed in its row', ($) async {
       final manager = await Given.manager();
       final id = (await Given.paymentMethods(manager)).last['id'] as String;
       await $.fromTheHome(manager, HomeScreen.paymentMethodsKey(manager.projectId));
