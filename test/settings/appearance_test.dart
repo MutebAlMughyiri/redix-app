@@ -226,18 +226,33 @@ void main() {
     expect(await kept(), 1);
   });
 
-  testWidgets('#87 R10: the waiting orange, the one color not grown from the seed, reads on the dark ground', (tester) async {
+  /// The ground of the app in [brightness], and the waiting orange on it.
+  Future<(Color, Color)> waitingOn(WidgetTester tester, Brightness brightness) async {
     late BuildContext context;
-    await tester.pumpWidget(MaterialApp(theme: appThemeOf(Brightness.dark), home: Builder(builder: (built) {
+    await tester.pumpWidget(MaterialApp(theme: appThemeOf(brightness), home: Builder(builder: (built) {
       context = built;
       return const SizedBox();
     })));
+    return (AppColor.waiting.of(context), Theme.of(context).colorScheme.surface);
+  }
 
-    double contrast(Color one, Color other) {
-      final (lighter, darker) = (max(one.computeLuminance(), other.computeLuminance()), min(one.computeLuminance(), other.computeLuminance()));
-      return (lighter + 0.05) / (darker + 0.05);
-    }
+  double contrast(Color one, Color other) {
+    final (lighter, darker) = (max(one.computeLuminance(), other.computeLuminance()), min(one.computeLuminance(), other.computeLuminance()));
+    return (lighter + 0.05) / (darker + 0.05);
+  }
 
-    expect(contrast(AppColor.waiting.of(context), Theme.of(context).colorScheme.surface), greaterThanOrEqualTo(4.5));
+  testWidgets('#87 R10: the waiting orange, the one color not grown from the seed, reads on the dark ground', (tester) async {
+    final (waiting, ground) = await waitingOn(tester, Brightness.dark);
+
+    expect(waiting, Colors.orange.shade700);
+    expect(contrast(waiting, ground), greaterThanOrEqualTo(4.5));
+  });
+
+  testWidgets('findings row 191: on the light ground the waiting orange is orange 900, its frame read at 3:1 or more, where orange 700 read at 2.6:1', (tester) async {
+    final (waiting, ground) = await waitingOn(tester, Brightness.light);
+
+    expect(waiting, Colors.orange.shade900);
+    expect(contrast(waiting, ground), greaterThanOrEqualTo(3));
+    expect(contrast(Colors.orange.shade700, ground), lessThan(3));
   });
 }

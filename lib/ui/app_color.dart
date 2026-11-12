@@ -85,5 +85,6 @@ enum AppColor {
 
   static Color _primary(ColorScheme colors) => colors.primary;
 
-  static Color _orange(ColorScheme colors) => Colors.orange.shade700;
+  /// Orange 900 on the light ground, where 700 read at 2.6:1, and 700 on the dark one (findings row 191, Muteb, 12 Nov 2026).
+  static Color _orange(ColorScheme colors) => colors.brightness == Brightness.light ? Colors.orange.shade900 : Colors.orange.shade700;
 }
