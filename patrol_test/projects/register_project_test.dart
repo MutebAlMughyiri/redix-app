@@ -22,7 +22,7 @@ Future<void> openForm(PatrolIntegrationTester $) async {
 
 /// Fills in the project's name and its manager, whose login is [username], and answers the password they chose.
 Future<String> fillProjectAndManager(PatrolIntegrationTester $, String project, String username, {String manager = 'ريم', String mobile = '0511111111'}) async {
-  final password = 'Chosen-${Given.unique()}';
+  final password = 'Chosen-${Given.unique()}-1';
   await $.fill(NewProjectScreen.nameKey, project);
   await $.fill(NewProjectScreen.managerNameKey, manager);
   await $.fill(NewProjectScreen.usernameKey, username);

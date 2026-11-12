@@ -71,7 +71,7 @@ class Given {
   static Future<Person> registered({String project = '', String manager = '', String mobile = '', String description = '', List<String> units = const [], List<String> partners = const [], String startDate = ''}) async {
     final mark = unique();
     final username = 'manager-$mark';
-    final password = 'Chosen-$mark';
+    final password = 'Chosen-$mark-2';
     final projectName = project.isEmpty ? 'Project $mark' : project;
     final displayName = manager.isEmpty ? 'Manager $mark' : manager;
     final made = await _post('/projects/register', {
@@ -101,7 +101,7 @@ class Given {
     final mark = unique();
     final username = 'member-$mark';
     final displayName = name.isEmpty ? 'Member $mark' : name;
-    final temporaryPassword = 'Temporary-$mark';
+    final temporaryPassword = 'Temporary-$mark-1';
     final user = await _post('${manager.project}/users', {
       'displayName': displayName,
       'username': username,
@@ -114,7 +114,7 @@ class Given {
     if (temporary) {
       return Person(id: id, username: username, password: temporaryPassword, displayName: displayName, projectId: manager.projectId, projectName: manager.projectName);
     }
-    final password = 'Chosen-$mark';
+    final password = 'Chosen-$mark-2';
     final session = await _signedIn(username, temporaryPassword);
     await _post('/auth/change-password', {'currentPassword': temporaryPassword, 'newPassword': password}, session['accessToken'] as String);
     return Person(id: id, username: username, password: password, displayName: displayName, projectId: manager.projectId, projectName: manager.projectName);

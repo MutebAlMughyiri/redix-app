@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../format/parts_line.dart';
 import '../auth/permission.dart';
 import '../partners/partners.dart';
 import '../ui/part_keys.dart';
@@ -118,7 +119,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     InputDecoration field(String label, {String helper = ''}) =>
-        InputDecoration(labelText: label, helperText: helper.isEmpty ? null : helper);
+        InputDecoration(labelText: label, helperText: helper.isEmpty ? null : helper, helperMaxLines: 2);
     return Scaffold(
       appBar: AppBar(title: Text(words.usersNew, key: ScreenTitle.titleKey)),
       body: SafeArea(
@@ -141,7 +142,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
               key: NewUserScreen.passwordKey,
               controller: _password,
               autocorrect: false,
-              decoration: field(words.usersTemporaryPassword, helper: words.usersTemporaryPasswordHint),
+              decoration: field(words.usersTemporaryPassword, helper: partsLine([words.usersTemporaryPasswordHint, words.commonPasswordRules])),
             ),
             const SizedBox(height: 16),
             Text(words.permissionsTitle, key: NewUserScreen.permissionsHeadingKey, style: Theme.of(context).textTheme.titleMedium),

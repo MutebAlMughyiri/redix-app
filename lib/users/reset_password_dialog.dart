@@ -50,7 +50,7 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
           key: UsersScreen.resetPasswordFieldKey,
           controller: _password,
           autocorrect: false,
-          decoration: InputDecoration(labelText: words.usersTemporaryPassword),
+          decoration: InputDecoration(labelText: words.usersTemporaryPassword, helperText: words.commonPasswordRules, helperMaxLines: 2),
         ),
       ],
     );

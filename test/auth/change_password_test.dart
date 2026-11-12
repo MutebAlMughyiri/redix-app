@@ -32,6 +32,19 @@ void main() {
     expect(find.byKey(ChangePasswordScreen.currentKey), findsOneWidget);
   });
 
+  testWidgets('redix-api #113: the new password field says what the password policy asks', (tester) async {
+    final api = FakeApi()..mustChangePassword = true;
+    await pumpRedix(tester, api);
+
+    await act(tester, api, () async {
+      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+      await tester.enterText(find.byKey(SignInScreen.passwordKey), 'temporary');
+      await tester.tap(find.byKey(SignInScreen.submitKey));
+    });
+
+    expect(tester.widget<TextField>(find.byKey(ChangePasswordScreen.newKey)).decoration!.helperText, 'en common.passwordRules');
+  });
+
   testWidgets('the password change cannot be skipped while the password is temporary', (tester) async {
     final api = FakeApi()..mustChangePassword = true;
     await pumpRedix(tester, api, stored: {'session': keptTemporarySession});

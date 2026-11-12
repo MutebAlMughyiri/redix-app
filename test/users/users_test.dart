@@ -178,6 +178,7 @@ void main() {
     await choose(tester, api, 'user-1', UsersScreen.resetPasswordKey);
     expect(text(tester, UsersScreen.resetNameKey), 'نواف');
     expect(text(tester, UsersScreen.resetExplainKey), 'en users.resetExplain');
+    expect(tester.widget<TextField>(find.byKey(UsersScreen.resetPasswordFieldKey)).decoration!.helperText, 'en common.passwordRules', reason: 'redix-api #113');
 
     await act(tester, api, () async {
       await tester.enterText(find.byKey(UsersScreen.resetPasswordFieldKey), 'Temporary-2');

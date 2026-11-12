@@ -39,14 +39,14 @@ void main() {
 
     phoneCase('a changed password opens the app', ($) async {
       final member = await onTheChangeScreen($);
-      final chosen = 'Chosen-${Given.unique()}';
+      final chosen = 'Chosen-${Given.unique()}-1';
       await sendChange($, member.password, chosen, chosen);
       await $.reach($(ProjectsScreen.cardKey(member.projectId)));
     });
 
     phoneCase('the new password signs in next time', ($) async {
       final member = await onTheChangeScreen($);
-      final chosen = 'Chosen-${Given.unique()}';
+      final chosen = 'Chosen-${Given.unique()}-1';
       await sendChange($, member.password, chosen, chosen);
       await $.reach($(ProjectsScreen.cardKey(member.projectId)));
       await $.signOutFromTheList();
@@ -65,7 +65,7 @@ void main() {
       await $.back();
       await $.goTo($(SharedSettingsScreen.changePasswordKey));
       await $(SharedSettingsScreen.changePasswordKey).tap();
-      final chosen = 'Chosen-${Given.unique()}';
+      final chosen = 'Chosen-${Given.unique()}-1';
       await sendChange($, manager.password, chosen, chosen);
       await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
       expect(await Given.canSignIn(manager.username, chosen), isTrue);
@@ -73,7 +73,7 @@ void main() {
 
     phoneCase('the old password stops working after the change', ($) async {
       final member = await onTheChangeScreen($);
-      final chosen = 'Chosen-${Given.unique()}';
+      final chosen = 'Chosen-${Given.unique()}-1';
       await sendChange($, member.password, chosen, chosen);
       await $.reach($(ProjectsScreen.cardKey(member.projectId)));
       await $.signOutFromTheList();
@@ -97,7 +97,7 @@ void main() {
 
     phoneCase('a wrong current password shows its own line', ($) async {
       await onTheChangeScreen($);
-      final chosen = 'Chosen-${Given.unique()}';
+      final chosen = 'Chosen-${Given.unique()}-1';
       await sendChange($, 'not-the-password', chosen, chosen);
       await $.says(ChangePasswordScreen.messageKey, $.words.changePasswordInvalidCredentials);
     });
@@ -110,7 +110,7 @@ void main() {
 
     phoneCase('AC-01.2: repeated wrong current passwords lock the account', ($) async {
       final member = await onTheChangeScreen($);
-      final chosen = 'Chosen-${Given.unique()}';
+      final chosen = 'Chosen-${Given.unique()}-1';
       for (var tries = 0; tries < 5; tries++) {
         await sendChange($, 'not-the-password', chosen, chosen);
       }
@@ -121,7 +121,7 @@ void main() {
     phoneCase('without a network the change says so', ($) async {
       final member = await onTheChangeScreen($);
       await Pc.cutNetwork();
-      final chosen = 'Chosen-${Given.unique()}';
+      final chosen = 'Chosen-${Given.unique()}-1';
       await sendChange($, member.password, chosen, chosen);
       await $.says(ChangePasswordScreen.messageKey, $.words.changePasswordNoConnection);
     });

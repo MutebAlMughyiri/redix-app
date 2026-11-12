@@ -200,6 +200,9 @@ mixin WordGetters {
   /// The word `attachments.cameraFailed`.
   String get attachmentsCameraFailed => text('attachments.cameraFailed');
 
+  /// The word `attachments.fileEmpty`.
+  String get attachmentsFileEmpty => text('attachments.fileEmpty');
+
   /// The word `attachments.fileTooLarge`.
   String get attachmentsFileTooLarge => text('attachments.fileTooLarge');
 
@@ -628,6 +631,9 @@ mixin WordGetters {
 
   /// The word `common.filter`.
   String get commonFilter => text('common.filter');
+
+  /// The word `common.passwordRules`.
+  String get commonPasswordRules => text('common.passwordRules');
 
   /// The word `common.retry`.
   String get commonRetry => text('common.retry');
@@ -1660,6 +1666,9 @@ mixin WordGetters {
 
   /// The word `projects.empty`.
   String get projectsEmpty => text('projects.empty');
+
+  /// The word `projects.exportSettings`.
+  String get projectsExportSettings => text('projects.exportSettings');
 
   /// The word `projects.finished`.
   String get projectsFinished => text('projects.finished');

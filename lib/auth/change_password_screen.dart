@@ -92,7 +92,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             const SizedBox(height: 32),
             TextField(key: ChangePasswordScreen.currentKey, controller: _current, decoration: field(words.changePasswordCurrent), obscureText: true),
             const SizedBox(height: 16),
-            TextField(key: ChangePasswordScreen.newKey, controller: _new, decoration: field(words.changePasswordNew), obscureText: true),
+            TextField(
+              key: ChangePasswordScreen.newKey,
+              controller: _new,
+              decoration: field(words.changePasswordNew).copyWith(helperText: words.commonPasswordRules, helperMaxLines: 2),
+              obscureText: true,
+            ),
             const SizedBox(height: 16),
             TextField(
               key: ChangePasswordScreen.confirmKey,

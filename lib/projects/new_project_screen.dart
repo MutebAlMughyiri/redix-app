@@ -256,7 +256,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                 key: NewProjectScreen.passwordKey,
                 controller: _password,
                 obscureText: true,
-                decoration: InputDecoration(labelText: words.signInPassword),
+                decoration: InputDecoration(labelText: words.signInPassword, helperText: words.commonPasswordRules, helperMaxLines: 2),
               ),
             ],
             const SizedBox(height: 24),

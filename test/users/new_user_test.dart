@@ -85,6 +85,12 @@ void main() {
     expect(tester.widget<TextField>(find.byKey(NewUserScreen.passwordKey)).obscureText, isFalse);
   });
 
+  testWidgets('redix-api #113: the temporary password says it changes at first sign-in, and what the password policy asks', (tester) async {
+    await openForm(tester);
+
+    expect(tester.widget<TextField>(find.byKey(NewUserScreen.passwordKey)).decoration!.helperText, 'en users.temporaryPasswordHint · en common.passwordRules');
+  });
+
   testWidgets('a taken username shows its own line, and nothing typed is lost', (tester) async {
     final api = await openForm(tester);
 

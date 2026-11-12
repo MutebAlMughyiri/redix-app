@@ -52,6 +52,12 @@ void main() {
     expect(tester.widget<TextField>(find.byKey(NewProjectScreen.passwordKey)).obscureText, isTrue);
   });
 
+  testWidgets('redix-api #113: the password says what the password policy asks', (tester) async {
+    await openForm(tester);
+
+    expect(tester.widget<TextField>(find.byKey(NewProjectScreen.passwordKey)).decoration!.helperText, 'en common.passwordRules');
+  });
+
   testWidgets('sending returns to sign-in and says it is waiting', (tester) async {
     final api = await openForm(tester);
 

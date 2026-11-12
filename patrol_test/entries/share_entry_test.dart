@@ -105,7 +105,7 @@ void main() {
       await $.pumpAndSettle();
       await $.signIn(member.username, member.password);
       await $.reach($(ChangePasswordScreen.currentKey));
-      final chosen = 'Chosen-${Given.unique()}';
+      final chosen = 'Chosen-${Given.unique()}-1';
       await $(ChangePasswordScreen.currentKey).enterText(member.password);
       await $(ChangePasswordScreen.newKey).enterText(chosen);
       await $(ChangePasswordScreen.confirmKey).enterText(chosen);
