@@ -49,17 +49,20 @@ void main() {
     expect(find.byKey(SuppliersScreen.rowKey(palm)), findsOneWidget);
   });
 
-  testWidgets('R4: while something is typed the search icon leaves the line open, and leaving the screen clears it', (tester) async {
-    final (api, _, palm) = await onSuppliers(tester);
+  testWidgets('R4: the search icon tapped again hides the line and clears it, and leaving the screen clears it too', (tester) async {
+    final (api, horizon, palm) = await onSuppliers(tester);
     await searchFor(tester, api, 'الافق');
-    await act(tester, api, () => tester.tap(find.byKey(SearchIcons.searchKey)));
-
-    expect(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.text('الافق')), findsOneWidget);
     expect(find.byKey(SuppliersScreen.rowKey(palm)), findsNothing);
 
+    await act(tester, api, () => tester.tap(find.byKey(SearchIcons.searchKey)));
+    expect(find.byKey(SearchLine.searchKey), findsNothing);
+    expect(find.byKey(SuppliersScreen.rowKey(palm)), findsOneWidget);
+
+    await searchFor(tester, api, 'الافق');
     await act(tester, api, () => tester.pageBack());
     await scrollAndTap(tester, api, HomeScreen.suppliersKey('project-0'));
     expect(find.byKey(SearchLine.searchKey), findsNothing);
+    expect(find.byKey(SuppliersScreen.rowKey(horizon)), findsOneWidget);
     expect(find.byKey(SuppliersScreen.rowKey(palm)), findsOneWidget);
   });
 

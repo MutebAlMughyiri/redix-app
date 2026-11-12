@@ -31,7 +31,8 @@ class ScreenSearch extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Hides the search line and clears what was typed, so the list shows whole again (R3): the only way the line closes, so a closed line never narrows the list.
+  /// Hides the search line and clears what was typed, so the list shows whole again (R3): the only way the line closes, by its ✕ or the search icon tapped again,
+  /// so a closed line never narrows the list.
   void close() {
     _isOpen = false;
     type('');
@@ -103,8 +104,8 @@ class _SearchHeld extends InheritedNotifier<ScreenSearch> {
   final ScreenSearch search;
 }
 
-/// The search icon in a screen's title bar, and on a screen with filters the filter icon beside it, filled while a filter is in use, so a narrowed list says so with
-/// its lines closed (redix-app #104, D7, D8, R6).
+/// The search icon in a screen's title bar, showing the search line and, tapped again, hiding it (Muteb, 12 Nov 2026); and on a screen with filters the filter icon
+/// beside it, filled while a filter is in use, so a narrowed list says so with its lines closed (redix-app #104, D7, D8, R6).
 class SearchIcons extends StatelessWidget {
   /// The search icon alone.
   const SearchIcons({super.key}) : hasFilters = false, filtersInUse = false;
@@ -131,7 +132,13 @@ class SearchIcons extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        IconButton(key: searchKey, tooltip: words.commonSearch, isSelected: search.isOpen, icon: Icon(Icons.search, key: searchKey.icon), onPressed: search.open),
+        IconButton(
+          key: searchKey,
+          tooltip: words.commonSearch,
+          isSelected: search.isOpen,
+          icon: Icon(Icons.search, key: searchKey.icon),
+          onPressed: search.isOpen ? search.close : search.open,
+        ),
         if (hasFilters)
           IconButton(
             key: filtersKey,
