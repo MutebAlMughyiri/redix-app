@@ -41,3 +41,17 @@ description: How REDIX app code is written - best practice of Flutter, simple, c
 - One class to a file: a screen's card, row and dialogs are files of their own, and each class has one job.
 - What a second feature needs moves to one owner (`ApiList`, `lib/ui/`), never a second copy.
 - The generated `lib/words/word_getters.g.dart` comes only from `tool/sync_translations.dart` and is never edited by hand.
+
+## The skills that hold each part in detail
+
+Brought from the Testin project on 12 November 2026; read the one a change touches.
+
+| Skill | Holds |
+| --- | --- |
+| `a-class-does-one-job` | A class or file does one job, and its name says which |
+| `names-say-the-business` | Every name is the glossary's word, in full |
+| `code-cites-its-rule` | The doc comment names its rule; the use case page and the guide change in the same commit |
+| `use-what-the-platform-has` | Flutter's widget first, through the app's owner of it; the owners table |
+| `size-by-screen-and-font` | A size is a part of the screen or follows the phone's text size |
+| `redix-review` | The seven questions and the checks before a commit |
+| `redix-story` (in redix-api) | The issue format, labels and milestone, for both repos |
