@@ -109,6 +109,18 @@ void main() {
     expect(find.byKey(DocumentsScreen.groupHeadingKey('التراخيص')), findsOneWidget);
   });
 
+  testWidgets('findings row 193: a file of no bytes says it is empty, and nothing is sent', (tester) async {
+    final (:api, :capture) = await openDocuments(tester);
+    capture.files = PickedFile.read('permit.pdf', '/phone/permit.pdf', Uint8List(0));
+
+    await openDialog(tester, api, 'رخصة البناء');
+    await act(tester, api, () => tester.tap(find.byKey(DocumentsScreen.fileKey)));
+
+    expect(tester.widget<Text>(find.byKey(DocumentsScreen.fileHintKey)).data, 'en attachments.fileEmpty');
+    await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
+    expect(api.sentDocuments, isEmpty);
+  });
+
   testWidgets('UC-064: a document with no group is sent with an empty one', (tester) async {
     final (:api, :capture) = await openDocuments(tester);
     capture.files = PickedFile('contract.pdf', '/phone/contract.pdf', Uint8List.fromList([0x25, 0x50, 0x44, 0x46]));

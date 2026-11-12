@@ -92,7 +92,7 @@ Map<String, String> wordsIn(String language) => {
     'contracts.contractor', 'contracts.item', 'contracts.openValue', 'contracts.contractValue', 'contracts.unitPrice', 'contracts.quantity', 'contracts.notes', 'contracts.value',
     'contracts.paid', 'contracts.remaining', 'contracts.open', 'contracts.overrun', 'contracts.notStarted', 'contracts.running', 'contracts.filterAll', 'contracts.filterOverrun',
     'contracts.filterOpenValue', 'contracts.disable', 'contracts.enable', 'contracts.disabled', 'contracts.documents', 'contracts.addDocument', 'contracts.unknownAttachment',
-    'attachments.invalidFileType', 'attachments.imageTooLarge', 'attachments.projectFinished', 'attachments.noConnection', 'attachments.refused', 'attachments.cameraFailed', 'attachments.unreadable',
+    'attachments.invalidFileType', 'attachments.imageTooLarge', 'attachments.projectFinished', 'attachments.noConnection', 'attachments.refused', 'attachments.cameraFailed', 'attachments.unreadable', 'attachments.fileEmpty',
     'attachments.invoicePhoto', 'attachments.retake', 'attachments.takePhoto', 'attachments.pickFile',
     'expenses.item', 'expenses.supplier', 'expenses.date', 'expenses.product', 'expenses.unitPrice', 'expenses.quantity',
     'expenses.total',

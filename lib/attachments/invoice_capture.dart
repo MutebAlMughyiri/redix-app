@@ -25,7 +25,7 @@ class InvoiceCapture {
         return PickedFile.none();
       }
       final file = File(pictures.first);
-      return PickedFile(file.uri.pathSegments.last, file.path, await compute(compressedPicture, await file.readAsBytes()));
+      return await _kept(PickedFile.read(file.uri.pathSegments.last, file.path, await file.readAsBytes()));
     } on Exception catch (error) {
       debugPrint('Camera not opened: $error');
       return PickedFile.failed('attachments.cameraFailed');
@@ -68,10 +68,11 @@ class InvoiceCapture {
 
   Future<PickedFile> _fileAt(String path) async {
     final file = File(path);
-    final bytes = await file.readAsBytes();
-    final picked = PickedFile(file.uri.pathSegments.last, path, bytes);
-    return picked.isPdf ? picked : PickedFile(picked.name, path, await compute(compressedPicture, bytes));
+    return _kept(PickedFile.read(file.uri.pathSegments.last, path, await file.readAsBytes()));
   }
+
+  /// [file] as the app keeps it: a picture under 1 MB (NFR-06); a PDF, and what could not be read or held nothing, as they are.
+  Future<PickedFile> _kept(PickedFile file) async => file.isNone || file.isPdf ? file : PickedFile(file.name, file.path, await compute(compressedPicture, file.bytes));
 
   /// Hands the PDF [bytes], named [name], to the phone's print dialog: AirPrint on iPhone, the print service on Android and Huawei, with a preview (FR-48).
   Future<void> printPdf(Uint8List bytes, String name) => Printing.layoutPdf(onLayout: (_) async => bytes, name: name);
@@ -95,7 +96,7 @@ class InvoiceCapture {
       if (picked == null) {
         return PickedFile.none();
       }
-      return PickedFile(picked.name, picked.path ?? '', await picked.readAsBytes());
+      return PickedFile.read(picked.name, picked.path ?? '', await picked.readAsBytes());
     } on Exception catch (error) {
       debugPrint('File not read: $error');
       return PickedFile.failed('attachments.unreadable');
@@ -109,9 +110,7 @@ class InvoiceCapture {
       if (picked == null) {
         return PickedFile.none();
       }
-      final bytes = await picked.readAsBytes();
-      final file = PickedFile(picked.name, picked.path ?? '', bytes);
-      return file.isPdf ? file : PickedFile(picked.name, picked.path ?? '', await compute(compressedPicture, bytes));
+      return await _kept(PickedFile.read(picked.name, picked.path ?? '', await picked.readAsBytes()));
     } on Exception catch (error) {
       debugPrint('File not read: $error');
       return PickedFile.failed('attachments.unreadable');

@@ -11,6 +11,9 @@ class PickedFile {
   /// Nothing, because of the word key [failure].
   PickedFile.failed(this.failure) : name = '', path = '', bytes = Uint8List(0);
 
+  /// The file named [name] at [path] as it was read, holding [bytes]: one that holds nothing says it is empty, rather than counting as nothing picked (findings row 193).
+  factory PickedFile.read(String name, String path, Uint8List bytes) => bytes.isEmpty ? PickedFile.failed('attachments.fileEmpty') : PickedFile(name, path, bytes);
+
   /// The file's name.
   final String name;
 
