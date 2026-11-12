@@ -49,6 +49,15 @@ void main() {
       await $.says(SignInScreen.messageKey, $.words.signInInvalidCredentials);
     });
 
+    phoneCase('redix-app #98: a refused sign-in says why in one line above the user name, on the screen', ($) async {
+      final manager = await Given.manager();
+      await $.startApp();
+      await $.signIn(manager.username, 'not-the-password');
+      await $.says(SignInScreen.messageKey, $.words.signInInvalidCredentials);
+      expect(find.byKey(SignInScreen.messageKey).hitTestable(), findsOneWidget);
+      expect($.tester.getTopLeft(find.byKey(SignInScreen.messageKey)).dy, lessThan($.tester.getTopLeft(find.byKey(SignInScreen.usernameKey)).dy));
+    });
+
     phoneCase('AC-01.2: an unknown username shows that same line', ($) async {
       await $.startApp();
       await $.signIn('nobody-${Given.unique()}', 'not-the-password');

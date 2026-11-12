@@ -108,6 +108,30 @@ void main() {
       await $.says(ChangePasswordScreen.messageKey, $.words.changePasswordWeakPassword);
     });
 
+    phoneCase('redix-api #113: the new password says the policy under it', ($) async {
+      await onTheChangeScreen($);
+      await $.reach($(ChangePasswordScreen.newKey));
+      expect(find.descendant(of: find.byKey(ChangePasswordScreen.newKey), matching: find.text($.words.commonPasswordRules)), findsOneWidget);
+    });
+
+    phoneCase('redix-api #113: eight letters with no digit are refused', ($) async {
+      final member = await onTheChangeScreen($);
+      await sendChange($, member.password, 'Abcdefgh', 'Abcdefgh');
+      await $.says(ChangePasswordScreen.messageKey, $.words.changePasswordWeakPassword);
+    });
+
+    phoneCase('redix-api #113: the user name is refused as a password', ($) async {
+      final member = await onTheChangeScreen($);
+      await sendChange($, member.password, member.username, member.username);
+      await $.says(ChangePasswordScreen.messageKey, $.words.changePasswordWeakPassword);
+    });
+
+    phoneCase('redix-api #113: eight characters with a letter and a digit are taken', ($) async {
+      final member = await onTheChangeScreen($);
+      await sendChange($, member.password, 'abcdefg1', 'abcdefg1');
+      await $.reach($(ProjectsScreen.cardKey(member.projectId)));
+    });
+
     phoneCase('AC-01.2: repeated wrong current passwords lock the account', ($) async {
       final member = await onTheChangeScreen($);
       final chosen = 'Chosen-${Given.unique()}-1';
