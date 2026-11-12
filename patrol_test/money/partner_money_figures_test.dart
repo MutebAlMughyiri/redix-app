@@ -96,12 +96,12 @@ void main() {
       await $.nothingWaits();
     });
 
-    phoneCase('AC-50.1: a reversed withdrawal puts the balance, the surplus and the account back', ($) async {
+    phoneCase('AC-50.1: a removed withdrawal puts the balance, the surplus and the account back', ($) async {
       final manager = await Given.manager();
       final partner = await Given.partner(manager, 'هيثم');
       final account = await Given.account(manager);
       await approvedMoney(manager, partner, 1000, accountId: account);
-      await Given.entryReversed(manager, await approvedMoney(manager, partner, 300, withdrawal: true, accountId: account));
+      await Given.entryRemoved(manager, await approvedMoney(manager, partner, 300, withdrawal: true, accountId: account));
       await onPartners($, manager);
       await $.says(PartnersScreen.balanceKey(partner), '1,000.00');
       await $.back();

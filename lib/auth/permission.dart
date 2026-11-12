@@ -39,10 +39,13 @@ enum Permission {
   /// Delete an entry not yet approved: one's own, or with [manageAnyEntry] anyone's once sent.
   deleteEntries,
 
+  /// Remove an approved entry softly (redix-api #119): it leaves every list and figure, and its history stays. Nobody holds it until it is ticked.
+  removeApprovedEntries,
+
   /// Keep a picture or a file in a project, for an entry, a receipt or a contract.
   attachFiles,
 
-  /// See the entries waiting in a project, approve or reject them, and reverse an approved one.
+  /// See the entries waiting in a project, and approve or reject them.
   approveEntries,
 
   /// Enter what counts at once in a project: capital movements, revenue and reconciling.

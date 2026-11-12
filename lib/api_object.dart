@@ -126,7 +126,7 @@ abstract class ApiObject<T> extends ChangeNotifier {
 
   /// Deletes what the API [path] names (redix-api #98), and answers as [change] does.
   @protected
-  Future<String> deleteAt(String path) => _send(path, () => _session.delete(path), '');
+  Future<String> deleteAt(String path, {String wordPrefix = ''}) => _send(path, () => _session.delete(path), wordPrefix);
 
   /// Sends the file [bytes], named [name], with the form [fields] beside it, to the API [path], and answers as [change] does.
   @protected

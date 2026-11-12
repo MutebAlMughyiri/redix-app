@@ -18,7 +18,6 @@ class EntryRow {
       invoiceNumber = '',
       authorName = '',
       isMine = false,
-      isReversed = false,
       partnerName = '',
       notes = '',
       accountName = '',
@@ -41,7 +40,6 @@ class EntryRow {
       invoiceNumber = json['invoiceNumber'] as String,
       authorName = json['authorName'] as String,
       isMine = json['isMine'] as bool,
-      isReversed = json['isReversed'] as bool,
       partnerName = json['partnerName'] as String,
       notes = json['notes'] as String,
       accountName = json['accountName'] as String,
@@ -81,9 +79,6 @@ class EntryRow {
   /// True when the signed-in user entered it.
   final bool isMine;
 
-  /// True when it was reversed, or is itself a reversal.
-  final bool isReversed;
-
   /// A partner's money's partner; empty for any other entry.
   final String partnerName;
 
@@ -116,6 +111,9 @@ class EntryRow {
   bool allows(Project project, Permission permission) =>
       !project.isFinished && !isApproved && project.may(permission) && (isMine ? !isPending || project.may(Permission.manageAnyEntry) : project.may(Permission.manageAnyEntry));
 
+  /// Whether the signed-in user may remove it from [project] now: an approved one by its own permission (redix-api #119), any other as [allows] says for deleting.
+  bool mayRemoveIn(Project project) => isApproved ? project.mayRemoveApprovedEntries : allows(project, Permission.deleteEntries);
+
   /// True while it waits for a decision.
   bool get isPending => status == EntryStatus.pendingApproval;
 
@@ -126,5 +124,5 @@ class EntryRow {
   bool get isRejected => status == EntryStatus.rejected;
 
   /// The word key of where it stands.
-  String get statusWordKey => isReversed ? 'entries.reversed' : status.wordKey;
+  String get statusWordKey => status.wordKey;
 }

@@ -76,13 +76,10 @@ lib/
     opened_entry.dart       The entry a page opened, read by its id as the lists show it, whichever list opened it: where it stands, sending and reversing it (findings row 201)
     project_entries.dart    A project's entries, newest first: everyone who reads the project sees them all, and only their own drafts
     searched_entries.dart   The Entries screen's search: the newest entries with what was typed and chosen sent to the API, a page at a time
-    reverse_sheet.dart      Asks why something approved is reversed, and reverses it
     saved_entry.dart        An entry as the API keeps it, whatever its table, read to fill Add entry when it is changed
     table_picker.dart       The field that chooses the table an expense goes into, opening a sheet of every table on offer: by category, each item with its general table first and its named tables and contracts under it, with a search over the items' and the tables' names
   expenses/
     column_value_field.dart The field of one custom column, drawn from what the column holds: a required one is marked
-    creditable_invoice.dart A bill a credit note can return, as the API answers it, or none yet chosen
-    creditable_invoices.dart What a credit note may return: one supplier's invoices, as the API finds them
     entry_date.dart         Asks for an entry's date in project, from current: within its period and not in the future
     invoice_qr.dart         What a Saudi e-invoice's QR code carries: the text is base64 of tag, length and value, one after another, tags 1 to 5 being the seller, its VAT number, the time, the total including VAT and the VAT
     invoice_section.dart    The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files
@@ -116,7 +113,7 @@ lib/
     capital.dart            One partner's capital
     capital_movement.dart   One movement of a partner's capital
     capital_movements.dart  One partner's movements, newest first
-    movements_screen.dart   One partner's movements, each with its receipt, and for whoever decides entries a way to reverse it
+    movements_screen.dart   One partner's movements, each with its receipt; whoever holds the removal swipes one away
     partner.dart            A partner in a project, as the API answers them
     partner_dialog.dart     Asks for a partner's name and their login
     partner_history*.dart   The partners' history: its lines, their words and icons

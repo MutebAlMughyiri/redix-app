@@ -166,7 +166,7 @@ void main() {
       api
         ..addPending()
         ..addPending()
-        ..approvalFailures['entry-1'] = 'originalNotApproved';
+        ..approvalFailures['entry-1'] = 'entryNotPending';
     });
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.selectKey('entry-0'))));
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.selectKey('entry-1'))));
@@ -174,7 +174,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.approveSelectedKey)));
 
     expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsNothing);
-    expect(tester.widget<Text>(find.byKey(ApprovalsScreen.failedKey('entry-1'))).data, 'en approvals.originalNotApproved');
+    expect(tester.widget<Text>(find.byKey(ApprovalsScreen.failedKey('entry-1'))).data, 'en approvals.entryNotPending');
   });
 
   testWidgets('AC-19.1: rejecting needs a reason, and the refusal shows on the sheet', (tester) async {

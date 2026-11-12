@@ -146,9 +146,6 @@ mixin WordGetters {
   /// The word `approvals.openFile`.
   String get approvalsOpenFile => text('approvals.openFile');
 
-  /// The word `approvals.originalNotApproved`.
-  String get approvalsOriginalNotApproved => text('approvals.originalNotApproved');
-
   /// The word `approvals.purchases`.
   String get approvalsPurchases => text('approvals.purchases');
 
@@ -310,12 +307,6 @@ mixin WordGetters {
 
   /// The word `capital.receiptHint`.
   String get capitalReceiptHint => text('capital.receiptHint');
-
-  /// The word `capital.reverse`.
-  String get capitalReverse => text('capital.reverse');
-
-  /// The word `capital.reversed`.
-  String get capitalReversed => text('capital.reversed');
 
   /// The word `capital.save`.
   String get capitalSave => text('capital.save');
@@ -851,9 +842,6 @@ mixin WordGetters {
   /// The word `documents.title`.
   String get documentsTitle => text('documents.title');
 
-  /// The word `entries.alreadyReversed`.
-  String get entriesAlreadyReversed => text('entries.alreadyReversed');
-
   /// The word `entries.approved`.
   String get entriesApproved => text('entries.approved');
 
@@ -881,14 +869,8 @@ mixin WordGetters {
   /// The word `entries.entryApproved`.
   String get entriesEntryApproved => text('entries.entryApproved');
 
-  /// The word `entries.entryHasCreditNote`.
-  String get entriesEntryHasCreditNote => text('entries.entryHasCreditNote');
-
   /// The word `entries.entryIncomplete`.
   String get entriesEntryIncomplete => text('entries.entryIncomplete');
-
-  /// The word `entries.entryNotApproved`.
-  String get entriesEntryNotApproved => text('entries.entryNotApproved');
 
   /// The word `entries.entryNotSubmittable`.
   String get entriesEntryNotSubmittable => text('entries.entryNotSubmittable');
@@ -947,20 +929,8 @@ mixin WordGetters {
   /// The word `entries.rejected`.
   String get entriesRejected => text('entries.rejected');
 
-  /// The word `entries.reverse`.
-  String get entriesReverse => text('entries.reverse');
-
-  /// The word `entries.reverseExplain`.
-  String get entriesReverseExplain => text('entries.reverseExplain');
-
-  /// The word `entries.reverseReason`.
-  String get entriesReverseReason => text('entries.reverseReason');
-
-  /// The word `entries.reverseTitle`.
-  String get entriesReverseTitle => text('entries.reverseTitle');
-
-  /// The word `entries.reversed`.
-  String get entriesReversed => text('entries.reversed');
+  /// The word `entries.remove`.
+  String get entriesRemove => text('entries.remove');
 
   /// The word `entries.search`.
   String get entriesSearch => text('entries.search');
@@ -1043,23 +1013,14 @@ mixin WordGetters {
   /// The word `expenses.accountNotOffered`.
   String get expensesAccountNotOffered => text('expenses.accountNotOffered');
 
-  /// The word `expenses.alreadyReversed`.
-  String get expensesAlreadyReversed => text('expenses.alreadyReversed');
-
   /// The word `expenses.amount`.
   String get expensesAmount => text('expenses.amount');
 
   /// The word `expenses.creditNote`.
   String get expensesCreditNote => text('expenses.creditNote');
 
-  /// The word `expenses.creditNoteAboveOriginal`.
-  String get expensesCreditNoteAboveOriginal => text('expenses.creditNoteAboveOriginal');
-
   /// The word `expenses.creditNoteExplain`.
   String get expensesCreditNoteExplain => text('expenses.creditNoteExplain');
-
-  /// The word `expenses.creditNoteNeedsOriginal`.
-  String get expensesCreditNoteNeedsOriginal => text('expenses.creditNoteNeedsOriginal');
 
   /// The word `expenses.date`.
   String get expensesDate => text('expenses.date');
@@ -1072,12 +1033,6 @@ mixin WordGetters {
 
   /// The word `expenses.entryExists`.
   String get expensesEntryExists => text('expenses.entryExists');
-
-  /// The word `expenses.entryHasCreditNote`.
-  String get expensesEntryHasCreditNote => text('expenses.entryHasCreditNote');
-
-  /// The word `expenses.entryNotApproved`.
-  String get expensesEntryNotApproved => text('expenses.entryNotApproved');
 
   /// The word `expenses.entryWaitingForDecision`.
   String get expensesEntryWaitingForDecision => text('expenses.entryWaitingForDecision');
@@ -1124,17 +1079,11 @@ mixin WordGetters {
   /// The word `expenses.noConnection`.
   String get expensesNoConnection => text('expenses.noConnection');
 
-  /// The word `expenses.noCreditableInvoice`.
-  String get expensesNoCreditableInvoice => text('expenses.noCreditableInvoice');
-
   /// The word `expenses.notYourEntry`.
   String get expensesNotYourEntry => text('expenses.notYourEntry');
 
   /// The word `expenses.notes`.
   String get expensesNotes => text('expenses.notes');
-
-  /// The word `expenses.originalInvoice`.
-  String get expensesOriginalInvoice => text('expenses.originalInvoice');
 
   /// The word `expenses.paymentMethod`.
   String get expensesPaymentMethod => text('expenses.paymentMethod');
@@ -1169,9 +1118,6 @@ mixin WordGetters {
   /// The word `expenses.requiredColumnMissing`.
   String get expensesRequiredColumnMissing => text('expenses.requiredColumnMissing');
 
-  /// The word `expenses.returnable`.
-  String get expensesReturnable => text('expenses.returnable');
-
   /// The word `expenses.saveDraft`.
   String get expensesSaveDraft => text('expenses.saveDraft');
 
@@ -1198,9 +1144,6 @@ mixin WordGetters {
 
   /// The word `expenses.unknownColumn`.
   String get expensesUnknownColumn => text('expenses.unknownColumn');
-
-  /// The word `expenses.unknownOriginalInvoice`.
-  String get expensesUnknownOriginalInvoice => text('expenses.unknownOriginalInvoice');
 
   /// The word `expenses.unknownPaymentMethod`.
   String get expensesUnknownPaymentMethod => text('expenses.unknownPaymentMethod');
@@ -1288,9 +1231,6 @@ mixin WordGetters {
 
   /// The word `history.partnerDeleted`.
   String get historyPartnerDeleted => text('history.partnerDeleted');
-
-  /// The word `history.reversed`.
-  String get historyReversed => text('history.reversed');
 
   /// The word `history.transfer`.
   String get historyTransfer => text('history.transfer');
@@ -1594,6 +1534,12 @@ mixin WordGetters {
 
   /// The word `permissions.recordEntriesHint`.
   String get permissionsRecordEntriesHint => text('permissions.recordEntriesHint');
+
+  /// The word `permissions.removeApprovedEntries`.
+  String get permissionsRemoveApprovedEntries => text('permissions.removeApprovedEntries');
+
+  /// The word `permissions.removeApprovedEntriesHint`.
+  String get permissionsRemoveApprovedEntriesHint => text('permissions.removeApprovedEntriesHint');
 
   /// The word `permissions.seeAllCapital`.
   String get permissionsSeeAllCapital => text('permissions.seeAllCapital');

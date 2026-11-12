@@ -20,7 +20,6 @@ import 'auth/session.dart';
 import 'auth/sign_in_screen.dart';
 import 'contracts/contracts.dart';
 import 'contracts/contracts_screen.dart';
-import 'expenses/creditable_invoices.dart';
 import 'home/home_screen.dart';
 import 'partners/capital.dart';
 import 'partners/capital_movements.dart';
@@ -173,7 +172,6 @@ class _RedixAppState extends State<RedixApp> {
   late final _documentsOf = _kept((projectId) => Documents(widget.session, projectId));
   late final _attachableOf = _kept((projectId) => AttachableEntries(widget.session, projectId));
   late final _entryTablesOf = _kept((projectId) => EntryTables(widget.session, projectId));
-  late final _creditableInvoicesOf = _kept((projectId) => CreditableInvoices(widget.session, projectId));
   final _offeredItemLists = <String, OfferedItems>{};
   final _periodicReports = <String, PeriodicReport>{};
   final _itemReports = <String, ItemReport>{};
@@ -411,7 +409,6 @@ class _RedixAppState extends State<RedixApp> {
     accounts: _offeredAccountsOf(projectId),
     paymentMethods: _paymentMethodsOf(projectId),
     suppliers: _suppliersOf(projectId),
-    creditableInvoices: _creditableInvoicesOf(projectId),
     columnsOf: (itemId) => _columnsAt(Columns.itemPath(projectId, itemId)),
     attachments: _attachmentsOf(projectId),
     capture: widget.capture,

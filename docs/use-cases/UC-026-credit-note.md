@@ -8,19 +8,17 @@
 
 ## Screens
 
-No screen of its own. On `AddEntryScreen`, the canvas's **مرتجع** switch. A credit note is typed as a plain amount, and the API keeps it negative. It always names the bill it returns (D13): once a supplier is chosen, the bill is picked from a sheet that says what each has left to return, an older bill by its number and a newer one by its date. Choosing another supplier takes the link away.
+No screen of its own. On `AddEntryScreen`, the canvas's **مرتجع** switch. A credit note is typed as a plain amount, and the API keeps it negative: its own row with a minus amount, naming no bill (Muteb, 12 Nov 2026, redix-api #119 D4), so nothing is asked about a bill and nothing caps it. A saved purchase with a minus amount opens with the switch on and its plain amount.
 
 A deduction needs no switch of its own: it is a negative amount, and it says why in its notes (D14). The amount's keyboard offers the minus sign, and `parseNumber` reads it with either digits.
 
 | Element | `Key` | Does |
 | --- | --- | --- |
 | Credit note | `AddEntryScreen.creditNoteKey` | The switch |
-| Original invoice | `AddEntryScreen.originalInvoiceKey` | Opens the sheet; required for a credit note |
-| A bill | `OriginalInvoicePicker.optionKey(entryId)` | Each row of the sheet |
 
 ## API calls
 
-`GET /projects/{id}/expenses/creditable?supplierId=` through `CreditableInvoices`, read each time the sheet opens. `POST /projects/{id}/expenses` with `isCreditNote` and `originalEntryId`, or a negative `amount`.
+`POST /projects/{id}/entries` with `isCreditNote` and a plain `amount`, or a negative `amount` for a deduction.
 
 ## Rules
 
@@ -28,10 +26,7 @@ Tests are in `test/entries/add_entry_test.dart`. The switch shows while a purcha
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| AC-14.2, D13: a credit note names the bill it returns and sends a plain amount | `OriginalInvoicePicker`, `_body` | AC-14.2, D13: a credit note names the bill it returns |
-| An older bill shows its number, and a new one its date | `CreditableInvoice.label` | an older bill shows its number, and a new one its date |
-| Another supplier takes the link away | `_useSupplier` | another supplier takes the link away |
-| BR-18: above what is left is blocked with a message | The API's `creditNoteAboveOriginal` | BR-18: a credit note above what is left |
+| AC-14.2, D4: a credit note sends a plain amount and names no bill | `_body` | AC-14.2, redix-api #119 D4: a credit note sends a plain amount and names no bill |
 | AC-14.1, D14: a deduction is a negative amount, sent with why in its notes | `parseNumber`, `_body` | AC-14.1, D14: a deduction is a negative amount |
 | D14: a deduction with no notes is refused with the API's reason | The API's `deductionNeedsNotes` | D14: a deduction with no notes is refused |
 | Fits 360 points wide, in both languages | The screen | `test/settings/account_test.dart`: AC-N03 |

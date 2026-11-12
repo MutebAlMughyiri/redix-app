@@ -95,11 +95,11 @@ void main() {
       await $.contractStands(contract.id, paid: '0.00', remaining: '1,000.00');
     });
 
-    phoneCase('AC-50.1: a reversed payment leaves what was paid, and what remains comes back', ($) async {
+    phoneCase('AC-50.1: a removed payment leaves what was paid, and what remains comes back', ($) async {
       final manager = await Given.manager();
       final contract = await Given.contract(manager, value: 1000);
       await approvedPayment(manager, contract, 200);
-      await Given.entryReversed(manager, await approvedPayment(manager, contract, 300));
+      await Given.entryRemoved(manager, await approvedPayment(manager, contract, 300));
       await onContracts($, manager);
       await $.contractStands(contract.id, paid: '200.00', remaining: '800.00');
     });

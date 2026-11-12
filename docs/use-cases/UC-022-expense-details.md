@@ -20,7 +20,7 @@ A purchase is a total on one date, with an optional file (redix-api #96, D3, D10
 | Searching the tables, and nothing matching | `TablePicker.searchKey`, `noMatchKey` | Keeps every table of an item whose name holds what was typed, and any table whose own name does, in one spelling |
 | Date | `AddEntryScreen.dateKey` | Starts at today and picks within the project's period; sent as `paymentDate` |
 | Supplier, and what is known of it | `AddEntryScreen.supplierKey`, `supplierDetailsKey` | A purchase's: opens `SupplierPicker`, with its quick add (UC-018, UC-019) |
-| Credit note | `AddEntryScreen.creditNoteKey`, `originalInvoiceKey` | A purchase's (UC-026) |
+| Credit note | `AddEntryScreen.creditNoteKey` | A purchase's (UC-026) |
 | Product, unit price, quantity | `AddEntryScreen.productKey`, `unitPriceKey`, `quantityKey` | A purchase's; each follows its column: marked `*` when required, gone when deleted |
 | The contract's figures, inside or outside | `AddEntryScreen.valueKey`, `paidKey`, `remainingKey`, `insideKey`, `outsideKey` | A payment's (UC-027) |
 | Amount | `AddEntryScreen.amountKey` | A purchase's total or a payment's amount, labelled by its column; a negative one is a deduction |

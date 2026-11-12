@@ -21,8 +21,8 @@ class OpenedEntry extends ApiObject<EntryRow> {
   /// Sends it, a draft or a rejected entry, for approval. Returns an empty string once sent, otherwise the word key of the refusal.
   Future<String> send() => change('/projects/$projectId/entries/${value.id}/submit', {});
 
-  /// Reverses it, an approved entry, saying [reason]. Returns an empty string once reversed, otherwise the word key of the refusal.
-  Future<String> reverse(String reason) => change('/projects/$projectId/entries/${value.id}/reverse', {'reason': reason});
+  /// Removes it, an approved entry, softly (redix-api #119). Returns an empty string once removed, otherwise the word key of the refusal.
+  Future<String> remove() => deleteAt('/projects/$projectId/entries/${value.id}');
 
   static EntryRow _rowOf(Object? json) => EntryRow.fromJson(json! as Map<String, dynamic>);
 }

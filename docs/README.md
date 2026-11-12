@@ -75,7 +75,7 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-027](use-cases/UC-027-contractor-payment.md) | Pay a contractor from a contract's table and see the effect before saving | Whoever enters an expense |
 | [UC-029](use-cases/UC-029-offline.md) | Record entries without a network, and send them when it returns | Whoever enters expenses in the project |
 | [UC-031, UC-032](use-cases/UC-031-approvals.md) | Review what waits, and approve or reject it | Whoever does the project's finance |
-| [UC-033, UC-034, UC-035, UC-037](use-cases/UC-033-entries.md) | See entries, search and filter them, fix them, and reverse them | Everyone in the project |
+| [UC-033, UC-034, UC-035, UC-037](use-cases/UC-033-entries.md) | See entries, search and filter them, fix them, and remove an approved one | Everyone in the project |
 | [UC-036](use-cases/UC-036-notifications.md) | See what you were told, and open it | Everyone |
 | [UC-038, UC-039, UC-046](use-cases/UC-038-share.md) | Share a file to the app, and attach it or start an expense with it | Whoever enters expenses |
 | [UC-049, UC-050, UC-051, UC-063](use-cases/UC-049-summary-and-reports.md) | The summary on the home, an item's report, the contracts, completion and cost | Everyone in the project |

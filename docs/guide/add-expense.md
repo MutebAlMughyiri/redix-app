@@ -16,7 +16,7 @@
 | Choose the item | Tap **Item**, and type in its search to find an item or a contractor. Each item shows by its category, with its named tables and its contracts under it. An item's own table, or a named one, takes a purchase; a contract's takes a [contractor payment](contractor-payment.md). |
 | Fill from the QR code | If the picture holds the e-invoice's QR code, the date and the total fill in, and the supplier with that VAT number is chosen. Check them. |
 | Enter the total | Type the total paid, or leave it empty and type the unit price and quantity. |
-| Record a credit note | Turn on **Credit note**, type the amount as printed, and choose the **Original invoice** it returns; the list says what each has left to return. |
+| Record a credit note | Turn on **Credit note** and type the amount as printed. It is kept as its own row with a minus amount, naming no bill. |
 | Take something off | Type the amount with a minus sign, such as -136, and say why in the notes. It comes off the item. |
 | Choose how it was paid | Choose the account and the payment method. You see only the accounts you may pay from. |
 | Keep it for later | Tap **Save draft**. A draft can wait for the required fields. |
@@ -27,8 +27,6 @@ No VAT is entered or kept: the VAT statement works it out of each total when the
 | Message | Meaning |
 | --- | --- |
 | A negative amount is a deduction: say why in the notes. | The amount is negative and the notes are empty. |
-| Choose the bill this credit note returns. | **Credit note** is on and no original invoice is chosen. |
-| A credit note cannot go above what is left of its original invoice. | Lower the amount, or choose another invoice. |
 | Fill the required field. | A field marked with * is empty, and is marked in red. |
 | Choose an account you may pay from. | No account was chosen, or you do not hold it. |
 | You hold no account to pay from. Ask Finance to hand you one. | You hold no account in this project. |
@@ -47,7 +45,7 @@ No VAT is entered or kept: the VAT statement works it out of each total when the
 | تختار البند | اضغط **البند**، واكتب في بحثه لتجد بنداً أو مقاولاً. يظهر كل بند تحت تصنيفه، وتحته جداوله المسماة وعقوده. جدول البند نفسه أو جدول مسمى يأخذ عملية شراء، وجدول العقد يأخذ [دفعة مقاول](contractor-payment.md). |
 | تعبّئ من رمز QR | إن كانت الصورة تحوي رمز QR للفاتورة الإلكترونية، يُعبَّأ التاريخ والإجمالي، ويُختار المورد صاحب الرقم الضريبي. راجعها. |
 | تُدخل الإجمالي | اكتب الإجمالي المدفوع، أو اتركه فارغاً واكتب سعر الوحدة والعدد. |
-| تسجّل مرتجعاً | فعّل **مرتجع (إشعار دائن)**، واكتب المبلغ كما هو مكتوب، واختر **الفاتورة الأصلية** التي يرجعها؛ وتبيّن القائمة المتبقي للإرجاع من كل فاتورة. |
+| تسجّل مرتجعاً | فعّل **مرتجع (إشعار دائن)**، واكتب المبلغ كما هو مكتوب. يُسجَّل صفاً مستقلاً بمبلغ سالب، دون ربطه بفاتورة. |
 | تخصم مبلغاً | اكتب المبلغ بعلامة الناقص، مثل -136، واذكر السبب في الملاحظات. يُخصم من البند. |
 | تحدد طريقة الدفع | اختر الحساب وطريقة الدفع. لا ترى إلا الحسابات التي يحق لك الدفع منها. |
 | تحفظه لوقت لاحق | اضغط **حفظ مسودة**. يمكن للمسودة أن تنتظر الحقول الإلزامية. |
@@ -58,8 +56,6 @@ No VAT is entered or kept: the VAT statement works it out of each total when the
 | الرسالة | معناها |
 | --- | --- |
 | المبلغ السالب خصم: اذكر سببه في الملاحظات. | المبلغ سالب والملاحظات فارغة. |
-| اختر الفاتورة التي يرجعها هذا المرتجع. | خيار **مرتجع** مفعّل ولم تُختر الفاتورة الأصلية. |
-| لا يمكن أن يتجاوز المرتجع المتبقي من فاتورته الأصلية. | اخفض المبلغ، أو اختر فاتورة أخرى. |
 | عبّئ الحقل الإلزامي. | حقل عليه علامة * فارغ، ويظهر بالأحمر. |
 | اختر حساباً يحق لك الدفع منه. | لم تختر حساباً، أو أنه ليس بعهدتك. |
 | لا تملك حساباً تدفع منه. اطلب من المالي تسليمك حساباً. | لا تملك أي حساب في هذا المشروع. |

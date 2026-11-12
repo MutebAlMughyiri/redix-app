@@ -16,7 +16,6 @@ import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/app_color.dart';
 
 import '../app_harness.dart';
-import 'package:redix/ui/reason_sheet.dart';
 import 'package:redix/ui/screen_title.dart';
 
 void main() {
@@ -66,12 +65,11 @@ void main() {
         ..addEntry()
         ..addEntry(status: 'rejected', rejectionReason: 'الصورة غير واضحة')
         ..addEntry(status: 'approved')
-        ..addEntry(status: 'approved', isReversed: true)
         ..addEntry(status: 'draft');
     });
 
-    expect([for (final id in ['entry-0', 'entry-1', 'entry-2', 'entry-3', 'entry-4']) frameOf(tester, id)], [AppColor.waiting, AppColor.refusal, AppColor.frame, AppColor.frame, AppColor.brand]);
-    for (final word in ['en entries.pendingApproval', 'en entries.rejected', 'en entries.reversed', 'en entries.draft']) {
+    expect([for (final id in ['entry-0', 'entry-1', 'entry-2', 'entry-3']) frameOf(tester, id)], [AppColor.waiting, AppColor.refusal, AppColor.frame, AppColor.brand]);
+    for (final word in ['en entries.pendingApproval', 'en entries.rejected', 'en entries.draft']) {
       expect(find.text(word), findsNothing, reason: word);
     }
     expect(find.textContaining('الصورة غير واضحة'), findsNothing);
@@ -137,15 +135,6 @@ void main() {
     expect(api.entryQueries.last['mine'], ['true']);
   });
 
-  testWidgets('a reversed entry says so on its page, and its row keeps the plain frame', (tester) async {
-    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved', isReversed: true));
-    expect(frameOf(tester, 'entry-0'), AppColor.frame);
-
-    await openActions(tester, api, 'entry-0');
-
-    expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.reversed');
-  });
-
   testWidgets('Muteb, 9 Nov 2026: whoever approves finds اعتماد beside Edit on a waiting entry read only, and approving it there approves it and goes back to the list', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(), permissions: managerAndFinance);
     await openActions(tester, api, 'entry-0');
@@ -169,27 +158,17 @@ void main() {
     expect(api.entryReads.sublist(readsBefore), hasLength(1));
   });
 
-  testWidgets("findings row 201: the home's fifth entry, reversed while someone records another, still says it was reversed, since it reads itself by its id", (tester) async {
-    final api = await openHome(tester, (api) {
-      api.addEntry(status: 'approved');
-      for (var entry = 1; entry < 5; entry++) {
-        api.addEntry();
-      }
-    }, permissions: managerAndFinance);
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0'))));
-    expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.approved');
+  testWidgets("redix-api #119, findings row 201: حذف removes the approved entry read only, by its own id while someone records another, and goes back to the list without it", (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: [...managerAndFinance, 'removeApprovedEntries']);
+    await openActions(tester, api, 'entry-0');
     api.addEntry(isMine: false);
 
-    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
-    await act(tester, api, () async {
-      await tester.enterText(find.byKey(ReasonSheet.reasonKey), 'إدخال خاطئ');
-      await tester.tap(find.byKey(ReasonSheet.sendKey));
-    });
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey)));
 
-    expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.reversed');
-    expect(find.byKey(AddEntryScreen.shareKey), findsOneWidget);
-    expect(find.byKey(AddEntryScreen.reverseKey), findsNothing);
-    expect(api.entryRowReads, ['entry-0', 'entry-0']);
+    expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2), ('entry-0', 'delete'));
+    expect(find.byKey(AddEntryScreen.removeKey), findsNothing);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
+    expect(find.byKey(EntriesScreen.rowKey('entry-1')), findsOneWidget);
   });
 
   testWidgets("findings row 201: an entry that cannot be read shows no status and offers nothing, rather than another entry's", (tester) async {
@@ -269,29 +248,21 @@ void main() {
     expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
   });
 
-  testWidgets('what is approved cannot be changed, only reversed, and only by whoever decides', (tester) async {
+  testWidgets('redix-api #119: what is approved cannot be changed, and حذف shows only to whoever holds the removal, approving entries or not', (tester) async {
     final field_ = await openEntries(tester, (api) => api.addEntry(status: 'approved'));
     await openActions(tester, field_, 'entry-0');
 
     expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
     expect(tester.widget<Text>(find.byKey(AddEntryScreen.cannotChangeKey)).data, 'en entries.approvedCannotChange');
-    expect(find.byKey(AddEntryScreen.reverseKey), findsNothing);
+    expect(find.byKey(AddEntryScreen.removeKey), findsNothing);
   });
 
-  testWidgets('AC-50.1: reversing asks why, and the entry then says it was reversed', (tester) async {
+  testWidgets('redix-api #119: approving entries is not removing them, so Finance without the removal finds no حذف', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: managerAndFinance);
+
     await openActions(tester, api, 'entry-0');
 
-    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
-    await act(tester, api, () async {
-      await tester.enterText(find.byKey(ReasonSheet.reasonKey), 'إدخال خاطئ');
-      await tester.tap(find.byKey(ReasonSheet.sendKey));
-    });
-
-    expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2, api.sentEntryChanges.single.$3['reason']), ('entry-0', 'reverse', 'إدخال خاطئ'));
-    expect(find.byKey(ReasonSheet.sendKey), findsNothing);
-    expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.reversed');
-    expect(find.byKey(AddEntryScreen.reverseKey), findsNothing);
+    expect(find.byKey(AddEntryScreen.removeKey), findsNothing);
   });
 
   testWidgets('Muteb, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the entries again', (tester) async {
@@ -307,45 +278,34 @@ void main() {
     expect(frameOf(tester, 'entry-0'), AppColor.brand);
   });
 
-  testWidgets('a reversal being sent cannot be sent again: its button is disabled until the answer comes', (tester) async {
-    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: managerAndFinance);
+  testWidgets('redix-api #119: a removal being sent cannot be sent again: its button is disabled until the answer comes', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: [...managerAndFinance, 'removeApprovedEntries']);
     await openActions(tester, api, 'entry-0');
-    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
-    await tester.enterText(find.byKey(ReasonSheet.reasonKey), 'إدخال خاطئ');
     api.heldEntryChange = Completer<void>();
 
     await act(tester, api, () async {
-      await tester.tap(find.byKey(ReasonSheet.sendKey));
+      await tester.tap(find.byKey(AddEntryScreen.removeKey));
       await tester.pump();
-      await tester.tap(find.byKey(ReasonSheet.sendKey), warnIfMissed: false);
+      await tester.tap(find.byKey(AddEntryScreen.removeKey), warnIfMissed: false);
     });
 
-    expect(tester.widget<FilledButton>(find.byKey(ReasonSheet.sendKey)).onPressed, isNull);
+    expect(tester.widget<OutlinedButton>(find.byKey(AddEntryScreen.removeKey)).onPressed, isNull);
     await act(tester, api, () async => api.heldEntryChange.complete());
     expect(api.sentEntryChanges.length, 1);
   });
 
-  testWidgets('a refused reversal stays open, saying why', (tester) async {
+  testWidgets('redix-api #119: a refused removal stays open, saying why', (tester) async {
     final api = await openEntries(tester, (api) {
       api
         ..addEntry(status: 'approved')
-        ..entryChangeAnswer = (status: 400, code: 'reasonRequired');
-    }, permissions: managerAndFinance);
-    await openActions(tester, api, 'entry-0');
-    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
-
-    await act(tester, api, () => tester.tap(find.byKey(ReasonSheet.sendKey)));
-
-    expect(find.text('en entries.reasonRequired'), findsOneWidget);
-    expect(find.byKey(ReasonSheet.sendKey), findsOneWidget);
-  });
-
-  testWidgets('a reversed entry cannot be reversed again', (tester) async {
-    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved', isReversed: true), permissions: managerAndFinance);
-
+        ..entryChangeAnswer = (status: 403, code: 'notYourEntry');
+    }, permissions: [...managerAndFinance, 'removeApprovedEntries']);
     await openActions(tester, api, 'entry-0');
 
-    expect(find.byKey(AddEntryScreen.reverseKey), findsNothing);
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey)));
+
+    expect(find.text('en entries.notYourEntry'), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.removeKey), findsOneWidget);
   });
 
   testWidgets('redix-api #102, redix-app #88: a swipe deletes a draft with no question, and the red bar shows it can', (tester) async {
@@ -361,6 +321,23 @@ void main() {
 
   testWidgets('redix-api #102: the home\'s latest entries swipe away too', (tester) async {
     final api = await openHome(tester, (api) => api.addEntry(status: 'draft'));
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').bar), findsOneWidget);
+
+    await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
+
+    expect(api.sentEntryChanges.single.$2, 'delete');
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
+  });
+
+  testWidgets('redix-api #119: an approved entry shows no red bar to Finance without the removal', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: managerAndFinance);
+
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').bar), findsNothing);
+    expect(api.sentEntryChanges, isEmpty);
+  });
+
+  testWidgets('redix-api #119: an approved entry swipes away for whoever holds the removal', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: [...managerAndFinance, 'removeApprovedEntries']);
     expect(find.byKey(EntriesScreen.rowKey('entry-0').bar), findsOneWidget);
 
     await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
@@ -389,23 +366,17 @@ void main() {
     });
   }
 
-  testWidgets('an approved bill cannot be removed, only reversed, and stays on the list said to be reversed', (tester) async {
-    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: managerAndFinance);
-    expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsNothing);
+  testWidgets('redix-api #119: an approved bill cannot be changed, and whoever holds the removal removes it by حذف, so it leaves the list', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: [...managerAndFinance, 'removeApprovedEntries']);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').swipe), findsOneWidget);
     await openActions(tester, api, 'entry-0');
 
     expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
-    expect(tester.widget<Text>(find.byKey(AddEntryScreen.reverseKey.label)).data, 'en entries.reverse');
-    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.reverseKey)));
-    await act(tester, api, () async {
-      await tester.enterText(find.byKey(ReasonSheet.reasonKey), 'فاتورة مكررة');
-      await tester.tap(find.byKey(ReasonSheet.sendKey));
-    });
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.removeKey.label)).data, 'en entries.remove');
+    await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey)));
 
-    expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2), ('entry-0', 'reverse'));
-    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
-    expect(frameOf(tester, 'entry-0'), AppColor.frame);
+    expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2), ('entry-0', 'delete'));
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
   });
 
   testWidgets('without Delete entries a bill does not swipe and shows no red bar, though it can still be changed', (tester) async {
@@ -469,7 +440,7 @@ void main() {
   });
 
   group('AC-19.1: fixing a rejected entry', () {
-    Future<FakeApi> openRejected(WidgetTester tester, {bool change = true, String attachmentId = 'attachment-1'}) async {
+    Future<FakeApi> openRejected(WidgetTester tester, {bool change = true, String attachmentId = 'attachment-1', num amount = 1150}) async {
       final api = await openEntries(tester, (api) {
         final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'بند اللياسة', subgroups: ['مواد']);
         for (final key in ['product', 'notes']) {
@@ -482,14 +453,13 @@ void main() {
           ..addEntry(status: 'rejected', rejectionReason: 'الصورة غير واضحة')
           ..entryDetails['entry-0'] = {
             'tableId': (item['subgroups']! as List<Map<String, Object>>).first['id']!,
-            'entry': {'id': 'entry-0', 'kind': 'purchase', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 1150, 'accountId': account['id']!, 'notes': 'دفعة أولى'},
+            'entry': {'id': 'entry-0', 'kind': 'purchase', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': amount, 'accountId': account['id']!, 'notes': 'دفعة أولى'},
             'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!, 'customValues': '{}'},
             'purchase': {'supplierId': supplier['id']!, 'product': 'مواد لياسة', 'unitPrice': 0, 'quantity': 0},
             'contractorPayment': {'contractId': '00000000-0000-0000-0000-000000000000', 'isOutsideContract': false},
             'attachments': [
               {'attachmentId': attachmentId},
             ],
-            'links': const <Object>[],
           };
       });
       await openActions(tester, api, 'entry-0');
@@ -512,6 +482,17 @@ void main() {
       expect(find.ancestor(of: find.byKey(AddEntryScreen.amountKey), matching: find.byWidgetPredicate((widget) => widget is IgnorePointer && widget.ignoring)), findsWidgets);
       expect(typed(tester, AddEntryScreen.amountKey), '1150');
       expect(typed(tester, AddEntryScreen.notesKey), 'دفعة أولى');
+    });
+
+    testWidgets('redix-api #119 D4: a saved purchase with a minus amount opens as a credit note, its plain amount typed, and is sent again as one', (tester) async {
+      final api = await openRejected(tester, amount: -320);
+
+      expect(tester.widget<SwitchListTile>(find.byKey(AddEntryScreen.creditNoteKey)).value, isTrue);
+      expect(typed(tester, AddEntryScreen.amountKey), '320');
+      await tester.ensureVisible(find.byKey(AddEntryScreen.sendKey));
+      await tester.pumpAndSettle();
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendKey)));
+      expect((api.sentEntries.single['isCreditNote'], api.sentEntries.single['amount']), (true, 320));
     });
 
     testWidgets('findings row 185: a kept PDF shows under the name it was kept with, its Arabic name too', (tester) async {
@@ -561,7 +542,6 @@ void main() {
             'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000', 'product': '', 'unitPrice': 0, 'quantity': 0},
             'contractorPayment': {'contractId': contract['id']!, 'isOutsideContract': true},
             'attachments': const <Object>[],
-            'links': const <Object>[],
           };
       });
       await openActions(tester, api, 'entry-0');
@@ -597,7 +577,6 @@ void main() {
             'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000', 'product': '', 'unitPrice': 0, 'quantity': 0},
             'contractorPayment': {'contractId': contract['id']!, 'isOutsideContract': isOutside},
             'attachments': const <Object>[],
-            'links': const <Object>[],
           };
       }, permissions: managerAndFinance);
       await openActions(tester, api, 'entry-0');

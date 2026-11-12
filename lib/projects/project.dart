@@ -111,9 +111,12 @@ class Project {
   /// Whether the signed-in user may keep a picture or a file in the project now: an invoice, a receipt or a contract's document.
   bool get mayAttachFiles => !isFinished && may(Permission.attachFiles);
 
-  /// Whether the signed-in user may approve, reject or reverse entries now.
+  /// Whether the signed-in user may approve or reject entries now.
   bool get mayApproveEntries => !isFinished && may(Permission.approveEntries);
 
   /// True when the user may delete an entry in this project, which a finished project allows nobody.
   bool get mayDeleteEntries => !isFinished && may(Permission.deleteEntries);
+
+  /// Whether the signed-in user may remove an approved entry now (redix-api #119).
+  bool get mayRemoveApprovedEntries => !isFinished && may(Permission.removeApprovedEntries);
 }

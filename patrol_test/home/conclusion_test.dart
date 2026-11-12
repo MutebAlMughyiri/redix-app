@@ -63,11 +63,11 @@ void main() {
       await $.says(SummaryCard.expensesKey, '100.00');
     });
 
-    phoneCase('AC-50.1: a reversed entry takes its amount back out', ($) async {
+    phoneCase('AC-50.1: a removed entry takes its amount back out', ($) async {
       final manager = await Given.manager();
       final entry = await Given.entry(manager);
       await Given.entriesApproved(manager, [entry]);
-      await Given.entryReversed(manager, entry);
+      await Given.entryRemoved(manager, entry);
       await $.onTheHome(manager);
       await $.says(SummaryCard.expensesKey, '0.00');
     });

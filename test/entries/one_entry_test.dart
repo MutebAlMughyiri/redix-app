@@ -252,7 +252,7 @@ void main() {
       expect(text(tester, EntriesScreen.detailsKey('entry-1')), startsWith('en capital.withdrawal'));
     });
 
-    testWidgets('R14: an approved revenue entry\'s sheet offers Reverse and no Edit; a rejected one offers Fix, as an expense\'s does', (tester) async {
+    testWidgets('R14, redix-api #119: an approved revenue entry\'s sheet offers no Edit, and no حذف without the removal; a rejected one offers Fix, as an expense\'s does', (tester) async {
       final (:api, capture: _, refund: _, partner: _, account: _) = await openAddEntry(tester);
       api
         ..addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب', amount: 140)
@@ -260,7 +260,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
       await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0'))));
-      expect(text(tester, AddEntryScreen.reverseKey.label), 'en entries.reverse');
+      expect(find.byKey(AddEntryScreen.removeKey), findsNothing);
       expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
@@ -307,7 +307,6 @@ void main() {
         'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000', 'product': '', 'unitPrice': 0, 'quantity': 0},
         'contractorPayment': {'contractId': '00000000-0000-0000-0000-000000000000', 'isOutsideContract': false},
         'attachments': const <Object>[],
-        'links': const <Object>[],
       };
     await openProject(tester, api);
     await tester.ensureVisible(find.byKey(HomeScreen.searchEntriesKey('project-0')));

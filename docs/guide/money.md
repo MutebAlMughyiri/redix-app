@@ -20,7 +20,7 @@
 
 **A partner who pays with their own money.** Enter it from **Add entry** as a contribution to their capital, then pay the expense from the account the money went into. An expense is paid only from an account added in **Accounts**.
 
-To correct any of these, reverse it. What was entered together reverses together.
+To correct one once approved, whoever holds **Remove approved entries** removes it, and its figures go with it.
 
 ## العربية
 
@@ -38,4 +38,4 @@ To correct any of these, reverse it. What was entered together reverses together
 
 **شريك يدفع من ماله.** أدخل ذلك من **إضافة قيد** مساهمةً في رأس ماله، ثم ادفع المصروف من الحساب الذي دخله المال. لا يُدفع المصروف إلا من حساب أُضيف في **الحسابات**.
 
-لتصحيح أي منها، اعكسه. وما أُدخل معاً يُعكس معاً.
+لتصحيح أي منها بعد اعتماده، يحذفه من يملك **حذف القيود المعتمدة**، فتذهب أرقامه معه.

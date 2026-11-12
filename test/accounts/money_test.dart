@@ -273,22 +273,36 @@ void main() {
       expect(find.byKey(PartnersScreen.totalKey), findsOneWidget);
     });
 
-    testWidgets('a partner opens to their movements, each with its receipt, and Finance can reverse one', (tester) async {
+    testWidgets('a partner opens to their movements, each with its receipt', (tester) async {
       final (:api, capture: _) = await openPartners(tester, (api) {
         api
           ..addPartner('project-0', 'متعب')
           ..addMovement(attachmentId: 'attachment-1')
-          ..addMovement(type: 'withdrawal', amount: -50, cashReason: 'نقداً', isReversed: true);
+          ..addMovement(type: 'withdrawal', amount: -50, cashReason: 'نقداً');
       });
 
       await act(tester, api, () => tester.tap(find.text('متعب')));
 
       expect(find.byKey(MovementsScreen.rowKey('movement-0')), findsOneWidget);
       expect(find.byKey(MovementsScreen.receiptKey('movement-0')), findsOneWidget);
-      expect(find.byKey(MovementsScreen.reverseKey('movement-0')), findsOneWidget);
       expect(find.byKey(MovementsScreen.receiptKey('movement-1')), findsNothing);
-      expect(find.byKey(MovementsScreen.reverseKey('movement-1')), findsNothing);
+      expect(find.byKey(MovementsScreen.rowKey('movement-0').bar), findsNothing);
       expect(find.text('(50.00)'), findsOneWidget);
+    });
+
+    testWidgets('redix-api #119: whoever holds the removal swipes a movement away, and the capital is read again', (tester) async {
+      final (:api, capture: _) = await openPartners(tester, (api) {
+        api
+          ..addPartner('project-0', 'متعب')
+          ..addMovement();
+      }, permissions: [...managerAndFinance, 'removeApprovedEntries']);
+      await act(tester, api, () => tester.tap(find.text('متعب')));
+      api.sentReads.clear();
+
+      await swipeToRemove(tester, api, MovementsScreen.rowKey('movement-0'));
+
+      expect((api.sentEntryChanges.single.$1, api.sentEntryChanges.single.$2), ('movement-0', 'delete'));
+      expect(api.sentReads, contains('/projects/project-0/capital'));
     });
   });
 }

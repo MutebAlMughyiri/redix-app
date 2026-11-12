@@ -4,7 +4,7 @@
 
 **Purpose:** take the VAT statement of any period as the accountant's workbook. Revenue is entered from Add entry and listed in القيود (UC-033).
 
-**No Revenue screen and no sales invoice** (Muteb, 8 Nov 2026: "remove those completely"). Revenue is entered from Add entry, on a revenue item's table, waits for approval, and shows in القيود with every other entry, where it is reversed. The sales invoice, its route and its table went; RedixReal held none. The VAT statement keeps its purchases.
+**No Revenue screen and no sales invoice** (Muteb, 8 Nov 2026: "remove those completely"). Revenue is entered from Add entry, on a revenue item's table, waits for approval, and shows in القيود with every other entry, where an approved one is removed by whoever holds the removal (redix-api #119). The sales invoice, its route and its table went; RedixReal held none. The VAT statement keeps its purchases.
 
 **Who uses it:** everyone in the project sees revenue; whoever moves money records; whoever sees all capital takes the statement's workbook.
 

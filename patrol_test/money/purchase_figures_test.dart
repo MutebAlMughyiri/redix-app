@@ -74,11 +74,11 @@ void main() {
       await $.accountStands(money.manager, money.account, '(10.00)');
     });
 
-    phoneCase('AC-50.1: reversing a purchase puts the expenses, the surplus and the account back', ($) async {
+    phoneCase('AC-50.1: removing a purchase puts the expenses, the surplus and the account back', ($) async {
       final money = await aProjectWithMoney();
       final entry = await Given.entry(money.manager, amount: 100, accountId: money.account);
       await Given.entriesApproved(money.manager, [entry]);
-      await Given.entryReversed(money.manager, entry);
+      await Given.entryRemoved(money.manager, entry);
       await $.onTheHome(money.manager);
       await $.homeFigures(surplus: '(10.00)', revenue: '0.00', expenses: '10.00');
       await $.accountStands(money.manager, money.account, '(10.00)');

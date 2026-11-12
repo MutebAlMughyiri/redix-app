@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../format/date_format.dart';
 import '../format/number_format.dart';
-import '../auth/permission.dart';
 import '../projects/project.dart';
 import '../ui/part_keys.dart';
 import '../ui/swipe_to_remove.dart';
@@ -36,7 +35,7 @@ class SwipeableEntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SwipeToRemove(
     rowKey: EntriesScreen.rowKey(entry.id),
-    mayRemove: entry.allows(project, Permission.deleteEntries),
+    mayRemove: entry.mayRemoveIn(project),
     onRemove: () async {
       final refusal = await entries.delete(entry);
       if (refusal.isEmpty) {

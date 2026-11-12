@@ -4,8 +4,8 @@ import 'entry_kind.dart';
 
 /// What the search of a project's entries asks the API to keep (redix-app #84, #104): every filter set must hold, and a filter left empty keeps everything.
 class EntryFilter {
-  /// Where an entry may stand, as the filter offers it: the word key of each, a reversed entry counting as reversed.
-  static const statuses = ['entries.pendingApproval', 'entries.approved', 'entries.rejected', 'entries.reversed', 'entries.draft'];
+  /// Where an entry may stand, as the filter offers it: the word key of each.
+  static const statuses = ['entries.pendingApproval', 'entries.approved', 'entries.rejected', 'entries.draft'];
 
   /// The period that keeps every date.
   static final anyTime = DateTimeRange(start: DateTime(2000), end: DateTime(2100));

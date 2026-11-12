@@ -46,7 +46,7 @@ void main() {
       await $.says(AccountsScreen.balanceKey(money.account), '(10.00)');
     });
 
-    phoneCase('AC-50.1: a reversal puts it back, whatever was reversed', ($) async {
+    phoneCase('AC-50.1: a removal puts it back, whatever was removed', ($) async {
       final money = await aProjectWithMoney();
       final partner = await Given.partner(money.manager, 'هيثم');
       final contract = await Given.contract(money.manager, value: 1000);
@@ -58,7 +58,7 @@ void main() {
       ];
       await Given.entriesApproved(money.manager, entries);
       for (final entry in entries) {
-        await Given.entryReversed(money.manager, entry);
+        await Given.entryRemoved(money.manager, entry);
       }
       await onAccounts($, money.manager);
       await $.says(AccountsScreen.balanceKey(money.account), '(10.00)');

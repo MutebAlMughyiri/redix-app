@@ -16,12 +16,9 @@ import '../contractor_payments/contract_figures.dart';
 import '../contracts/contract.dart';
 import '../contracts/contracts.dart';
 import '../expenses/column_value_field.dart';
-import '../expenses/creditable_invoice.dart';
-import '../expenses/creditable_invoices.dart';
 import '../expenses/entry_date.dart';
 import '../expenses/invoice_qr.dart';
 import '../expenses/invoice_section.dart';
-import '../expenses/original_invoice_picker.dart';
 import '../expenses/payment_choice.dart';
 import '../expenses/payment_choices.dart';
 import '../expenses/qr_summary.dart';
@@ -51,7 +48,6 @@ import 'entry_row.dart';
 import 'saved_entry.dart';
 import '../approvals/approvals.dart';
 import 'entry_share.dart';
-import 'reverse_sheet.dart';
 import 'entry_recording.dart';
 import '../attachments/entry_file.dart';
 import '../ui/form_error.dart';
@@ -65,7 +61,7 @@ import '../ui/act_once.dart';
 /// A draft can wait for the required columns; sending cannot.
 class AddEntryScreen extends StatefulWidget {
   /// The screen entering an entry in [project], recorded through [recording], into one of [tables], showing a contract's figures from [contracts], picking from [accounts] or
-  /// [projectAccounts], [paymentMethods], [suppliers] and, for a credit note, [creditableInvoices], asking what [columnsOf] an item says, keeping the file through [attachments]
+  /// [projectAccounts], [paymentMethods] and [suppliers], asking what [columnsOf] an item says, keeping the file through [attachments]
   /// from what [capture] gives, and offering to share it, read through [opened], once recorded.
   const AddEntryScreen({
     super.key,
@@ -80,7 +76,6 @@ class AddEntryScreen extends StatefulWidget {
     required this.accounts,
     required this.paymentMethods,
     required this.suppliers,
-    required this.creditableInvoices,
     required this.columnsOf,
     required this.attachments,
     required this.capture,
@@ -121,9 +116,6 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The register a purchase's supplier comes from.
   final Suppliers suppliers;
-
-  /// What a credit note may return.
-  final CreditableInvoices creditableInvoices;
 
   /// The columns of an item.
   final Columns Function(String itemId) columnsOf;
@@ -210,9 +202,6 @@ class AddEntryScreen extends StatefulWidget {
   /// The switch that makes a purchase a credit note.
   static const creditNoteKey = Key('addEntry.creditNote');
 
-  /// The bill a credit note returns.
-  static const originalInvoiceKey = Key('addEntry.originalInvoice');
-
   /// What was bought.
   static const productKey = Key('addEntry.product');
 
@@ -297,8 +286,8 @@ class AddEntryScreen extends StatefulWidget {
   /// The button sending a draft read only for approval.
   static const sendDraftKey = Key('addEntry.sendDraft');
 
-  /// The button reversing an approved entry, which reads حذف (Muteb, 9 Nov 2026).
-  static const reverseKey = Key('addEntry.reverse');
+  /// The button removing an approved entry softly, which reads حذف (Muteb, 9 Nov 2026; redix-api #119).
+  static const removeKey = Key('addEntry.remove');
 
   /// The button approving an entry read only that waits, beside تعديل; grayed for whoever may not approve (Muteb, 9 Nov 2026).
   static const approveKey = Key('addEntry.approve');
@@ -318,7 +307,6 @@ class AddEntryScreen extends StatefulWidget {
 
 class _AddEntryScreenState extends State<AddEntryScreen> {
   late final _entryId = widget.editingId.isEmpty ? const Uuid().v7() : widget.editingId;
-  var _keptOriginalId = '';
   final _product = TextEditingController();
   final _unitPrice = TextEditingController();
   final _quantity = TextEditingController();
@@ -335,7 +323,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   var _supplier = Supplier.none();
   var _date = DateTime.now();
   var _isCreditNote = false;
-  var _original = CreditableInvoice.none();
   var _isOutside = false;
   var _isWithdrawal = false;
   final _payment = PaymentChoice();
@@ -394,7 +381,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         ..paymentMethodId = saved.paymentMethodId;
       _date = saved.date;
       _isCreditNote = saved.isCreditNote;
-      _keptOriginalId = saved.originalEntryId;
       _amount.text = formatPlain(saved.isCreditNote ? saved.amount.abs() : saved.amount);
       _file.attachmentId = saved.attachmentId;
       _customValues.addAll(saved.customValues);
@@ -501,19 +487,11 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   /// Takes [supplier] for a purchase, and its usual item's general table while none is chosen.
   void _useSupplier(Supplier supplier) {
-    if (supplier.id != _supplier.id) {
-      _original = CreditableInvoice.none();
-    }
     _supplier = supplier;
     final usual = widget.tables.generalTableOf(supplier.defaultItemId);
     if (_table.isNone && !usual.isNone) {
       unawaited(_chooseTable(usual));
     }
-  }
-
-  void _setCreditNote(bool isCreditNote) {
-    _isCreditNote = isCreditNote;
-    _original = CreditableInvoice.none();
   }
 
   Future<void> _pickSupplier() async {
@@ -555,9 +533,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     ('amount', _amount, 'expenses.invalidAmount'),
   ];
 
-  /// The bill a credit note returns: the one chosen, or else the one it was saved with.
-  String get _originalEntryId => _original.isNone ? _keptOriginalId : _original.entryId;
-
   /// What is sent for the entry, whatever its table (redix-api #110): what every entry has, then what only its table asks.
   Map<String, Object> _body(bool submit) {
     final accountId = _payment.chosenAccountIn(_accounts.all.where((account) => account.isActive).toList());
@@ -583,7 +558,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   Map<String, Object> get _purchasePart => {
     if (_supplier.id.isNotEmpty) 'supplierId': _supplier.id,
     if (_isCreditNote) 'isCreditNote': true,
-    if (_isCreditNote && _originalEntryId.isNotEmpty) 'originalEntryId': _originalEntryId,
     'product': _product.text,
   };
 
@@ -679,16 +653,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       title: Text(words.expensesCreditNote, key: AddEntryScreen.creditNoteKey.title),
       subtitle: Text(words.expensesCreditNoteExplain, key: AddEntryScreen.creditNoteKey.subtitle),
       value: _isCreditNote,
-      onChanged: (isCreditNote) => setState(() => _setCreditNote(isCreditNote)),
+      onChanged: (isCreditNote) => setState(() => _isCreditNote = isCreditNote),
     ),
-    if (_isCreditNote && _supplier.id.isNotEmpty)
-      OriginalInvoicePicker(
-        key: AddEntryScreen.originalInvoiceKey,
-        invoices: widget.creditableInvoices,
-        supplierId: _supplier.id,
-        chosen: _original,
-        onChanged: (invoice) => setState(() => _original = invoice),
-      ),
     if (_asks('product')) _textField(AddEntryScreen.productKey, _product, _labelOf('product', words.expensesProduct), errorText: _errorOf('product', words)),
     if (_asks('unitPrice') || _asks('quantity'))
       TwoFields(
@@ -807,11 +773,11 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   }
 
   /// What an entry read only offers at its bottom (redix-app #90, D3, D4): تعديل, grayed with the reason where it cannot work; اعتماد beside it on a waiting entry, grayed
-  /// for whoever may not approve (Muteb, 9 Nov 2026); a draft's إرسال للاعتماد; and حذف, which reverses an approved entry, for whoever approves.
+  /// for whoever may not approve (Muteb, 9 Nov 2026); a draft's إرسال للاعتماد; and حذف, which removes an approved entry softly, for whoever holds that permission (redix-api #119).
   Widget _readingActions(Words words) {
     final row = _row;
     final mayChange = row.allows(widget.project, row.kind.recordedWith);
-    final mayReverse = widget.project.mayApproveEntries && row.isApproved && !row.isReversed;
+    final mayRemove = row.isApproved && widget.project.mayRemoveApprovedEntries;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       spacing: 8,
@@ -832,9 +798,9 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
                 child: FilledButton.tonal(key: AddEntryScreen.approveKey, onPressed: once(widget.project.mayApproveEntries ? () => _approve(row) : null), child: Text(words.approvalsApprove, key: AddEntryScreen.approveKey.label)),
               ),
             if (row.isDraft && mayChange) Expanded(child: OutlinedButton(key: AddEntryScreen.sendDraftKey, onPressed: once(_sendDraft), child: Text(words.entriesSend, key: AddEntryScreen.sendDraftKey.label))),
-            if (mayReverse)
+            if (mayRemove)
               Expanded(
-                child: OutlinedButton(key: AddEntryScreen.reverseKey, onPressed: once(() => ReverseSheet.show(context, widget.opened.reverse)), child: Text(words.entriesReverse, key: AddEntryScreen.reverseKey.label)),
+                child: OutlinedButton(key: AddEntryScreen.removeKey, onPressed: once(_remove), child: Text(words.entriesRemove, key: AddEntryScreen.removeKey.label)),
               ),
           ],
         )),
@@ -855,6 +821,14 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       return;
     }
     context.pop(true);
+  }
+
+  /// Removes the approved entry read only (redix-api #119), then goes back to the list, which reads itself again; what the API refused shows why, and the page stays.
+  Future<void> _remove() async {
+    final refusal = await showRefusalOf(context, widget.opened.remove());
+    if (refusal.isEmpty && mounted) {
+      context.pop(true);
+    }
   }
 
   Future<void> _sendDraft() async {

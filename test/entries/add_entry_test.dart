@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/expenses/payment_choices.dart';
-import 'package:redix/expenses/original_invoice_picker.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/offline/outbox.dart';
 import 'package:redix/entries/table_picker.dart';
@@ -503,56 +502,17 @@ void main() {
     expect(shown(tester, messageKeyOf('expenses.sent').label), 'en expenses.sent');
   });
 
-  Map<String, Object> creditable(String entryId, {double returnable = 1035, String number = ''}) => {'entryId': entryId, 'number': number, 'date': '2026-10-01', 'returnable': returnable};
-
-  testWidgets('AC-14.2, D13: a credit note names the bill it returns and sends a plain amount', (tester) async {
-    final opened = await openExpense(tester, arrange: (api) => api.creditableInvoices.add(creditable('e1', returnable: 700)));
+  testWidgets('AC-14.2, redix-api #119 D4: a credit note sends a plain amount and names no bill', (tester) async {
+    final opened = await openExpense(tester);
     await fill(tester, opened);
     await tapVisible(tester, opened.api, AddEntryScreen.creditNoteKey);
     await type(tester, AddEntryScreen.amountKey, '320');
 
-    await tapVisible(tester, opened.api, AddEntryScreen.originalInvoiceKey);
-    expect(find.textContaining('700.00'), findsOneWidget);
-    expect(find.byKey(OriginalInvoicePicker.optionKey('')), findsNothing);
-    await act(tester, opened.api, () => tester.tap(find.byKey(OriginalInvoicePicker.optionKey('e1'))));
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     final sent = opened.api.sentEntries.single;
-    expect((sent['isCreditNote'], sent['amount'], sent['originalEntryId']), (true, 320, 'e1'));
-  });
-
-  testWidgets('an older bill shows its number, and a new one its date', (tester) async {
-    final opened = await openExpense(tester, arrange: (api) => api.creditableInvoices..add(creditable('e1', number: 'F-1'))..add(creditable('e2')));
-    await fill(tester, opened);
-    await tapVisible(tester, opened.api, AddEntryScreen.creditNoteKey);
-
-    await tapVisible(tester, opened.api, AddEntryScreen.originalInvoiceKey);
-
-    expect(find.descendant(of: find.byKey(OriginalInvoicePicker.optionKey('e1')), matching: find.text('F-1')), findsOneWidget);
-    expect(find.descendant(of: find.byKey(OriginalInvoicePicker.optionKey('e2')), matching: find.text('01.10.2026')), findsOneWidget);
-  });
-
-  testWidgets('another supplier takes the link away, because the invoice was the first one\'s', (tester) async {
-    final opened = await openExpense(tester, arrange: (api) => api.creditableInvoices.add(creditable('e1')));
-    await fill(tester, opened);
-    await tapVisible(tester, opened.api, AddEntryScreen.creditNoteKey);
-    await tapVisible(tester, opened.api, AddEntryScreen.originalInvoiceKey);
-    await act(tester, opened.api, () => tester.tap(find.byKey(OriginalInvoicePicker.optionKey('e1'))));
-
-    await pickSupplier(tester, opened.api, opened.cash);
-    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
-
-    expect(opened.api.sentEntries.single.containsKey('originalEntryId'), isFalse);
-  });
-
-  testWidgets('BR-18: a credit note above what is left of its invoice is blocked with a message', (tester) async {
-    final opened = await openExpense(tester, arrange: (api) => api.entryAnswer = (status: 400, body: const {'code': 'creditNoteAboveOriginal'}));
-    await fill(tester, opened);
-    await tapVisible(tester, opened.api, AddEntryScreen.creditNoteKey);
-
-    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
-
-    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.creditNoteAboveOriginal');
+    expect((sent['isCreditNote'], sent['amount']), (true, 320));
+    expect(sent.containsKey('originalEntryId'), isFalse);
   });
 
   testWidgets('AC-14.1, D14: a deduction is a negative amount, typed in either digits, sent as it is with why in its notes', (tester) async {

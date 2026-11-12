@@ -172,6 +172,12 @@ class Given {
   static Future<void> joined(Person person, {required Person by, List<Permission> permissions = const []}) async {
     final token = await _tokenOf(by);
     await _post('${by.project}/users/existing', {'username': person.username}, token);
+    await ticked(person, permissions, by: by);
+  }
+
+  /// [by] ticks [permissions] for [person] in the project of [by]: a manager ticks for themselves a permission nobody holds until it is ticked, as removing approved entries (redix-api #119).
+  static Future<void> ticked(Person person, List<Permission> permissions, {required Person by}) async {
+    final token = await _tokenOf(by);
     for (final permission in permissions) {
       await _post('${by.project}/users/${person.id}/permissions/${permission.name}', {}, token);
     }
@@ -343,7 +349,7 @@ class Given {
   }
 
   /// A purchase by [by] on the first general table a purchase can go to, sent for approval or, when [sent] is false, kept as a draft. Its id is answered.
-  static Future<String> entry(Person by, {bool sent = true, num amount = 100, String accountId = '', String supplierId = '', String notes = '', String itemId = '', String tableId = '', String date = '', String creditNoteOf = ''}) async {
+  static Future<String> entry(Person by, {bool sent = true, num amount = 100, String accountId = '', String supplierId = '', String notes = '', String itemId = '', String tableId = '', String date = '', bool creditNote = false}) async {
     final token = await _tokenOf(by);
     final table = await firstPurchaseTable(by);
     return _record(by, token, {
@@ -356,7 +362,7 @@ class Given {
       'submit': sent,
       'notes': notes,
       if (date.isNotEmpty) 'date': date,
-      if (creditNoteOf.isNotEmpty) ...{'isCreditNote': true, 'originalEntryId': creditNoteOf},
+      if (creditNote) 'isCreditNote': true,
     });
   }
 
@@ -409,9 +415,10 @@ class Given {
     await _post('${manager.project}/entries/$entryId/reject', {'reason': reason}, await _tokenOf(manager));
   }
 
-  /// [manager] reverses the approved entry [entryId], saying [reason].
-  static Future<void> entryReversed(Person manager, String entryId, {String reason = 'أدخل بالخطأ'}) async {
-    await _post('${manager.project}/entries/$entryId/reverse', {'reason': reason}, await _tokenOf(manager));
+  /// [manager] removes the approved entry [entryId] softly (redix-api #119), ticking the removal for themselves first, since nobody holds it until it is ticked.
+  static Future<void> entryRemoved(Person manager, String entryId) async {
+    await ticked(manager, [Permission.removeApprovedEntries], by: manager);
+    await _delete('${manager.project}/entries/$entryId', await _tokenOf(manager));
   }
 
   /// [manager] issues the next periodic report.

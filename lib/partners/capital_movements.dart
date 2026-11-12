@@ -10,6 +10,6 @@ class CapitalMovements extends ApiList<CapitalMovement> {
   /// The project.
   final String projectId;
 
-  /// Reverses [movement], with whatever was entered with it, saying [reason]. Returns an empty string once reversed, otherwise the word key of the refusal.
-  Future<String> reverse(CapitalMovement movement, String reason) => change('/projects/$projectId/entries/${movement.id}/reverse', {'reason': reason}, wordPrefix: 'entries');
+  /// Removes [movement], an approved one, softly (redix-api #119). Returns an empty string once removed, otherwise the word key of the refusal.
+  Future<String> remove(CapitalMovement movement) => deleteAt('/projects/$projectId/entries/${movement.id}', wordPrefix: 'entries');
 }

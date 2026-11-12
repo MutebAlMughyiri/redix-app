@@ -42,7 +42,7 @@ typedef Gate = ({String name, Permission permission, void Function(FakeApi api) 
 const _project = 'project-0';
 
 /// Every permission there is: the admin's, and all a person can hold in a project.
-const _every = [...admin, ...managerAndFinance];
+const _every = [...admin, ...managerAndFinance, 'removeApprovedEntries'];
 
 Step _tap(Finder Function(FakeApi api) target) => (tester, api, capture) async {
   await bringIntoView(tester, target(api).last);
@@ -249,27 +249,27 @@ final List<Gate> _gates = [
     control: _key(SummaryCard.pendingKey),
   ),
   (
-    name: 'Reverse an approved entry',
-    permission: Permission.approveEntries,
+    name: 'Remove an approved entry (redix-api #119)',
+    permission: Permission.removeApprovedEntries,
     arrange: (api) => api.addEntry(status: 'approved'),
     steps: [_openProject, _tapKey(HomeScreen.searchEntriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
-    control: _key(AddEntryScreen.reverseKey),
+    control: _key(AddEntryScreen.removeKey),
   ),
   (
-    name: 'Reverse a capital movement',
-    permission: Permission.approveEntries,
+    name: 'Swipe away an approved entry (redix-api #119)',
+    permission: Permission.removeApprovedEntries,
+    arrange: (api) => api.addEntry(status: 'approved'),
+    steps: [_openProject, _tapKey(HomeScreen.searchEntriesKey(_project))],
+    control: _key(EntriesScreen.rowKey('entry-0').bar),
+  ),
+  (
+    name: 'Swipe away a capital movement (redix-api #119)',
+    permission: Permission.removeApprovedEntries,
     arrange: (api) => api
       ..addPartner(_project, 'متعب')
       ..addMovement(),
     steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project)), _tap((_) => find.text('متعب'))],
-    control: _key(MovementsScreen.reverseKey('movement-0')),
-  ),
-  (
-    name: 'Reverse a revenue entry in القيود',
-    permission: Permission.approveEntries,
-    arrange: (api) => api.addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب'),
-    steps: [_openProject, _tapKey(HomeScreen.searchEntriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
-    control: _key(AddEntryScreen.reverseKey),
+    control: _key(MovementsScreen.rowKey('movement-0').bar),
   ),
   (
     name: 'An enabled تحديث on Accounts (redix-app #89)',

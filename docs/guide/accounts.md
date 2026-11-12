@@ -17,7 +17,7 @@ An account holds only what its approved entries and its transfers moved into it,
 | --- | --- | --- |
 | Move money between two accounts | Tap **Transfer** at the bottom, choose **From** and **To**, type the amount. It counts at once in both accounts and never in the surplus. You cannot move more than **From** holds. | Whoever moves money |
 | Type what the accounts really hold | Tap **Update** at the bottom, beside Transfer, and type each account's balance. The difference at the top follows. | Whoever moves money |
-| See what was done | Tap **History** at the top: every account added, changed, disabled or deleted, every transfer, every approved or reversed entry and every check, with who and when. Filter by one account, or by **What I did**. | Everyone in the project |
+| See what was done | Tap **History** at the top: every account added, changed, disabled or deleted, every transfer, every approved entry and every check, with who and when. Filter by one account, or by **What I did**. | Everyone in the project |
 | Add an account | Tap **+** at the top, choose **Bank account** or **Cash custody**, type its name and choose who holds it. A cash custody must have someone. The type cannot change later. | Whoever does the project's finance |
 | Change an account | Tap the three dots on its row, then **Edit account**: its name and who holds it. | Whoever does the project's finance |
 | Stop using an account | Tap the three dots, then **Disable**: it leaves entry and every account list, and stays in the reports. **Enable** brings it back. | Whoever does the project's finance |
@@ -48,7 +48,7 @@ An account holds only what its approved entries and its transfers moved into it,
 | --- | --- | --- |
 | تنقل مالاً بين حسابين | اضغط **تحويل** في الأسفل، واختر **من** و**إلى**، واكتب المبلغ. يُحسب في الحسابين فوراً ولا يدخل في الفائض. ولا يُحوَّل أكثر من رصيد **من**. | من ينقل المال |
 | تكتب ما في الحسابات فعلاً | اضغط **تحديث** في الأسفل بجانب تحويل، واكتب رصيد كل حساب. ويتبعه الفرق في الأعلى. | من ينقل المال |
-| ترى ما جرى | اضغط **السجل** في الأعلى: كل حساب أُضيف أو عُدّل أو عُطّل أو حُذف، وكل تحويل، وكل قيد اعتُمد أو عُكس، وكل مطابقة، مع من فعلها ومتى. ويُصفّى بحساب واحد أو بـ **ما قمت به**. | كل من في المشروع |
+| ترى ما جرى | اضغط **السجل** في الأعلى: كل حساب أُضيف أو عُدّل أو عُطّل أو حُذف، وكل تحويل، وكل قيد اعتُمد، وكل مطابقة، مع من فعلها ومتى. ويُصفّى بحساب واحد أو بـ **ما قمت به**. | كل من في المشروع |
 | تضيف حساباً | اضغط **+** في الأعلى، واختر **حساب بنكي** أو **عهدة نقدية**، واكتب اسمه، واختر صاحب العهدة. والعهدة النقدية لا بد لها من صاحب. ولا يتغير النوع بعد ذلك. | من يتولى مالية المشروع |
 | تغيّر حساباً | اضغط النقاط الثلاث في صفه، ثم **تعديل الحساب**: اسمه وصاحب عهدته. | من يتولى مالية المشروع |
 | توقف استخدام حساب | اضغط النقاط الثلاث، ثم **تعطيل**: يخرج من الإدخال ومن كل قائمة حسابات، ويبقى في التقارير. و**تفعيل** يعيده. | من يتولى مالية المشروع |

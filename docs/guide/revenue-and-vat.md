@@ -8,7 +8,7 @@
 
 **Who sees it:** everyone in the project. Whoever does the project's finance records, and whoever sees all capital takes the statement.
 
-Revenue shows in **القيود** with every other entry, saying it is revenue; tap it to reverse it once approved.
+Revenue shows in **القيود** with every other entry, saying it is revenue; once approved, whoever holds **Remove approved entries** removes it from there.
 
 - To record a VAT refund, a sale or anything else that comes in, open **Add entry** and pick the revenue item in the table list. It waits for approval like an expense, and counts once approved.
 
@@ -20,7 +20,7 @@ Revenue shows in **القيود** with every other entry, saying it is revenue; 
 
 **من يراها:** كل من في المشروع. ويسجّل من يتولى مالية المشروع، ويأخذ الكشف من يرى رأس المال كله.
 
-تظهر الإيرادات في **القيود** مع غيرها من القيود، ويقول كل منها إنه إيراد؛ اضغطه لعكسه بعد اعتماده.
+تظهر الإيرادات في **القيود** مع غيرها من القيود، ويقول كل منها إنه إيراد؛ وبعد اعتماده يحذفه من هناك من يملك **حذف القيود المعتمدة**.
 
 - لتسجيل استرجاع ضريبة أو بيع أو غيره مما يدخل، افتح **إضافة قيد** واختر بند الإيراد من قائمة الجداول. وينتظر الاعتماد كالمصروف، ولا يُحسب إلا بعد اعتماده.
 

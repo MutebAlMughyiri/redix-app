@@ -12,7 +12,6 @@ class SavedEntry {
     final purchase = json['purchase'] as Map<String, dynamic>;
     final payment = json['contractorPayment'] as Map<String, dynamic>;
     final files = (json['attachments'] as List<dynamic>).cast<Map<String, dynamic>>();
-    final creditNoteOf = (json['links'] as List<dynamic>).cast<Map<String, dynamic>>().where((link) => link['type'] == 'creditNoteOf').map((link) => link['linkedEntryId'] as String);
     return SavedEntry._(
       tableId: json['tableId'] as String,
       status: EntryStatus.values.byName(entry['status'] as String),
@@ -27,7 +26,7 @@ class SavedEntry {
       unitPrice: (purchase['unitPrice'] as num).toDouble(),
       quantity: (purchase['quantity'] as num).toDouble(),
       isOutsideContract: payment['isOutsideContract'] as bool,
-      originalEntryId: creditNoteOf.firstOrNull ?? '',
+      isCreditNote: EntryKind.values.byName(entry['kind'] as String) == EntryKind.purchase && (entry['amount'] as num) < 0,
       attachmentId: files.isEmpty ? '' : files.first['attachmentId'] as String,
       customValues: (jsonDecode(expense['customValues'] as String) as Map<String, dynamic>).map((key, value) => MapEntry(key, '$value')),
     );
@@ -48,7 +47,7 @@ class SavedEntry {
       unitPrice = 0,
       quantity = 0,
       isOutsideContract = false,
-      originalEntryId = '',
+      isCreditNote = false,
       attachmentId = '',
       customValues = const {};
 
@@ -66,7 +65,7 @@ class SavedEntry {
     required this.unitPrice,
     required this.quantity,
     required this.isOutsideContract,
-    required this.originalEntryId,
+    required this.isCreditNote,
     required this.attachmentId,
     required this.customValues,
   });
@@ -110,8 +109,8 @@ class SavedEntry {
   /// True for a payment outside its contract.
   final bool isOutsideContract;
 
-  /// The bill a credit note returns; empty for anything else.
-  final String originalEntryId;
+  /// True for a credit note: a purchase kept with a minus amount, its own row, naming no bill (redix-api #119, D4).
+  final bool isCreditNote;
 
   /// Its file; empty when it has none.
   final String attachmentId;
@@ -121,9 +120,6 @@ class SavedEntry {
 
   /// True when nothing could be read.
   bool get isNone => tableId.isEmpty;
-
-  /// True for a credit note.
-  bool get isCreditNote => originalEntryId.isNotEmpty;
 
   /// What the figures of the contract [contractId] already hold of it: its amount once it waits or is approved inside that contract, otherwise nothing.
   double heldBy(String contractId) => tableId == contractId && !isOutsideContract && (status == EntryStatus.pendingApproval || status == EntryStatus.approved) ? amount : 0;

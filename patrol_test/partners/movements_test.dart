@@ -5,7 +5,7 @@ import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
-import 'package:redix/ui/reason_sheet.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../support/entry_steps.dart';
 import '../support/given.dart';
@@ -34,29 +34,27 @@ void main() {
       await $.reach($(MovementsScreen.receiptKey(entry)));
     });
 
-    phoneCase('Finance can reverse a movement', ($) async {
+    phoneCase('redix-api #119: whoever holds the removal swipes a movement away, and it leaves the list', ($) async {
+      final manager = await Given.manager();
+      final partner = await Given.partner(manager, 'متعب');
+      final entry = await Given.partnerMoney(manager, partner);
+      await Given.entriesApproved(manager, [entry]);
+      await Given.ticked(manager, [Permission.removeApprovedEntries], by: manager);
+      await $.fromTheHome(manager, HomeScreen.partnersKey(manager.projectId));
+      await $.tapOn(PartnersScreen.rowKey(partner));
+      await $.swipeAway(MovementsScreen.rowKey(entry));
+      await $.gone($(MovementsScreen.rowKey(entry)));
+    });
+
+    phoneCase('redix-api #119: without the removal a movement shows no red bar, even to whoever approves', ($) async {
       final manager = await Given.manager();
       final partner = await Given.partner(manager, 'متعب');
       final entry = await Given.partnerMoney(manager, partner);
       await Given.entriesApproved(manager, [entry]);
       await $.fromTheHome(manager, HomeScreen.partnersKey(manager.projectId));
       await $.tapOn(PartnersScreen.rowKey(partner));
-      await $.tapOn(MovementsScreen.reverseKey(entry));
-      await $.fill(ReasonSheet.reasonKey, 'أدخل بالخطأ');
-      await $.tapOn(ReasonSheet.sendKey);
-      await $.gone($(MovementsScreen.reverseKey(entry)));
-    });
-
-    phoneCase('whoever does not approve cannot reverse one', ($) async {
-      final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'متعب');
-      final entry = await Given.partnerMoney(manager, partner);
-      await Given.entriesApproved(manager, [entry]);
-      final member = await Given.member(manager, permissions: [Permission.seeAllCapital]);
-      await $.fromTheHome(member, HomeScreen.partnersKey(member.projectId));
-      await $.tapOn(PartnersScreen.rowKey(partner));
       await $.reach($(MovementsScreen.rowKey(entry)));
-      expect($(MovementsScreen.reverseKey(entry)), findsNothing);
+      expect($(MovementsScreen.rowKey(entry).bar), findsNothing);
     });
   });
 }

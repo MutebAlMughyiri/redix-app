@@ -26,10 +26,7 @@ enum PartnerHistoryKind {
   capitalIn('history.capitalIn', Icons.done_all, _movement),
 
   /// Capital went out to a partner, approved.
-  capitalOut('history.capitalOut', Icons.done_all, _movement),
-
-  /// An approved capital movement was reversed.
-  reversed('history.reversed', Icons.undo, _reversed);
+  capitalOut('history.capitalOut', Icons.done_all, _movement);
 
   const PartnerHistoryKind(this.wordKey, this.icon, this._values);
 
@@ -51,8 +48,6 @@ enum PartnerHistoryKind {
   static List<String> _account(PartnerHistoryLine line, Words words) => [line.partner, line.login.isEmpty ? words.partnersNoLogin : line.login];
 
   static List<String> _movement(PartnerHistoryLine line, Words words) => [formatMoney(line.amount), line.partner, line.account];
-
-  static List<String> _reversed(PartnerHistoryLine line, Words words) => [partsLine([formatMoney(line.amount), line.partner, line.account])];
 }
 
 /// One line of the partner history, as the API answers it.

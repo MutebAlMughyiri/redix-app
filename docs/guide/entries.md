@@ -23,9 +23,9 @@ Tap an entry to open it as it was filled, its photo included, and see what you c
 | A draft | Who entered it | **Edit**, **Send for approval**; swipe its row to delete |
 | Waiting for approval | Finance | **Edit**, and **Approve** for whoever approves entries; swipe its row to delete |
 | Rejected | Who entered it, and Finance | **Fix and send again**; swipe its row to delete. The reason shows at the top |
-| Approved | Finance | **Remove**, saying why: it reverses the entry. **Edit** is grayed |
+| Approved | Whoever holds **Remove approved entries** | **Remove**, or swipe its row: it leaves every list and figure. **Edit** is grayed |
 
-An approved entry never changes. Reversing it adds an opposite entry tied to it, approved at once: both show in the reports, and their net is zero.
+An approved entry never changes. Removing it takes it out of every list and figure as if it was never approved; it stays on record with who removed it and when, and a report issued before keeps it. Nobody can remove an approved entry until **Remove approved entries** is ticked for them.
 
 ## العربية
 
@@ -48,6 +48,6 @@ An approved entry never changes. Reversing it adds an opposite entry tied to it,
 | مسودة | من أدخله | **تعديل**، **إرسال للاعتماد**؛ واسحب السطر لحذفه |
 | بانتظار الاعتماد | المالي | **تعديل**، و**اعتماد** لمن يعتمد القيود؛ واسحب السطر لحذفه |
 | مرفوض | من أدخله والمالي | **تعديل وإعادة إرسال**؛ واسحب السطر لحذفه. يظهر السبب أعلى النموذج |
-| معتمد | المالي | **حذف** مع ذكر السبب، فيُعكس القيد. و**تعديل** رمادي |
+| معتمد | من يملك **حذف القيود المعتمدة** | **حذف**، أو اسحب السطر: يخرج من كل القوائم والأرقام. و**تعديل** رمادي |
 
-القيد المعتمد لا يتغيّر. عكسه يضيف قيداً مقابلاً مرتبطاً به ومعتمداً فوراً: يظهران في التقارير وصافيهما صفر.
+القيد المعتمد لا يتغيّر. حذفه يخرجه من كل القوائم والأرقام كأنه لم يُعتمد، ويبقى في السجل مع من حذفه ومتى، ويبقى في التقرير الصادر قبل حذفه. ولا يحذف أحد قيداً معتمداً حتى تُفعَّل له صلاحية **حذف القيود المعتمدة**.

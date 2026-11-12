@@ -59,19 +59,6 @@ void main() {
       expect(await Given.waitingIds(manager), isEmpty);
     });
 
-    phoneCase('AC-19.2: what could not be approved stays, saying why', ($) async {
-      final manager = await Given.manager();
-      final supplier = await Given.supplier(manager);
-      final account = await Given.account(manager);
-      final bill = await Given.entry(manager, amount: 500, supplierId: supplier, accountId: account);
-      final note = await Given.entry(manager, amount: 100, supplierId: supplier, accountId: account, creditNoteOf: bill);
-      await onApprovals($, manager);
-      await $.tapOn(ApprovalsScreen.approveKey(note));
-      await $.says(ApprovalsScreen.failedKey(note), $.words.approvalsOriginalNotApproved);
-      expect($(ApprovalsScreen.cardKey(note)), findsOneWidget);
-      expect(await Given.waitingIds(manager), containsAll([bill, note]));
-    });
-
     phoneCase('an entry someone else decided meanwhile leaves the inbox when Approve is tapped', ($) async {
       final manager = await Given.manager();
       final entry = await Given.entry(manager);

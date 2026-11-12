@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../attachments/attachment_screen.dart';
-import '../entries/reverse_sheet.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
+import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'capital.dart';
 import 'capital_movement.dart';
@@ -18,7 +18,7 @@ import '../ui/search_scope.dart';
 import '../words/word_fill.dart';
 import '../format/parts_line.dart';
 
-/// One partner's movements (UC-044), each with its receipt, and for whoever decides entries a way to reverse it (BR-11).
+/// One partner's movements (UC-044), each with its receipt; whoever may remove an approved entry swipes one away (redix-api #119).
 class MovementsScreen extends StatefulWidget {
   /// The movements of the partner named [partnerName] in [project].
   const MovementsScreen({super.key, required this.project, required this.partnerName, required this.movements, required this.capital});
@@ -34,9 +34,6 @@ class MovementsScreen extends StatefulWidget {
 
   /// The button opening the receipt of the movement [id].
   static Key receiptKey(String id) => Key('movements.receipt.$id');
-
-  /// The button reversing the movement [id].
-  static Key reverseKey(String id) => Key('movements.reverse.$id');
 
   /// The project.
   final Project project;
@@ -61,8 +58,8 @@ class _MovementsScreenState extends State<MovementsScreen> {
     widget.movements.loadOnOpen();
   }
 
-  Future<String> _reverse(CapitalMovement movement, String reason) async {
-    final refusal = await widget.movements.reverse(movement, reason);
+  Future<String> _remove(CapitalMovement movement) async {
+    final refusal = await widget.movements.remove(movement);
     if (refusal.isEmpty) {
       await widget.capital.load();
     }
@@ -72,17 +69,13 @@ class _MovementsScreenState extends State<MovementsScreen> {
   Widget _row(CapitalMovement movement) {
     final words = Words.of(context);
     final project = widget.project;
-    final parts = [
-      words.text('capital.${movement.type}'),
-      formatDate(movement.date),
-      movement.accountName,
-      if (movement.isReversed) words.capitalReversed,
-    ];
-    return Card.outlined(
-      key: MovementsScreen.rowKey(movement.id),
-      margin: const EdgeInsets.only(bottom: 8),
+    final parts = [words.text('capital.${movement.type}'), formatDate(movement.date), movement.accountName];
+    return SwipeToRemove(
+      rowKey: MovementsScreen.rowKey(movement.id),
+      mayRemove: project.mayRemoveApprovedEntries,
+      onRemove: () => _remove(movement),
       child: ListTile(
-        key: MovementsScreen.rowKey(movement.id).body,
+        key: MovementsScreen.rowKey(movement.id),
         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
         title: Text(movement.description.isEmpty ? words.text('capital.${movement.type}') : movement.description, key: MovementsScreen.rowKey(movement.id).title),
         subtitle: Text(parts.join(' · '), key: MovementsScreen.rowKey(movement.id).subtitle),
@@ -96,13 +89,6 @@ class _MovementsScreenState extends State<MovementsScreen> {
                 icon: Icon(Icons.receipt_long_outlined, key: MovementsScreen.receiptKey(movement.id).icon),
                 tooltip: words.capitalReceiptAttached,
                 onPressed: () => context.push(AttachmentScreen.pathOf(project.id, movement.attachmentId, fileName: movement.fileName), extra: movement.contentType),
-              ),
-            if (project.mayApproveEntries && !movement.isReversed)
-              IconButton(
-                key: MovementsScreen.reverseKey(movement.id),
-                icon: Icon(Icons.undo, key: MovementsScreen.reverseKey(movement.id).icon),
-                tooltip: words.capitalReverse,
-                onPressed: () => ReverseSheet.show(context, (reason) => _reverse(movement, reason)),
               ),
           ],
         ),

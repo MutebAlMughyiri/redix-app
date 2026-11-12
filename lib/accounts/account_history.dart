@@ -38,9 +38,6 @@ enum AccountHistoryKind {
   /// An approved entry took money out of an account.
   entryOut('history.entryOut', Icons.done_all, _entry),
 
-  /// An approved entry was reversed.
-  reversed('history.reversed', Icons.undo, _reversed),
-
   /// The actual balances were counted.
   check('history.check', Icons.balance_outlined, _check);
 
@@ -66,8 +63,6 @@ enum AccountHistoryKind {
   static List<String> _transfer(AccountHistoryLine line, Words words) => [formatMoney(line.amount), line.account, line.otherAccount];
 
   static List<String> _entry(AccountHistoryLine line, Words words) => [words.text(line.entryKind.wordKey), formatMoney(line.amount), line.account];
-
-  static List<String> _reversed(AccountHistoryLine line, Words words) => [partsLine([words.text(line.entryKind.wordKey), formatMoney(line.amount), line.account])];
 
   static List<String> _check(AccountHistoryLine line, Words words) => [formatMoney(line.amount)];
 }

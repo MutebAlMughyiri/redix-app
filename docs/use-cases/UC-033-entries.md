@@ -1,18 +1,17 @@
 [Documentation](../README.md) › [Use cases](../README.md#use-cases) › UC-033, UC-034, UC-035, UC-037
 
-# UC-033, UC-034, UC-035, UC-037: See entries, fix them, and reverse them
+# UC-033, UC-034, UC-035, UC-037: See entries, fix them, and remove an approved one
 
-**Purpose:** everyone in a project sees its entries, and each person what they entered. An entry is fixed before approval, and reversed after it.
+**Purpose:** everyone in a project sees its entries, and each person what they entered. An entry is fixed before approval; after it, an approved one is removed softly by its own permission (redix-api #119). Nothing is reversed.
 
-**Who uses it:** everyone in the project reads. Who entered an entry changes it while it is a draft or rejected; whoever holds `manageAnyEntry` changes anything before approval; whoever holds `approveEntries` reverses.
+**Who uses it:** everyone in the project reads. Who entered an entry changes it while it is a draft or rejected; whoever holds `manageAnyEntry` changes anything before approval; whoever holds `removeApprovedEntries`, which nobody holds until it is ticked, removes an approved one.
 
 | Element | Key |
 | --- | --- |
 | On the home, under القيود: the search, the way to all | `HomeScreen.searchEntriesKey`, `entriesKey` |
 | The search, and the filters: whose, kind, status, period, clearing them, how many show | `EntriesScreen.searchKey`, `mineKey`, `allKey`, `kindKey(kind)`, `statusFilterKey(wordKey)`, `periodKey`, `clearKey`, `foundKey` |
 | A row, where it stands by its frame's color alone: teal a draft, orange waiting, red rejected, plain once approved (redix-app #90; Muteb, 9 Nov 2026) | `EntriesScreen.rowKey`, `rowKey(id).card` |
-| An entry read only (redix-app #90): where it stands, and what can be done to it | `AddEntryScreen.statusKey`, `changeKey`, `cannotChangeKey`, `sendDraftKey`, `reverseKey`; a draft, waiting or rejected entry is deleted by swiping its row, `rowKey(id).swipe`, on القيود and on the home alike (redix-api #102) |
-| Reversing | `EntriesScreen.reverseReasonKey`, `reverseSendKey` |
+| An entry read only (redix-app #90): where it stands, and what can be done to it | `AddEntryScreen.statusKey`, `changeKey`, `cannotChangeKey`, `sendDraftKey`, `removeKey`; a draft, waiting or rejected entry is deleted by swiping its row, `rowKey(id).swipe`, on القيود and on the home alike (redix-api #102) |
 | The reason at the top of the form | `AddEntryScreen.rejectionKey` |
 | Share, in an entry's title bar read only and in the message once it is saved or sent (redix-app #83) | `AddEntryScreen.shareKey`; the message's action, `messageKeyOf(wordKey).icon` |
 | Where a shared link lands: looking for the entry, and saying it cannot be found | `EntryLinkScreen.loadingKey`, `notFoundKey` |
@@ -20,7 +19,7 @@
 | Rule | Code | Test |
 | --- | --- | --- |
 | AC-22.1, R1, R2, R3, R15: the home lists the project's latest five by anyone under القيود, someone else's saying who entered it; it counts none of mine waiting or rejected (Muteb, 7 Nov 2026) | `LatestEntries`, `EntryCard` | `entries_test.dart`: AC-22.1, R1, R2, R3, R15 |
-| A row says where it stands by its frame's color alone, with no status words and no reason: teal a draft, orange waiting, red rejected, plain once approved or reversed; the entry's page says the status and the reason (Muteb, 9 Nov 2026) | `EntryStatus.color`, `SwipeToRemove.side` | `entries_test.dart`: Muteb, 9 Nov 2026: a row says where it stands by its frame alone; a reversed entry says so on its page |
+| A row says where it stands by its frame's color alone, with no status words and no reason: teal a draft, orange waiting, red rejected, plain once approved; the entry's page says the status and the reason (Muteb, 9 Nov 2026) | `EntryStatus.color`, `SwipeToRemove.side` | `entries_test.dart`: Muteb, 9 Nov 2026: a row says where it stands by its frame alone |
 | While the entries are first read, the home shows a spinner under القيود, and the rows once they come | `LatestEntries`, `HomeScreen.entriesLoadingKey` | `entries_test.dart`: the home shows a spinner under القيود |
 | R3, R14: with none of mine the home still lists the project's; with none at all it keeps its heading, search and the way to all | `LatestEntries` | `entries_test.dart`: R3, R14; R14 |
 | R4: the search beside القيود opens the list ready to type | `LatestEntries`, `EntriesScreen.startsSearching` | `entries_test.dart`: search, R4 |
@@ -33,8 +32,8 @@
 | A draft of their own can be changed, sent or deleted | `AddEntryScreen._readingActions` | `entries_test.dart`: a draft of their own |
 | What waits offers the field تعديل grayed, saying why, and someone else's too (redix-app #90, D4) | `EntryRow.allows`, `AddEntryScreen._readingActions` | `entries_test.dart`: redix-app #90 D4, two tests |
 | Finance can change what waits, and what someone else entered | `EntryRow.allows` | `entries_test.dart`: Finance can change |
-| What is approved is only reversed, by حذف, and only by whoever decides; its تعديل is grayed, saying an approved entry does not change | `AddEntryScreen._readingActions` | `entries_test.dart`: what is approved; an approved bill |
-| AC-50.1: reversing asks why, and the entry's page then says it was reversed | `ReverseSheet`, `ProjectEntries.reverse` | `entries_test.dart`: AC-50.1 |
+| What is approved does not change: its تعديل is grayed, saying so; حذف removes it softly, shown only to whoever holds the removal, approving entries or not, and a removal being sent cannot be sent again (redix-api #119) | `AddEntryScreen._readingActions`, `OpenedEntry.remove` | `entries_test.dart`: redix-api #119, five tests |
+| AC-50.1: an approved entry swipes away for whoever holds the removal, and shows no red bar to anyone else | `EntryRow.mayRemoveIn`, `SwipeableEntryCard` | `entries_test.dart`: redix-api #119: an approved entry swipes away |
 | القيود lists every kind of entry: expenses, revenue and partners' money, each named by its item or partner and saying what it is; any of them opens in Add entry to change or fix, for whoever may enter its table (redix-api #110) | `EntryRow.title`, `kindWordKey`, `EntryKind.recordedWith` | `one_entry_test.dart`: No Revenue screen; R14, two tests |
 | A swipe deletes an entry with no question, where `EntryRow.allows` lets the user delete it | `SwipeableEntryCard`, `SwipeToRemove` | `entries_test.dart`: redix-api #102: a swipe deletes a draft with no question; without Delete entries a bill does not swipe |
 | AC-19.1: a rejected entry opens with its reason, and holds what it held | `AddEntryScreen._openEntry` | `entries_test.dart`: the reason shows at the top |
