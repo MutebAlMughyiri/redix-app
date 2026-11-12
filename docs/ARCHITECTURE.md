@@ -28,6 +28,8 @@ lib/
   approvals/
     approvals.dart          What waits for a decision in a project, and the way to decide it
     approvals_screen.dart   Finance's inbox: what waits, oldest first, to approve one at a time or many at once, or to reject saying why
+    approval_history.dart   What was approved and rejected, by whom and when, a page at a time, as the HistoryList the other histories are
+    approval_history_screen.dart  السجل from the inbox's title bar: the approval history through HistoryView, filtered by kind of entry
     pending_approval.dart   An entry waiting for Finance's decision
     reject_sheet.dart       Rejects an entry, saying why: the reason returns to who entered it
   attachments/

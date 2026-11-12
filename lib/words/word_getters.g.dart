@@ -134,6 +134,9 @@ mixin WordGetters {
   /// The word `approvals.fileFailed`.
   String get approvalsFileFailed => text('approvals.fileFailed');
 
+  /// The word `approvals.history`.
+  String get approvalsHistory => text('approvals.history');
+
   /// The word `approvals.loadFailed`.
   String get approvalsLoadFailed => text('approvals.loadFailed');
 
@@ -1241,11 +1244,17 @@ mixin WordGetters {
   /// The word `history.empty`.
   String get historyEmpty => text('history.empty');
 
+  /// The word `history.entryApproved`.
+  String get historyEntryApproved => text('history.entryApproved');
+
   /// The word `history.entryIn`.
   String get historyEntryIn => text('history.entryIn');
 
   /// The word `history.entryOut`.
   String get historyEntryOut => text('history.entryOut');
+
+  /// The word `history.entryRejected`.
+  String get historyEntryRejected => text('history.entryRejected');
 
   /// The word `history.loadFailed`.
   String get historyLoadFailed => text('history.loadFailed');
@@ -1945,9 +1954,6 @@ mixin WordGetters {
 
   /// The word `reports.reportNumber`.
   String get reportsReportNumber => text('reports.reportNumber');
-
-  /// The word `reports.revenueAndExpenses`.
-  String get reportsRevenueAndExpenses => text('reports.revenueAndExpenses');
 
   /// The word `reports.save`.
   String get reportsSave => text('reports.save');

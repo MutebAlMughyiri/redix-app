@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/approvals/approvals_screen.dart';
+import 'package:redix/format/number_format.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/search_scope.dart';
 
 import '../support/given.dart';
 import '../support/phone_case.dart';
+import '../support/search_steps.dart';
 import '../support/steps.dart';
 
 /// Signs [manager] in and opens what waits.
@@ -78,6 +80,18 @@ void main() {
       await $.tapOn(ApprovalsScreen.approveKey(entry));
       await $.gone($(ApprovalsScreen.cardKey(entry)));
       expect(await Given.waitingIds(manager), isEmpty);
+    });
+
+    phoneCase('Muteb, 12 Nov 2026: السجل in the title bar lists what was approved, and its search finds it by its amount', ($) async {
+      final manager = await Given.manager();
+      final amount = 1000 + DateTime.now().millisecond;
+      await Given.entriesApproved(manager, [await Given.entry(manager, amount: amount)]);
+      await onApprovals($, manager);
+      await $.tapOn(ApprovalsScreen.historyKey);
+      await $.reach($(SearchIcons.searchKey));
+      await $.searchFor('$amount');
+      await $(find.textContaining(formatMoney(amount.toDouble()))).waitUntilExists();
+      expect($(keyStartingWith('approvalHistory.line.')), findsWidgets);
     });
   });
 }

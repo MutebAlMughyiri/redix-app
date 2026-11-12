@@ -111,7 +111,7 @@ Map<String, String> wordsIn(String language) => {
     'reports.surplus',
     'expenses.creditNote', 'expenses.creditNoteExplain', 'expenses.originalInvoice', 'expenses.noCreditableInvoice', 'expenses.returnable', 'expenses.loadFailed',
     'expenses.creditNoteAboveOriginal', 'expenses.creditNoteNeedsOriginal', 'expenses.deductionNeedsNotes', 'revenue.total', 'expenses.unknownOriginalInvoice',
-    'accounts.custodian', 'accounts.noCustodian', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.counted', 'accounts.history', 'accounts.delete', 'accounts.deleteQuestion', 'accounts.deleteCannotUndo', 'accounts.accountInUse', 'accounts.deleted', 'accounts.banks', 'accounts.custodies', 'transfers.title', 'transfers.button', 'transfers.from', 'transfers.to', 'transfers.balanceNow', 'transfers.amount', 'transfers.date', 'transfers.notes', 'transfers.save', 'transfers.sameAccount', 'transfers.invalidAmount', 'transfers.accountDisabled', 'transfers.insufficientBalance', 'transfers.unknownAccount', 'transfers.invalidNotes', 'transfers.noConnection', 'transfers.refused', 'transfers.projectFinished', 'approvals.accountShort', 'entryShare.accountShort', 'history.account', 'history.partner', 'history.all', 'history.partnerCreated', 'history.partnerChanged', 'history.partnerAccount', 'history.partnerDeleted', 'history.capitalIn', 'history.capitalOut', 'history.mine', 'history.empty', 'history.loadFailed', 'history.unknownAccount', 'history.accountCreated', 'history.accountChanged', 'history.nameWas', 'history.accountDisabled', 'history.accountEnabled', 'history.accountDeleted', 'history.custodianChanged', 'history.transfer', 'history.entryIn', 'history.entryOut', 'history.reversed', 'history.check', 'history.approvedBy', 'history.more', 'accounts.riyal',
+    'accounts.custodian', 'accounts.noCustodian', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.counted', 'accounts.history', 'accounts.delete', 'accounts.deleteQuestion', 'accounts.deleteCannotUndo', 'accounts.accountInUse', 'accounts.deleted', 'accounts.banks', 'accounts.custodies', 'transfers.title', 'transfers.button', 'transfers.from', 'transfers.to', 'transfers.balanceNow', 'transfers.amount', 'transfers.date', 'transfers.notes', 'transfers.save', 'transfers.sameAccount', 'transfers.invalidAmount', 'transfers.accountDisabled', 'transfers.insufficientBalance', 'transfers.unknownAccount', 'transfers.invalidNotes', 'transfers.noConnection', 'transfers.refused', 'transfers.projectFinished', 'approvals.accountShort', 'entryShare.accountShort', 'history.account', 'history.partner', 'history.all', 'history.partnerCreated', 'history.partnerChanged', 'history.partnerAccount', 'history.partnerDeleted', 'history.capitalIn', 'history.capitalOut', 'history.mine', 'history.empty', 'history.loadFailed', 'history.unknownAccount', 'history.accountCreated', 'history.accountChanged', 'history.nameWas', 'history.accountDisabled', 'history.accountEnabled', 'history.accountDeleted', 'history.custodianChanged', 'history.transfer', 'history.entryIn', 'history.entryOut', 'history.reversed', 'history.check', 'history.approvedBy', 'history.more', 'history.entryApproved', 'history.entryRejected', 'approvals.history', 'entries.kind', 'accounts.riyal',
   ])
     key: '$language $key',
   'partners.draftsBy': '$language partners.draftsBy {0}',
@@ -1036,6 +1036,28 @@ class FakeApi {
     return _json(lines, 200);
   }
 
+  /// The approval history of each project, newest first, as the API answers it (Muteb, 12 Nov 2026).
+  final approvalHistory = <String, List<Map<String, Object>>>{};
+
+  /// Adds a decision of [kind], approved or rejected, to the approval history of [projectId], newest first, on an entry of [entryKind] for the kind filter.
+  Map<String, Object> addApprovalHistoryLine(String projectId, String kind, {String entryKind = 'purchase', String by = 'متعب', String item = 'البلاط', String party = 'شركة النخيل', double amount = 1150, String reason = ''}) {
+    final list = approvalHistory.putIfAbsent(projectId, () => []);
+    final line = <String, Object>{'id': 3000 - list.length, 'at': '2026-11-12T09:30:00Z', 'by': by, 'kind': kind, 'item': item, 'party': party, 'amount': amount, 'reason': reason, 'entryKind': entryKind};
+    list.add(line);
+    return line;
+  }
+
+  http.Response _answerApprovalHistory(http.Request request) {
+    historyReads.add(request.url);
+    final query = request.url.queryParameters;
+    final lines = (approvalHistory[request.url.pathSegments[1]] ?? const <Map<String, Object>>[])
+        .where((line) => (query['kind'] ?? '').isEmpty || line['entryKind'] == query['kind'])
+        .where((line) => _holds(request.url, line['amount']! as num, [line['by'], line['item'], line['party'], line['reason']]))
+        .take(50)
+        .toList();
+    return _json(lines, 200);
+  }
+
   /// Adds a partner to the project [projectId], as the API holds them: a table of the capital item [itemId] (redix-api #109), whose own account is [userId], called [userName]. Who sees
   /// them is chosen on people's permissions (redix-api #106).
   Map<String, Object> addPartner(
@@ -1679,6 +1701,9 @@ class FakeApi {
     }
     if (segments.length == 4 && segments[2] == 'partners' && segments[3] == 'history') {
       return _answerPartnerHistory(request);
+    }
+    if (segments.length == 4 && segments[2] == 'approvals' && segments[3] == 'history') {
+      return _answerApprovalHistory(request);
     }
     if (segments.length >= 3 && segments[2] == 'partners' && segments.last != 'movements') {
       return _answerPartners(request);

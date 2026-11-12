@@ -26,6 +26,7 @@ import '../words/word_fill.dart';
 import '../ui/filter_line.dart';
 import '../ui/list_search.dart';
 import '../ui/search_scope.dart';
+import 'approval_history_screen.dart';
 
 /// Finance's inbox (UC-031, UC-032): what waits, oldest first, to approve one at a time or many at once, or to reject saying why.
 class ApprovalsScreen extends StatefulWidget {
@@ -61,6 +62,9 @@ class ApprovalsScreen extends StatefulWidget {
 
   /// The filter showing contractor payments.
   static const contractorPaymentsKey = Key('approvals.contractorPayments');
+
+  /// السجل in the title bar: what was approved and rejected (Muteb, 12 Nov 2026).
+  static const historyKey = Key('approvals.history');
 
   /// The button approving what is selected.
   static const approveSelectedKey = Key('approvals.approveSelected');
@@ -258,7 +262,18 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
     final mayDecide = _mayDecide;
     return SearchScope(
       child: Scaffold(
-        appBar: AppBar(title: ScreenTitle(words.approvalsTitle, subject: widget.project.name), actions: [SearchIcons.andFilters(filtersInUse: _filter != _Filter.all)]),
+        appBar: AppBar(
+          title: ScreenTitle(words.approvalsTitle, subject: widget.project.name),
+          actions: [
+            SearchIcons.andFilters(filtersInUse: _filter != _Filter.all),
+            IconButton(
+              key: ApprovalsScreen.historyKey,
+              tooltip: words.approvalsHistory,
+              icon: Icon(Icons.history, key: ApprovalsScreen.historyKey.icon),
+              onPressed: () => context.push(ApprovalHistoryScreen.pathOf(widget.project.id), extra: widget.project),
+            ),
+          ],
+        ),
         bottomNavigationBar: !mayDecide || _selected.isEmpty
             ? null
             : BottomButton(buttonKey: ApprovalsScreen.approveSelectedKey, icon: Icons.done_all, label: '${words.approvalsApproveSelected} · ${_selected.length}', onPressed: () => _approve(_selected.toList())),

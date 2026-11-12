@@ -31,6 +31,8 @@ import 'partners/partner_history.dart';
 import 'partners/partner_history_screen.dart';
 import 'approvals/approvals.dart';
 import 'approvals/approvals_screen.dart';
+import 'approvals/approval_history.dart';
+import 'approvals/approval_history_screen.dart';
 import 'attachments/attachment_screen.dart';
 import 'entries/entry_recording.dart';
 import 'entries/add_entry_screen.dart';
@@ -150,6 +152,7 @@ class _RedixAppState extends State<RedixApp> {
   late final _reconciliationsOf = _kept((projectId) => Reconciliations(widget.session, projectId));
   late final _historyOf = _kept((projectId) => AccountHistory(widget.session, projectId));
   late final _partnerHistoryOf = _kept((projectId) => PartnerHistory(widget.session, projectId));
+  late final _approvalHistoryOf = _kept((projectId) => ApprovalHistory(widget.session, projectId));
   late final _summaryOf = _kept((projectId) => Summary(widget.session, projectId));
   late final _capitalOf = _kept((projectId) => Capital(widget.session, projectId));
   late final _membersOf = _kept((projectId) => Members(widget.session, projectId));
@@ -276,6 +279,10 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(
         path: AccountHistoryScreen.path,
         builder: (context, state) => AccountHistoryScreen(project: state.extra! as Project, history: _historyOf(state.projectId), accounts: _accountsOf(state.projectId)),
+      ),
+      GoRoute(
+        path: ApprovalHistoryScreen.path,
+        builder: (context, state) => ApprovalHistoryScreen(project: state.extra! as Project, history: _approvalHistoryOf(state.projectId)),
       ),
       GoRoute(
         path: PartnerHistoryScreen.path,

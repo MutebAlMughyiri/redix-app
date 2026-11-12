@@ -15,6 +15,8 @@ Entries show oldest first: expenses, revenue and partners' money alike, each nam
 
 A credit note goes only with or after the invoice it returns. Approving the first expense on a supplier waiting for approval approves the supplier too.
 
+**History**, in the title bar, lists what was decided, newest first: each entry approved or rejected, by whom and when, and a rejection's reason. Search it, keep one kind of entry, or only what you decided.
+
 ## العربية
 
 **الغرض:** البت فيما أُدخل. لا يدخل في الإجماليات والتقارير إلا المعتمد.
@@ -27,3 +29,5 @@ A credit note goes only with or after the invoice it returns. Approving the firs
 - **رفض** يسأل عن السبب. اختر سبباً سريعاً أو اكتبه. يعود السبب لمن أدخله ليعدّل ويعيد الإرسال.
 
 لا يُعتمد المرتجع إلا مع الفاتورة التي يعيدها أو بعدها. واعتماد أول مصروف على مورد بانتظار الاعتماد يعتمد المورد أيضاً.
+
+**السجل**، في شريط العنوان، يعرض ما بُتّ فيه بالأحدث أولاً: كل قيد اعتُمد أو رُفض، ومن قام بذلك ومتى، وسبب الرفض. ابحث فيه، أو اقصره على نوع من القيود، أو على ما قمت به.
