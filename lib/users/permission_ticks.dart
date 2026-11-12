@@ -11,7 +11,17 @@ import 'permission_tick.dart';
 class PermissionTicks extends StatelessWidget {
   /// The ticks, each keyed [keyOf], ticked as [holds] says, changed through [onChangedOf]; the [partners] under the chosen-capital tick ticked as [chosen] says, changed through [onChooseOf].
   /// A function that answers null leaves that tick read-only.
-  const PermissionTicks({super.key, required this.keyOf, required this.holds, required this.onChangedOf, required this.partners, required this.chosen, required this.onChooseOf});
+  /// Only the permissions [shows] keeps are drawn, every one unless a search narrows them (صلاحياتي, Muteb, 12 Nov 2026).
+  const PermissionTicks({
+    super.key,
+    required this.keyOf,
+    required this.holds,
+    required this.onChangedOf,
+    required this.partners,
+    required this.chosen,
+    required this.onChooseOf,
+    this.shows = showsAll,
+  });
 
   /// The key of each permission's tick, which each screen names.
   final Key Function(Permission permission) keyOf;
@@ -30,6 +40,12 @@ class PermissionTicks extends StatelessWidget {
 
   /// What ticking the partner does; null where it cannot change.
   final ValueChanged<bool>? Function(Partner partner) onChooseOf;
+
+  /// Whether the permission is drawn.
+  final bool Function(Permission permission) shows;
+
+  /// Every permission.
+  static bool showsAll(Permission permission) => true;
 
   /// The heading over the two capital ticks.
   static const capitalGroupKey = Key('permissions.capitalGroup');
@@ -63,8 +79,8 @@ class PermissionTicks extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final permission in Permission.inAProject) ...[
-          if (permission == Permission.seeAllCapital)
+        for (final permission in Permission.inAProject.where(shows)) ...[
+          if (permission == Permission.seeAllCapital || (permission == Permission.seeChosenCapital && !shows(Permission.seeAllCapital)))
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 8),
               child: Text(words.permissionsCapitalGroup, key: capitalGroupKey, style: Theme.of(context).textTheme.titleSmall),

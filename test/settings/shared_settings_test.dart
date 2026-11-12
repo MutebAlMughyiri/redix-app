@@ -8,6 +8,7 @@ import 'package:redix/words/language_switch.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/refusal_snack_bar.dart';
 import 'package:redix/users/my_permissions_screen.dart';
+import 'package:redix/users/permission_ticks.dart';
 import 'package:redix/auth/permission.dart';
 
 import '../app_harness.dart';
@@ -180,5 +181,25 @@ void main() {
       expect(tick.value, field.contains(permission.name), reason: permission.name);
       expect(tick.onChanged, isNull, reason: permission.name);
     }
+  });
+
+  testWidgets('Muteb, 12 Nov 2026: صلاحياتي is searched: what was typed keeps the permissions whose name or what it allows holds it, the capital heading over a capital tick kept', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', permissions: field);
+    await openProject(tester, api);
+    await scrollAndTap(tester, api, HomeScreen.myPermissionsKey('project-0'));
+
+    await searchFor(tester, api, 'approveEntries');
+    expect(find.byKey(MyPermissionsScreen.permissionKey(Permission.approveEntries)), findsOneWidget);
+    expect(find.byKey(MyPermissionsScreen.permissionKey(Permission.recordEntries)), findsNothing);
+    expect(find.byKey(PermissionTicks.capitalGroupKey), findsNothing);
+
+    await searchFor(tester, api, 'seeChosenCapitalHint');
+    expect(find.byKey(MyPermissionsScreen.permissionKey(Permission.seeChosenCapital)), findsOneWidget);
+    expect(find.byKey(MyPermissionsScreen.permissionKey(Permission.seeAllCapital)), findsNothing);
+    expect(find.byKey(PermissionTicks.capitalGroupKey), findsOneWidget);
+
+    await searchFor(tester, api, '');
+    expect(find.byKey(MyPermissionsScreen.permissionKey(Permission.inAProject.first)), findsOneWidget);
+    expect(find.byKey(MyPermissionsScreen.permissionKey(Permission.recordEntries)), findsOneWidget);
   });
 }

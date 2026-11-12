@@ -5,6 +5,7 @@ import 'package:redix/users/my_permissions_screen.dart';
 
 import '../support/given.dart';
 import '../support/phone_case.dart';
+import '../support/search_steps.dart';
 import '../support/steps.dart';
 
 void main() {
@@ -25,6 +26,16 @@ void main() {
       await $.fromTheHome(manager, HomeScreen.myPermissionsKey(manager.projectId));
       await $.goTo($(MyPermissionsScreen.permissionKey(Permission.recordEntries)));
       expect($.canTick(MyPermissionsScreen.permissionKey(Permission.recordEntries)), isFalse);
+    });
+
+    phoneCase('Muteb, 12 Nov 2026: its search keeps the permissions whose name holds what was typed', ($) async {
+      final manager = await Given.manager();
+      final member = await Given.member(manager, permissions: [Permission.recordEntries]);
+      await $.fromTheHome(member, HomeScreen.myPermissionsKey(member.projectId));
+      await $.reach($(MyPermissionsScreen.hintKey));
+      await $.searchFor($.words.text(Permission.approveEntries.wordKey));
+      await $.reach($(MyPermissionsScreen.permissionKey(Permission.approveEntries)));
+      expect($(MyPermissionsScreen.permissionKey(Permission.manageUsers)), findsNothing);
     });
   });
 }
