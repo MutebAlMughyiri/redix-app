@@ -103,89 +103,92 @@ class _SignInScreenState extends State<SignInScreen> {
     final theme = Theme.of(context);
     return ActOnce(builder: (once) => Scaffold(
       body: SafeArea(
-        child: ListView(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-          children: [
-            Align(alignment: AlignmentDirectional.centerEnd, child: LanguageSwitch(language: widget.language)),
-            const SizedBox(height: 16),
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.asset('assets/icon/icon.png', key: SignInScreen.logoKey, height: 72, cacheHeight: (72 * MediaQuery.devicePixelRatioOf(context)).round()),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Align(alignment: AlignmentDirectional.centerEnd, child: LanguageSwitch(language: widget.language)),
+              const SizedBox(height: 16),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset('assets/icon/icon.png', key: SignInScreen.logoKey, height: 72, cacheHeight: (72 * MediaQuery.devicePixelRatioOf(context)).round()),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(words.appTitle, key: SignInScreen.titleKey, style: theme.textTheme.headlineMedium),
-            const SizedBox(height: 8),
-            Text(words.signInHint, key: SignInScreen.hintKey, style: theme.textTheme.bodyLarge),
-            const SizedBox(height: 32),
-            ListenableBuilder(
-              listenable: widget.session,
-              builder: (context, _) {
-                final message = _message.isEmpty ? widget.session.notice : _message;
-                return message.isEmpty ? const SizedBox.shrink() : FormError(text: words.text(message), textKey: SignInScreen.messageKey);
-              },
-            ),
-            TextField(
-              key: SignInScreen.usernameKey,
-              controller: _username,
-              decoration: InputDecoration(labelText: words.signInUsername),
-              autofillHints: const [AutofillHints.username],
-              textInputAction: TextInputAction.next,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              key: SignInScreen.passwordKey,
-              controller: _password,
-              decoration: InputDecoration(labelText: words.signInPassword),
-              autofillHints: const [AutofillHints.password],
-              obscureText: true,
-              onSubmitted: (_) => once(_signIn)?.call(),
-            ),
-            const SizedBox(height: 24),
-            FilledButton(
-              key: SignInScreen.submitKey,
-              onPressed: once(_signIn),
-              style: formButtonStyle,
-              child: Text(words.signInSubmit, key: SignInScreen.submitKey.label),
-            ),
-            ListenableBuilder(
-              listenable: widget.session,
-              builder: (context, _) => widget.session.canUnlock
-                  ? Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Row(
-                            children: [
-                              const Expanded(child: Divider()),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
-                                child: Text(words.biometricsOr, key: SignInScreen.orKey, style: theme.textTheme.bodySmall),
-                              ),
-                              const Expanded(child: Divider()),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          OutlinedButton.icon(
-                            key: SignInScreen.unlockKey,
-                            onPressed: _unlock,
-                            style: formButtonStyle,
-                            icon: Icon(Icons.fingerprint, key: SignInScreen.unlockKey.icon),
-                            label: Text(words.biometricsSignIn, key: SignInScreen.unlockKey.label),
-                          ),
-                        ],
-                      ),
-                    )
-                  : const SizedBox.shrink(),
-            ),
-            const SizedBox(height: 16),
-            TextButton(key: SignInScreen.registerKey, onPressed: () => context.push(NewProjectScreen.registerPath), child: Text(words.signInRegisterProject, key: SignInScreen.registerKey.label)),
-            const SizedBox(height: 16),
-            Text(words.signInForgotPassword, key: SignInScreen.forgotKey, style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
-          ],
+              const SizedBox(height: 16),
+              Text(words.appTitle, key: SignInScreen.titleKey, style: theme.textTheme.headlineMedium),
+              const SizedBox(height: 8),
+              Text(words.signInHint, key: SignInScreen.hintKey, style: theme.textTheme.bodyLarge),
+              const SizedBox(height: 32),
+              ListenableBuilder(
+                listenable: widget.session,
+                builder: (context, _) {
+                  final message = _message.isEmpty ? widget.session.notice : _message;
+                  return message.isEmpty ? const SizedBox.shrink() : FormError(text: words.text(message), textKey: SignInScreen.messageKey);
+                },
+              ),
+              TextField(
+                key: SignInScreen.usernameKey,
+                controller: _username,
+                decoration: InputDecoration(labelText: words.signInUsername),
+                autofillHints: const [AutofillHints.username],
+                textInputAction: TextInputAction.next,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                key: SignInScreen.passwordKey,
+                controller: _password,
+                decoration: InputDecoration(labelText: words.signInPassword),
+                autofillHints: const [AutofillHints.password],
+                obscureText: true,
+                onSubmitted: (_) => once(_signIn)?.call(),
+              ),
+              const SizedBox(height: 24),
+              FilledButton(
+                key: SignInScreen.submitKey,
+                onPressed: once(_signIn),
+                style: formButtonStyle,
+                child: Text(words.signInSubmit, key: SignInScreen.submitKey.label),
+              ),
+              ListenableBuilder(
+                listenable: widget.session,
+                builder: (context, _) => widget.session.canUnlock
+                    ? Padding(
+                        padding: const EdgeInsets.only(top: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              children: [
+                                const Expanded(child: Divider()),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  child: Text(words.biometricsOr, key: SignInScreen.orKey, style: theme.textTheme.bodySmall),
+                                ),
+                                const Expanded(child: Divider()),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            OutlinedButton.icon(
+                              key: SignInScreen.unlockKey,
+                              onPressed: _unlock,
+                              style: formButtonStyle,
+                              icon: Icon(Icons.fingerprint, key: SignInScreen.unlockKey.icon),
+                              label: Text(words.biometricsSignIn, key: SignInScreen.unlockKey.label),
+                            ),
+                          ],
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+              const SizedBox(height: 16),
+              TextButton(key: SignInScreen.registerKey, onPressed: () => context.push(NewProjectScreen.registerPath), child: Text(words.signInRegisterProject, key: SignInScreen.registerKey.label)),
+              const SizedBox(height: 16),
+              Text(words.signInForgotPassword, key: SignInScreen.forgotKey, style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
+            ],
+          ),
         ),
       ),
     ));

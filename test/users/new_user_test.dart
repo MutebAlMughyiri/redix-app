@@ -91,6 +91,18 @@ void main() {
     expect(tester.widget<TextField>(find.byKey(NewUserScreen.passwordKey)).decoration!.helperText, 'en users.temporaryPasswordHint · en common.passwordRules');
   });
 
+  testWidgets('redix-app #98: refused from the bottom of a long form on a small screen, its line above the first field is built and brought into view', (tester) async {
+    tester.view.physicalSize = const Size(360, 480);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final api = await openForm(tester);
+
+    api.userAnswer = (status: 409, code: 'usernameTaken');
+    await fillAndSubmit(tester, api);
+
+    expectErrorAbove(tester, NewUserScreen.messageKey, NewUserScreen.nameKey);
+  });
+
   testWidgets('a taken username shows its own line, and nothing typed is lost', (tester) async {
     final api = await openForm(tester);
 

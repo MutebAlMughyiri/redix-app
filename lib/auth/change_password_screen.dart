@@ -83,38 +83,41 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     return ActOnce(builder: (once) => Scaffold(
       appBar: AppBar(),
       body: SafeArea(
-        child: ListView(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-          children: [
-            Text(words.changePasswordTitle, key: ChangePasswordScreen.titleKey, style: theme.textTheme.headlineMedium),
-            const SizedBox(height: 8),
-            Text(words.changePasswordHint, key: ChangePasswordScreen.hintKey, style: theme.textTheme.bodyLarge),
-            const SizedBox(height: 32),
-            if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: ChangePasswordScreen.messageKey),
-            TextField(key: ChangePasswordScreen.currentKey, controller: _current, decoration: field(words.changePasswordCurrent), obscureText: true),
-            const SizedBox(height: 16),
-            TextField(
-              key: ChangePasswordScreen.newKey,
-              controller: _new,
-              decoration: field(words.changePasswordNew).copyWith(helperText: words.commonPasswordRules, helperMaxLines: 2),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              key: ChangePasswordScreen.confirmKey,
-              controller: _confirm,
-              decoration: field(words.changePasswordConfirm),
-              obscureText: true,
-              onSubmitted: (_) => once(_save)?.call(),
-            ),
-            const SizedBox(height: 24),
-            FilledButton(
-              key: ChangePasswordScreen.submitKey,
-              onPressed: once(_save),
-              style: formButtonStyle,
-              child: Text(words.changePasswordSubmit, key: ChangePasswordScreen.submitKey.label),
-            ),
-          ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(words.changePasswordTitle, key: ChangePasswordScreen.titleKey, style: theme.textTheme.headlineMedium),
+              const SizedBox(height: 8),
+              Text(words.changePasswordHint, key: ChangePasswordScreen.hintKey, style: theme.textTheme.bodyLarge),
+              const SizedBox(height: 32),
+              if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: ChangePasswordScreen.messageKey),
+              TextField(key: ChangePasswordScreen.currentKey, controller: _current, decoration: field(words.changePasswordCurrent), obscureText: true),
+              const SizedBox(height: 16),
+              TextField(
+                key: ChangePasswordScreen.newKey,
+                controller: _new,
+                decoration: field(words.changePasswordNew).copyWith(helperText: words.commonPasswordRules, helperMaxLines: 2),
+                obscureText: true,
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                key: ChangePasswordScreen.confirmKey,
+                controller: _confirm,
+                decoration: field(words.changePasswordConfirm),
+                obscureText: true,
+                onSubmitted: (_) => once(_save)?.call(),
+              ),
+              const SizedBox(height: 24),
+              FilledButton(
+                key: ChangePasswordScreen.submitKey,
+                onPressed: once(_save),
+                style: formButtonStyle,
+                child: Text(words.changePasswordSubmit, key: ChangePasswordScreen.submitKey.label),
+              ),
+            ],
+          ),
         ),
       ),
     ));

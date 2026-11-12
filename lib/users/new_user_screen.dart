@@ -123,50 +123,53 @@ class _NewUserScreenState extends State<NewUserScreen> {
     return Scaffold(
       appBar: AppBar(title: Text(words.usersNew, key: ScreenTitle.titleKey)),
       body: SafeArea(
-        child: ListView(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
-          children: [
-            if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: NewUserScreen.messageKey),
-            TextField(
-              key: NewUserScreen.nameKey,
-              controller: _name,
-              decoration: field(words.usersName, helper: words.usersNameHint),
-            ),
-            const SizedBox(height: 16),
-            TextField(key: NewUserScreen.usernameKey, controller: _username, autocorrect: false, decoration: field(words.usersUsername)),
-            const SizedBox(height: 16),
-            TextField(key: NewUserScreen.roleNameKey, controller: _roleName, decoration: field(words.usersRoleName)),
-            const SizedBox(height: 16),
-            TextField(key: NewUserScreen.mobileKey, controller: _mobile, keyboardType: TextInputType.phone, decoration: field(words.usersMobile)),
-            const SizedBox(height: 16),
-            TextField(
-              key: NewUserScreen.passwordKey,
-              controller: _password,
-              autocorrect: false,
-              decoration: field(words.usersTemporaryPassword, helper: partsLine([words.usersTemporaryPasswordHint, words.commonPasswordRules])),
-            ),
-            const SizedBox(height: 16),
-            Text(words.permissionsTitle, key: NewUserScreen.permissionsHeadingKey, style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            ListenableBuilder(
-              listenable: widget.partners,
-              builder: (context, _) => PermissionTicks(
-                keyOf: NewUserScreen.permissionKey,
-                holds: _ticked.contains,
-                onChangedOf: (permission) => permission == Permission.readProject ? null : (ticked) => _tick(permission, ticked),
-                partners: widget.partners.all,
-                chosen: (partner) => _chosen.contains(partner.id),
-                onChooseOf: (partner) => (ticked) => setState(() => ticked ? _chosen.add(partner.id) : _chosen.remove(partner.id)),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: NewUserScreen.messageKey),
+              TextField(
+                key: NewUserScreen.nameKey,
+                controller: _name,
+                decoration: field(words.usersName, helper: words.usersNameHint),
               ),
-            ),
-            const SizedBox(height: 24),
-            ActOnce(builder: (once) => FilledButton(
-              key: NewUserScreen.submitKey,
-              onPressed: once(_add),
-              style: formButtonStyle,
-              child: Text(words.usersAdd, key: NewUserScreen.submitKey.label),
-            )),
-          ],
+              const SizedBox(height: 16),
+              TextField(key: NewUserScreen.usernameKey, controller: _username, autocorrect: false, decoration: field(words.usersUsername)),
+              const SizedBox(height: 16),
+              TextField(key: NewUserScreen.roleNameKey, controller: _roleName, decoration: field(words.usersRoleName)),
+              const SizedBox(height: 16),
+              TextField(key: NewUserScreen.mobileKey, controller: _mobile, keyboardType: TextInputType.phone, decoration: field(words.usersMobile)),
+              const SizedBox(height: 16),
+              TextField(
+                key: NewUserScreen.passwordKey,
+                controller: _password,
+                autocorrect: false,
+                decoration: field(words.usersTemporaryPassword, helper: partsLine([words.usersTemporaryPasswordHint, words.commonPasswordRules])),
+              ),
+              const SizedBox(height: 16),
+              Text(words.permissionsTitle, key: NewUserScreen.permissionsHeadingKey, style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              ListenableBuilder(
+                listenable: widget.partners,
+                builder: (context, _) => PermissionTicks(
+                  keyOf: NewUserScreen.permissionKey,
+                  holds: _ticked.contains,
+                  onChangedOf: (permission) => permission == Permission.readProject ? null : (ticked) => _tick(permission, ticked),
+                  partners: widget.partners.all,
+                  chosen: (partner) => _chosen.contains(partner.id),
+                  onChooseOf: (partner) => (ticked) => setState(() => ticked ? _chosen.add(partner.id) : _chosen.remove(partner.id)),
+                ),
+              ),
+              const SizedBox(height: 24),
+              ActOnce(builder: (once) => FilledButton(
+                key: NewUserScreen.submitKey,
+                onPressed: once(_add),
+                style: formButtonStyle,
+                child: Text(words.usersAdd, key: NewUserScreen.submitKey.label),
+              )),
+            ],
+          ),
         ),
       ),
     );
