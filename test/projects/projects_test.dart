@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/api_list_body.dart';

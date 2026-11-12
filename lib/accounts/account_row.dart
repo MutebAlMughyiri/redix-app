@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../projects/members.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../words/words.dart';
 import 'account.dart';
 import 'account_dialog.dart';

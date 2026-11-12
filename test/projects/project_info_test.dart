@@ -6,7 +6,7 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/name_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/confirm_dialog.dart';

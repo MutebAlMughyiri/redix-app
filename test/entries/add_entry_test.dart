@@ -13,7 +13,7 @@ import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 
 import '../app_harness.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 import 'package:redix/ui/part_keys.dart';
 
 void main() {

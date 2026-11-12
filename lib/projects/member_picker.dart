@@ -58,6 +58,7 @@ class MemberPicker extends StatelessWidget {
               for (final person in people.entries)
                 DropdownMenuItem(key: optionKey(person.key), value: person.key, child: Text(person.value, key: optionKey(person.key).title, overflow: TextOverflow.ellipsis)),
             ],
+            selectedItemBuilder: (_) => [for (final person in people.values) Text(person, overflow: TextOverflow.ellipsis)],
             onChanged: (chosen) => onChanged(chosen ?? userId),
           ),
         ),

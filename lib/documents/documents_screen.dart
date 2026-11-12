@@ -16,7 +16,7 @@ import '../ui/part_keys.dart';
 import '../ui/title_bar_add.dart';
 import '../ui/screen_title.dart';
 import '../ui/swipe_to_remove.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../words/words.dart';
 import 'documents.dart';
 import '../ui/act_once.dart';

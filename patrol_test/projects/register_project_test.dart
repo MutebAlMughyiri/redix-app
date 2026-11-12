@@ -6,7 +6,7 @@ import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/projects/new_project_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 
 import '../support/given.dart';
 import '../support/pc.dart';

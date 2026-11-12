@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/screen_title.dart';
 import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';

@@ -5,7 +5,7 @@ import '../ui/row_menu.dart';
 import '../ui/bottom_button.dart';
 import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/screen_title.dart';
 import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';

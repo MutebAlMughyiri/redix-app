@@ -7,6 +7,7 @@ import '../projects/project.dart';
 import '../reports/summary.dart';
 import '../ui/api_object_body.dart';
 import '../ui/part_keys.dart';
+import '../words/word_fill.dart';
 import '../words/words.dart';
 import '../ui/app_color.dart';
 import '../reports/category_share.dart';
@@ -124,7 +125,7 @@ class _SummaryCardState extends State<SummaryCard> {
             color: AppColor.noticeSurface.of(context),
             child: ListTile(
               key: SummaryCard.pendingKey,
-              title: Text(words.summaryPending.replaceFirst('{0}', '${figures.waiting.count}'), key: SummaryCard.pendingKey.title),
+              title: Text(words.summaryPending.fill(['${figures.waiting.count}']), key: SummaryCard.pendingKey.title),
               subtitle: Text(
                 [
                   words.summaryPendingHint,

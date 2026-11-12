@@ -8,7 +8,7 @@ import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 import 'package:redix/words/word_fill.dart';
 
 import '../app_harness.dart';

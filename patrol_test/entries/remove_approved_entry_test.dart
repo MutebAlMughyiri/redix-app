@@ -4,7 +4,7 @@ import 'package:redix/auth/permission.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 
 import '../support/given.dart';
 import '../support/phone_case.dart';

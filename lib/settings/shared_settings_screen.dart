@@ -200,6 +200,7 @@ class _SharedSettingsScreenState extends State<SharedSettingsScreen> {
                     for (final count in LocalConfig.entriesShownChoices)
                       DropdownMenuItem(key: SharedSettingsScreen.entriesShownOptionKey(count), value: count, child: Text('$count', key: SharedSettingsScreen.entriesShownOptionKey(count).title)),
                   ],
+                  selectedItemBuilder: (_) => [for (final count in LocalConfig.entriesShownChoices) Text('$count')],
                   onChanged: (count) => widget.localConfig.chooseEntriesShown(count ?? widget.localConfig.entriesShown),
                 ),
               ),

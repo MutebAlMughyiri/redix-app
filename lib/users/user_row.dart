@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../ui/part_keys.dart';
+import '../words/word_fill.dart';
 import '../words/words.dart';
 import 'user.dart';
 import 'users_screen.dart';
@@ -71,7 +72,7 @@ class UserRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(partsLine([user.username, user.roleName, user.mobile]), key: UsersScreen.detailsKey(user.id)),
-            Text(words.permissionsCount.replaceFirst('{0}', '${user.permissionCount}'), key: UsersScreen.permissionsLineKey(user.id)),
+            Text(words.permissionsCount.fill(['${user.permissionCount}']), key: UsersScreen.permissionsLineKey(user.id)),
           ],
         ),
         trailing: rowMenu(UsersScreen.menuKey(user.id), [

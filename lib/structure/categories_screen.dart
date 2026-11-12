@@ -4,7 +4,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/name_dialog.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'categories.dart';

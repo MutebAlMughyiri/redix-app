@@ -515,8 +515,8 @@ void main() {
         ChangeDialog.saveKey,
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.custodianKey.field)));
-      expect(tester.getRect(find.byKey(MemberPicker.optionKey('user-nawaf')).last).width, lessThanOrEqualTo(360));
-      await act(tester, api, () => tester.tap(find.byKey(MemberPicker.optionKey('')).last));
+      expect(tester.getRect(find.byKey(MemberPicker.optionKey('user-nawaf'))).width, lessThanOrEqualTo(360));
+      await act(tester, api, () => tester.tap(find.byKey(MemberPicker.optionKey(''))));
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
       await tester.ensureVisible(find.byKey(AccountsScreen.menuKey(custody)));
       await tester.pumpAndSettle();

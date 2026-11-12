@@ -5,7 +5,7 @@ import '../ui/api_list_body.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/title_bar_add.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'add_existing_user_dialog.dart';

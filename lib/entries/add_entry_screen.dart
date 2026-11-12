@@ -42,7 +42,7 @@ import '../ui/two_fields.dart';
 import '../words/words.dart';
 import 'entry_tables.dart';
 import 'table_picker.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/screen_title.dart';
 import 'entry_row.dart';
 import 'saved_entry.dart';

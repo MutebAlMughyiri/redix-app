@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../format/number_format.dart';
 import '../reports/report_files.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../words/words.dart';
 import 'contract.dart';
 import 'contracts.dart';

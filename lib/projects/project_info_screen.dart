@@ -4,7 +4,7 @@ import '../format/date_format.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/row_menu.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';

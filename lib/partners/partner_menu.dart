@@ -5,7 +5,7 @@ import '../format/number_format.dart';
 import '../format/parts_line.dart';
 import '../projects/project.dart';
 import '../ui/confirm_dialog.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/row_menu.dart';
 import '../words/word_fill.dart';
 import '../words/words.dart';

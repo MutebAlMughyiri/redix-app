@@ -130,17 +130,6 @@ class _AccountsScreenState extends State<AccountsScreen> {
     child: Text(words.text(type.groupWordKey), key: AccountsScreen.groupKey(type), style: Theme.of(context).textTheme.titleSmall),
   );
 
-  /// The [rows] of the accounts, which the API gives banks first, each type under its heading.
-  List<Widget> _grouped(Words words, List<Widget> rows) {
-    final all = widget.accounts.all;
-    return [
-      for (final (index, account) in all.indexed) ...[
-        if (index == 0 || all[index - 1].type != account.type) _heading(words, account.type),
-        rows[index],
-      ],
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
@@ -191,8 +180,10 @@ class _AccountsScreenState extends State<AccountsScreen> {
             listOf: (rows) => ListView(
               padding: ApiListBody.padding,
               physics: ApiListBody.physics,
-              children: [ReconciliationCard(reconciliations: widget.reconciliations), ..._grouped(words, rows)],
+              children: [ReconciliationCard(reconciliations: widget.reconciliations), ...rows],
             ),
+            groupOf: (account) => account.type.name,
+            headingOf: (type) => _heading(words, AccountType.values.byName(type)),
           );
         },
       ),

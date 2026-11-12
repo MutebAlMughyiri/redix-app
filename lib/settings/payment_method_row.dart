@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../ui/name_dialog.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
 import 'payment_method.dart';

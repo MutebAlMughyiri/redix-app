@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../projects/project.dart';
 import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../words/words.dart';
 import 'categories.dart';
 import 'categories_screen.dart';

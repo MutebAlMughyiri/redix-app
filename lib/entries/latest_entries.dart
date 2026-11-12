@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../home/home_screen.dart';
 import '../projects/project.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_card.dart';

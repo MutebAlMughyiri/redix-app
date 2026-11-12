@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../words/word_fill.dart';
 import '../words/words.dart';
 import 'part_keys.dart';
 
@@ -11,7 +12,7 @@ Key messageKeyOf(String wordKey) => Key('message.$wordKey');
 void showMessage(ScaffoldMessengerState messenger, Words words, String wordKey, {String value = '', String actionLabel = '', VoidCallback onAction = _nothing, Duration duration = const Duration(milliseconds: 4000)}) => messenger.showSnackBar(
   SnackBar(
     key: messageKeyOf(wordKey),
-    content: Text(words.text(wordKey).replaceFirst('{0}', value), key: messageKeyOf(wordKey).label),
+    content: Text(words.text(wordKey).fill([value]), key: messageKeyOf(wordKey).label),
     action: actionLabel.isEmpty ? null : SnackBarAction(key: messageKeyOf(wordKey).icon, label: actionLabel, onPressed: onAction),
     persist: false,
     duration: duration,

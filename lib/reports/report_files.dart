@@ -5,7 +5,7 @@ import '../attachments/invoice_capture.dart';
 import '../auth/session.dart';
 import '../ui/busy.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../words/words.dart';
 import '../ui/act_once.dart';
 

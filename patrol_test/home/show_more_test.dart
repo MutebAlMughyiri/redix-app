@@ -15,7 +15,7 @@ int entriesShown() => find.byType(SwipeableEntryCard).evaluate().length;
 Future<void> chooseEntriesShown(PatrolIntegrationTester $, String projectId, int count) async {
   await $.tapOn(HomeScreen.sharedSettingsKey(projectId));
   await $.tapOn(SharedSettingsScreen.entriesShownChoiceKey);
-  await $.tester.tap(find.byKey(SharedSettingsScreen.entriesShownOptionKey(count)).last);
+  await $.tester.tap(find.byKey(SharedSettingsScreen.entriesShownOptionKey(count)));
   await $.pumpAndSettle();
   await $.back();
   await $.reach($(HomeScreen.titleKey));

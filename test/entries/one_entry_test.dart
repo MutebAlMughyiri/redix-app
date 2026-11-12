@@ -13,7 +13,7 @@ import 'package:redix/sharing/share_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 
 /// One entry for every table (redix-api #110): a revenue item's table and a partner are picked from Add entry's table list, for whoever moves money, and entered in the same form
 /// as an expense, sent through the same route, as a draft or for approval, kept on the phone without a network, and fixed after a rejection.

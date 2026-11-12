@@ -9,7 +9,7 @@ import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/entries/entry_link_screen.dart';
 import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 
 import '../support/entry_steps.dart';
 import '../support/given.dart';

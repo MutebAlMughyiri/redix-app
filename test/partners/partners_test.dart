@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 import 'package:redix/format/date_format.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/home/home_screen.dart';

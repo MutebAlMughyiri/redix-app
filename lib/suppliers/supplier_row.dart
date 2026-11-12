@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../structure/offered_items.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../words/words.dart';
 import 'supplier.dart';
 import 'supplier_dialog.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entry_card.dart';
 import 'package:redix/entries/entries_screen.dart';
@@ -38,7 +38,7 @@ void main() {
   Future<void> chooseCount(WidgetTester tester, FakeApi api, int count) async {
     await tester.ensureVisible(find.byKey(SharedSettingsScreen.entriesShownChoiceKey));
     await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.entriesShownChoiceKey)));
-    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.entriesShownOptionKey(count)).last));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.entriesShownOptionKey(count))));
   }
 
   testWidgets('R1: Settings offers any number from 5 to 20, shows 5 until one is chosen, and keeps the choice on the phone', (tester) async {

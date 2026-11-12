@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../format/date_format.dart';
 import '../auth/sign_in_screen.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'project.dart';

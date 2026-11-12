@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../format/date_format.dart';
 import '../ui/api_list_body.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'registered_project.dart';

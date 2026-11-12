@@ -19,8 +19,9 @@ import '../ui/bottom_button.dart';
 import '../ui/form_section.dart';
 import '../ui/labelled_chips.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/screen_title.dart';
+import '../words/word_fill.dart';
 import '../words/words.dart';
 import 'attachable_entries.dart';
 import 'attachable_entry.dart';
@@ -222,7 +223,7 @@ class _ShareScreenState extends State<ShareScreen> {
     final words = Words.of(context);
     final style = TextStyle(color: AppColor.refusal.of(context));
     return [
-      if (!_qr.isNone && _qr.total != entry.amount) Text(words.shareAmountDiffers.replaceFirst('{0}', formatMoney(_qr.total)).replaceFirst('{1}', formatMoney(entry.amount)), key: ShareScreen.amountDiffersKey, style: style),
+      if (!_qr.isNone && _qr.total != entry.amount) Text(words.shareAmountDiffers.fill([formatMoney(_qr.total), formatMoney(entry.amount)]), key: ShareScreen.amountDiffersKey, style: style),
       if (!_qr.isNone && _qr.vatNumber != entry.supplierVatNumber) Text(words.shareSupplierDiffers, key: ShareScreen.supplierDiffersKey, style: style),
     ];
   }

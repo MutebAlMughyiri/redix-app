@@ -5,6 +5,7 @@ import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/part_keys.dart';
 import '../ui/swipe_to_remove.dart';
+import '../words/word_fill.dart';
 import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_row.dart';
@@ -72,7 +73,7 @@ class EntryCard extends StatelessWidget {
       onTap: onTap,
       title: Text(entry.title, key: EntriesScreen.rowKey(entry.id).title),
       subtitle: Text(
-        [if (!entry.isExpense) words.text(entry.kind.wordKey), if (entry.supplierName.isNotEmpty) entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.replaceFirst('{0}', entry.authorName)].join(' · '),
+        [if (!entry.isExpense) words.text(entry.kind.wordKey), if (entry.supplierName.isNotEmpty) entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.fill([entry.authorName])].join(' · '),
         key: EntriesScreen.detailsKey(entry.id),
       ),
       trailing: Text(formatMoney(entry.amount), key: EntriesScreen.rowKey(entry.id).trailing, style: theme.textTheme.titleSmall),

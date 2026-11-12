@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../auth/session.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../words/words.dart';
 import 'project.dart';
 

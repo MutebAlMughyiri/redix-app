@@ -2071,7 +2071,7 @@ Future<void> chooseFromMenu(WidgetTester tester, FakeApi api, Key menuKey, Key i
 Future<void> chooseMember(WidgetTester tester, FakeApi api, Key pickerKey, String userId) async {
   await tester.ensureVisible(find.byKey(pickerKey.field));
   await act(tester, api, () => tester.tap(find.byKey(pickerKey.field)));
-  await act(tester, api, () => tester.tap(find.byKey(MemberPicker.optionKey(userId)).last));
+  await act(tester, api, () => tester.tap(find.byKey(MemberPicker.optionKey(userId))));
 }
 
 /// The color the frame of the entry [id]'s row is drawn in, which alone says where the entry stands (Muteb, 9 Nov 2026).

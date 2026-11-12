@@ -6,8 +6,9 @@ import '../projects/project.dart';
 import '../ui/bottom_button.dart';
 import '../ui/confirm_dialog.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/screen_title.dart';
+import '../words/word_fill.dart';
 import '../words/words.dart';
 import 'periodic_report_screen.dart';
 import 'periodic_reports.dart';
@@ -66,10 +67,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
     showDialog<void>(
       context: context,
       builder: (_) => ConfirmDialog(
-        title: words.reportsIssueQuestion.replaceFirst('{0}', '${next.number}'),
+        title: words.reportsIssueQuestion.fill(['${next.number}']),
         subject: widget.project.name,
-        explanation: words.reportsIssueExplain.replaceFirst('{1}', '${next.waiting.count}'),
-        confirmLabel: words.reportsIssue.replaceFirst('{0}', '${next.number}'),
+        explanation: words.reportsIssueExplain.fill(['${next.waiting.count}']),
+        confirmLabel: words.reportsIssue.fill(['${next.number}']),
         onConfirm: () async {
           final refusal = await widget.periodicReports.issue();
           await widget.nextReport.load();
@@ -130,7 +131,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
         builder: (context, _) => BottomButton(
           buttonKey: ReportsScreen.issueKey,
           icon: Icons.post_add,
-          label: words.reportsIssue.replaceFirst('{0}', '${widget.nextReport.value.number}'),
+          label: words.reportsIssue.fill(['${widget.nextReport.value.number}']),
           onPressed: project.mayMoveMoney ? () => _askToIssue(widget.nextReport.value) : null,
         ),
       ),

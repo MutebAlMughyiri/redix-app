@@ -19,7 +19,7 @@ import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/name_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 import 'package:redix/ui/swipe_to_remove.dart';
 import 'package:redix/words/app_language.dart';
 import 'package:redix/words/language_switch.dart';
@@ -280,11 +280,11 @@ extension Steps on PatrolIntegrationTester {
     await this(key).tap();
   }
 
-  /// Opens the [MemberPicker] keyed [pickerKey] and chooses [id] in its list; nobody when that is empty. The open list draws over the closed one, so the last match is tapped.
+  /// Opens the [MemberPicker] keyed [pickerKey] and chooses [id] in its list; nobody when that is empty.
   Future<void> chooseMember(Key pickerKey, String id) async {
     await tapOn(pickerKey.field);
     await pumpAndSettle();
-    await tester.tap(find.byKey(MemberPicker.optionKey(id)).last);
+    await tester.tap(find.byKey(MemberPicker.optionKey(id)));
     await pumpAndSettle();
   }
 

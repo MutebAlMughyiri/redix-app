@@ -219,7 +219,7 @@ lib/
     refusal_text.dart       A refusal or failure said in words, in the one refusal color
     row_menu.dart           A row's ⋮ menu and its choices; each row lists its own
     row_stripe.dart         Rows one under another a shade apart: an odd row takes the scheme's next tone
-    refusal_snack_bar.dart  The key of the SnackBar saying the word wordKey: every message has its own key, made from what it says, so a test finds it by key
+    messages.dart           The key of the SnackBar saying the word wordKey: every message has its own key, made from what it says, so a test finds it by key
     screen_title.dart       A screen's title in the app bar, with what it belongs to on a line beneath, so a long title on a narrow phone never cuts the name to a letter
     search_line.dart        The one search line, shown while its screen's search is open, ready to type, handing what is typed on once typing pauses for a list the API searches, its ✕ closing it and clearing what was typed; the filter line under it while open
     search_scope.dart       One screen's search (redix-app #104, version 3): SearchScope over its Scaffold holds whether the line and the filters show and what is typed; SearchIcons in the title bar opens them, the filter icon filled while a filter is in use

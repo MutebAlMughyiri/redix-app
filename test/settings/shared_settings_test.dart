@@ -6,7 +6,7 @@ import 'package:redix/settings/default_project_sheet.dart';
 import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/words/language_switch.dart';
 import 'package:redix/ui/part_keys.dart';
-import 'package:redix/ui/refusal_snack_bar.dart';
+import 'package:redix/ui/messages.dart';
 import 'package:redix/users/my_permissions_screen.dart';
 import 'package:redix/users/permission_ticks.dart';
 import 'package:redix/auth/permission.dart';

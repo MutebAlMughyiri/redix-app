@@ -13,7 +13,7 @@ import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../ui/reason_sheet.dart';
 import '../ui/screen_title.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../words/words.dart';
 import 'approvals.dart';
 import 'pending_approval.dart';

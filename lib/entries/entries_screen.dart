@@ -8,7 +8,7 @@ import '../ui/filter_line.dart';
 import '../ui/list_search.dart';
 import '../ui/search_scope.dart';
 import '../ui/part_keys.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'add_entry_screen.dart';

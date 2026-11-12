@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../auth/permission.dart';
 import '../partners/partners.dart';
 import '../ui/api_list_body.dart';
-import '../ui/refusal_snack_bar.dart';
+import '../ui/messages.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'permission_ticks.dart';
