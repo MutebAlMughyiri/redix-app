@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/reports/report_files.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/documents/documents_screen.dart';
@@ -123,7 +124,7 @@ void main() {
       expect($(keyStartingWith('suppliers.menu.')), findsNothing);
     });
 
-    phoneCase('contracts offer nothing to change', ($) async {
+    phoneCase('contracts offer nothing to change: a contract\'s ⋮ holds its files alone (Muteb, 12 Nov 2026)', ($) async {
       final manager = await Given.manager();
       final contract = await Given.contract(manager);
       await Given.closed(manager);
@@ -131,7 +132,10 @@ void main() {
       await $.tapOn(HomeScreen.contractsKey(manager.projectId));
       await $.reach($(ContractsScreen.valueOfKey(contract.id)));
       expect($.isEnabled(ContractsScreen.addKey), isFalse);
-      expect($(ContractsScreen.menuKey(contract.id)), findsNothing);
+      await $.tapOn(ContractsScreen.menuKey(contract.id));
+      await $.reach($(ContractsScreen.fileKey(ReportFileKind.pdf)));
+      expect($(ContractsScreen.editKey), findsNothing);
+      expect($(ContractsScreen.disableKey), findsNothing);
     });
 
     phoneCase('documents offer no Add and no Remove', ($) async {
