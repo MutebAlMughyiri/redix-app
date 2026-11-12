@@ -107,6 +107,7 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
       if (project.may(Permission.manageStructure)) _button(HomeScreen.categoriesKey(id), Icons.category_outlined, words.categoriesTitle, CategoriesScreen.pathOf(id)),
       if (project.may(Permission.manageSettings)) _button(HomeScreen.paymentMethodsKey(id), Icons.credit_card_outlined, words.paymentMethodsTitle, PaymentMethodsScreen.pathOf(id)),
       _button(HomeScreen.importSettingsKey(id), Icons.file_upload_outlined, words.projectsImportSettings, ''),
+      _button(HomeScreen.exportSettingsKey(id), Icons.file_download_outlined, words.projectsExportSettings, ''),
     ];
     final pages = [for (var start = 0; start < buttons.length; start += ProjectSettingsCard.perPage) buttons.skip(start).take(ProjectSettingsCard.perPage).toList()];
     return Card.outlined(

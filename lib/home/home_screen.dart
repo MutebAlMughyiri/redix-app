@@ -159,6 +159,9 @@ class HomeScreen extends StatefulWidget {
   /// Importing the settings of the project [id], grayed until it is built (Muteb, 9 Nov 2026).
   static Key importSettingsKey(String id) => Key('home.importSettings.$id');
 
+  /// تصدير إعدادات المشروع in the project [id]'s settings, grayed until redix-api #115 builds the export (redix-app #111).
+  static Key exportSettingsKey(String id) => Key('home.exportSettings.$id');
+
   /// The heading over the entries of the project [id].
   static Key entriesHeadingKey(String id) => Key('home.entriesHeading.$id');
 

@@ -14,6 +14,7 @@ void main() {
   final second = [HomeScreen.suppliersKey(project), HomeScreen.accountsKey(project), HomeScreen.partnersKey(project), HomeScreen.vatKey(project)];
   final third = [HomeScreen.approvalsKey(project), HomeScreen.documentsKey(project), HomeScreen.projectInfoKey(project), HomeScreen.myPermissionsKey(project)];
   final fourth = [HomeScreen.usersKey(project), HomeScreen.categoriesKey(project), HomeScreen.paymentMethodsKey(project), HomeScreen.importSettingsKey(project)];
+  final fifth = [HomeScreen.exportSettingsKey(project)];
 
   /// The app started and the home of a project opened, in [locale], seen with [permissions].
   Future<FakeApi> openHome(WidgetTester tester, {List<String> permissions = managerAndFinance, Locale locale = const Locale('en')}) async {
@@ -39,12 +40,12 @@ void main() {
   testWidgets('the card opens on its first page: the four used most, two by two, with a dot per page and the first one wide', (tester) async {
     await openHome(tester);
 
-    expectPage(first, [second, third, fourth]);
+    expectPage(first, [second, third, fourth, fifth]);
     expect(tester.getTopLeft(find.byKey(first[0])).dy, tester.getTopLeft(find.byKey(first[1])).dy);
     expect(tester.getTopLeft(find.byKey(first[2])).dy, greaterThan(tester.getTopLeft(find.byKey(first[0])).dy));
-    expect(find.byKey(HomeScreen.settingsDotKey(project, 3)), findsOneWidget);
-    expect(find.byKey(HomeScreen.settingsDotKey(project, 4)), findsNothing);
-    expect(pageShown(tester, 4), 0);
+    expect(find.byKey(HomeScreen.settingsDotKey(project, 4)), findsOneWidget);
+    expect(find.byKey(HomeScreen.settingsDotKey(project, 5)), findsNothing);
+    expect(pageShown(tester, 5), 0);
   });
 
   for (final language in ['en', 'ar']) {
@@ -52,19 +53,22 @@ void main() {
       await openHome(tester, locale: Locale(language));
 
       await swipeProjectSettings(tester);
-      expectPage(second, [first, third, fourth]);
-      expect(pageShown(tester, 4), 1);
+      expectPage(second, [first, third, fourth, fifth]);
+      expect(pageShown(tester, 5), 1);
       expect(isEnabled(tester, HomeScreen.vatKey(project)), isFalse, reason: 'Muteb, 12 Nov 2026: grayed until the next release');
 
       await swipeProjectSettings(tester);
-      expectPage(third, [first, second, fourth]);
+      expectPage(third, [first, second, fourth, fifth]);
       await swipeProjectSettings(tester);
-      expectPage(fourth, [first, second, third]);
+      expectPage(fourth, [first, second, third, fifth]);
       expect(isEnabled(tester, HomeScreen.importSettingsKey(project)), isFalse);
+      await swipeProjectSettings(tester);
+      expectPage(fifth, [first, second, third, fourth]);
+      expect(isEnabled(tester, HomeScreen.exportSettingsKey(project)), isFalse, reason: 'redix-app #111: grayed until redix-api #115 builds it');
 
       await swipeProjectSettings(tester, back: true);
-      expectPage(third, [first, second, fourth]);
-      expect(pageShown(tester, 4), 2);
+      expectPage(fourth, [first, second, third, fifth]);
+      expect(pageShown(tester, 5), 3);
     });
   }
 
@@ -72,12 +76,12 @@ void main() {
     await openHome(tester);
 
     await swipeProjectSettings(tester, back: true);
-    expectPage(fourth, [first, second, third]);
-    expect(pageShown(tester, 4), 3);
+    expectPage(fifth, [first, second, third, fourth]);
+    expect(pageShown(tester, 5), 4);
 
     await swipeProjectSettings(tester);
-    expectPage(first, [second, third, fourth]);
-    expect(pageShown(tester, 4), 0);
+    expectPage(first, [second, third, fourth, fifth]);
+    expect(pageShown(tester, 5), 0);
   });
 
   testWidgets('a page swiped to stays on coming back from a screen it opened, and the next start opens on the first page', (tester) async {
@@ -99,7 +103,7 @@ void main() {
       await showProjectSetting(tester, key);
       expect(find.byKey(key), findsNothing, reason: '$key');
     }
-    expect(find.byKey(HomeScreen.settingsDotKey(project, 2)), findsOneWidget);
-    expect(find.byKey(HomeScreen.settingsDotKey(project, 3)), findsNothing);
+    expect(find.byKey(HomeScreen.settingsDotKey(project, 3)), findsOneWidget);
+    expect(find.byKey(HomeScreen.settingsDotKey(project, 4)), findsNothing);
   });
 }

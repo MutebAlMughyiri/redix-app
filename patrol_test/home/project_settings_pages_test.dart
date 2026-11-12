@@ -28,7 +28,7 @@ void main() {
       expect($.tester.widget<TextButton>(find.byKey(HomeScreen.vatKey(id))).onPressed, isNull, reason: 'Muteb, 12 Nov 2026: grayed until the next release');
       expect($(HomeScreen.contractsKey(id)), findsNothing);
 
-      for (var page = 2; page <= 4; page++) {
+      for (var page = 2; page <= 5; page++) {
         await $.swipeProjectSettings();
       }
       expect($(HomeScreen.contractsKey(id)), findsOneWidget);
