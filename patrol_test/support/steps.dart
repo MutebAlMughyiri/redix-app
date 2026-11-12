@@ -361,7 +361,9 @@ extension Steps on PatrolIntegrationTester {
   }
 
   /// The id in the key of the element whose key starts with [prefix] and that shows [text]: a case names what it makes and learns its id from that name once, then finds it by its key.
+  /// It waits for a dialog still saving to close first, since the name typed in its field is not the element.
   Future<String> idShowing(String prefix, String text) async {
+    await until(() => find.byType(ChangeDialog).evaluate().isEmpty);
     await pumpAndSettle();
     if (find.text(text).evaluate().isEmpty) {
       await this(find.text(text)).scrollTo(view: scrolledList);
