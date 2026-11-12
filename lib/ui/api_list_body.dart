@@ -137,7 +137,7 @@ class _ApiListBodyState<T> extends State<ApiListBody<T>> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        SearchLine(hint: search.hint, filters: search.filters),
+        SearchLine(hint: search.hint, filters: search.filters, waits: search.searchesOnApi),
         Expanded(child: _items(ScreenSearch.of(context).typed)),
       ],
     );

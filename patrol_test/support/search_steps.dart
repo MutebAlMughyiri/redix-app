@@ -17,6 +17,7 @@ extension SearchSteps on PatrolIntegrationTester {
     }
     await reach(this(SearchLine.searchKey));
     await this(SearchLine.searchKey).enterText(typed);
+    await Future<void>.delayed(SearchLine.apiPause);
     await pumpAndSettle();
   }
 

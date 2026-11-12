@@ -709,6 +709,40 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(chip)));
     }
 
+    testWidgets('findings row 210: a word typed letter by letter asks the API once, when typing pauses, for the whole word', (tester) async {
+      final api = await openSearch(tester);
+      final field = find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(TextField));
+      final readsBefore = api.entryQueries.length;
+
+      await act(tester, api, () async {
+        for (final typed in ['ا', 'اح', 'احم', 'احمد']) {
+          await tester.enterText(field, typed);
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(api.entryQueries, hasLength(readsBefore));
+        await tester.pump(SearchLine.apiPause);
+      });
+
+      expect(api.entryQueries, hasLength(readsBefore + 1));
+      expect(api.entryQueries.last['text'], ['احمد']);
+      expect(shownRows(tester), ['entry-3']);
+    });
+
+    testWidgets('findings row 210: the ✕ closes the line before typing pauses, and what was typed is never asked', (tester) async {
+      final api = await openSearch(tester);
+      final field = find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(TextField));
+
+      await act(tester, api, () async {
+        await tester.enterText(field, 'احمد');
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.tap(find.byKey(SearchLine.closeKey));
+        await tester.pump(SearchLine.apiPause);
+      });
+
+      expect(api.entryQueries.where((query) => query['text']?.contains('احمد') ?? false), isEmpty);
+      expect(shownRows(tester), hasLength(4));
+    });
+
     testWidgets('R4: the search beside القيود opens the list ready to type, and the API is asked for one page, not every entry', (tester) async {
       final api = await openSearch(tester);
 

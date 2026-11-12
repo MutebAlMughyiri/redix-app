@@ -69,6 +69,17 @@ void main() {
     expect(tester.takeException(), isA<FlutterError>());
   });
 
+  testWidgets('findings row 210: Suppliers, searched on the phone, answers a letter at once, with no pause', (tester) async {
+    final (api, horizon, palm) = await onSuppliers(tester);
+    await act(tester, api, () => tester.tap(find.byKey(SearchIcons.searchKey)));
+
+    await tester.enterText(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(TextField)), 'الافق');
+    await tester.pump();
+
+    expect(find.byKey(SuppliersScreen.rowKey(horizon)), findsOneWidget);
+    expect(find.byKey(SuppliersScreen.rowKey(palm)), findsNothing);
+  });
+
   testWidgets('Suppliers: typing keeps the suppliers holding it, whichever way an Arabic name is spelled, by name or VAT number; cleared, every one', (tester) async {
     final (api, horizon, palm) = await onSuppliers(tester);
 

@@ -9,8 +9,8 @@ class ListSearch<T> {
   /// A search line saying [hint], keeping the items whose [textOf] holds what was typed, whichever way an Arabic word is spelled, with [filters] under it.
   const ListSearch({required this.hint, required this.textOf, this.filters = const []}) : searchesOnApi = false;
 
-  /// A search line saying [hint] whose list the API searches: the screen's [SearchScope] hands what is typed to what reads the list again, and every item the API
-  /// answers shows. [filters] as a list searched here.
+  /// A search line saying [hint] whose list the API searches: the screen's [SearchScope] hands what is typed, once typing pauses (findings row 210), to what reads the
+  /// list again, and every item the API answers shows. [filters] as a list searched here.
   const ListSearch.onApi({required this.hint, this.filters = const []}) : textOf = _nothing, searchesOnApi = true;
 
   /// No search.

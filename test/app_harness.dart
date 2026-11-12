@@ -1954,12 +1954,16 @@ Future<void> openFilters(WidgetTester tester, FakeApi api) async {
 /// Folds a list's filter line again, as the title bar's filter icon does.
 Future<void> foldFilters(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(SearchIcons.filtersKey)));
 
-/// Types [typed] in a list's search line, opening it from the title bar's search icon first.
+/// Types [typed] in a list's search line, opening it from the title bar's search icon first, and waits as long as a line whose list the API searches pauses before
+/// handing it on (findings row 210).
 Future<void> searchFor(WidgetTester tester, FakeApi api, String typed) async {
   if (find.byKey(SearchLine.searchKey).evaluate().isEmpty) {
     await act(tester, api, () => tester.tap(find.byKey(SearchIcons.searchKey)));
   }
-  await act(tester, api, () => tester.enterText(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(TextField)), typed));
+  await act(tester, api, () async {
+    await tester.enterText(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(TextField)), typed);
+    await tester.pump(SearchLine.apiPause);
+  });
 }
 
 /// On the Entries screen, shows everyone's entries rather than the user's own: قيودي turned off under the search line (redix-app #104).
