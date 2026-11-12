@@ -72,6 +72,12 @@ void main() {
     expect(find.text('en share.title'), findsOneWidget);
   });
 
+  testWidgets('findings row 211 (Muteb, 13 Nov 2026): the shared picture\'s preview is a quarter of the screen\'s height, never a fixed number', (tester) async {
+    await share(tester, (api) {});
+
+    expect(tester.getSize(find.byKey(ShareScreen.pictureKey)).height, 2400 / 4);
+  });
+
   testWidgets('AC-49.1: not signed in, sign in comes first and the attach screen continues with the file', (tester) async {
     final (:api, :capture) = await share(tester, (api) {}, signedIn: false);
     expect(capture.cameraOpened, 0);
