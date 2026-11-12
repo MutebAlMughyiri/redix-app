@@ -21,7 +21,7 @@ Future<void> onEntries(PatrolIntegrationTester $, Person person) async {
 
 void main() {
   phoneClass('The list of entries (UC-033)', () {
-    phoneCase('everyone sees all entries, and starts on their own', ($) async {
+    phoneCase('Muteb, 12 Nov 2026: everyone sees all entries from the start, and قيودي keeps their own', ($) async {
       final manager = await Given.manager();
       final account = await Given.account(manager);
       final member = await Given.member(manager, permissions: [Permission.recordEntries, Permission.chargeAnyAccount]);
@@ -29,9 +29,10 @@ void main() {
       final theirs = await Given.entry(manager, accountId: account);
       await onEntries($, member);
       await $.reach($(EntriesScreen.rowKey(mine)));
-      expect($(EntriesScreen.rowKey(theirs)), findsNothing);
-      await $.filterBy(EntriesScreen.mineKey);
       await $.reach($(EntriesScreen.rowKey(theirs)));
+      await $.filterBy(EntriesScreen.mineKey);
+      await $.gone($(EntriesScreen.rowKey(theirs)));
+      await $.reach($(EntriesScreen.rowKey(mine)));
     });
 
     phoneCase('redix-api #110: القيود lists every kind: expenses, revenue and partners\' money, each saying what it is', ($) async {
@@ -91,19 +92,18 @@ void main() {
       final theirs = await Given.entry(member, accountId: account);
       await onEntries($, manager);
       await $.reach($(EntriesScreen.rowKey(mine)));
-      expect($(EntriesScreen.rowKey(theirs)), findsNothing);
-      await $.filterBy(EntriesScreen.mineKey);
       await $.reach($(EntriesScreen.rowKey(theirs)));
+      await $.filterBy(EntriesScreen.mineKey);
+      await $.gone($(EntriesScreen.rowKey(theirs)));
       expect($(EntriesScreen.clearKey), findsNothing);
       await $.chooseIn(EntriesScreen.kindChoiceKey, EntriesScreen.kindKey('revenue'));
       await $.gone($(EntriesScreen.rowKey(mine)));
-      await $.gone($(EntriesScreen.rowKey(theirs)));
       await $.tapOn(EntriesScreen.clearKey);
       await $.reach($(EntriesScreen.rowKey(mine)));
-      await $.reach($(EntriesScreen.rowKey(theirs)));
+      expect($(EntriesScreen.rowKey(theirs)), findsNothing);
       expect($(EntriesScreen.clearKey), findsNothing);
       await $.tapOn(EntriesScreen.mineKey);
-      await $.gone($(EntriesScreen.rowKey(theirs)));
+      await $.reach($(EntriesScreen.rowKey(theirs)));
     });
 
     phoneCase('R8: a period keeps the entries dated inside it, both ends included', ($) async {

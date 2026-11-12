@@ -58,9 +58,6 @@ Step _swipeTo(Key key) => (tester, api, capture) => showProjectSetting(tester, k
 
 final _openProject = _tapKey(ProjectsScreen.cardKey(_project));
 
-/// On the Entries screen, everyone's entries rather than the user's own.
-Future<void> _showEveryones(WidgetTester tester, FakeApi api, FakeCapture capture) => showEveryonesEntries(tester, api);
-
 Future<void> _shareAPicture(WidgetTester tester, FakeApi api, FakeCapture capture) async {
   capture.share(PickedFile('receipt.png', '', Uint8List.fromList(onePixelPng)));
   await act(tester, api, () async {});
@@ -196,7 +193,7 @@ final List<Gate> _gates = [
     name: 'An enabled Edit on someone else\'s entry',
     permission: Permission.manageAnyEntry,
     arrange: (api) => api.addEntry(isMine: false),
-    steps: [_openProject, _tapKey(HomeScreen.searchEntriesKey(_project)), _showEveryones, _tapKey(EntriesScreen.rowKey('entry-0'))],
+    steps: [_openProject, _tapKey(HomeScreen.searchEntriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
     control: _enabled(AddEntryScreen.changeKey),
   ),
   (

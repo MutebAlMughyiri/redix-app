@@ -1966,12 +1966,6 @@ Future<void> searchFor(WidgetTester tester, FakeApi api, String typed) async {
   });
 }
 
-/// On the Entries screen, shows everyone's entries rather than the user's own: قيودي turned off under the search line (redix-app #104).
-Future<void> showEveryonesEntries(WidgetTester tester, FakeApi api) async {
-  await openFilters(tester, api);
-  await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.mineKey)));
-}
-
 /// Opens Settings from the card of the open project [projectId].
 Future<void> openSettings(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) async {
   await tester.ensureVisible(find.byKey(HomeScreen.sharedSettingsKey(projectId)));

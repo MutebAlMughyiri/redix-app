@@ -154,7 +154,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
       startsOpen: widget.startsSearching,
       onTyped: (typed) => _change(() => _filter.text = typed),
       child: Scaffold(
-        appBar: AppBar(title: ScreenTitle(words.entriesTitle, subject: widget.project.name), actions: [SearchIcons.andFilters(filtersInUse: _filter.isNarrowed || !_filter.onlyMine)]),
+        appBar: AppBar(title: ScreenTitle(words.entriesTitle, subject: widget.project.name), actions: [SearchIcons.andFilters(filtersInUse: _filter.isNarrowed || _filter.onlyMine)]),
         body: ApiListBody<EntryRow>(
           list: entries,
           emptyText: words.entriesEmpty,

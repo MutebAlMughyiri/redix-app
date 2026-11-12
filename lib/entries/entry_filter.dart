@@ -13,8 +13,8 @@ class EntryFilter {
   /// What was typed, which the API matches against the item, the supplier or contractor, who entered it, an old bill's number and the amount.
   var text = '';
 
-  /// True to keep only the signed-in user's own.
-  var onlyMine = true;
+  /// True to keep only the signed-in user's own: off as the screen opens, so everyone's entries show (Muteb, 12 Nov 2026).
+  var onlyMine = false;
 
   /// The kinds kept; none chosen keeps every kind.
   final chosenKinds = <EntryKind>{};

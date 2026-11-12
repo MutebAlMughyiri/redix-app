@@ -118,7 +118,7 @@ void main() {
     expect(find.byKey(HomeScreen.moreEntriesKey('project-0')), findsNothing);
   });
 
-  testWidgets('everyone sees all entries, and starts on their own', (tester) async {
+  testWidgets('Muteb, 12 Nov 2026: everyone sees all entries from the start, قيودي off, and قيودي keeps their own', (tester) async {
     final api = await openEntries(tester, (api) {
       api
         ..addEntry()
@@ -126,11 +126,15 @@ void main() {
     });
 
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
-    expect(find.byKey(EntriesScreen.rowKey('entry-1')), findsNothing);
-
-    await showEveryonesEntries(tester, api);
-
     expect(find.byKey(EntriesScreen.rowKey('entry-1')), findsOneWidget);
+    expect(api.entryQueries.last.containsKey('mine'), isFalse);
+    await openFilters(tester, api);
+    expect(tester.widget<FilterChip>(find.byKey(EntriesScreen.mineKey)).selected, isFalse);
+
+    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.mineKey)));
+
+    expect(find.byKey(EntriesScreen.rowKey('entry-1')), findsNothing);
+    expect(api.entryQueries.last['mine'], ['true']);
   });
 
   testWidgets('a reversed entry says so on its page, and its row keeps the plain frame', (tester) async {
@@ -251,7 +255,6 @@ void main() {
 
   testWidgets('Finance can change what waits, and what someone else entered', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(isMine: false), permissions: managerAndFinance);
-    await showEveryonesEntries(tester, api);
 
     await openActions(tester, api, 'entry-0');
 
@@ -260,7 +263,6 @@ void main() {
 
   testWidgets('redix-app #90 D4: someone else\'s entry offers the field Edit grayed', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'draft', isMine: false));
-    await showEveryonesEntries(tester, api);
 
     await openActions(tester, api, 'entry-0');
 
@@ -692,7 +694,6 @@ void main() {
         api.entryRows.firstWhere((row) => row['id'] == 'entry-1')['itemName'] = 'بند الحديد';
       });
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
-      await showEveryonesEntries(tester, api);
       return api;
     }
 
@@ -702,6 +703,7 @@ void main() {
     ];
 
     Future<void> choose(WidgetTester tester, FakeApi api, Key chip, Key item) async {
+      await openFilters(tester, api);
       await tester.ensureVisible(find.byKey(chip));
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(chip)));
@@ -789,7 +791,7 @@ void main() {
       await act(tester, api, () => tester.pageBack());
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
 
-      expect(api.entryQueries.last, {'mine': ['true'], 'take': ['5']});
+      expect(api.entryQueries.last, {'take': ['5']});
       expect(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.text('احمد')), findsNothing);
       expect(tester.widget<Icon>(find.byKey(SearchIcons.filtersKey.icon)).icon, Icons.filter_alt_outlined);
     });
@@ -860,7 +862,7 @@ void main() {
 
       expect(api.entryReads.last, 10);
       expect(api.entryQueries.last['kinds'], ['purchase']);
-      expect(api.entryQueries.last['mine'], ['true']);
+      expect(api.entryQueries.last.containsKey('mine'), isFalse);
     });
   });
 
