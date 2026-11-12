@@ -13,6 +13,7 @@ import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/app_color.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -139,6 +140,18 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.deleteKey), warnIfMissed: false));
 
     expect(opened.api.sentSettingsChanges, isEmpty);
+  });
+
+  testWidgets("findings row 206: on a shaded row the ⋮ menu's gray Delete keeps the menu's ground, its reason a line under its name", (tester) async {
+    final opened = await openPartners(tester);
+    final row = tester.element(find.byKey(PartnersScreen.nameKey(opened.haitham)));
+    expect(Theme.of(row).cardTheme.color, AppColor.oddRow.of(row), reason: 'هيثم is on a shaded row');
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.menuKey(opened.haitham))));
+
+    expect(find.descendant(of: find.byKey(PartnersScreen.deleteKey), matching: find.byType(ListTile)), findsNothing);
+    expect(text(tester, PartnersScreen.deleteKey.label), 'en partners.delete');
+    expect(text(tester, PartnersScreen.deleteKey.subtitle), 'en partners.partnerNotDeletable');
   });
 
   testWidgets("findings row 199: a partner held by someone else's draft has Delete gray, saying whose draft holds them", (tester) async {
