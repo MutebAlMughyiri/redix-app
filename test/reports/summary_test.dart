@@ -128,10 +128,8 @@ void main() {
     expect(find.byKey(SummaryCard.pendingKey), findsNothing);
   });
 
-  /// Opens الإيرادات والمصروفات from the home's buttons (Muteb, 9 Nov 2026).
-  Future<void> openRevenueAndExpenses(WidgetTester tester, FakeApi api) => scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0'));
-
-  SummarySide sideShown(WidgetTester tester) => tester.widget<SegmentedButton<SummarySide>>(find.byKey(ItemReportsScreen.sideKey)).selected.single;
+  /// Opens المصروفات or الإيرادات, [side], from the home's buttons (Muteb, 9 and 12 Nov 2026).
+  Future<void> openSide(WidgetTester tester, FakeApi api, SummarySide side) => scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0', side));
 
   testWidgets('the categories show only once a tile is tapped: expenses opens the expense categories, revenue the revenue ones, each with its total', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
@@ -153,7 +151,7 @@ void main() {
     expect(find.byKey(SummaryCard.categoryKey('category-9')), findsNothing);
   });
 
-  testWidgets("Muteb, 9 Nov 2026: a category on the home opens nothing; its items and their reports are on الإيرادات والمصروفات", (tester) async {
+  testWidgets("Muteb, 9 Nov 2026: a category on the home opens nothing; its items and their reports are on المصروفات and الإيرادات", (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
     await act(tester, api, () => tester.tap(find.byKey(SummaryCard.expensesKey)));
 
@@ -162,32 +160,30 @@ void main() {
     expect(find.text('التشطيب'), findsOneWidget);
     expect(find.byKey(ItemReportsScreen.itemKey('item-1')), findsNothing);
     expect(find.byType(ItemReportScreen), findsNothing);
-    expect(text(tester, HomeScreen.itemReportsKey('project-0').label), 'en reports.revenueAndExpenses');
+    expect(text(tester, HomeScreen.itemReportsKey('project-0', SummarySide.expenses).label), 'en summary.expenses');
+    expect(text(tester, HomeScreen.itemReportsKey('project-0', SummarySide.revenue).label), 'en summary.revenue');
   });
 
-  testWidgets('Muteb, 9 Nov 2026: الإيرادات والمصروفات opens on the expenses, and its switch, like the language one, shows the revenue categories instead', (tester) async {
+  testWidgets('Muteb, 12 Nov 2026: المصروفات and الإيرادات are two screens, each its own side\'s categories, with no switch between them', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
-    await openRevenueAndExpenses(tester, api);
+    await openSide(tester, api, SummarySide.expenses);
 
-    expect(find.text('en reports.revenueAndExpenses'), findsOneWidget);
-    expect(sideShown(tester), SummarySide.expenses);
-    expect(text(tester, ItemReportsScreen.sideOptionKey(SummarySide.revenue)), 'en summary.revenue');
-    expect(text(tester, ItemReportsScreen.sideOptionKey(SummarySide.expenses)), 'en summary.expenses');
+    expect(find.text('en summary.expenses'), findsOneWidget);
+    expect(find.byType(SegmentedButton<SummarySide>), findsNothing);
     expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsOneWidget);
     expect(find.byKey(ItemReportsScreen.categoryKey('category-9')), findsNothing);
 
-    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(SummarySide.revenue))));
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await openSide(tester, api, SummarySide.revenue);
 
-    expect(sideShown(tester), SummarySide.revenue);
+    expect(find.text('en summary.revenue'), findsOneWidget);
     expect(find.byKey(ItemReportsScreen.categoryKey('category-9')), findsOneWidget);
     expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsNothing);
   });
 
   testWidgets("BR-06, redix-api #109: the revenue side is its categories in the structure's order, رأس المال first like any other, each with its total", (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
-    await openRevenueAndExpenses(tester, api);
-
-    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(SummarySide.revenue))));
+    await openSide(tester, api, SummarySide.revenue);
 
     expect(text(tester, ItemReportsScreen.categoryKey('category-capital').title), 'رأس المال');
     expect(text(tester, ItemReportsScreen.categoryKey('category-capital').trailing), formatMoney(4000));
@@ -197,8 +193,7 @@ void main() {
 
   testWidgets('redix-api #109: رأس المال opens to its item like any category, and the item to its report, whose tables are its partners', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
-    await openRevenueAndExpenses(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.sideOptionKey(SummarySide.revenue))));
+    await openSide(tester, api, SummarySide.revenue);
     expect(find.byKey(ItemReportsScreen.itemKey('item-capital')), findsNothing);
 
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.categoryKey('category-capital'))));
@@ -221,7 +216,7 @@ void main() {
 
   testWidgets('redix-app #104: the search line keeps the categories whose name or an item\'s holds what was typed, open on those items, whichever way Arabic is spelled', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
-    await openRevenueAndExpenses(tester, api);
+    await openSide(tester, api, SummarySide.expenses);
 
     await searchFor(tester, api, 'بلاط');
     expect(find.byKey(ItemReportsScreen.itemKey('item-1')), findsOneWidget);
@@ -269,7 +264,7 @@ void main() {
         {'id': 'contract-1', 'contractorName': 'مقاول البلاط', 'value': 5000, 'isOpenValue': false, 'paid': 4000, 'remaining': 1000, 'isOverrun': false, 'paymentsTotal': 4000, 'payments': [line('entry-c', 'دفعة أولى', 4000)]},
       ],
     };
-    await openRevenueAndExpenses(tester, api);
+    await openSide(tester, api, SummarySide.expenses);
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.categoryKey('category-1'))));
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
 
@@ -292,7 +287,7 @@ void main() {
 
   testWidgets('a category opens to its items with their totals, and an item opens its report', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
-    await openRevenueAndExpenses(tester, api);
+    await openSide(tester, api, SummarySide.expenses);
 
     expect(find.byKey(ItemReportsScreen.itemKey('item-1')), findsNothing);
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.categoryKey('category-1'))));
@@ -334,9 +329,7 @@ void main() {
           ],
         };
     });
-    await showProjectSetting(tester, HomeScreen.itemReportsKey('project-0'));
-    await tester.ensureVisible(projectSettingPages);
-    await scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0'));
+    await openSide(tester, api, SummarySide.expenses);
     await act(tester, api, () => tester.tap(find.text('التشطيب')));
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
 
@@ -351,8 +344,8 @@ void main() {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
     await showProjectSetting(tester, HomeScreen.vatKey('project-0'));
     expect(tester.widget<Text>(find.byKey(HomeScreen.vatKey('project-0').label)).data, 'en vat.title');
-    await showProjectSetting(tester, HomeScreen.itemReportsKey('project-0'));
-    expect(find.byKey(HomeScreen.itemReportsKey('project-0')), findsOneWidget);
+    await showProjectSetting(tester, HomeScreen.itemReportsKey('project-0', SummarySide.expenses));
+    expect(find.byKey(HomeScreen.itemReportsKey('project-0', SummarySide.revenue)), findsOneWidget);
 
     await showProjectSetting(tester, HomeScreen.reportsKey('project-0'));
     await tester.ensureVisible(projectSettingPages);

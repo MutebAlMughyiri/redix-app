@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/reports/summary.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/project_info_screen.dart';
 
@@ -13,14 +15,17 @@ void main() {
       final id = manager.projectId;
       await $.onTheHome(manager);
       await $.reach($(HomeScreen.contractsKey(id)));
-      for (final key in [HomeScreen.reportsKey(id), HomeScreen.itemReportsKey(id), HomeScreen.suppliersKey(id)]) {
+      for (final key in [HomeScreen.reportsKey(id), HomeScreen.itemReportsKey(id, SummarySide.expenses), HomeScreen.itemReportsKey(id, SummarySide.revenue)]) {
         expect($(key), findsOneWidget);
       }
+      expect($(HomeScreen.suppliersKey(id)), findsNothing);
       expect($(HomeScreen.accountsKey(id)), findsNothing);
       expect($(HomeScreen.settingsDotKey(id, 3)), findsOneWidget);
 
       await $.swipeProjectSettings();
+      expect($(HomeScreen.suppliersKey(id)), findsOneWidget);
       expect($(HomeScreen.accountsKey(id)), findsOneWidget);
+      expect($.tester.widget<TextButton>(find.byKey(HomeScreen.vatKey(id))).onPressed, isNull, reason: 'Muteb, 12 Nov 2026: grayed until the next release');
       expect($(HomeScreen.contractsKey(id)), findsNothing);
 
       for (var page = 2; page <= 4; page++) {

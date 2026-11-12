@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/reports/summary.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/item_reports_screen.dart';
@@ -67,7 +68,7 @@ void main() {
       ],
       'revenueCategories': const <Object>[],
     });
-    await scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0'));
+    await scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0', SummarySide.expenses));
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.categoryKey('category-1'))));
     return api;
   }

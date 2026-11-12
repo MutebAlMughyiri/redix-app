@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:patrol/patrol.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 import 'package:redix/auth/change_password_screen.dart';
 import 'package:redix/auth/session.dart';
 import 'package:redix/auth/sign_in_screen.dart';
@@ -152,6 +153,16 @@ extension Steps on PatrolIntegrationTester {
   Future<void> fromTheHome(Person person, Key key) async {
     await onTheHome(person);
     await tapOn(key);
+  }
+
+  /// Signs [person] in and opens the screen at [path] from the project's home, as a Project settings button would, for a screen whose button is grayed until a later
+  /// release while its work stays (Muteb, 12 Nov 2026): the VAT refund.
+  Future<void> openPathFromTheHome(Person person, String path) async {
+    await onTheHome(person);
+    final card = find.byType(ProjectSettingsCard);
+    await this(card).waitUntilExists();
+    unawaited(GoRouter.of(tester.element(card)).push(path, extra: tester.widget<ProjectSettingsCard>(card).project));
+    await pumpAndSettle();
   }
 
   /// Opens the menu [menu] and chooses [item].

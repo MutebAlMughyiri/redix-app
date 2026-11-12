@@ -17,25 +17,18 @@ import 'item_report_screen.dart';
 import 'category_share.dart';
 import '../ui/row_stripe.dart';
 
-/// الإيرادات والمصروفات (FR-33), on its own from the home (Muteb, 9 Nov 2026): a choice between the revenue categories and the expense categories, like the language's, then
-/// every category of that side with its total and its share of the side, opening on its items with theirs, each opening its report. The expenses show first. The home's
-/// card shows the same categories and opens none of them. The search line over them keeps a category whose name, or an item's, holds what was typed, open on those items, or
-/// on all of them when its own name holds it (redix-app #104).
+/// المصروفات or الإيرادات (FR-33), each its own screen from Project settings (Muteb, 9 and 12 Nov 2026): every category of its [side] with its total and its share of
+/// the side, opening on its items with theirs, each opening its report. The home's card shows the same categories and opens none of them. The search line over them keeps a
+/// category whose name, or an item's, holds what was typed, open on those items, or on all of them when its own name holds it (redix-app #104).
 class ItemReportsScreen extends StatefulWidget {
-  /// The items of [project], named by its [summary]'s figures.
-  const ItemReportsScreen({super.key, required this.project, required this.summary});
+  /// The items of [project] on its [side], named by its [summary]'s figures.
+  const ItemReportsScreen({super.key, required this.project, required this.summary, required this.side});
 
   /// The screen's route.
-  static const path = '/projects/:projectId/item-reports';
+  static const path = '/projects/:projectId/item-reports/:side';
 
-  /// The route of the item reports of the project [projectId].
-  static String pathOf(String projectId) => '/projects/$projectId/item-reports';
-
-  /// The choice between revenue and expenses.
-  static const sideKey = Key('itemReports.side');
-
-  /// One side of the choice.
-  static Key sideOptionKey(SummarySide side) => Key('itemReports.side.${side.name}');
+  /// The route of the item reports of the project [projectId] on its [side].
+  static String pathOf(String projectId, SummarySide side) => '/projects/$projectId/item-reports/${side.name}';
 
   /// The way into the report of the item [id].
   static Key itemKey(String id) => Key('itemReports.item.$id');
@@ -49,12 +42,14 @@ class ItemReportsScreen extends StatefulWidget {
   /// Its figures, which name its items.
   final Summary summary;
 
+  /// What it shows: the expenses or the revenue.
+  final SummarySide side;
+
   @override
   State<ItemReportsScreen> createState() => _ItemReportsScreenState();
 }
 
 class _ItemReportsScreenState extends State<ItemReportsScreen> {
-  var _side = SummarySide.expenses;
   var _typed = '';
 
   /// Each category's tile: opened while a search narrows the categories, folded once it is cleared.
@@ -119,14 +114,16 @@ class _ItemReportsScreenState extends State<ItemReportsScreen> {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
+    final side = widget.side;
+    final title = words.text(side.wordKey);
     return SearchScope(
       onTyped: _search,
       child: Scaffold(
-        appBar: AppBar(title: ScreenTitle(words.reportsRevenueAndExpenses, subject: widget.project.name), actions: const [SearchIcons()]),
+        appBar: AppBar(title: ScreenTitle(title, subject: widget.project.name), actions: const [SearchIcons()]),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SearchLine(hint: words.commonSearchIn.fill([words.reportsRevenueAndExpenses])),
+            SearchLine(hint: words.commonSearchIn.fill([title])),
             Expanded(
               child: ApiObjectBody(
                 object: widget.summary,
@@ -136,19 +133,9 @@ class _ItemReportsScreenState extends State<ItemReportsScreen> {
                     padding: const EdgeInsets.all(16),
                     physics: ApiListBody.physics,
                     children: [
-                      SegmentedButton<SummarySide>(
-                        key: ItemReportsScreen.sideKey,
-                        segments: [
-                          ButtonSegment(value: SummarySide.revenue, label: Text(words.summaryRevenue, key: ItemReportsScreen.sideOptionKey(SummarySide.revenue))),
-                          ButtonSegment(value: SummarySide.expenses, label: Text(words.summaryExpenses, key: ItemReportsScreen.sideOptionKey(SummarySide.expenses))),
-                        ],
-                        selected: {_side},
-                        onSelectionChanged: (selection) => setState(() => _side = selection.single),
-                      ),
-                      const SizedBox(height: 8),
-                      for (final category in _side.categoriesOf(figures))
+                      for (final category in side.categoriesOf(figures))
                         if (ListSearch.groupOf(category.name, category.items, (item) => item.name, _typed) case (isShown: true, :final children))
-                          _category(category, children, _side.totalOf(figures)),
+                          _category(category, children, side.totalOf(figures)),
                     ],
                   ),
                 ),

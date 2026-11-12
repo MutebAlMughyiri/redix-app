@@ -2,17 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
+import 'package:redix/reports/summary.dart';
 
 import '../app_harness.dart';
 
 /// Muteb, 11 Nov 2026: the home's Project settings come four to a page, two by two, swiped sideways with dots under them; the first page holds the four used most.
-/// Nothing is kept: the card opens on its first page.
+/// Nothing is kept: the card opens on its first page. Since 12 Nov المصروفات and الإيرادات are two buttons there, and الموردون opens the second page.
 void main() {
   const project = 'project-0';
-  final first = [HomeScreen.contractsKey(project), HomeScreen.reportsKey(project), HomeScreen.itemReportsKey(project), HomeScreen.suppliersKey(project)];
-  final second = [HomeScreen.accountsKey(project), HomeScreen.partnersKey(project), HomeScreen.vatKey(project), HomeScreen.approvalsKey(project)];
-  final third = [HomeScreen.documentsKey(project), HomeScreen.projectInfoKey(project), HomeScreen.myPermissionsKey(project), HomeScreen.usersKey(project)];
-  final fourth = [HomeScreen.categoriesKey(project), HomeScreen.paymentMethodsKey(project), HomeScreen.importSettingsKey(project)];
+  final first = [HomeScreen.contractsKey(project), HomeScreen.reportsKey(project), HomeScreen.itemReportsKey(project, SummarySide.expenses), HomeScreen.itemReportsKey(project, SummarySide.revenue)];
+  final second = [HomeScreen.suppliersKey(project), HomeScreen.accountsKey(project), HomeScreen.partnersKey(project), HomeScreen.vatKey(project)];
+  final third = [HomeScreen.approvalsKey(project), HomeScreen.documentsKey(project), HomeScreen.projectInfoKey(project), HomeScreen.myPermissionsKey(project)];
+  final fourth = [HomeScreen.usersKey(project), HomeScreen.categoriesKey(project), HomeScreen.paymentMethodsKey(project), HomeScreen.importSettingsKey(project)];
 
   /// The app started and the home of a project opened, in [locale], seen with [permissions].
   Future<FakeApi> openHome(WidgetTester tester, {List<String> permissions = managerAndFinance, Locale locale = const Locale('en')}) async {
@@ -53,6 +54,7 @@ void main() {
       await swipeProjectSettings(tester);
       expectPage(second, [first, third, fourth]);
       expect(pageShown(tester, 4), 1);
+      expect(isEnabled(tester, HomeScreen.vatKey(project)), isFalse, reason: 'Muteb, 12 Nov 2026: grayed until the next release');
 
       await swipeProjectSettings(tester);
       expectPage(third, [first, second, fourth]);

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/quarter_picker.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
@@ -21,9 +20,7 @@ void main() {
 
   Future<FakeApi> openVat(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance}) async {
     final api = await openHome(tester, arrange, permissions: permissions);
-    await showProjectSetting(tester, HomeScreen.vatKey('project-0'));
-    await tester.ensureVisible(projectSettingPages);
-    await scrollAndTap(tester, api, HomeScreen.vatKey('project-0'));
+    await openFromTheHome(tester, api, VatStatementScreen.pathOf('project-0'));
     return api;
   }
 

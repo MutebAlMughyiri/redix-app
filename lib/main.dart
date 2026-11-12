@@ -291,7 +291,11 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(
         path: ItemReportsScreen.path,
-        builder: (context, state) => ItemReportsScreen(project: state.extra! as Project, summary: _summaryOf(state.projectId)),
+        builder: (context, state) => ItemReportsScreen(
+          project: state.extra! as Project,
+          summary: _summaryOf(state.projectId),
+          side: SummarySide.values.firstWhere((side) => side.name == state.pathParameters['side'], orElse: () => SummarySide.expenses),
+        ),
       ),
       GoRoute(
         path: PeriodicReportScreen.path,

@@ -45,10 +45,15 @@ class CategoryTotal {
 /// A side of a project's figures: what came in or what went out (deep review, 9 Nov 2026).
 enum SummarySide {
   /// The revenue, رأس المال among it.
-  revenue,
+  revenue('summary.revenue'),
 
   /// The expenses.
-  expenses;
+  expenses('summary.expenses');
+
+  const SummarySide(this.wordKey);
+
+  /// The word naming this side: الإيرادات or المصروفات.
+  final String wordKey;
 
   /// This side's categories in [figures].
   List<CategoryTotal> categoriesOf(SummaryFigures figures) => this == revenue ? figures.revenueCategories : figures.categories;

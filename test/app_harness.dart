@@ -7,6 +7,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:go_router/go_router.dart';
+import 'package:redix/projects/project_settings_card.dart';
 import 'package:redix/offline/local_store.dart';
 import 'package:redix/attachments/invoice_capture.dart';
 import 'package:redix/attachments/picked_file.dart';
@@ -1932,6 +1934,14 @@ Future<void> bringIntoView(WidgetTester tester, Finder target) async {
   final inSettings = find.descendant(of: projectSettingPages, matching: target).evaluate().isNotEmpty;
   await tester.ensureVisible(inSettings ? projectSettingPages : target);
   await tester.pumpAndSettle();
+}
+
+/// Opens the screen at [path] from the open project's home, as a Project settings button would, for a screen whose button is grayed until a later release while its
+/// work stays (Muteb, 12 Nov 2026): the VAT refund.
+Future<void> openFromTheHome(WidgetTester tester, FakeApi api, String path) {
+  final card = find.byType(ProjectSettingsCard);
+  final project = tester.widget<ProjectSettingsCard>(card).project;
+  return act(tester, api, () async => unawaited(GoRouter.of(tester.element(card)).push(path, extra: project)));
 }
 
 /// Taps the widget keyed [key], scrolled into view first; a button of the home's Project settings is swiped to first.

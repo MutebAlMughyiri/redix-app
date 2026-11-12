@@ -1,4 +1,6 @@
 import 'package:patrol/patrol.dart';
+import 'package:redix/ui/search_scope.dart';
+import 'package:redix/reports/summary.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/contracts/contracts_screen.dart';
@@ -63,10 +65,10 @@ extension MoneySteps on PatrolIntegrationTester {
     }
   }
 
-  /// From the home of [person], opens الإيرادات والمصروفات and the category named [categoryName].
+  /// From the home of [person], opens المصروفات and the category named [categoryName].
   Future<void> openReportCategory(Person person, String categoryName) async {
-    await tapOn(HomeScreen.itemReportsKey(person.projectId));
-    await reach(this(ItemReportsScreen.sideKey));
+    await tapOn(HomeScreen.itemReportsKey(person.projectId, SummarySide.expenses));
+    await reach(this(SearchIcons.searchKey));
     final id = await idShowing('itemReports.category.', categoryName);
     await tapOn(ItemReportsScreen.categoryKey(id));
     await pumpAndSettle();

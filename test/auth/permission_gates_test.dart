@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/reports/summary.dart';
+import 'package:redix/reports/vat_statement_screen.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/attachments/picked_file.dart';
@@ -216,14 +218,14 @@ final List<Gate> _gates = [
     name: 'The VAT statement\'s files',
     permission: Permission.seeAllCapital,
     arrange: _nothing,
-    steps: [_openProject, _tapKey(HomeScreen.vatKey(_project))],
+    steps: [_openProject, (tester, api, capture) => openFromTheHome(tester, api, VatStatementScreen.pathOf(_project))],
     control: (_) => find.byType(ReportFileButtons),
   ),
   (
     name: 'An item report\'s files',
     permission: Permission.seeAllCapital,
     arrange: (api) => api.summaryAnswer = _summaryWithAnItem,
-    steps: [_openProject, _tapKey(HomeScreen.itemReportsKey(_project)), _tapKey(ItemReportsScreen.categoryKey('category-1')), _tapKey(ItemReportsScreen.itemKey('item-1'))],
+    steps: [_openProject, _tapKey(HomeScreen.itemReportsKey(_project, SummarySide.expenses)), _tapKey(ItemReportsScreen.categoryKey('category-1')), _tapKey(ItemReportsScreen.itemKey('item-1'))],
     control: (_) => find.byType(ReportFileButtons),
   ),
   (name: 'Approvals on the project card', permission: Permission.approveEntries, arrange: _nothing, steps: [_openProject, _swipeTo(HomeScreen.approvalsKey(_project))], control: _key(HomeScreen.approvalsKey(_project))),

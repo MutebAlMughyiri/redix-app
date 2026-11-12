@@ -148,7 +148,7 @@ lib/
     quarter_picker.dart     A quarter chosen by its year and its number, each as chips, from the year firstYear to this one
     report_files.dart       What can be done with a report's file on the phone
     reports_screen.dart     A project's periodic reports: the next one and those issued before
-    item_reports_screen.dart الإيرادات والمصروفات, from the home: a switch between the revenue and the expense categories, each with its total and share, opening on its items, each opening its report
+    item_reports_screen.dart المصروفات or الإيرادات, each its own button in Project settings: one side's categories, each with its total and share, opening on its items, each opening its report
     category_share.dart     A category's name and total over a bar of its share of its side
     vat_statement_screen.dart How a period is chosen
     waiting_figures.dart    What waits for approval, as two figures: expenses, which lower the surplus once approved, and revenue with partners' money, which raises it

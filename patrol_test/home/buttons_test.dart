@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
+import 'package:redix/reports/summary.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/home_screen.dart';
@@ -58,10 +59,10 @@ void main() {
       await $.reach($(AddEntryScreen.tableKey));
     });
 
-    phoneCase('everyone has Accounts, Partners, Suppliers, Contracts, Reports, الإيرادات والمصروفات, Actual balances, VAT, Documents, More info and My permissions', ($) async {
+    phoneCase('everyone has Accounts, Partners, Suppliers, Contracts, Reports, المصروفات, الإيرادات, Actual balances, VAT, Documents, More info and My permissions', ($) async {
       final member = await onTheHomeHolding($, []);
       final id = member.projectId;
-      for (final key in [HomeScreen.accountsKey(id), HomeScreen.partnersKey(id), HomeScreen.suppliersKey(id), HomeScreen.contractsKey(id), HomeScreen.reportsKey(id), HomeScreen.itemReportsKey(id), HomeScreen.vatKey(id), HomeScreen.documentsKey(id), HomeScreen.projectInfoKey(id), HomeScreen.myPermissionsKey(id)]) {
+      for (final key in [HomeScreen.accountsKey(id), HomeScreen.partnersKey(id), HomeScreen.suppliersKey(id), HomeScreen.contractsKey(id), HomeScreen.reportsKey(id), HomeScreen.itemReportsKey(id, SummarySide.expenses), HomeScreen.itemReportsKey(id, SummarySide.revenue), HomeScreen.vatKey(id), HomeScreen.documentsKey(id), HomeScreen.projectInfoKey(id), HomeScreen.myPermissionsKey(id)]) {
         await $.goTo($(key));
       }
     });

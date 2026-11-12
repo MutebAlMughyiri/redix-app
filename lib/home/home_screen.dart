@@ -112,7 +112,7 @@ class HomeScreen extends StatefulWidget {
   static Key reportsKey(String id) => Key('home.reports.$id');
 
   /// The way into the item reports of the project [id] (Muteb, 9 Nov 2026).
-  static Key itemReportsKey(String id) => Key('home.itemReports.$id');
+  static Key itemReportsKey(String id, SummarySide side) => Key('home.itemReports.${side.name}.$id');
 
   /// The way into the VAT refund of the project [id] (Muteb, 9 Nov 2026).
   static Key vatKey(String id) => Key('home.vat.$id');

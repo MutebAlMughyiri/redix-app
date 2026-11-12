@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/format/date_format.dart';
-import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/quarter_picker.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
@@ -15,7 +14,7 @@ import '../support/steps.dart';
 
 /// Signs [person] in and opens the VAT statement.
 Future<void> onStatement(PatrolIntegrationTester $, Person person) async {
-  await $.fromTheHome(person, HomeScreen.vatKey(person.projectId));
+  await $.openPathFromTheHome(person, VatStatementScreen.pathOf(person.projectId));
   await $.reach($(VatStatementScreen.modeKey));
 }
 

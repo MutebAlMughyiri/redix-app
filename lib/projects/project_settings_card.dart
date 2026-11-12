@@ -9,7 +9,7 @@ import '../home/home_screen.dart';
 import '../partners/partners_screen.dart';
 import '../reports/item_reports_screen.dart';
 import '../reports/reports_screen.dart';
-import '../reports/vat_statement_screen.dart';
+import '../reports/summary.dart';
 import '../settings/payment_methods_screen.dart';
 import '../structure/categories_screen.dart';
 import '../suppliers/suppliers_screen.dart';
@@ -92,11 +92,13 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
     final buttons = [
       _button(HomeScreen.contractsKey(id), Icons.description_outlined, words.contractsTitle, ContractsScreen.pathOf(id)),
       _button(HomeScreen.reportsKey(id), Icons.summarize_outlined, words.reportsTitle, ReportsScreen.pathOf(id)),
-      _button(HomeScreen.itemReportsKey(id), Icons.analytics_outlined, words.reportsRevenueAndExpenses, ItemReportsScreen.pathOf(id)),
+      _button(HomeScreen.itemReportsKey(id, SummarySide.expenses), Icons.trending_down, words.summaryExpenses, ItemReportsScreen.pathOf(id, SummarySide.expenses)),
+      _button(HomeScreen.itemReportsKey(id, SummarySide.revenue), Icons.trending_up, words.summaryRevenue, ItemReportsScreen.pathOf(id, SummarySide.revenue)),
       _button(HomeScreen.suppliersKey(id), Icons.storefront_outlined, words.suppliersTitle, SuppliersScreen.pathOf(id)),
       _button(HomeScreen.accountsKey(id), Icons.account_balance_wallet_outlined, words.accountsTitle, AccountsScreen.pathOf(id)),
       _button(HomeScreen.partnersKey(id), Icons.handshake_outlined, words.partnersTitle, PartnersScreen.pathOf(id)),
-      _button(HomeScreen.vatKey(id), Icons.receipt_long_outlined, words.vatTitle, VatStatementScreen.pathOf(id)),
+      // Grayed until the next release works on it (Muteb, 12 Nov 2026); VatStatementScreen and its route stay as they are.
+      _button(HomeScreen.vatKey(id), Icons.receipt_long_outlined, words.vatTitle, ''),
       if (project.may(Permission.approveEntries)) _button(HomeScreen.approvalsKey(id), Icons.fact_check_outlined, words.approvalsTitle, ApprovalsScreen.pathOf(id)),
       _button(HomeScreen.documentsKey(id), Icons.folder_outlined, words.documentsTitle, DocumentsScreen.pathOf(id)),
       _button(HomeScreen.projectInfoKey(id), Icons.info_outline, words.projectInfoTitle, ProjectInfoScreen.pathOf(id)),

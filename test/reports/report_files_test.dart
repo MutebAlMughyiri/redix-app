@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/reports/summary.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/periodic_report_screen.dart';
 import 'package:redix/reports/report_files.dart';
@@ -98,9 +99,7 @@ void main() {
   testWidgets('UC-057, D20: the VAT statement hands on its workbook for the period shown', (tester) async {
     final (:api, :capture) = await openReports(tester, (api) {});
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
-    await showProjectSetting(tester, HomeScreen.vatKey('project-0'));
-    await tester.ensureVisible(projectSettingPages);
-    await scrollAndTap(tester, api, HomeScreen.vatKey('project-0'));
+    await openFromTheHome(tester, api, VatStatementScreen.pathOf('project-0'));
     final start = DateTime(DateTime.now().year, (DateTime.now().month - 1) ~/ 3 * 3 + 1);
     final from = start.toIso8601String().substring(0, 10);
     final to = DateTime(start.year, start.month + 3, 0).toIso8601String().substring(0, 10);
@@ -130,9 +129,7 @@ void main() {
       };
     });
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
-    await showProjectSetting(tester, HomeScreen.itemReportsKey('project-0'));
-    await tester.ensureVisible(projectSettingPages);
-    await scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0'));
+    await scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0', SummarySide.expenses));
     await act(tester, api, () => tester.tap(find.text('التشطيب')));
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
 
