@@ -5,6 +5,7 @@ import 'package:patrol/patrol.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/contracts/contract.dart';
 import 'package:redix/contracts/contracts_screen.dart';
+import 'package:redix/format/number_format.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/report_files.dart';
@@ -225,7 +226,7 @@ void main() {
       await $.tapOn(ContractsScreen.nameKey(contract.id).body);
       await $.reach($(ItemReportScreen.contractCardKey(contract.id)));
       await $.says(ItemReportScreen.contractorKey(contract.id), contract.contractor);
-      await $.says(ItemReportScreen.contractTotalKey(contract.id), '400.00');
+      await $.says(ItemReportScreen.contractTotalKey(contract.id), '${$.words.reportsGrandTotal}: ${formatMoney(400)}');
     });
 
     phoneCase('a contract with payments keeps its contractor and item', ($) async {
