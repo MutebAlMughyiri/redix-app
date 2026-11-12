@@ -78,7 +78,7 @@ void main() {
     expect(isTicked(tester, Permission.readProject), isTrue);
 
     await toggle(tester, api, Permission.approveEntries);
-    expect(api.sentUserChanges.last.$1, '/projects/project-0/users/user-1/permissions/approveEntries/remove');
+    expect(api.sentUserChanges.last.$1, 'DELETE /projects/project-0/users/user-1/permissions/approveEntries');
     expect(isTicked(tester, Permission.approveEntries), isFalse);
   });
 

@@ -127,7 +127,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.renameItemKey)));
     await save(tester, opened.api, 'بند الحفر');
     expect(text(tester, CategoriesScreen.itemNameKey(opened.digging)), 'بند الحفر');
-    expect(opened.api.sentStructureChanges.last.$1, '/projects/project-0/items/${opened.digging}');
+    expect(opened.api.sentStructureChanges.last.$1, 'PUT /projects/project-0/items/${opened.digging}');
   });
 
   testWidgets('AC-39.1: dragging a category sends the new order and it stays', (tester) async {
@@ -338,7 +338,7 @@ void main() {
 
     expect(find.byType(AlertDialog), findsNothing);
 
-    expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/items/${opened.item}/subgroups/${opened.ids[0]}/delete');
+    expect(opened.api.sentStructureChanges.single.$1, 'DELETE /projects/project-0/items/${opened.item}/subgroups/${opened.ids[0]}');
     expect(find.text('مواد'), findsNothing);
     expect(find.text('دفان'), findsOneWidget);
   });
@@ -363,7 +363,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemTypeKey(ItemType.both))));
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-    expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/items/${opened.steel}/type');
+    expect(opened.api.sentStructureChanges.single.$1, 'PUT /projects/project-0/items/${opened.steel}/type');
     expect(opened.api.sentStructureChanges.single.$2, {'type': 'both'});
     expect(text(tester, CategoriesScreen.itemDetailsKey(opened.steel)), 'en categories.typeBoth');
   });
@@ -376,7 +376,7 @@ void main() {
     expect(tester.widget<CheckedPopupMenuItem<VoidCallback>>(find.byKey(CategoriesScreen.tablePercentagesKey)).checked, isFalse);
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.tablePercentagesKey)));
 
-    expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/items/${opened.steel}/table-percentages');
+    expect(opened.api.sentStructureChanges.single.$1, 'PUT /projects/project-0/items/${opened.steel}/table-percentages');
     expect(opened.api.sentStructureChanges.single.$2, {'isOn': true});
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(opened.steel))));
     expect(tester.widget<CheckedPopupMenuItem<VoidCallback>>(find.byKey(CategoriesScreen.tablePercentagesKey)).checked, isTrue);

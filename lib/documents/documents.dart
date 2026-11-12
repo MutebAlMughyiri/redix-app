@@ -51,5 +51,5 @@ class Documents extends ApiList<Document> {
   Future<String> add(PickedFile file, String name, String group) => sendFile('/projects/$projectId/documents', file.name, file.bytes, fields: {'name': name, 'group': group});
 
   /// Takes [document] off the list; its file stays kept.
-  Future<String> remove(Document document) => change('/projects/$projectId/documents/${document.id}/delete', {});
+  Future<String> remove(Document document) => deleteAt('/projects/$projectId/documents/${document.id}');
 }

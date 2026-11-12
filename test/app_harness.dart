@@ -867,15 +867,15 @@ class FakeApi {
     if (request.method == 'GET') {
       return _json(list, 200);
     }
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
-    sentSettingsChanges.add((request.url.path, body));
+    final body = _bodyOf(request);
+    sentSettingsChanges.add((_written(request), body));
     if (settingsAnswer.status >= 300) {
       return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
     }
     switch (segments.sublist(3)) {
       case []:
         addPaymentMethod(segments[1], body['name'] as String);
-      case [final id, 'delete']:
+      case [final id] when request.method == 'DELETE':
         list.removeWhere((row) => row['id'] == id);
       case [final id, 'disable']:
         list.singleWhere((row) => row['id'] == id)['isActive'] = false;
@@ -929,8 +929,8 @@ class FakeApi {
     if (request.method == 'GET') {
       return _json(list, 200);
     }
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
-    sentSettingsChanges.add((request.url.path, body));
+    final body = _bodyOf(request);
+    sentSettingsChanges.add((_written(request), body));
     if (settingsAnswer.status >= 300) {
       return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
     }
@@ -942,7 +942,7 @@ class FakeApi {
         list.singleWhere((row) => row['id'] == id)['isActive'] = false;
       case [final id, 'enable']:
         list.singleWhere((row) => row['id'] == id)['isActive'] = true;
-      case [final id, 'delete']:
+      case [final id] when request.method == 'DELETE':
         list.removeWhere((row) => row['id'] == id);
       case [final id]:
         list.singleWhere((row) => row['id'] == id)
@@ -959,7 +959,7 @@ class FakeApi {
   /// Moves a sent transfer's amount between its two accounts at once, as the API does (FR-23), unless [settingsAnswer] refuses it.
   http.Response _answerTransfer(http.Request request) {
     final projectId = request.url.pathSegments[1];
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    final body = _bodyOf(request);
     sentTransfers.add((projectId, body));
     if (settingsAnswer.status >= 300) {
       return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
@@ -1090,13 +1090,13 @@ class FakeApi {
     if (request.method == 'GET') {
       return _json(list, 200);
     }
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
-    sentSettingsChanges.add((request.url.path, body));
+    final body = _bodyOf(request);
+    sentSettingsChanges.add((_written(request), body));
     if (settingsAnswer.status >= 300) {
       return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
     }
     final userId = body['userId'] as String? ?? '';
-    if (segments.last == 'delete') {
+    if (request.method == 'DELETE') {
       list.removeWhere((row) => row['id'] == segments[3]);
     } else if (segments.length == 3) {
       addPartner(segments[1], body['name'] as String, userId: userId, userName: _memberName(userId));
@@ -1155,8 +1155,8 @@ class FakeApi {
 
   http.Response _changeSuppliers(http.Request request, List<Map<String, Object>> list) {
     final segments = request.url.pathSegments;
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
-    sentSettingsChanges.add((request.url.path, body));
+    final body = _bodyOf(request);
+    sentSettingsChanges.add((_written(request), body));
     if (settingsAnswer.status >= 300) {
       return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code, if (supplierHolder.isNotEmpty) 'existing': supplierHolder}, settingsAnswer.status);
     }
@@ -1229,8 +1229,8 @@ class FakeApi {
     if (request.method == 'GET') {
       return _json(list, 200);
     }
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
-    sentSettingsChanges.add((request.url.path, body));
+    final body = _bodyOf(request);
+    sentSettingsChanges.add((_written(request), body));
     if (settingsAnswer.status >= 300) {
       return _json({if (settingsAnswer.code.isNotEmpty) 'code': settingsAnswer.code}, settingsAnswer.status);
     }
@@ -1382,8 +1382,8 @@ class FakeApi {
     if (request.method == 'GET') {
       return _json(list, 200);
     }
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
-    sentStructureChanges.add((request.url.path, body));
+    final body = _bodyOf(request);
+    sentStructureChanges.add((_written(request), body));
     if (structureAnswer.status >= 300) {
       return _json({if (structureAnswer.code.isNotEmpty) 'code': structureAnswer.code}, structureAnswer.status);
     }
@@ -1416,7 +1416,7 @@ class FakeApi {
         row['showsTablePercentages'] = body['isOn'] as bool;
       case ['items', final itemId, 'tables', 'reorder']:
         tableOrders[itemId] = [for (final id in body['ids'] as List<dynamic>) id as String];
-      case ['items', _, 'subgroups', final subgroupId, 'delete']:
+      case ['items', _, 'subgroups', final subgroupId] when request.method == 'DELETE':
         (row['subgroups']! as List<Map<String, Object>>).removeWhere((subgroup) => subgroup['id'] == subgroupId);
       case ['items', _, 'subgroups', final subgroupId]:
         (row['subgroups']! as List<Map<String, Object>>).singleWhere((subgroup) => subgroup['id'] == subgroupId)['name'] = body['name'] as String;
@@ -1451,15 +1451,15 @@ class FakeApi {
     if (request.method == 'GET') {
       return _json(list, 200);
     }
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
-    sentStructureChanges.add((path, body));
+    final body = _bodyOf(request);
+    sentStructureChanges.add((_written(request), body));
     if (structureAnswer.status >= 300) {
       return _json({if (structureAnswer.code.isNotEmpty) 'code': structureAnswer.code}, structureAnswer.status);
     }
     if (path.endsWith('/reorder')) {
       final order = body['ids'] as List<dynamic>;
       list.sort((first, second) => order.indexOf(first['id']).compareTo(order.indexOf(second['id'])));
-    } else if (path.endsWith('/delete')) {
+    } else if (request.method == 'DELETE') {
       list.removeWhere((column) => column['id'] == segments[columnsEnd]);
     } else if (segments.length == columnsEnd) {
       addColumn(
@@ -1529,8 +1529,8 @@ class FakeApi {
       final inProject = users.where((user) => (_inProject(user, projectId)['projects'] as List<Map<String, Object>>).isNotEmpty);
       return _json([for (final user in inProject) _inProject(user, projectId)], 200);
     }
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
-    sentUserChanges.add((request.url.path, body));
+    final body = _bodyOf(request);
+    sentUserChanges.add((_written(request), body));
     if (userAnswer.status >= 300) {
       return _json({if (userAnswer.code.isNotEmpty) 'code': userAnswer.code}, userAnswer.status);
     }
@@ -1552,15 +1552,15 @@ class FakeApi {
     if (segments.last == 'role-name') {
       lines.singleWhere((line) => line['projectId'] == projectId)['roleName'] = body['roleName'] as String;
     } else if (segments[4] == 'partners') {
-      if (segments.last != 'remove') {
+      if (request.method != 'DELETE') {
         give(user, projectId, ['seeChosenCapital']);
       }
       final chosen = lines.singleWhere((line) => line['projectId'] == projectId)['partnerIds']! as List<String>;
       chosen.remove(segments[5]);
-      if (segments.last != 'remove') {
+      if (request.method != 'DELETE') {
         chosen.add(segments[5]);
       }
-    } else if (segments.last != 'remove') {
+    } else if (request.method != 'DELETE') {
       give(user, projectId, [segments[5]]);
     } else if (segments[5] == 'readProject') {
       lines.removeWhere((line) => line['projectId'] == projectId);
@@ -1578,9 +1578,9 @@ class FakeApi {
     if (request.method == 'GET') {
       return _json(users, 200);
     }
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    final body = _bodyOf(request);
     final path = request.url.path;
-    sentUserChanges.add((path, body));
+    sentUserChanges.add((_written(request), body));
     if (userAnswer.status >= 300) {
       return _json({if (userAnswer.code.isNotEmpty) 'code': userAnswer.code}, userAnswer.status);
     }
@@ -1599,10 +1599,19 @@ class FakeApi {
 
   /// Records the entry the app sent to the one route, or the change of one, and answers as [entryAnswer] says (redix-api #110).
   http.Response _recordEntry(http.Request request) {
-    sentEntryPaths.add(request.url.path);
-    sentEntries.add(jsonDecode(request.body) as Map<String, dynamic>);
+    sentEntryPaths.add(_written(request));
+    sentEntries.add(_bodyOf(request));
     return _json(entryAnswer.body, entryAnswer.status);
   }
+
+  /// What the app sent [request] to: its path, with its query, led by its method when that is not POST, so a test sees a plain edit put and a delete deleted (redix-api #98).
+  String _written(http.Request request) {
+    final sent = request.url.hasQuery ? '${request.url.path}?${request.url.query}' : request.url.path;
+    return request.method == 'POST' ? sent : '${request.method} $sent';
+  }
+
+  /// What [request] carries as JSON; nothing for a delete, which has no body.
+  Map<String, dynamic> _bodyOf(http.Request request) => request.body.isEmpty ? <String, dynamic>{} : jsonDecode(request.body) as Map<String, dynamic>;
 
   /// Answers as bytes with no character set, as a JSON reply may arrive, so reading Arabic takes UTF-8 on the app's side.
   http.Response _json(Object body, int status) => http.Response.bytes(utf8.encode(jsonEncode(body)), status);
@@ -1626,7 +1635,7 @@ class FakeApi {
     if (request.method == 'GET') {
       return _json(registered, 200);
     }
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    final body = _bodyOf(request);
     sentRegistrations.add((path, body));
     if (registrationAnswer.status >= 300) {
       return _json({if (registrationAnswer.code.isNotEmpty) 'code': registrationAnswer.code}, registrationAnswer.status);
@@ -1639,24 +1648,25 @@ class FakeApi {
 
   http.Response _answerDefault(http.Request request) {
     final segments = request.url.pathSegments;
-    sentProjectChanges.add((request.url.path, jsonDecode(request.body) as Map<String, dynamic>));
+    sentProjectChanges.add((_written(request), _bodyOf(request)));
     if (projectAnswer.status >= 300) {
       return _json({if (projectAnswer.code.isNotEmpty) 'code': projectAnswer.code}, projectAnswer.status);
     }
-    final removing = segments.last == 'remove';
+    final removing = request.method == 'DELETE';
     defaultProjectId = removing ? '' : segments[1];
     return _json({'defaultProjectId': defaultProjectId}, 200);
   }
 
   Future<http.Response> _changeEntry(http.Request request) async {
     final segments = request.url.pathSegments;
-    sentEntryChanges.add((segments[3], segments[4], request.body.isEmpty ? const <String, dynamic>{} : jsonDecode(request.body) as Map<String, dynamic>));
+    final action = request.method == 'DELETE' ? 'delete' : segments[4];
+    sentEntryChanges.add((segments[3], action, _bodyOf(request)));
     await heldEntryChange.future;
     if (entryChangeAnswer.status >= 300) {
       return _json({'code': entryChangeAnswer.code}, entryChangeAnswer.status);
     }
     final row = entryRows.singleWhere((row) => row['id'] == segments[3]);
-    switch (segments[4]) {
+    switch (action) {
       case 'submit':
         row['status'] = 'pendingApproval';
       case 'delete':
@@ -1669,7 +1679,7 @@ class FakeApi {
 
   FutureOr<http.Response> _answerProjects(http.Request request) {
     final segments = request.url.pathSegments;
-    if (segments.last == 'default' || segments.length == 3 && segments[1] == 'default') {
+    if (segments.last == 'default') {
       return _answerDefault(request);
     }
     if (segments.length == 2 && (segments[1] == 'register' || segments[1] == 'registered') || segments.length == 3 && (segments[2] == 'approve' || segments[2] == 'reject')) {
@@ -1730,7 +1740,7 @@ class FakeApi {
     if (segments.length == 4 && segments[2] == 'entries' && request.method == 'GET' && entryDetails.containsKey(segments[3])) {
       return _json(entryDetails[segments[3]]!, 200);
     }
-    if (segments.length == 5 && segments[2] == 'entries' && const ['submit', 'delete', 'reverse'].contains(segments[4])) {
+    if (segments.length == 5 && segments[2] == 'entries' && const ['submit', 'reverse'].contains(segments[4]) || request.method == 'DELETE' && segments.length == 4 && segments[2] == 'entries') {
       return _changeEntry(request);
     }
     if (request.method == 'GET' && segments.length == 5 && segments[2] == 'entries' && segments[4] == 'row') {
@@ -1800,7 +1810,7 @@ class FakeApi {
       pendingEntries.removeWhere((entry) => entry['id'] == segments[3]);
       return _json(const <String, Object>{}, 200);
     }
-    if (request.method == 'POST' && segments.length == 4 && segments[2] == 'entries') {
+    if (request.method == 'PUT' && segments.length == 4 && segments[2] == 'entries') {
       return _recordEntry(request);
     }
     if (request.method == 'GET' && segments.length == 4 && segments[2] == 'entries' && segments[3] != 'mine') {
@@ -1813,8 +1823,8 @@ class FakeApi {
       if (request.method == 'GET') {
         return _json(documentRows, 200);
       }
-      if (segments.length == 5) {
-        sentDocuments.add((request.url.path, const {}));
+      if (request.method == 'DELETE') {
+        sentDocuments.add((_written(request), const {}));
         documentRows.removeWhere((row) => row['id'] == segments[3]);
         return _json(const <String, Object>{}, 200);
       }
@@ -1854,9 +1864,9 @@ class FakeApi {
     if (request.method == 'GET') {
       return _json(projects, 200);
     }
-    final body = jsonDecode(request.body) as Map<String, dynamic>;
+    final body = _bodyOf(request);
     final path = request.url.path;
-    sentProjectChanges.add((path, body));
+    sentProjectChanges.add((_written(request), body));
     if (projectAnswer.status >= 300) {
       return _json({if (projectAnswer.code.isNotEmpty) 'code': projectAnswer.code}, projectAnswer.status);
     }
@@ -1871,7 +1881,7 @@ class FakeApi {
       project['description'] = (body['description'] as String).trim();
     } else if (segments.length == 2) {
       project['name'] = body['name'] as String;
-    } else if (path.endsWith('/delete')) {
+    } else if (request.method == 'DELETE') {
       units.removeWhere((unit) => unit['id'] == segments[3]);
     } else if (segments.length == 4) {
       units.singleWhere((unit) => unit['id'] == segments[3])['name'] = body['name'] as String;

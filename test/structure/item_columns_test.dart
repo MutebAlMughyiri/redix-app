@@ -141,7 +141,7 @@ void main() {
     await tester.enterText(find.byKey(ItemColumnsScreen.columnNameKey), 'تاريخ الفاتورة');
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-    expect(opened.api.sentStructureChanges.single.$1, '$itemPath/${opened.date}');
+    expect(opened.api.sentStructureChanges.single.$1, 'PUT $itemPath/${opened.date}');
     expect(opened.api.sentStructureChanges.single.$2, {'name': 'تاريخ الفاتورة', 'isRequired': true, 'showInReports': true, 'applyToAllItems': false});
     expect(text(tester, ItemColumnsScreen.nameKey(opened.date)), 'تاريخ الفاتورة');
   });
@@ -195,7 +195,7 @@ void main() {
 
     expect(find.byType(AlertDialog), findsNothing);
 
-    expect(opened.api.sentStructureChanges.single.$1, '$itemPath/${opened.area}/delete');
+    expect(opened.api.sentStructureChanges.single.$1, 'DELETE $itemPath/${opened.area}?applyToAllItems=false');
     expect(find.byKey(ItemColumnsScreen.nameKey(opened.area)), findsNothing);
   });
 
@@ -266,7 +266,7 @@ void main() {
       await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
       await act(tester, opened.api, () => tester.tap(find.byKey(ApplyToAllDialog.applyKey)));
 
-      expect(opened.api.sentStructureChanges.single.$1, '$templatePath/${templateColumn(opened.api, 0)}');
+      expect(opened.api.sentStructureChanges.single.$1, 'PUT $templatePath/${templateColumn(opened.api, 0)}');
       expect(opened.api.sentStructureChanges.single.$2['applyToAllItems'], isTrue);
     });
 
@@ -278,8 +278,7 @@ void main() {
       await swipeToRemove(tester, opened.api, ItemColumnsScreen.rowKey(unit));
       await act(tester, opened.api, () => tester.tap(find.byKey(ApplyToAllDialog.templateOnlyKey)));
 
-      expect(opened.api.sentStructureChanges.single.$1, '$templatePath/$unit/delete');
-      expect(opened.api.sentStructureChanges.single.$2['applyToAllItems'], isFalse);
+      expect(opened.api.sentStructureChanges.single.$1, 'DELETE $templatePath/$unit?applyToAllItems=false');
     });
 
     testWidgets('dragging a column asks', (tester) async {

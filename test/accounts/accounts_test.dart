@@ -106,7 +106,7 @@ void main() {
     await chooseCustodian(tester, opened.api, 'user-fawaz');
     await save(tester, opened.api, name: 'كاش مع فواز');
 
-    expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/accounts/${opened.custody}');
+    expect(opened.api.sentSettingsChanges.single.$1, 'PUT /projects/project-0/accounts/${opened.custody}');
     expect(opened.api.sentSettingsChanges.single.$2, {'name': 'كاش مع فواز', 'custodianId': 'user-fawaz'});
     expect(text(tester, AccountsScreen.detailsKey(opened.custody)), 'en accounts.typeCashCustody · فواز');
     expect(text(tester, AccountsScreen.balanceKey(opened.custody)), '2,750.00');

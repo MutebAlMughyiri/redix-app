@@ -151,7 +151,7 @@ void main() {
     });
 
     final (path, body) = api.sentUserChanges.single;
-    expect((path, body['roleName']), ('/projects/project-0/users/user-1/role-name', 'مشرف مالي'));
+    expect((path, body['roleName']), ('PUT /projects/project-0/users/user-1/role-name', 'مشرف مالي'));
     expect(text(tester, UsersScreen.detailsKey('user-1')), 'nawaf · مشرف مالي · 0500000000');
 
     await choose(tester, api, 'user-1', UsersScreen.editKey);

@@ -163,7 +163,7 @@ void main() {
     await swipeToRemove(tester, api, DocumentsScreen.documentKey('permit'));
 
     expect(find.byType(AlertDialog), findsNothing);
-    expect(api.sentDocuments.single.$1, '/projects/project-0/documents/permit/delete');
+    expect(api.sentDocuments.single.$1, 'DELETE /projects/project-0/documents/permit');
     expect(find.byKey(DocumentsScreen.documentKey('permit')), findsNothing);
   });
 

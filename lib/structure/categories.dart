@@ -26,7 +26,7 @@ class Categories extends ApiList<Category> {
   }
 
   /// Names [category] [name].
-  Future<String> renameCategory(Category category, String name) => change('/projects/$projectId/categories/${category.id}', {'name': name});
+  Future<String> renameCategory(Category category, String name) => put('/projects/$projectId/categories/${category.id}', {'name': name});
 
   /// Takes [category] and its items out of entry; they stay in the reports.
   Future<String> disableCategory(Category category) => change('/projects/$projectId/categories/${category.id}/disable', {});
@@ -47,7 +47,7 @@ class Categories extends ApiList<Category> {
   }
 
   /// Names [item] [name].
-  Future<String> renameItem(Item item, String name) => change('/projects/$projectId/items/${item.id}', {'name': name});
+  Future<String> renameItem(Item item, String name) => put('/projects/$projectId/items/${item.id}', {'name': name});
 
   /// Takes [item] out of entry; it stays in the reports.
   Future<String> disableItem(Item item) => change('/projects/$projectId/items/${item.id}/disable', {});
@@ -56,8 +56,8 @@ class Categories extends ApiList<Category> {
   Future<String> enableItem(Item item) => change('/projects/$projectId/items/${item.id}/enable', {});
 
   /// Sets whether [item]'s sheet in the report calculates each table's percentage of the grand total.
-  Future<String> setTablePercentages(Item item, bool isOn) => change('/projects/$projectId/items/${item.id}/table-percentages', {'isOn': isOn});
+  Future<String> setTablePercentages(Item item, bool isOn) => put('/projects/$projectId/items/${item.id}/table-percentages', {'isOn': isOn});
 
   /// Makes [item] for [type], which the API refuses once it has entries.
-  Future<String> changeItemType(Item item, ItemType type) => change('/projects/$projectId/items/${item.id}/type', {'type': type.name});
+  Future<String> changeItemType(Item item, ItemType type) => put('/projects/$projectId/items/${item.id}/type', {'type': type.name});
 }

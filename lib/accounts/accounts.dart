@@ -24,7 +24,7 @@ class Accounts extends ApiList<Account> {
 
   /// Changes the name of [account] and who holds it: the user [custodianId], or nobody when that is empty.
   Future<String> edit(Account account, String name, String custodianId) =>
-      change('/projects/$projectId/accounts/${account.id}', {'name': name, if (custodianId.isNotEmpty) 'custodianId': custodianId});
+      put('/projects/$projectId/accounts/${account.id}', {'name': name, if (custodianId.isNotEmpty) 'custodianId': custodianId});
 
   /// Takes [account] out of entry; it stays in the reports.
   Future<String> disable(Account account) => change('/projects/$projectId/accounts/${account.id}/disable', {});
@@ -33,7 +33,7 @@ class Accounts extends ApiList<Account> {
   Future<String> enable(Account account) => change('/projects/$projectId/accounts/${account.id}/enable', {});
 
   /// Deletes [account], which nothing names yet (BR-15).
-  Future<String> delete(Account account) => change('/projects/$projectId/accounts/${account.id}/delete', {});
+  Future<String> delete(Account account) => deleteAt('/projects/$projectId/accounts/${account.id}');
 
   /// Moves [amount] from [from] to [to] on [date], with [notes]: it counts in both balances at once (FR-23), and its refusals are the transfer's words.
   Future<String> transfer(Account from, Account to, double amount, DateTime date, String notes) => change(

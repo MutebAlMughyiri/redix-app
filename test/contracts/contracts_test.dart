@@ -356,7 +356,7 @@ void main() {
     await tester.enterText(find.byKey(ContractsScreen.notesKey), 'زيادة بملحق');
     await save(tester, opened.api);
 
-    expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/contracts/${opened.running}');
+    expect(opened.api.sentSettingsChanges.single.$1, 'PUT /projects/project-0/contracts/${opened.running}');
     expect(opened.api.sentSettingsChanges.single.$2, {'value': 36000.0, 'isOpenValue': false, 'unitPrice': 0.0, 'quantity': 0.0, 'notes': 'زيادة بملحق'});
     expect(text(tester, ContractsScreen.valueOfKey(opened.running)), '36,000.00');
     expect(text(tester, ContractsScreen.contractNotesKey(opened.running)), 'زيادة بملحق');

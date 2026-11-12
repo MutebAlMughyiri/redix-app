@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 import '../api.dart';
 import '../attachments/picked_file.dart';
@@ -45,6 +46,12 @@ class Outbox extends ChangeNotifier {
   void dispose() {
     _tries.cancel();
     super.dispose();
+  }
+
+  /// Sends [body] to the entry [route] of the project [projectId] now: `entries` records a new entry, `entries/{id}` changes that one, so it is put (redix-api #98).
+  Future<http.Response> deliver(String projectId, String route, Map<String, Object> body) {
+    final path = '/projects/$projectId/$route';
+    return route == 'entries' ? _session.post(path, body) : _session.put(path, body);
   }
 
   /// Keeps an entry of the project [projectId] for the API [route], with [file] if it has one still to send.
@@ -107,7 +114,7 @@ class Outbox extends ChangeNotifier {
         ..fileName = '';
       await _save(entry);
     }
-    final sent = await _session.post('/projects/${entry.projectId}/${entry.route}', entry.body);
+    final sent = await deliver(entry.projectId, entry.route, entry.body);
     if (sent.statusCode >= 500) {
       return;
     }

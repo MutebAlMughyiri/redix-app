@@ -33,7 +33,7 @@ class Contracts extends ApiList<Contract> {
   });
 
   /// Amends [contract] to [terms], with the contractor [supplierId], for [itemId] while no payment names it.
-  Future<String> amend(Contract contract, ContractTerms terms, String supplierId, String itemId) => change('/projects/$projectId/contracts/${contract.id}', {
+  Future<String> amend(Contract contract, ContractTerms terms, String supplierId, String itemId) => put('/projects/$projectId/contracts/${contract.id}', {
     if (!contract.hasPayments) ...{'supplierId': supplierId, 'itemId': itemId},
     ..._bodyOf(terms),
   });

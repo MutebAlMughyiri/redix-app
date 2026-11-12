@@ -143,7 +143,7 @@ void main() {
       expect(find.byKey(ConfirmDialog.dialogKey), findsOneWidget);
       await act(tester, opened.api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
-      expect(opened.api.sentSettingsChanges.last.$1, '/projects/project-0/accounts/${opened.custody}/delete');
+      expect(opened.api.sentSettingsChanges.last.$1, 'DELETE /projects/project-0/accounts/${opened.custody}');
       expect(find.byKey(AccountsScreen.rowKey(opened.custody)), findsNothing);
       expect(find.byKey(messageKeyOf('accounts.deleted')), findsOneWidget);
     });

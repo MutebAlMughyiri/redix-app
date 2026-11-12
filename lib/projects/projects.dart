@@ -24,16 +24,16 @@ class Projects extends ApiList<Project> {
   });
 
   /// Names [project] [name]. Returns an empty string once named, otherwise the word key of the refusal.
-  Future<String> rename(Project project, String name) => change('/projects/${project.id}', {'name': name});
+  Future<String> rename(Project project, String name) => put('/projects/${project.id}', {'name': name});
 
   /// Keeps [description] as what [project] is; empty clears it. Returns an empty string once kept, otherwise the word key of the refusal.
-  Future<String> describe(Project project, String description) => change('/projects/${project.id}/description', {'description': description});
+  Future<String> describe(Project project, String description) => put('/projects/${project.id}/description', {'description': description});
 
   /// Names the [unit] of [project] [name]. Returns an empty string once named, otherwise the word key of the refusal.
-  Future<String> renameUnit(Project project, Unit unit, String name) => change('/projects/${project.id}/units/${unit.id}', {'name': name});
+  Future<String> renameUnit(Project project, Unit unit, String name) => put('/projects/${project.id}/units/${unit.id}', {'name': name});
 
   /// Deletes the [unit] of [project], which nothing may use. Returns an empty string once deleted, otherwise the word key of the refusal.
-  Future<String> deleteUnit(Project project, Unit unit) => change('/projects/${project.id}/units/${unit.id}/delete', {});
+  Future<String> deleteUnit(Project project, Unit unit) => deleteAt('/projects/${project.id}/units/${unit.id}');
 
   /// Adds a unit named [name] to [project]. Returns an empty string once added, otherwise the word key of the refusal.
   Future<String> addUnit(Project project, String name) => change('/projects/${project.id}/units', {'name': name});

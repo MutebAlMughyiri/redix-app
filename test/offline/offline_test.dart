@@ -167,6 +167,17 @@ void main() {
     expect(await store.namesIn('outbox'), isEmpty);
   });
 
+  testWidgets('redix-api #98: a kept change of an entry is put when it goes, and a kept new entry posted', (tester) async {
+    final change = PendingEntry(ownerId: 'user-signed-in', projectId: 'project-0', route: 'entries/entry-2', body: {'id': 'entry-2', 'amount': 6000, 'date': '2026-11-05'});
+    final store = await storeHolding([pending('entry-1'), change]);
+    final api = await openHome(tester, store);
+
+    await act(tester, api, () => tester.pump(Outbox.tryEvery));
+
+    expect(api.sentEntryPaths, unorderedEquals(['/projects/project-0/entries', 'PUT /projects/project-0/entries/entry-2']));
+    expect(await store.namesIn('outbox'), isEmpty);
+  });
+
   testWidgets('redix-api #102: a swipe forgets one with no question, and a short one forgets nothing', (tester) async {
     final store = await storeHolding([pending('entry-1', refusal: 'expenses.unknownSupplier')]);
     final api = await openHome(tester, store);

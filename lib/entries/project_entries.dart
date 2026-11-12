@@ -13,5 +13,5 @@ class ProjectEntries extends ApiList<EntryRow> {
   final String projectId;
 
   /// Deletes an entry never approved. Returns an empty string once deleted, otherwise the word key of the refusal.
-  Future<String> delete(EntryRow entry) => change('/projects/$projectId/entries/${entry.id}/delete', {});
+  Future<String> delete(EntryRow entry) => deleteAt('/projects/$projectId/entries/${entry.id}');
 }

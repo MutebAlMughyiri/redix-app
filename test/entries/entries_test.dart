@@ -537,7 +537,7 @@ void main() {
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendKey)));
 
-      expect(api.sentEntryPaths.single, '/projects/project-0/entries/entry-0');
+      expect(api.sentEntryPaths.single, 'PUT /projects/project-0/entries/entry-0');
       final body = api.sentEntries.single;
       expect((body['id'], body['attachmentId'], body['amount'], body['date'], body['submit']), ('entry-0', 'attachment-1', 1150, '2026-11-05', true));
       expect(body['supplierId'], isNotEmpty);
@@ -574,7 +574,7 @@ void main() {
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendKey)));
 
-      expect(api.sentEntryPaths.single, '/projects/project-0/entries/entry-0');
+      expect(api.sentEntryPaths.single, 'PUT /projects/project-0/entries/entry-0');
       final body = api.sentEntries.single;
       expect((body['tableId'], body['isOutsideContract'], body['amount'], body['notes']), (api.contracts['project-0']!.single['id'], true, 500, 'دفعة'));
     });

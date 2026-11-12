@@ -162,7 +162,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.starKey('project-0'))));
 
-    expect(api.sentProjectChanges.last.$1, '/projects/default/remove');
+    expect(api.sentProjectChanges.last.$1, 'DELETE /projects/default');
     expect(api.defaultProjectId, '');
     expect(star(tester, 'project-0'), Icons.star_border);
   });

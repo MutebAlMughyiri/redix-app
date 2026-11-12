@@ -120,6 +120,14 @@ abstract class ApiObject<T> extends ChangeNotifier {
   @protected
   Future<String> change(String path, Map<String, Object> body, {String wordPrefix = ''}) => _send(path, () => _session.post(path, body), wordPrefix);
 
+  /// Sends a plain edit of what the API [path] names (redix-api #98), and answers as [change] does.
+  @protected
+  Future<String> put(String path, Map<String, Object> body) => _send(path, () => _session.put(path, body), '');
+
+  /// Deletes what the API [path] names (redix-api #98), and answers as [change] does.
+  @protected
+  Future<String> deleteAt(String path) => _send(path, () => _session.delete(path), '');
+
   /// Sends the file [bytes], named [name], with the form [fields] beside it, to the API [path], and answers as [change] does.
   @protected
   Future<String> sendFile(String path, String name, List<int> bytes, {Map<String, String> fields = const {}}) => _send(path, () => _session.postFile(path, name, bytes, fields: fields), '');

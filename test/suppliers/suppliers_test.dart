@@ -118,7 +118,7 @@ void main() {
     await tester.enterText(find.byKey(SuppliersScreen.supplierNameKey), 'النخيل');
     await save(tester, opened.api);
 
-    expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/suppliers/${opened.approved}');
+    expect(opened.api.sentSettingsChanges.single.$1, 'PUT /projects/project-0/suppliers/${opened.approved}');
     expect(text(tester, SuppliersScreen.nameKey(opened.approved)), 'النخيل');
   });
 

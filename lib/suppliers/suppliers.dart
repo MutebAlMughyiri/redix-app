@@ -35,7 +35,7 @@ class Suppliers extends ApiList<Supplier> {
   Future<String> add(SupplierFields fields) => change('/projects/$projectId/suppliers', _bodyOf(fields));
 
   /// Changes [supplier] to [fields].
-  Future<String> edit(Supplier supplier, SupplierFields fields) => change('/projects/$projectId/suppliers/${supplier.id}', _bodyOf(fields));
+  Future<String> edit(Supplier supplier, SupplierFields fields) => put('/projects/$projectId/suppliers/${supplier.id}', _bodyOf(fields));
 
   /// Takes [supplier] out of entry; it stays in the reports.
   Future<String> disable(Supplier supplier) => change('/projects/$projectId/suppliers/${supplier.id}/disable', {});

@@ -14,7 +14,7 @@ class PaymentMethods extends ApiList<PaymentMethod> {
   Future<String> add(String name) => change('/projects/$projectId/payment-methods', {'name': name});
 
   /// Names [method] [name].
-  Future<String> rename(PaymentMethod method, String name) => change('/projects/$projectId/payment-methods/${method.id}', {'name': name});
+  Future<String> rename(PaymentMethod method, String name) => put('/projects/$projectId/payment-methods/${method.id}', {'name': name});
 
   /// Takes [method] out of entry; it stays on the entries that used it.
   Future<String> disable(PaymentMethod method) => change('/projects/$projectId/payment-methods/${method.id}/disable', {});
@@ -23,5 +23,5 @@ class PaymentMethods extends ApiList<PaymentMethod> {
   Future<String> enable(PaymentMethod method) => change('/projects/$projectId/payment-methods/${method.id}/enable', {});
 
   /// Deletes [method]; one an expense was paid with is refused, and can be disabled instead.
-  Future<String> delete(PaymentMethod method) => change('/projects/$projectId/payment-methods/${method.id}/delete', {});
+  Future<String> delete(PaymentMethod method) => deleteAt('/projects/$projectId/payment-methods/${method.id}');
 }

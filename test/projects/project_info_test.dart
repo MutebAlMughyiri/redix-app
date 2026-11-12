@@ -111,7 +111,7 @@ void main() {
       await tester.enterText(find.byKey(ProjectInfoScreen.descriptionKey), 'فيلتان سكنيتان في حي النرجس.\nالتسليم ديسمبر 2027.');
       await tap(tester, api, ProjectInfoScreen.saveDescriptionKey);
 
-      expect(api.sentProjectChanges.single.$1, '/projects/project-0/description');
+      expect(api.sentProjectChanges.single.$1, 'PUT /projects/project-0/description');
       expect(api.sentProjectChanges.single.$2, {'description': 'فيلتان سكنيتان في حي النرجس.\nالتسليم ديسمبر 2027.'});
       expect(text(tester, messageKeyOf('projectInfo.saved').label), 'en projectInfo.saved');
       expect(api.projects.single['description'], 'فيلتان سكنيتان في حي النرجس.\nالتسليم ديسمبر 2027.');
@@ -194,7 +194,7 @@ void main() {
       await tester.enterText(find.byKey(NameDialog.nameKey), 'غصون السادس');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-      expect(api.sentProjectChanges.single.$1, '/projects/project-0');
+      expect(api.sentProjectChanges.single.$1, 'PUT /projects/project-0');
       expect(api.sentProjectChanges.single.$2, {'name': 'غصون السادس'});
       expect(text(tester, ProjectInfoScreen.nameKey), 'غصون السادس');
       await backHome(tester, api);
@@ -253,7 +253,7 @@ void main() {
       await tester.enterText(find.byKey(NameDialog.nameKey), 'الفلة الجنوبية');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-      expect(api.sentProjectChanges.single.$1, '/projects/project-0/units/project-0-unit-0');
+      expect(api.sentProjectChanges.single.$1, 'PUT /projects/project-0/units/project-0-unit-0');
       expect(api.sentProjectChanges.single.$2, {'name': 'الفلة الجنوبية'});
       expect(text(tester, ProjectInfoScreen.unitKey('project-0-unit-0')), 'الفلة الجنوبية');
     });
@@ -278,7 +278,7 @@ void main() {
       await swipeToRemove(tester, api, ProjectInfoScreen.unitRowKey('project-0-unit-0'));
 
       expect(find.byType(AlertDialog), findsNothing);
-      expect(api.sentProjectChanges.single.$1, '/projects/project-0/units/project-0-unit-0/delete');
+      expect(api.sentProjectChanges.single.$1, 'DELETE /projects/project-0/units/project-0-unit-0');
       expect(find.byKey(ProjectInfoScreen.unitKey('project-0-unit-0')), findsNothing);
       expect(find.byKey(ProjectInfoScreen.unitKey('project-0-unit-1')), findsOneWidget);
     });

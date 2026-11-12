@@ -28,7 +28,7 @@ class Columns extends ApiList<ItemColumn> {
   });
 
   /// Changes [column], and adds [newOptions] to its choices; its type never changes, and no choice is taken away.
-  Future<String> edit(ItemColumn column, String name, {required bool isRequired, required bool showInReports, List<String> newOptions = const [], required bool applyToAll}) => change('$_path/${column.id}', {
+  Future<String> edit(ItemColumn column, String name, {required bool isRequired, required bool showInReports, List<String> newOptions = const [], required bool applyToAll}) => put('$_path/${column.id}', {
     'name': name,
     'isRequired': isRequired,
     'showInReports': showInReports,
@@ -37,7 +37,7 @@ class Columns extends ApiList<ItemColumn> {
   });
 
   /// Deletes [column]: it leaves entry, and its values stay.
-  Future<String> delete(ItemColumn column, {required bool applyToAll}) => change('$_path/${column.id}/delete', {'applyToAllItems': applyToAll});
+  Future<String> delete(ItemColumn column, {required bool applyToAll}) => deleteAt('$_path/${column.id}?applyToAllItems=$applyToAll');
 
   /// Moves the column at [from] to [to].
   Future<String> move(int from, int to, {required bool applyToAll}) {

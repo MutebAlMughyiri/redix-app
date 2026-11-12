@@ -95,7 +95,7 @@ void main() {
     expect(tester.widget<TextField>(find.byKey(PartnersScreen.partnerNameKey)).controller!.text, 'متعب');
     await save(tester, opened.api, 'متعب المغيري');
 
-    expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/partners/${opened.mutab}');
+    expect(opened.api.sentSettingsChanges.single.$1, 'PUT /projects/project-0/partners/${opened.mutab}');
     expect(opened.api.sentSettingsChanges.single.$2, {'name': 'متعب المغيري', 'userId': 'user-mutab'});
     expect(text(tester, PartnersScreen.nameKey(opened.mutab)), 'متعب المغيري');
   });
@@ -126,7 +126,7 @@ void main() {
     expect(find.text('en partners.deleteKeepsMovements'), findsOneWidget);
     await act(tester, opened.api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
-    expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/partners/${opened.mutab}/delete');
+    expect(opened.api.sentSettingsChanges.single.$1, 'DELETE /projects/project-0/partners/${opened.mutab}');
     expect(find.byKey(PartnersScreen.nameKey(opened.mutab)), findsNothing);
     expect(find.byKey(messageKeyOf('partners.deleted')), findsOneWidget);
   });

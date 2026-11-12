@@ -68,7 +68,7 @@ class EntryRecording {
     _refusedColumnKey = '';
     _wasKept = false;
     try {
-      final response = await _session.post('/projects/$projectId/$route', body);
+      final response = await _outbox.deliver(projectId, route, body);
       _lastAnswer = answerOf(response);
       if (response.statusCode < 300) {
         return '';

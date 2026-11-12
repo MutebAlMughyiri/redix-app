@@ -71,7 +71,7 @@ void main() {
     expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).controller!.text, 'شبكة');
     await saveName(tester, opened.api, 'بطاقة');
 
-    expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/payment-methods/${opened.card}');
+    expect(opened.api.sentSettingsChanges.single.$1, 'PUT /projects/project-0/payment-methods/${opened.card}');
     expect(opened.api.sentSettingsChanges.single.$2, {'name': 'بطاقة'});
     expect(text(tester, PaymentMethodsScreen.nameKey(opened.card)), 'بطاقة');
   });
@@ -94,7 +94,7 @@ void main() {
 
     expect(find.byType(AlertDialog), findsNothing);
 
-    expect(opened.api.sentSettingsChanges.last.$1, '/projects/project-0/payment-methods/${opened.card}/delete');
+    expect(opened.api.sentSettingsChanges.last.$1, 'DELETE /projects/project-0/payment-methods/${opened.card}');
     expect(find.byKey(PaymentMethodsScreen.nameKey(opened.card)), findsNothing);
   });
 

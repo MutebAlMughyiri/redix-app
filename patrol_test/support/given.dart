@@ -135,7 +135,7 @@ class Given {
 
   /// [by] writes [roleName] for [person] in the project of [by].
   static Future<void> roleName(Person person, String roleName, {required Person by}) async {
-    await _post('${by.project}/users/${person.id}/role-name', {'roleName': roleName}, await _tokenOf(by));
+    await _put('${by.project}/users/${person.id}/role-name', {'roleName': roleName}, await _tokenOf(by));
   }
 
   /// The admin approves the project [projectId].
@@ -179,7 +179,7 @@ class Given {
 
   /// [by] takes [person] off the project.
   static Future<void> removed(Person person, {required Person by}) async {
-    await _post('${by.project}/users/${person.id}/permissions/readProject/remove', {}, await _tokenOf(by));
+    await _delete('${by.project}/users/${person.id}/permissions/readProject', await _tokenOf(by));
   }
 
   /// [person] makes their project the default.
@@ -189,7 +189,7 @@ class Given {
 
   /// [manager] renames their project to [name].
   static Future<void> renamed(Person manager, String name) async {
-    await _post(manager.project, {'name': name}, await _tokenOf(manager));
+    await _put(manager.project, {'name': name}, await _tokenOf(manager));
   }
 
   /// [manager] closes their project.
@@ -396,7 +396,7 @@ class Given {
 
   /// [person] deletes the entry [entryId], which was never approved.
   static Future<void> entryDeleted(Person person, String entryId) async {
-    await _post('${person.project}/entries/$entryId/delete', {}, await _tokenOf(person));
+    await _delete('${person.project}/entries/$entryId', await _tokenOf(person));
   }
 
   /// [manager] approves the entries [entryIds].
@@ -433,7 +433,7 @@ class Given {
 
   /// [manager] deletes the column [columnId] of the item [itemId].
   static Future<void> columnDeleted(Person manager, String itemId, String columnId) async {
-    await _post('${manager.project}/items/$itemId/columns/$columnId/delete', {}, await _tokenOf(manager));
+    await _delete('${manager.project}/items/$itemId/columns/$columnId', await _tokenOf(manager));
   }
 
   /// [manager] sends the draft [entryId] for approval.
@@ -478,6 +478,13 @@ class Given {
     final answer = await http.post(Uri.parse('$_base$path'), headers: {'Content-Type': 'application/json', if (token.isNotEmpty) 'Authorization': 'Bearer $token'}, body: jsonEncode(body));
     return _bodyOf('POST $path', answer);
   }
+
+  static Future<void> _put(String path, Map<String, Object> body, String token) async {
+    final answer = await http.put(Uri.parse('$_base$path'), headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $token'}, body: jsonEncode(body));
+    _bodyOf('PUT $path', answer);
+  }
+
+  static Future<void> _delete(String path, String token) async => _bodyOf('DELETE $path', await http.delete(Uri.parse('$_base$path'), headers: {'Authorization': 'Bearer $token'}));
 
   static Future<List<dynamic>> _getList(String path, String token) async {
     final answer = await http.get(Uri.parse('$_base$path'), headers: {'Authorization': 'Bearer $token'});

@@ -31,11 +31,11 @@ class Users extends ApiList<User> {
   /// (Muteb, 9 Nov 2026). A part left as it was is not sent, so a role name is never refused for a name nobody changed. Returns the first refusal.
   Future<String> edit(User user, String displayName, String mobile, String roleName) async {
     final detailsChanged = displayName.trim() != user.displayName || westernDigits(mobile).trim() != user.mobile;
-    final refusal = detailsChanged ? await change('/users/${user.id}', {'displayName': displayName, 'mobile': westernDigits(mobile)}) : '';
+    final refusal = detailsChanged ? await put('/users/${user.id}', {'displayName': displayName, 'mobile': westernDigits(mobile)}) : '';
     if (refusal.isNotEmpty || roleName.trim() == user.roleName) {
       return refusal;
     }
-    return change('/projects/$projectId/users/${user.id}/role-name', {'roleName': roleName});
+    return put('/projects/$projectId/users/${user.id}/role-name', {'roleName': roleName});
   }
 
   /// Sets a new temporary password for [user], who is signed out everywhere.
@@ -52,11 +52,11 @@ class Users extends ApiList<User> {
   Future<String> give(User user, Permission permission) => change('/projects/$projectId/users/${user.id}/permissions/${permission.name}', {});
 
   /// Takes the [permission] in this project from [user]; taking [Permission.readProject] takes them out of it.
-  Future<String> take(User user, Permission permission) => change('/projects/$projectId/users/${user.id}/permissions/${permission.name}/remove', {});
+  Future<String> take(User user, Permission permission) => deleteAt('/projects/$projectId/users/${user.id}/permissions/${permission.name}');
 
   /// Chooses the partner [partnerId] for [user], who then sees their capital (redix-api #106).
   Future<String> choosePartner(User user, String partnerId) => change('/projects/$projectId/users/${user.id}/partners/$partnerId', {});
 
   /// Takes the partner [partnerId] from those chosen for [user].
-  Future<String> unchoosePartner(User user, String partnerId) => change('/projects/$projectId/users/${user.id}/partners/$partnerId/remove', {});
+  Future<String> unchoosePartner(User user, String partnerId) => deleteAt('/projects/$projectId/users/${user.id}/partners/$partnerId');
 }

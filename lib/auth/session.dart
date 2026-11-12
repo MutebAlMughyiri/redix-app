@@ -62,14 +62,14 @@ class Session extends ChangeNotifier {
   bool get canUnlock => _usesBiometrics && !isOpen && _unlockAttempts < maxUnlockAttempts;
 
   /// Makes [projectId] the default project, which sign-in opens directly. Returns an empty string once made, otherwise the word key of the refusal.
-  Future<String> setDefaultProject(String projectId) => _changeDefault('/projects/$projectId/default');
+  Future<String> setDefaultProject(String projectId) => _changeDefault(() => post('/projects/$projectId/default', {}));
 
   /// Clears the default project. Returns an empty string once made, otherwise the word key of the refusal.
-  Future<String> removeDefaultProject() => _changeDefault('/projects/default/remove');
+  Future<String> removeDefaultProject() => _changeDefault(() => delete('/projects/default'));
 
-  Future<String> _changeDefault(String path) async {
+  Future<String> _changeDefault(Future<http.Response> Function() send) async {
     try {
-      final response = await post(path, {});
+      final response = await send();
       if (response.statusCode >= 300) {
         return refusalOf(answerOf(response), 'projects');
       }
@@ -221,6 +221,13 @@ class Session extends ChangeNotifier {
   /// a session the API refuses to renew ends.
   Future<http.Response> post(String path, Map<String, Object> body) =>
       _remember(_send(() => timed(http.post(apiUri(path), headers: {...jsonHeaders, ..._authorized}, body: jsonEncode(body)))));
+
+  /// Sends [body] as JSON to the API [path] as a plain edit of what the path names (redix-api #98), renewing an expired access token like [post].
+  Future<http.Response> put(String path, Map<String, Object> body) =>
+      _remember(_send(() => timed(http.put(apiUri(path), headers: {...jsonHeaders, ..._authorized}, body: jsonEncode(body)))));
+
+  /// Deletes what the API [path] names (redix-api #98), renewing an expired access token like [post].
+  Future<http.Response> delete(String path) => _remember(_send(() => timed(http.delete(apiUri(path), headers: _authorized))));
 
   /// Sends the file [bytes], named [fileName], with the form [fields] beside it, to the API [path] as the signed-in user, renewing an expired access token like [post].
   Future<http.Response> postFile(String path, String fileName, List<int> bytes, {Map<String, String> fields = const {}}) => _remember(_send(() async {

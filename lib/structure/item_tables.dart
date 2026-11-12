@@ -71,8 +71,8 @@ class ItemTables extends ApiList<ItemTable> {
   Future<String> addSubgroup(String name) => change('/projects/$projectId/items/$itemId/subgroups', {'name': name});
 
   /// Names the subgroup [table] [name].
-  Future<String> renameSubgroup(ItemTable table, String name) => change('/projects/$projectId/items/$itemId/subgroups/${table.id}', {'name': name});
+  Future<String> renameSubgroup(ItemTable table, String name) => put('/projects/$projectId/items/$itemId/subgroups/${table.id}', {'name': name});
 
   /// Removes the subgroup [table], which the API refuses while entries use it.
-  Future<String> deleteSubgroup(ItemTable table) => change('/projects/$projectId/items/$itemId/subgroups/${table.id}/delete', {});
+  Future<String> deleteSubgroup(ItemTable table) => deleteAt('/projects/$projectId/items/$itemId/subgroups/${table.id}');
 }
