@@ -184,6 +184,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ReasonSheet.sendKey)));
 
     expect(tester.widget<Text>(find.byKey(ReasonSheet.messageKey)).data, 'en approvals.reasonRequired');
+    expectErrorAbove(tester, ReasonSheet.messageKey, ReasonSheet.reasonKey);
     expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsOneWidget);
   });
 

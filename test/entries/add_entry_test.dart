@@ -166,6 +166,7 @@ void main() {
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.invalidPaymentDate');
+    expectErrorAbove(tester, AddEntryScreen.messageKey, AddEntryScreen.amountKey);
     expect(tester.widget<TextField>(find.byKey(AddEntryScreen.amountKey)).controller!.text, '6000');
 
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);

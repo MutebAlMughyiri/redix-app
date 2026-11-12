@@ -98,6 +98,7 @@ void main() {
     await fillAndSubmit(tester, api);
 
     expect(tester.widget<Text>(find.byKey(NewUserScreen.messageKey)).data, 'en users.usernameTaken');
+    expectErrorAbove(tester, NewUserScreen.messageKey, NewUserScreen.nameKey);
     expect(typed(tester, NewUserScreen.nameKey), 'نواف');
     expect(typed(tester, NewUserScreen.usernameKey), 'nawaf');
     expect(typed(tester, NewUserScreen.passwordKey), 'Temporary-1');

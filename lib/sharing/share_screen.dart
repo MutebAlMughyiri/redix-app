@@ -1,3 +1,4 @@
+import '../ui/form_error.dart';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -24,7 +25,6 @@ import '../words/words.dart';
 import 'attachable_entries.dart';
 import 'attachable_entry.dart';
 import '../ui/app_color.dart';
-import '../ui/refusal_text.dart';
 import '../entries/table_picker.dart';
 import '../entries/entry_tables.dart';
 import '../ui/act_once.dart';
@@ -247,7 +247,6 @@ class _ShareScreenState extends State<ShareScreen> {
               child: Column(children: [for (final entry in entries.all) _entryRow(entry)]),
             ),
             for (final entry in chosen) ..._differences(entry),
-            if (_message.isNotEmpty) refusalText(context, words.text(_message), ShareScreen.messageKey),
             if (chosen.isNotEmpty) ActOnce(builder: (once) => FilledButton(key: ShareScreen.attachKey, onPressed: once(_attach), child: Text(words.shareAttach, key: ShareScreen.attachKey.label))),
           ],
         );
@@ -264,6 +263,7 @@ class _ShareScreenState extends State<ShareScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 12,
         children: [
+          if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: ShareScreen.messageKey),
           if (widget.file.isPdf) ListTile(key: ShareScreen.fileKey, leading: Icon(Icons.picture_as_pdf_outlined, key: ShareScreen.fileKey.icon), title: Text(widget.file.name, key: ShareScreen.fileKey.title)) else SizedBox(height: 160, child: Image.memory(widget.file.bytes, key: ShareScreen.pictureKey, fit: BoxFit.contain)),
           if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: false, onAddSupplier: () {}),
           if (_open.length > 1)

@@ -1,3 +1,4 @@
+import '../ui/form_error.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -5,7 +6,6 @@ import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'session.dart';
 import 'sign_in_screen.dart';
-import '../ui/refusal_text.dart';
 import '../ui/form_button_style.dart';
 import '../ui/act_once.dart';
 
@@ -90,6 +90,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             const SizedBox(height: 8),
             Text(words.changePasswordHint, key: ChangePasswordScreen.hintKey, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 32),
+            if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: ChangePasswordScreen.messageKey),
             TextField(key: ChangePasswordScreen.currentKey, controller: _current, decoration: field(words.changePasswordCurrent), obscureText: true),
             const SizedBox(height: 16),
             TextField(
@@ -113,10 +114,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               style: formButtonStyle,
               child: Text(words.changePasswordSubmit, key: ChangePasswordScreen.submitKey.label),
             ),
-            if (_message.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              refusalText(context, words.text(_message), ChangePasswordScreen.messageKey),
-            ],
           ],
         ),
       ),

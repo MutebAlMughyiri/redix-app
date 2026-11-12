@@ -198,6 +198,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(ReconcileScreen.saveKey)));
 
       expect(find.byKey(ReconcileScreen.messageKey), findsOneWidget);
+      expectErrorAbove(tester, ReconcileScreen.messageKey, ReconcileScreen.balanceKey('account-a'));
       expect(api.sentMoney, isEmpty);
     });
 

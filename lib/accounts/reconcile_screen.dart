@@ -1,3 +1,4 @@
+import '../ui/form_error.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,7 +9,6 @@ import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'reconciliation.dart';
-import '../ui/refusal_text.dart';
 import '../ui/act_once.dart';
 
 /// What each account and custody really holds (UC-041), with the total and the difference as they are typed.
@@ -96,6 +96,7 @@ class _ReconcileScreenState extends State<ReconcileScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 12,
           children: [
+            if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: ReconcileScreen.messageKey),
             for (final row in figures.balances)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +107,6 @@ class _ReconcileScreenState extends State<ReconcileScreen> {
               ),
             Text('${words.reconciliationsActualTotal}: ${formatMoney(_total)}', key: ReconcileScreen.totalKey),
             Text('${words.reconciliationsDifference}: ${formatMoney(_total - figures.surplus)}', key: ReconcileScreen.differenceKey, style: theme.textTheme.titleMedium),
-            if (_message.isNotEmpty) refusalText(context, words.text(_message), ReconcileScreen.messageKey),
             ActOnce(builder: (once) => FilledButton(key: ReconcileScreen.saveKey, onPressed: once(_save), child: Text(words.reconciliationsSave, key: ReconcileScreen.saveKey.label))),
           ],
         ),

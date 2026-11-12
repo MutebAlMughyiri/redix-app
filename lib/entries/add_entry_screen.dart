@@ -54,7 +54,7 @@ import 'entry_share.dart';
 import 'reverse_sheet.dart';
 import 'entry_recording.dart';
 import '../attachments/entry_file.dart';
-import '../ui/form_refusal.dart';
+import '../ui/form_error.dart';
 import '../ui/refusal_text.dart';
 import '../ui/act_once.dart';
 
@@ -776,6 +776,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: AddEntryScreen.messageKey),
             if (_reading && !_row.isNone) _standing(words),
             InvoiceSection(
               project: widget.project,
@@ -788,10 +789,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
             ),
             IgnorePointer(ignoring: _reading, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: _entryFields(words, ownFields))),
             const SizedBox(height: 16),
-            if (_message.isNotEmpty) ...[
-              FormRefusal(text: words.text(_message), textKey: AddEntryScreen.messageKey),
-              const SizedBox(height: 8),
-            ],
             if (!_reading) _formActions(words) else if (!_row.isNone) _readingActions(words),
           ],
         ),

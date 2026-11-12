@@ -77,6 +77,7 @@ void main() {
     await signIn(tester, api);
 
     expect(message(tester), 'en signIn.invalidCredentials');
+    expectErrorAbove(tester, SignInScreen.messageKey, SignInScreen.usernameKey);
     expect(find.byKey(ProjectsScreen.titleKey), findsNothing);
   });
 

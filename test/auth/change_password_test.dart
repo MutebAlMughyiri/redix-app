@@ -72,6 +72,7 @@ void main() {
     await change(tester, api, confirm: 'something-else');
 
     expect(message(tester), 'en changePassword.mismatch');
+    expectErrorAbove(tester, ChangePasswordScreen.messageKey, ChangePasswordScreen.currentKey);
     expect(api.sentAccessTokens, isEmpty);
   });
 

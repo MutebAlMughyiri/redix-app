@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../words/words.dart';
 import 'part_keys.dart';
-import 'form_refusal.dart';
+import 'form_error.dart';
 import 'act_once.dart';
 
 /// A dialog that sends a change: it closes once saved, and a refusal stays in it with what was typed.
@@ -68,11 +68,8 @@ class _ChangeDialogState extends State<ChangeDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: ChangeDialog.messageKey),
             ...widget.children,
-            if (_message.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              FormRefusal(text: words.text(_message), textKey: ChangeDialog.messageKey),
-            ],
           ],
         ),
       ),

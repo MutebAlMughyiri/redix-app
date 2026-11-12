@@ -1965,6 +1965,12 @@ Future<void> bringIntoView(WidgetTester tester, Finder target) async {
   await tester.pumpAndSettle();
 }
 
+/// redix-app #98, D1: the form's error [errorKey] stands above the form's first field [fieldKey], shown on the screen.
+void expectErrorAbove(WidgetTester tester, Key errorKey, Key fieldKey) {
+  expect(find.byKey(errorKey).hitTestable(), findsOneWidget, reason: 'redix-app #98 R4: the error is brought into view');
+  expect(tester.getTopLeft(find.byKey(errorKey)).dy, lessThan(tester.getTopLeft(find.byKey(fieldKey)).dy), reason: "redix-app #98: a form's error stands above its first field");
+}
+
 /// Opens the screen at [path] from the open project's home, as a Project settings button would, for a screen whose button is grayed until a later release while its
 /// work stays (Muteb, 12 Nov 2026): the VAT refund.
 Future<void> openFromTheHome(WidgetTester tester, FakeApi api, String path) {

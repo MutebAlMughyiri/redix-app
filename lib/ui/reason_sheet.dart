@@ -1,9 +1,9 @@
+import 'form_error.dart';
 import 'package:flutter/material.dart';
 
 import '../words/words.dart';
 import 'part_keys.dart';
 import 'app_color.dart';
-import 'refusal_text.dart';
 import 'act_once.dart';
 
 /// Asks why, then does what needs a reason: rejecting an entry (AC-19.1) or reversing one (FR-50). The one owner of that sheet: its quick reasons, its saving, and the refusal it keeps
@@ -109,6 +109,7 @@ class _ReasonSheetState extends State<ReasonSheet> {
           children: [
             Text(widget.title, key: ReasonSheet.titleKey, style: theme.textTheme.titleLarge),
             Text(widget.about, key: ReasonSheet.aboutKey),
+            if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: ReasonSheet.messageKey),
             if (widget.quickReasons.isNotEmpty) ...[
               Text(words.approvalsQuickReason, key: ReasonSheet.quickReasonHeadingKey, style: theme.textTheme.titleSmall),
               Wrap(
@@ -125,7 +126,6 @@ class _ReasonSheetState extends State<ReasonSheet> {
               maxLines: 3,
               decoration: InputDecoration(labelText: widget.reasonLabel, helperText: widget.reasonHint.isEmpty ? null : widget.reasonHint, helperMaxLines: 3),
             ),
-            if (_message.isNotEmpty) refusalText(context, words.text(_message), ReasonSheet.messageKey),
             ActOnce(builder: (once) => FilledButton(
               key: ReasonSheet.sendKey,
               style: FilledButton.styleFrom(backgroundColor: AppColor.refusal.of(context), foregroundColor: AppColor.onRefusal.of(context)),

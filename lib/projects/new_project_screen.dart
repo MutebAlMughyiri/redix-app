@@ -11,7 +11,7 @@ import 'project.dart';
 import 'project_registration.dart';
 import 'projects.dart';
 import '../ui/typed_names.dart';
-import '../ui/form_refusal.dart';
+import '../ui/form_error.dart';
 import '../ui/picker_field.dart';
 import '../ui/form_button_style.dart';
 import '../ui/act_once.dart';
@@ -174,6 +174,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
           children: [
             Text(words.registerHint, key: NewProjectScreen.hintKey, style: theme.textTheme.bodyMedium),
             const SizedBox(height: 16),
+            if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: NewProjectScreen.messageKey),
             TextField(
               key: NewProjectScreen.nameKey,
               controller: _name,
@@ -266,10 +267,6 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               style: formButtonStyle,
               child: Text(words.projectsCreate, key: NewProjectScreen.submitKey.label),
             )),
-            if (_message.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              FormRefusal(text: words.text(_message), textKey: NewProjectScreen.messageKey),
-            ],
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import '../ui/form_error.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -7,7 +8,6 @@ import '../words/app_language.dart';
 import '../words/language_switch.dart';
 import '../words/words.dart';
 import 'session.dart';
-import '../ui/refusal_text.dart';
 import '../ui/form_button_style.dart';
 import '../ui/act_once.dart';
 
@@ -120,6 +120,13 @@ class _SignInScreenState extends State<SignInScreen> {
             const SizedBox(height: 8),
             Text(words.signInHint, key: SignInScreen.hintKey, style: theme.textTheme.bodyLarge),
             const SizedBox(height: 32),
+            ListenableBuilder(
+              listenable: widget.session,
+              builder: (context, _) {
+                final message = _message.isEmpty ? widget.session.notice : _message;
+                return message.isEmpty ? const SizedBox.shrink() : FormError(text: words.text(message), textKey: SignInScreen.messageKey);
+              },
+            ),
             TextField(
               key: SignInScreen.usernameKey,
               controller: _username,
@@ -142,18 +149,6 @@ class _SignInScreenState extends State<SignInScreen> {
               onPressed: once(_signIn),
               style: formButtonStyle,
               child: Text(words.signInSubmit, key: SignInScreen.submitKey.label),
-            ),
-            ListenableBuilder(
-              listenable: widget.session,
-              builder: (context, _) {
-                final message = _message.isEmpty ? widget.session.notice : _message;
-                return message.isEmpty
-                    ? const SizedBox.shrink()
-                    : Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: refusalText(context, words.text(message), SignInScreen.messageKey),
-                      );
-              },
             ),
             ListenableBuilder(
               listenable: widget.session,

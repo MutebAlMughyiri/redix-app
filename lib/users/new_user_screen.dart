@@ -9,7 +9,7 @@ import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'permission_ticks.dart';
 import 'users.dart';
-import '../ui/form_refusal.dart';
+import '../ui/form_error.dart';
 import '../ui/form_button_style.dart';
 import '../ui/act_once.dart';
 
@@ -126,6 +126,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: NewUserScreen.messageKey),
             TextField(
               key: NewUserScreen.nameKey,
               controller: _name,
@@ -165,10 +166,6 @@ class _NewUserScreenState extends State<NewUserScreen> {
               style: formButtonStyle,
               child: Text(words.usersAdd, key: NewUserScreen.submitKey.label),
             )),
-            if (_message.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              FormRefusal(text: words.text(_message), textKey: NewUserScreen.messageKey),
-            ],
           ],
         ),
       ),

@@ -100,6 +100,7 @@ void main() {
     await fillAndSend(tester, api);
 
     expect(tester.widget<Text>(find.byKey(NewProjectScreen.messageKey)).data, 'en register.usernameTaken');
+    expectErrorAbove(tester, NewProjectScreen.messageKey, NewProjectScreen.nameKey);
     expect(typed(tester, NewProjectScreen.usernameKey), 'reem');
   });
 

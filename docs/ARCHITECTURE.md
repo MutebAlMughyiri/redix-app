@@ -210,7 +210,7 @@ lib/
     drag_handle.dart        The one drag handle of a row put in order, grayed and still while a search narrows its list
     filter_line.dart        The one line of filters under a search line: a segmented choice, a chip on or off, a chip opening a list of many or of one, an action chip
     entry_field.dart        One typed field of an entry's form, the same on every kind of entry: text, or a number on the phone's number keyboard, which has a minus sign when it isSigned
-    form_refusal.dart  A refusal under a long form's main button, which brings itself into view when it appears
+    form_error.dart    A form's error: the line above its first field, brought to the top of the view when it appears (redix-app #98)
     form_button_style.dart  The one style of a form's full-width main button, which stays inside the form
     form_section.dart       One section of a long form: its children on a card, evenly spaced
     labelled_chips.dart     A choice among a few, drawn as chips under what is being chosen

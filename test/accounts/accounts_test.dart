@@ -82,6 +82,7 @@ void main() {
 
     expect(text(tester, ChangeDialog.messageKey), 'en accounts.custodianRequired');
     expect(find.byKey(AccountsScreen.accountNameKey), findsOneWidget);
+    expectErrorAbove(tester, ChangeDialog.messageKey, AccountsScreen.accountNameKey);
   });
 
   testWidgets('R10: the dialog asks no balance, adding or editing', (tester) async {
