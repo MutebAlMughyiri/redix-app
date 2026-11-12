@@ -6,6 +6,8 @@ import 'package:redix/auth/permission.dart';
 import 'package:redix/contracts/contract.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/reports/item_report_screen.dart';
+import 'package:redix/reports/report_files.dart';
 import 'package:redix/structure/item_picker.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
@@ -202,11 +204,28 @@ void main() {
       await $(find.text(madeUpDocumentName)).waitUntilExists();
     });
 
-    phoneCase('AC-31.1: the contracts report hands on its PDF and Excel to whoever sees all capital', ($) async {
+    phoneCase('AC-31.1, Muteb, 12 Nov 2026: a contract\'s ⋮ saves its own workbook in the phone\'s Download folder', ($) async {
       final manager = await Given.manager();
-      await Given.contract(manager);
+      final contract = await Given.contract(manager);
       await onContracts($, manager);
-      await $(keyStartingWith('reportFile.')).waitUntilExists();
+      expect($(keyStartingWith('reportFile.contracts')), findsNothing);
+      await $.goTo($(ContractsScreen.nameKey(contract.id)));
+      await $.menuChoice(ContractsScreen.menuKey(contract.id), ContractsScreen.fileKey(ReportFileKind.excel));
+      await $.tapOn(ReportFileButtons.handingKey(contract.contractor, ReportFileKind.excel, FileHandling.save));
+      await $.messageShows('reports.downloaded');
+      await Pc.expectDownloaded(contract.contractor);
+    });
+
+    phoneCase('Muteb, 12 Nov 2026: tapping a contract opens its own table, with its payments and what remains', ($) async {
+      final manager = await Given.manager();
+      final contract = await Given.contract(manager, value: 1000);
+      await Given.entriesApproved(manager, [await Given.contractorPayment(manager, contract, amount: 400)]);
+      await onContracts($, manager);
+      await $.goTo($(ContractsScreen.nameKey(contract.id)));
+      await $.tapOn(ContractsScreen.nameKey(contract.id).body);
+      await $.reach($(ItemReportScreen.contractCardKey(contract.id)));
+      await $.says(ItemReportScreen.contractorKey(contract.id), contract.contractor);
+      await $.says(ItemReportScreen.contractTotalKey(contract.id), '400.00');
     });
 
     phoneCase('a contract with payments keeps its contractor and item', ($) async {
@@ -285,10 +304,13 @@ void main() {
       expect($(ContractsScreen.menuKey(contract.id)), findsNothing);
     });
 
-    phoneCase('BR-31: whoever does not see all capital gets no files', ($) async {
-      final member = await Given.member(await Given.manager(), permissions: [Permission.recordEntries]);
+    phoneCase('BR-31: whoever does not see all capital gets no files: a contract has no ⋮ for them', ($) async {
+      final manager = await Given.manager();
+      final contract = await Given.contract(manager);
+      final member = await Given.member(manager, permissions: [Permission.recordEntries]);
       await onContracts($, member);
-      await $.reach($(ContractsScreen.addKey));
+      await $.goTo($(ContractsScreen.nameKey(contract.id)));
+      expect($(ContractsScreen.menuKey(contract.id)), findsNothing);
       expect($(keyStartingWith('reportFile.')), findsNothing);
     });
 

@@ -308,12 +308,11 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(
         path: ItemReportScreen.path,
-        builder: (context, state) => ItemReportScreen(
-          project: state.extra! as Project,
-          itemId: state.pathParameters['itemId'] ?? '',
-          report: _itemReports.putIfAbsent(state.uri.path, () => ItemReport(widget.session, state.projectId, state.pathParameters['itemId'] ?? '')),
-          files: _reportFiles,
-        ),
+        builder: _itemReportScreen,
+      ),
+      GoRoute(
+        path: ItemReportScreen.contractPath,
+        builder: _itemReportScreen,
       ),
       GoRoute(
         path: VatStatementScreen.path,
@@ -412,6 +411,14 @@ class _RedixAppState extends State<RedixApp> {
     opened: _openedEntryOf(projectId),
     approvals: _approvalsOf(projectId),
     projectAccounts: _accountsOf(projectId),
+  );
+
+  /// The report at the route's own address, an item's or one contract's, whose API address is the same (Muteb, 12 Nov 2026).
+  ItemReportScreen _itemReportScreen(BuildContext context, GoRouterState state) => ItemReportScreen(
+    project: state.extra! as Project,
+    address: state.uri.path,
+    report: _itemReports.putIfAbsent(state.uri.path, () => ItemReport(widget.session, state.uri.path)),
+    files: _reportFiles,
   );
 
   ItemColumnsScreen _itemColumnsScreen(String projectId, String itemId, Project project) {

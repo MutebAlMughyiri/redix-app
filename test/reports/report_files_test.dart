@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/reports/summary.dart';
 import 'package:redix/reports/item_report_screen.dart';
@@ -142,14 +143,14 @@ void main() {
 
   testWidgets('a file that cannot be read says so', (tester) async {
     final (:api, capture: _) = await openReports(tester, (api) {});
+    final contract = api.addContract('project-0', 'مبلط الغربية', value: 34000)['id']! as String;
     await act(tester, api, () => tester.tap(find.byType(BackButton)));
-    await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
-    await tester.ensureVisible(projectSettingPages);
     await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
     api.online = false;
 
-    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf))));
-    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('contracts', ReportFileKind.pdf, FileHandling.share))));
+    await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.menuKey(contract))));
+    await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.fileKey(ReportFileKind.pdf))));
+    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('مبلط الغربية', ReportFileKind.pdf, FileHandling.share))));
 
     expect(find.text('en reports.fileFailed'), findsOneWidget);
   });

@@ -18,14 +18,15 @@ import '../ui/refusal_text.dart';
 import '../ui/amount_line.dart';
 import '../ui/row_stripe.dart';
 
-/// Everything spent on one item (UC-050): a table per subgroup, then each contract with its value, paid and remaining. The search line over them keeps the rows holding
-/// what was typed, and every row of a subgroup or contract whose own name holds it (redix-app #104); the totals stay the item's.
+/// Everything spent on one item (UC-050): a table per subgroup, then each contract with its value, paid and remaining; or one contract's table alone, as Contracts opens it
+/// (Muteb, 12 Nov 2026). The search line over them keeps the rows holding what was typed, and every row of a subgroup or contract whose own name holds it (redix-app #104);
+/// the totals stay the item's.
 class ItemReportScreen extends StatefulWidget {
-  /// The report of an item of [project], read through [report].
-  const ItemReportScreen({super.key, required this.project, required this.itemId, required this.report, required this.files});
+  /// The report at [address], an item's or a contract's, of [project], read through [report].
+  const ItemReportScreen({super.key, required this.project, required this.address, required this.report, required this.files});
 
-  /// The item.
-  final String itemId;
+  /// The report's address on the API, which its files are named after.
+  final String address;
 
   /// The way to its files.
   final ReportFiles files;
@@ -35,6 +36,12 @@ class ItemReportScreen extends StatefulWidget {
 
   /// The address of the report of the item [itemId] in the project [projectId].
   static String pathOf(String projectId, String itemId) => '/projects/$projectId/reports/items/$itemId';
+
+  /// The address of the screen holding one contract's table.
+  static const contractPath = '/projects/:projectId/reports/contracts/:contractId';
+
+  /// The address of the report of the contract [contractId] in the project [projectId].
+  static String contractPathOf(String projectId, String contractId) => '/projects/$projectId/reports/contracts/$contractId';
 
   /// The item's total.
   static const totalKey = Key('itemReport.total');
@@ -170,7 +177,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
       if (widget.project.may(Permission.seeAllCapital))
         Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: ReportFileButtons(files: widget.files, address: '/projects/${widget.project.id}/reports/items/${widget.itemId}', name: report.itemName, kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
+          child: ReportFileButtons(files: widget.files, address: widget.address, name: report.itemName, kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
         ),
       for (final subgroup in report.subgroups)
         if (ListSearch.groupOf(_nameOf(subgroup, words), subgroup.rows, _textOf, _typed) case (isShown: true, :final children)) _subgroup(subgroup, children, report.columns),

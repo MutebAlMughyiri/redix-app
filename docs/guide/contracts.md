@@ -19,6 +19,8 @@ What was paid counts only once approved. What waits shows under the figures as *
 | Change the value, the notes or an amendment | Open the menu on its card and tap **Amend contract**. Every change is recorded with who made it. |
 | Keep the contract's document | In the dialog, tap **Add a document** and pick a picture or a PDF. It is kept when you save, and stays once attached. It cannot be opened from the app yet. |
 | Stop using a contract | Open the menu on its card and tap **Disable**. It stays on the list, and nothing is ever deleted. |
+| See a contract's payments | Tap its card. Its own table opens: each payment, its total, and the value, paid and remaining. |
+| Take a contract's PDF or Excel | Open the menu on its card and tap **PDF** or **Excel**, then save or share it. Only the owner and Finance, who see all capital, have them. |
 
 The contractor and item can change from **Edit** while the contract has no payments. Once one exists they stay, so if one is wrong, disable the contract and add it again.
 
@@ -46,6 +48,8 @@ A remaining in red and brackets, such as (1,000.00), means more was paid than wa
 | تغيّر القيمة أو الملاحظات أو تسجل تعديلاً | افتح القائمة في بطاقته واضغط **تعديل العقد**. ويُسجَّل كل تغيير باسم من قام به. |
 | تحفظ مستند العقد | في النافذة، اضغط **إضافة مستند** واختر صورة أو ملف PDF. يُحفظ عند الحفظ، ويبقى بعد إرفاقه. لا يمكن فتحه من التطبيق حالياً. |
 | توقف استخدام عقد | افتح القائمة في بطاقته واضغط **تعطيل**. يبقى في القائمة، ولا يُحذف شيء أبداً. |
+| ترى دفعات عقد | اضغط بطاقته. يُفتح جدوله: كل دفعة، ومجموعها، والقيمة والمدفوع والمتبقي. |
+| تأخذ ملف PDF أو Excel لعقد | افتح القائمة في بطاقته واضغط **PDF** أو **Excel**، ثم احفظه أو شاركه. وهما للمالك والمالي فقط، لأنهما يريان رأس المال كله. |
 
 يمكن تغيير المقاول والبند من **تعديل** ما دام العقد بلا دفعات. فإذا وُجدت دفعة بقيت كما هي، فإن كان أحدها خطأً فعطّل العقد وأضفه من جديد.
 

@@ -625,6 +625,9 @@ class FakeApi {
   };
 
   /// What an item's report answers.
+  /// The addresses item reports were read at: an item's, or one contract's (Muteb, 12 Nov 2026).
+  final itemReportReads = <String>[];
+
   var itemReportAnswer = <String, Object>{'itemName': 'البلاط', 'categoryName': 'التشطيب', 'total': 0, 'columns': <String>[], 'subgroups': <Map<String, Object>>[], 'contracts': <Map<String, Object>>[]};
 
   /// The project's documents, as the API holds them.
@@ -1729,7 +1732,8 @@ class FakeApi {
     if (segments.length == 3 && segments[2] == 'summary') {
       return _json(summaryAnswer, 200);
     }
-    if (segments.length == 5 && segments[2] == 'reports' && segments[3] == 'items') {
+    if (segments.length == 5 && segments[2] == 'reports' && (segments[3] == 'items' || segments[3] == 'contracts')) {
+      itemReportReads.add(request.url.path);
       return _json(itemReportAnswer, 200);
     }
     if (segments.length == 3 && segments[2] == 'capital') {

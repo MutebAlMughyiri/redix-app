@@ -17,7 +17,7 @@ The home's buttons at its bottom open the rest:
 - **Expenses** and **Revenue**: two buttons in Project settings, each opening its own side's categories. Each category shows its total and its share of the side, and opens on its items with theirs; an item opens its report, with its PDF and Excel. At the top of the home, Revenue and Expenses still open to their categories with their totals, but a category opens nothing: its items are here.
 - **Actual balances**: what the accounts should hold, what they really held at the last check, and the difference; **Update** enters them again.
 - **VAT refund**, as Excel, its VAT worked out from each total.
-- **Contracts**, whose screen holds the contracts report's PDF and Excel for the owner and Finance; and **Partners**, with the capital.
+- **Contracts**, where each contract's menu holds its own PDF and Excel for the owner and Finance; and **Partners**, with the capital.
 
 Print opens the phone's printer with a preview. PDF and Excel open the share sheet, for WhatsApp or email.
 
@@ -36,6 +36,6 @@ Print opens the phone's printer with a preview. PDF and Excel open the share she
 - **المصروفات** و**الإيرادات**: زران في إعدادات المشروع، يفتح كل منهما تصنيفات جهته. يعرض كل تصنيف مجموعه ونصيبه، ويُفتح على بنوده بمجاميعها؛ وكل بند يفتح تقريره بملفي PDF وExcel. أما الإيرادات والمصروفات أعلى الصفحة الرئيسية فما زالت تُفتح على تصنيفاتها بمجاميعها، لكن التصنيف لا يفتح شيئاً: بنوده هنا.
 - **الأرصدة الفعلية**: ما يفترض أن تحويه الحسابات، وما حوته فعلاً عند آخر مطابقة، والفرق؛ و**تحديث** يُدخلها من جديد.
 - **استرداد ضريبة القيمة المضافة** ملفَّ Excel، تُحسب ضريبته من كل إجمالي.
-- **العقود**، وفي شاشتها ملفا PDF وExcel لتقرير العقود للمالك والمالي؛ و**الشركاء** ومعهم رأس المال.
+- **العقود**، وفي قائمة كل عقد ملفا PDF وExcel له، للمالك والمالي؛ و**الشركاء** ومعهم رأس المال.
 
 الطباعة تفتح طابعة الجوال مع معاينة. وPDF وExcel يفتحان المشاركة، لواتساب أو البريد.

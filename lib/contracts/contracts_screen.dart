@@ -1,5 +1,7 @@
+import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 
+import '../reports/item_report_screen.dart';
 import '../attachments/attachments.dart';
 import '../attachments/invoice_capture.dart';
 import '../projects/project.dart';
@@ -135,6 +137,9 @@ class ContractsScreen extends StatefulWidget {
   /// The menu of the contract [id].
   static Key menuKey(String id) => Key('contracts.menu.$id');
 
+  /// The file of [kind] of a contract, in its ⋮ (Muteb, 12 Nov 2026): its PDF or its Excel.
+  static Key fileKey(ReportFileKind kind) => Key('contracts.file.${kind.name}');
+
   /// The heading over the documents, in the dialog.
   static const documentsHeadingKey = Key('contracts.documentsHeading');
 
@@ -176,11 +181,6 @@ class _ContractsScreenState extends State<ContractsScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (project.may(Permission.seeAllCapital))
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: ReportFileButtons(files: widget.files, address: '/projects/${project.id}/reports/contracts', name: 'contracts', kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
-              ),
             Expanded(
               child: ListenableBuilder(
                 listenable: contracts,
@@ -202,7 +202,16 @@ class _ContractsScreenState extends State<ContractsScreen> {
                       ),
                     ],
                   ),
-                  itemBuilder: (contract) => ContractCard(contract: contract, contracts: contracts, mayChange: project.mayManageSettings, onAmend: () => _ask(contract)),
+                  itemBuilder: (contract) => ContractCard(
+                    contract: contract,
+                    contracts: contracts,
+                    mayChange: project.mayManageSettings,
+                    onAmend: () => _ask(contract),
+                    onOpen: () => context.push(ItemReportScreen.contractPathOf(project.id, contract.id), extra: project),
+                    mayExport: project.may(Permission.seeAllCapital),
+                    files: widget.files,
+                    address: ItemReportScreen.contractPathOf(project.id, contract.id),
+                  ),
                 ),
               ),
             ),

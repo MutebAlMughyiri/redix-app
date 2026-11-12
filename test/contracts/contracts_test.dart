@@ -6,6 +6,8 @@ import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/contracts/contract.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/reports/item_report_screen.dart';
+import 'package:redix/reports/report_files.dart';
 import 'package:redix/structure/item_picker.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
@@ -406,11 +408,14 @@ void main() {
     expect(find.byKey(ContractsScreen.menuKey(opened.running)), findsNothing);
   });
 
-  testWidgets('a finished project shows its contracts with nothing to change', (tester) async {
+  testWidgets('a finished project shows its contracts with nothing to change: a contract\'s ⋮ holds its files alone', (tester) async {
     final opened = await openContracts(tester, status: 'finished');
 
     expect(isEnabled(tester, ContractsScreen.addKey), isFalse);
-    expect(find.byKey(ContractsScreen.menuKey(opened.running)), findsNothing);
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
+    expect(find.byKey(ContractsScreen.editKey), findsNothing);
+    expect(find.byKey(ContractsScreen.disableKey), findsNothing);
+    expect(find.byKey(ContractsScreen.fileKey(ReportFileKind.pdf)), findsOneWidget);
   });
 
   testWidgets('a list that cannot be read says so', (tester) async {
@@ -423,5 +428,35 @@ void main() {
     await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
 
     expect(text(tester, ApiListBody.messageKey), 'en contracts.loadFailed');
+  });
+
+  testWidgets('Muteb, 12 Nov 2026: tapping a contract opens its own table, read from that contract\'s report', (tester) async {
+    final opened = await openContracts(tester);
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.nameKey(opened.running))));
+
+    expect(find.byType(ItemReportScreen), findsOneWidget);
+    expect(opened.api.itemReportReads.last, '/projects/project-0/reports/contracts/${opened.running}');
+  });
+
+  testWidgets('Muteb, 12 Nov 2026: a contract\'s ⋮ holds its PDF and Excel for whoever sees all capital, and Contracts holds no file buttons of its own', (tester) async {
+    final opened = await openContracts(tester);
+    expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)), findsNothing);
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
+    expect(find.byKey(ContractsScreen.fileKey(ReportFileKind.excel)), findsOneWidget);
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.fileKey(ReportFileKind.pdf))));
+
+    expect(find.byKey(ReportFileButtons.handingKey('مبلط الغربية', ReportFileKind.pdf, FileHandling.share)), findsOneWidget);
+  });
+
+  testWidgets('BR-31: without seeing all capital a contract\'s ⋮ holds no files, only what keeping the settings allows', (tester) async {
+    final opened = await openContracts(tester, permissions: [for (final permission in managerAndFinance) if (permission != 'seeAllCapital') permission]);
+
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
+
+    expect(find.byKey(ContractsScreen.editKey), findsOneWidget);
+    expect(find.byKey(ContractsScreen.fileKey(ReportFileKind.pdf)), findsNothing);
+    expect(find.byKey(ContractsScreen.fileKey(ReportFileKind.excel)), findsNothing);
   });
 }

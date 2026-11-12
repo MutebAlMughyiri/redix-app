@@ -75,6 +75,9 @@ Finder Function(FakeApi api) _enabled(Key key) =>
 
 String _first(List<Map<String, Object>>? rows) => rows!.first['id']! as String;
 
+/// Opens the ⋮ of the project's first contract, which holds what keeping the settings allows and, for whoever sees all capital, its files (Muteb, 12 Nov 2026).
+Future<void> _openContractMenu(WidgetTester tester, FakeApi api, FakeCapture capture) => _tapKey(ContractsScreen.menuKey(_first(api.contracts[_project])))(tester, api, capture);
+
 final _summaryWithAnItem = <String, Object>{
   ...FakeApi().summaryAnswer,
   'categories': [
@@ -148,11 +151,11 @@ final List<Gate> _gates = [
   ),
   (name: 'An enabled Add a contract', permission: Permission.manageSettings, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project))], control: _enabled(ContractsScreen.addKey)),
   (
-    name: 'A contract\'s menu',
+    name: 'A contract\'s Edit, in its ⋮',
     permission: Permission.manageSettings,
     arrange: (api) => api.addContract(_project, 'مؤسسة البلاط', value: 40000),
-    steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project))],
-    control: (api) => find.byKey(ContractsScreen.menuKey(_first(api.contracts[_project]))),
+    steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project)), _openContractMenu],
+    control: _key(ContractsScreen.editKey),
   ),
   (
     name: 'Quick add in the supplier picker',
@@ -199,11 +202,11 @@ final List<Gate> _gates = [
     control: _enabled(AddEntryScreen.changeKey),
   ),
   (
-    name: 'The contracts report\'s files, on Contracts',
+    name: 'A contract\'s files, in its ⋮ on Contracts',
     permission: Permission.seeAllCapital,
-    arrange: _nothing,
-    steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project))],
-    control: _key(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)),
+    arrange: (api) => api.addContract(_project, 'مبلط الغربية', value: 34000),
+    steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project)), _openContractMenu],
+    control: _key(ContractsScreen.fileKey(ReportFileKind.pdf)),
   ),
   (
     name: 'A periodic report\'s files',

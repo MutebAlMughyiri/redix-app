@@ -147,6 +147,6 @@ class ItemReportFigures {
 /// The report of one item of a project.
 class ItemReport extends ApiObject<ItemReportFigures> {
   /// The report of the item [itemId] in the project [projectId], seen through [session].
-  ItemReport(Session session, String projectId, String itemId)
-    : super(session, '/projects/$projectId/reports/items/$itemId', 'reports', (json) => ItemReportFigures.fromJson(json! as Map<String, dynamic>), ItemReportFigures.none());
+  ItemReport(Session session, String address)
+    : super(session, address, 'reports', (json) => ItemReportFigures.fromJson(json! as Map<String, dynamic>), ItemReportFigures.none());
 }

@@ -340,7 +340,7 @@ void main() {
     expect(find.textContaining('(500.00)'), findsOneWidget);
   });
 
-  testWidgets('Muteb, 9 Nov 2026: Reports holds the periodic reports alone; the home opens the item reports and the VAT refund, and Contracts holds the contracts report\'s files', (tester) async {
+  testWidgets('Muteb, 9 Nov 2026: Reports holds the periodic reports alone; the home opens the item reports and the VAT refund, and Contracts no files of its own', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
     await showProjectSetting(tester, HomeScreen.vatKey('project-0'));
     expect(tester.widget<Text>(find.byKey(HomeScreen.vatKey('project-0').label)).data, 'en vat.title');
@@ -360,7 +360,6 @@ void main() {
     await tester.ensureVisible(projectSettingPages);
     await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
     expect(find.byType(ContractsScreen), findsOneWidget);
-    expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)), findsOneWidget);
-    expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.excel)), findsOneWidget);
+    expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)), findsNothing, reason: 'Muteb, 12 Nov 2026: each contract holds its own files in its ⋮');
   });
 }

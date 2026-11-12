@@ -105,6 +105,36 @@ class ReportFiles {
   }
 }
 
+/// Gets the report file of [kind] at [address], named [name], through [files], and hands it on: at once when the kind is handed one way, as printing is, otherwise after
+/// asking whether to save or share it. The one way a button or a menu choice gets a report's file (Muteb, 12 Nov 2026: a contract's ⋮ holds its PDF and Excel).
+Future<void> handReportFile(BuildContext context, ReportFiles files, String address, String name, ReportFileKind kind) async {
+  Future<void> run(FileHandling handing) => showRefusalOf(context, whileBusy(context, files.hand(address, name, kind, handing)));
+  if (kind.handings.length == 1) {
+    return run(kind.handings.single);
+  }
+  final words = Words.of(context);
+  await showModalBottomSheet<void>(
+    context: context,
+    builder: (sheet) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final handing in kind.handings)
+            ListTile(
+              key: ReportFileButtons.handingKey(name, kind, handing),
+              leading: Icon(handing.icon, key: ReportFileButtons.handingKey(name, kind, handing).icon),
+              title: Text(words.text(handing.wordKey), key: ReportFileButtons.handingKey(name, kind, handing).title),
+              onTap: () {
+                Navigator.pop(sheet);
+                run(handing);
+              },
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
 /// The buttons that get a report's files: the PDF, the workbook, printing, and any [kinds] given.
 class ReportFileButtons extends StatelessWidget {
   /// The buttons of the report at [address], named [name], through [files].
@@ -128,31 +158,6 @@ class ReportFileButtons extends StatelessWidget {
   /// Which buttons show.
   final List<ReportFileKind> kinds;
 
-  Future<void> _run(BuildContext context, ReportFileKind kind, FileHandling handing) => showRefusalOf(context, whileBusy(context, files.hand(address, name, kind, handing)));
-
-  void _ask(BuildContext context, ReportFileKind kind) {
-    final words = Words.of(context);
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (sheet) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final handing in kind.handings)
-              ListTile(
-                key: handingKey(name, kind, handing),
-                leading: Icon(handing.icon, key: handingKey(name, kind, handing).icon),
-                title: Text(words.text(handing.wordKey), key: handingKey(name, kind, handing).title),
-                onTap: () {
-                  Navigator.pop(sheet);
-                  _run(context, kind, handing);
-                },
-              ),
-          ],
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +171,7 @@ class ReportFileButtons extends StatelessWidget {
             key: buttonKey(name, kind),
             icon: Icon(kind.icon, key: buttonKey(name, kind).icon),
             label: Text(words.text(kind.wordKey), key: buttonKey(name, kind).label),
-            onPressed: once(() => kind.handings.length == 1 ? _run(context, kind, kind.handings.single) : _ask(context, kind)),
+            onPressed: once(() => handReportFile(context, files, address, name, kind)),
           )),
       ],
     );
