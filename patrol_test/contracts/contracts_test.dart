@@ -31,11 +31,7 @@ Future<void> onContracts(PatrolIntegrationTester $, Person person) async {
 }
 
 /// The standing of the contract [id] says [text].
-Future<void> standsAs(PatrolIntegrationTester $, String id, String text) async {
-  final standing = find.descendant(of: find.byKey(ContractsScreen.standingKey(id)), matching: find.text(text));
-  await $.until(() => standing.evaluate().isNotEmpty);
-  expect(standing, findsOneWidget);
-}
+Future<void> standsAs(PatrolIntegrationTester $, String id, String text) => $.says(ContractsScreen.standingKey(id).label, text);
 
 /// A payment of [amount] on [contract], approved.
 Future<void> paid(Person manager, MadeContract contract, num amount) async {
@@ -150,7 +146,7 @@ void main() {
       await onContracts($, manager);
       await $.reach($(ContractsScreen.nameKey(running.id)));
       await $.openFilters();
-      await $(find.text('${$.words.contractsFilterOverrun} · 1')).waitUntilExists();
+      await $.says(ContractsScreen.filterKey(ContractFilter.overrun).label, '${$.words.contractsFilterOverrun} · 1');
       await $.tapOn(ContractsScreen.filterKey(ContractFilter.overrun));
       await $.gone($(ContractsScreen.nameKey(running.id)));
       await $.reach($(ContractsScreen.nameKey(overrun.id)));
@@ -202,7 +198,7 @@ void main() {
       await $.gone($(ContractsScreen.valueKey));
       await $.menuChoice(ContractsScreen.menuKey(contract.id), ContractsScreen.editKey);
       await $.reach($(ContractsScreen.documentsHeadingKey));
-      await $(find.text(madeUpDocumentName)).waitUntilExists();
+      await $.says(ContractsScreen.documentKey((await Given.contractDocumentIds(manager, contract.id)).single), madeUpDocumentName);
     });
 
     phoneCase('AC-31.1, Muteb, 12 Nov 2026: a contract\'s ⋮ saves its own workbook in the phone\'s Download folder', ($) async {

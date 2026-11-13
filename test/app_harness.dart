@@ -441,6 +441,9 @@ class FakeApi {
   /// Where each file was sent: an entry's file, or a document's.
   final sentAttachmentPaths = <String>[];
 
+  /// The id the API gave each file it kept, in the order they were sent.
+  final keptAttachmentIds = <String>[];
+
   /// The status and problem code the API answers to a file; 2xx keeps it. An empty code sends none.
   var attachmentAnswer = (status: 201, code: '');
 
@@ -1868,7 +1871,9 @@ class FakeApi {
       if (attachmentAnswer.status >= 300) {
         return _json({if (attachmentAnswer.code.isNotEmpty) 'code': attachmentAnswer.code}, attachmentAnswer.status);
       }
-      return _json({'id': 'attachment-${_nextStructureId++}', 'fileName': RegExp('filename="([^"]*)"').firstMatch(latin1.decode(request.bodyBytes))!.group(1)!}, attachmentAnswer.status);
+      final id = 'attachment-${_nextStructureId++}';
+      keptAttachmentIds.add(id);
+      return _json({'id': id, 'fileName': RegExp('filename="([^"]*)"').firstMatch(latin1.decode(request.bodyBytes))!.group(1)!}, attachmentAnswer.status);
     }
     if (segments.length >= 3 && segments[2] == 'members') {
       return _json(members, 200);

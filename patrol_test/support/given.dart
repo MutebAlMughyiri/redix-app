@@ -332,6 +332,12 @@ class Given {
     return (id: made['id'] as String, itemId: item['id'] as String, supplierId: supplier['id'] as String, contractor: name);
   }
 
+  /// The ids of the documents the contract [contractId] of [manager]'s project carries, in the order they were kept.
+  static Future<List<String>> contractDocumentIds(Person manager, String contractId) async {
+    final all = (await _getList('${manager.project}/contracts', await _tokenOf(manager))).cast<Map<String, dynamic>>();
+    return [for (final document in all.singleWhere((contract) => contract['id'] == contractId)['documents'] as List<dynamic>) (document as Map<String, dynamic>)['id'] as String];
+  }
+
   /// [manager] disables the contract [contractId].
   static Future<void> contractDisabled(Person manager, String contractId) async {
     await _post('${manager.project}/contracts/$contractId/disable', {}, await _tokenOf(manager));
