@@ -225,7 +225,6 @@ lib/
     search_scope.dart       One screen's search (redix-app #104, version 3): SearchScope over its Scaffold holds whether the line and the filters show and what is typed; SearchIcons in the title bar opens them, the filter icon filled while a filter is in use
     swipe_to_remove.dart    The one way a row is removed, and the one frame of a row that can be: an outlined card with a red bar inside its end edge where it may be removed, swiped from that edge toward its start past 40% of its width, once confirmed in its row (redix-api #119)
     title_bar_add.dart      The plus in a title bar, for what is added rarely, grayed without the permission
-    two_fields.dart         Two fields of a form, side by side and of equal width
   users/
     add_existing_user_dialog.dart Adds someone who already has a login to this project, by their exact username, so a manager never sees another project's people
     edit_user_dialog.dart   Corrects a user's name and mobile

@@ -986,12 +986,6 @@ mixin WordGetters {
   /// The word `entries.view`.
   String get entriesView => text('entries.view');
 
-  /// The word `entries.withdrawal`.
-  String get entriesWithdrawal => text('entries.withdrawal');
-
-  /// The word `entries.withdrawalHint`.
-  String get entriesWithdrawalHint => text('entries.withdrawalHint');
-
   /// The word `entryShare.account`.
   String get entryShareAccount => text('entryShare.account');
 
@@ -1037,12 +1031,6 @@ mixin WordGetters {
   /// The word `expenses.amount`.
   String get expensesAmount => text('expenses.amount');
 
-  /// The word `expenses.creditNote`.
-  String get expensesCreditNote => text('expenses.creditNote');
-
-  /// The word `expenses.creditNoteExplain`.
-  String get expensesCreditNoteExplain => text('expenses.creditNoteExplain');
-
   /// The word `expenses.date`.
   String get expensesDate => text('expenses.date');
 
@@ -1073,15 +1061,6 @@ mixin WordGetters {
   /// The word `expenses.invalidNotes`.
   String get expensesInvalidNotes => text('expenses.invalidNotes');
 
-  /// The word `expenses.invalidProduct`.
-  String get expensesInvalidProduct => text('expenses.invalidProduct');
-
-  /// The word `expenses.invalidQuantity`.
-  String get expensesInvalidQuantity => text('expenses.invalidQuantity');
-
-  /// The word `expenses.invalidUnitPrice`.
-  String get expensesInvalidUnitPrice => text('expenses.invalidUnitPrice');
-
   /// The word `expenses.invoiceAlreadyAttached`.
   String get expensesInvoiceAlreadyAttached => text('expenses.invoiceAlreadyAttached');
 
@@ -1109,9 +1088,6 @@ mixin WordGetters {
   /// The word `expenses.paymentMethod`.
   String get expensesPaymentMethod => text('expenses.paymentMethod');
 
-  /// The word `expenses.product`.
-  String get expensesProduct => text('expenses.product');
-
   /// The word `expenses.projectFinished`.
   String get expensesProjectFinished => text('expenses.projectFinished');
 
@@ -1126,9 +1102,6 @@ mixin WordGetters {
 
   /// The word `expenses.qrUnreadable`.
   String get expensesQrUnreadable => text('expenses.qrUnreadable');
-
-  /// The word `expenses.quantity`.
-  String get expensesQuantity => text('expenses.quantity');
 
   /// The word `expenses.reasonRequired`.
   String get expensesReasonRequired => text('expenses.reasonRequired');
@@ -1156,9 +1129,6 @@ mixin WordGetters {
 
   /// The word `expenses.total`.
   String get expensesTotal => text('expenses.total');
-
-  /// The word `expenses.unitPrice`.
-  String get expensesUnitPrice => text('expenses.unitPrice');
 
   /// The word `expenses.unknownAttachment`.
   String get expensesUnknownAttachment => text('expenses.unknownAttachment');
@@ -1859,9 +1829,6 @@ mixin WordGetters {
   /// The word `reports.grandTotal`.
   String get reportsGrandTotal => text('reports.grandTotal');
 
-  /// The word `reports.invoiceNumber`.
-  String get reportsInvoiceNumber => text('reports.invoiceNumber');
-
   /// The word `reports.issue`.
   String get reportsIssue => text('reports.issue');
 
@@ -1892,9 +1859,6 @@ mixin WordGetters {
   /// The word `reports.openValue`.
   String get reportsOpenValue => text('reports.openValue');
 
-  /// The word `reports.outsideContract`.
-  String get reportsOutsideContract => text('reports.outsideContract');
-
   /// The word `reports.overrun`.
   String get reportsOverrun => text('reports.overrun');
 
@@ -1922,9 +1886,6 @@ mixin WordGetters {
   /// The word `reports.print`.
   String get reportsPrint => text('reports.print');
 
-  /// The word `reports.quantity`.
-  String get reportsQuantity => text('reports.quantity');
-
   /// The word `reports.refused`.
   String get reportsRefused => text('reports.refused');
 
@@ -1945,9 +1906,6 @@ mixin WordGetters {
 
   /// The word `reports.title`.
   String get reportsTitle => text('reports.title');
-
-  /// The word `reports.unitPrice`.
-  String get reportsUnitPrice => text('reports.unitPrice');
 
   /// The word `revenue.amount`.
   String get revenueAmount => text('revenue.amount');
