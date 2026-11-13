@@ -62,7 +62,8 @@ void main() {
 
     expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/partners');
     expect(opened.api.sentSettingsChanges.single.$2, {'name': 'نوف'});
-    expect(find.text('نوف'), findsOneWidget);
+    final added = opened.api.partners['project-0']!.singleWhere((partner) => partner['name'] == 'نوف')['id']! as String;
+    expect(text(tester, PartnersScreen.nameKey(added)), 'نوف');
     expect(find.byKey(PartnersScreen.partnerNameKey), findsNothing);
   });
 
@@ -123,7 +124,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.menuKey(opened.mutab))));
     expect(find.byKey(PartnersScreen.editKey), findsOneWidget);
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.deleteKey)));
-    expect(find.text('en partners.deleteKeepsMovements'), findsOneWidget);
+    expect(text(tester, ConfirmDialog.explanationKey), 'en partners.deleteKeepsMovements');
     await act(tester, opened.api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
     expect(opened.api.sentSettingsChanges.single.$1, 'DELETE /projects/project-0/partners/${opened.mutab}');
@@ -136,7 +137,7 @@ void main() {
 
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.menuKey(opened.haitham))));
     expect(tester.widget<PopupMenuItem<VoidCallback>>(find.byKey(PartnersScreen.deleteKey)).enabled, isFalse);
-    expect(find.text('en partners.partnerNotDeletable'), findsOneWidget);
+    expect(text(tester, PartnersScreen.deleteKey.subtitle), 'en partners.partnerNotDeletable');
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.deleteKey), warnIfMissed: false));
 
     expect(opened.api.sentSettingsChanges, isEmpty);
@@ -175,7 +176,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.menuKey(nour))));
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.deleteKey)));
 
-    expect(find.text('en partners.deleteKeepsMovements\n\nen partners.deleteRemovesMyDrafts\n${formatDate(DateTime(2026, 11, 10))} · ${formatMoney(300)}'), findsOneWidget);
+    expect(text(tester, ConfirmDialog.explanationKey), 'en partners.deleteKeepsMovements\n\nen partners.deleteRemovesMyDrafts\n${formatDate(DateTime(2026, 11, 10))} · ${formatMoney(300)}');
   });
 
   testWidgets("findings row 202: without Delete entries, a partner one's own draft names has Delete gray, saying that deleting the draft needs it", (tester) async {
@@ -204,9 +205,9 @@ void main() {
   testWidgets('redix-app #101: Partners has + and History in the title bar and no bottom button; + adds a partner', (tester) async {
     final opened = await openPartners(tester);
 
-    expect(find.byType(BottomButton), findsNothing);
-    expect(find.descendant(of: find.byType(AppBar), matching: find.byKey(PartnersScreen.addKey)), findsOneWidget);
-    expect(find.descendant(of: find.byType(AppBar), matching: find.byKey(PartnersScreen.historyKey)), findsOneWidget);
+    expect(find.byKey(BottomButton.barKey), findsNothing);
+    expect(isInTitleBar(tester, PartnersScreen.addKey), isTrue);
+    expect(isInTitleBar(tester, PartnersScreen.historyKey), isTrue);
     await act(tester, opened.api, () => tester.tap(find.byKey(PartnersScreen.addKey)));
 
     expect(find.byKey(PartnersScreen.partnerNameKey), findsOneWidget);
@@ -268,7 +269,7 @@ void main() {
     final opened = await openPartners(tester);
     opened.api.online = false;
 
-    await act(tester, opened.api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, opened.api, () => tester.pageBack());
     await showProjectSetting(tester, HomeScreen.partnersKey('project-0'));
     await tester.ensureVisible(projectSettingPages);
     await scrollAndTap(tester, opened.api, HomeScreen.partnersKey('project-0'));
