@@ -19,6 +19,17 @@ const jsonHeaders = {'Content-Type': 'application/json'};
 /// The JSON [response] carries, read as UTF-8 so Arabic arrives unbroken.
 dynamic jsonOf(http.Response response) => jsonDecode(utf8.decode(response.bodyBytes));
 
+/// What [response] carries, made by [make]: the one way an answer becomes what the app holds. An answer in a shape this version does not read, as a copy an earlier
+/// version kept on the phone may be, throws a [FormatException] as an answer that is not JSON does, so every reader treats it as nothing kept and the next read comes
+/// from the API (redix-api #126); no reader keeps a way to read an old shape.
+T madeFrom<T>(http.Response response, T Function(Object? json) make) {
+  try {
+    return make(jsonOf(response));
+  } on TypeError catch (error) {
+    throw FormatException('An answer in a shape this version does not read: $error');
+  }
+}
+
 /// The JSON object [response] carries; empty when its body is empty or holds something else.
 Map<String, dynamic> answerOf(http.Response response) {
   final answer = response.body.isEmpty ? null : jsonOf(response);

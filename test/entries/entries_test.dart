@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -20,18 +21,18 @@ import '../app_harness.dart';
 import 'package:redix/ui/screen_title.dart';
 
 void main() {
-  Future<FakeApi> openHome(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field, String status = 'active'}) async {
+  Future<FakeApi> openHome(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field, String status = 'active', MemoryStore? store}) async {
     tester.view.physicalSize = const Size(800, 2000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status, units: ['الفلة الغربية']);
     arrange(api);
-    await openProject(tester, api);
+    await openProject(tester, api, store: store);
     return api;
   }
 
-  Future<FakeApi> openEntries(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field, String status = 'active'}) async {
-    final api = await openHome(tester, arrange, permissions: permissions, status: status);
+  Future<FakeApi> openEntries(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field, String status = 'active', MemoryStore? store}) async {
+    final api = await openHome(tester, arrange, permissions: permissions, status: status, store: store);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
     return api;
   }
@@ -501,8 +502,8 @@ void main() {
   });
 
   group('AC-19.1: fixing a rejected entry', () {
-    Future<FakeApi> openRejected(WidgetTester tester, {bool change = true, String attachmentId = 'attachment-1', num amount = 1150}) async {
-      final api = await openEntries(tester, (api) {
+    Future<FakeApi> openRejected(WidgetTester tester, {bool change = true, String attachmentId = 'attachment-1', num amount = 1150, MemoryStore? store}) async {
+      final api = await openEntries(tester, store: store, (api) {
         final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'بند اللياسة', subgroups: ['مواد']);
         for (final key in ['product', 'notes']) {
           api.addColumn('/projects/project-0/items/${item['id']}/columns', key);
@@ -542,6 +543,33 @@ void main() {
       expect(find.byKey(AddEntryScreen.filesKey), findsNothing);
       expect(find.ancestor(of: find.byKey(AddEntryScreen.amountKey), matching: find.byWidgetPredicate((widget) => widget is IgnorePointer && widget.ignoring)), findsWidgets);
       expect(typed(tester, AddEntryScreen.amountKey), '1150');
+      expect(typed(tester, AddEntryScreen.notesKey), 'دفعة أولى');
+    });
+
+    /// Goes back from the entry opened read only and opens it again with no network, so it is read from what the phone kept.
+    Future<void> openAgainWithNoNetwork(WidgetTester tester, FakeApi api) async {
+      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      api.online = false;
+      await openActions(tester, api, 'entry-0');
+    }
+
+    testWidgets('redix-api #126: an entry an earlier version kept on the phone, in a shape this one does not read, opens with nothing filled when the network is gone, and nothing escapes', (tester) async {
+      final store = MemoryStore();
+      final api = await openRejected(tester, change: false, store: store);
+      await store.write('copies', '/projects/project-0/entries/entry-0', jsonEncode({...api.entryDetails['entry-0']! as Map<String, Object>}..remove('contractorPayment')));
+
+      await openAgainWithNoNetwork(tester, api);
+
+      expect(tester.takeException(), isNull);
+      expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en entries.view');
+      expect(typed(tester, AddEntryScreen.notesKey), '');
+    });
+
+    testWidgets('redix-api #126: an entry kept on the phone in the shape this version reads opens filled when the network is gone', (tester) async {
+      final api = await openRejected(tester, change: false, store: MemoryStore());
+
+      await openAgainWithNoNetwork(tester, api);
+
       expect(typed(tester, AddEntryScreen.notesKey), 'دفعة أولى');
     });
 
