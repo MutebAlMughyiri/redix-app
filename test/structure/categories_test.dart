@@ -12,6 +12,7 @@ import 'package:redix/structure/category.dart';
 import 'package:redix/structure/item_tables_screen.dart';
 
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/messages.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
@@ -20,6 +21,12 @@ import 'package:redix/ui/name_dialog.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
+
+  /// The id the API gave the row named [name] among [rows].
+  String idNamed(List<Map<String, Object>> rows, String name) => rows.singleWhere((row) => row['name'] == name)['id']! as String;
+
+  /// Every item the API holds in the first project, of every category.
+  List<Map<String, Object>> itemsHeld(FakeApi api) => [for (final category in api.categories['project-0']!) ...category['items']! as List<Map<String, Object>>];
 
   /// A project with العظم (الحفر, الحديد) and التشطيب, opened as far as its categories.
   Future<({FakeApi api, String bone, String finishing, String digging, String steel})> openCategories(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
@@ -82,7 +89,7 @@ void main() {
 
     expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/categories');
     expect(opened.api.sentStructureChanges.single.$2, {'name': 'الملاحق'});
-    expect(find.text('الملاحق'), findsOneWidget);
+    expect(text(tester, CategoriesScreen.categoryNameKey(idNamed(opened.api.categories['project-0']!, 'الملاحق'))), 'الملاحق');
     expect(find.byKey(ChangeDialog.saveKey), findsNothing);
   });
 
@@ -110,7 +117,7 @@ void main() {
 
     expect(opened.api.sentStructureChanges.last.$1, '/projects/project-0/categories/${opened.bone}/items');
     expect(opened.api.sentStructureChanges.last.$2, {'name': 'دفعات العظم', 'type': 'contractorPayments'});
-    expect(find.text('دفعات العظم'), findsOneWidget);
+    expect(text(tester, CategoriesScreen.itemNameKey(idNamed(itemsHeld(opened.api), 'دفعات العظم'))), 'دفعات العظم');
   });
 
   testWidgets('a category and an item are renamed, starting from their names', (tester) async {
@@ -157,7 +164,7 @@ void main() {
 
     await drag(tester, opened.api, CategoriesScreen.categoryHandleKey(opened.bone), 200);
 
-    expect(find.text('en categories.invalidOrder'), findsOneWidget);
+    expect(text(tester, messageKeyOf('categories.invalidOrder').label), 'en categories.invalidOrder');
     expect(tester.getTopLeft(find.byKey(CategoriesScreen.cardKey(opened.bone))).dy, lessThan(tester.getTopLeft(find.byKey(CategoriesScreen.cardKey(opened.finishing))).dy));
   });
 
@@ -167,7 +174,7 @@ void main() {
 
     await drag(tester, opened.api, CategoriesScreen.categoryHandleKey(opened.bone), 200);
 
-    expect(find.text('en categories.noConnection'), findsOneWidget);
+    expect(text(tester, messageKeyOf('categories.noConnection').label), 'en categories.noConnection');
     expect(tester.getTopLeft(find.byKey(CategoriesScreen.cardKey(opened.bone))).dy, lessThan(tester.getTopLeft(find.byKey(CategoriesScreen.cardKey(opened.finishing))).dy));
   });
 
@@ -209,7 +216,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.categoryMenuKey(opened.bone))));
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.disableCategoryKey(opened.bone))));
 
-    expect(find.text('en categories.projectFinished'), findsOneWidget);
+    expect(text(tester, messageKeyOf('categories.projectFinished').label), 'en categories.projectFinished');
     expect(text(tester, CategoriesScreen.categoryDetailsKey(opened.bone)), 'en categories.items: 2');
   });
 
@@ -299,11 +306,12 @@ void main() {
     await save(tester, opened.api, 'أسمنت');
     expect(opened.api.sentStructureChanges.single.$1, '/projects/project-0/items/${opened.item}/subgroups');
     expect(opened.api.sentStructureChanges.single.$2, {'name': 'أسمنت'});
-    expect(find.text('أسمنت'), findsOneWidget);
+    final subgroups = itemsHeld(opened.api).singleWhere((item) => item['id'] == opened.item)['subgroups']! as List<Map<String, Object>>;
+    expect(text(tester, ItemTablesScreen.tableNameKey(idNamed(subgroups, 'أسمنت'))), 'أسمنت');
 
     await chooseFromMenu(tester, opened.api, ItemTablesScreen.menuKey(opened.ids[0]), ItemTablesScreen.renameKey);
     await save(tester, opened.api, 'مواد بناء');
-    expect(find.text('مواد بناء'), findsOneWidget);
+    expect(text(tester, ItemTablesScreen.tableNameKey(opened.ids[0])), 'مواد بناء');
   });
 
   testWidgets('AC-46.8: dragging a table sends the order of every table, the general one and the contract too, and it stays', (tester) async {
@@ -326,7 +334,7 @@ void main() {
 
     await drag(tester, opened.api, ItemTablesScreen.handleKey(opened.ids[0]), 170);
 
-    expect(find.text('en categories.invalidOrder'), findsOneWidget);
+    expect(text(tester, messageKeyOf('categories.invalidOrder').label), 'en categories.invalidOrder');
     expect(tester.getTopLeft(find.byKey(ItemTablesScreen.tableNameKey(opened.ids[0]))).dy, lessThan(tester.getTopLeft(find.byKey(ItemTablesScreen.tableNameKey(opened.ids[1]))).dy));
   });
 
@@ -339,8 +347,8 @@ void main() {
     expect(find.byType(AlertDialog), findsNothing);
 
     expect(opened.api.sentStructureChanges.single.$1, 'DELETE /projects/project-0/items/${opened.item}/subgroups/${opened.ids[0]}');
-    expect(find.text('مواد'), findsNothing);
-    expect(find.text('دفان'), findsOneWidget);
+    expect(find.byKey(ItemTablesScreen.tableNameKey(opened.ids[0])), findsNothing);
+    expect(text(tester, ItemTablesScreen.tableNameKey(opened.ids[1])), 'دفان');
   });
 
   testWidgets('a subgroup that entries use stays, and the refusal says why', (tester) async {
@@ -349,8 +357,8 @@ void main() {
 
     await swipeToRemove(tester, opened.api, ItemTablesScreen.rowKey(opened.ids[0]));
 
-    expect(find.text('en categories.subgroupInUse'), findsOneWidget);
-    expect(find.text('مواد'), findsOneWidget);
+    expect(text(tester, messageKeyOf('categories.subgroupInUse').label), 'en categories.subgroupInUse');
+    expect(text(tester, ItemTablesScreen.tableNameKey(opened.ids[0])), 'مواد');
   });
 
   testWidgets('an item\'s type changes from its menu, starting from the one it has', (tester) async {
