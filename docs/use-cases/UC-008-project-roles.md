@@ -27,7 +27,7 @@ Every permission a project can give is listed, with what the person holds ticked
 | `POST /projects/{projectId}/users` | Adding a new user, with what is ticked |
 | `POST /projects/{projectId}/users/existing` | Adding an existing user |
 | `POST /projects/{projectId}/users/{userId}/permissions/{permission}` | Ticking a permission |
-| `POST /projects/{projectId}/users/{userId}/permissions/{permission}/remove` | Unticking a permission |
+| `DELETE /projects/{projectId}/users/{userId}/permissions/{permission}` | Unticking a permission |
 
 ## Rules and where they live
 
