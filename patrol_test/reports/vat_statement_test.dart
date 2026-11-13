@@ -19,17 +19,8 @@ Future<void> onStatement(PatrolIntegrationTester $, Person person) async {
   await $.reach($(VatStatementScreen.modeKey));
 }
 
-/// The name of the first and last day [from] and [to] take in the name of the file.
-String vatName(DateTime from, DateTime to) => 'vat-${from.toIso8601String().substring(0, 10)}-${to.toIso8601String().substring(0, 10)}';
-
-/// The name of the files of the quarter the statement opens on, this one.
-String thisQuarter() {
-  final start = DateTime(DateTime.now().year, (DateTime.now().month - 1) ~/ 3 * 3 + 1);
-  return vatName(start, DateTime(start.year, start.month + 3, 0));
-}
-
 /// The workbook button of the quarter the statement opens on.
-PatrolFinder excelButton(PatrolIntegrationTester $) => $(ReportFileButtons.buttonKey(thisQuarter(), ReportFileKind.excel));
+PatrolFinder excelButton(PatrolIntegrationTester $) => $(ReportFileButtons.buttonKey(VatStatementScreen.fileNameOf(quarterOf(DateTime.now())), ReportFileKind.excel));
 
 void main() {
   phoneClass('The VAT statement (UC-047)', () {
@@ -68,7 +59,7 @@ void main() {
       await excelButton($).waitUntilExists();
       await excelButton($).tap();
       await $.pumpAndSettle();
-      await $(ReportFileButtons.handingKey(thisQuarter(), ReportFileKind.excel, FileHandling.share)).tap(settlePolicy: SettlePolicy.noSettle);
+      await $(ReportFileButtons.handingKey(VatStatementScreen.fileNameOf(quarterOf(DateTime.now())), ReportFileKind.excel, FileHandling.share)).tap(settlePolicy: SettlePolicy.noSettle);
       await $.shareSheetOffers('vat');
     });
 

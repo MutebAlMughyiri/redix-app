@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/reports/summary.dart';
+import 'package:redix/reports/quarter_picker.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/approvals/approvals_screen.dart';
@@ -222,7 +223,7 @@ final List<Gate> _gates = [
     permission: Permission.seeAllCapital,
     arrange: _nothing,
     steps: [_openProject, (tester, api, capture) => openFromTheHome(tester, api, VatStatementScreen.pathOf(_project))],
-    control: (_) => find.byKey(ReportFileButtons.buttonKey(thisQuarterVat(), ReportFileKind.excel)),
+    control: (_) => find.byKey(ReportFileButtons.buttonKey(VatStatementScreen.fileNameOf(quarterOf(DateTime.now())), ReportFileKind.excel)),
   ),
   (
     name: 'An item report\'s files',

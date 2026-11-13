@@ -12,7 +12,7 @@ Reports is on the project's home. The app shows and stores no VAT (redix-api #96
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| AC-32.2, D20: a quarter's Excel, and nothing else, for its first to its last day | `VatStatementScreen._period`, `ReportFileButtons` | `AC-32.2, D20: the third quarter of 2026 takes its Excel, and nothing else` |
+| AC-32.2, D20: a quarter's Excel, and nothing else, for its first to its last day | `VatStatementScreen._period`, `quarterOf`, `VatStatementScreen.fileNameOf`, `ReportFileButtons` | `AC-32.2, D20: the third quarter of 2026 takes its Excel, and nothing else` |
 | AC-32.2: a half-year takes six months | `VatStatementScreen._period` | `AC-32.2: a half-year takes six months` |
 | A half-year is chosen by its year and its half alone: no quarter is offered | `YearChips`, `VatStatementScreen` | `a half-year is chosen by its year and its half alone: no quarter is offered` |
 | AC-32.2: a custom period never ends before it starts: the last day is picked from the first on, and a first day after the last moves the last day to it | `VatStatementScreen._pick` | `AC-32.2: a custom period never ends before it starts` |

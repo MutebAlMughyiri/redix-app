@@ -7,7 +7,9 @@ import 'package:redix/reports/item_report_screen.dart';
 import 'package:redix/reports/periodic_report_screen.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/reports_screen.dart';
+import 'package:redix/reports/quarter_picker.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
+import 'package:redix/format/date_format.dart';
 import 'package:redix/ui/bottom_button.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/messages.dart';
@@ -104,14 +106,15 @@ void main() {
     final (:api, :capture) = await openReports(tester, (api) {});
     await act(tester, api, () => tester.pageBack());
     await openFromTheHome(tester, api, VatStatementScreen.pathOf('project-0'));
-    final start = DateTime(DateTime.now().year, (DateTime.now().month - 1) ~/ 3 * 3 + 1);
-    final from = start.toIso8601String().substring(0, 10);
-    final to = DateTime(start.year, start.month + 3, 0).toIso8601String().substring(0, 10);
+    final quarter = quarterOf(DateTime.now());
+    final name = VatStatementScreen.fileNameOf(quarter);
+    final from = apiDate(quarter.$1);
+    final to = apiDate(quarter.$2);
 
-    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey('vat-$from-$to', ReportFileKind.excel))));
-    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('vat-$from-$to', ReportFileKind.excel, FileHandling.share))));
+    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey(name, ReportFileKind.excel))));
+    await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey(name, ReportFileKind.excel, FileHandling.share))));
 
-    expect(capture.sharedOut.single, ('vat-$from-$to.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
+    expect(capture.sharedOut.single, ('$name.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
     expect(api.sentFileReads.single, '/projects/project-0/vat-statement/xlsx?from=$from&to=$to');
     expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en vat.title');
   });
