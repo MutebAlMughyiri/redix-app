@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/auth/change_password_screen.dart';
@@ -111,7 +112,7 @@ void main() {
     phoneCase('redix-api #113: the new password says the policy under it', ($) async {
       await onTheChangeScreen($);
       await $.reach($(ChangePasswordScreen.newKey));
-      expect(find.descendant(of: find.byKey(ChangePasswordScreen.newKey), matching: find.text($.words.commonPasswordRules)), findsOneWidget);
+      expect($.tester.widget<TextField>(find.byKey(ChangePasswordScreen.newKey)).decoration!.helperText, $.words.commonPasswordRules);
     });
 
     phoneCase('redix-api #113: eight letters with no digit are refused', ($) async {

@@ -45,8 +45,8 @@ const _project = 'project-0';
 const _every = [...admin, ...managerAndFinance, 'removeApprovedEntries'];
 
 Step _tap(Finder Function(FakeApi api) target) => (tester, api, capture) async {
-  await bringIntoView(tester, target(api).last);
-  await act(tester, api, () => tester.tap(target(api).last));
+  await bringIntoView(tester, target(api));
+  await act(tester, api, () => tester.tap(target(api)));
 };
 
 /// Taps the widget keyed [key], swiping the home's Project settings to its page first when it is one of their buttons.
@@ -222,14 +222,14 @@ final List<Gate> _gates = [
     permission: Permission.seeAllCapital,
     arrange: _nothing,
     steps: [_openProject, (tester, api, capture) => openFromTheHome(tester, api, VatStatementScreen.pathOf(_project))],
-    control: (_) => find.byType(ReportFileButtons),
+    control: (_) => find.byKey(ReportFileButtons.buttonKey(thisQuarterVat(), ReportFileKind.excel)),
   ),
   (
     name: 'An item report\'s files',
     permission: Permission.seeAllCapital,
     arrange: (api) => api.summaryAnswer = _summaryWithAnItem,
     steps: [_openProject, _tapKey(HomeScreen.itemReportsKey(_project, SummarySide.expenses)), _tapKey(ItemReportsScreen.categoryKey('category-1')), _tapKey(ItemReportsScreen.itemKey('item-1'))],
-    control: (_) => find.byType(ReportFileButtons),
+    control: _key(ReportFileButtons.buttonKey('البلاط', ReportFileKind.pdf)),
   ),
   (name: 'Approvals on the project card', permission: Permission.approveEntries, arrange: _nothing, steps: [_openProject, _swipeTo(HomeScreen.approvalsKey(_project))], control: _key(HomeScreen.approvalsKey(_project))),
   (
@@ -268,7 +268,7 @@ final List<Gate> _gates = [
     arrange: (api) => api
       ..addPartner(_project, 'متعب')
       ..addMovement(),
-    steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project)), _tap((_) => find.text('متعب'))],
+    steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project)), _tap((api) => find.byKey(PartnersScreen.nameKey(_first(api.partners[_project]))))],
     control: _key(MovementsScreen.rowKey('movement-0').bar),
   ),
   (

@@ -2013,6 +2013,12 @@ Future<void> openFromTheHome(WidgetTester tester, FakeApi api, String path, {Str
   return act(tester, api, () async => unawaited(GoRouter.of(tester.element(card)).push(path, extra: project)));
 }
 
+/// The name the VAT statement gives its files for the quarter it opens on, this one (UC-057): `vat-` and the quarter's first and last day.
+String thisQuarterVat() {
+  final start = DateTime(DateTime.now().year, (DateTime.now().month - 1) ~/ 3 * 3 + 1);
+  return 'vat-${start.toIso8601String().substring(0, 10)}-${DateTime(start.year, start.month + 3, 0).toIso8601String().substring(0, 10)}';
+}
+
 /// Taps the widget keyed [key], scrolled into view first; a button of the home's Project settings is swiped to first.
 Future<void> scrollAndTap(WidgetTester tester, FakeApi api, Key key) async {
   await showProjectSetting(tester, key);
