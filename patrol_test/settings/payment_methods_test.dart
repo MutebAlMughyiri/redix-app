@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/table_picker.dart';
@@ -6,6 +5,7 @@ import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/name_dialog.dart';
 
 import '../support/given.dart';
@@ -66,7 +66,7 @@ void main() {
       final id = (await Given.paymentMethods(manager)).last['id'] as String;
       await $.fromTheHome(manager, HomeScreen.paymentMethodsKey(manager.projectId));
       await $.swipeAway(PaymentMethodsScreen.rowKey(id));
-      expect(find.byType(AlertDialog), findsNothing);
+      expect($(ConfirmDialog.dialogKey), findsNothing);
       await $.gone($(PaymentMethodsScreen.nameKey(id)));
     });
 

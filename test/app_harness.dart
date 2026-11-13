@@ -2095,6 +2095,10 @@ Future<void> tapWhileWaiting(WidgetTester tester, FakeApi api, Finder finder) =>
   await tester.pump(const Duration(milliseconds: 500));
 }, () => api.client);
 
+/// Goes back with the phone's own back, as a person does in any language: it closes what is open, a sheet or a screen. tester.pageBack() taps the title bar's arrow,
+/// which it finds by its English tooltip alone.
+Future<void> pressBack(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.binding.handlePopRoute());
+
 /// Runs [action] and lets the app settle, with the app's requests reaching [api].
 Future<void> act(WidgetTester tester, FakeApi api, Future<void> Function() action) => http.runWithClient(() async {
   await action();

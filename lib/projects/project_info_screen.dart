@@ -36,6 +36,9 @@ class ProjectInfoScreen extends StatefulWidget {
   /// The project's name.
   static const nameKey = Key('projectInfo.name');
 
+  /// What More info shows under its title, which scrolls.
+  static const bodyKey = Key('projectInfo.body');
+
   /// The choice in the name's ⋮ menu that renames the project (redix-app #102).
   static const renameKey = Key('projectInfo.rename');
 
@@ -182,6 +185,7 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
           final mayChange = project.mayManageProject;
           final startDate = '${words.projectsStartDate} ${formatDate(project.startDate)}';
           return ListView(
+            key: ProjectInfoScreen.bodyKey,
             padding: const EdgeInsets.all(16),
             children: [
               Row(
