@@ -7,6 +7,8 @@ import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/ui/messages.dart';
+import 'package:redix/ui/part_keys.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -15,11 +17,12 @@ void main() {
     final api = FakeApi()..addProject('غصون 6');
     final manager = api.addUser('متعب', username: 'muteb');
     final nawaf = api.addUser('نواف', username: 'nawaf', mobile: '0500000000');
-    final disabled = api.addUser('سالم', username: 'salem', isActive: false);
+    final disabled = api.addUser('سالم', username: 'salem');
     api
       ..give(manager, 'project-0', managerAndFinance)
       ..give(nawaf, 'project-0', field)
-      ..give(disabled, 'project-0', reader);
+      ..give(disabled, 'project-0', reader)
+      ..makeUserInactive(disabled, 'project-0');
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.usersKey('project-0'));
     return api;
@@ -59,11 +62,11 @@ void main() {
     expect(find.byKey(UsersScreen.enableKey), findsNothing);
   });
 
-  testWidgets('an active user has no badge, and a disabled one offers Enable', (tester) async {
+  testWidgets('redix-api #126 D1: a person active in this project has no badge; one inactive in it shows «معطّل» and offers Enable', (tester) async {
     final api = await openProjectUsers(tester);
 
     expect(find.byKey(UsersScreen.statusKey('user-1')), findsNothing);
-    expect(find.descendant(of: find.byKey(UsersScreen.statusKey('user-2')), matching: find.text('en users.disabled')), findsOneWidget);
+    expect(text(tester, UsersScreen.statusKey('user-2').label), 'en users.disabled');
 
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-2'))));
     expect(find.byKey(UsersScreen.enableKey), findsOneWidget);
@@ -83,32 +86,48 @@ void main() {
     expect(find.byKey(UsersScreen.statusKey('user-1')), findsNothing);
   });
 
-  testWidgets('a disabled user stays listed with the Disabled badge, and Enable brings them back', (tester) async {
+  testWidgets("redix-api #126 D1: Disable makes a person inactive through this project's route, listed with «معطّل», and Enable makes them active again through its own", (tester) async {
     final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.disableKey);
     await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
-    expect(api.sentUserChanges.single.$1, '/users/user-1/disable');
-    expect(find.descendant(of: find.byKey(UsersScreen.statusKey('user-1')), matching: find.text('en users.disabled')), findsOneWidget);
+    expect(api.sentUserChanges.single.$1, '/projects/project-0/users/user-1/disable');
+    expect(text(tester, UsersScreen.statusKey('user-1').label), 'en users.disabled');
 
     await choose(tester, api, 'user-1', UsersScreen.enableKey);
-    expect(api.sentUserChanges.last.$1, '/users/user-1/enable');
+    expect(api.sentUserChanges.last.$1, '/projects/project-0/users/user-1/enable');
     expect(find.byKey(UsersScreen.statusKey('user-1')), findsNothing);
   });
 
-  testWidgets("a refused disable shows its word in a SnackBar: the last manager, or someone also in another project", (tester) async {
+  testWidgets('redix-api #126 D1: a person inactive in another project shows active in this one, and offers Disable', (tester) async {
+    final api = FakeApi()
+      ..addProject('غصون 6')
+      ..addProject('غصون 7');
+    final manager = api.addUser('متعب', username: 'muteb');
+    final nawaf = api.addUser('نواف', username: 'nawaf');
+    api
+      ..give(manager, 'project-0', managerAndFinance)
+      ..give(nawaf, 'project-0', field)
+      ..give(nawaf, 'project-1', field)
+      ..makeUserInactive(nawaf, 'project-1');
+    await openProject(tester, api);
+    await scrollAndTap(tester, api, HomeScreen.usersKey('project-0'));
+
+    expect(find.byKey(UsersScreen.statusKey('user-1')), findsNothing);
+    await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-1'))));
+    expect(find.byKey(UsersScreen.disableKey), findsOneWidget);
+    expect(find.byKey(UsersScreen.enableKey), findsNothing);
+  });
+
+  testWidgets('redix-api #126 R8: making the last manager inactive is refused with its word in a SnackBar, and they stay active', (tester) async {
     final api = await openProjectUsers(tester);
-    await choose(tester, api, 'user-1', UsersScreen.disableKey);
+    await choose(tester, api, 'user-0', UsersScreen.disableKey);
 
     api.userAnswer = (status: 409, code: 'lastManager');
     await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
-    expect(find.text('en users.lastManager'), findsOneWidget);
 
-    await tester.pumpAndSettle(const Duration(seconds: 5));
-    await choose(tester, api, 'user-1', UsersScreen.disableKey);
-    api.userAnswer = (status: 403, code: 'otherProject');
-    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
-    expect(find.text('en users.otherProject'), findsOneWidget);
+    expect(text(tester, messageKeyOf('users.lastManager').label), 'en users.lastManager');
+    expect(find.byKey(UsersScreen.statusKey('user-0')), findsNothing);
   });
 
   testWidgets('Edit sends a mobile typed in Arabic digits in Western digits', (tester) async {
@@ -205,7 +224,7 @@ void main() {
     expect(api.sentUserChanges.single.$2, {'username': 'reem'});
     expect(find.byKey(ChangeDialog.saveKey), findsNothing);
     expect(text(tester, UsersScreen.permissionsLineKey('user-3')), 'en permissions.count');
-    expect(api.users.last['projects'], [{'projectId': 'project-0', 'name': 'غصون 6', 'permissions': ['readProject'], 'partnerIds': <String>[]}]);
+    expect(api.users.last['projects'], [{'projectId': 'project-0', 'name': 'غصون 6', 'isInactive': false, 'permissions': ['readProject'], 'partnerIds': <String>[]}]);
   });
 
   testWidgets('an unknown username stays in the dialog and says so', (tester) async {

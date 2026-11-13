@@ -61,7 +61,7 @@ void main() {
       await $.gone($(UsersScreen.statusKey(people.member.id)));
     });
 
-    phoneCase('a disabled user stays listed, muted', ($) async {
+    phoneCase('redix-api #126 D1: a person made inactive in the project stays listed, muted, with «معطّل»', ($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager);
       await Given.disabled(member, by: manager);

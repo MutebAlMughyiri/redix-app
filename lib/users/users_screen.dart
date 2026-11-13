@@ -21,7 +21,8 @@ import '../ui/search_scope.dart';
 import '../words/word_fill.dart';
 import '../format/parts_line.dart';
 
-/// The people of one project, for its manager (UC-007, UC-008): one row per user, with a menu to edit, tick permissions, reset the password, and disable or enable.
+/// The people of one project, for its manager (UC-007, UC-008): one row per user, with a menu to edit, tick permissions, reset the password, and make them inactive in
+/// this project or active again (redix-api #126 D1).
 class UsersScreen extends StatefulWidget {
   /// The screen, showing and changing the [users] of the project [projectName].
   const UsersScreen({super.key, required this.users, required this.projectName});
@@ -56,10 +57,10 @@ class UsersScreen extends StatefulWidget {
   /// Reset password, in a row's menu.
   static const resetPasswordKey = Key('users.resetPassword');
 
-  /// Disable, in a row's menu.
+  /// Disable, in a row's menu: makes the person inactive in this project (redix-api #126 D1).
   static const disableKey = Key('users.disable');
 
-  /// Enable, in a row's menu.
+  /// Enable, in a row's menu: makes the person active in this project again.
   static const enableKey = Key('users.enable');
 
   /// The name, in the Edit dialog.
@@ -92,7 +93,7 @@ class UsersScreen extends StatefulWidget {
   /// How many permissions the user [id] holds in this project.
   static Key permissionsLineKey(String id) => Key('users.permissionsLine.$id');
 
-  /// The badge of the user [id], when disabled.
+  /// The badge of the user [id], when inactive in this project.
   static Key statusKey(String id) => Key('users.status.$id');
 
   /// The menu of the user [id].

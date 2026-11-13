@@ -2,7 +2,7 @@
 
 # UC-007: Manage users
 
-**What it is for:** creating the accounts of the people who use the app, correcting them, disabling them, and resetting a forgotten password (FR-02).
+**What it is for:** creating the accounts of the people who use the app, correcting them, making them inactive in a project, and resetting a forgotten password (FR-02).
 **Who uses it:** project managers, from a project's card (BR-29).
 **Issue:** redix-app #27; the API side is redix-api #25.
 
@@ -14,9 +14,9 @@
 | --- | --- | --- |
 | New user | `UsersScreen.newUserKey` | Opens the new user form |
 | A user's row | `UsersScreen.rowKey(id)` | One user; active users first, by name |
-| Name | `UsersScreen.nameKey(id)` | Their name, muted once disabled |
+| Name | `UsersScreen.nameKey(id)` | Their name, muted while inactive in this project |
 | Details | `UsersScreen.detailsKey(id)` | Their username and mobile |
-| Disabled | `UsersScreen.statusKey(id)` | The badge of a disabled user |
+| Disabled | `UsersScreen.statusKey(id)` | «معطّل», the badge of a person inactive in this project (redix-api #126 D1) |
 | The row's menu | `UsersScreen.menuKey(id)` | Edit, Roles on a project's list, Reset password, and Disable or Enable |
 | Edit | `UsersScreen.editKey` | Opens the Edit dialog: `editNameKey`, `editMobileKey` |
 | Reset password | `UsersScreen.resetPasswordKey` | Opens the Reset password dialog: `resetNameKey`, `resetExplainKey`, `resetPasswordFieldKey` |
@@ -46,7 +46,7 @@ New user, `NewUserScreen` at `/users/new`:
 | `POST /users` | Add user |
 | `POST /users/{userId}` | Saving Edit |
 | `POST /users/{userId}/reset-password` | Saving Reset password |
-| `POST /users/{userId}/disable`, `/enable` | Disable, once confirmed; Enable |
+| `POST /projects/{projectId}/users/{userId}/disable`, `/enable` | Disable, once confirmed; Enable. Each answers the user, and is for this project alone (redix-api #126 D1) |
 
 ## Rules and where they live
 
@@ -60,9 +60,11 @@ New user, `NewUserScreen` at `/users/new`:
 | A refused change stays in its dialog with what was typed | `ChangeDialog` | `users_test.dart`: a refused edit |
 | Reset password names the user and says what it means | `ResetPasswordDialog` | `users_test.dart`: Reset password |
 | Without a network the list and the form say so | `ApiList`, `NewUserScreen` | `users_test.dart`, `new_user_test.dart`: without a network |
-| A disabled user stays listed, muted, and can be enabled | `UserRow`, `UsersScreen` | `users_test.dart`: a disabled user stays listed |
+| redix-api #126 D1: Disable makes a person inactive in this project alone, through its route; they stay listed, muted with «معطّل», and Enable makes them active again | `Users`, `UserRow`, `UsersScreen` | `users_test.dart`: Disable makes a person inactive through this project's route |
+| redix-api #126 D1: a person inactive in another project shows active in this one | `User.isInactive`, which reads this project's line | `users_test.dart`: a person inactive in another project |
+| redix-api #126 R8: the last manager of a project cannot be made inactive in it, «users.lastManager» | The API; `UsersScreen` shows the refusal | `users_test.dart`: making the last manager inactive is refused |
 | Every row has the whole menu | `UserRow` | `users_test.dart`: every row has the whole menu |
-| A disabled user's session ends at their next request (AC-01.3) | The API | `UsersTests.DisablingAUserEndsTheOpenSessionAtTheNextRequest`, in the API |
+| redix-api #126 R2, R4, R5: a person inactive in a project still signs in; his project list shows it gray with «حسابك غير مفعّل في هذا المشروع.»; every call about it is refused as for a project he is not in, and the list replaces it at the next renewal | The API; `ProjectChoice`, `HomeScreen` (UC-010) | `projects_test.dart`, `home_test.dart`; `patrol_test/auth/sign_in_test.dart` |
 | AC-N03: right to left in Arabic, left to right in English, nothing off a screen 360 points wide | Each screen | `settings/account_test.dart`: AC-N03, once per language |
 
 ## Left to later use cases

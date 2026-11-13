@@ -1485,13 +1485,12 @@ class FakeApi {
   }
 
   /// Adds a user to what the API holds.
-  Map<String, Object> addUser(String displayName, {required String username, String mobile = '', bool isActive = true}) {
+  Map<String, Object> addUser(String displayName, {required String username, String mobile = ''}) {
     final user = <String, Object>{
       'id': 'user-${users.length}',
       'username': username,
       'displayName': displayName,
       'mobile': mobile,
-      'isActive': isActive,
       'mustChangePassword': false,
       'projects': <Map<String, Object>>[],
     };
@@ -1504,7 +1503,7 @@ class FakeApi {
     final project = projects.singleWhere((project) => project['id'] == projectId);
     final lines = user['projects'] as List<Map<String, Object>>;
     if (!lines.any((line) => line['projectId'] == projectId)) {
-      lines.add({'projectId': projectId, 'name': project['name'] as String, 'permissions': <String>[], 'partnerIds': <String>[]});
+      lines.add({'projectId': projectId, 'name': project['name'] as String, 'isInactive': false, 'permissions': <String>[], 'partnerIds': <String>[]});
     }
     final line = lines.singleWhere((line) => line['projectId'] == projectId);
     final held = line['permissions']! as List<String>;
@@ -1517,6 +1516,12 @@ class FakeApi {
       (line['partnerIds']! as List<String>).clear();
     }
   }
+
+  /// Makes [user], as [addUser] answered them, inactive in the project [projectId], as its manager's «تعطيل» does (redix-api #126 D1).
+  void makeUserInactive(Map<String, Object> user, String projectId) => _lineOf(user, projectId)['isInactive'] = true;
+
+  /// The line of [user] for the project [projectId].
+  static Map<String, Object> _lineOf(Map<String, Object> user, String projectId) => (user['projects'] as List<Map<String, Object>>).singleWhere((line) => line['projectId'] == projectId);
 
   /// The two capital ticks, which the API lets nobody hold together (redix-api #106).
   static const _capitalTicks = {'seeAllCapital', 'seeChosenCapital'};
@@ -1555,6 +1560,8 @@ class FakeApi {
     final lines = user['projects'] as List<Map<String, Object>>;
     if (segments.last == 'role-name') {
       lines.singleWhere((line) => line['projectId'] == projectId)['roleName'] = body['roleName'] as String;
+    } else if (segments.last == 'disable' || segments.last == 'enable') {
+      _lineOf(user, projectId)['isInactive'] = segments.last == 'disable';
     } else if (segments[4] == 'partners') {
       if (request.method != 'DELETE') {
         give(user, projectId, ['seeChosenCapital']);
@@ -1590,11 +1597,7 @@ class FakeApi {
     }
     final segments = request.url.pathSegments;
     final user = users.singleWhere((user) => user['id'] == segments[1]);
-    if (path.endsWith('/disable')) {
-      user['isActive'] = false;
-    } else if (path.endsWith('/enable')) {
-      user['isActive'] = true;
-    } else if (!path.endsWith('/reset-password')) {
+    if (!path.endsWith('/reset-password')) {
       user['displayName'] = body['displayName'] as String;
       user['mobile'] = body['mobile'] as String;
     }

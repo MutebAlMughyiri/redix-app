@@ -120,9 +120,9 @@ class Given {
     return Person(id: id, username: username, password: password, displayName: displayName, projectId: manager.projectId, projectName: manager.projectName);
   }
 
-  /// [by] disables [person].
+  /// [by] makes [person] inactive in [by]'s project, as «تعطيل» in Users does (redix-api #126 D1).
   static Future<void> disabled(Person person, {required Person by}) async {
-    await _post('/users/${person.id}/disable', {}, await _tokenOf(by));
+    await _post('${by.project}/users/${person.id}/disable', {}, await _tokenOf(by));
   }
 
   /// What [person] may do in the project of [by], as the API lists it.

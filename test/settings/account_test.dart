@@ -324,10 +324,11 @@ void main() {
       final finished = api.addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
       final manager = api.addUser('متعب', username: 'muteb');
       final field_ = api.addUser('نواف', username: 'nawaf', mobile: '0500000000');
-      final disabled = api.addUser('سالم', username: 'salem', isActive: false);
+      final disabled = api.addUser('سالم', username: 'salem');
       for (final (user, permissions) in [(manager, managerAndFinance), (field_, field), (disabled, reader)]) {
         api.give(user, running['id'] as String, permissions);
       }
+      api.makeUserInactive(disabled, running['id'] as String);
       final session = await pumpRedix(tester, api, locale: Locale(language));
       [SignInScreen.logoKey, SignInScreen.titleKey, SignInScreen.usernameKey, SignInScreen.passwordKey, SignInScreen.submitKey, SignInScreen.registerKey].forEach(expectFits);
 

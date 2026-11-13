@@ -64,13 +64,12 @@ void main() {
       await $.says(SignInScreen.messageKey, $.words.signInInvalidCredentials);
     });
 
-    phoneCase('AC-01.2: a disabled user shows that same line', ($) async {
+    phoneCase('redix-api #126 R2: a person made inactive in his project still signs in, and his list shows it gray, saying so', ($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager);
       await Given.disabled(member, by: manager);
-      await $.startApp();
-      await $.signIn(member.username, member.password);
-      await $.says(SignInScreen.messageKey, $.words.signInInvalidCredentials);
+      await $.onTheList(member);
+      await $.says(ProjectsScreen.detailsKey(member.projectId), $.words.projectsInactive);
     });
 
     phoneCase('nothing typed is refused, and the app stays on sign-in', ($) async {
@@ -92,14 +91,14 @@ void main() {
       await $.says(SignInScreen.messageKey, $.words.signInAccountLocked);
     });
 
-    phoneCase('AC-01.3: someone disabled while signed in ends on sign-in at their next request, with a notice', ($) async {
+    phoneCase('redix-api #126 R4: made inactive while inside his project, the project list replaces it when the app comes back to the screen', ($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager);
-      await $.onTheList(member);
+      await $.onTheHome(member);
       await Given.disabled(member, by: manager);
-      await $(ProjectsScreen.cardKey(member.projectId)).tap();
-      await $.reach($(SignInScreen.usernameKey));
-      await $.says(SignInScreen.messageKey, $.words.signInSessionExpired);
+      await $.platform.mobile.pressHome();
+      await $.platform.mobile.openApp();
+      await $.says(ProjectsScreen.detailsKey(member.projectId), $.words.projectsInactive);
     });
 
     phoneCase('without a network sign-in says there is no connection', ($) async {

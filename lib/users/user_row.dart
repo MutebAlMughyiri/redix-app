@@ -9,7 +9,8 @@ import '../ui/app_color.dart';
 import '../format/parts_line.dart';
 import '../ui/row_menu.dart';
 
-/// One user on the list: their name, username, mobile and how many permissions they hold, a badge when disabled, and a menu of what can be done to them.
+/// One user on the list: their name, username, mobile and how many permissions they hold, a badge when inactive in this project (redix-api #126 D1), and a menu of
+/// what can be done to them.
 class UserRow extends StatelessWidget {
   /// The row of [user], calling the given callback when its menu item is chosen.
   const UserRow({
@@ -56,9 +57,9 @@ class UserRow extends StatelessWidget {
             Text(
               user.displayName,
               key: UsersScreen.nameKey(user.id),
-              style: AppColor.quiet.textUnless(context, user.isActive),
+              style: AppColor.quiet.textUnless(context, !user.isInactive),
             ),
-            if (!user.isActive)
+            if (user.isInactive)
               Chip(
                 key: UsersScreen.statusKey(user.id),
                 label: Text(words.usersDisabled, key: UsersScreen.statusKey(user.id).label),
@@ -79,10 +80,10 @@ class UserRow extends StatelessWidget {
             rowMenuItem(UsersScreen.editKey, words.usersEdit, onEdit),
             rowMenuItem(UsersScreen.permissionsKey, words.permissionsTitle, onPermissions),
             rowMenuItem(UsersScreen.resetPasswordKey, words.usersResetPassword, onResetPassword),
-            if (user.isActive)
-              rowMenuItem(UsersScreen.disableKey, words.usersDisable, onDisable)
+            if (user.isInactive)
+              rowMenuItem(UsersScreen.enableKey, words.usersEnable, onEnable)
             else
-              rowMenuItem(UsersScreen.enableKey, words.usersEnable, onEnable),
+              rowMenuItem(UsersScreen.disableKey, words.usersDisable, onDisable),
           ]),
       ),
     );

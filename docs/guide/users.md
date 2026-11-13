@@ -10,7 +10,7 @@
 **What it is for:** adding the people of a project, giving their roles, and looking after their accounts.
 **Who sees it:** each project's project manager, from **Users** on the project's card. It needs a network.
 
-Each project has its own project manager, who manages its users. Open **Users** from the project's home. Add a new user, or add someone who already has a login by their exact username. A **Role name**, such as Project manager, is free text typed for each person in each project: it shows beside their username in the list, under the project's name on their home and beside their username in Settings. It is a label only; what they may do is their permissions. To change what someone may do, open their menu, choose **Permissions** and tick each permission they need; there are no roles. A project needs at least one person who manages its users. If a person also works in a project you do not manage, you cannot reset their password or disable them, but you can untick their permissions here. If a project's only manager forgets their password, nobody in the app can reset it, so keep a second manager.
+Each project has its own project manager, who manages its users. Open **Users** from the project's home. Add a new user, or add someone who already has a login by their exact username. A **Role name**, such as Project manager, is free text typed for each person in each project: it shows beside their username in the list, under the project's name on their home and beside their username in Settings. It is a label only; what they may do is their permissions. To change what someone may do, open their menu, choose **Permissions** and tick each permission they need; there are no roles. A project needs at least one person who manages its users. If a person also works in a project you do not manage, you cannot reset their password, but you can disable them in yours and untick their permissions here. If a project's only manager forgets their password, nobody in the app can reset it, so keep a second manager.
 
 **Add a user**
 
@@ -28,8 +28,8 @@ Each project has its own project manager, who manages its users. Open **Users** 
 | Edit | Corrects their name and mobile, and their role name in this project. A username never changes. |
 | Permissions | Says what they may do in this project, as above. |
 | Reset password | For a forgotten password. Type a new temporary one and pass it on. They are signed out, and choose their own at their next sign-in. |
-| Disable | They are signed out at their next action and cannot sign in. They stay in the list, and their entries are kept. |
-| Enable | Lets a disabled user sign in again. |
+| Disable | They can no longer open this project, and only this one: their project list shows it gray, saying **Your account is inactive in this project.**, and if they have it open, the list replaces it when they come back from one of its screens, when the app opens or comes back to the screen, or within 15 minutes. They still sign in, stay in this list marked **Disabled**, and keep their permissions and entries here. |
+| Enable | They open this project again, with their permissions as before. |
 
 | Message | Meaning |
 | --- | --- |
@@ -50,7 +50,7 @@ Each project has its own project manager, who manages its users. Open **Users** 
 **الغرض:** إنشاء حسابات مستخدمي REDIX والعناية بها.
 **من يراها:** مدير كل مشروع، من **المستخدمون** في بطاقة المشروع. تحتاج إلى شبكة.
 
-لكل مشروع مدير مشروع خاص به يدير مستخدميه. افتح **المستخدمون** من الشاشة الرئيسية للمشروع. أضف مستخدماً جديداً، أو من له حساب باسم مستخدمه بالضبط. و**المسمى الوظيفي**، مثل مدير المشروع، نص حر يُكتب لكل شخص في كل مشروع: يظهر بجانب اسم المستخدم في القائمة، وتحت اسم المشروع في شاشته الرئيسية، وبجانب اسم المستخدم في الإعدادات. وهو تسمية فقط؛ وما يستطيعه هو صلاحياته. لتغيير ما يستطيعه شخص، افتح قائمته واختر **الصلاحيات** وحدد كل صلاحية يحتاجها؛ فلا أدوار. ويحتاج المشروع إلى شخص واحد على الأقل يدير مستخدميه. وإذا كان الشخص يعمل في مشروع لا تديره، فلا يمكنك إعادة تعيين كلمة مروره أو تعطيله، لكن يمكنك إلغاء صلاحياته هنا. وإذا نسي مدير المشروع الوحيد كلمة مروره فلا أحد في التطبيق يستطيع إعادة تعيينها، فاحرص على مدير ثانٍ.
+لكل مشروع مدير مشروع خاص به يدير مستخدميه. افتح **المستخدمون** من الشاشة الرئيسية للمشروع. أضف مستخدماً جديداً، أو من له حساب باسم مستخدمه بالضبط. و**المسمى الوظيفي**، مثل مدير المشروع، نص حر يُكتب لكل شخص في كل مشروع: يظهر بجانب اسم المستخدم في القائمة، وتحت اسم المشروع في شاشته الرئيسية، وبجانب اسم المستخدم في الإعدادات. وهو تسمية فقط؛ وما يستطيعه هو صلاحياته. لتغيير ما يستطيعه شخص، افتح قائمته واختر **الصلاحيات** وحدد كل صلاحية يحتاجها؛ فلا أدوار. ويحتاج المشروع إلى شخص واحد على الأقل يدير مستخدميه. وإذا كان الشخص يعمل في مشروع لا تديره، فلا يمكنك إعادة تعيين كلمة مروره، لكن يمكنك تعطيله في مشروعك وإلغاء صلاحياته هنا. وإذا نسي مدير المشروع الوحيد كلمة مروره فلا أحد في التطبيق يستطيع إعادة تعيينها، فاحرص على مدير ثانٍ.
 
 **إضافة مستخدم**
 
@@ -68,8 +68,8 @@ Each project has its own project manager, who manages its users. Open **Users** 
 | تعديل | يصحح اسمه وجواله، ومسماه الوظيفي في هذا المشروع. اسم المستخدم لا يتغير. |
 | الصلاحيات | يحدد ما يستطيعه في هذا المشروع، كما سبق. |
 | إعادة تعيين كلمة المرور | عند نسيان كلمة المرور. اكتب كلمة مؤقتة جديدة وأعطه إياها. يُسجَّل خروجه، ويختار كلمة مروره عند دخوله التالي. |
-| تعطيل | يُسجَّل خروجه عند أول إجراء تالٍ ولا يستطيع الدخول. يبقى في القائمة، وتبقى قيوده. |
-| تفعيل | يسمح لمستخدم معطّل بالدخول مرة أخرى. |
+| تعطيل | لا يستطيع فتح هذا المشروع وحده: تظهره قائمة مشاريعه رمادياً بعبارة **حسابك غير مفعّل في هذا المشروع.**، وإن كان مفتوحاً لديه تحل القائمة محله عند عودته من إحدى شاشاته، أو عند فتح التطبيق أو عودته إلى الشاشة، أو خلال 15 دقيقة. ويبقى يسجّل الدخول، ويبقى في هذه القائمة **معطّل**، وتبقى صلاحياته وقيوده فيه. |
+| تفعيل | يفتح هذا المشروع مرة أخرى، بصلاحياته كما كانت. |
 
 | الرسالة | معناها |
 | --- | --- |

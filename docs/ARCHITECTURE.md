@@ -236,9 +236,9 @@ lib/
     reset_password_dialog.dart Sets a new temporary password for a user, typed by whoever manages them, who passes it on
     user.dart               A person in a project, as the API answers them
     user_permissions_screen.dart What one person may do in one project: a tick for each permission, saved at once
-    user_row.dart           One user on the list: their name, username, mobile and how many permissions they hold, a badge when disabled, and a menu of what can be done to them
+    user_row.dart           One user on the list: their name, username, mobile and how many permissions they hold, a badge when inactive in this project, and a menu of what can be done to them
     users.dart              The people of one project, and the one way to change them
-    users_screen.dart       The people of one project, for its manager: one row per user, with a menu to edit, tick permissions, reset the password, and disable or enable
+    users_screen.dart       The people of one project, for its manager: one row per user, with a menu to edit, tick permissions, reset the password, and make them inactive in this project or active again
   words/
     app_language.dart       The language the user chose, on the sign-in screen or in Settings, kept on the phone; empty while the app follows the phone's language
     language_switch.dart    The choice between Arabic and English, the same on the sign-in screen and in Settings, with the line that says why it could not switch

@@ -42,11 +42,12 @@ class Users extends ApiList<User> {
   Future<String> resetPassword(User user, String temporaryPassword) =>
       change('/users/${user.id}/reset-password', {'temporaryPassword': temporaryPassword});
 
-  /// Disables [user], who is signed out at their next request.
-  Future<String> disable(User user) => change('/users/${user.id}/disable', {});
+  /// Makes [user] inactive in this project alone, a login shared with another project included: they keep their permissions and entries here, and cannot open it
+  /// (redix-api #126 D1).
+  Future<String> disable(User user) => change('/projects/$projectId/users/${user.id}/disable', {});
 
-  /// Lets the disabled [user] sign in again.
-  Future<String> enable(User user) => change('/users/${user.id}/enable', {});
+  /// Makes [user], inactive in this project, active in it again, with everything as before (redix-api #126 D1).
+  Future<String> enable(User user) => change('/projects/$projectId/users/${user.id}/enable', {});
 
   /// Gives [user] the [permission] in this project.
   Future<String> give(User user, Permission permission) => change('/projects/$projectId/users/${user.id}/permissions/${permission.name}', {});
