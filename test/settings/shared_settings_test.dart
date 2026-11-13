@@ -115,6 +115,16 @@ void main() {
     expect(find.byKey(DefaultProjectSheet.optionKey('project-3')), findsNothing);
   });
 
+  testWidgets('redix-api #126 D2: Default project offers no tick for a project the user was made inactive in, and keeps the tick of one he is active in', (tester) async {
+    final api = FakeApi()..addProject('غصون 6');
+    api.makeInactive(api.addProject('غصون 7'));
+    await openSettings(tester, api);
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.defaultProjectKey)));
+
+    expect(find.byKey(DefaultProjectSheet.optionKey('project-0')), findsOneWidget);
+    expect(find.byKey(DefaultProjectSheet.optionKey('project-1')), findsNothing);
+  });
+
   testWidgets('AC-37.1: ticking a project makes it the default and a message says so; ticking another moves it', (tester) async {
     final api = await openDefaultProject(tester);
 

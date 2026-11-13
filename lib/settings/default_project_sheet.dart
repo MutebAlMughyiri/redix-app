@@ -6,7 +6,7 @@ import '../projects/projects.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 
-/// The choice of the default project, from Settings (Muteb, 8 Nov 2026): every approved project with a tick, the default one ticked. Ticking another moves the default,
+/// The choice of the default project, from Settings (Muteb, 8 Nov 2026): every project the user may open with a tick, the default one ticked, so none he was made inactive in (redix-api #126 D2). Ticking another moves the default,
 /// unticking it clears it; the default opens at sign-in (AC-37.1).
 class DefaultProjectSheet extends StatefulWidget {
   /// The sheet choosing among [projects] the default of [session].
@@ -56,7 +56,7 @@ class _DefaultProjectSheetState extends State<DefaultProjectSheet> {
           Text(words.sharedSettingsDefaultProject, key: DefaultProjectSheet.titleKey, style: theme.textTheme.titleLarge),
           Text(words.sharedSettingsDefaultProjectHint, key: DefaultProjectSheet.hintKey, style: theme.textTheme.bodySmall),
           const SizedBox(height: 8),
-          for (final project in widget.projects.all.where((project) => project.isApproved))
+          for (final project in widget.projects.all.where((project) => project.mayOpen))
             CheckboxListTile(
               key: DefaultProjectSheet.optionKey(project.id),
               contentPadding: EdgeInsets.zero,

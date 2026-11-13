@@ -153,7 +153,7 @@ lib/
     waiting_figures.dart    What waits for approval, as two figures: expenses, which lower the surplus once approved, and revenue with partners' money, which raises it
     year_chips.dart         A year chosen as chips, from this year back to firstYear
   settings/
-    default_project_sheet.dart The choice of the default project, from Settings: every approved project with a tick, the default one ticked
+    default_project_sheet.dart The choice of the default project, from Settings: every project the user may open with a tick, the default one ticked
     payment_method.dart     A way a project pays, such as شبكة, as the API answers it
     payment_method_row.dart One payment method: its name, whether it is disabled and, for whoever keeps the settings, a menu of what can be done to it
     payment_methods.dart    A project's payment methods, and the one way to change them
