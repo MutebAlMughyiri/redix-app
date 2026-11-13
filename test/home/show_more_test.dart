@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/ui/messages.dart';
 import 'package:redix/entries/add_entry_screen.dart';
-import 'package:redix/entries/entry_card.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
@@ -27,7 +26,8 @@ void main() {
     return api;
   }
 
-  int shown(WidgetTester tester) => find.byType(SwipeableEntryCard).evaluate().length;
+  /// How many of the entries [api] holds the home shows.
+  int shown(WidgetTester tester, FakeApi api) => api.entryRows.where((entry) => find.byKey(EntriesScreen.rowKey(entry['id']! as String)).evaluate().isNotEmpty).length;
 
   Future<void> showMore(WidgetTester tester, FakeApi api) async {
     await tester.ensureVisible(more);
@@ -59,7 +59,7 @@ void main() {
   testWidgets('R2, R3: the home shows the newest as many as chosen, and reads only those, never the whole list', (tester) async {
     final api = await openHome(tester, 12, preferences: {countKey: 7});
 
-    expect(shown(tester), 7);
+    expect(shown(tester, api), 7);
     expect(find.byKey(EntriesScreen.rowKey('entry-11')), findsOneWidget);
     expect(find.byKey(EntriesScreen.rowKey('entry-4')), findsNothing);
     expect(api.entryReads, everyElement(7));
@@ -69,11 +69,11 @@ void main() {
     final api = await openHome(tester, 12, preferences: {countKey: 5});
 
     await showMore(tester, api);
-    expect(shown(tester), 10);
+    expect(shown(tester, api), 10);
     expect(more, findsOneWidget);
 
     await showMore(tester, api);
-    expect(shown(tester), 12);
+    expect(shown(tester, api), 12);
     expect(more, findsNothing);
     expect(api.entryReads, [5, 10, 15]);
   });
@@ -81,13 +81,13 @@ void main() {
   testWidgets('R4: coming back to the home keeps what showed, at the count chosen meanwhile in Settings', (tester) async {
     final api = await openHome(tester, 30, preferences: {countKey: 5});
     await showMore(tester, api);
-    expect(shown(tester), 10);
+    expect(shown(tester, api), 10);
 
     await openSettings(tester, api);
     await chooseCount(tester, api, 8);
     await act(tester, api, () => tester.pageBack());
 
-    expect(shown(tester), 16);
+    expect(shown(tester, api), 16);
     expect(api.entryReads.last, 16);
   });
 
@@ -98,7 +98,7 @@ void main() {
     await showMore(tester, api);
 
     expect(find.byKey(messageKeyOf('entries.loadFailed')), findsOneWidget);
-    expect(shown(tester), 5);
+    expect(shown(tester, api), 5);
     expect(more, findsOneWidget);
   });
 

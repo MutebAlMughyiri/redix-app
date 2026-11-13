@@ -5,6 +5,7 @@ import 'package:redix/documents/documents_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/ui/bottom_button.dart';
+import 'package:redix/ui/part_keys.dart';
 import 'package:redix/users/users_screen.dart';
 
 import '../support/given.dart';
@@ -16,9 +17,9 @@ Future<void> addsFromTheTitleBar(PatrolIntegrationTester $, Person manager, Key 
   await $.onTheHome(manager);
   await $.tapOn(screen);
   await $.reach($(add));
-  expect(find.descendant(of: find.byType(AppBar), matching: find.byKey(add)), findsOneWidget);
-  expect($.tester.widget<Icon>(find.descendant(of: find.byKey(add), matching: find.byType(Icon))).icon, Icons.add);
-  expect(find.byType(BottomButton), findsNothing);
+  expect($.isInTitleBar(add), isTrue);
+  expect($.tester.widget<Icon>(find.byKey(add.icon)).icon, Icons.add);
+  expect($(BottomButton.barKey), findsNothing);
 }
 
 void main() {
@@ -36,7 +37,7 @@ void main() {
     phoneCase('R1: Users adds from a + in the title bar, beside adding someone who has an account', ($) async {
       final manager = await Given.manager();
       await addsFromTheTitleBar($, manager, HomeScreen.usersKey(manager.projectId), UsersScreen.newUserKey);
-      expect(find.descendant(of: find.byType(AppBar), matching: find.byKey(UsersScreen.addExistingKey)), findsOneWidget);
+      expect($.isInTitleBar(UsersScreen.addExistingKey), isTrue);
     });
   });
 }

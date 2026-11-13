@@ -180,7 +180,7 @@ void main() {
       final id = await $.idShowing('summary.category.', table.category);
       await $(SummaryCard.categoryKey(id)).tap();
       await $.pumpAndSettle();
-      expect(find.byType(ItemReportsScreen), findsNothing);
+      expect($(ItemReportsScreen.categoryKey(id)), findsNothing);
       expect($(HomeScreen.titleKey), findsOneWidget);
     });
 

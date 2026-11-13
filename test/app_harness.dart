@@ -1960,6 +1960,9 @@ Future<void> _passThrough(WidgetTester tester, FakeApi api, List<AppLifecycleSta
   }
 });
 
+/// True when the element keyed [key] sits in its screen's title bar: within the height the screen's app bar takes from the top.
+bool isInTitleBar(WidgetTester tester, Key key) => tester.getRect(find.byKey(key)).bottom <= Scaffold.of(tester.element(find.byKey(key))).appBarMaxHeight!;
+
 /// True when the button keyed [key] works; a screen's add button shows grayed without the permission rather than hidden (issue #85).
 bool isEnabled(WidgetTester tester, Key key) => switch (tester.widget(find.byKey(key))) {
   final IconButton icon => icon.onPressed != null,

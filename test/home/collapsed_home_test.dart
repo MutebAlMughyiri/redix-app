@@ -25,7 +25,7 @@ void main() {
 
   Future<void> tapCollapse(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(HomeScreen.collapseKey)));
 
-  Finder iconOf(IconData icon) => find.descendant(of: find.byKey(HomeScreen.collapseKey), matching: find.byIcon(icon));
+  IconData iconOf(WidgetTester tester) => tester.widget<Icon>(find.byKey(HomeScreen.collapseKey.icon)).icon!;
 
   Future<int?> kept() async => (await SharedPreferences.getInstance()).getInt(stateKey);
 
@@ -43,9 +43,8 @@ void main() {
   testWidgets('R1: the button sits right before Settings in the top bar', (tester) async {
     await openHome(tester);
 
-    final actions = tester.widget<AppBar>(find.byType(AppBar)).actions!;
-    expect((actions[0] as IconButton).key, HomeScreen.collapseKey);
-    expect(find.byKey(HomeScreen.sharedSettingsKey('project-0')), findsOneWidget);
+    expect(isInTitleBar(tester, HomeScreen.collapseKey), isTrue);
+    expect(tester.getTopRight(find.byKey(HomeScreen.collapseKey)).dx, tester.getTopLeft(find.byKey(HomeScreen.sharedSettingsKey('project-0'))).dx);
     expect(tester.getCenter(find.byKey(HomeScreen.collapseKey)).dx, lessThan(tester.getCenter(find.byKey(HomeScreen.sharedSettingsKey('project-0'))).dx));
   });
 
@@ -62,13 +61,11 @@ void main() {
 
   testWidgets('R5: unfold_less while everything shows, unfold_more while collapsed', (tester) async {
     final api = await openHome(tester);
-    expect(iconOf(Icons.unfold_less), findsOneWidget);
-    expect(find.byKey(HomeScreen.collapseKey.icon), findsOneWidget);
+    expect(iconOf(tester), Icons.unfold_less);
 
     await tapCollapse(tester, api);
 
-    expect(iconOf(Icons.unfold_more), findsOneWidget);
-    expect(iconOf(Icons.unfold_less), findsNothing);
+    expect(iconOf(tester), Icons.unfold_more);
   });
 
   testWidgets('R5: its tooltip says what the next tap does', (tester) async {
@@ -84,7 +81,7 @@ void main() {
     await openHome(tester, preferences: {stateKey: 0});
 
     expect(find.byKey(SummaryCard.cardKey), findsNothing);
-    expect(iconOf(Icons.unfold_more), findsOneWidget);
+    expect(iconOf(tester), Icons.unfold_more);
   });
 
   testWidgets('R7: collapsed, the entries and Add entry still show', (tester) async {
