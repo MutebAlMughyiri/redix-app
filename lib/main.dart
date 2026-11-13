@@ -487,9 +487,6 @@ class _RedixAppState extends State<RedixApp> {
     _lifecycle.dispose();
     _router.dispose();
     _outbox.dispose();
-    _projects.dispose();
-    _registered.dispose();
-    _notifications.dispose();
     super.dispose();
   }
 
