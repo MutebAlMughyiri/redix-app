@@ -15,12 +15,19 @@ import 'package:redix/home/home_screen.dart';
 
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/messages.dart';
+import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/offline/waiting_screen.dart';
 import 'package:redix/ui/app_color.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/screen_title.dart';
 
 void main() {
+  String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
+
+  /// What the row of the entry [id] says: its title, then its details.
+  String rowText(WidgetTester tester, String id) => '${text(tester, EntriesScreen.rowKey(id).title)} · ${text(tester, EntriesScreen.detailsKey(id))}';
+
   Future<FakeApi> openHome(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field, String status = 'active', MemoryStore? store}) async {
     tester.view.physicalSize = const Size(800, 2000);
     tester.view.devicePixelRatio = 1;
@@ -50,15 +57,15 @@ void main() {
         ..addEntry(isMine: false, status: 'approved');
     });
 
-    expect(find.text('en entries.title'), findsOneWidget);
+    expect(text(tester, HomeScreen.entriesHeadingKey('project-0')), 'en entries.title');
     expect(find.textContaining('en entries.pendingApproval ·'), findsNothing);
     expect(find.textContaining('en entries.rejected ·'), findsNothing);
     for (final shown in ['entry-5', 'entry-4', 'entry-3', 'entry-2', 'entry-1']) {
       expect(find.byKey(EntriesScreen.rowKey(shown)), findsOneWidget, reason: shown);
     }
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
-    expect(find.textContaining('en entries.enteredBy'), findsNWidgets(2));
-    expect(find.text('en entries.reason: الصورة غير واضحة'), findsNothing, reason: 'Muteb, 9 Nov 2026: the reason shows once the entry is opened');
+    expect([for (final shown in ['entry-5', 'entry-4', 'entry-3', 'entry-2', 'entry-1']) rowText(tester, shown).contains('en entries.enteredBy')], [true, true, false, false, false]);
+    expect(rowText(tester, 'entry-2'), isNot(contains('الصورة غير واضحة')), reason: 'Muteb, 9 Nov 2026: the reason shows once the entry is opened');
   });
 
   testWidgets('Muteb, 9 Nov 2026: a row says where it stands by its frame alone, orange waiting, red rejected, teal a draft and plain once approved, with no status words and no reason', (tester) async {
@@ -71,10 +78,11 @@ void main() {
     });
 
     expect([for (final id in ['entry-0', 'entry-1', 'entry-2', 'entry-3']) frameOf(tester, id)], [AppColor.waiting, AppColor.refusal, AppColor.frame, AppColor.brand]);
-    for (final word in ['en entries.pendingApproval', 'en entries.rejected', 'en entries.draft']) {
-      expect(find.text(word), findsNothing, reason: word);
+    for (final id in ['entry-0', 'entry-1', 'entry-2', 'entry-3']) {
+      for (final word in ['en entries.pendingApproval', 'en entries.rejected', 'en entries.draft', 'الصورة غير واضحة']) {
+        expect(rowText(tester, id), isNot(contains(word)), reason: '$id: $word');
+      }
     }
-    expect(find.textContaining('الصورة غير واضحة'), findsNothing);
   });
 
   testWidgets('redix-app #88: in a finished project no entry shows the red bar, since nothing is deleted in it', (tester) async {
@@ -112,8 +120,8 @@ void main() {
   testWidgets('R14: a project with no entries keeps its heading and its search, says it has none, and offers no Show more', (tester) async {
     await openHome(tester, (api) {});
 
-    expect(find.text('en entries.title'), findsOneWidget);
-    expect(find.text('en entries.empty'), findsOneWidget);
+    expect(text(tester, HomeScreen.entriesHeadingKey('project-0')), 'en entries.title');
+    expect(text(tester, HomeScreen.entriesEmptyKey('project-0')), 'en entries.empty');
     expect(find.byKey(HomeScreen.searchEntriesKey('project-0')), findsOneWidget);
     expect(find.byKey(HomeScreen.moreEntriesKey('project-0')), findsNothing);
   });
@@ -197,7 +205,7 @@ void main() {
     final api = await openEntries(tester, (api) => api..addEntry(status: 'draft')..addEntry(status: 'approved'), permissions: managerAndFinance);
     await openActions(tester, api, 'entry-0');
     expect(find.byKey(AddEntryScreen.approveKey), findsNothing);
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
 
     await openActions(tester, api, 'entry-1');
     expect(find.byKey(AddEntryScreen.approveKey), findsNothing);
@@ -209,7 +217,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.approveKey)));
 
-    expect(find.text('en approvals.entryNotPending'), findsOneWidget);
+    expect(text(tester, messageKeyOf('approvals.entryNotPending').label), 'en approvals.entryNotPending');
     expect(find.byKey(AddEntryScreen.approveKey), findsOneWidget);
   });
 
@@ -273,11 +281,11 @@ void main() {
     expect(find.byIcon(Icons.refresh), findsNothing);
 
     api.entryRows.single['status'] = 'approved';
-    await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 500)));
+    await act(tester, api, () => tester.drag(listRows, const Offset(0, 500)));
     expect(frameOf(tester, 'entry-0'), AppColor.frame);
 
     api.entryRows.single['status'] = 'draft';
-    await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 500)));
+    await act(tester, api, () => tester.drag(listRows, const Offset(0, 500)));
     expect(frameOf(tester, 'entry-0'), AppColor.brand);
   });
 
@@ -305,7 +313,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey)));
 
-    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.byKey(ConfirmDialog.dialogKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(AddEntryScreen.removeKey.question)).data, 'en entries.removeQuestion');
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey.cancel)));
     expect(find.byKey(AddEntryScreen.removeKey), findsOneWidget);
@@ -330,7 +338,7 @@ void main() {
 
     await swipeToAsk(tester, api, EntriesScreen.rowKey('entry-0'));
 
-    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.byKey(ConfirmDialog.dialogKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(EntriesScreen.rowKey('entry-0').question.label)).data, 'en swipe.question');
     await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0').cancel)));
     expect(find.byKey(EntriesScreen.rowKey('entry-0').question), findsNothing);
@@ -364,7 +372,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey)));
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.removeKey.confirm)));
 
-    expect(find.text('en entries.notYourEntry'), findsOneWidget);
+    expect(text(tester, messageKeyOf('entries.notYourEntry').label), 'en entries.notYourEntry');
     expect(find.byKey(AddEntryScreen.removeKey), findsOneWidget);
   });
 
@@ -374,7 +382,7 @@ void main() {
 
     await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
 
-    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.byKey(ConfirmDialog.dialogKey), findsNothing);
     expect(api.sentEntryChanges.single.$2, 'delete');
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
   });
@@ -463,7 +471,7 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    expect(find.text('en entries.noConnection'), findsOneWidget);
+    expect(text(tester, messageKeyOf('entries.noConnection').label), 'en entries.noConnection');
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsOneWidget);
     api.heldEntryChange.complete();
   });
@@ -482,7 +490,7 @@ void main() {
     await openActions(tester, api, 'entry-0');
     api.sentReads.clear();
 
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
 
     expect(api.sentReads, contains('/projects/project-0/summary'));
     expect(api.sentReads, contains('/projects'));
@@ -741,7 +749,7 @@ void main() {
   testWidgets('R5: one إضافة قيد button sits at the bottom of the home, and opens the screen to add an entry', (tester) async {
     final api = await openHome(tester, (api) {});
 
-    expect(find.text('en entries.new'), findsOneWidget);
+    expect(text(tester, HomeScreen.addEntryKey('project-0').label), 'en entries.new');
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
 
     expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en entries.new');
@@ -781,7 +789,7 @@ void main() {
 
     testWidgets('findings row 210: a word typed letter by letter asks the API once, when typing pauses, for the whole word', (tester) async {
       final api = await openSearch(tester);
-      final field = find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(TextField));
+      final field = find.byKey(SearchLine.searchKey);
       final readsBefore = api.entryQueries.length;
 
       await act(tester, api, () async {
@@ -800,7 +808,7 @@ void main() {
 
     testWidgets('findings row 210: the ✕ closes the line before typing pauses, and what was typed is never asked', (tester) async {
       final api = await openSearch(tester);
-      final field = find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(TextField));
+      final field = find.byKey(SearchLine.searchKey);
 
       await act(tester, api, () async {
         await tester.enterText(field, 'احمد');
@@ -944,6 +952,6 @@ void main() {
     await act(tester, api, () => tester.pump(const Duration(seconds: 20)));
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
 
-    expect(find.text('en expenses.entryApproved'), findsOneWidget);
+    expect(text(tester, WaitingScreen.stateKey('entry-0')), 'en expenses.entryApproved');
   });
 }

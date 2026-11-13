@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/entries/entries_screen.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../support/given.dart';
@@ -15,7 +15,7 @@ void main() {
       final entry = await Given.entry(manager, sent: false);
       await $.onTheHome(manager);
       await $.swipeAway(EntriesScreen.rowKey(entry));
-      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.byKey(ConfirmDialog.dialogKey), findsNothing);
       await $.gone($(EntriesScreen.rowKey(entry)));
       expect(await Given.entries(manager), isEmpty);
     });
