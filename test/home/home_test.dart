@@ -95,6 +95,34 @@ void main() {
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
 
+  testWidgets('redix-api #126 R4: made inactive in the open project, the project list replaces its screens at the next renewal, the project gray on it', (tester) async {
+    final api = FakeApi()..addProject('غصون 6');
+    await openHome(tester, api);
+    await openProjectInfo(tester, api);
+    await sendToBackground(tester, api);
+
+    api.makeInactive(api.projects.single);
+    await bringBack(tester, api);
+
+    expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
+    expect(find.byKey(ProjectInfoScreen.nameKey), findsNothing);
+    expect(find.byKey(HomeScreen.titleKey), findsNothing);
+    expect(text(tester, ProjectsScreen.detailsKey('project-0')), 'en projects.inactive');
+  });
+
+  testWidgets('redix-api #126 R4: still active in the open project, a renewal leaves its screens where they were', (tester) async {
+    final api = FakeApi()..addProject('غصون 6');
+    await openHome(tester, api);
+    await openProjectInfo(tester, api);
+    await sendToBackground(tester, api);
+
+    await bringBack(tester, api);
+
+    expect(api.refreshes, 2, reason: 'one renewal on opening the app, one on coming back');
+    expect(find.byKey(ProjectInfoScreen.nameKey), findsOneWidget);
+    expect(find.byKey(ProjectsScreen.titleKey), findsNothing);
+  });
+
   testWidgets('with no network and nothing kept the home says so, and Try again reads it', (tester) async {
     final store = MemoryStore();
     final api = FakeApi()..addProject('غصون 6');

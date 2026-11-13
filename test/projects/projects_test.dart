@@ -7,6 +7,7 @@ import 'package:redix/ui/messages.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/app_color.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -58,7 +59,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
 
-    expect(api.sentAccessTokens, [...List.filled(5, 'kept-access'), ...List.filled(5, 'new-access')]);
+    expect(api.sentAccessTokens, [...List.filled(5, 'kept-access'), ...List.filled(10, 'new-access')], reason: 'each list sent again with the new token, and the project list read again after each renewal (redix-api #126 R6)');
     expect(api.refreshes, 5);
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsOneWidget);
   });
@@ -125,6 +126,46 @@ void main() {
 
     expect(text(tester, ProjectsScreen.detailsKey('project-0')), 'en projects.readOnly');
     expect(status(tester, 'project-0'), 'en projects.finished');
+  });
+
+  /// Two projects of the signed-in user, made inactive in the second, غصون 7 (redix-api #126).
+  FakeApi activeAndInactive() {
+    final api = FakeApi()..addProject('غصون 6');
+    api.makeInactive(api.addProject('غصون 7'));
+    return api;
+  }
+
+  Color? nameColor(WidgetTester tester, String id) => tester.widget<Text>(find.byKey(ProjectsScreen.nameKey(id))).style?.color;
+
+  Color? chipColor(WidgetTester tester, String id) => tester.widget<Chip>(find.byKey(ProjectsScreen.statusKey(id))).backgroundColor;
+
+  testWidgets('redix-api #126 D2: a project the user was made inactive in shows gray and disabled, saying so under its name, with no star, and does not open', (tester) async {
+    final api = activeAndInactive();
+    await openProjects(tester, api);
+    final context = tester.element(find.byKey(ProjectsScreen.cardKey('project-1')));
+
+    expect(text(tester, ProjectsScreen.detailsKey('project-1')), 'en projects.inactive');
+    expect(nameColor(tester, 'project-1'), AppColor.quiet.of(context));
+    expect(chipColor(tester, 'project-1'), AppColor.mutedSurface.of(context));
+    expect(find.byKey(ProjectsScreen.starKey('project-1')), findsNothing);
+
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
+    expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
+    expect(find.byKey(HomeScreen.titleKey), findsNothing);
+  });
+
+  testWidgets('redix-api #126 D2: the project beside it that the user is active in shows as before, with its units, its star and its green status, and opens', (tester) async {
+    final api = activeAndInactive();
+    await openProjects(tester, api);
+    final context = tester.element(find.byKey(ProjectsScreen.cardKey('project-0')));
+
+    expect(text(tester, ProjectsScreen.detailsKey('project-0')), 'en projects.noUnits');
+    expect(nameColor(tester, 'project-0'), isNot(AppColor.quiet.of(context)));
+    expect(chipColor(tester, 'project-0'), AppColor.activeSurface.of(context));
+    expect(find.byKey(ProjectsScreen.starKey('project-0')), findsOneWidget);
+
+    await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
+    expect(text(tester, HomeScreen.titleKey), 'غصون 6');
   });
 
   IconData star(WidgetTester tester, String id) => (tester.widget<IconButton>(find.byKey(ProjectsScreen.starKey(id))).icon as Icon).icon!;

@@ -139,6 +139,9 @@ class _RedixAppState extends State<RedixApp> {
   /// A shared entry's link opened before signing in, to open once signed in (redix-app #83, R8); empty for none.
   var _afterSignIn = '';
   late final StreamSubscription<PickedFile> _sharing;
+
+  /// Renews the session each time the app comes back to the screen, so it learns soon what changed while it was away (redix-api #126 R6).
+  late final AppLifecycleListener _lifecycle;
   late final _projects = Projects(widget.session);
   late final _outbox = Outbox(widget.session, widget.session.store);
   late final _sync = ProjectSync(widget.session);
@@ -181,7 +184,7 @@ class _RedixAppState extends State<RedixApp> {
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
-    refreshListenable: widget.session,
+    refreshListenable: widget.session.access,
     redirect: (context, state) => _redirect(state.matchedLocation),
     routes: [
       GoRoute(path: ProjectsScreen.path, builder: (context, state) => ProjectsScreen(projects: _projects, session: widget.session, notifications: _notifications)),
@@ -475,11 +478,13 @@ class _RedixAppState extends State<RedixApp> {
     super.initState();
     unawaited(_outbox.start());
     _sharing = widget.capture.shared().listen(_openShared);
+    _lifecycle = AppLifecycleListener(onResume: widget.session.renew);
   }
 
   @override
   void dispose() {
     unawaited(_sharing.cancel());
+    _lifecycle.dispose();
     _router.dispose();
     _outbox.dispose();
     _projects.dispose();

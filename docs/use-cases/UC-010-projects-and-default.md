@@ -22,7 +22,7 @@ The list, `ProjectsScreen` at `/`:
 | Element | `Key` | Does |
 | --- | --- | --- |
 | Choose a project | `ProjectsScreen.titleKey` | The heading |
-| A project's card | `ProjectsScreen.cardKey(id)` | Opens its home |
+| A project's card | `ProjectsScreen.cardKey(id)` | Opens its home; one the user was made inactive in shows gray and disabled, `ProjectsScreen.detailsKey(id)` saying «حسابك غير مفعّل في هذا المشروع.», with no star, and does not open (redix-api #126 D2) |
 | Its star | `ProjectsScreen.starKey(id)` | Makes it the default, saying so in a message (`messageKeyOf('projects.defaultSet')`), or clears it |
 | Settings | `ProjectsScreen.sharedSettingsKey` | Opens Settings |
 | Register new project | `ProjectsScreen.newProjectKey` | Opens the form (UC-066) |
@@ -59,5 +59,7 @@ The button beside Settings, `HomeScreen.collapseKey`, hides the conclusion (`Sum
 | Default project in Settings lists every approved project with a tick, none waiting or rejected; ticking sets and moves the default and says so, unticking clears it, a refusal says why | `shared_settings_test.dart` |
 | AC-37.1: a default opens directly at sign-in and at start | `home_test.dart` |
 | A project gone while open returns to the list | `home_test.dart` |
+| redix-api #126 D2: a project the user was made inactive in shows gray and disabled, saying so under its name, with no star, and does not open; one he is active in beside it opens | `projects_test.dart` |
+| redix-api #126 R4: made inactive in the open project, the project list replaces its screens at the next renewal; still active, the home stays | `home_test.dart` |
 | Switch project reaches the list | `shared_settings_test.dart` |
 | On a real phone, against the real API | `patrol_test/projects/project_list_test.dart`, `patrol_test/projects/default_project_test.dart`, `patrol_test/home/collapse_home_test.dart` |

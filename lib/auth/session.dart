@@ -24,6 +24,9 @@ class Session extends ChangeNotifier {
   /// The tries at the fingerprint or face before only the password works (AC-35.2).
   static const maxUnlockAttempts = 3;
 
+  /// How long before its access token runs out the session renews on its own (redix-api #126 R6).
+  static const renewsBeforeExpiry = Duration(seconds: 30);
+
   final FlutterSecureStorage _storage;
   final Biometrics _biometrics;
   static const _storageKey = 'session';
@@ -42,6 +45,13 @@ class Session extends ChangeNotifier {
   var _usesBiometrics = false;
   var _unlockAttempts = 0;
   var _notice = '';
+
+  /// The renewal waiting for the access token to run out; a cancelled one while no session answer has said when.
+  var _renewalTimer = Timer(Duration.zero, () {})..cancel();
+
+  final _renewals = ValueNotifier(0);
+
+  final _access = ValueNotifier((isOpen: false, mustChangePassword: false));
 
   /// True from sign-in until the session ends.
   bool get isOpen => _refreshToken.isNotEmpty;
@@ -73,13 +83,20 @@ class Session extends ChangeNotifier {
       if (response.statusCode >= 300) {
         return refusalOf(answerOf(response), 'projects');
       }
-      await _renew();
+      await renew();
       return '';
     } on Exception catch (error) {
       debugPrint('Default project not changed: $error');
       return 'projects.noConnection';
     }
   }
+
+  /// What the session lets the screens reach, for the router to follow: whether it is open, and whether its password must change first. It tells its listeners only
+  /// when one of them changes, so a renewal rebuilds no screen, whose route may hold what it was opened with (redix-api #126 R6).
+  Listenable get access => _access;
+
+  /// Tells its listeners after each renewal, so what a renewal may have changed is read again: a project the user was made inactive in (redix-api #126 R6).
+  Listenable get renewals => _renewals;
 
   /// The word key of why the last session ended, for the sign-in screen; empty when there is nothing to say.
   String get notice => _notice;
@@ -130,7 +147,7 @@ class Session extends ChangeNotifier {
   void _open(Map<String, dynamic> session) {
     _apply(session);
     if (isOpen) {
-      unawaited(_renew());
+      unawaited(renew());
     }
   }
 
@@ -256,12 +273,14 @@ class Session extends ChangeNotifier {
     if (response.statusCode != 401) {
       return response;
     }
-    await _renew();
+    await renew();
     return isOpen ? request() : response;
   }
 
-  /// One renewal after another, each with the token the last one left: the API replaces the refresh token at every renewal, so a second sent at once would end the session.
-  Future<void> _renew() => _renewal = _renewal.then((_) => _renewOnce());
+  /// Renews the session: one renewal after another, each with the token the last one left, because the API replaces the refresh token at every renewal and a second sent
+  /// at once would end the session. It runs when the app opens, when it comes back to the screen, [renewsBeforeExpiry] before the access token runs out, and after a
+  /// refused request (redix-api #126 R6).
+  Future<void> renew() => _renewal = _renewal.then((_) => _renewOnce());
 
   Future<void> _renewOnce() async {
     if (!isOpen) {
@@ -271,6 +290,7 @@ class Session extends ChangeNotifier {
       final response = await timed(http.post(apiUri('/auth/refresh'), headers: jsonHeaders, body: jsonEncode({'refreshToken': _refreshToken})));
       if (response.statusCode == 200) {
         await _keep(response);
+        _renewals.value++;
       } else if (response.statusCode == 401) {
         await _end('signIn.sessionExpired');
       }
@@ -281,14 +301,25 @@ class Session extends ChangeNotifier {
 
   Future<void> _keep(http.Response response) async {
     final body = utf8.decode(response.bodyBytes);
-    _apply(jsonDecode(body) as Map<String, dynamic>);
+    final session = jsonDecode(body) as Map<String, dynamic>;
+    _apply(session);
+    _renewBeforeExpiry(session['accessTokenExpiresAt'] as String? ?? '');
     await _storage.write(key: _storageKey, value: body);
     notifyListeners();
   }
 
+  /// Sets the one renewal for [renewsBeforeExpiry] before the access token runs out at [expiresAt], replacing the one set before; none when the answer said no time.
+  void _renewBeforeExpiry(String expiresAt) {
+    _renewalTimer.cancel();
+    if (expiresAt.isNotEmpty) {
+      _renewalTimer = Timer(DateTime.parse(expiresAt).difference(DateTime.now()) - renewsBeforeExpiry, renew);
+    }
+  }
+
   Future<void> _end(String notice) async {
-    _apply({});
+    _renewalTimer.cancel();
     _notice = notice;
+    _apply({});
     await _storage.delete(key: _storageKey);
     await store.clear(_copies);
     notifyListeners();
@@ -304,5 +335,14 @@ class Session extends ChangeNotifier {
     _permissions = {...(session['permissions'] as List<dynamic>? ?? []).cast<String>()};
     _defaultProjectId = session['defaultProjectId'] as String? ?? '';
     _usesBiometrics = session['usesBiometrics'] as bool? ?? false;
+    _access.value = (isOpen: isOpen, mustChangePassword: _mustChangePassword);
+  }
+
+  @override
+  void dispose() {
+    _renewalTimer.cancel();
+    _renewals.dispose();
+    _access.dispose();
+    super.dispose();
   }
 }

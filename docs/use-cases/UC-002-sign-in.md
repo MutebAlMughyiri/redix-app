@@ -24,7 +24,7 @@
 | Call | When |
 | --- | --- |
 | `POST /auth/sign-in` | The user taps Sign in |
-| `POST /auth/refresh` | At start, when the phone keeps a session |
+| `POST /auth/refresh` | At start, when the phone keeps a session; when the app comes back to the screen; 30 seconds before the access token runs out, at the `accessTokenExpiresAt` of the last session answer; after a refused request (redix-api #126 R6) |
 
 ## Rules and where they live
 
@@ -39,6 +39,7 @@
 | A kept session opens home directly and is renewed in the background | `Session.restore` | `sign_in_test.dart`: a kept session |
 | Without a network a kept session stays open, so work goes on offline (FR-16) | `Session.restore` | `sign_in_test.dart`: without a network a kept session |
 | A session the API refuses ends on sign-in with a notice (AC-01.3, NFR-09) | `Session.restore` | `sign_in_test.dart`: a kept session the API refuses |
+| redix-api #126 R6: the session renews on its own when the app opens, when it comes back to the screen and 30 seconds before its access token runs out, one renewal waiting at a time and none after sign-out; each renewal reads the project list again | `Session`, `Projects` | `session_renewal_test.dart` |
 
 ## Left to later use cases
 

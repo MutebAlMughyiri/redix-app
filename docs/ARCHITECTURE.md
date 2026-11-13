@@ -265,8 +265,8 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 
 ## Session and screens
 
-1. `main` reads the kept session (`Session.restore`) before the first frame, then renews it in the background with `POST /auth/refresh`.
-2. `go_router` sends every route to `/sign-in` while the session is closed, to `/change-password` while the password is temporary, and away from sign-in once open; it listens to `Session`, so a sign-in, a password change or an ended session moves the screen at once.
+1. `main` reads the kept session (`Session.restore`) before the first frame, then renews it in the background with `POST /auth/refresh`. It renews again on its own when the app comes back to the screen (`RedixApp`'s `AppLifecycleListener`) and 30 seconds before the access token runs out (one `Timer`), and after each renewal `Projects` reads the list again, so a project the user was made inactive in leaves the screen (redix-api #126).
+2. `go_router` sends every route to `/sign-in` while the session is closed, to `/change-password` while the password is temporary, and away from sign-in once open; it listens to `Session.access`, so a sign-in, a password change or an ended session moves the screen at once, and nothing else does: a refresh of `go_router` rebuilds the open screens without the `extra` they were opened with (redix-api #126).
 3. Every request made as the user goes through `Session.post`: it sends the access token, and on a `401` renews the session once and sends again. Renewals run one after another, because each replaces the refresh token the next one needs. A read waits for what was sent before it, so leaving a screen while a change is on its way cannot show the old value. `Session.get` keeps each list it reads, and answers from that copy when the network fails; `ProjectSync` fills the copies on opening a project; `Outbox` holds entries waiting for the network (UC-029).
 4. Each screen declares its `path` and its element `Key`s.
 

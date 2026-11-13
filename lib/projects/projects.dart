@@ -5,8 +5,19 @@ import '../format/date_format.dart';
 
 /// The projects (UC-006), and the one way to change them.
 class Projects extends ApiList<Project> {
-  /// The projects of the user signed in through [session].
-  Projects(Session session) : super(session, '/projects', 'projects', Project.fromJson);
+  /// The projects of the user signed in through [_session], read again after each renewal of it, so one he was made inactive in shows so soon (redix-api #126 R6):
+  /// the one owner of reading the projects again after a renewal.
+  Projects(this._session) : super(_session, '/projects', 'projects', Project.fromJson) {
+    _session.renewals.addListener(load);
+  }
+
+  final Session _session;
+
+  @override
+  void dispose() {
+    _session.renewals.removeListener(load);
+    super.dispose();
+  }
 
   /// [project] as the list holds it now, or [project] itself when the list does not hold it.
   Project latest(Project project) => all.firstWhere((each) => each.id == project.id, orElse: () => project);

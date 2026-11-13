@@ -15,6 +15,8 @@ Everyone sees **[Accounts](accounts.md)**, **[Suppliers](suppliers.md)** and **[
 
 After you sign in, REDIX lists the projects you have access to. Tap one to open it: what you can do there follows your role in that project. To open the same project every time, tap its star and turn on **Open the default project directly**. To change project later, open **Settings**, then **Switch project**.
 
+A project whose manager made you inactive in it shows gray on the list, saying **Your account is inactive in this project.**, and does not open; your permissions and entries there stay for when you are made active again. If you have it open when it happens, the project list replaces it when you come back from one of its screens, when the app opens or comes back to the screen, or within 15 minutes.
+
 The app speaks your phone's language: Arabic right to left, English left to right. On a phone in any other language it speaks Arabic.
 
 If the very first start has no network, the app shows a no-network icon and a retry button. Connect, then tap retry.
@@ -33,6 +35,8 @@ Whoever does the project's finance renames the project, adds, renames and delete
 ويرى فيها الجميع **[الحسابات](accounts.md)** و**[الموردين](suppliers.md)** و**[العقود](contracts.md)**. ويرى من يتولى مالية المشروع أيضاً **[التصنيفات والبنود](categories.md)** و**[طرق الدفع](payment-methods.md)**، ويرى الجميع **[الشركاء](partners.md)**، كلٌّ سطره. وتليها أزرار المشروع نفسه: **معلومات المشروع**، و**صلاحياتي** التي تعرض ما تستطيعه في المشروع محدداً دون تغييره، و**المستخدمون** لمن يديرهم، و**استيراد إعدادات المشروع** رمادياً حتى يُبنى.
 
 بعد تسجيل الدخول، يعرض REDIX المشاريع المصرّح لك بها. اضغط أحدها لفتحه: وما يمكنك فعله فيه يتبع دورك في ذلك المشروع. لفتح المشروع نفسه كل مرة، اضغط نجمته وفعّل **فتح المشروع الافتراضي مباشرة**. ولتغيير المشروع لاحقاً، افتح **الإعدادات** ثم **تبديل المشروع**.
+
+والمشروع الذي عطّلك مديره فيه يظهر في القائمة رمادياً بعبارة **حسابك غير مفعّل في هذا المشروع.** ولا يُفتح، وتبقى صلاحياتك وقيودك فيه حتى يُعاد تفعيلك. وإن كان مفتوحاً لديك حينها، تحل قائمة المشاريع محله عند عودتك من إحدى شاشاته، أو عند فتح التطبيق أو عودته إلى الشاشة، أو خلال 15 دقيقة.
 
 يتحدث التطبيق بلغة جوالك: العربية من اليمين لليسار، والإنجليزية من اليسار لليمين. وإذا كان جوالك بلغة أخرى فيتحدث العربية.
 

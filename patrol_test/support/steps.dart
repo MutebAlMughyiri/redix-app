@@ -76,6 +76,7 @@ extension Steps on PatrolIntegrationTester {
   Future<void> _open() async {
     if (_appIsOpen) {
       await pumpWidget(const SizedBox());
+      _session.dispose();
     }
     _session = Session();
     final language = AppLanguage();

@@ -189,10 +189,11 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  /// They may be taken out of the project at any time, and then the project is gone from their list.
+  /// They may be taken out of the project at any time, and then the project is gone from their list; or made inactive in it, which they learn at the latest at the next
+  /// renewal of their session, and then the project list replaces the project's screen (redix-api #126 D2, R4).
   void _leaveIfGone() {
     final projects = widget.projects;
-    if (!projects.isLoading && projects.message.isEmpty && !projects.all.any((project) => project.id == widget.projectId && project.isApproved)) {
+    if (!projects.isLoading && projects.message.isEmpty && !projects.all.any((project) => project.id == widget.projectId && project.mayOpen)) {
       context.go(ProjectsScreen.path);
     }
   }

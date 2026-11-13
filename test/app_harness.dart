@@ -54,7 +54,7 @@ Map<String, String> wordsIn(String language) => {
     'registered.reason', 'registered.invalidReason', 'registered.notPending', 'registered.noConnection', 'registered.refused',
     'myAccount.changePassword', 'myAccount.signOut', 'myAccount.signOutQuestion', 'myAccount.signOutExplain',
     'sharedSettings.title', 'projects.new', 'projects.manager', 'projects.empty', 'projects.loadFailed', 'common.retry', 'projects.active',
-    'projects.finished', 'projects.readOnly', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
+    'projects.finished', 'projects.readOnly', 'projects.inactive', 'projects.startDate', 'projects.name', 'projects.units', 'projects.noUnits',
     'projects.unitName', 'projects.addUnit', 'projects.create', 'common.cancel', 'projects.close',
     'projects.closeQuestion', 'projects.closeExplain', 'projects.pendingEntries', 'projects.rename', 'projects.renameUnit', 'projects.save', 'projects.invalidName', 'projects.projectFinished', 'projects.noConnection',
     'projects.refused', 'projects.description', 'projects.invalidDescription', 'register.invalidDescription', 'projectInfo.title', 'projectInfo.description',
@@ -349,6 +349,10 @@ class FakeApi {
 
   /// The status `POST /auth/refresh` answers; 200 renews the session.
   var refreshStatus = 200;
+
+  /// How long an access token lasts, which every session answer says as `accessTokenExpiresAt` (redix-api #126). Zero leaves it out, so a case that is not about
+  /// renewing on time leaves no renewal waiting when it ends, which flutter_test refuses.
+  var accessTokenLifetime = Duration.zero;
 
   /// The status and problem code `POST /auth/change-password` answers; 200 changes the password, and an empty code an empty body.
   var changePasswordAnswer = (status: 200, code: '');
@@ -811,8 +815,9 @@ class FakeApi {
     if (path == '/auth/change-password' && status == 200) {
       mustChangePassword = false;
     }
+    final expiresAt = accessTokenLifetime == Duration.zero ? '' : ', "accessTokenExpiresAt": "${DateTime.now().toUtc().add(accessTokenLifetime).toIso8601String()}"';
     final body = status == 200
-        ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}", "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "usesBiometrics": $usesBiometrics, "userId": "$userId", "username": "muteb", "displayName": "متعب المغيري"}'
+        ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}"$expiresAt, "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "usesBiometrics": $usesBiometrics, "userId": "$userId", "username": "muteb", "displayName": "متعب المغيري"}'
         : code.isEmpty
         ? ''
         : '{"code": "$code"}';
@@ -839,12 +844,19 @@ class FakeApi {
       'rejectionReason': rejectionReason,
       'description': description,
       'roleName': roleName,
+      'isInactive': false,
       'units': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}],
       'permissions': permissions,
     };
     projects.add(project);
     return project;
   }
+
+  /// Makes the signed-in user inactive in [project], as [addProject] answered it, as its manager's «تعطيل» does: the list says so, and holds none of his permissions there
+  /// (redix-api #126).
+  void makeInactive(Map<String, Object> project) => project
+    ..['isInactive'] = true
+    ..['permissions'] = <String>[];
 
   /// Adds a payment method to the project [projectId], as the API holds it.
   Map<String, Object> addPaymentMethod(String projectId, String name, {bool isActive = true}) {
@@ -1927,6 +1939,18 @@ Future<Session> pumpRedix(
   }, () => api.client);
   return session;
 }
+
+/// Puts the app behind another, as a person who leaves REDIX for WhatsApp does: each state the phone passes through, in order, as AppLifecycleListener requires.
+Future<void> sendToBackground(WidgetTester tester, FakeApi api) => _passThrough(tester, api, [AppLifecycleState.inactive, AppLifecycleState.hidden, AppLifecycleState.paused]);
+
+/// Brings the app back to the screen from behind another, as a person returning to REDIX does (redix-api #126 R6).
+Future<void> bringBack(WidgetTester tester, FakeApi api) => _passThrough(tester, api, [AppLifecycleState.hidden, AppLifecycleState.inactive, AppLifecycleState.resumed]);
+
+Future<void> _passThrough(WidgetTester tester, FakeApi api, List<AppLifecycleState> states) => act(tester, api, () async {
+  for (final state in states) {
+    tester.binding.handleAppLifecycleStateChanged(state);
+  }
+});
 
 /// True when the button keyed [key] works; a screen's add button shows grayed without the permission rather than hidden (issue #85).
 bool isEnabled(WidgetTester tester, Key key) => switch (tester.widget(find.byKey(key))) {

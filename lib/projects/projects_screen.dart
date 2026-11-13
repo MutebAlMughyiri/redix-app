@@ -50,7 +50,7 @@ class ProjectsScreen extends StatefulWidget {
   /// The name of the project [id].
   static Key nameKey(String id) => Key('projects.name.$id');
 
-  /// The units of the project [id], or that it is read-only.
+  /// The units of the project [id], that it is read-only, or that the signed-in user is inactive in it (redix-api #126 D2).
   static Key detailsKey(String id) => Key('projects.details.$id');
 
   /// The status of the project [id].
