@@ -25,6 +25,9 @@ class AttachmentScreen extends StatefulWidget {
   /// The picture.
   static const pictureKey = Key('attachment.picture');
 
+  /// What zooms into the picture (AC-18.1).
+  static const zoomKey = Key('attachment.zoom');
+
   /// The line saying the file could not be read.
   static const failedKey = Key('attachment.failed');
 
@@ -84,7 +87,7 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
               child: ActOnce(builder: (once) => FilledButton(key: AttachmentScreen.openFileKey, onPressed: once(() => widget.capture.shareFile(bytes, widget.fileName, widget.contentType)), child: Text(words.approvalsOpenFile, key: AttachmentScreen.openFileKey.label))),
             );
           }
-          return InteractiveViewer(maxScale: 6, child: Center(child: Image.memory(bytes, key: AttachmentScreen.pictureKey)));
+          return InteractiveViewer(key: AttachmentScreen.zoomKey, maxScale: 6, child: Center(child: Image.memory(bytes, key: AttachmentScreen.pictureKey)));
         },
       ),
     );

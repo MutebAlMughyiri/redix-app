@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
+import 'package:redix/approvals/approval_history_screen.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/search_scope.dart';
 
 import '../support/given.dart';
@@ -77,8 +79,8 @@ void main() {
       await $.tapOn(ApprovalsScreen.historyKey);
       await $.reach($(SearchIcons.searchKey));
       await $.searchFor('$amount');
-      await $(find.textContaining(formatMoney(amount.toDouble()))).waitUntilExists();
-      expect($(keyStartingWith('approvalHistory.line.')), findsWidgets);
+      final approval = (await Given.history(manager, 'approvals/history')).single['id'] as int;
+      await $.saysContaining(ApprovalHistoryScreen.lineKey(approval).title, formatMoney(amount.toDouble()));
     });
   });
 }

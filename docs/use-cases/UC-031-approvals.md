@@ -16,7 +16,7 @@
 | Show everything waiting, when a shared link opened one entry (redix-app #83) | `ApprovalsScreen.showAllKey` |
 | Approve selected | `ApprovalsScreen.approveSelectedKey` |
 | The rejection's quick reasons, reason, send and refusal | `ApprovalsScreen.quickReasonKey`, `reasonKey`, `rejectSendKey`, `rejectMessageKey` |
-| A file: picture, any other file, or failure | `AttachmentScreen.pictureKey`, `openFileKey`, `failedKey` |
+| A file: picture, any other file, or failure | `AttachmentScreen.pictureKey`, zoomed in `zoomKey`; `openFileKey`, `failedKey` |
 
 | Rule | Code | Test |
 | --- | --- | --- |

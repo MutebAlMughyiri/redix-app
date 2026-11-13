@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/approvals/approval_history_screen.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/screen_title.dart';
 
 import '../app_harness.dart';
 
@@ -28,7 +30,7 @@ void main() {
         ..addApprovalHistoryLine('project-0', 'approved');
     });
 
-    expect(find.byType(ApprovalHistoryScreen), findsOneWidget);
+    expect(text(tester, ScreenTitle.titleKey), 'en approvals.history');
     expect(api.historyReads.last.path, '/projects/project-0/approvals/history');
     expect(text(tester, ApprovalHistoryScreen.lineKey(3000).title), 'en history.entryRejected');
     expect(text(tester, ApprovalHistoryScreen.lineKey(2999).title), 'en history.entryApproved');
@@ -71,6 +73,6 @@ void main() {
   testWidgets('nothing decided yet says so', (tester) async {
     await openHistory(tester, (api) {});
 
-    expect(find.text('en history.empty'), findsOneWidget);
+    expect(text(tester, ApiListBody.emptyKey), 'en history.empty');
   });
 }
