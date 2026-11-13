@@ -78,7 +78,8 @@ abstract class ApiObject<T> extends ChangeNotifier {
     SchedulerBinding.instance.addPostFrameCallback((_) => load());
   }
 
-  /// Reads it from the API.
+  /// Reads it from the API. A copy kept on the phone in a shape this version no longer reads, as an earlier version kept it, says it could not be read, as nothing
+  /// kept would, so the next read comes from the API (redix-api #126); no reader keeps a way to read an old shape.
   Future<void> load() async {
     final path = _path;
     _isLoading = true;
@@ -95,6 +96,9 @@ abstract class ApiObject<T> extends ChangeNotifier {
       }
     } on Exception catch (error) {
       debugPrint('$path not read: $error');
+      message = loadFailedKey;
+    } on TypeError catch (error) {
+      debugPrint('$path not read, in a shape this version does not read: $error');
       message = loadFailedKey;
     }
     if (path == _path) {

@@ -35,6 +35,7 @@ Android's backup of the app's data is off, so none of this leaves the phone that
 | AC-16.3: an upload cut after its file went keeps the file's id, and the entry lands once | `Outbox._sendOne`, with the API's UC-029 | `add_entry_test.dart`: AC-16.3 |
 | Without a network an entry is kept, whatever its table, and the person is told | `EntryRecording._send`, `EntryRecording._keep` | `add_entry_test.dart`: without a network the expense is kept; `one_entry_test.dart`: R8, D12 |
 | A list read once answers with no network | `Session.get` | `offline_test.dart`: a list read once |
+| redix-api #126: a copy an earlier version kept in a shape this one no longer reads answers as nothing kept, saying the list could not be read, and the next read comes from the API; a copy in today's shape still answers | `ApiObject.load` | `offline_test.dart`: a project list an earlier version kept; a project list kept in the shape this version reads |
 | Signing out forgets what was kept of the lists | `Session._end` | `offline_test.dart`: signing out forgets |
 | Opening a project keeps every list the sync answers | `ProjectSync.refresh` | `offline_test.dart`: opening a project keeps |
 | What someone else entered neither shows nor goes | `Outbox.of`, `Outbox.send` | `offline_test.dart`: what someone else entered |

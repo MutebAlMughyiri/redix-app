@@ -12,6 +12,7 @@ import 'package:redix/offline/pending_entry.dart';
 import 'package:redix/offline/waiting_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/suppliers/supplier_search.dart';
+import 'package:redix/ui/api_list_body.dart';
 
 import '../app_harness.dart';
 
@@ -46,6 +47,31 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
 
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsOneWidget);
+  });
+
+  testWidgets('redix-api #126: a project list an earlier version kept, with no isInactive, answers as nothing kept when the network is gone, and the next read comes from the API', (tester) async {
+    final api = FakeApi()..online = false;
+    final store = MemoryStore();
+    await store.write('copies', '/projects', jsonEncode([{...api.addProject('غصون 6')}..remove('isInactive')]));
+    await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: keptWords('en'), store: store);
+
+    expect(tester.widget<Text>(find.byKey(ApiListBody.messageKey)).data, 'en projects.loadFailed');
+    expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsNothing);
+
+    api.online = true;
+    await act(tester, api, () => tester.tap(find.byKey(ApiListBody.retryKey)));
+
+    expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsOneWidget);
+  });
+
+  testWidgets('redix-api #126: a project list kept in the shape this version reads answers when the network is gone', (tester) async {
+    final api = FakeApi()..online = false;
+    final store = MemoryStore();
+    await store.write('copies', '/projects', jsonEncode([api.addProject('غصون 6')]));
+    await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: keptWords('en'), store: store);
+
+    expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsOneWidget);
+    expect(find.byKey(ApiListBody.messageKey), findsNothing);
   });
 
   testWidgets('signing out forgets what was kept of the lists, because the next user must not see it', (tester) async {
