@@ -35,7 +35,7 @@ void main() {
     await openInbox(tester, (api) {
       api
         ..addPending()
-        ..addPending(amount: 500, notes: 'شراء من السوق', attachmentId: '');
+        ..addPending(amount: 500, description: 'شراء من السوق', attachmentId: '');
     });
 
     expect(tester.getTopLeft(find.byKey(ApprovalsScreen.cardKey('entry-0'))).dy, lessThan(tester.getTopLeft(find.byKey(ApprovalsScreen.cardKey('entry-1'))).dy));

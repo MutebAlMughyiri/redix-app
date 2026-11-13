@@ -32,11 +32,10 @@ void main() {
     for (final added in [item, otherItem]) {
       final path = '/projects/project-0/items/${added['id']}/columns';
       api
-        ..addColumn(path, 'الصنف', key: 'product')
         ..addColumn(path, 'سعر الوحدة', key: 'unitPrice', dataType: 'amount')
         ..addColumn(path, 'العدد', key: 'quantity', dataType: 'number')
         ..addColumn(path, 'نوع القيد', key: 'entryType', dataType: 'list', isCore: true, choices: [FakeApi.choice('choice-purchase', 'شراء', sign: 'plus'), FakeApi.choice('choice-creditNote', 'مرتجع', sign: 'minus')])
-        ..addColumn(path, 'notes');
+        ..addColumn(path, 'الوصف', key: 'description', isCore: true);
     }
     final supplier = api.addSupplier('project-0', 'شركة النخيل', vatNumber: '300000000000003');
     final cash = api.addSupplier('project-0', 'مورد نقدي عام');
@@ -123,8 +122,7 @@ void main() {
   testWidgets('saving a draft sends what was typed and chosen, never a figure, with an id made on the phone', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
-    await type(tester, AddEntryScreen.columnKey('product'), 'مواد لياسة');
-    await type(tester, AddEntryScreen.notesKey, 'ملاحظة');
+    await type(tester, AddEntryScreen.descriptionKey, 'مواد لياسة · ملاحظة');
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
@@ -132,9 +130,9 @@ void main() {
     expect(body['itemId'], opened.item);
     expect(body['supplierId'], opened.supplier);
     expect(body['date'], DateTime.now().toIso8601String().substring(0, 10));
-    expect((body['columnValues'] as Map<String, dynamic>)['product'], 'مواد لياسة');
+    expect(body['description'], 'مواد لياسة · ملاحظة');
     expect(body.containsKey('product'), isFalse);
-    expect(body['notes'], 'ملاحظة');
+    expect(body.containsKey('notes'), isFalse);
     expect(body['amount'], 6000);
     for (final gone in ['invoiceNumber', 'invoiceDate', 'amountIncludesVat', 'isNotTaxable', 'discount', 'withoutInvoiceReason']) {
       expect(body.containsKey(gone), isFalse);
@@ -355,15 +353,23 @@ void main() {
   testWidgets('a built-in field Finance made required is marked, and one it deleted is gone', (tester) async {
     final opened = await openExpense(tester);
     final columns = opened.api.columns['/projects/project-0/items/${opened.item}/columns']!;
-    columns.singleWhere((column) => column['key'] == 'product')['isRequired'] = true;
-    columns.removeWhere((column) => column['key'] == 'notes');
+    columns.singleWhere((column) => column['key'] == 'unitPrice')['isRequired'] = true;
+    columns.removeWhere((column) => column['key'] == 'quantity');
 
-    expect(find.byKey(AddEntryScreen.notesKey), findsOneWidget);
     await pickItem(tester, opened.api, opened.item);
 
-    expect(find.text('الصنف *'), findsOneWidget);
-    expect(find.byKey(AddEntryScreen.notesKey), findsNothing);
-    expect(find.byKey(AddEntryScreen.columnKey('unitPrice')), findsOneWidget);
+    expect(find.text('سعر الوحدة *'), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.columnKey('quantity')), findsNothing);
+    expect(find.byKey(AddEntryScreen.descriptionKey), findsOneWidget);
+  });
+
+  testWidgets('redix-api #129 D1: «الوصف» is the first of the table\'s fields, under its column\'s name, and no notes or product field is drawn', (tester) async {
+    final opened = await openExpense(tester);
+    await pickItem(tester, opened.api, opened.item);
+
+    expect(tester.getTopLeft(find.byKey(AddEntryScreen.descriptionKey)).dy < tester.getTopLeft(find.byKey(AddEntryScreen.dateKey)).dy, isTrue);
+    expect(find.byKey(AddEntryScreen.columnKey('product')), findsNothing);
+    expect(find.byKey(AddEntryScreen.columnKey('notes')), findsNothing);
   });
 
   testWidgets('redix-api #129 R3: a table without the unit price and the quantity asks neither, and the supplier may be left empty', (tester) async {
@@ -375,7 +381,7 @@ void main() {
 
     expect(find.byKey(AddEntryScreen.columnKey('unitPrice')), findsNothing);
     expect(find.byKey(AddEntryScreen.columnKey('quantity')), findsNothing);
-    expect(find.byKey(AddEntryScreen.columnKey('product')), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.descriptionKey), findsOneWidget);
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     final sent = opened.api.sentEntries.single;
@@ -556,13 +562,13 @@ void main() {
   testWidgets('AC-14.1, D14: a deduction is a negative amount, typed in either digits, sent as it is with why in its notes', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
-    await type(tester, AddEntryScreen.notesKey, 'خصم من المورد');
+    await type(tester, AddEntryScreen.descriptionKey, 'خصم من المورد');
 
     await type(tester, AddEntryScreen.amountKey, '-١٣٦');
 
     expect(tester.widget<TextField>(find.byKey(AddEntryScreen.amountKey)).keyboardType, const TextInputType.numberWithOptions(decimal: true, signed: true));
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
-    expect((opened.api.sentEntries.single['amount'], opened.api.sentEntries.single['notes']), (-136, 'خصم من المورد'));
+    expect((opened.api.sentEntries.single['amount'], opened.api.sentEntries.single['description']), (-136, 'خصم من المورد'));
   });
 
   testWidgets('D14: a deduction with no notes is refused with the API\'s reason', (tester) async {
@@ -572,7 +578,7 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.deductionNeedsNotes');
+    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.deductionNeedsDescription');
   });
 
   testWidgets('who holds no recordEntries has no way in', (tester) async {

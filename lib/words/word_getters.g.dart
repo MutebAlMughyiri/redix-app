@@ -1004,11 +1004,11 @@ mixin WordGetters {
   /// The word `entryShare.date`.
   String get entryShareDate => text('entryShare.date');
 
+  /// The word `entryShare.description`.
+  String get entryShareDescription => text('entryShare.description');
+
   /// The word `entryShare.item`.
   String get entryShareItem => text('entryShare.item');
-
-  /// The word `entryShare.notes`.
-  String get entryShareNotes => text('entryShare.notes');
 
   /// The word `entryShare.partner`.
   String get entrySharePartner => text('entryShare.partner');
@@ -1034,8 +1034,11 @@ mixin WordGetters {
   /// The word `expenses.date`.
   String get expensesDate => text('expenses.date');
 
-  /// The word `expenses.deductionNeedsNotes`.
-  String get expensesDeductionNeedsNotes => text('expenses.deductionNeedsNotes');
+  /// The word `expenses.deductionNeedsDescription`.
+  String get expensesDeductionNeedsDescription => text('expenses.deductionNeedsDescription');
+
+  /// The word `expenses.description`.
+  String get expensesDescription => text('expenses.description');
 
   /// The word `expenses.entryApproved`.
   String get expensesEntryApproved => text('expenses.entryApproved');
@@ -1055,11 +1058,11 @@ mixin WordGetters {
   /// The word `expenses.invalidDate`.
   String get expensesInvalidDate => text('expenses.invalidDate');
 
+  /// The word `expenses.invalidDescription`.
+  String get expensesInvalidDescription => text('expenses.invalidDescription');
+
   /// The word `expenses.invalidEntryId`.
   String get expensesInvalidEntryId => text('expenses.invalidEntryId');
-
-  /// The word `expenses.invalidNotes`.
-  String get expensesInvalidNotes => text('expenses.invalidNotes');
 
   /// The word `expenses.invoiceAlreadyAttached`.
   String get expensesInvoiceAlreadyAttached => text('expenses.invoiceAlreadyAttached');
@@ -1081,9 +1084,6 @@ mixin WordGetters {
 
   /// The word `expenses.notYourEntry`.
   String get expensesNotYourEntry => text('expenses.notYourEntry');
-
-  /// The word `expenses.notes`.
-  String get expensesNotes => text('expenses.notes');
 
   /// The word `expenses.paymentMethod`.
   String get expensesPaymentMethod => text('expenses.paymentMethod');

@@ -5,7 +5,10 @@ import '../structure/item_column.dart';
 /// A column a table of an item's report prints, its name and what it holds (redix-api #129, R1).
 class ReportColumn {
   /// A column as the API answers it.
-  ReportColumn.fromJson(Map<String, dynamic> json) : name = json['name'] as String, dataType = ColumnDataType.values.byName(json['dataType'] as String);
+  ReportColumn.fromJson(Map<String, dynamic> json) : key = json['key'] as String, name = json['name'] as String, dataType = ColumnDataType.values.byName(json['dataType'] as String);
+
+  /// Its key: `description` is «الوصف», the row's title.
+  final String key;
 
   /// Its name.
   final String name;
@@ -20,7 +23,6 @@ class ItemEntryRow {
   ItemEntryRow.fromJson(Map<String, dynamic> json)
     : entryId = json['entryId'] as String,
       date = DateTime.parse(json['date'] as String),
-      description = json['description'] as String,
       amount = (json['amount'] as num).toDouble(),
       isOutsideContract = json['isOutsideContract'] as bool,
       values = (json['values'] as List<dynamic>).cast<String>();
@@ -30,9 +32,6 @@ class ItemEntryRow {
 
   /// The day it was paid.
   final DateTime date;
-
-  /// What was bought, or what was said.
-  final String description;
 
   /// What was paid.
   final double amount;

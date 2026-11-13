@@ -190,12 +190,12 @@ void main() {
       await pick(tester, api, refund);
 
       await tester.enterText(find.byKey(AddEntryScreen.amountKey), 'كثير');
-      await tester.enterText(find.byKey(AddEntryScreen.notesKey), 'استرداد الربع الثالث');
+      await tester.enterText(find.byKey(AddEntryScreen.descriptionKey), 'استرداد الربع الثالث');
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendKey)));
 
       expect(api.sentEntries, isEmpty);
       expect(text(tester, AddEntryScreen.messageKey), 'en expenses.invalidAmount');
-      expect(tester.widget<TextField>(find.byKey(AddEntryScreen.notesKey)).controller!.text, 'استرداد الربع الثالث');
+      expect(tester.widget<TextField>(find.byKey(AddEntryScreen.descriptionKey)).controller!.text, 'استرداد الربع الثالث');
     });
 
     testWidgets('R8, D6 (Muteb, 9 Nov 2026, reversing redix-api #101 D9): revenue is saved as a draft, as an expense is', (tester) async {
@@ -306,7 +306,7 @@ void main() {
       ..addEntry(kind: 'capitalOut', status: 'rejected', rejectionReason: 'أرفق الإيصال', itemName: '', partnerName: 'نواف', amount: 300)
       ..entryDetails['entry-0'] = {
         'tableId': partner,
-        'entry': {'id': 'entry-0', 'kind': 'capitalOut', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 300, 'accountId': account, 'notes': 'سحب', 'columnValues': '{"movementType":"choice-withdrawal"}'},
+        'entry': {'id': 'entry-0', 'kind': 'capitalOut', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 300, 'accountId': account, 'description': 'سحب', 'columnValues': '{"movementType":"choice-withdrawal"}'},
         'expense': {'itemId': '00000000-0000-0000-0000-000000000000', 'subgroupId': '00000000-0000-0000-0000-000000000000', 'paymentMethodId': '00000000-0000-0000-0000-000000000000'},
         'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000'},
         'contractorPayment': {'contractId': '00000000-0000-0000-0000-000000000000', 'isOutsideContract': false},
@@ -327,6 +327,6 @@ void main() {
 
     expect(api.sentEntryPaths.single, 'PUT /projects/project-0/entries/entry-0');
     final body = api.sentEntries.single;
-    expect((body['tableId'], (body['columnValues'] as Map<String, dynamic>)['movementType'], body['amount'], body['accountId'], body['notes'], body['submit']), (partner, 'choice-withdrawal', 300, account, 'سحب', true));
+    expect((body['tableId'], (body['columnValues'] as Map<String, dynamic>)['movementType'], body['amount'], body['accountId'], body['description'], body['submit']), (partner, 'choice-withdrawal', 300, account, 'سحب', true));
   });
 }

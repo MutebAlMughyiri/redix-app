@@ -44,7 +44,7 @@ void main() {
   group('the text', () {
     for (final language in ['en', 'ar']) {
       testWidgets('R2, R4, R5, R6, R10: in $language, an entry\'s sheet in القيود shares it as text alone, every fact on its own line and its link last', (tester) async {
-        final opened = await openEntries(tester, (api) => api.addEntry(notes: 'الدفعة الأولى', paymentMethodName: 'شبكة'), language: language);
+        final opened = await openEntries(tester, (api) => api.addEntry(description: 'الدفعة الأولى', paymentMethodName: 'شبكة'), language: language);
 
         expect(await share(tester, opened, 'entry-0'), [
           '$language entries.purchases · غصون 6',
@@ -56,7 +56,7 @@ void main() {
           '$language entryShare.account: حساب المؤسسة',
           '$language entryShare.paymentMethod: شبكة',
           '$language entryShare.author: نواف',
-          '$language entryShare.notes: الدفعة الأولى',
+          '$language entryShare.description: الدفعة الأولى',
           linkOf('entry-0'),
         ].join('\n'));
         expect(opened.capture.sharedOut, isEmpty, reason: 'text only: no file goes with it');

@@ -94,7 +94,7 @@ void main() {
       await $.fill(AddEntryScreen.amountKey, '-100');
       await $.pumpAndSettle();
       await $.says(AddEntryScreen.remainingKey, '1,100.00');
-      await $.fill(AddEntryScreen.notesKey, 'خصم جودة');
+      await $.fill(AddEntryScreen.descriptionKey, 'خصم جودة');
       await $.choosePayment(made.manager, made.account);
       await $.sendEntry();
       await $.messageShows('expenses.sent');
@@ -148,7 +148,7 @@ void main() {
       await $.fill(AddEntryScreen.amountKey, '-100');
       await $.choosePayment(made.manager, made.account);
       await $.sendEntry();
-      await $.says(AddEntryScreen.messageKey, $.words.expensesDeductionNeedsNotes);
+      await $.says(AddEntryScreen.messageKey, $.words.expensesDeductionNeedsDescription);
     });
   });
 }

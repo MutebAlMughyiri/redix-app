@@ -201,7 +201,7 @@ class _ShareScreenState extends State<ShareScreen> {
 
   Widget _entryRow(AttachableEntry entry) {
     final words = Words.of(context);
-    final title = entry.product.isEmpty ? entry.supplierName : entry.product;
+    final title = entry.description.isEmpty ? entry.supplierName : entry.description;
     return RadioListTile<String>(
       key: ShareScreen.entryKey(entry.id),
       value: entry.id,

@@ -19,7 +19,7 @@ void main() {
     final open = api.addContract('project-0', 'دهان داخلي', isOpenValue: true, paid: 12000);
     final method = api.addPaymentMethod('project-0', 'شبكة');
     api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
-    api.addColumn('/projects/project-0/items/item-of-contract/columns', 'notes');
+    api.addColumn('/projects/project-0/items/item-of-contract/columns', 'الوصف', key: 'description', isCore: true);
     arrange?.call(api);
     final capture = FakeCapture();
     await openProject(tester, api, capture: capture);
@@ -122,14 +122,14 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
     expect(opened.api.sentEntries, isEmpty);
-    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.deductionNeedsNotes');
+    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.deductionNeedsDescription');
 
-    await type(tester, AddEntryScreen.notesKey, 'خصم من المبلط');
+    await type(tester, AddEntryScreen.descriptionKey, 'خصم من المبلط');
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
     final sent = opened.api.sentEntries.single;
     expect(sent['amount'], -136);
-    expect(sent['notes'], 'خصم من المبلط');
+    expect(sent['description'], 'خصم من المبلط');
     expect(sent.containsKey('attachmentId'), isFalse);
   });
 
@@ -162,7 +162,7 @@ void main() {
     await pickContract(tester, opened.api, opened.running);
     await type(tester, AddEntryScreen.amountKey, '٣٠٠٠');
     await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
-    await type(tester, AddEntryScreen.notesKey, 'دفعة الدور الأرضي');
+    await type(tester, AddEntryScreen.descriptionKey, 'دفعة الدور الأرضي');
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
@@ -171,7 +171,7 @@ void main() {
     expect(sent['amount'], 3000);
     expect(sent['paymentMethodId'], opened.method);
     expect(sent['accountId'], isNotNull);
-    expect(sent['notes'], 'دفعة الدور الأرضي');
+    expect(sent['description'], 'دفعة الدور الأرضي');
     expect(sent['date'], DateTime.now().toIso8601String().substring(0, 10));
     expect(sent['submit'], isFalse);
     expect(sent.containsKey('invoiceNumber'), isFalse);

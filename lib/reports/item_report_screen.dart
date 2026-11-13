@@ -90,20 +90,21 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
     widget.report.loadOnOpen();
   }
 
-  /// What a row is searched by: what it says, what it shows under its columns, and its amount.
-  static String _textOf(ItemEntryRow row) => [row.description, ...row.values, formatDate(row.date), searchableAmount(row.amount)].join(' ');
+  /// What a row is searched by: what it shows under its columns, and its amount.
+  static String _textOf(ItemEntryRow row) => [...row.values, formatDate(row.date), searchableAmount(row.amount)].join(' ');
 
-  /// A row as its table prints it (redix-api #129, R1): «الوصف», then what it shows under each of its table's columns, a date and an amount as the app writes them, then its amount.
+  /// A row as its table prints it (redix-api #129, R1): «الوصف» its title, then what it shows under each other column of its table, a date and an amount as the app writes them, then its amount.
   Widget _row(ItemEntryRow row, List<ReportColumn> columns) {
+    final described = columns.indexWhere((column) => column.key == 'description');
     final details = [
       for (var index = 0; index < columns.length && index < row.values.length; index++)
-        if (row.values[index].isNotEmpty) '${columns[index].name}: ${_shown(columns[index], row.values[index])}',
+        if (index != described && row.values[index].isNotEmpty) '${columns[index].name}: ${_shown(columns[index], row.values[index])}',
     ];
     return ListTile(
       key: ItemReportScreen.rowKey(row.entryId),
       dense: true,
       contentPadding: EdgeInsets.zero,
-      title: Text(row.description, key: ItemReportScreen.rowKey(row.entryId).title),
+      title: Text(described >= 0 && described < row.values.length ? row.values[described] : '', key: ItemReportScreen.rowKey(row.entryId).title),
       subtitle: Text(details.join(' · '), key: ItemReportScreen.rowKey(row.entryId).subtitle),
       trailing: Text(formatMoney(row.amount), key: ItemReportScreen.rowKey(row.entryId).trailing),
     );

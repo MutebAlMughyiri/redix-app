@@ -87,10 +87,9 @@ void main() {
     Map<String, Object> line(String id) => {
       'entryId': id,
       'date': '2026-11-02',
-      'description': 'دفعة للأرض',
       'amount': 1000,
       'isOutsideContract': false,
-      'values': const <String>[],
+      'values': ['دفعة للأرض'],
     };
     final api = await openLandCategory(tester, Brightness.dark);
     api.itemReportAnswer = {
@@ -98,7 +97,7 @@ void main() {
       'categoryName': 'الأرض',
       'total': 3000,
       'subgroups': [
-        {'id': 'subgroup-1', 'name': '', 'total': 3000, 'columns': const <Object>[], 'rows': [line('entry-a'), line('entry-b'), line('entry-c')]},
+        {'id': 'subgroup-1', 'name': '', 'total': 3000, 'columns': [{'key': 'description', 'name': 'الوصف', 'dataType': 'text'}], 'rows': [line('entry-a'), line('entry-b'), line('entry-c')]},
       ],
       'contracts': const <Object>[],
     };

@@ -27,7 +27,7 @@ abstract final class EntryShare {
     if (entry.accountShortBy > 0) words.entryShareAccountShort,
     if (entry.paymentMethodName.isNotEmpty) '${words.entrySharePaymentMethod}: ${entry.paymentMethodName}',
     '${words.entryShareAuthor}: ${entry.authorName}',
-    if (entry.notes.isNotEmpty) '${words.entryShareNotes}: ${entry.notes}',
+    if (entry.description.isNotEmpty) '${words.entryShareDescription}: ${entry.description}',
     linkOf(project.id, entry),
   ].join('\n');
 

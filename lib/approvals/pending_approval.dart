@@ -13,7 +13,7 @@ class PendingApproval {
       supplierName = json['supplierName'] as String,
       invoiceNumber = json['invoiceNumber'] as String,
       accountName = json['accountName'] as String,
-      notes = json['notes'] as String,
+      description = json['description'] as String,
       attachmentId = json['attachmentId'] as String,
       contentType = json['contentType'] as String,
       fileName = json['fileName'] as String,
@@ -47,8 +47,8 @@ class PendingApproval {
   /// What paid it.
   final String accountName;
 
-  /// What was noted.
-  final String notes;
+  /// «الوصف», what it says (redix-api #129).
+  final String description;
 
   /// Its file; empty when it has none.
   final String attachmentId;

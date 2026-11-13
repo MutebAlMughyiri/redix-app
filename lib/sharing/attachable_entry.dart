@@ -6,7 +6,7 @@ class AttachableEntry {
       status = json['status'] as String,
       date = DateTime.parse(json['entryDate'] as String),
       amount = (json['amount'] as num).toDouble(),
-      product = json['product'] as String,
+      description = json['description'] as String,
       supplierName = json['supplierName'] as String,
       supplierVatNumber = json['supplierVatNumber'] as String,
       isMatching = json['isMatching'] as bool;
@@ -23,8 +23,8 @@ class AttachableEntry {
   /// What was paid.
   final double amount;
 
-  /// What was bought; empty when not said.
-  final String product;
+  /// «الوصف», what it says (redix-api #129).
+  final String description;
 
   /// Its supplier, or the contract's contractor.
   final String supplierName;

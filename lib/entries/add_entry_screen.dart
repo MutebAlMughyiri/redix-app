@@ -56,11 +56,11 @@ import '../ui/app_color.dart';
 import '../ui/swipe_to_remove.dart';
 
 /// إضافة قيد (UC-022, UC-027, redix-app #84, redix-api #110): one form adds an entry to any table, and the table chosen says what it is. Every entry asks the same things in the
-/// same place: its file, its table and date, its amount, its account and its notes, and is saved as a draft or sent for approval. A table adds only its own: a purchase its
+/// same place: its file, its table, its description «الوصف» first, its date, its amount and its account, and is saved as a draft or sent for approval. A table adds only its own: a purchase its
 /// supplier, which may be none (redix-api #129); a contract's payment the contract's figures, where going beyond its value only warns, and whether it is inside it. Every table
 /// shows its item's columns as fields of their own (redix-api #129, R3): the unit price, the quantity and the product only where the table has them, «نوع القيد» and «نوع الحركة»
 /// as dropdowns of their choices, whose sign makes a purchase a credit note or a partner's money a withdrawal. An expense also says how it was paid, and a negative amount is a
-/// deduction, which says why in its notes. A draft can wait for the required columns; sending cannot.
+/// deduction, which says why in its description. A draft can wait for the required columns; sending cannot.
 class AddEntryScreen extends StatefulWidget {
   /// The screen entering an entry in [project], recorded through [recording], into one of [tables], showing a contract's figures from [contracts], picking from [accounts] or
   /// [projectAccounts], [paymentMethods] and [suppliers], asking what [columnsOf] an item says, keeping the file through [attachments]
@@ -235,8 +235,8 @@ class AddEntryScreen extends StatefulWidget {
   /// The line that says what outside the contract means.
   static const outsideExplainKey = Key('addEntry.outsideExplain');
 
-  /// The notes.
-  static const notesKey = Key('addEntry.notes');
+  /// «الوصف», the entry's one description, first among its table's fields (redix-api #129 D1).
+  static const descriptionKey = Key('addEntry.description');
 
   /// The button that sends it for approval.
   static const sendKey = Key('addEntry.send');
@@ -299,7 +299,7 @@ class AddEntryScreen extends StatefulWidget {
 class _AddEntryScreenState extends State<AddEntryScreen> {
   late final _entryId = widget.editingId.isEmpty ? const Uuid().v7() : widget.editingId;
   final _amount = TextEditingController();
-  final _notes = TextEditingController();
+  final _description = TextEditingController();
   final _columnValues = <String, String>{};
   final _file = EntryFile();
   var _qr = InvoiceQr.none();
@@ -331,7 +331,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   @override
   void dispose() {
-    for (final controller in [_amount, _notes]) {
+    for (final controller in [_amount, _description]) {
       controller.dispose();
     }
     super.dispose();
@@ -356,7 +356,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       _saved = saved;
       _supplier = widget.suppliers.all.where((supplier) => supplier.id == saved.supplierId).firstOrNull ?? Supplier.none();
       _isOutside = saved.isOutsideContract;
-      _notes.text = saved.notes;
+      _description.text = saved.description;
       _payment
         ..accountId = saved.accountId
         ..paymentMethodId = saved.paymentMethodId;
@@ -520,7 +520,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       if (accountId.isNotEmpty) 'accountId': accountId,
       if (_table.isExpense && _payment.paymentMethodId.isNotEmpty) 'paymentMethodId': _payment.paymentMethodId,
       if (_file.attachmentId.isNotEmpty) 'attachmentId': _file.attachmentId,
-      'notes': _notes.text,
+      'description': _description.text,
       'columnValues': ItemColumn.valuesToSend(_columns, _columnValues),
       'submit': submit,
       if (_amount.text.trim().isNotEmpty) 'amount': parseNumber(_amount.text),
@@ -534,7 +534,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     if (_amount.text.trim().isNotEmpty && parseNumber(_amount.text).isNaN) {
       return 'expenses.invalidAmount';
     }
-    return _isDeduction && _notes.text.trim().isEmpty ? 'expenses.deductionNeedsNotes' : '';
+    return _isDeduction && _description.text.trim().isEmpty ? 'expenses.deductionNeedsDescription' : '';
   }
 
   Future<String> _record(bool submit) async {
@@ -580,8 +580,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     });
   }
 
-  /// Whether the entry asks its notes: an expense when its table asks them; revenue and a partner's money always, whose description they are.
-  bool get _asksNotes => !_table.isExpense || _table.asks('notes');
 
   bool _requires(String key) => _columns.any((column) => column.key == key && column.isRequired);
 
@@ -597,6 +595,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   List<Widget> _whatItIsFor(Words words) => [
     if (widget.rejectionReason.isNotEmpty) refusalText(context, '${words.entriesReason}: ${widget.rejectionReason}', AddEntryScreen.rejectionKey),
     _tablePicker(),
+    _textField(AddEntryScreen.descriptionKey, _description, _labelOf('description', words.expensesDescription), maxLines: 2, errorText: _errorOf('description', words)),
     PickerField(key: AddEntryScreen.dateKey, label: _nameOf('date', words.expensesDate), value: formatDate(_date), onTap: () => _chooseDate(_date, (date) => _date = date)),
     if (_table.asksContract) ..._theContract(words),
     if (_table.asksSupplier) _theSupplier(words),
@@ -651,7 +650,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   Widget _paymentSection(Words words) => FormSection(key: AddEntryScreen.paymentSectionKey, [
     PaymentChoices(choice: _payment, accounts: _accounts, asksPaymentMethod: _table.isExpense, paymentMethods: widget.paymentMethods, onChanged: () => setState(() {}), onRetry: _readListsAgain),
-    if (_asksNotes) _textField(AddEntryScreen.notesKey, _notes, _labelOf('notes', words.expensesNotes), maxLines: 2, errorText: _errorOf('notes', words)),
   ]);
 
   Widget _tablePicker() => TablePicker(key: AddEntryScreen.tableKey, tables: widget.tables, chosen: _table, onChanged: _chooseTable);

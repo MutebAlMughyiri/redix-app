@@ -16,7 +16,7 @@ class SavedEntry {
       status: EntryStatus.values.byName(entry['status'] as String),
       amount: (entry['amount'] as num).toDouble(),
       date: DateTime.parse(entry['entryDate'] as String),
-      notes: entry['notes'] as String,
+      description: entry['description'] as String,
       accountId: entry['accountId'] as String,
       paymentMethodId: expense['paymentMethodId'] as String,
       supplierId: purchase['supplierId'] as String,
@@ -32,7 +32,7 @@ class SavedEntry {
       status = EntryStatus.draft,
       amount = 0,
       date = DateTime(1),
-      notes = '',
+      description = '',
       accountId = '',
       paymentMethodId = '',
       supplierId = '',
@@ -45,7 +45,7 @@ class SavedEntry {
     required this.status,
     required this.amount,
     required this.date,
-    required this.notes,
+    required this.description,
     required this.accountId,
     required this.paymentMethodId,
     required this.supplierId,
@@ -66,8 +66,8 @@ class SavedEntry {
   /// Its date.
   final DateTime date;
 
-  /// What was noted.
-  final String notes;
+  /// «الوصف», what it says (redix-api #129).
+  final String description;
 
   /// The account that paid it.
   final String accountId;

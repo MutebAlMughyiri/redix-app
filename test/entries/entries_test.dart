@@ -506,9 +506,8 @@ void main() {
       final api = await openEntries(tester, (api) {
         final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'بند اللياسة', subgroups: ['مواد']);
         api
-          ..addColumn('/projects/project-0/items/${item['id']}/columns', 'الصنف', key: 'product')
           ..addColumn('/projects/project-0/items/${item['id']}/columns', 'نوع القيد', key: 'entryType', dataType: 'list', isCore: true, choices: [FakeApi.choice('choice-purchase', 'شراء', sign: 'plus'), FakeApi.choice('choice-creditNote', 'مرتجع', sign: 'minus')])
-          ..addColumn('/projects/project-0/items/${item['id']}/columns', 'notes');
+          ..addColumn('/projects/project-0/items/${item['id']}/columns', 'الوصف', key: 'description', isCore: true);
         final supplier = api.addSupplier('project-0', 'شركة البواني', vatNumber: '300000000000003');
         final method = api.addPaymentMethod('project-0', 'شبكة');
         final account = api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
@@ -516,7 +515,7 @@ void main() {
           ..addEntry(status: 'rejected', rejectionReason: 'الصورة غير واضحة')
           ..entryDetails['entry-0'] = {
             'tableId': (item['subgroups']! as List<Map<String, Object>>).first['id']!,
-            'entry': {'id': 'entry-0', 'kind': 'purchase', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': amount, 'accountId': account['id']!, 'notes': 'دفعة أولى', 'columnValues': jsonEncode({'product': 'مواد لياسة', 'entryType': amount < 0 ? 'choice-creditNote' : 'choice-purchase'})},
+            'entry': {'id': 'entry-0', 'kind': 'purchase', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': amount, 'accountId': account['id']!, 'description': 'دفعة أولى', 'columnValues': jsonEncode({'entryType': amount < 0 ? 'choice-creditNote' : 'choice-purchase'})},
             'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!},
             'purchase': {'supplierId': supplier['id']!},
             'contractorPayment': {'contractId': '00000000-0000-0000-0000-000000000000', 'isOutsideContract': false},
@@ -544,7 +543,7 @@ void main() {
       expect(find.byKey(AddEntryScreen.filesKey), findsNothing);
       expect(find.ancestor(of: find.byKey(AddEntryScreen.amountKey), matching: find.byWidgetPredicate((widget) => widget is IgnorePointer && widget.ignoring)), findsWidgets);
       expect(typed(tester, AddEntryScreen.amountKey), '1150');
-      expect(typed(tester, AddEntryScreen.notesKey), 'دفعة أولى');
+      expect(typed(tester, AddEntryScreen.descriptionKey), 'دفعة أولى');
     });
 
     testWidgets('redix-api #119 D4, #129: a saved purchase whose «نوع القيد» is «مرتجع» opens with it chosen and its plain amount typed, and is sent again as one', (tester) async {
@@ -559,10 +558,10 @@ void main() {
       expect(((sent['columnValues'] as Map<String, dynamic>)['entryType'], sent['amount']), ('choice-creditNote', 320));
     });
 
-    testWidgets('redix-api #129: a saved purchase keeps the product it was given in its column\'s field', (tester) async {
+    testWidgets('redix-api #129 D1: a saved entry opens with its description in «الوصف»', (tester) async {
       await openRejected(tester);
 
-      expect(typed(tester, AddEntryScreen.columnKey('product')), 'مواد لياسة');
+      expect(typed(tester, AddEntryScreen.descriptionKey), 'دفعة أولى');
     });
 
     testWidgets('findings row 185: a kept PDF shows under the name it was kept with, its Arabic name too', (tester) async {
@@ -576,7 +575,7 @@ void main() {
 
       expect(tester.widget<Text>(find.byKey(AddEntryScreen.rejectionKey)).data, 'en entries.reason: الصورة غير واضحة');
       expect(typed(tester, AddEntryScreen.amountKey), '1150');
-      expect(typed(tester, AddEntryScreen.notesKey), 'دفعة أولى');
+      expect(typed(tester, AddEntryScreen.descriptionKey), 'دفعة أولى');
       expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget, reason: 'redix-app #90: the photo it was filled with stays after Edit');
       expect(find.byKey(AddEntryScreen.cameraKey), findsOneWidget);
     });
@@ -599,7 +598,7 @@ void main() {
     testWidgets('R12, D10: a rejected contractor payment opens in its contract\'s table under the title تعديل, and goes back to its own entry', (tester) async {
       final api = await openEntries(tester, (api) {
         final item = api.addItem(api.addCategory('project-0', 'العظم'), 'بند الحديد', type: 'contractorPayments');
-        api.addColumn('/projects/project-0/items/${item['id']}/columns', 'notes');
+        api.addColumn('/projects/project-0/items/${item['id']}/columns', 'الوصف', key: 'description', isCore: true);
         final contract = api.addContract('project-0', 'مقاول الحديد', value: 1000, itemId: item['id']! as String);
         final method = api.addPaymentMethod('project-0', 'شبكة');
         final account = api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
@@ -607,7 +606,7 @@ void main() {
           ..addEntry(kind: 'contractorPayment', status: 'rejected', rejectionReason: 'المبلغ خطأ')
           ..entryDetails['entry-0'] = {
             'tableId': contract['id']!,
-            'entry': {'id': 'entry-0', 'kind': 'contractorPayment', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 500, 'accountId': account['id']!, 'notes': 'دفعة', 'columnValues': '{}'},
+            'entry': {'id': 'entry-0', 'kind': 'contractorPayment', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 500, 'accountId': account['id']!, 'description': 'دفعة', 'columnValues': '{}'},
             'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!},
             'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000'},
             'contractorPayment': {'contractId': contract['id']!, 'isOutsideContract': true},
@@ -626,7 +625,7 @@ void main() {
 
       expect(api.sentEntryPaths.single, 'PUT /projects/project-0/entries/entry-0');
       final body = api.sentEntries.single;
-      expect((body['tableId'], body['isOutsideContract'], body['amount'], body['notes']), (api.contracts['project-0']!.single['id'], true, 500, 'دفعة'));
+      expect((body['tableId'], body['isOutsideContract'], body['amount'], body['description']), (api.contracts['project-0']!.single['id'], true, 500, 'دفعة'));
     });
   });
 
@@ -635,14 +634,14 @@ void main() {
     Future<FakeApi> openSaved(WidgetTester tester, {required String status, double amount = 500, double paid = 0, double pending = 0, bool isOutside = false}) async {
       final api = await openEntries(tester, (api) {
         final item = api.addItem(api.addCategory('project-0', 'العظم'), 'بند الحديد', type: 'contractorPayments');
-        api.addColumn('/projects/project-0/items/${item['id']}/columns', 'notes');
+        api.addColumn('/projects/project-0/items/${item['id']}/columns', 'الوصف', key: 'description', isCore: true);
         final contract = api.addContract('project-0', 'مقاول الحديد', value: 1000, paid: paid, pending: pending, itemId: item['id']! as String);
         final account = api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
         api
           ..addEntry(kind: 'contractorPayment', status: status, amount: amount)
           ..entryDetails['entry-0'] = {
             'tableId': contract['id']!,
-            'entry': {'id': 'entry-0', 'kind': 'contractorPayment', 'status': status, 'entryDate': '2026-11-05', 'amount': amount, 'accountId': account['id']!, 'notes': 'دفعة', 'columnValues': '{}'},
+            'entry': {'id': 'entry-0', 'kind': 'contractorPayment', 'status': status, 'entryDate': '2026-11-05', 'amount': amount, 'accountId': account['id']!, 'description': 'دفعة', 'columnValues': '{}'},
             'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': '00000000-0000-0000-0000-000000000000'},
             'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000'},
             'contractorPayment': {'contractId': contract['id']!, 'isOutsideContract': isOutside},

@@ -574,7 +574,7 @@ void main() {
 
       final overrun = api.addContract(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', itemName: 'البلاط والرخام للواجهات الداخلية', value: 999999999.99, paid: 1099999999.99, unitPrice: 380, quantity: 50, notes: 'زيادة بملحق', hasPayments: true)['id'] as String;
       final open = api.addContract(runningId, 'دهان داخلي', isOpenValue: true, paid: 12000)['id'] as String;
-      api.addColumn('/projects/$runningId/items/item-of-contract/columns', 'notes');
+      api.addColumn('/projects/$runningId/items/item-of-contract/columns', 'الوصف', key: 'description', isCore: true);
       await showProjectSetting(tester, HomeScreen.contractsKey(runningId));
       await tester.ensureVisible(projectSettingPages);
       await tester.pumpAndSettle();
@@ -619,7 +619,7 @@ void main() {
         AddEntryScreen.supplierKey,
         AddEntryScreen.dateKey,
         AddEntryScreen.amountKey,
-        AddEntryScreen.notesKey,
+        AddEntryScreen.descriptionKey,
         AddEntryScreen.sendKey,
         AddEntryScreen.draftKey,
       ].forEach(expectFits);
@@ -644,7 +644,7 @@ void main() {
         AddEntryScreen.outsideExplainKey,
         AddEntryScreen.cameraKey,
         AddEntryScreen.filesKey,
-        AddEntryScreen.notesKey,
+        AddEntryScreen.descriptionKey,
         AddEntryScreen.sendKey,
         AddEntryScreen.draftKey,
       ].forEach(expectFits);

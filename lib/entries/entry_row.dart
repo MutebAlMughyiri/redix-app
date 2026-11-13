@@ -19,7 +19,7 @@ class EntryRow {
       authorName = '',
       isMine = false,
       partnerName = '',
-      notes = '',
+      description = '',
       accountName = '',
       paymentMethodName = '',
       accountShortBy = 0;
@@ -41,7 +41,7 @@ class EntryRow {
       authorName = json['authorName'] as String,
       isMine = json['isMine'] as bool,
       partnerName = json['partnerName'] as String,
-      notes = json['notes'] as String,
+      description = json['description'] as String,
       accountName = json['accountName'] as String,
       paymentMethodName = json['paymentMethodName'] as String,
       accountShortBy = (json['accountShortBy'] as num? ?? 0).toDouble();
@@ -82,8 +82,8 @@ class EntryRow {
   /// A partner's money's partner; empty for any other entry.
   final String partnerName;
 
-  /// What was noted; empty for nothing.
-  final String notes;
+  /// «الوصف», what it says; empty for nothing (redix-api #129).
+  final String description;
 
   /// The account it was paid from or reached.
   final String accountName;

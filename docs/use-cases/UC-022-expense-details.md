@@ -10,18 +10,19 @@
 
 One button, **إضافة قيد**, sits at the bottom of the project's home where **New purchase expense** and **Contractor payment** were (`HomeScreen.addEntryKey(id)`). It opens `AddEntryScreen` at `/projects/:projectId/entries/new`. The rule: **an entry goes into one table of an item's sheet, and the table says what the entry is.** An item's general or named table takes a purchase; a contract's table takes a contractor payment (UC-027). `EntryTable` answers everything the two differ in: the route, the amount's column and word, and the file's word.
 
-A purchase is a total on one date, with an optional file (redix-api #96, D3, D10, D11). The app sends what was typed: the amount, or price and quantity, which the API multiplies when no amount is typed (BR-01). Every table shows its item's columns as fields of their own (redix-api #129, R3): the unit price, the quantity and the product only where the table has them, «نوع القيد» as a dropdown of its choices, each sent under its column's key in `columnValues`; the API's `columnKeys` on each table say which of the item's columns it asks. The supplier may be left empty (Muteb, 13 Nov 2026). It shows and sends no VAT, discount or bill number (D2, D4, D12). The id is made here (`Uuid().v7()`), once per screen, so trying again cannot make a second entry. The file is kept once, on the first save, and again only if it was taken again. The camera opens first for whoever may attach files, and its QR code fills the date, the total and the supplier (UC-024).
+A purchase is a total on one date, with an optional file (redix-api #96, D3, D10, D11). The app sends what was typed: the amount, or price and quantity, which the API multiplies when no amount is typed (BR-01). Every table shows its item's columns as fields of their own (redix-api #129, R3): the unit price and the quantity only where the table has them, «نوع القيد» as a dropdown of its choices, each sent under its column's key in `columnValues`; the API's `columnKeys` on each table say which of the item's columns it asks. The supplier may be left empty (Muteb, 13 Nov 2026). It shows and sends no VAT, discount or bill number (D2, D4, D12). The id is made here (`Uuid().v7()`), once per screen, so trying again cannot make a second entry. The file is kept once, on the first save, and again only if it was taken again. The camera opens first for whoever may attach files, and its QR code fills the date, the total and the supplier (UC-024).
 
 | Element | `Key` | Does |
 | --- | --- | --- |
 | The title, and the project's name under it | `AddEntryScreen.titleKey`, `projectNameKey` | إضافة قيد, or تعديل when an entry opens to change |
 | The file | `AddEntryScreen.cameraKey`, `filesKey`, `invoiceNameKey` | UC-021: the bill's picture for a purchase, the receipt for a payment |
+| الوصف | `AddEntryScreen.descriptionKey` | The entry's one description, first under the table, for every table; a deduction says why here; the product and the notes went into it (redix-api #129 D1) |
 | Table | `AddEntryScreen.tableKey`, `TablePicker.optionKey(id)` | A sheet of every table on offer, by category: each item's general table, and its named tables and contracts under it. The field shows the general table as its item's name, and any other as the table and then its item in brackets, الجلاي (دفعات العظم) (Muteb, 7 Nov 2026). Its item's columns are read when the item changes |
 | Searching the tables, and nothing matching | `TablePicker.searchKey`, `noMatchKey` | Keeps every table of an item whose name holds what was typed, and any table whose own name does, in one spelling |
 | Date | `AddEntryScreen.dateKey` | Starts at today and picks within the project's period; sent as `paymentDate` |
 | Supplier, and what is known of it | `AddEntryScreen.supplierKey`, `supplierDetailsKey` | A purchase's: opens `SupplierPicker`, with its quick add (UC-018, UC-019); may be left empty (redix-api #129) |
 | نوع القيد | `AddEntryScreen.columnKey('entryType')`, `columnOptionKey('entryType', choiceId)` | A purchase's list of «شراء» and «مرتجع»; «مرتجع» makes it a credit note (UC-026, redix-api #129) |
-| Product, unit price, quantity | `AddEntryScreen.columnKey('product')`, `columnKey('unitPrice')`, `columnKey('quantity')` | Columns like any other, each shown only where its table has it, under its column's name: marked `*` when required, gone when deleted (redix-api #129, R2, R3) |
+| Unit price, quantity | `AddEntryScreen.columnKey('unitPrice')`, `columnKey('quantity')` | Columns like any other, each shown only where its table has it, under its column's name: marked `*` when required, gone when deleted (redix-api #129, R2, R3) |
 | The contract's figures, inside or outside | `AddEntryScreen.valueKey`, `paidKey`, `remainingKey`, `insideKey`, `outsideKey` | A payment's (UC-027) |
 | Amount | `AddEntryScreen.amountKey` | A purchase's total or a payment's amount, labelled by its column; a negative one is a deduction |
 | Any other column of the table | `AddEntryScreen.columnKey(key)`, a list's choice `columnOptionKey(key, choiceId)` | `ColumnValueField`, by what it holds, a list a dropdown of its choices; marked `*` when required, and in red when refused |
@@ -29,7 +30,6 @@ A purchase is a total on one date, with an optional file (redix-api #96, D3, D10
 | An account | `PaymentChoices.accountKey(id)` | The offered accounts; the only one is already chosen |
 | Holds nothing | `AddEntryScreen.noAccountKey` | |
 | A payment method | `PaymentChoices.paymentMethodKey(id)` | The active ones |
-| Notes | `AddEntryScreen.notesKey` | Follows its column; a deduction says why here |
 | Send for approval, Save draft | `AddEntryScreen.sendKey`, `draftKey` | |
 | Why refused, and what was saved | `AddEntryScreen.messageKey`, `savedKey` | |
 | A list not read, and try again | `AddEntryScreen.listMessageKey`, `retryKey` | |

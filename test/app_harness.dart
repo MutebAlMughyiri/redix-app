@@ -35,7 +35,7 @@ Map<String, String> wordsIn(String language) => {
   for (final key in [
     'app.title',
     'entries.share', 'entries.notFound', 'approvals.showAll', 'entryShare.item', 'entryShare.partner', 'entryShare.supplier', 'entryShare.contractor', 'entryShare.amount',
-    'entryShare.date', 'entryShare.status', 'entryShare.account', 'entryShare.paymentMethod', 'entryShare.author', 'entryShare.notes',
+    'entryShare.date', 'entryShare.status', 'entryShare.account', 'entryShare.paymentMethod', 'entryShare.author', 'entryShare.description',
     'biometrics.signIn', 'biometrics.hint', 'biometrics.or', 'biometrics.failed', 'biometrics.usePassword', 'biometrics.promptTitle', 'biometrics.promptCancel', 'biometrics.notAvailable', 'biometrics.notChanged',
     'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.defaultSet', 'sharedSettings.defaultProject', 'sharedSettings.defaultProjectHint', 'sharedSettings.switchProject',
     'sharedSettings.appearance', 'sharedSettings.themeSystem', 'sharedSettings.themeLight', 'sharedSettings.themeDark', 'sharedSettings.entriesShown', 'sharedSettings.entriesShownHint',
@@ -95,10 +95,10 @@ Map<String, String> wordsIn(String language) => {
     'attachments.invoicePhoto', 'attachments.retake', 'attachments.takePhoto', 'attachments.pickFile',
     'expenses.item', 'expenses.supplier', 'expenses.date',
     'expenses.total',
-    'expenses.paymentMethod', 'expenses.account', 'expenses.noAccount', 'expenses.notes',
+    'expenses.paymentMethod', 'expenses.account', 'expenses.noAccount', 'expenses.description',
     'expenses.send', 'expenses.saveDraft', 'expenses.sent', 'expenses.saved', 'expenses.noConnection', 'expenses.refused', 'expenses.projectFinished', 'expenses.invalidEntryId',
     'expenses.entryExists', 'expenses.itemNotOffered', 'expenses.unknownSubgroup', 'expenses.unknownSupplier', 'expenses.unknownPaymentMethod', 'expenses.accountNotOffered', 'expenses.unknownAttachment',
-    'expenses.invalidNotes', 'expenses.invalidAmount',
+    'expenses.invalidDescription', 'expenses.invalidAmount',
     'expenses.invalidPaymentDate', 'expenses.unknownColumn', 'expenses.invalidColumnValue', 'expenses.requiredColumnMissing', 'expenses.qrRead',
     'expenses.qrUnreadable', 'expenses.qrSupplierMissing', 'expenses.qrAddSupplier', 'suppliers.mostUsed',
     'expenses.duplicateTitle', 'expenses.duplicateExplain', 'expenses.invoiceAlreadyAttached',
@@ -109,7 +109,7 @@ Map<String, String> wordsIn(String language) => {
                 'capital.pendingEntries',     'reports.save', 'reports.downloaded',
     'reports.surplus',
     'expenses.loadFailed',
-    'expenses.deductionNeedsNotes', 'revenue.total', 'accounts.custodian', 'accounts.noCustodian', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.counted', 'accounts.history', 'accounts.delete', 'accounts.deleteQuestion', 'accounts.deleteCannotUndo', 'accounts.accountInUse', 'accounts.deleted', 'accounts.banks', 'accounts.custodies', 'transfers.title', 'transfers.button', 'transfers.from', 'transfers.to', 'transfers.balanceNow', 'transfers.amount', 'transfers.date', 'transfers.notes', 'transfers.save', 'transfers.sameAccount', 'transfers.invalidAmount', 'transfers.accountDisabled', 'transfers.insufficientBalance', 'transfers.unknownAccount', 'transfers.invalidNotes', 'transfers.noConnection', 'transfers.refused', 'transfers.projectFinished', 'approvals.accountShort', 'entryShare.accountShort', 'history.account', 'history.partner', 'history.all', 'history.partnerCreated', 'history.partnerChanged', 'history.partnerAccount', 'history.partnerDeleted', 'history.capitalIn', 'history.capitalOut', 'history.mine', 'history.empty', 'history.loadFailed', 'history.unknownAccount', 'history.accountCreated', 'history.accountChanged', 'history.nameWas', 'history.accountDisabled', 'history.accountEnabled', 'history.accountDeleted', 'history.custodianChanged', 'history.transfer', 'history.entryIn', 'history.entryOut', 'history.check', 'history.approvedBy', 'history.more', 'history.entryApproved', 'history.entryRejected', 'approvals.history', 'entries.kind', 'accounts.riyal',
+    'expenses.deductionNeedsDescription', 'revenue.total', 'accounts.custodian', 'accounts.noCustodian', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.counted', 'accounts.history', 'accounts.delete', 'accounts.deleteQuestion', 'accounts.deleteCannotUndo', 'accounts.accountInUse', 'accounts.deleted', 'accounts.banks', 'accounts.custodies', 'transfers.title', 'transfers.button', 'transfers.from', 'transfers.to', 'transfers.balanceNow', 'transfers.amount', 'transfers.date', 'transfers.notes', 'transfers.save', 'transfers.sameAccount', 'transfers.invalidAmount', 'transfers.accountDisabled', 'transfers.insufficientBalance', 'transfers.unknownAccount', 'transfers.invalidNotes', 'transfers.noConnection', 'transfers.refused', 'transfers.projectFinished', 'approvals.accountShort', 'entryShare.accountShort', 'history.account', 'history.partner', 'history.all', 'history.partnerCreated', 'history.partnerChanged', 'history.partnerAccount', 'history.partnerDeleted', 'history.capitalIn', 'history.capitalOut', 'history.mine', 'history.empty', 'history.loadFailed', 'history.unknownAccount', 'history.accountCreated', 'history.accountChanged', 'history.nameWas', 'history.accountDisabled', 'history.accountEnabled', 'history.accountDeleted', 'history.custodianChanged', 'history.transfer', 'history.entryIn', 'history.entryOut', 'history.check', 'history.approvedBy', 'history.more', 'history.entryApproved', 'history.entryRejected', 'approvals.history', 'entries.kind', 'accounts.riyal',
   ])
     key: '$language $key',
   'partners.draftsBy': '$language partners.draftsBy {0}',
@@ -533,7 +533,7 @@ class FakeApi {
     bool isMine = true,
     String itemName = 'بند اللياسة',
     String partnerName = '',
-    String notes = '',
+    String description = '',
     String accountName = 'حساب المؤسسة',
     String paymentMethodName = '',
     double accountShortBy = 0,
@@ -551,7 +551,7 @@ class FakeApi {
       'authorName': 'نواف',
       'isMine': isMine,
       'partnerName': partnerName,
-      'notes': notes,
+      'description': description,
       'accountName': accountName,
       'paymentMethodName': paymentMethodName,
       'accountShortBy': accountShortBy,
@@ -576,7 +576,7 @@ class FakeApi {
   Map<String, Object> addPending({
     String kind = 'purchase',
     double amount = 1150,
-    String notes = '',
+    String description = '',
     String attachmentId = 'attachment-1',
     String contentType = 'image/png',
     String fileName = 'invoice-2617.png',
@@ -594,7 +594,7 @@ class FakeApi {
       'supplierName': 'شركة البواني',
       'invoiceNumber': '2617',
       'accountName': 'حساب المؤسسة',
-      'notes': notes,
+      'description': description,
       'attachmentId': attachmentId,
       'contentType': contentType,
       'fileName': fileName,
@@ -698,7 +698,7 @@ class FakeApi {
       'status': status,
       'entryDate': '2026-10-25',
       'amount': amount,
-      'product': 'مواد لياسة',
+      'description': 'مواد لياسة',
       'supplierName': 'شركة البواني',
       'supplierVatNumber': supplierVatNumber,
       'isMatching': isMatching,
@@ -1441,13 +1441,13 @@ class FakeApi {
   }
 
   /// What only a purchase's template has, which a contractor payment is never asked, its supplier among it (redix-api #129).
-  static const purchaseOnlyKeys = {'supplier', 'product', 'unitPrice', 'quantity', 'entryType', 'total'};
+  static const purchaseOnlyKeys = {'supplier', 'unitPrice', 'quantity', 'entryType', 'total'};
 
   /// What only a contractor payment's template has, which a purchase is never asked.
   static const paymentOnlyKeys = {'outsideContract', 'contract', 'amount'};
 
   /// The columns an entry answers in fields of its own, as the API marks them (redix-api #129, R5).
-  static const entryFieldKeys = {'date', 'supplier', 'total', 'amount', 'account', 'paymentMethod', 'attachment', 'contract', 'outsideContract', 'notes'};
+  static const entryFieldKeys = {'description', 'date', 'supplier', 'total', 'amount', 'account', 'paymentMethod', 'attachment', 'contract', 'outsideContract'};
 
   /// A choice of a list column as the API answers it: its [id], its [name] and its [sign].
   static Map<String, Object> choice(String id, String name, {String sign = 'none'}) => {'id': id, 'name': name, 'sign': sign};

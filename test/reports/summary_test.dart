@@ -242,10 +242,9 @@ void main() {
     Map<String, Object> line(String id, String description, double amount) => {
       'entryId': id,
       'date': '2026-11-02',
-      'description': description,
       'amount': amount,
       'isOutsideContract': false,
-      'values': const <String>[],
+      'values': [description],
     };
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
     api.itemReportAnswer = {
@@ -253,10 +252,10 @@ void main() {
       'categoryName': 'التشطيب',
       'total': 5600,
       'subgroups': [
-        {'id': 'subgroup-1', 'name': 'الدور الأرضي', 'total': 1600, 'columns': const <Object>[], 'rows': [line('entry-a', 'بلاط المطبخ', 1000), line('entry-b', 'بلاط الحمام', 600)]},
+        {'id': 'subgroup-1', 'name': 'الدور الأرضي', 'total': 1600, 'columns': [{'key': 'description', 'name': 'الوصف', 'dataType': 'text'}], 'rows': [line('entry-a', 'بلاط المطبخ', 1000), line('entry-b', 'بلاط الحمام', 600)]},
       ],
       'contracts': [
-        {'id': 'contract-1', 'contractorName': 'مقاول البلاط', 'value': 5000, 'isOpenValue': false, 'paid': 4000, 'remaining': 1000, 'isOverrun': false, 'paymentsTotal': 4000, 'columns': const <Object>[], 'payments': [line('entry-c', 'دفعة أولى', 4000)]},
+        {'id': 'contract-1', 'contractorName': 'مقاول البلاط', 'value': 5000, 'isOpenValue': false, 'paid': 4000, 'remaining': 1000, 'isOverrun': false, 'paymentsTotal': 4000, 'columns': [{'key': 'description', 'name': 'الوصف', 'dataType': 'text'}], 'payments': [line('entry-c', 'دفعة أولى', 4000)]},
       ],
     };
     await openSide(tester, api, SummarySide.expenses);
@@ -314,18 +313,19 @@ void main() {
               'name': '',
               'total': 1000,
               'columns': [
-                {'name': 'المورد', 'dataType': 'list'},
-                {'name': 'التاريخ', 'dataType': 'date'},
-                {'name': 'سعر الوحدة', 'dataType': 'amount'},
-                {'name': 'اللون', 'dataType': 'text'},
+                {'key': 'description', 'name': 'الوصف', 'dataType': 'text'},
+                {'key': 'supplier', 'name': 'المورد', 'dataType': 'list'},
+                {'key': 'date', 'name': 'التاريخ', 'dataType': 'date'},
+                {'key': 'unitPrice', 'name': 'سعر الحبة', 'dataType': 'amount'},
+                {'key': 'custom.colour', 'name': 'اللون', 'dataType': 'text'},
               ],
               'rows': [
-                {'entryId': 'entry-1', 'date': '2026-10-01', 'description': 'بلاط أرضيات', 'amount': 1000, 'isOutsideContract': false, 'values': ['البواني', '2026-10-01', '50', 'أبيض']},
+                {'entryId': 'entry-1', 'date': '2026-10-01', 'amount': 1000, 'isOutsideContract': false, 'values': ['بلاط أرضيات', 'البواني', '2026-10-01', '50', 'أبيض']},
               ],
             },
           ],
           'contracts': [
-            {'id': 'contract-1', 'contractorName': 'مقاول البلاط', 'value': 1500, 'isOpenValue': false, 'paid': 2000, 'remaining': -500, 'isOverrun': true, 'paymentsTotal': 2000, 'columns': const <Object>[], 'payments': <Map<String, Object>>[]},
+            {'id': 'contract-1', 'contractorName': 'مقاول البلاط', 'value': 1500, 'isOpenValue': false, 'paid': 2000, 'remaining': -500, 'isOverrun': true, 'paymentsTotal': 2000, 'columns': [{'key': 'description', 'name': 'الوصف', 'dataType': 'text'}], 'payments': <Map<String, Object>>[]},
           ],
         };
     });
@@ -337,7 +337,9 @@ void main() {
     expect(tester.widget<Text>(find.byKey(ItemReportScreen.subgroupTotalKey('subgroup-1'))).data, '1,000.00');
     expect(find.textContaining('اللون: أبيض'), findsOneWidget);
     expect(find.textContaining('المورد: البواني'), findsOneWidget, reason: 'redix-api #129 R1: each of its table\'s columns shows, a list by its choice');
-    expect(find.textContaining('سعر الوحدة: 50.00'), findsOneWidget, reason: 'an amount shows as money');
+    expect(find.textContaining('سعر الحبة: 50.00'), findsOneWidget, reason: 'an amount shows as money');
+    expect(find.text('بلاط أرضيات'), findsOneWidget, reason: 'redix-api #129 D1: «الوصف» is the row\'s title, not one of its details');
+    expect(find.textContaining('الوصف:'), findsNothing);
     expect(find.textContaining('رقم الفاتورة'), findsNothing);
     expect(find.byKey(ItemReportScreen.overrunKey('contract-1')), findsOneWidget);
     expect(find.textContaining('(500.00)'), findsOneWidget);

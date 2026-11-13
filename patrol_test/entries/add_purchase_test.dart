@@ -106,7 +106,7 @@ void main() {
     phoneCase('what was typed is what the entry holds, figure for figure', ($) async {
       final made = await onPurchase($);
       await $.fill(AddEntryScreen.amountKey, '123.45');
-      await $.fill(AddEntryScreen.notesKey, 'دفعة أولى');
+      await $.fill(AddEntryScreen.descriptionKey, 'دفعة أولى');
       await $.choosePayment(made.manager, made.account);
       await $.saveDraft();
       await $.messageShows('expenses.saved');
@@ -154,12 +154,13 @@ void main() {
     phoneCase('a built-in column follows what Finance made of it', ($) async {
       final manager = await Given.manager();
       final table = await Given.firstPurchaseTable(manager);
-      final product = (await Given.columns(manager, table.itemId)).singleWhere((column) => column['key'] == 'product');
-      await Given.columnDeleted(manager, table.itemId, product['id'] as String);
+      final quantity = (await Given.columns(manager, table.itemId)).singleWhere((column) => column['key'] == 'quantity');
+      await Given.columnDeleted(manager, table.itemId, quantity['id'] as String);
       await $.onAddEntry(manager);
       await $.pickTable(table.tableId);
       await $.goTo($(AddEntryScreen.amountKey));
-      expect($(AddEntryScreen.columnKey('product')), findsNothing);
+      expect($(AddEntryScreen.columnKey('quantity')), findsNothing);
+      expect($(AddEntryScreen.descriptionKey), findsOneWidget);
     });
 
     phoneCase('AC-43.1: the suppliers used most come first, under their title', ($) async {
@@ -185,7 +186,7 @@ void main() {
     phoneCase('AC-14.1: a deduction is a negative amount, sent with why in its notes', ($) async {
       final made = await onPurchase($);
       await $.fill(AddEntryScreen.amountKey, '-50');
-      await $.fill(AddEntryScreen.notesKey, 'خصم جودة');
+      await $.fill(AddEntryScreen.descriptionKey, 'خصم جودة');
       await $.choosePayment(made.manager, made.account);
       await $.sendEntry();
       await $.messageShows('expenses.sent');
@@ -244,7 +245,7 @@ void main() {
       await $.fill(AddEntryScreen.amountKey, '-50');
       await $.choosePayment(made.manager, made.account);
       await $.sendEntry();
-      await $.says(AddEntryScreen.messageKey, $.words.expensesDeductionNeedsNotes);
+      await $.says(AddEntryScreen.messageKey, $.words.expensesDeductionNeedsDescription);
     });
 
     phoneCase('open question 4: without chargeAnyAccount only the accounts held are offered', ($) async {

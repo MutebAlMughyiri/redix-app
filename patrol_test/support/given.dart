@@ -370,7 +370,7 @@ class Given {
       'paymentMethodId': await _firstIdOf('${by.project}/payment-methods', token),
       'supplierId': supplierId.isEmpty ? await _firstIdOf('${by.project}/suppliers', token) : supplierId,
       'submit': sent,
-      'notes': notes,
+      'description': notes,
       if (date.isNotEmpty) 'date': date,
       if (creditNote) 'columnValues': {'entryType': creditNoteChoiceId},
     });
@@ -387,7 +387,7 @@ class Given {
       'paymentMethodId': await _firstIdOf('${manager.project}/payment-methods', token),
       'submit': sent,
       'isOutsideContract': outside,
-      'notes': notes,
+      'description': notes,
     });
   }
 

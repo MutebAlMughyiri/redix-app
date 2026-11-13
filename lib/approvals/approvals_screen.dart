@@ -106,7 +106,7 @@ class ApprovalsScreen extends StatefulWidget {
   static Key shortKey(String id) => Key('approvals.short.$id');
 
   /// The notes of the entry [id].
-  static Key notesKey(String id) => Key('approvals.notes.$id');
+  static Key descriptionKey(String id) => Key('approvals.description.$id');
 
   /// The amount of the entry [id].
   static Key amountKey(String id) => Key('approvals.amount.$id');
@@ -200,7 +200,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
               style: small,
             ),
           ),
-        if (entry.notes.isNotEmpty) Text(entry.notes, key: ApprovalsScreen.notesKey(entry.id), style: small),
+        if (entry.description.isNotEmpty) Text(entry.description, key: ApprovalsScreen.descriptionKey(entry.id), style: small),
         Text(formatMoney(entry.amount), key: ApprovalsScreen.amountKey(entry.id), style: theme.textTheme.titleMedium),
       ],
     );
@@ -293,7 +293,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
                   keeps: (entry) => (_focus.isEmpty || entry.id == _focus) && _filter.keeps(entry),
                   search: ListSearch(
                     hint: words.commonSearchIn.fill([words.approvalsTitle]),
-                    textOf: (entry) => partsLine([entry.itemName, entry.supplierName, entry.partnerName, entry.authorName, entry.accountName, entry.invoiceNumber, entry.notes, searchableAmount(entry.amount)]),
+                    textOf: (entry) => partsLine([entry.itemName, entry.supplierName, entry.partnerName, entry.authorName, entry.accountName, entry.invoiceNumber, entry.description, searchableAmount(entry.amount)]),
                     filters: [
                       FilterLine.segmented(
                         key: ApprovalsScreen.filterChoiceKey,

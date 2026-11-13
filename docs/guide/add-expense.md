@@ -15,10 +15,11 @@
 | Use a file instead | Tap **Pick from files** for a picture or a PDF. |
 | Choose the item | Tap **Item**, and type in its search to find an item or a contractor. Each item shows by its category, with its named tables and its contracts under it. An item's own table, or a named one, takes a purchase; a contract's takes a [contractor payment](contractor-payment.md). |
 | Fill from the QR code | If the picture holds the e-invoice's QR code, the date and the total fill in, and the supplier with that VAT number is chosen. Check them. |
-| Fill the table's own fields | Each table asks its own columns, as Finance set them in Columns: the unit price, the quantity or the product appear only where the table has them. The supplier may be left empty. |
+| Fill the table's own fields | Each table asks its own columns, as Finance set them in Columns: the unit price or the quantity appear only where the table has them. The supplier may be left empty. |
 | Enter the total | Type the total paid, or leave it empty and type the unit price and quantity when the table asks them. |
 | Record a credit note | Choose **مرتجع** in **نوع القيد** and type the amount as printed. It is kept as its own row with a minus amount, naming no bill. |
-| Take something off | Type the amount with a minus sign, such as -136, and say why in the notes. It comes off the item. |
+| Describe it | Type what it is in **الوصف**, the first field under the item: what was bought, or what was paid. |
+| Take something off | Type the amount with a minus sign, such as -136, and say why in the description. It comes off the item. |
 | Choose how it was paid | Choose the account and the payment method. You see only the accounts you may pay from. |
 | Keep it for later | Tap **Save draft**. A draft can wait for the required fields. |
 | Send it | Tap **Send for approval**. It needs every field marked with *; the invoice's picture can be added later. |
@@ -27,7 +28,7 @@ No VAT is entered or kept: the VAT statement works it out of each total when the
 
 | Message | Meaning |
 | --- | --- |
-| A negative amount is a deduction: say why in the notes. | The amount is negative and the notes are empty. |
+| A negative amount is a deduction: say why in the description. | The amount is negative and the description is empty. |
 | Fill the required field. | A field marked with * is empty, and is marked in red. |
 | Choose an account you may pay from. | No account was chosen, or you do not hold it. |
 | You hold no account to pay from. Ask Finance to hand you one. | You hold no account in this project. |
@@ -45,10 +46,11 @@ No VAT is entered or kept: the VAT statement works it out of each total when the
 | تستخدم ملفاً بدلاً منها | اضغط **اختيار من الملفات** لصورة أو ملف PDF. |
 | تختار البند | اضغط **البند**، واكتب في بحثه لتجد بنداً أو مقاولاً. يظهر كل بند تحت تصنيفه، وتحته جداوله المسماة وعقوده. جدول البند نفسه أو جدول مسمى يأخذ عملية شراء، وجدول العقد يأخذ [دفعة مقاول](contractor-payment.md). |
 | تعبّئ من رمز QR | إن كانت الصورة تحوي رمز QR للفاتورة الإلكترونية، يُعبَّأ التاريخ والإجمالي، ويُختار المورد صاحب الرقم الضريبي. راجعها. |
-| تعبّئ حقول الجدول | يطلب كل جدول أعمدته كما أعدّتها المالية في الأعمدة: لا يظهر سعر الوحدة أو العدد أو الصنف إلا حيث يكون في الجدول. ويمكن ترك المورد فارغاً. |
+| تعبّئ حقول الجدول | يطلب كل جدول أعمدته كما أعدّتها المالية في الأعمدة: لا يظهر سعر الحبة أو العدد إلا حيث يكون في الجدول. ويمكن ترك المورد فارغاً. |
 | تُدخل الإجمالي | اكتب الإجمالي المدفوع، أو اتركه فارغاً واكتب سعر الوحدة والعدد حين يطلبهما الجدول. |
 | تسجّل مرتجعاً | اختر **مرتجع** في **نوع القيد**، واكتب المبلغ كما هو مكتوب. يُسجَّل صفاً مستقلاً بمبلغ سالب، دون ربطه بفاتورة. |
-| تخصم مبلغاً | اكتب المبلغ بعلامة الناقص، مثل -136، واذكر السبب في الملاحظات. يُخصم من البند. |
+| تصف القيد | اكتب ما هو في **الوصف**، أول حقل تحت البند: ما اشتُري أو ما دُفع. |
+| تخصم مبلغاً | اكتب المبلغ بعلامة الناقص، مثل -136، واذكر السبب في الوصف. يُخصم من البند. |
 | تحدد طريقة الدفع | اختر الحساب وطريقة الدفع. لا ترى إلا الحسابات التي يحق لك الدفع منها. |
 | تحفظه لوقت لاحق | اضغط **حفظ مسودة**. يمكن للمسودة أن تنتظر الحقول الإلزامية. |
 | ترسله | اضغط **إرسال للاعتماد**. يحتاج إلى كل حقل عليه علامة *، ويمكن إضافة صورة الفاتورة لاحقاً. |
@@ -57,7 +59,7 @@ No VAT is entered or kept: the VAT statement works it out of each total when the
 
 | الرسالة | معناها |
 | --- | --- |
-| المبلغ السالب خصم: اذكر سببه في الملاحظات. | المبلغ سالب والملاحظات فارغة. |
+| المبلغ السالب خصم: اذكر سببه في الوصف. | المبلغ سالب والوصف فارغ. |
 | عبّئ الحقل الإلزامي. | حقل عليه علامة * فارغ، ويظهر بالأحمر. |
 | اختر حساباً يحق لك الدفع منه. | لم تختر حساباً، أو أنه ليس بعهدتك. |
 | لا تملك حساباً تدفع منه. اطلب من المالي تسليمك حساباً. | لا تملك أي حساب في هذا المشروع. |
