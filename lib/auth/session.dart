@@ -95,7 +95,7 @@ class Session extends ChangeNotifier {
   /// when one of them changes, so a renewal rebuilds no screen, whose route may hold what it was opened with (redix-api #126 R6).
   Listenable get access => _access;
 
-  /// Tells its listeners after each renewal, so what a renewal may have changed is read again: a project the user was made inactive in (redix-api #126 R6).
+  /// Tells its listeners after each renewal [renew] makes, so what a renewal may have changed is read again: a project the user was made inactive in (redix-api #126 R6).
   Listenable get renewals => _renewals;
 
   /// The word key of why the last session ended, for the sign-in screen; empty when there is nothing to say.
@@ -273,30 +273,40 @@ class Session extends ChangeNotifier {
     if (response.statusCode != 401) {
       return response;
     }
-    await renew();
+    await _renewAfterRefusal();
     return isOpen ? request() : response;
   }
 
   /// Renews the session: one renewal after another, each with the token the last one left, because the API replaces the refresh token at every renewal and a second sent
-  /// at once would end the session. It runs when the app opens, when it comes back to the screen, [renewsBeforeExpiry] before the access token runs out, and after a
-  /// refused request (redix-api #126 R6).
-  Future<void> renew() => _renewal = _renewal.then((_) => _renewOnce());
+  /// at once would end the session; once renewed it tells [renewals]. It runs when the app opens, when it comes back to the screen and [renewsBeforeExpiry] before the
+  /// access token runs out (redix-api #126 R6).
+  Future<void> renew() => _renewal = _renewal.then((_) async {
+    if (await _renewOnce()) {
+      _renewals.value++;
+    }
+  });
 
-  Future<void> _renewOnce() async {
+  /// Renews the session after a refused request, in turn like [renew], telling [renewals] nothing: what [renewals] reads again could be refused too, and renewing for
+  /// that refusal would read again without end (redix-api #126 R6).
+  Future<void> _renewAfterRefusal() => _renewal = _renewal.then((_) => _renewOnce());
+
+  /// Sends the refresh token once; true once renewed. A refresh token the API refuses ends the session.
+  Future<bool> _renewOnce() async {
     if (!isOpen) {
-      return;
+      return false;
     }
     try {
       final response = await timed(http.post(apiUri('/auth/refresh'), headers: jsonHeaders, body: jsonEncode({'refreshToken': _refreshToken})));
       if (response.statusCode == 200) {
         await _keep(response);
-        _renewals.value++;
+        return true;
       } else if (response.statusCode == 401) {
         await _end('signIn.sessionExpired');
       }
     } on Exception catch (error) {
       debugPrint('Session not renewed: $error');
     }
+    return false;
   }
 
   Future<void> _keep(http.Response response) async {

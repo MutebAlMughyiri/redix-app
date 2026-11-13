@@ -59,7 +59,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
 
-    expect(api.sentAccessTokens, [...List.filled(5, 'kept-access'), ...List.filled(10, 'new-access')], reason: 'each list sent again with the new token, and the project list read again after each renewal (redix-api #126 R6)');
+    expect(api.sentAccessTokens, [...List.filled(5, 'kept-access'), ...List.filled(5, 'new-access')], reason: 'each list sent again with the new token, and the project list not read again after a renewal a refusal made (redix-api #126 R6)');
     expect(api.refreshes, 5);
     expect(find.byKey(HomeScreen.cardKey('project-0')), findsOneWidget);
   });
