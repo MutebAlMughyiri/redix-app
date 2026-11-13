@@ -40,7 +40,7 @@ void main() {
 
     expect(find.byKey(SearchLine.searchKey), findsOneWidget);
     expect(tester.widget<SearchBar>(find.byKey(SearchLine.searchKey)).autoFocus, isTrue);
-    expect(tester.testTextInput.isVisible, isTrue, reason: 'the line holds the keyboard, ready to type');
+    expect(holdsFocus(SearchLine.searchKey), isTrue, reason: 'the line holds the focus, ready to type');
     await searchFor(tester, api, 'الافق');
     expect(find.byKey(SuppliersScreen.rowKey(palm)), findsNothing);
 

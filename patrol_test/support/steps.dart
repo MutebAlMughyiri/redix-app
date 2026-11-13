@@ -37,6 +37,13 @@ var _localConfig = LocalConfig();
 /// Every widget whose key starts with [start].
 Finder keyStartingWith(String start) => find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith(start));
 
+/// Whether what holds the focus, the field the keyboard types into, sits inside the element keyed [key].
+bool holdsFocus(Key key) {
+  var inside = false;
+  FocusManager.instance.primaryFocus?.context?.visitAncestorElements((element) => !(inside = element.widget.key == key));
+  return inside;
+}
+
 /// Every widget keyed by [keyOf] for any id, such as the rows of a list whose ids a case does not know: the widgets whose key starts as [keyOf] keys an empty id.
 Finder keyedBy(Key Function(String id) keyOf) => keyStartingWith((keyOf('') as ValueKey<String>).value);
 

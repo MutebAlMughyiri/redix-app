@@ -1960,6 +1960,13 @@ Future<void> _passThrough(WidgetTester tester, FakeApi api, List<AppLifecycleSta
   }
 });
 
+/// Whether what holds the focus, the field the keyboard types into, sits inside the element keyed [key].
+bool holdsFocus(Key key) {
+  var inside = false;
+  FocusManager.instance.primaryFocus?.context?.visitAncestorElements((element) => !(inside = element.widget.key == key));
+  return inside;
+}
+
 /// True when the element keyed [key] sits in its screen's title bar: within the height the screen's app bar takes from the top.
 bool isInTitleBar(WidgetTester tester, Key key) => tester.getRect(find.byKey(key)).bottom <= Scaffold.of(tester.element(find.byKey(key))).appBarMaxHeight!;
 
