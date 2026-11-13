@@ -4,6 +4,7 @@ import 'package:redix/auth/permission.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 
@@ -52,7 +53,7 @@ void main() {
 
   testWidgets('what is ticked is sent with the new user, and See the project is always ticked', (tester) async {
     final api = await openForm(tester);
-    Finder tick(Permission permission) => find.descendant(of: find.byKey(NewUserScreen.permissionKey(permission)), matching: find.byType(CheckboxListTile));
+    Finder tick(Permission permission) => find.byKey(NewUserScreen.permissionKey(permission).body);
 
     expect(tester.widget<CheckboxListTile>(tick(Permission.readProject)).onChanged, isNull);
     await tester.ensureVisible(tick(Permission.recordEntries));

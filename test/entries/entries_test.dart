@@ -105,7 +105,7 @@ void main() {
       ..addEntry()
       ..heldEntries = Completer<void>();
     await pumpRedix(tester, api, stored: {'session': keptSession});
-    await tapWhileWaiting(tester, api, find.byKey(ProjectsScreen.cardKey('project-0')));
+    await actWhileWaiting(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
 
     expect(find.byKey(HomeScreen.entriesLoadingKey), findsOneWidget);
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);

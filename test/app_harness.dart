@@ -2087,10 +2087,10 @@ Future<void> swipeToRemove(WidgetTester tester, FakeApi api, Key rowKey) async {
 Future<void> openProjectInfo(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) =>
     scrollAndTap(tester, api, HomeScreen.projectInfoKey(projectId));
 
-/// Taps [finder] and lets the app run half a second, with its requests reaching [api], without waiting for it to settle: a screen shows a spinner, which never settles,
-/// while [api] holds an answer back.
-Future<void> tapWhileWaiting(WidgetTester tester, FakeApi api, Finder finder) => http.runWithClient(() async {
-  await tester.tap(finder);
+/// Runs [action], a tap or going back, and lets the app run half a second, with its requests reaching [api], without waiting for it to settle: a screen shows a spinner,
+/// which never settles, while [api] holds an answer back.
+Future<void> actWhileWaiting(WidgetTester tester, FakeApi api, Future<void> Function() action) => http.runWithClient(() async {
+  await action();
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 500));
 }, () => api.client);
