@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -504,9 +505,10 @@ void main() {
     Future<FakeApi> openRejected(WidgetTester tester, {bool change = true, String attachmentId = 'attachment-1', num amount = 1150}) async {
       final api = await openEntries(tester, (api) {
         final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'بند اللياسة', subgroups: ['مواد']);
-        for (final key in ['product', 'notes']) {
-          api.addColumn('/projects/project-0/items/${item['id']}/columns', key);
-        }
+        api
+          ..addColumn('/projects/project-0/items/${item['id']}/columns', 'الصنف', key: 'product')
+          ..addColumn('/projects/project-0/items/${item['id']}/columns', 'نوع القيد', key: 'entryType', dataType: 'list', isCore: true, choices: [FakeApi.choice('choice-purchase', 'شراء', sign: 'plus'), FakeApi.choice('choice-creditNote', 'مرتجع', sign: 'minus')])
+          ..addColumn('/projects/project-0/items/${item['id']}/columns', 'notes');
         final supplier = api.addSupplier('project-0', 'شركة البواني', vatNumber: '300000000000003');
         final method = api.addPaymentMethod('project-0', 'شبكة');
         final account = api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
@@ -514,9 +516,9 @@ void main() {
           ..addEntry(status: 'rejected', rejectionReason: 'الصورة غير واضحة')
           ..entryDetails['entry-0'] = {
             'tableId': (item['subgroups']! as List<Map<String, Object>>).first['id']!,
-            'entry': {'id': 'entry-0', 'kind': 'purchase', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': amount, 'accountId': account['id']!, 'notes': 'دفعة أولى'},
-            'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!, 'customValues': '{}'},
-            'purchase': {'supplierId': supplier['id']!, 'product': 'مواد لياسة', 'unitPrice': 0, 'quantity': 0},
+            'entry': {'id': 'entry-0', 'kind': 'purchase', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': amount, 'accountId': account['id']!, 'notes': 'دفعة أولى', 'columnValues': jsonEncode({'product': 'مواد لياسة', 'entryType': amount < 0 ? 'choice-creditNote' : 'choice-purchase'})},
+            'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!},
+            'purchase': {'supplierId': supplier['id']!},
             'contractorPayment': {'contractId': '00000000-0000-0000-0000-000000000000', 'isOutsideContract': false},
             'attachments': [
               {'attachmentId': attachmentId},
@@ -545,15 +547,22 @@ void main() {
       expect(typed(tester, AddEntryScreen.notesKey), 'دفعة أولى');
     });
 
-    testWidgets('redix-api #119 D4: a saved purchase with a minus amount opens as a credit note, its plain amount typed, and is sent again as one', (tester) async {
+    testWidgets('redix-api #119 D4, #129: a saved purchase whose «نوع القيد» is «مرتجع» opens with it chosen and its plain amount typed, and is sent again as one', (tester) async {
       final api = await openRejected(tester, amount: -320);
 
-      expect(tester.widget<SwitchListTile>(find.byKey(AddEntryScreen.creditNoteKey)).value, isTrue);
+      expect(tester.widget<DropdownButtonFormField<String>>(find.byKey(AddEntryScreen.columnKey('entryType'))).initialValue, 'choice-creditNote');
       expect(typed(tester, AddEntryScreen.amountKey), '320');
       await tester.ensureVisible(find.byKey(AddEntryScreen.sendKey));
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendKey)));
-      expect((api.sentEntries.single['isCreditNote'], api.sentEntries.single['amount']), (true, 320));
+      final sent = api.sentEntries.single;
+      expect(((sent['columnValues'] as Map<String, dynamic>)['entryType'], sent['amount']), ('choice-creditNote', 320));
+    });
+
+    testWidgets('redix-api #129: a saved purchase keeps the product it was given in its column\'s field', (tester) async {
+      await openRejected(tester);
+
+      expect(typed(tester, AddEntryScreen.columnKey('product')), 'مواد لياسة');
     });
 
     testWidgets('findings row 185: a kept PDF shows under the name it was kept with, its Arabic name too', (tester) async {
@@ -598,9 +607,9 @@ void main() {
           ..addEntry(kind: 'contractorPayment', status: 'rejected', rejectionReason: 'المبلغ خطأ')
           ..entryDetails['entry-0'] = {
             'tableId': contract['id']!,
-            'entry': {'id': 'entry-0', 'kind': 'contractorPayment', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 500, 'accountId': account['id']!, 'notes': 'دفعة'},
-            'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!, 'customValues': '{}'},
-            'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000', 'product': '', 'unitPrice': 0, 'quantity': 0},
+            'entry': {'id': 'entry-0', 'kind': 'contractorPayment', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 500, 'accountId': account['id']!, 'notes': 'دفعة', 'columnValues': '{}'},
+            'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!},
+            'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000'},
             'contractorPayment': {'contractId': contract['id']!, 'isOutsideContract': true},
             'attachments': const <Object>[],
           };
@@ -633,9 +642,9 @@ void main() {
           ..addEntry(kind: 'contractorPayment', status: status, amount: amount)
           ..entryDetails['entry-0'] = {
             'tableId': contract['id']!,
-            'entry': {'id': 'entry-0', 'kind': 'contractorPayment', 'status': status, 'entryDate': '2026-11-05', 'amount': amount, 'accountId': account['id']!, 'notes': 'دفعة'},
-            'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': '00000000-0000-0000-0000-000000000000', 'customValues': '{}'},
-            'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000', 'product': '', 'unitPrice': 0, 'quantity': 0},
+            'entry': {'id': 'entry-0', 'kind': 'contractorPayment', 'status': status, 'entryDate': '2026-11-05', 'amount': amount, 'accountId': account['id']!, 'notes': 'دفعة', 'columnValues': '{}'},
+            'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': '00000000-0000-0000-0000-000000000000'},
+            'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000'},
             'contractorPayment': {'contractId': contract['id']!, 'isOutsideContract': isOutside},
             'attachments': const <Object>[],
           };

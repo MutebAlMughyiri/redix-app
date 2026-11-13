@@ -625,7 +625,7 @@ class FakeApi {
   /// The addresses item reports were read at: an item's, or one contract's (Muteb, 12 Nov 2026).
   final itemReportReads = <String>[];
 
-  var itemReportAnswer = <String, Object>{'itemName': 'البلاط', 'categoryName': 'التشطيب', 'total': 0, 'columns': <String>[], 'subgroups': <Map<String, Object>>[], 'contracts': <Map<String, Object>>[]};
+  var itemReportAnswer = <String, Object>{'itemName': 'البلاط', 'categoryName': 'التشطيب', 'total': 0, 'subgroups': <Map<String, Object>>[], 'contracts': <Map<String, Object>>[]};
 
   /// The project's documents, as the API holds them.
   final documentRows = <Map<String, Object>>[];
@@ -665,11 +665,11 @@ class FakeApi {
     capitalLines.add({'id': id, 'name': id, 'isMine': false, 'balance': balance, 'sharePercent': sharePercent});
   }
 
-  /// Adds a movement.
-  void addMovement({String type = 'contribution', double amount = 100, String attachmentId = '', String cashReason = ''}) {
+  /// Adds a movement, named after the choice of «نوع الحركة» it took (redix-api #129).
+  void addMovement({String movementName = 'إضافة مبلغ', double amount = 100, String attachmentId = '', String cashReason = ''}) {
     movementRows.add({
       'id': 'movement-${movementRows.length}',
-      'type': type,
+      'movementName': movementName,
       'date': '2026-11-05',
       'amount': amount,
       'description': 'زاد رصيده',
@@ -1317,8 +1317,13 @@ class FakeApi {
   List<Map<String, Object>> entryTablesOf(String projectId) {
     final movesMoney = (projects.singleWhere((project) => project['id'] == projectId)['permissions']! as List<String>).contains('moveMoney');
     final active = (contracts[projectId] ?? const <Map<String, Object>>[]).where((contract) => contract['isActive']! as bool).toList();
+    List<String> keysOf(String itemId, Set<String> notAsked) => [
+      for (final column in columns['/projects/$projectId/items/$itemId/columns'] ?? const <Map<String, Object>>[])
+        if (!notAsked.contains(column['key'])) column['key']! as String,
+    ];
     List<Map<String, Object>> contractTablesOf(String itemId) => [
-      for (final contract in active.where((contract) => contract['itemId'] == itemId)) {'id': contract['id']!, 'kind': 'contract', 'name': contract['supplierName']!},
+      for (final contract in active.where((contract) => contract['itemId'] == itemId))
+        {'id': contract['id']!, 'kind': 'contract', 'name': contract['supplierName']!, 'columnKeys': keysOf(itemId, purchaseOnlyKeys)},
     ];
     Map<String, Object> itemOf(Map<String, Object> item) {
       final type = item['type']! as String;
@@ -1330,7 +1335,12 @@ class FakeApi {
         'tables': [
           if (type == 'purchases' || type == 'both' || isRevenue && movesMoney)
             for (final subgroup in item['subgroups']! as List<Map<String, Object>>)
-              {'id': subgroup['id']!, 'kind': (subgroup['name']! as String).isEmpty ? 'general' : 'subgroup', 'name': (subgroup['name']! as String).isEmpty ? item['name']! : subgroup['name']!},
+              {
+                'id': subgroup['id']!,
+                'kind': (subgroup['name']! as String).isEmpty ? 'general' : 'subgroup',
+                'name': (subgroup['name']! as String).isEmpty ? item['name']! : subgroup['name']!,
+                'columnKeys': keysOf(item['id']! as String, paymentOnlyKeys),
+              },
           if (type == 'contractorPayments' || type == 'both') ...contractTablesOf(item['id']! as String),
         ],
       };
@@ -1369,7 +1379,7 @@ class FakeApi {
                 'isRevenue': true,
                 'tables': [
                   for (final partner in (partners[projectId] ?? const <Map<String, Object>>[]).where((partner) => partner['itemId'] == itemId))
-                    {'id': partner['id']!, 'kind': 'partner', 'name': partner['name']!},
+                    {'id': partner['id']!, 'kind': 'partner', 'name': partner['name']!, 'columnKeys': keysOf(itemId, const {})},
                 ],
               },
           ],
@@ -1430,18 +1440,42 @@ class FakeApi {
     return _json({}, 200);
   }
 
-  /// Adds a column at the address [path], as the API holds it.
-  Map<String, Object> addColumn(String path, String name, {String dataType = 'text', bool isCore = false, bool isCustom = false, bool isRequired = false, bool showInReports = false}) {
+  /// What only a purchase's template has, which a contractor payment is never asked, its supplier among it (redix-api #129).
+  static const purchaseOnlyKeys = {'supplier', 'product', 'unitPrice', 'quantity', 'entryType', 'total'};
+
+  /// What only a contractor payment's template has, which a purchase is never asked.
+  static const paymentOnlyKeys = {'outsideContract', 'contract', 'amount'};
+
+  /// The columns an entry answers in fields of its own, as the API marks them (redix-api #129, R5).
+  static const entryFieldKeys = {'date', 'supplier', 'total', 'amount', 'account', 'paymentMethod', 'attachment', 'contract', 'outsideContract', 'notes'};
+
+  /// A choice of a list column as the API answers it: its [id], its [name] and its [sign].
+  static Map<String, Object> choice(String id, String name, {String sign = 'none'}) => {'id': id, 'name': name, 'sign': sign};
+
+  /// Adds a column at the address [path], as the API holds it, its key [key] or else its [name], a list's [choices] with it.
+  Map<String, Object> addColumn(
+    String path,
+    String name, {
+    String key = '',
+    String dataType = 'text',
+    bool isCore = false,
+    bool isCustom = false,
+    bool isRequired = false,
+    bool showInReports = false,
+    List<Map<String, Object>> choices = const [],
+  }) {
+    final columnKey = key.isEmpty ? name : key;
     final column = <String, Object>{
       'id': 'column-${_nextStructureId++}',
-      'key': name,
+      'key': columnKey,
       'name': name,
       'dataType': dataType,
       'isCore': isCore,
       'isCustom': isCustom,
       'isRequired': isRequired,
       'showInReports': showInReports,
-      'options': <String>[],
+      'choices': choices,
+      'isEntryField': entryFieldKeys.contains(columnKey),
     };
     columns.putIfAbsent(path, () => []).add(column);
     return column;
@@ -1473,13 +1507,17 @@ class FakeApi {
         isCustom: true,
         isRequired: body['isRequired'] as bool,
         showInReports: body['showInReports'] as bool,
+        choices: [for (final (place, choice) in (body['choices'] as List<dynamic>).indexed) FakeApi.choice('choice-$place', (choice as Map<String, dynamic>)['name'] as String)],
       );
     } else {
       list.singleWhere((column) => column['id'] == segments[columnsEnd])
         ..['name'] = body['name'] as String
         ..['isRequired'] = body['isRequired'] as bool
         ..['showInReports'] = body['showInReports'] as bool
-        ..update('options', (options) => [...options as List<String>, ...(body['newOptions'] as List<dynamic>? ?? const []).cast<String>()]);
+        ..update('choices', (choices) => [
+          ...choices as List<Map<String, Object>>,
+          for (final (place, choice) in (body['newChoices'] as List<dynamic>? ?? const []).indexed) FakeApi.choice('new-choice-$place', (choice as Map<String, dynamic>)['name'] as String),
+        ]);
     }
     return _json({}, 200);
   }

@@ -3,7 +3,7 @@ class CapitalMovement {
   /// A movement as the API answers it.
   CapitalMovement.fromJson(Map<String, dynamic> json)
     : id = json['id'] as String,
-      type = json['type'] as String,
+      movementName = json['movementName'] as String,
       date = DateTime.parse(json['date'] as String),
       amount = (json['amount'] as num).toDouble(),
       description = json['description'] as String,
@@ -15,8 +15,8 @@ class CapitalMovement {
   /// The entry.
   final String id;
 
-  /// What it is, the end of its word key.
-  final String type;
+  /// What it is: the name of the choice of «نوع الحركة» it took (redix-api #129); empty when it took none.
+  final String movementName;
 
   /// The day it moved.
   final DateTime date;

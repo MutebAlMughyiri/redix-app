@@ -10,10 +10,11 @@ class EntryTable {
   EntryTable.fromJson(Map<String, dynamic> json, {required this.itemId, required this.itemName, required this.isRevenue})
     : id = json['id'] as String,
       kind = ItemTableKind.values.byName(json['kind'] as String),
-      name = json['name'] as String;
+      name = json['name'] as String,
+      columnKeys = (json['columnKeys'] as List<dynamic>).cast<String>();
 
   /// No table chosen yet, which asks what a purchase asks.
-  EntryTable.none() : id = '', kind = ItemTableKind.general, name = '', itemId = '', itemName = '', isRevenue = false;
+  EntryTable.none() : id = '', kind = ItemTableKind.general, name = '', itemId = '', itemName = '', isRevenue = false, columnKeys = const [];
 
   /// The subgroup, contract or partner it prints.
   final String id;
@@ -33,6 +34,12 @@ class EntryTable {
   /// True for a revenue item's table, whose entries are revenue.
   final bool isRevenue;
 
+  /// The keys of its item's columns an entry in it is asked, in their order, as the API says (FR-41, redix-api #129, R3).
+  final List<String> columnKeys;
+
+  /// Whether an entry in it is asked the column [key]; with no table chosen yet, everything a purchase asks.
+  bool asks(String key) => isNone || columnKeys.contains(key);
+
   /// True while none is chosen.
   bool get isNone => id.isEmpty;
 
@@ -40,26 +47,26 @@ class EntryTable {
   /// a partner's money do none of these, and use any of the project's accounts (redix-api #110, D7).
   bool get isExpense => !isRevenue;
 
-  /// True for a purchase's table, which asks the supplier, whether it is a credit note, and what was bought.
+  /// True for a purchase's table, which asks the supplier.
   bool get asksSupplier => isExpense && !asksContract;
 
   /// True for a contract's payments, which show the contract's figures and ask whether the payment is inside it.
   bool get asksContract => kind == ItemTableKind.contract;
 
-  /// True for a partner, whose entry is their capital's money in, or out as a withdrawal.
-  bool get asksWithdrawal => kind == ItemTableKind.partner;
+  /// True for a partner, whose entry is their capital's money in, or out as «نوع الحركة» says (redix-api #129).
+  bool get isPartner => kind == ItemTableKind.partner;
 
   /// The word key saying what its entries are, under its name in the list.
   String get kindWordKey => kind.wordKeyOf(isRevenue: isRevenue);
 
-  /// The column its entries' amount is in.
-  String get amountColumn => asksContract ? 'amount' : 'total';
+  /// The column its entries' amount is in: a purchase's total, any other entry's amount (redix-api #129).
+  String get amountColumn => asksSupplier ? 'total' : 'amount';
 
   /// The word key naming its entries' amount.
-  String get amountWordKey => asksContract ? 'expenses.amount' : 'expenses.total';
+  String get amountWordKey => asksSupplier ? 'expenses.total' : 'expenses.amount';
 
   /// The word key naming its entries' file.
-  String get fileWordKey => asksWithdrawal ? 'capital.receiptHint' : isRevenue ? 'revenue.file' : asksContract ? 'contractorPayments.receipt' : 'attachments.invoicePhoto';
+  String get fileWordKey => isPartner ? 'capital.receiptHint' : isRevenue ? 'revenue.file' : asksContract ? 'contractorPayments.receipt' : 'attachments.invoicePhoto';
 
   /// What a field shows of it: the table, then its sheet, the item, in brackets, as الجلاي (دفعات العظم) (Muteb, 7 Nov 2026); the item's own table is its name alone.
   String get label => isNamedAfterItem ? itemName : '$name ($itemName)';

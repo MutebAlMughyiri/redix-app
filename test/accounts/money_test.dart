@@ -278,7 +278,7 @@ void main() {
         api
           ..addPartner('project-0', 'متعب')
           ..addMovement(attachmentId: 'attachment-1')
-          ..addMovement(type: 'withdrawal', amount: -50, cashReason: 'نقداً');
+          ..addMovement(movementName: 'سحب مبلغ', amount: -50, cashReason: 'نقداً');
       });
 
       await act(tester, api, () => tester.tap(find.text('متعب')));

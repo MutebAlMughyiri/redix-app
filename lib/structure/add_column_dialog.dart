@@ -41,7 +41,7 @@ class _AddColumnDialogState extends State<AddColumnDialog> {
     _dataType,
     isRequired: _isRequired,
     showInReports: _showInReports,
-    options: _dataType == ColumnDataType.list ? _choices.text.split('\n') : [],
+    choices: _dataType == ColumnDataType.list ? _choices.text.split('\n') : [],
     applyToAll: await widget.applyToAll(),
   );
 

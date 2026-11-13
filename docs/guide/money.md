@@ -14,7 +14,7 @@
 
 **Partners.** The total sits at the top, and each partner shows their balance and share. Tap a partner to see their movements, with the receipt of each.
 
-**A partner's money in or out** is entered from **Add entry**: pick the partner at the end of the table list, under **Partners**. Off, it is money the partner put in; turn on **Withdrawal** for money they took out. Attach the bank receipt when there is one, as for any entry. It waits for approval like an expense, and counts in the capital once approved.
+**A partner's money in or out** is entered from **Add entry**: pick the partner at the end of the table list, under **Partners**. Choose **إضافة مبلغ** in **نوع الحركة** for money the partner put in, and **سحب مبلغ** for money they took out. Attach the bank receipt when there is one, as for any entry. It waits for approval like an expense, and counts in the capital once approved.
 
 <img src="images/add-entry-partner.png" alt="A partner's money in Add entry" width="300">
 
@@ -34,7 +34,7 @@ To correct one once approved, whoever holds **Remove approved entries** removes 
 
 **الشركاء.** الإجمالي في الأعلى، ولكل شريك رصيده ونسبته. اضغط الشريك لترى حركاته، ولكلٍّ إيصالها.
 
-**مال الشريك الداخل أو الخارج** يُدخل من **إضافة قيد**: اختر الشريك في آخر قائمة الجداول، تحت **الشركاء**. وهو مال أضافه الشريك، وفعّل **سحب** لمال سحبه. وأرفق الإيصال البنكي إن وُجد، كأي قيد. وينتظر الاعتماد كالمصروف، ولا يُحسب في رأس المال إلا بعد اعتماده.
+**مال الشريك الداخل أو الخارج** يُدخل من **إضافة قيد**: اختر الشريك في آخر قائمة الجداول، تحت **الشركاء**. واختر **إضافة مبلغ** في **نوع الحركة** لمال أضافه الشريك، و**سحب مبلغ** لمال سحبه. وأرفق الإيصال البنكي إن وُجد، كأي قيد. وينتظر الاعتماد كالمصروف، ولا يُحسب في رأس المال إلا بعد اعتماده.
 
 **شريك يدفع من ماله.** أدخل ذلك من **إضافة قيد** مساهمةً في رأس ماله، ثم ادفع المصروف من الحساب الذي دخله المال. لا يُدفع المصروف إلا من حساب أُضيف في **الحسابات**.
 

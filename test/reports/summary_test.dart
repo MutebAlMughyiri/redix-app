@@ -243,10 +243,6 @@ void main() {
       'entryId': id,
       'date': '2026-11-02',
       'description': description,
-      'supplierName': 'مؤسسة الرواد',
-      'invoiceNumber': '',
-      'unitPrice': 0,
-      'quantity': 0,
       'amount': amount,
       'isOutsideContract': false,
       'values': const <String>[],
@@ -256,12 +252,11 @@ void main() {
       'itemName': 'البلاط',
       'categoryName': 'التشطيب',
       'total': 5600,
-      'columns': const <String>[],
       'subgroups': [
-        {'id': 'subgroup-1', 'name': 'الدور الأرضي', 'total': 1600, 'rows': [line('entry-a', 'بلاط المطبخ', 1000), line('entry-b', 'بلاط الحمام', 600)]},
+        {'id': 'subgroup-1', 'name': 'الدور الأرضي', 'total': 1600, 'columns': const <Object>[], 'rows': [line('entry-a', 'بلاط المطبخ', 1000), line('entry-b', 'بلاط الحمام', 600)]},
       ],
       'contracts': [
-        {'id': 'contract-1', 'contractorName': 'مقاول البلاط', 'value': 5000, 'isOpenValue': false, 'paid': 4000, 'remaining': 1000, 'isOverrun': false, 'paymentsTotal': 4000, 'payments': [line('entry-c', 'دفعة أولى', 4000)]},
+        {'id': 'contract-1', 'contractorName': 'مقاول البلاط', 'value': 5000, 'isOpenValue': false, 'paid': 4000, 'remaining': 1000, 'isOverrun': false, 'paymentsTotal': 4000, 'columns': const <Object>[], 'payments': [line('entry-c', 'دفعة أولى', 4000)]},
       ],
     };
     await openSide(tester, api, SummarySide.expenses);
@@ -313,19 +308,24 @@ void main() {
           'itemName': 'البلاط',
           'categoryName': 'التشطيب',
           'total': 3000,
-          'columns': ['اللون'],
           'subgroups': [
             {
               'id': 'subgroup-1',
               'name': '',
               'total': 1000,
+              'columns': [
+                {'name': 'المورد', 'dataType': 'list'},
+                {'name': 'التاريخ', 'dataType': 'date'},
+                {'name': 'سعر الوحدة', 'dataType': 'amount'},
+                {'name': 'اللون', 'dataType': 'text'},
+              ],
               'rows': [
-                {'entryId': 'entry-1', 'date': '2026-10-01', 'description': 'بلاط أرضيات', 'supplierName': 'البواني', 'invoiceNumber': '2617', 'unitPrice': 50, 'quantity': 20, 'amount': 1000, 'isOutsideContract': false, 'values': ['أبيض']},
+                {'entryId': 'entry-1', 'date': '2026-10-01', 'description': 'بلاط أرضيات', 'amount': 1000, 'isOutsideContract': false, 'values': ['البواني', '2026-10-01', '50', 'أبيض']},
               ],
             },
           ],
           'contracts': [
-            {'id': 'contract-1', 'contractorName': 'مقاول البلاط', 'value': 1500, 'isOpenValue': false, 'paid': 2000, 'remaining': -500, 'isOverrun': true, 'paymentsTotal': 2000, 'payments': <Map<String, Object>>[]},
+            {'id': 'contract-1', 'contractorName': 'مقاول البلاط', 'value': 1500, 'isOpenValue': false, 'paid': 2000, 'remaining': -500, 'isOverrun': true, 'paymentsTotal': 2000, 'columns': const <Object>[], 'payments': <Map<String, Object>>[]},
           ],
         };
     });
@@ -336,6 +336,9 @@ void main() {
     expect(tester.widget<Text>(find.byKey(ItemReportScreen.totalKey)).data, '3,000.00');
     expect(tester.widget<Text>(find.byKey(ItemReportScreen.subgroupTotalKey('subgroup-1'))).data, '1,000.00');
     expect(find.textContaining('اللون: أبيض'), findsOneWidget);
+    expect(find.textContaining('المورد: البواني'), findsOneWidget, reason: 'redix-api #129 R1: each of its table\'s columns shows, a list by its choice');
+    expect(find.textContaining('سعر الوحدة: 50.00'), findsOneWidget, reason: 'an amount shows as money');
+    expect(find.textContaining('رقم الفاتورة'), findsNothing);
     expect(find.byKey(ItemReportScreen.overrunKey('contract-1')), findsOneWidget);
     expect(find.textContaining('(500.00)'), findsOneWidget);
   });

@@ -17,22 +17,22 @@ class Columns extends ApiList<ItemColumn> {
   /// The API's address of the default template of the project [projectId] for [type].
   static String templatePath(String projectId, ItemType type) => '/projects/$projectId/default-columns/${type.name}';
 
-  /// Adds a column at the end, with the [options] of a list.
-  Future<String> add(String name, ColumnDataType dataType, {required bool isRequired, required bool showInReports, required List<String> options, required bool applyToAll}) => change(_path, {
+  /// Adds a column at the end, with the [choices] of a list, named as typed, each giving no sign (redix-api #129).
+  Future<String> add(String name, ColumnDataType dataType, {required bool isRequired, required bool showInReports, required List<String> choices, required bool applyToAll}) => change(_path, {
     'name': name,
     'dataType': dataType.name,
     'isRequired': isRequired,
     'showInReports': showInReports,
-    'options': options,
+    'choices': [for (final choice in choices) {'name': choice}],
     'applyToAllItems': applyToAll,
   });
 
-  /// Changes [column], and adds [newOptions] to its choices; its type never changes, and no choice is taken away.
-  Future<String> edit(ItemColumn column, String name, {required bool isRequired, required bool showInReports, List<String> newOptions = const [], required bool applyToAll}) => put('$_path/${column.id}', {
+  /// Changes [column], and adds [newChoices] to its choices, each giving no sign; its type never changes, and no choice is taken away.
+  Future<String> edit(ItemColumn column, String name, {required bool isRequired, required bool showInReports, List<String> newChoices = const [], required bool applyToAll}) => put('$_path/${column.id}', {
     'name': name,
     'isRequired': isRequired,
     'showInReports': showInReports,
-    if (newOptions.isNotEmpty) 'newOptions': newOptions,
+    if (newChoices.isNotEmpty) 'newChoices': [for (final choice in newChoices) {'name': choice}],
     'applyToAllItems': applyToAll,
   });
 

@@ -30,9 +30,13 @@ void main() {
     final item = api.addItem(category, 'البلاط', subgroups: ['مواد']);
     final otherItem = api.addItem(category, 'الجبس');
     for (final added in [item, otherItem]) {
-      for (final key in ['product', 'unitPrice', 'quantity', 'notes']) {
-        api.addColumn('/projects/project-0/items/${added['id']}/columns', key);
-      }
+      final path = '/projects/project-0/items/${added['id']}/columns';
+      api
+        ..addColumn(path, 'الصنف', key: 'product')
+        ..addColumn(path, 'سعر الوحدة', key: 'unitPrice', dataType: 'amount')
+        ..addColumn(path, 'العدد', key: 'quantity', dataType: 'number')
+        ..addColumn(path, 'نوع القيد', key: 'entryType', dataType: 'list', isCore: true, choices: [FakeApi.choice('choice-purchase', 'شراء', sign: 'plus'), FakeApi.choice('choice-creditNote', 'مرتجع', sign: 'minus')])
+        ..addColumn(path, 'notes');
     }
     final supplier = api.addSupplier('project-0', 'شركة النخيل', vatNumber: '300000000000003');
     final cash = api.addSupplier('project-0', 'مورد نقدي عام');
@@ -119,7 +123,7 @@ void main() {
   testWidgets('saving a draft sends what was typed and chosen, never a figure, with an id made on the phone', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
-    await type(tester, AddEntryScreen.productKey, 'مواد لياسة');
+    await type(tester, AddEntryScreen.columnKey('product'), 'مواد لياسة');
     await type(tester, AddEntryScreen.notesKey, 'ملاحظة');
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
@@ -128,7 +132,8 @@ void main() {
     expect(body['itemId'], opened.item);
     expect(body['supplierId'], opened.supplier);
     expect(body['date'], DateTime.now().toIso8601String().substring(0, 10));
-    expect(body['product'], 'مواد لياسة');
+    expect((body['columnValues'] as Map<String, dynamic>)['product'], 'مواد لياسة');
+    expect(body.containsKey('product'), isFalse);
     expect(body['notes'], 'ملاحظة');
     expect(body['amount'], 6000);
     for (final gone in ['invoiceNumber', 'invoiceDate', 'amountIncludesVat', 'isNotTaxable', 'discount', 'withoutInvoiceReason']) {
@@ -328,22 +333,22 @@ void main() {
     final path = '/projects/project-0/items/${opened.item}/columns';
     opened.api.addColumn(path, 'custom.area', dataType: 'number', isCustom: true);
     opened.api.addColumn(path, 'custom.note', isCustom: true);
-    opened.api.addColumn(path, 'custom.colour', dataType: 'list', isCustom: true)['options'] = ['أحمر', 'أزرق'];
+    opened.api.addColumn(path, 'custom.colour', dataType: 'list', isCustom: true, choices: [FakeApi.choice('choice-red', 'أحمر'), FakeApi.choice('choice-blue', 'أزرق')]);
     opened.api.addColumn(path, 'custom.day', dataType: 'date', isCustom: true);
     await fill(tester, opened);
 
     await type(tester, AddEntryScreen.columnKey('custom.area'), '١٢٥٫٥');
     await type(tester, AddEntryScreen.columnKey('custom.note'), 'نص');
     await tapVisible(tester, opened.api, AddEntryScreen.columnKey('custom.colour'));
-    await act(tester, opened.api, () => tester.tap(find.text('أزرق').last));
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.columnOptionKey('custom.colour', 'choice-blue')).last));
     await tapVisible(tester, opened.api, AddEntryScreen.columnKey('custom.day'));
     await act(tester, opened.api, () => tester.tap(find.text('OK')));
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    final values = opened.api.sentEntries.single['customValues'] as Map<String, dynamic>;
+    final values = opened.api.sentEntries.single['columnValues'] as Map<String, dynamic>;
     expect(values['custom.area'], '125.5');
     expect(values['custom.note'], 'نص');
-    expect(values['custom.colour'], 'أزرق');
+    expect(values['custom.colour'], 'choice-blue');
     expect(values['custom.day'], DateTime.now().toIso8601String().substring(0, 10));
   });
 
@@ -356,9 +361,40 @@ void main() {
     expect(find.byKey(AddEntryScreen.notesKey), findsOneWidget);
     await pickItem(tester, opened.api, opened.item);
 
-    expect(find.text('en expenses.product *'), findsOneWidget);
+    expect(find.text('الصنف *'), findsOneWidget);
     expect(find.byKey(AddEntryScreen.notesKey), findsNothing);
-    expect(find.byKey(AddEntryScreen.unitPriceKey), findsOneWidget);
+    expect(find.byKey(AddEntryScreen.columnKey('unitPrice')), findsOneWidget);
+  });
+
+  testWidgets('redix-api #129 R3: a table without the unit price and the quantity asks neither, and the supplier may be left empty', (tester) async {
+    final opened = await openExpense(tester);
+    opened.api.columns['/projects/project-0/items/${opened.item}/columns']!.removeWhere((column) => column['key'] == 'unitPrice' || column['key'] == 'quantity');
+    await pickItem(tester, opened.api, opened.item);
+    await type(tester, AddEntryScreen.amountKey, '6000');
+    await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
+
+    expect(find.byKey(AddEntryScreen.columnKey('unitPrice')), findsNothing);
+    expect(find.byKey(AddEntryScreen.columnKey('quantity')), findsNothing);
+    expect(find.byKey(AddEntryScreen.columnKey('product')), findsOneWidget);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
+
+    final sent = opened.api.sentEntries.single;
+    expect(sent.containsKey('supplierId'), isFalse);
+    expect((sent['columnValues'] as Map<String, dynamic>).keys, isNot(contains('unitPrice')));
+  });
+
+  testWidgets('redix-api #129 R3: the unit price and the quantity are fields of their columns, sent under their keys', (tester) async {
+    final opened = await openExpense(tester);
+    await fill(tester, opened);
+
+    await type(tester, AddEntryScreen.columnKey('unitPrice'), '230');
+    await type(tester, AddEntryScreen.columnKey('quantity'), '5');
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
+
+    final sent = opened.api.sentEntries.single;
+    expect((sent['columnValues'] as Map<String, dynamic>)['unitPrice'], '230.0');
+    expect((sent['columnValues'] as Map<String, dynamic>)['quantity'], '5.0');
+    expect(sent.containsKey('unitPrice'), isFalse);
   });
 
   testWidgets('choosing another item starts its fields afresh', (tester) async {
@@ -502,16 +538,18 @@ void main() {
     expect(shown(tester, messageKeyOf('expenses.sent').label), 'en expenses.sent');
   });
 
-  testWidgets('AC-14.2, redix-api #119 D4: a credit note sends a plain amount and names no bill', (tester) async {
+  testWidgets('AC-14.2, redix-api #119 D4, #129: a credit note is «مرتجع» of «نوع القيد», sent with a plain amount and naming no bill', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);
-    await tapVisible(tester, opened.api, AddEntryScreen.creditNoteKey);
+    await tapVisible(tester, opened.api, AddEntryScreen.columnKey('entryType'));
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.columnOptionKey('entryType', 'choice-creditNote')).last));
     await type(tester, AddEntryScreen.amountKey, '320');
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     final sent = opened.api.sentEntries.single;
-    expect((sent['isCreditNote'], sent['amount']), (true, 320));
+    expect(((sent['columnValues'] as Map<String, dynamic>)['entryType'], sent['amount']), ('choice-creditNote', 320));
+    expect(sent.containsKey('isCreditNote'), isFalse);
     expect(sent.containsKey('originalEntryId'), isFalse);
   });
 

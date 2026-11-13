@@ -225,7 +225,7 @@ class Given {
 
   /// [manager] adds a text column [name] to the item [itemId].
   static Future<void> column(Person manager, String itemId, String name, {bool required = false}) async {
-    await _post('${manager.project}/items/$itemId/columns', {'name': name, 'dataType': 'text', 'isRequired': required, 'showInReports': false, 'options': <String>[]}, await _tokenOf(manager));
+    await _post('${manager.project}/items/$itemId/columns', {'name': name, 'dataType': 'text', 'isRequired': required, 'showInReports': false, 'choices': <Object>[]}, await _tokenOf(manager));
   }
 
   /// [manager] disables the item [itemId].
@@ -348,7 +348,17 @@ class Given {
     return _bodyOf('POST document', answer)['id'] as String;
   }
 
-  /// A purchase by [by] on the first general table a purchase can go to, sent for approval or, when [sent] is false, kept as a draft. Its id is answered.
+  /// The id of «مرتجع», the choice of «نوع القيد» that makes a purchase a credit note: the same in every database, as the API's template seeds it (redix-api #129).
+  static const creditNoteChoiceId = '6ad91ed9-316c-826e-8f15-e5f277fdeba2';
+
+  /// The id of «سحب مبلغ», the choice of «نوع الحركة» that takes a partner's money out: the same in every database (redix-api #129).
+  static const withdrawalChoiceId = '90f8b88a-68ff-f475-364a-5ee21644377d';
+
+  /// The id of «إضافة مبلغ», the choice of «نوع الحركة» that puts a partner's money in (redix-api #129).
+  static const contributionChoiceId = '18475559-dc5d-29ae-f1c8-36b2b080151f';
+
+  /// A purchase by [by] on the first general table a purchase can go to, sent for approval or, when [sent] is false, kept as a draft; a credit note when [creditNote], its
+  /// «نوع القيد» «مرتجع». Its id is answered.
   static Future<String> entry(Person by, {bool sent = true, num amount = 100, String accountId = '', String supplierId = '', String notes = '', String itemId = '', String tableId = '', String date = '', bool creditNote = false}) async {
     final token = await _tokenOf(by);
     final table = await firstPurchaseTable(by);
@@ -362,7 +372,7 @@ class Given {
       'submit': sent,
       'notes': notes,
       if (date.isNotEmpty) 'date': date,
-      if (creditNote) 'isCreditNote': true,
+      if (creditNote) 'columnValues': {'entryType': creditNoteChoiceId},
     });
   }
 
@@ -391,13 +401,13 @@ class Given {
     return _record(manager, token, {'itemId': item['id'] as String, 'tableId': table['id'] as String, 'amount': amount, 'accountId': accountId.isEmpty ? await account(manager) : accountId, 'submit': sent});
   }
 
-  /// Money the partner [partnerId] put in, or took out with [withdrawal], entered by [manager]. Its id is answered.
+  /// Money the partner [partnerId] put in, or took out with [withdrawal], as «نوع الحركة» says (redix-api #129), entered by [manager]. Its id is answered.
   static Future<String> partnerMoney(Person manager, String partnerId, {bool sent = true, num amount = 500, bool withdrawal = false, String accountId = ''}) async {
     final token = await _tokenOf(manager);
     final categories = await _getList('${manager.project}/entry-tables', token);
     final items = categories.expand((category) => category['items'] as List<dynamic>).cast<Map<String, dynamic>>();
     final item = items.firstWhere((item) => (item['tables'] as List<dynamic>).any((table) => table['id'] == partnerId));
-    return _record(manager, token, {'itemId': item['id'] as String, 'tableId': partnerId, 'amount': amount, 'accountId': accountId.isEmpty ? await account(manager) : accountId, 'isWithdrawal': withdrawal, 'submit': sent});
+    return _record(manager, token, {'itemId': item['id'] as String, 'tableId': partnerId, 'amount': amount, 'accountId': accountId.isEmpty ? await account(manager) : accountId, 'columnValues': {'movementType': withdrawal ? withdrawalChoiceId : contributionChoiceId}, 'submit': sent});
   }
 
   /// [person] deletes the entry [entryId], which was never approved.

@@ -101,7 +101,8 @@ void main() {
       'dataType': 'number',
       'isRequired': true,
       'showInReports': true,
-      'options': <String>[],
+      'choices': <Map<String, Object>>[],
+      'isEntryField': false,
       'applyToAllItems': false,
     });
     expect(find.text('رقم أمر الشراء'), findsOneWidget);
@@ -119,7 +120,7 @@ void main() {
     await tester.enterText(find.byKey(ItemColumnsScreen.choicesKey), 'أبيض\nرمادي');
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-    expect(opened.api.sentStructureChanges.single.$2['options'], ['أبيض', 'رمادي']);
+    expect(opened.api.sentStructureChanges.single.$2['choices'], [{'name': 'أبيض'}, {'name': 'رمادي'}]);
   });
 
   testWidgets('a refused column stays in its dialog with why', (tester) async {
@@ -160,7 +161,7 @@ void main() {
 
   testWidgets('a list a person added gains choices, one a line, showing those that stay', (tester) async {
     final opened = await openColumns(tester);
-    final list = opened.api.addColumn(itemPath, 'الجهة', dataType: 'list', isCustom: true)..['options'] = <String>['شرق', 'غرب'];
+    final list = opened.api.addColumn(itemPath, 'الجهة', dataType: 'list', isCustom: true, choices: [FakeApi.choice('choice-east', 'شرق'), FakeApi.choice('choice-west', 'غرب')]);
     await showTemplate(tester, opened.api);
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.thisItemKey)));
     await tester.ensureVisible(find.byKey(ItemColumnsScreen.menuKey(list['id'] as String)));
@@ -172,7 +173,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(opened.api.sentStructureChanges.single.$2['newOptions'], ['شمال', 'جنوب']);
-    expect(list['options'], ['شرق', 'غرب', 'شمال', 'جنوب']);
+    expect((list['choices']! as List<Map<String, Object>>).map((choice) => choice['name']), ['شرق', 'غرب', 'شمال', 'جنوب']);
   });
 
   testWidgets('only a list a person added offers new choices, and an edit that gives none sends none', (tester) async {

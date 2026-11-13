@@ -88,10 +88,6 @@ void main() {
       'entryId': id,
       'date': '2026-11-02',
       'description': 'دفعة للأرض',
-      'supplierName': 'مكتب الرواد العقاري',
-      'invoiceNumber': '',
-      'unitPrice': 0,
-      'quantity': 0,
       'amount': 1000,
       'isOutsideContract': false,
       'values': const <String>[],
@@ -101,9 +97,8 @@ void main() {
       'itemName': 'تكلفة الأرض',
       'categoryName': 'الأرض',
       'total': 3000,
-      'columns': const <String>[],
       'subgroups': [
-        {'id': 'subgroup-1', 'name': '', 'total': 3000, 'rows': [line('entry-a'), line('entry-b'), line('entry-c')]},
+        {'id': 'subgroup-1', 'name': '', 'total': 3000, 'columns': const <Object>[], 'rows': [line('entry-a'), line('entry-b'), line('entry-c')]},
       ],
       'contracts': const <Object>[],
     };

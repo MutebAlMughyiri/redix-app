@@ -13,7 +13,8 @@ void main() {
     'isCustom': false,
     'isRequired': false,
     'showInReports': true,
-    'options': <String>[],
+    'choices': <Map<String, Object>>[],
+    'isEntryField': false,
   });
 
   Future<String> labelIn(WidgetTester tester, Locale locale, List<ItemColumn> columns, String key) async {

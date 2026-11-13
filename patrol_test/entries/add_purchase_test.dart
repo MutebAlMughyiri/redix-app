@@ -159,7 +159,7 @@ void main() {
       await $.onAddEntry(manager);
       await $.pickTable(table.tableId);
       await $.goTo($(AddEntryScreen.amountKey));
-      expect($(AddEntryScreen.productKey), findsNothing);
+      expect($(AddEntryScreen.columnKey('product')), findsNothing);
     });
 
     phoneCase('AC-43.1: the suppliers used most come first, under their title', ($) async {

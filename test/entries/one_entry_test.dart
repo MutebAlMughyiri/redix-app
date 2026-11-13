@@ -29,6 +29,7 @@ void main() {
     api.addItem(api.addCategory('project-0', 'التشطيب'), 'البلاط', type: 'purchases');
     final refund = api.addItem(api.addCategory('project-0', 'الإيرادات'), 'استرداد الضريبة', type: 'vatRefund');
     final partner = api.addPartner('project-0', 'نواف');
+    api.addColumn('/projects/project-0/items/${partner['itemId']}/columns', 'نوع الحركة', key: 'movementType', dataType: 'list', isCore: true, choices: [FakeApi.choice('choice-contribution', 'إضافة مبلغ', sign: 'plus'), FakeApi.choice('choice-withdrawal', 'سحب مبلغ', sign: 'minus')]);
     final account = api.addAccount('project-0', 'حساب المؤسسة');
     final capture = FakeCapture();
     await openProject(tester, api, capture: capture);
@@ -86,9 +87,9 @@ void main() {
       capture.files = picture();
       await pick(tester, api, partner);
 
-      expect(tester.widget<SwitchListTile>(find.byKey(AddEntryScreen.withdrawalKey)).value, isFalse);
+      expect(find.byKey(AddEntryScreen.columnKey('movementType')), findsOneWidget);
       expect(find.byKey(AddEntryScreen.supplierKey), findsNothing);
-      expect(find.byKey(AddEntryScreen.creditNoteKey), findsNothing);
+      expect(find.byKey(AddEntryScreen.columnKey('entryType')), findsNothing);
       expect(find.byKey(PaymentChoices.methodChoiceKey), findsNothing);
       await tester.enterText(find.byKey(AddEntryScreen.amountKey), '1000');
       await act(tester, api, () => tester.tap(find.byKey(PaymentChoices.accountKey(account))));
@@ -97,7 +98,7 @@ void main() {
 
       final body = api.sentEntries.single;
       expect(api.sentEntryPaths.single, '/projects/project-0/entries');
-      expect((body['itemId'], body['tableId'], body['isWithdrawal'], body['amount'], body['accountId'], body['submit']), ('item-capital', partner, false, 1000.0, account, true));
+      expect((body['itemId'], body['tableId'], body.containsKey('isWithdrawal'), body['amount'], body['accountId'], body['submit']), ('item-capital', partner, false, 1000.0, account, true));
       expect((body.containsKey('paymentMethodId'), body.containsKey('supplierId')), (false, false));
       expect(body['attachmentId'], isNotNull);
       expect(text(tester, messageKeyOf('expenses.sent').label), 'en expenses.sent');
@@ -121,18 +122,19 @@ void main() {
       expect((lines.first, lines[1], lines.last), ('en capital.contribution · غصون 6', 'en entryShare.partner: نواف', 'https://redix.test/projects/project-0/entries/$id/open'));
     });
 
-    testWidgets('R7: with سحب on it is a withdrawal', (tester) async {
+    testWidgets('R7, redix-api #129: «سحب مبلغ» of «نوع الحركة» makes it a withdrawal', (tester) async {
       final (:api, :capture, refund: _, :partner, :account) = await openAddEntry(tester);
       capture.files = picture();
       await pick(tester, api, partner);
 
-      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.withdrawalKey)));
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.columnKey('movementType'))));
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.columnOptionKey('movementType', 'choice-withdrawal')).last));
       await tester.enterText(find.byKey(AddEntryScreen.amountKey), '300');
       await act(tester, api, () => tester.tap(find.byKey(PaymentChoices.accountKey(account))));
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.filesKey)));
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendKey)));
 
-      expect(api.sentEntries.single['isWithdrawal'], isTrue);
+      expect((api.sentEntries.single['columnValues'] as Map<String, dynamic>)['movementType'], 'choice-withdrawal');
     });
 
     testWidgets('Muteb, 8 Nov 2026: a contribution is one amount and is sent as it is, its receipt optional like every entry\'s, with no cash switch and no second amount', (tester) async {
@@ -170,7 +172,7 @@ void main() {
       final (:api, capture: _, :refund, partner: _, :account) = await openAddEntry(tester);
       await pick(tester, api, refund);
 
-      expect(find.byKey(AddEntryScreen.withdrawalKey), findsNothing);
+      expect(find.byKey(AddEntryScreen.columnKey('movementType')), findsNothing);
       await tester.enterText(find.byKey(AddEntryScreen.amountKey), '140');
       await act(tester, api, () => tester.tap(find.byKey(PaymentChoices.accountKey(account))));
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendKey)));
@@ -296,15 +298,17 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة']);
-    final partner = api.addPartner('project-0', 'نواف')['id']! as String;
+    final added = api.addPartner('project-0', 'نواف');
+    final partner = added['id']! as String;
+    api.addColumn('/projects/project-0/items/${added['itemId']}/columns', 'نوع الحركة', key: 'movementType', dataType: 'list', isCore: true, choices: [FakeApi.choice('choice-contribution', 'إضافة مبلغ', sign: 'plus'), FakeApi.choice('choice-withdrawal', 'سحب مبلغ', sign: 'minus')]);
     final account = api.addAccount('project-0', 'حساب المؤسسة')['id']! as String;
     api
       ..addEntry(kind: 'capitalOut', status: 'rejected', rejectionReason: 'أرفق الإيصال', itemName: '', partnerName: 'نواف', amount: 300)
       ..entryDetails['entry-0'] = {
         'tableId': partner,
-        'entry': {'id': 'entry-0', 'kind': 'capitalOut', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 300, 'accountId': account, 'notes': 'سحب'},
-        'expense': {'itemId': '00000000-0000-0000-0000-000000000000', 'subgroupId': '00000000-0000-0000-0000-000000000000', 'paymentMethodId': '00000000-0000-0000-0000-000000000000', 'customValues': '{}'},
-        'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000', 'product': '', 'unitPrice': 0, 'quantity': 0},
+        'entry': {'id': 'entry-0', 'kind': 'capitalOut', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 300, 'accountId': account, 'notes': 'سحب', 'columnValues': '{"movementType":"choice-withdrawal"}'},
+        'expense': {'itemId': '00000000-0000-0000-0000-000000000000', 'subgroupId': '00000000-0000-0000-0000-000000000000', 'paymentMethodId': '00000000-0000-0000-0000-000000000000'},
+        'purchase': {'supplierId': '00000000-0000-0000-0000-000000000000'},
         'contractorPayment': {'contractId': '00000000-0000-0000-0000-000000000000', 'isOutsideContract': false},
         'attachments': const <Object>[],
       };
@@ -316,13 +320,13 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.changeKey)));
 
     expect(tester.widget<TablePicker>(find.byKey(AddEntryScreen.tableKey)).chosen.id, partner);
-    expect(tester.widget<SwitchListTile>(find.byKey(AddEntryScreen.withdrawalKey)).value, isTrue);
+    expect(tester.widget<DropdownButtonFormField<String>>(find.byKey(AddEntryScreen.columnKey('movementType'))).initialValue, 'choice-withdrawal');
     await tester.ensureVisible(find.byKey(AddEntryScreen.sendKey));
     await tester.pumpAndSettle();
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendKey)));
 
     expect(api.sentEntryPaths.single, 'PUT /projects/project-0/entries/entry-0');
     final body = api.sentEntries.single;
-    expect((body['tableId'], body['isWithdrawal'], body['amount'], body['accountId'], body['notes'], body['submit']), (partner, true, 300, account, 'سحب', true));
+    expect((body['tableId'], (body['columnValues'] as Map<String, dynamic>)['movementType'], body['amount'], body['accountId'], body['notes'], body['submit']), (partner, 'choice-withdrawal', 300, account, 'سحب', true));
   });
 }

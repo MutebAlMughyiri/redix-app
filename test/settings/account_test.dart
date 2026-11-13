@@ -618,18 +618,11 @@ void main() {
         AddEntryScreen.tableKey,
         AddEntryScreen.supplierKey,
         AddEntryScreen.dateKey,
-        AddEntryScreen.productKey,
-        AddEntryScreen.unitPriceKey,
-        AddEntryScreen.quantityKey,
         AddEntryScreen.amountKey,
         AddEntryScreen.notesKey,
         AddEntryScreen.sendKey,
         AddEntryScreen.draftKey,
       ].forEach(expectFits);
-      await tester.ensureVisible(find.byKey(AddEntryScreen.creditNoteKey));
-      await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.creditNoteKey)));
-      expectFits(AddEntryScreen.creditNoteKey);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey(runningId))));
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));

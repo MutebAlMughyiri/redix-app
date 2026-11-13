@@ -15,8 +15,9 @@
 | Use a file instead | Tap **Pick from files** for a picture or a PDF. |
 | Choose the item | Tap **Item**, and type in its search to find an item or a contractor. Each item shows by its category, with its named tables and its contracts under it. An item's own table, or a named one, takes a purchase; a contract's takes a [contractor payment](contractor-payment.md). |
 | Fill from the QR code | If the picture holds the e-invoice's QR code, the date and the total fill in, and the supplier with that VAT number is chosen. Check them. |
-| Enter the total | Type the total paid, or leave it empty and type the unit price and quantity. |
-| Record a credit note | Turn on **Credit note** and type the amount as printed. It is kept as its own row with a minus amount, naming no bill. |
+| Fill the table's own fields | Each table asks its own columns, as Finance set them in Columns: the unit price, the quantity or the product appear only where the table has them. The supplier may be left empty. |
+| Enter the total | Type the total paid, or leave it empty and type the unit price and quantity when the table asks them. |
+| Record a credit note | Choose **مرتجع** in **نوع القيد** and type the amount as printed. It is kept as its own row with a minus amount, naming no bill. |
 | Take something off | Type the amount with a minus sign, such as -136, and say why in the notes. It comes off the item. |
 | Choose how it was paid | Choose the account and the payment method. You see only the accounts you may pay from. |
 | Keep it for later | Tap **Save draft**. A draft can wait for the required fields. |
@@ -44,8 +45,9 @@ No VAT is entered or kept: the VAT statement works it out of each total when the
 | تستخدم ملفاً بدلاً منها | اضغط **اختيار من الملفات** لصورة أو ملف PDF. |
 | تختار البند | اضغط **البند**، واكتب في بحثه لتجد بنداً أو مقاولاً. يظهر كل بند تحت تصنيفه، وتحته جداوله المسماة وعقوده. جدول البند نفسه أو جدول مسمى يأخذ عملية شراء، وجدول العقد يأخذ [دفعة مقاول](contractor-payment.md). |
 | تعبّئ من رمز QR | إن كانت الصورة تحوي رمز QR للفاتورة الإلكترونية، يُعبَّأ التاريخ والإجمالي، ويُختار المورد صاحب الرقم الضريبي. راجعها. |
-| تُدخل الإجمالي | اكتب الإجمالي المدفوع، أو اتركه فارغاً واكتب سعر الوحدة والعدد. |
-| تسجّل مرتجعاً | فعّل **مرتجع (إشعار دائن)**، واكتب المبلغ كما هو مكتوب. يُسجَّل صفاً مستقلاً بمبلغ سالب، دون ربطه بفاتورة. |
+| تعبّئ حقول الجدول | يطلب كل جدول أعمدته كما أعدّتها المالية في الأعمدة: لا يظهر سعر الوحدة أو العدد أو الصنف إلا حيث يكون في الجدول. ويمكن ترك المورد فارغاً. |
+| تُدخل الإجمالي | اكتب الإجمالي المدفوع، أو اتركه فارغاً واكتب سعر الوحدة والعدد حين يطلبهما الجدول. |
+| تسجّل مرتجعاً | اختر **مرتجع** في **نوع القيد**، واكتب المبلغ كما هو مكتوب. يُسجَّل صفاً مستقلاً بمبلغ سالب، دون ربطه بفاتورة. |
 | تخصم مبلغاً | اكتب المبلغ بعلامة الناقص، مثل -136، واذكر السبب في الملاحظات. يُخصم من البند. |
 | تحدد طريقة الدفع | اختر الحساب وطريقة الدفع. لا ترى إلا الحسابات التي يحق لك الدفع منها. |
 | تحفظه لوقت لاحق | اضغط **حفظ مسودة**. يمكن للمسودة أن تنتظر الحقول الإلزامية. |

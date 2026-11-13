@@ -74,7 +74,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
   Widget _row(CapitalMovement movement) {
     final words = Words.of(context);
     final project = widget.project;
-    final parts = [words.text('capital.${movement.type}'), formatDate(movement.date), movement.accountName];
+    final parts = [if (movement.movementName.isNotEmpty) movement.movementName, formatDate(movement.date), movement.accountName];
     return SwipeToRemove(
       rowKey: MovementsScreen.rowKey(movement.id),
       mayRemove: project.mayRemoveApprovedEntries,
@@ -83,7 +83,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
       child: ListTile(
         key: MovementsScreen.rowKey(movement.id),
         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
-        title: Text(movement.description.isEmpty ? words.text('capital.${movement.type}') : movement.description, key: MovementsScreen.rowKey(movement.id).title),
+        title: Text(movement.description.isEmpty ? movement.movementName : movement.description, key: MovementsScreen.rowKey(movement.id).title),
         subtitle: Text(parts.join(' · '), key: MovementsScreen.rowKey(movement.id).subtitle),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
@@ -113,7 +113,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
           emptyText: words.capitalNoMovements,
           search: ListSearch(
             hint: words.commonSearchIn.fill([words.capitalMovements]),
-            textOf: (movement) => partsLine([words.text('capital.${movement.type}'), movement.description, movement.accountName, formatDate(movement.date), searchableAmount(movement.amount)]),
+            textOf: (movement) => partsLine([movement.movementName, movement.description, movement.accountName, formatDate(movement.date), searchableAmount(movement.amount)]),
           ),
           itemBuilder: _row,
         ),

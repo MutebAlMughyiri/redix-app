@@ -28,7 +28,7 @@ On [Categories and items](../guide/categories.md), `CategoriesScreen`:
 | Its name | `ItemColumnsScreen.nameKey(id)` | |
 | What it is | `ItemColumnsScreen.detailsKey(id)` | Custom, type, required or optional, in reports |
 | Edit | `ItemColumnsScreen.editKey(id)` | Opens the Edit column dialog |
-| The choices it has, in the Edit dialog | `ItemColumnsScreen.existingChoicesKey` | A list a person added: they stay, because entries hold them |
+| The choices it has, in the Edit dialog | `ItemColumnsScreen.existingChoicesKey` | A list a person added: they stay, because entries hold their ids; a choice that gives the amount a sign shows it, such as مرتجع (سالب (−)) (redix-api #129) |
 | New choices, in the Edit dialog | `ItemColumnsScreen.newChoicesKey` | One a line, added to those it has |
 | Lock | `ItemColumnsScreen.lockKey(id)` | On a core column, in place of Delete |
 | A column's swipe | `ItemColumnsScreen.rowKey(id).swipe` | Any column but a core one: swiped from its end toward its start, it is deleted once confirmed in its row (redix-api #119); on the template it still asks whether every item takes it (redix-api #102) |
@@ -63,7 +63,7 @@ The question after a change to the template, `ApplyToAllDialog`:
 | A row says what the column is | `ColumnRow` | `item_columns_test.dart`: a row says |
 | AC-41.2: a core column has a lock and no delete; any other a delete and no lock | `ColumnRow` | `item_columns_test.dart`: AC-41.2 |
 | AC-41.1: a column is added to this item with what was chosen, asking nothing about other items | `AddColumnDialog`, `Columns.add` | `item_columns_test.dart`: AC-41.1 |
-| A pick list sends its choices; no file type is offered | `ColumnDataType.offered`, `AddColumnDialog` | `item_columns_test.dart`: a pick list |
+| A pick list sends its choices, each as `{ name }` with no sign, since a sign is set by no screen yet (redix-api #129); no file type is offered | `ColumnDataType.offered`, `AddColumnDialog`, `Columns.add` | `item_columns_test.dart`: a pick list |
 | A refused column stays in its dialog, with why | `ChangeDialog` | `item_columns_test.dart`: a refused column |
 | A core column changes its name only | `EditColumnDialog` | `item_columns_test.dart`: a core column changes |
 | No dialog offers a type to change (AC-41.3) | `EditColumnDialog` | `item_columns_test.dart`: another column changes |

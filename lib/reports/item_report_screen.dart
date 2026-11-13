@@ -12,6 +12,7 @@ import '../ui/screen_title.dart';
 import '../ui/search_line.dart';
 import '../words/word_fill.dart';
 import '../words/words.dart';
+import '../structure/item_column.dart';
 import 'item_report.dart';
 import 'report_files.dart';
 import '../ui/refusal_text.dart';
@@ -89,31 +90,33 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
     widget.report.loadOnOpen();
   }
 
-  /// What a row is searched by: what it says and its amount.
-  static String _textOf(ItemEntryRow row) => [row.description, row.supplierName, row.invoiceNumber, ...row.values, formatDate(row.date), searchableAmount(row.amount)].join(' ');
+  /// What a row is searched by: what it says, what it shows under its columns, and its amount.
+  static String _textOf(ItemEntryRow row) => [row.description, ...row.values, formatDate(row.date), searchableAmount(row.amount)].join(' ');
 
-  Widget _row(ItemEntryRow row, List<String> columns) {
-    final words = Words.of(context);
+  /// A row as its table prints it (redix-api #129, R1): «الوصف», then what it shows under each of its table's columns, a date and an amount as the app writes them, then its amount.
+  Widget _row(ItemEntryRow row, List<ReportColumn> columns) {
     final details = [
-      formatDate(row.date),
-      if (row.supplierName.isNotEmpty) row.supplierName,
-      if (row.invoiceNumber.isNotEmpty) '${words.reportsInvoiceNumber} ${row.invoiceNumber}',
-      if (row.quantity != 0) '${formatPlain(row.quantity)} × ${formatMoney(row.unitPrice)}',
       for (var index = 0; index < columns.length && index < row.values.length; index++)
-        if (row.values[index].isNotEmpty) '${columns[index]}: ${row.values[index]}',
-      if (row.isOutsideContract) words.reportsOutsideContract,
+        if (row.values[index].isNotEmpty) '${columns[index].name}: ${_shown(columns[index], row.values[index])}',
     ];
     return ListTile(
       key: ItemReportScreen.rowKey(row.entryId),
       dense: true,
       contentPadding: EdgeInsets.zero,
-      title: Text(row.description.isEmpty ? row.supplierName : row.description, key: ItemReportScreen.rowKey(row.entryId).title),
+      title: Text(row.description, key: ItemReportScreen.rowKey(row.entryId).title),
       subtitle: Text(details.join(' · '), key: ItemReportScreen.rowKey(row.entryId).subtitle),
       trailing: Text(formatMoney(row.amount), key: ItemReportScreen.rowKey(row.entryId).trailing),
     );
   }
 
-  Widget _subgroup(SubgroupReport subgroup, List<ItemEntryRow> rows, List<String> columns) {
+  /// A value as the app writes what its column holds: a date as a day, an amount as money, anything else as kept.
+  static String _shown(ReportColumn column, String value) => switch (column.dataType) {
+    ColumnDataType.date => formatDate(DateTime.parse(value)),
+    ColumnDataType.amount => formatMoney(parseNumber(value)),
+    _ => value,
+  };
+
+  Widget _subgroup(SubgroupReport subgroup, List<ItemEntryRow> rows) {
     final words = Words.of(context);
     return Card.outlined(
       key: ItemReportScreen.subgroupKey(subgroup.id),
@@ -129,7 +132,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
                 Text(formatMoney(subgroup.total), key: ItemReportScreen.subgroupTotalKey(subgroup.id), style: Theme.of(context).textTheme.titleSmall),
               ],
             ),
-            for (final (index, row) in rows.indexed) RowStripe(index: index, child: _row(row, columns)),
+            for (final (index, row) in rows.indexed) RowStripe(index: index, child: _row(row, subgroup.columns)),
           ],
         ),
       ),
@@ -139,7 +142,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
   /// What the subgroup is called: its name, or the general one's word.
   static String _nameOf(SubgroupReport subgroup, Words words) => subgroup.name.isEmpty ? words.reportsGeneralSubgroup : subgroup.name;
 
-  Widget _contract(ContractReport contract, List<ItemEntryRow> payments, List<String> columns) {
+  Widget _contract(ContractReport contract, List<ItemEntryRow> payments) {
     final words = Words.of(context);
     final theme = Theme.of(context);
     return Card.outlined(
@@ -160,7 +163,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
               key: ItemReportScreen.contractKey(contract.id),
             ),
             if (contract.isOverrun) refusalText(context, words.reportsOverrun, ItemReportScreen.overrunKey(contract.id)),
-            for (final (index, row) in payments.indexed) RowStripe(index: index, child: _row(row, columns)),
+            for (final (index, row) in payments.indexed) RowStripe(index: index, child: _row(row, contract.columns)),
             Align(alignment: AlignmentDirectional.centerEnd, child: Text('${words.reportsGrandTotal}: ${formatMoney(contract.paymentsTotal)}', key: ItemReportScreen.contractTotalKey(contract.id))),
           ],
         ),
@@ -180,9 +183,9 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
           child: ReportFileButtons(files: widget.files, address: widget.address, name: report.itemName, kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
         ),
       for (final subgroup in report.subgroups)
-        if (ListSearch.groupOf(_nameOf(subgroup, words), subgroup.rows, _textOf, _typed) case (isShown: true, :final children)) _subgroup(subgroup, children, report.columns),
+        if (ListSearch.groupOf(_nameOf(subgroup, words), subgroup.rows, _textOf, _typed) case (isShown: true, :final children)) _subgroup(subgroup, children),
       for (final contract in report.contracts)
-        if (ListSearch.groupOf(contract.contractorName, contract.payments, _textOf, _typed) case (isShown: true, :final children)) _contract(contract, children, report.columns),
+        if (ListSearch.groupOf(contract.contractorName, contract.payments, _textOf, _typed) case (isShown: true, :final children)) _contract(contract, children),
     ],
   );
 

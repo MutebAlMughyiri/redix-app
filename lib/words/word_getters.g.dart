@@ -584,6 +584,21 @@ mixin WordGetters {
   /// The word `columns.showInReports`.
   String get columnsShowInReports => text('columns.showInReports');
 
+  /// The word `columns.sign`.
+  String get columnsSign => text('columns.sign');
+
+  /// The word `columns.signMinus`.
+  String get columnsSignMinus => text('columns.signMinus');
+
+  /// The word `columns.signNone`.
+  String get columnsSignNone => text('columns.signNone');
+
+  /// The word `columns.signPlus`.
+  String get columnsSignPlus => text('columns.signPlus');
+
+  /// The word `columns.signedListExists`.
+  String get columnsSignedListExists => text('columns.signedListExists');
+
   /// The word `columns.template`.
   String get columnsTemplate => text('columns.template');
 

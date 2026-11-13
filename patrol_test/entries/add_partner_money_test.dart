@@ -28,14 +28,15 @@ void main() {
       await $.messageShows('expenses.sent');
     });
 
-    phoneCase('redix-api #110: with سحب on, it is a withdrawal', ($) async {
+    phoneCase('redix-api #110, #129: with «سحب مبلغ» chosen in «نوع الحركة», it is a withdrawal', ($) async {
       final manager = await Given.manager();
       final partner = await Given.partner(manager, 'هيثم');
       final account = await Given.account(manager);
       await $.onAddEntry(manager);
       await $.pickTable(partner, search: 'هيثم');
       await $.fill(AddEntryScreen.amountKey, '700');
-      await $.tapOn(AddEntryScreen.withdrawalKey);
+      await $.tapOn(AddEntryScreen.columnKey('movementType'));
+      await $.tapOn(AddEntryScreen.columnOptionKey('movementType', Given.withdrawalChoiceId));
       await $.tapOn(PaymentChoices.accountKey(account));
       await $.sendEntry();
       await $.messageShows('expenses.sent');

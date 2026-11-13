@@ -8,7 +8,8 @@ import '../support/given.dart';
 import '../support/phone_case.dart';
 import '../support/steps.dart';
 
-/// A new manager, their account and an approved bill of [amount] from a supplier, standing on Add entry as a credit note for that supplier, which names no bill (redix-api #119, D4).
+/// A new manager, their account and an approved bill of [amount] from a supplier, standing on Add entry as a credit note for that supplier, «مرتجع» chosen in «نوع القيد», which
+/// names no bill (redix-api #119 D4, #129).
 Future<({Person manager, String account, String bill, String supplier})> onCreditNote(PatrolIntegrationTester $, {num amount = 500}) async {
   final manager = await Given.manager(project: 'غصون 7');
   final account = await Given.account(manager, name: 'حساب المؤسسة');
@@ -21,7 +22,8 @@ Future<({Person manager, String account, String bill, String supplier})> onCredi
   await $.tapOn(AddEntryScreen.supplierKey);
   await $.tapOn(SupplierPicker.rowKey(supplier));
   await $.pumpAndSettle();
-  await $.tapOn(AddEntryScreen.creditNoteKey);
+  await $.tapOn(AddEntryScreen.columnKey('entryType'));
+  await $.tapOn(AddEntryScreen.columnOptionKey('entryType', Given.creditNoteChoiceId));
   await $.pumpAndSettle();
   return (manager: manager, account: account, bill: bill, supplier: supplier);
 }
@@ -32,7 +34,7 @@ void main() {
       final made = await onCreditNote($);
       await $.fill(AddEntryScreen.amountKey, '100');
       await $.choosePayment(made.manager, made.account);
-      await $.tester.ensureVisible(find.byKey(AddEntryScreen.creditNoteKey));
+      await $.tester.ensureVisible(find.byKey(AddEntryScreen.columnKey('entryType')));
       await $.pumpAndSettle();
       await $.picture('add-expense-credit-note');
       await $.sendEntry();

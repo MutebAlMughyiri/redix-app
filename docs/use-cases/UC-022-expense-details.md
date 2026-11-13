@@ -10,7 +10,7 @@
 
 One button, **إضافة قيد**, sits at the bottom of the project's home where **New purchase expense** and **Contractor payment** were (`HomeScreen.addEntryKey(id)`). It opens `AddEntryScreen` at `/projects/:projectId/entries/new`. The rule: **an entry goes into one table of an item's sheet, and the table says what the entry is.** An item's general or named table takes a purchase; a contract's table takes a contractor payment (UC-027). `EntryTable` answers everything the two differ in: the route, the amount's column and word, and the file's word.
 
-A purchase is a total on one date, with an optional file (redix-api #96, D3, D10, D11). The app sends what was typed: the amount, or price and quantity, which the API multiplies when no amount is typed (BR-01). It shows and sends no VAT, discount or bill number (D2, D4, D12). The id is made here (`Uuid().v7()`), once per screen, so trying again cannot make a second entry. The file is kept once, on the first save, and again only if it was taken again. The camera opens first for whoever may attach files, and its QR code fills the date, the total and the supplier (UC-024).
+A purchase is a total on one date, with an optional file (redix-api #96, D3, D10, D11). The app sends what was typed: the amount, or price and quantity, which the API multiplies when no amount is typed (BR-01). Every table shows its item's columns as fields of their own (redix-api #129, R3): the unit price, the quantity and the product only where the table has them, «نوع القيد» as a dropdown of its choices, each sent under its column's key in `columnValues`; the API's `columnKeys` on each table say which of the item's columns it asks. The supplier may be left empty (Muteb, 13 Nov 2026). It shows and sends no VAT, discount or bill number (D2, D4, D12). The id is made here (`Uuid().v7()`), once per screen, so trying again cannot make a second entry. The file is kept once, on the first save, and again only if it was taken again. The camera opens first for whoever may attach files, and its QR code fills the date, the total and the supplier (UC-024).
 
 | Element | `Key` | Does |
 | --- | --- | --- |
@@ -19,12 +19,12 @@ A purchase is a total on one date, with an optional file (redix-api #96, D3, D10
 | Table | `AddEntryScreen.tableKey`, `TablePicker.optionKey(id)` | A sheet of every table on offer, by category: each item's general table, and its named tables and contracts under it. The field shows the general table as its item's name, and any other as the table and then its item in brackets, الجلاي (دفعات العظم) (Muteb, 7 Nov 2026). Its item's columns are read when the item changes |
 | Searching the tables, and nothing matching | `TablePicker.searchKey`, `noMatchKey` | Keeps every table of an item whose name holds what was typed, and any table whose own name does, in one spelling |
 | Date | `AddEntryScreen.dateKey` | Starts at today and picks within the project's period; sent as `paymentDate` |
-| Supplier, and what is known of it | `AddEntryScreen.supplierKey`, `supplierDetailsKey` | A purchase's: opens `SupplierPicker`, with its quick add (UC-018, UC-019) |
-| Credit note | `AddEntryScreen.creditNoteKey` | A purchase's (UC-026) |
-| Product, unit price, quantity | `AddEntryScreen.productKey`, `unitPriceKey`, `quantityKey` | A purchase's; each follows its column: marked `*` when required, gone when deleted |
+| Supplier, and what is known of it | `AddEntryScreen.supplierKey`, `supplierDetailsKey` | A purchase's: opens `SupplierPicker`, with its quick add (UC-018, UC-019); may be left empty (redix-api #129) |
+| نوع القيد | `AddEntryScreen.columnKey('entryType')`, `columnOptionKey('entryType', choiceId)` | A purchase's list of «شراء» and «مرتجع»; «مرتجع» makes it a credit note (UC-026, redix-api #129) |
+| Product, unit price, quantity | `AddEntryScreen.columnKey('product')`, `columnKey('unitPrice')`, `columnKey('quantity')` | Columns like any other, each shown only where its table has it, under its column's name: marked `*` when required, gone when deleted (redix-api #129, R2, R3) |
 | The contract's figures, inside or outside | `AddEntryScreen.valueKey`, `paidKey`, `remainingKey`, `insideKey`, `outsideKey` | A payment's (UC-027) |
 | Amount | `AddEntryScreen.amountKey` | A purchase's total or a payment's amount, labelled by its column; a negative one is a deduction |
-| A custom column | `AddEntryScreen.columnKey(key)` | `ColumnValueField`, by what it holds; marked `*` when required, and in red when refused |
+| Any other column of the table | `AddEntryScreen.columnKey(key)`, a list's choice `columnOptionKey(key, choiceId)` | `ColumnValueField`, by what it holds, a list a dropdown of its choices; marked `*` when required, and in red when refused |
 | A column list not read | `AddEntryScreen.columnsMessageKey` | |
 | An account | `PaymentChoices.accountKey(id)` | The offered accounts; the only one is already chosen |
 | Holds nothing | `AddEntryScreen.noAccountKey` | |
@@ -63,11 +63,12 @@ Tests are in `test/entries/add_entry_test.dart`, with the payment's in `add_entr
 | D3: an entry with no file is sent, with no reason asked | `_record` | D3: an expense with no file is sent |
 | Arabic digits count | `parseNumber` | what a person types in Arabic digits counts |
 | What was typed is sent, never a figure, with an id made here | `_body` | saving a draft sends what was typed and chosen, never a figure |
-| What is not a number is refused here | `_numbers` | what is not a number is refused here |
+| What is not a number is refused here | `_whatIsWrong` | what is not a number is refused here |
 | D14: a deduction, on either kind, is refused here until its notes say why | `_whatIsWrong` | `add_entry_test.dart`: AC-14.1, D14: a deduction is a negative amount, typed in either digits; `add_entry_contract_test.dart`: AC-14.1, D14: a deduction is a negative amount, which raises what remains |
 | FR-09: a file is kept first and named | `_record` | FR-09; a refusal stays on the screen; a picture taken again; a file the API refuses |
-| AC-41.1, FR-41: custom columns are drawn, marked and sent | `ColumnValueField`, `ItemColumn.valueToSend` | AC-41.1; FR-41; choosing another item |
-| A built-in column follows what Finance made of it | `_asks`, `_requires` | a built-in field Finance made required |
+| AC-41.1, FR-41: custom columns are drawn, marked and sent, a list's choice by its id | `ColumnValueField`, `ItemColumn.valueToSend` | AC-41.1; FR-41; choosing another item |
+| A built-in column follows what Finance made of it | `EntryTable.asks`, `_requires` | a built-in field Finance made required |
+| redix-api #129 R3: the unit price and the quantity are fields of their columns, sent under their keys, and a table without them asks neither; the supplier may be left empty | `_itemsOwnFields`, `EntryTable.columnKeys`, `_body` | redix-api #129 R3: a table without the unit price and the quantity asks neither; the unit price and the quantity are fields of their columns |
 | Open question 4: Field is offered only what they hold; Finance chooses any | `OfferedAccounts` | open question 4; ChargeAnyAccount; someone who holds nothing |
 | AC-40.1: a disabled method is not offered | `PaymentChoices` | a disabled payment method |
 | FR-44: Field reaches the sheet and its quick add from the entry (findings row 79) | `_pickSupplier` | findings row 79; Patrol |

@@ -43,7 +43,7 @@ class _EditColumnDialogState extends State<EditColumnDialog> {
     _name.text,
     isRequired: _isRequired,
     showInReports: _showInReports,
-    newOptions: _newChoices.text.trim().isEmpty ? [] : _newChoices.text.split('\n'),
+    newChoices: _newChoices.text.trim().isEmpty ? [] : _newChoices.text.split('\n'),
     applyToAll: await widget.applyToAll(),
   );
 
@@ -77,7 +77,7 @@ class _EditColumnDialogState extends State<EditColumnDialog> {
           onChanged: mayChangeMore ? (value) => setState(() => _showInReports = value) : null,
         ),
         if (widget.column.gainsChoices) ...[
-          Text(widget.column.options.join(' · '), key: ItemColumnsScreen.existingChoicesKey),
+          Text(widget.column.choices.map((choice) => choice.sign == ChoiceSign.none ? choice.name : '${choice.name} (${words.text(choice.sign.wordKey)})').join(' · '), key: ItemColumnsScreen.existingChoicesKey),
           const SizedBox(height: 8),
           TextField(
             key: ItemColumnsScreen.newChoicesKey,
