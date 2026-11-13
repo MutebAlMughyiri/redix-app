@@ -6,6 +6,7 @@ import 'package:redix/format/date_format.dart';
 import 'package:redix/reports/quarter_picker.dart';
 import 'package:redix/reports/report_files.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../support/given.dart';
 import '../support/phone_case.dart';
@@ -18,11 +19,17 @@ Future<void> onStatement(PatrolIntegrationTester $, Person person) async {
   await $.reach($(VatStatementScreen.modeKey));
 }
 
-/// The workbook button showing now.
-PatrolFinder excelButton(PatrolIntegrationTester $) => $(keyStartingWith('reportFile.vat-').hitTestable());
-
 /// The name of the first and last day [from] and [to] take in the name of the file.
 String vatName(DateTime from, DateTime to) => 'vat-${from.toIso8601String().substring(0, 10)}-${to.toIso8601String().substring(0, 10)}';
+
+/// The name of the files of the quarter the statement opens on, this one.
+String thisQuarter() {
+  final start = DateTime(DateTime.now().year, (DateTime.now().month - 1) ~/ 3 * 3 + 1);
+  return vatName(start, DateTime(start.year, start.month + 3, 0));
+}
+
+/// The workbook button of the quarter the statement opens on.
+PatrolFinder excelButton(PatrolIntegrationTester $) => $(ReportFileButtons.buttonKey(thisQuarter(), ReportFileKind.excel));
 
 void main() {
   phoneClass('The VAT statement (UC-047)', () {
@@ -30,7 +37,7 @@ void main() {
       final manager = await Given.manager();
       await onStatement($, manager);
       await excelButton($).waitUntilExists();
-      expect($(keyStartingWith('reportFile.vat-')), findsWidgets);
+      expect(excelButton($), findsOneWidget);
       expect($(ReportFileButtons.buttonKey('x', ReportFileKind.pdf)), findsNothing);
     });
 
@@ -41,7 +48,9 @@ void main() {
       await $.pumpAndSettle();
       await $.reach($(VatStatementScreen.firstHalfKey));
       await $.reach($(VatStatementScreen.secondHalfKey));
-      expect(find.byType(QuarterPicker), findsNothing);
+      for (var quarter = 1; quarter <= 4; quarter++) {
+        expect($(QuarterPicker.quarterKey(quarter)), findsNothing);
+      }
     });
 
     phoneCase('AC-32.2: a custom period takes the days picked', ($) async {
@@ -59,7 +68,7 @@ void main() {
       await excelButton($).waitUntilExists();
       await excelButton($).tap();
       await $.pumpAndSettle();
-      await $($(keyStartingWith('reportFile.vat-')).evaluate().isEmpty ? keyStartingWith('reportFile.vat-') : keyStartingWith('reportFile.vat-').hitTestable().last).tap(settlePolicy: SettlePolicy.noSettle);
+      await $(ReportFileButtons.handingKey(thisQuarter(), ReportFileKind.excel, FileHandling.share)).tap(settlePolicy: SettlePolicy.noSettle);
       await $.shareSheetOffers('vat');
     });
 
@@ -78,15 +87,15 @@ void main() {
       await $.pumpAndSettle();
       await $.tester.tap(find.text(MaterialLocalizations.of($.tester.element(find.byType(DatePickerDialog))).okButtonLabel));
       await $.pumpAndSettle();
-      await $.reach($(find.descendant(of: find.byKey(VatStatementScreen.fromKey), matching: find.text(formatDate(day)))));
-      await $.reach($(find.descendant(of: find.byKey(VatStatementScreen.toKey), matching: find.text(formatDate(day)))));
+      await $.says(VatStatementScreen.fromKey.label, formatDate(day));
+      await $.says(VatStatementScreen.toKey.label, formatDate(day));
     });
 
     phoneCase('whoever does not see all capital gets no workbook', ($) async {
       final member = await Given.member(await Given.manager(), permissions: const <Permission>[]);
       await onStatement($, member);
       await $.pumpAndSettle();
-      expect($(keyStartingWith('reportFile.vat-')), findsNothing);
+      expect(excelButton($), findsNothing);
     });
   });
 }

@@ -36,12 +36,12 @@ void main() {
       await Given.entriesApproved(manager, [await Given.entry(manager, accountId: account), await Given.revenue(manager, accountId: account)]);
       final table = await Given.firstPurchaseTable(manager);
       await onReports($, manager);
-      await $.idShowing('itemReports.category.', table.category);
-      expect(find.text('استرجاع ضرائب'), findsNothing);
+      final expenses = await $.idShowing('itemReports.category.', table.category);
+      expect($(ItemReportsScreen.categoryKey(await Given.categoryNamed(manager, 'استرجاع ضرائب'))), findsNothing);
       await $.back();
       await $.tapOn(HomeScreen.itemReportsKey(manager.projectId, SummarySide.revenue));
       await $.idShowing('itemReports.category.', 'استرجاع ضرائب');
-      expect(find.text(table.category), findsNothing);
+      expect($(ItemReportsScreen.categoryKey(expenses)), findsNothing);
     });
 
     phoneCase('a category opens to its items with their totals, and an item opens its report', ($) async {
@@ -101,7 +101,7 @@ void main() {
       final table = await Given.firstPurchaseTable(manager);
       await onReports($, manager);
       await $.pumpAndSettle();
-      expect(find.text(table.itemName), findsNothing);
+      expect($(ItemReportsScreen.itemKey(table.itemId)), findsNothing);
     });
 
     phoneCase('BR-31, redix-api #106: with a chosen partner someone sees only that partner\'s table',($) async {

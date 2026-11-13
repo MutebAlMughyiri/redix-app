@@ -10,6 +10,9 @@ import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
 import 'package:redix/ui/bottom_button.dart';
 import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/ui/messages.dart';
+import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/screen_title.dart';
 import 'package:redix/reports/item_reports_screen.dart';
 
 import '../app_harness.dart';
@@ -28,9 +31,9 @@ void main() {
     final (:api, capture: _) = await openReports(tester, (api) {});
 
     expect(find.byKey(ReportsScreen.noneIssuedKey), findsOneWidget);
-    expect(find.ancestor(of: find.byKey(ReportsScreen.issueKey), matching: find.byType(BottomButton)), findsOneWidget, reason: 'Muteb, 9 Nov 2026: issuing is the bottom button of the screen');
+    expect(find.descendant(of: find.byKey(BottomButton.barKey), matching: find.byKey(ReportsScreen.issueKey)), findsOneWidget, reason: 'Muteb, 9 Nov 2026: issuing is the bottom button of the screen');
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.issueKey)));
-    expect(find.text('en reports.issueQuestion'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(ConfirmDialog.titleKey)).data, 'en reports.issueQuestion');
 
     await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
@@ -80,7 +83,7 @@ void main() {
 
     expect(capture.savedOut, [('report-1.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')]);
     expect(api.sentFileReads, ['/projects/project-0/periodic-reports/1/xlsx']);
-    expect(find.text('en reports.downloaded'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(messageKeyOf('reports.downloaded').label)).data, 'en reports.downloaded');
   });
 
   testWidgets('BR-31: someone who does not see all capital reads the report and gets no files', (tester) async {
@@ -99,7 +102,7 @@ void main() {
 
   testWidgets('UC-057, D20: the VAT statement hands on its workbook for the period shown', (tester) async {
     final (:api, :capture) = await openReports(tester, (api) {});
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     await openFromTheHome(tester, api, VatStatementScreen.pathOf('project-0'));
     final start = DateTime(DateTime.now().year, (DateTime.now().month - 1) ~/ 3 * 3 + 1);
     final from = start.toIso8601String().substring(0, 10);
@@ -110,7 +113,7 @@ void main() {
 
     expect(capture.sharedOut.single, ('vat-$from-$to.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'));
     expect(api.sentFileReads.single, '/projects/project-0/vat-statement/xlsx?from=$from&to=$to');
-    expect(find.byType(VatStatementScreen), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en vat.title');
   });
 
   testWidgets('AC-33.1: an item report hands on its PDF', (tester) async {
@@ -129,22 +132,22 @@ void main() {
         ],
       };
     });
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     await scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0', SummarySide.expenses));
-    await act(tester, api, () => tester.tap(find.text('التشطيب')));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.categoryKey('category-1'))));
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
 
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.buttonKey('البلاط', ReportFileKind.pdf))));
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('البلاط', ReportFileKind.pdf, FileHandling.share))));
 
-    expect(find.byType(ItemReportScreen), findsOneWidget);
+    expect(find.byKey(ItemReportScreen.totalKey), findsOneWidget);
     expect(capture.sharedOut.single, ('البلاط.pdf', 'application/pdf'));
   });
 
   testWidgets('a file that cannot be read says so', (tester) async {
     final (:api, capture: _) = await openReports(tester, (api) {});
     final contract = api.addContract('project-0', 'مبلط الغربية', value: 34000)['id']! as String;
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
     api.online = false;
 
@@ -152,6 +155,6 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.fileKey(ReportFileKind.pdf))));
     await act(tester, api, () => tester.tap(find.byKey(ReportFileButtons.handingKey('مبلط الغربية', ReportFileKind.pdf, FileHandling.share))));
 
-    expect(find.text('en reports.fileFailed'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(messageKeyOf('reports.fileFailed').label)).data, 'en reports.fileFailed');
   });
 }

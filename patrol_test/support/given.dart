@@ -467,6 +467,12 @@ class Given {
     return categories.firstWhere((category) => (category['items'] as List<dynamic>).any((item) => item['id'] == itemId))['name'] as String;
   }
 
+  /// The id of the category named [name] in the project of [manager].
+  static Future<String> categoryNamed(Person manager, String name) async {
+    final categories = (await _getList('${manager.project}/categories', await _tokenOf(manager))).cast<Map<String, dynamic>>();
+    return categories.singleWhere((category) => category['name'] == name)['id'] as String;
+  }
+
   /// Whether the API lets [username] sign in with [password] now.
   static Future<bool> canSignIn(String username, String password) async => (await _signIn(username, password)).statusCode == 200;
 
