@@ -2007,8 +2007,8 @@ void expectErrorAbove(WidgetTester tester, Key errorKey, Key fieldKey) {
 
 /// Opens the screen at [path] from the open project's home, as a Project settings button would, for a screen whose button is grayed until a later release while its
 /// work stays (Muteb, 12 Nov 2026): the VAT refund.
-Future<void> openFromTheHome(WidgetTester tester, FakeApi api, String path) {
-  final card = find.byType(ProjectSettingsCard);
+Future<void> openFromTheHome(WidgetTester tester, FakeApi api, String path, {String projectId = 'project-0'}) {
+  final card = find.byKey(HomeScreen.cardKey(projectId));
   final project = tester.widget<ProjectSettingsCard>(card).project;
   return act(tester, api, () async => unawaited(GoRouter.of(tester.element(card)).push(path, extra: project)));
 }
@@ -2020,8 +2020,8 @@ Future<void> scrollAndTap(WidgetTester tester, FakeApi api, Key key) async {
   await act(tester, api, () => tester.tap(find.byKey(key)));
 }
 
-/// What scrolls a list's rows, as opposed to the search line over it, whose field scrolls its own text (redix-app #104).
-final listRows = find.descendant(of: find.byKey(ApiListBody.rowsKey), matching: find.byType(Scrollable)).first;
+/// What is dragged to scroll a list's rows, as opposed to the search line over it, whose field scrolls its own text (redix-app #104).
+final listRows = find.byKey(ApiListBody.rowsKey);
 
 /// Opens a list's filter line from the title bar's filter icon (redix-app #104, version 3); nothing when it shows already.
 Future<void> openFilters(WidgetTester tester, FakeApi api) async {
@@ -2040,7 +2040,7 @@ Future<void> searchFor(WidgetTester tester, FakeApi api, String typed) async {
     await act(tester, api, () => tester.tap(find.byKey(SearchIcons.searchKey)));
   }
   await act(tester, api, () async {
-    await tester.enterText(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(TextField)), typed);
+    await tester.enterText(find.byKey(SearchLine.searchKey), typed);
     await tester.pump(SearchLine.apiPause);
   });
 }

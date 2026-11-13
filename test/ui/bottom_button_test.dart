@@ -184,7 +184,7 @@ void main() {
     await tester.pumpAndSettle();
     await scrollAndTap(tester, api, HomeScreen.suppliersKey(_project));
 
-    await tester.scrollUntilVisible(find.byKey(SuppliersScreen.rowKey(last)), 200, scrollable: listRows);
+    await tester.dragUntilVisible(find.byKey(SuppliersScreen.rowKey(last)), listRows, const Offset(0, -200));
     await tester.pumpAndSettle();
     await tester.drag(listRows, const Offset(0, -400));
     await tester.pumpAndSettle();

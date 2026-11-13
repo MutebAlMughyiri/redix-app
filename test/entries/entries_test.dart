@@ -905,9 +905,9 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
 
       expect(shownRows(tester), hasLength(5));
-      await tester.scrollUntilVisible(find.byKey(EntriesScreen.moreKey), 200, scrollable: listRows);
+      await tester.dragUntilVisible(find.byKey(EntriesScreen.moreKey), listRows, const Offset(0, -200));
       await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.moreKey)));
-      await tester.scrollUntilVisible(find.byKey(EntriesScreen.rowKey('entry-0')), 200, scrollable: listRows);
+      await tester.dragUntilVisible(find.byKey(EntriesScreen.rowKey('entry-0')), listRows, const Offset(0, -200));
 
       expect(find.byKey(EntriesScreen.moreKey), findsNothing);
       expect(api.entryReads.last, 10);
@@ -925,7 +925,7 @@ void main() {
       await choose(tester, api, EntriesScreen.kindChoiceKey, EntriesScreen.kindKey('purchase'));
       await foldFilters(tester, api);
 
-      await tester.scrollUntilVisible(find.byKey(EntriesScreen.moreKey), 200, scrollable: listRows);
+      await tester.dragUntilVisible(find.byKey(EntriesScreen.moreKey), listRows, const Offset(0, -200));
       await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.moreKey)));
 
       expect(api.entryReads.last, 10);

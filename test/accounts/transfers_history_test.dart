@@ -261,11 +261,11 @@ void main() {
         }
       });
 
-      await tester.scrollUntilVisible(find.byKey(AccountHistoryScreen.moreKey), 400, scrollable: listRows);
+      await tester.dragUntilVisible(find.byKey(AccountHistoryScreen.moreKey), listRows, const Offset(0, -400));
       await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.moreKey)));
 
       expect(api.historyReads.last.queryParameters['before'], '951');
-      await tester.scrollUntilVisible(find.byKey(AccountHistoryScreen.lineKey(941)), 400, scrollable: listRows);
+      await tester.dragUntilVisible(find.byKey(AccountHistoryScreen.lineKey(941)), listRows, const Offset(0, -400));
       expect(find.byKey(AccountHistoryScreen.lineKey(941)), findsOneWidget);
       expect(find.byKey(AccountHistoryScreen.moreKey), findsNothing);
     });
@@ -286,7 +286,7 @@ void main() {
 
     Future<void> tapMoreWithNoNetwork(WidgetTester tester, FakeApi api) async {
       api.online = false;
-      await tester.scrollUntilVisible(find.byKey(AccountHistoryScreen.moreKey), 400, scrollable: listRows);
+      await tester.dragUntilVisible(find.byKey(AccountHistoryScreen.moreKey), listRows, const Offset(0, -400));
       await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.moreKey)));
     }
 
@@ -308,7 +308,7 @@ void main() {
       await tapMoreWithNoNetwork(tester, api);
 
       expect(find.byKey(messageKeyOf('history.loadFailed').label), findsNothing);
-      await tester.scrollUntilVisible(find.byKey(AccountHistoryScreen.lineKey(950)), 400, scrollable: listRows);
+      await tester.dragUntilVisible(find.byKey(AccountHistoryScreen.lineKey(950)), listRows, const Offset(0, -400));
       expect(find.byKey(AccountHistoryScreen.lineKey(950)), findsOneWidget);
     });
 

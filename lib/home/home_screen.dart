@@ -295,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             CustodyCard(accounts: widget.accounts),
             LatestEntries(project: project, entries: widget.entries, onOpen: (path) => _open(path, project), onRemoved: widget.summary.load),
-            if (showsDetails) ProjectSettingsCard(project: project, onOpen: (path) => _open(path, project)),
+            if (showsDetails) ProjectSettingsCard(key: HomeScreen.cardKey(project.id), project: project, onOpen: (path) => _open(path, project)),
           ],
         ),
       ),

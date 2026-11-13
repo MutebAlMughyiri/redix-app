@@ -600,7 +600,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
       [ContractsScreen.partiesKey, ContractsScreen.openValueKey, ContractsScreen.valueKey, ChangeDialog.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
-      await tester.scrollUntilVisible(find.byKey(ContractsScreen.menuKey(open)), 200, scrollable: listRows);
+      await tester.dragUntilVisible(find.byKey(ContractsScreen.menuKey(open)), listRows, const Offset(0, -200));
       contractKeys(open).forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byType(BackButton)));
 
