@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/name_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/messages.dart';
@@ -58,7 +58,7 @@ void main() {
       await $.onMoreInfo(manager);
       final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
       await $.swipeAway(ProjectInfoScreen.unitRowKey(unit));
-      expect(find.byType(AlertDialog), findsNothing);
+      expect($(ConfirmDialog.dialogKey), findsNothing);
       await $.gone($(ProjectInfoScreen.unitKey(unit)));
       await $.idShowing('projectInfo.unit.', 'الفلة الجنوبية');
     });
