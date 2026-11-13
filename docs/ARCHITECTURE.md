@@ -6,7 +6,7 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 
 ```
 lib/
-  api.dart                  The API's address, from the environment's config file: `config/dev.json` for automated runs, `config/qa.json` for Muteb's own testing, `config/production.json` for a release (redix-api #118)
+  api.dart                  The API's address, from the environment's config file: `config/dev.json` for automated runs, `config/qa.json` for Muteb's own testing, `config/production.json` for a release (redix-api #118); and the one place an answer is read: `jsonOf`, `answerOf`, `refusalOf`, `madeFrom`
   api_list.dart             A list the API owns, as it last answered, and the way to change it
   api_object.dart           Something the API owns, as it last answered, and the way to change it
   main.dart                 The app: its theme, its languages, and its screens
