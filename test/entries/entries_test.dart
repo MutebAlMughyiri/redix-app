@@ -506,7 +506,7 @@ void main() {
     await openActions(tester, api, 'entry-0');
 
     expect(tester.takeException(), isNull);
-    expect(find.byType(AddEntryScreen), findsOneWidget);
+    expect(text(tester, ScreenTitle.titleKey), 'en entries.view');
   });
 
   group('AC-19.1: fixing a rejected entry', () {
@@ -539,7 +539,7 @@ void main() {
       return api;
     }
 
-    String typed(WidgetTester tester, Key key) => tester.widget<TextField>(find.descendant(of: find.byKey(key), matching: find.byType(TextField), matchRoot: true)).controller!.text;
+    String typed(WidgetTester tester, Key key) => tester.widget<TextField>(find.byKey(key)).controller!.text;
 
     testWidgets('redix-app #90 (Muteb, 9 Nov 2026: "let me show all entered details en read mode"): a tap opens the entry read only, its photo and every value as it was filled, with no way to type or take another file', (tester) async {
       await openRejected(tester, change: false);
@@ -549,14 +549,16 @@ void main() {
       expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
       expect(find.byKey(AddEntryScreen.cameraKey), findsNothing);
       expect(find.byKey(AddEntryScreen.filesKey), findsNothing);
-      expect(find.ancestor(of: find.byKey(AddEntryScreen.amountKey), matching: find.byWidgetPredicate((widget) => widget is IgnorePointer && widget.ignoring)), findsWidgets);
+      await tester.tap(find.byKey(AddEntryScreen.amountKey), warnIfMissed: false);
+      await tester.pump();
+      expect(holdsFocus(AddEntryScreen.amountKey), isFalse, reason: 'read only, a field takes no finger');
       expect(typed(tester, AddEntryScreen.amountKey), '1150');
       expect(typed(tester, AddEntryScreen.notesKey), 'دفعة أولى');
     });
 
     /// Goes back from the entry opened read only and opens it again with no network, so it is read from what the phone kept.
     Future<void> openAgainWithNoNetwork(WidgetTester tester, FakeApi api) async {
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.pageBack());
       api.online = false;
       await openActions(tester, api, 'entry-0');
     }

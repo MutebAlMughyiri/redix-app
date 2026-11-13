@@ -4,6 +4,8 @@ import 'package:patrol/patrol.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
+import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/screen_title.dart';
 
 import '../support/entry_steps.dart';
 import '../support/given.dart';
@@ -46,7 +48,7 @@ void main() {
       expect($.typed(AddEntryScreen.amountKey), '150');
       await $.tester.tap(find.byKey(AddEntryScreen.amountKey), warnIfMissed: false);
       await $.pumpAndSettle();
-      expect($.tester.widget<EditableText>(find.descendant(of: find.byKey(AddEntryScreen.amountKey), matching: find.byType(EditableText))).focusNode.hasFocus, isFalse);
+      expect(holdsFocus(AddEntryScreen.amountKey), isFalse);
     });
 
     phoneCase('redix-app #90: تعديل turns it into the form, keeping the photo, and saving does not send the file twice', ($) async {
@@ -76,8 +78,8 @@ void main() {
       await Given.entryRejected(manager, entry);
       await $.onTheEntry(manager, entry);
       await $.tapOn(AddEntryScreen.changeKey);
-      await $(find.text($.words.entriesEdit)).waitUntilExists();
-      await $(find.textContaining(contract.contractor)).waitUntilExists();
+      await $.says(ScreenTitle.titleKey, $.words.entriesEdit);
+      await $.saysContaining(AddEntryScreen.tableKey.field.label, contract.contractor);
     });
 
     phoneCase('saving goes to that entry, with its id, file and figures', ($) async {
@@ -113,7 +115,7 @@ void main() {
       await $.tapOn(AddEntryScreen.changeKey);
       await $.reach($(AddEntryScreen.amountKey));
       expect($.typed(AddEntryScreen.amountKey), '700');
-      await $(find.textContaining('هيثم')).waitUntilExists();
+      await $.saysContaining(AddEntryScreen.tableKey.field.label, 'هيثم');
     });
 
     phoneCase('redix-app #90: whoever approves finds اعتماد on a waiting entry, and it approves it', ($) async {

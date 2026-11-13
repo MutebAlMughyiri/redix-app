@@ -8,6 +8,7 @@ import 'package:redix/format/date_format.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 import '../expenses/made_up_qr.dart';
@@ -42,9 +43,9 @@ void main() {
     expect(shown(tester, AddEntryScreen.qrTimeKey), '26.10.2026 14:25');
     expect(shown(tester, AddEntryScreen.qrAmountsKey), 'en expenses.total 6,000.00');
     expect(typed(tester, AddEntryScreen.amountKey), '6000');
-    expect(find.text('شركة البواني للتجارة'), findsNWidgets(2));
+    expect(shown(tester, AddEntryScreen.supplierKey.label), 'شركة البواني للتجارة');
     expect(shown(tester, AddEntryScreen.supplierDetailsKey), contains('310823353100003'));
-    expect(find.descendant(of: find.byKey(AddEntryScreen.dateKey), matching: find.text(formatDate(DateTime(2026, 10, 26)))), findsOneWidget);
+    expect(shown(tester, AddEntryScreen.dateKey.label), formatDate(DateTime(2026, 10, 26)));
   });
 
   for (final text in ['', 'https://example.com/invoice']) {

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 
@@ -38,13 +39,13 @@ void main() {
     final opened = await openExpense(tester);
 
     expect(find.byKey(AddEntryScreen.invoicePictureKey), findsNothing);
-    expect(find.text('en attachments.takePhoto'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.cameraKey.label)).data, 'en attachments.takePhoto');
 
     opened.capture.camera = picture;
     await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.cameraKey)));
 
     expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
-    expect(find.text('en attachments.retake'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(AddEntryScreen.cameraKey.label)).data, 'en attachments.retake');
   });
 
   testWidgets('no camera permission: the message says so and the files stay offered', (tester) async {

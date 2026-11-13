@@ -227,7 +227,7 @@ void main() {
   group('the screens that lost their buttons', () {
     testWidgets('R1: Partners has no حركة, and still shows the total and its partners', (tester) async {
       final (:api, capture: _, refund: _, :partner, account: _) = await openAddEntry(tester);
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.pageBack());
 
       await showProjectSetting(tester, HomeScreen.partnersKey('project-0'));
       await tester.ensureVisible(projectSettingPages);
@@ -243,7 +243,7 @@ void main() {
       api
         ..addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب', amount: 140)
         ..addEntry(kind: 'capitalOut', status: 'pendingApproval', itemName: '', partnerName: 'نواف', amount: 300);
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.pageBack());
 
       expect(find.byKey(const Key('home.revenue.project-0')), findsNothing);
       expect(text(tester, EntriesScreen.rowKey('entry-0').title), 'استرجاع ضرائب');
@@ -257,12 +257,12 @@ void main() {
       api
         ..addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب', amount: 140)
         ..addEntry(kind: 'revenue', status: 'rejected', itemName: 'استرجاع ضرائب', amount: 90, rejectionReason: 'المبلغ خطأ');
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.pageBack());
 
       await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-0'))));
       expect(find.byKey(AddEntryScreen.removeKey), findsNothing);
       expect(isEnabled(tester, AddEntryScreen.changeKey), isFalse);
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.pageBack());
 
       await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-1'))));
       expect(text(tester, AddEntryScreen.changeKey.label), 'en entries.fix');

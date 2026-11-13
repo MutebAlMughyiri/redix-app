@@ -268,7 +268,7 @@ void main() {
       opened.api.online = false;
       await tapVisible(tester, opened.api, AddEntryScreen.cameraKey);
       await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
-      expect(find.text('en offline.title · $entered'), findsOneWidget);
+      expect(shown(tester, HomeScreen.waitingKey('project-0').title), 'en offline.title · $entered');
       if (entered < 5) {
         await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey('project-0')));
         await act(tester, opened.api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
@@ -335,7 +335,7 @@ void main() {
     await type(tester, AddEntryScreen.columnKey('custom.area'), '١٢٥٫٥');
     await type(tester, AddEntryScreen.columnKey('custom.note'), 'نص');
     await tapVisible(tester, opened.api, AddEntryScreen.columnKey('custom.colour'));
-    await act(tester, opened.api, () => tester.tap(find.text('أزرق').last));
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.columnOptionKey('custom.colour', 'أزرق')).hitTestable()));
     await tapVisible(tester, opened.api, AddEntryScreen.columnKey('custom.day'));
     await act(tester, opened.api, () => tester.tap(find.text('OK')));
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
@@ -356,7 +356,7 @@ void main() {
     expect(find.byKey(AddEntryScreen.notesKey), findsOneWidget);
     await pickItem(tester, opened.api, opened.item);
 
-    expect(find.text('en expenses.product *'), findsOneWidget);
+    expect(tester.widget<TextField>(find.byKey(AddEntryScreen.productKey)).decoration!.labelText, 'en expenses.product *');
     expect(find.byKey(AddEntryScreen.notesKey), findsNothing);
     expect(find.byKey(AddEntryScreen.unitPriceKey), findsOneWidget);
   });
@@ -418,7 +418,7 @@ void main() {
 
     expect(find.byKey(PaymentChoices.accountKey(opened.custody)), findsOneWidget);
     expect(find.byKey(PaymentChoices.accountKey(opened.bank)), findsNothing);
-    expect(tester.widget<RadioGroup<String>>(find.byType(RadioGroup<String>)).groupValue, opened.custody);
+    expect(RadioGroup.maybeOf<String>(tester.element(find.byKey(PaymentChoices.accountKey(opened.custody))))!.groupValue, opened.custody);
   });
 
   testWidgets('ChargeAnyAccount: Finance is offered every account and chooses one', (tester) async {
@@ -436,19 +436,20 @@ void main() {
     await openExpense(tester, arrange: (api) => api.accounts['project-0']!.clear());
 
     expect(find.byKey(PaymentChoices.noAccountKey), findsOneWidget);
-    expect(find.byType(RadioListTile<String>), findsNothing);
+    expect(find.byKey(PaymentChoices.accountHeadingKey), findsNothing);
   });
 
   testWidgets('a disabled payment method is not on offer', (tester) async {
-    await openExpense(tester);
+    final opened = await openExpense(tester);
+    final disabled = opened.api.paymentMethods['project-0']!.singleWhere((method) => method['name'] == 'معطّلة')['id']! as String;
 
-    expect(find.text('شبكة'), findsOneWidget);
-    expect(find.text('معطّلة'), findsNothing);
+    expect(shown(tester, PaymentChoices.paymentMethodKey(opened.method).label), 'شبكة');
+    expect(find.byKey(PaymentChoices.paymentMethodKey(disabled)), findsNothing);
   });
 
   testWidgets('a list that cannot be read says so, and Try again reads it', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
-    api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
+    final custody = api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true)['id']! as String;
     await openProject(tester, api, capture: FakeCapture());
     await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey('project-0')));
     api.online = false;
@@ -460,7 +461,7 @@ void main() {
     api.online = true;
     await act(tester, api, () => tester.tap(find.byKey(PaymentChoices.retryKey)));
 
-    expect(find.text('عهدتي'), findsOneWidget);
+    expect(shown(tester, PaymentChoices.accountKey(custody).title), 'عهدتي');
     expect(find.byKey(PaymentChoices.listMessageKey), findsNothing);
   });
 
@@ -486,7 +487,7 @@ void main() {
     await tester.enterText(find.byKey(SuppliersScreen.vatNumberKey), '311111111111113');
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-    expect(find.text('مبلط الغربية'), findsOneWidget);
+    expect(shown(tester, AddEntryScreen.supplierKey.label), 'مبلط الغربية');
     expect(shown(tester, AddEntryScreen.supplierDetailsKey), contains('311111111111113'));
   });
 

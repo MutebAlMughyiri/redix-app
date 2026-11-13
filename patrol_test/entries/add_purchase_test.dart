@@ -7,6 +7,7 @@ import 'package:redix/entries/table_picker.dart';
 import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../support/entry_steps.dart';
 import '../support/given.dart';
@@ -63,7 +64,7 @@ void main() {
       final subgroup = await Given.subgroup(manager, table.itemId, 'الجلاي');
       await $.onAddEntry(manager);
       await $.pickTable(subgroup);
-      await $(find.text('الجلاي (${table.itemName})')).waitUntilExists();
+      await $.says(AddEntryScreen.tableKey.field.label, 'الجلاي (${table.itemName})');
     });
 
     phoneCase('the table sheet searches items and tables, Arabic spelling read as one', ($) async {
@@ -83,7 +84,7 @@ void main() {
       await $.onAddEntry(manager);
       await $.tapOn(AddEntryScreen.supplierKey);
       await $.tapOn(SupplierPicker.rowKey(supplier));
-      await $(find.text(table.itemName)).waitUntilExists();
+      await $.says(AddEntryScreen.tableKey.field.label, table.itemName);
     });
 
     phoneCase('D3: an entry with no file is sent, with no reason asked', ($) async {
