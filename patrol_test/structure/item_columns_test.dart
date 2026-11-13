@@ -6,11 +6,15 @@ import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/shared_settings_screen.dart';
+import 'package:redix/structure/apply_to_all_dialog.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/item_column.dart';
 import 'package:redix/structure/item_columns_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/picker_field.dart';
+import 'package:redix/ui/screen_title.dart';
 import 'package:redix/words/language_switch.dart';
 
 import '../support/entry_steps.dart';
@@ -93,7 +97,7 @@ void main() {
       await addList($, 'الجهة', 'شرق');
       final id = await $.idShowing('columns.name.', 'الجهة');
       await $.swipeAway(ItemColumnsScreen.rowKey(id));
-      expect(find.byType(AlertDialog), findsNothing);
+      expect($(ConfirmDialog.dialogKey), findsNothing);
       await $.gone($(ItemColumnsScreen.nameKey(id)));
     });
 
@@ -101,7 +105,7 @@ void main() {
       final made = await onColumns($);
       final details = $.tester.widget<Text>(find.byKey(ItemColumnsScreen.itemDetailsKey)).data!;
       expect(details, contains(made.categoryName));
-      expect(find.text(made.itemName), findsWidgets);
+      await $.says(ScreenTitle.subjectKey, made.itemName);
     });
 
     phoneCase('a row says what the column is', ($) async {
@@ -133,7 +137,7 @@ void main() {
       await $.goTo($(ItemColumnsScreen.nameKey(second)));
       expect($.topOf(ItemColumnsScreen.nameKey(first)), lessThan($.topOf(ItemColumnsScreen.nameKey(second))));
       await $.dragDown(ItemColumnsScreen.handleKey(first), distance: 100);
-      expect(find.byType(AlertDialog), findsNothing);
+      expect($(ApplyToAllDialog.dialogKey), findsNothing);
       await $.until(() => $.topOf(ItemColumnsScreen.nameKey(first)) > $.topOf(ItemColumnsScreen.nameKey(second)));
       expect($.topOf(ItemColumnsScreen.nameKey(first)), greaterThan($.topOf(ItemColumnsScreen.nameKey(second))));
     });
@@ -151,7 +155,7 @@ void main() {
       await $.tapOn(HomeScreen.addEntryKey(manager.projectId));
       await $.pickTable(table.tableId);
       await $.goTo($(AddEntryScreen.dateKey));
-      expect(find.descendant(of: find.byKey(AddEntryScreen.dateKey), matching: find.text('التاريخ')), findsWidgets);
+      expect($.tester.widget<PickerField>(find.byKey(AddEntryScreen.dateKey)).label, 'التاريخ');
     });
 
     phoneCase('AC-41.2: a core column has a lock, no delete, and does not swipe', ($) async {

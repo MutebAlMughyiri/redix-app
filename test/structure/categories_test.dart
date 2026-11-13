@@ -16,6 +16,7 @@ import 'package:redix/ui/messages.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/name_dialog.dart';
 
@@ -268,7 +269,7 @@ void main() {
     await save(tester, api, 'الجلاي');
     final added = (item['subgroups']! as List<Map<String, Object>>).last['id']! as String;
     for (var back = 0; back < 2; back++) {
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.pageBack());
     }
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
     await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
@@ -344,7 +345,7 @@ void main() {
 
     await swipeToRemove(tester, opened.api, ItemTablesScreen.rowKey(opened.ids[0]));
 
-    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.byKey(ConfirmDialog.dialogKey), findsNothing);
 
     expect(opened.api.sentStructureChanges.single.$1, 'DELETE /projects/project-0/items/${opened.item}/subgroups/${opened.ids[0]}');
     expect(find.byKey(ItemTablesScreen.tableNameKey(opened.ids[0])), findsNothing);
@@ -367,7 +368,7 @@ void main() {
 
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemMenuKey(opened.steel))));
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.changeTypeKey)));
-    expect(tester.widget<RadioGroup<ItemType>>(find.byType(RadioGroup<ItemType>)).groupValue, ItemType.purchases);
+    expect(RadioGroup.maybeOf<ItemType>(tester.element(find.byKey(CategoriesScreen.itemTypeKey(ItemType.purchases))))!.groupValue, ItemType.purchases);
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.itemTypeKey(ItemType.both))));
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 

@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/item_tables_screen.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/name_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 
@@ -47,7 +47,7 @@ void main() {
       final table = await Given.subgroup(made.manager, made.item, 'الجلاي');
       await onTables($, made.manager, made.category, made.item);
       await $.swipeAway(ItemTablesScreen.rowKey(table));
-      expect(find.byType(AlertDialog), findsNothing);
+      expect($(ConfirmDialog.dialogKey), findsNothing);
       await $.gone($(ItemTablesScreen.tableNameKey(table)));
     });
 
