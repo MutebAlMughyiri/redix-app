@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/accounts/account_history_screen.dart';
@@ -17,8 +19,8 @@ import '../app_harness.dart';
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  /// A project with a bank account and a custody, arranged further by [arrange], opened as far as its accounts.
-  Future<({FakeApi api, String bank, String custody})> openAccounts(WidgetTester tester, {void Function(FakeApi api)? arrange, List<String> permissions = managerAndFinance}) async {
+  /// A project with a bank account and a custody, arranged further by [arrange], opened as far as its accounts, on a phone keeping what it reads in [store].
+  Future<({FakeApi api, String bank, String custody})> openAccounts(WidgetTester tester, {void Function(FakeApi api)? arrange, List<String> permissions = managerAndFinance, MemoryStore? store}) async {
     tester.view.physicalSize = const Size(900, 2400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -27,7 +29,7 @@ void main() {
     final bank = api.addAccount('project-0', 'حساب المؤسسة', balance: 1000);
     final custody = api.addAccount('project-0', 'كاش مع نواف', type: 'cashCustody', balance: 200, custodianId: 'user-nawaf', custodianName: 'نواف');
     arrange?.call(api);
-    await openProject(tester, api);
+    await openProject(tester, api, store: store);
     await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
     await tester.ensureVisible(projectSettingPages);
     await scrollAndTap(tester, api, HomeScreen.accountsKey('project-0'));
@@ -161,8 +163,8 @@ void main() {
   });
 
   group('History', () {
-    Future<FakeApi> openHistory(WidgetTester tester, {void Function(FakeApi api)? arrange, List<String> permissions = managerAndFinance}) async {
-      final opened = await openAccounts(tester, arrange: arrange, permissions: permissions);
+    Future<FakeApi> openHistory(WidgetTester tester, {void Function(FakeApi api)? arrange, List<String> permissions = managerAndFinance, MemoryStore? store}) async {
+      final opened = await openAccounts(tester, arrange: arrange, permissions: permissions, store: store);
       await act(tester, opened.api, () => tester.tap(find.byKey(AccountsScreen.historyKey)));
       return opened.api;
     }
@@ -266,6 +268,48 @@ void main() {
       await tester.scrollUntilVisible(find.byKey(AccountHistoryScreen.lineKey(941)), 400, scrollable: listRows);
       expect(find.byKey(AccountHistoryScreen.lineKey(941)), findsOneWidget);
       expect(find.byKey(AccountHistoryScreen.moreKey), findsNothing);
+    });
+
+    /// A phone keeping [line] as the page after the first full page of the history, as a read of it with no network answers.
+    Future<MemoryStore> storeKeepingTheSecondPage(Map<String, Object> line) async {
+      final store = MemoryStore();
+      final secondPage = Uri(path: '/projects/project-0/accounts/history', queryParameters: {'account': '', 'mine': 'false', 'before': '951'}).toString();
+      await store.write('copies', secondPage, jsonEncode([line]));
+      return store;
+    }
+
+    void fillAPageAndMore(FakeApi api) {
+      for (var i = 0; i < 60; i++) {
+        api.addHistoryLine('project-0', 'accountChanged', nameWas: 'قديم');
+      }
+    }
+
+    Future<void> tapMoreWithNoNetwork(WidgetTester tester, FakeApi api) async {
+      api.online = false;
+      await tester.scrollUntilVisible(find.byKey(AccountHistoryScreen.moreKey), 400, scrollable: listRows);
+      await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.moreKey)));
+    }
+
+    testWidgets('redix-api #126: a next page an earlier version kept, in a shape this one does not read, says it could not be read when the network is gone, and the lines shown stay', (tester) async {
+      final line = {...FakeApi().addHistoryLine('project-0', 'accountChanged', nameWas: 'قديم'), 'id': 950}..remove('custodian');
+      final api = await openHistory(tester, arrange: fillAPageAndMore, store: await storeKeepingTheSecondPage(line));
+
+      await tapMoreWithNoNetwork(tester, api);
+
+      expect(text(tester, messageKeyOf('history.loadFailed').label), 'en history.loadFailed');
+      expect(find.byKey(AccountHistoryScreen.lineKey(951)), findsOneWidget);
+      expect(find.byKey(AccountHistoryScreen.lineKey(950)), findsNothing);
+    });
+
+    testWidgets('redix-api #126: a next page kept in the shape this version reads is added below when the network is gone', (tester) async {
+      final line = {...FakeApi().addHistoryLine('project-0', 'accountChanged', nameWas: 'قديم'), 'id': 950};
+      final api = await openHistory(tester, arrange: fillAPageAndMore, store: await storeKeepingTheSecondPage(line));
+
+      await tapMoreWithNoNetwork(tester, api);
+
+      expect(find.byKey(messageKeyOf('history.loadFailed').label), findsNothing);
+      await tester.scrollUntilVisible(find.byKey(AccountHistoryScreen.lineKey(950)), 400, scrollable: listRows);
+      expect(find.byKey(AccountHistoryScreen.lineKey(950)), findsOneWidget);
     });
 
     testWidgets('a history with fewer lines than a page offers no More', (tester) async {

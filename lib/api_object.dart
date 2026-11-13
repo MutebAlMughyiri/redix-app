@@ -79,8 +79,7 @@ abstract class ApiObject<T> extends ChangeNotifier {
     SchedulerBinding.instance.addPostFrameCallback((_) => load());
   }
 
-  /// Reads it from the API. A copy kept on the phone in a shape this version no longer reads, as an earlier version kept it, says it could not be read, as nothing
-  /// kept would, so the next read comes from the API (redix-api #126); no reader keeps a way to read an old shape.
+  /// Reads it from the API, through [readAt].
   Future<void> load() async {
     final path = _path;
     _isLoading = true;
@@ -89,17 +88,9 @@ abstract class ApiObject<T> extends ChangeNotifier {
     var value = _value;
     var message = '';
     try {
-      final response = await _session.get(path);
-      if (response.statusCode == 200) {
-        value = _fromJson(jsonOf(response));
-      } else {
-        message = loadFailedKey;
-      }
+      value = await readAt(path);
     } on Exception catch (error) {
       debugPrint('$path not read: $error');
-      message = loadFailedKey;
-    } on TypeError catch (error) {
-      debugPrint('$path not read, in a shape this version does not read: $error');
       message = loadFailedKey;
     }
     if (path == _path) {
@@ -110,14 +101,20 @@ abstract class ApiObject<T> extends ChangeNotifier {
     }
   }
 
-  /// What the API at [path] answers now, made as this is, without showing it: the next page of a list read a page at a time (redix-app #89). One that cannot be read throws.
+  /// What the API at [path] answers now, made as this is, without showing it: the one way it and the next page of a list read a page at a time (redix-app #89) are read.
+  /// One that cannot be read throws an [Exception]: a copy kept on the phone in a shape this version no longer reads, as an earlier version kept it, throws as nothing
+  /// kept would, so the next read comes from the API (redix-api #126), and no reader keeps a way to read an old shape.
   @protected
   Future<T> readAt(String path) async {
     final response = await _session.get(path);
     if (response.statusCode != 200) {
       throw http.ClientException('$path answered ${response.statusCode}');
     }
-    return _fromJson(jsonOf(response));
+    try {
+      return _fromJson(jsonOf(response));
+    } on TypeError catch (error) {
+      throw FormatException('$path answered in a shape this version does not read: $error');
+    }
   }
 
   /// Sends a change to the API [path] and, once it has answered, reads this again, so what someone else changed shows as it is now.
