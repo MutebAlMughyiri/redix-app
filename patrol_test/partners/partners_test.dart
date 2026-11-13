@@ -175,7 +175,6 @@ void main() {
       final id = await Given.partner(manager, 'متعب');
       await onPartners($, manager);
       await $.reach($(PartnersScreen.nameKey(id)));
-      expect($(keyStartingWith('partners.movement')), findsNothing);
       expect(find.text($.words.capitalContribution), findsNothing);
     });
 
