@@ -68,7 +68,7 @@ void main() {
       await $.says(DocumentsScreen.fileKey.label, madeUpDocumentName);
       await $(ChangeDialog.saveKey).tap();
       await $.idShowing('documents.document.', 'عقد الأرض');
-      expect($(keyStartingWith('documents.group.')), findsNothing);
+      expect($(keyedBy(DocumentsScreen.groupHeadingKey)), findsNothing);
     });
 
     phoneCase('redix-api #102, #119: a swipe removes one once confirmed in its row', ($) async {

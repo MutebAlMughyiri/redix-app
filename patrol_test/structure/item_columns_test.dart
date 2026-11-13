@@ -38,7 +38,7 @@ Future<void> openColumns(PatrolIntegrationTester $, Person manager, String categ
   await $.fromTheHome(manager, HomeScreen.categoriesKey(manager.projectId));
   await $.tapOn(CategoriesScreen.categoryTileKey(category));
   await $.tapOn(CategoriesScreen.itemColumnsKey(item));
-  await $(keyStartingWith('columns.lock.')).waitUntilExists();
+  await $(keyedBy(ItemColumnsScreen.lockKey)).waitUntilExists();
 }
 
 /// Adds a list column called [name] with [choices], one a line.

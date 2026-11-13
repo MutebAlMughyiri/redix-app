@@ -205,7 +205,9 @@ void main() {
       final manager = await Given.manager();
       final contract = await Given.contract(manager);
       await onContracts($, manager);
-      expect($(keyStartingWith('reportFile.contracts')), findsNothing);
+      for (final kind in ReportFileKind.values) {
+        expect($(ReportFileButtons.buttonKey('contracts', kind)), findsNothing);
+      }
       await $.goTo($(ContractsScreen.nameKey(contract.id)));
       await $.menuChoice(ContractsScreen.menuKey(contract.id), ContractsScreen.fileKey(ReportFileKind.excel));
       await $.tapOn(ReportFileButtons.handingKey(contract.contractor, ReportFileKind.excel, FileHandling.save));
@@ -308,7 +310,9 @@ void main() {
       await onContracts($, member);
       await $.goTo($(ContractsScreen.nameKey(contract.id)));
       expect($(ContractsScreen.menuKey(contract.id)), findsNothing);
-      expect($(keyStartingWith('reportFile.')), findsNothing);
+      for (final kind in ReportFileKind.values) {
+        expect($(ReportFileButtons.buttonKey(contract.contractor, kind)), findsNothing);
+      }
     });
 
     phoneCase('a list that cannot be read says so', ($) async {

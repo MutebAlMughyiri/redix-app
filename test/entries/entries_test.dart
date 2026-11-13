@@ -775,10 +775,7 @@ void main() {
       return api;
     }
 
-    List<String> shownRows(WidgetTester tester) => [
-      for (final element in find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith('entries.row.')).evaluate())
-        (element.widget.key! as ValueKey<String>).value.substring('entries.row.'.length),
-    ];
+    List<String> shownRows(WidgetTester tester) => idsKeyedBy(EntriesScreen.rowKey);
 
     Future<void> choose(WidgetTester tester, FakeApi api, Key chip, Key item) async {
       await openFilters(tester, api);

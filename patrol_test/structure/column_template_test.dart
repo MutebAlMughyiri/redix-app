@@ -17,9 +17,9 @@ Future<Person> onTemplate(PatrolIntegrationTester $) async {
   await $.fromTheHome(manager, HomeScreen.categoriesKey(manager.projectId));
   await $.tapOn(CategoriesScreen.categoryTileKey(bone.categoryId));
   await $.tapOn(CategoriesScreen.itemColumnsKey(bone.itemId));
-  await $(keyStartingWith('columns.lock.')).waitUntilExists();
+  await $(keyedBy(ItemColumnsScreen.lockKey)).waitUntilExists();
   await $.tapOn(ItemColumnsScreen.templateKey);
-  await $(keyStartingWith('columns.lock.')).waitUntilExists();
+  await $(keyedBy(ItemColumnsScreen.lockKey)).waitUntilExists();
   return manager;
 }
 
@@ -55,7 +55,7 @@ void main() {
       await $(ApplyToAllDialog.templateOnlyKey).tap();
       await $.idShowing('columns.name.', 'رقم أمر الشراء');
       await $.tapOn(ItemColumnsScreen.thisItemKey);
-      await $(keyStartingWith('columns.lock.')).waitUntilExists();
+      await $(keyedBy(ItemColumnsScreen.lockKey)).waitUntilExists();
       expect(find.text('رقم أمر الشراء'), findsNothing);
     });
 

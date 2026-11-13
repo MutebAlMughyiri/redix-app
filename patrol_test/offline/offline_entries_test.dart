@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
+import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
@@ -98,7 +99,7 @@ void main() {
       await readyOnTheHome($, made);
       await Pc.cutNetwork();
       await $.tapOn(HomeScreen.accountsKey(made.manager.projectId));
-      await $(keyStartingWith('accounts.name.')).waitUntilExists();
+      await $(keyedBy(AccountsScreen.nameKey)).waitUntilExists();
     });
 
     phoneCase('a typed search looks in what was kept, whichever way the name is spelled', ($) async {
@@ -167,7 +168,7 @@ void main() {
       await Pc.restoreNetwork();
       await $.pullDown();
       await $.tapOn(HomeScreen.waitingKey(made.manager.projectId));
-      final row = $(keyStartingWith('waiting.state.'));
+      final row = $(keyedBy(WaitingScreen.stateKey));
       await row.waitUntilExists();
       expect(row, findsOneWidget);
     });

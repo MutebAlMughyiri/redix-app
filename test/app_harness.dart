@@ -1982,8 +1982,20 @@ Future<void> openProject(WidgetTester tester, FakeApi api, {InvoiceCapture? capt
   await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
 }
 
+/// Every widget keyed by [keyOf] for any id, such as the rows of a list: the widgets whose key starts as [keyOf] keys an empty id.
+Finder keyedBy(Key Function(String id) keyOf) {
+  final start = (keyOf('') as ValueKey<String>).value;
+  return find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith(start));
+}
+
+/// The id in the key of each widget keyed by [keyOf], in the order they show.
+List<String> idsKeyedBy(Key Function(String id) keyOf) {
+  final start = (keyOf('') as ValueKey<String>).value;
+  return [for (final element in keyedBy(keyOf).evaluate()) (element.widget.key! as ValueKey<String>).value.substring(start.length)];
+}
+
 /// The pages of the home's Project settings, four buttons each (Muteb, 11 Nov 2026).
-final projectSettingPages = find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith('home.settingsPages.'));
+final projectSettingPages = keyedBy(HomeScreen.settingsPagesKey);
 
 /// Swipes the home's Project settings one page on, as a person does: toward the start of the reading line, so in Arabic the next page comes from the left; back a page
 /// when [back].
