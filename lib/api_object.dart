@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 import 'api.dart';
 import 'auth/session.dart';
 
-/// Something the API owns, as it last answered, and the way to change it. Nothing about it is kept on the phone.
+/// Something the API owns, as it last answered, and the way to change it. What it reads is kept on the phone by [Session.get], which answers with that copy while there
+/// is no network (FR-16), until sign-out.
 abstract class ApiObject<T> extends ChangeNotifier {
   /// What the API at [_path] answers, made from JSON by [_fromJson], whose word keys start with [_wordPrefix]; [_empty] until it answers.
   ApiObject(this._session, this._path, this._wordPrefix, this._fromJson, this._empty) : _value = _empty {
