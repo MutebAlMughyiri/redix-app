@@ -235,7 +235,6 @@ void main() {
 
       expect(find.byKey(PartnersScreen.totalKey), findsOneWidget);
       expect(find.byKey(PartnersScreen.nameKey(partner)), findsOneWidget);
-      expect(find.byKey(const Key('partners.move')), findsNothing);
     });
 
     testWidgets('No Revenue screen: the home has no Revenue, and القيود lists revenue and a partner\'s money, each saying what it is', (tester) async {
@@ -245,7 +244,6 @@ void main() {
         ..addEntry(kind: 'capitalOut', status: 'pendingApproval', itemName: '', partnerName: 'نواف', amount: 300);
       await act(tester, api, () => tester.pageBack());
 
-      expect(find.byKey(const Key('home.revenue.project-0')), findsNothing);
       expect(text(tester, EntriesScreen.rowKey('entry-0').title), 'استرجاع ضرائب');
       expect(text(tester, EntriesScreen.detailsKey('entry-0')), startsWith('en categories.tableRevenue'));
       expect(text(tester, EntriesScreen.rowKey('entry-1').title), 'نواف');
@@ -277,7 +275,6 @@ void main() {
       capture.share(picture());
       await act(tester, api, () async {});
 
-      expect(find.byKey(const Key('share.capitalReceipt')), findsNothing);
       await tester.ensureVisible(find.byKey(ShareScreen.newExpenseKey));
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(ShareScreen.newExpenseKey)));

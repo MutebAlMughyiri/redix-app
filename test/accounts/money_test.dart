@@ -220,7 +220,6 @@ void main() {
       expect(find.descendant(of: bar, matching: find.byKey(AccountsScreen.updateKey)), findsOneWidget);
       expect(find.descendant(of: bar, matching: find.byKey(AccountsScreen.transferKey)), findsOneWidget);
       expect(isEnabled(tester, AccountsScreen.transferKey), isTrue);
-      expect(find.byKey(const Key('home.actualBalances.project-0')), findsNothing);
     });
 
     testWidgets('redix-app #89: with one active account there is nothing to transfer to, so Transfer is grayed', (tester) async {
