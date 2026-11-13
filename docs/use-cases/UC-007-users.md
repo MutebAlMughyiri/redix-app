@@ -8,33 +8,38 @@
 
 ## Screens
 
-[Users](../guide/users.md), `UsersScreen` at `/users`, opened from the home of a project (`HomeScreen.usersKey`):
+[Users](../guide/users.md), `UsersScreen` at `/projects/:projectId/users`, opened from the home of a project (`HomeScreen.usersKey(id)`):
 
 | Element | `Key` | Does |
 | --- | --- | --- |
 | New user | `UsersScreen.newUserKey` | Opens the new user form |
 | A user's row | `UsersScreen.rowKey(id)` | One user; active users first, by name |
 | Name | `UsersScreen.nameKey(id)` | Their name, muted while inactive in this project |
-| Details | `UsersScreen.detailsKey(id)` | Their username and mobile |
+| Details | `UsersScreen.detailsKey(id)` | Their username, what they are called in this project, and their mobile |
+| Permissions | `UsersScreen.permissionsLineKey(id)` | How many permissions they hold in this project (UC-008) |
 | Disabled | `UsersScreen.statusKey(id)` | «معطّل», the badge of a person inactive in this project (redix-api #126 D1) |
-| The row's menu | `UsersScreen.menuKey(id)` | Edit, Roles on a project's list, Reset password, and Disable or Enable |
-| Edit | `UsersScreen.editKey` | Opens the Edit dialog: `editNameKey`, `editMobileKey` |
+| The row's menu | `UsersScreen.menuKey(id)` | Edit, Permissions (`UsersScreen.permissionsKey`, UC-008), Reset password, and Disable or Enable |
+| Edit | `UsersScreen.editKey` | Opens the Edit dialog: `editNameKey`, `editRoleNameKey`, `editMobileKey` |
 | Reset password | `UsersScreen.resetPasswordKey` | Opens the Reset password dialog: `resetNameKey`, `resetExplainKey`, `resetPasswordFieldKey` |
-| Save, in both dialogs | `UsersScreen.saveKey` | Sends the change; disabled while waiting |
-| Message, in both dialogs | `UsersScreen.dialogMessageKey` | One line saying why it was refused, keeping what was typed |
-| Disable | `UsersScreen.disableKey` | Asks first: `disableNameKey`, `disableExplainKey`, `confirmDisableKey`, `cancelDisableKey` |
+| Save, Cancel, in both dialogs | `ChangeDialog.saveKey`, `ChangeDialog.cancelKey` | Save sends the change, once while it is sent; Cancel closes the dialog unchanged |
+| Message, in both dialogs | `ChangeDialog.messageKey` | One line saying why it was refused, keeping what was typed |
+| Disable | `UsersScreen.disableKey` | Asks first in a `ConfirmDialog`: `ConfirmDialog.titleKey`, `subjectKey` (the person's name), `explanationKey`, `confirmKey`, `cancelKey` |
 | Enable | `UsersScreen.enableKey` | Enables, with no question |
+
+A refused Disable or Enable says why in the bar (`messageKeyOf(wordKey)`).
 
 The list's empty, loading and could-not-load states are `ApiListBody`'s, shared with Projects.
 
-New user, `NewUserScreen` at `/users/new`:
+New user, `NewUserScreen` at `/projects/:projectId/users/new`:
 
 | Element | `Key` | Does |
 | --- | --- | --- |
 | Name | `NewUserScreen.nameKey` | 1 to 100 characters; shows on their entries |
 | Username | `NewUserScreen.usernameKey` | 1 to 50 characters, unique; never changes |
+| What they are called in this project | `NewUserScreen.roleNameKey` | May be empty (UC-008) |
 | Mobile | `NewUserScreen.mobileKey` | Up to 20 characters; may be empty |
 | Temporary password | `NewUserScreen.passwordKey` | At least 8 characters; shown as typed, to pass on |
+| Permissions | `NewUserScreen.permissionsHeadingKey`, `NewUserScreen.permissionKey(permission)` | What the new login may do in this project, See the project always ticked (UC-008) |
 | Add user | `NewUserScreen.submitKey` | Sends everything; disabled while waiting |
 | Message | `NewUserScreen.messageKey` | One line saying why it was refused |
 
@@ -42,9 +47,10 @@ New user, `NewUserScreen` at `/users/new`:
 
 | Call | When |
 | --- | --- |
-| `GET /users` | Opening Users, Try again, and after every answer to a change |
-| `POST /users` | Add user |
-| `POST /users/{userId}` | Saving Edit |
+| `GET /projects/{projectId}/users` | Opening Users, Try again, and after every answer to a change |
+| `POST /projects/{projectId}/users` | Add user |
+| `PUT /users/{userId}` | Saving Edit, when the name or the mobile changed |
+| `PUT /projects/{projectId}/users/{userId}/role-name` | Saving Edit, when what they are called in this project changed |
 | `POST /users/{userId}/reset-password` | Saving Reset password |
 | `POST /projects/{projectId}/users/{userId}/disable`, `/enable` | Disable, once confirmed; Enable. Each answers the user, and is for this project alone (redix-api #126 D1) |
 
