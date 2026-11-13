@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
+import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../support/entry_steps.dart';
@@ -77,7 +78,7 @@ void main() {
       await $.onAddEntry(manager);
       await openSheet($);
       await $(SupplierPicker.searchKey).enterText('لا يوجد ${Given.unique()}');
-      await $(find.text($.words.suppliersNoMatch)).waitUntilExists();
+      await $.says(ApiListBody.emptyKey, $.words.suppliersNoMatch);
     });
 
     phoneCase('closing answers no supplier', ($) async {
@@ -87,7 +88,7 @@ void main() {
       await openSheet($);
       await $.tapOn(SupplierPicker.closeKey);
       await $.gone($(SupplierPicker.searchKey));
-      expect(find.text('شركة النخيل'), findsNothing);
+      await $.says(AddEntryScreen.supplierKey.label, '');
     });
   });
 }
