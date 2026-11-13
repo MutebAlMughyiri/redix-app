@@ -1628,6 +1628,9 @@ mixin WordGetters {
   /// The word `projects.importSettings`.
   String get projectsImportSettings => text('projects.importSettings');
 
+  /// The word `projects.inactive`.
+  String get projectsInactive => text('projects.inactive');
+
   /// The word `projects.invalidDescription`.
   String get projectsInvalidDescription => text('projects.invalidDescription');
 
