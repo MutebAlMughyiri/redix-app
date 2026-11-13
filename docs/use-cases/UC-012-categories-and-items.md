@@ -18,7 +18,7 @@ New project, `NewProjectScreen`, signed in:
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Copy categories and items from | `NewProjectScreen.structureSourceKey` | The default template unless changed, or an approved project on the user's list. The sign-in page's form has no such field |
+| Copy categories and items from | `NewProjectScreen.structureSourceKey` | The default template unless changed, or a project on the user's list he may open (`Project.mayOpen`): approved, and not one he was made inactive in (redix-api #126 D2). The sign-in page's form has no such field |
 
 [Categories and items](../guide/categories.md), `CategoriesScreen` at `/projects/:projectId/categories`:
 
@@ -84,7 +84,7 @@ New project, `NewProjectScreen`, signed in:
 | A named subgroup is removed by a swipe once confirmed in its row (redix-api #119); the general table and a contract do not swipe; one that entries use comes back and the refusal says why (redix-api #102) | `ItemTables.deleteSubgroup`, `SwipeToRemove` | `categories_test.dart`: a named subgroup is removed by a swipe; AC-46.8; a subgroup that entries use |
 | An item's type changes from its menu, starting from the one it has; one with entries keeps it and the dialog says why | `ChangeItemTypeDialog`, `ItemTypeChoice`, `Categories.changeItemType` | `categories_test.dart`: an item's type changes from its menu; an item with entries keeps its type |
 | A finished project shows its structure with nothing to change (AC-04.1) | `Project.mayChangeStructure` | `categories_test.dart`: a finished project |
-| AC-05.2: a new project can copy an approved earlier one, and the sign-in page offers none | `NewProjectScreen` | `categories_test.dart`: a new project |
+| AC-05.2: a new project can copy an approved earlier one, never one the user was made inactive in (redix-api #126 D2), and the sign-in page offers none | `NewProjectScreen`, `Project.mayOpen` | `categories_test.dart`: a new project |
 | AC-N03: nothing off a screen 360 points wide, in both languages | Each screen | `settings/account_test.dart`: AC-N03 |
 
 The real app and API run it together on a real phone in `patrol_test/structure/categories_test.dart`, `items_test.dart` and `item_tables_test.dart`, which take the guide's pictures.

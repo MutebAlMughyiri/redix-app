@@ -486,6 +486,18 @@ void main() {
       expect(api.sentProjectChanges.single.$2['structureSourceId'], 'project-1');
     });
 
+    testWidgets('redix-api #126 D2: offers no project the user was made inactive in, and still offers one he is active in', (tester) async {
+      final api = FakeApi()..addProject('غصون 6');
+      api.makeInactive(api.addProject('غصون 7'));
+      await openNewProject(tester, api);
+
+      await tester.ensureVisible(find.byKey(NewProjectScreen.structureSourceKey));
+      await act(tester, api, () => tester.tap(find.byKey(NewProjectScreen.structureSourceKey)));
+
+      expect(find.byKey(NewProjectScreen.structureSourceOptionKey('project-0')), findsWidgets);
+      expect(find.byKey(NewProjectScreen.structureSourceOptionKey('project-1')), findsNothing);
+    });
+
     testWidgets('says when the earlier project cannot be copied', (tester) async {
       final api = FakeApi()
         ..addProject('غصون 6')
