@@ -6,15 +6,18 @@ import 'package:redix/ui/busy.dart';
 
 /// Muteb, 11 Nov 2026: a spinner while a file is picked, read or sent, through the one whileBusy.
 void main() {
+  /// The button the test taps to start the work.
+  const goKey = Key('busyTest.go');
+
   Future<void> pumpButton(WidgetTester tester, Future<String> Function(BuildContext context) onTap) =>
-      tester.pumpWidget(MaterialApp(home: Builder(builder: (context) => TextButton(onPressed: () => onTap(context), child: const Text('go')))));
+      tester.pumpWidget(MaterialApp(home: Builder(builder: (context) => TextButton(key: goKey, onPressed: () => onTap(context), child: const Text('go')))));
 
   testWidgets('a spinner covers the screen while the work runs, and goes once it ends, answering what the work answered', (tester) async {
     final work = Completer<String>();
     var answer = '';
     await pumpButton(tester, (context) async => answer = await whileBusy(context, work.future));
 
-    await tester.tap(find.text('go'));
+    await tester.tap(find.byKey(goKey));
     await tester.pump();
     expect(find.byKey(busySpinnerKey), findsOneWidget);
 
@@ -32,7 +35,7 @@ void main() {
       return '';
     }));
 
-    await tester.tap(find.text('go'));
+    await tester.tap(find.byKey(goKey));
     await tester.pump();
     work.completeError(StateError('lost'));
     await tester.pumpAndSettle();
@@ -45,7 +48,7 @@ void main() {
     final work = Completer<String>();
     await pumpButton(tester, (context) => whileBusy(context, work.future));
 
-    await tester.tap(find.text('go'));
+    await tester.tap(find.byKey(goKey));
     await tester.pump();
     await tester.binding.handlePopRoute();
     await tester.pump();

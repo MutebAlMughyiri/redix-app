@@ -31,7 +31,7 @@ void main() {
     expect(find.byType(Card), findsOneWidget);
     expect((card.contains(bar.topLeft), card.contains(bar.bottomRight - const Offset(1, 1))), (true, true), reason: 'the bar lies inside the card');
     expect(bar.width, SwipeToRemove.barWidth);
-    final color = tester.widget<ColoredBox>(find.descendant(of: find.byKey(row.bar), matching: find.byType(ColoredBox))).color;
+    final color = (tester.widget<PositionedDirectional>(find.byKey(row.bar)).child as ColoredBox).color;
     expect(color, Theme.of(tester.element(find.byKey(row))).colorScheme.error);
   });
 
@@ -40,7 +40,7 @@ void main() {
 
     expect(find.byKey(row.card), findsOneWidget);
     expect(find.byKey(row.bar), findsNothing);
-    expect(find.byType(Dismissible), findsNothing);
+    expect(find.byKey(row.swipe), findsNothing);
   });
 
   testWidgets('redix-app #88 R3, R5: the bar is on the edge the swipe starts from, the left in Arabic and the right in English', (tester) async {
