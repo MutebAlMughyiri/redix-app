@@ -40,11 +40,11 @@ New project, `NewProjectScreen`, signed in:
 | Its type, or Disabled | `CategoriesScreen.itemDetailsKey(id)` | |
 | Columns | `CategoriesScreen.itemColumnsKey(id)` | Opens [its columns](UC-013-item-columns.md) |
 | Its menu | `CategoriesScreen.itemMenuKey(id)` | Rename `renameItemKey`, Change type `changeTypeKey`, Tables `tablesKey`, the percentage of each table `tablePercentagesKey`, Disable `disableItemKey` or Enable `enableItemKey` |
-| The name, in a dialog | `CategoriesScreen.nameKey` | |
+| The name, in a dialog | `NameDialog.nameKey` | |
 | The type, in Add item | `CategoriesScreen.itemTypeKey(type)` | One choice per type, each in full; Purchases + contractor payments unless changed |
-| Save, in a dialog | `CategoriesScreen.saveKey` | |
-| Why refused, in a dialog | `CategoriesScreen.dialogMessageKey` | |
-| The list's states | `CategoriesScreen.messageKey`, `emptyKey` | Could not read; no categories |
+| Save, Cancel, in a dialog | `ChangeDialog.saveKey`, `ChangeDialog.cancelKey` | |
+| Why refused, in a dialog | `ChangeDialog.messageKey` | |
+| The list's states | `ApiListBody.messageKey`, `retryKey`, `emptyKey` | Could not read, and Try again; no categories |
 
 [Tables](../guide/categories.md#tables), `ItemTablesScreen` at `/projects/:projectId/items/:itemId/tables`:
 

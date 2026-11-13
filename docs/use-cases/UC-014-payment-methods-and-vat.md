@@ -24,10 +24,10 @@ The home of a project, `HomeScreen`:
 | A method's name | `PaymentMethodsScreen.nameKey(id)` | |
 | That it is disabled | `PaymentMethodsScreen.disabledKey(id)` | |
 | Its menu | `PaymentMethodsScreen.menuKey(id)` | Rename `renameKey`, Disable `disableKey` or Enable `enableKey`; a method is deleted by swiping its row, `rowKey(id).swipe` (redix-api #102) |
-| The name, in a dialog | `PaymentMethodsScreen.dialogNameKey` | |
-| Save, in a dialog | `PaymentMethodsScreen.saveKey` | |
-| Why refused, in a dialog | `PaymentMethodsScreen.dialogMessageKey` | |
-| The list's states | `PaymentMethodsScreen.messageKey`, `emptyKey` | Could not read; no methods |
+| The name, in a dialog | `NameDialog.nameKey` | |
+| Save, Cancel, in a dialog | `ChangeDialog.saveKey`, `ChangeDialog.cancelKey` | |
+| Why refused, in a dialog | `ChangeDialog.messageKey` | |
+| The list's states | `ApiListBody.messageKey`, `retryKey`, `emptyKey` | Could not read, and Try again; no methods |
 
 ## API calls
 
