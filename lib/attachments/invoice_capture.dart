@@ -20,7 +20,7 @@ class InvoiceCapture {
   /// Opens the camera, whose scanner finds and crops the invoice (FR-10), and answers the picture under 1 MB (NFR-06). A phone that cannot, or a person who refused the camera, gets why, and picks from their files instead.
   Future<PickedFile> fromCamera() async {
     try {
-      final pictures = await CunningDocumentScanner.getPictures(noOfPages: 1) ?? const [];
+      final pictures = (await CunningDocumentScanner.scanDocuments(noOfPages: 1))?.images ?? const [];
       if (pictures.isEmpty) {
         return PickedFile.none();
       }
