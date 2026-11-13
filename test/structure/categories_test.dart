@@ -478,9 +478,9 @@ void main() {
 
       await tester.ensureVisible(find.byKey(NewProjectScreen.structureSourceKey));
       await act(tester, api, () => tester.tap(find.byKey(NewProjectScreen.structureSourceKey)));
-      expect(find.text('en projects.defaultTemplate'), findsWidgets);
-      expect(find.text('غصون 9'), findsNothing);
-      await act(tester, api, () => tester.tap(find.text('غصون 5').last));
+      expect(tester.widgetList<Text>(find.byKey(NewProjectScreen.structureSourceOptionKey('').label)).map((label) => label.data).toSet(), {'en projects.defaultTemplate'});
+      expect(find.byKey(NewProjectScreen.structureSourceOptionKey('project-2')), findsNothing);
+      await act(tester, api, () => tester.tap(find.byKey(NewProjectScreen.structureSourceOptionKey('project-1')).hitTestable()));
       await submit(tester, api);
 
       expect(api.sentProjectChanges.single.$2['structureSourceId'], 'project-1');
