@@ -68,7 +68,7 @@ void main() {
       await openTransfer(tester, opened.api);
 
       await act(tester, opened.api, () => tester.tap(find.byKey(TransferDialog.fromKey)));
-      await act(tester, opened.api, () => tester.tap(find.byKey(TransferDialog.choiceKey(TransferDialog.fromKey, opened.custody)).last));
+      await act(tester, opened.api, () => tester.tap(find.byKey(TransferDialog.choiceKey(TransferDialog.fromKey, opened.custody)).hitTestable()));
 
       expect(tester.widget<DropdownButton<String>>(find.byKey(TransferDialog.fromKey)).value, opened.custody);
       expect(tester.widget<DropdownButton<String>>(find.byKey(TransferDialog.toKey)).value, opened.bank);

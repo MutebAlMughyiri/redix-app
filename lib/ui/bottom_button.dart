@@ -24,8 +24,12 @@ class BottomButton extends StatelessWidget {
   /// The action beside it; [BottomAction.none] for a screen with one.
   final BottomAction second;
 
+  /// The bar at the screen's bottom that holds its main actions.
+  static const barKey = Key('bottom.bar');
+
   @override
   Widget build(BuildContext context) => SafeArea(
+    key: barKey,
     child: Padding(
       padding: const EdgeInsets.all(8),
       child: ActOnce(

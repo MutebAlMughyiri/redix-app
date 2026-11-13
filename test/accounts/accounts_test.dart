@@ -4,6 +4,8 @@ import 'package:redix/accounts/account.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/projects/member_picker.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
@@ -58,7 +60,8 @@ void main() {
 
     expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/accounts');
     expect(opened.api.sentSettingsChanges.single.$2, {'type': 'bank', 'name': 'حساب جديد'});
-    expect(find.text('حساب جديد'), findsOneWidget);
+    final added = opened.api.accounts['project-0']!.singleWhere((account) => account['name'] == 'حساب جديد')['id']! as String;
+    expect(text(tester, AccountsScreen.nameKey(added)), 'حساب جديد');
     expect(find.byKey(AccountsScreen.accountNameKey), findsNothing);
   });
 
@@ -132,7 +135,7 @@ void main() {
 
     await chooseInMenu(tester, api, custody['id'] as String, AccountsScreen.editKey);
 
-    expect(find.descendant(of: find.byKey(AccountsScreen.custodianKey), matching: find.text('هيثم')), findsOneWidget);
+    expect(text(tester, MemberPicker.optionKey('user-gone').label), 'هيثم');
   });
 
   testWidgets('disabling says so on the row, and enable brings it back', (tester) async {
@@ -186,7 +189,7 @@ void main() {
     final opened = await openAccounts(tester);
     opened.api.online = false;
 
-    await act(tester, opened.api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, opened.api, () => tester.pageBack());
     await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
     await tester.ensureVisible(projectSettingPages);
     await scrollAndTap(tester, opened.api, HomeScreen.accountsKey('project-0'));

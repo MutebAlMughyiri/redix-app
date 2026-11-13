@@ -34,7 +34,7 @@ The project's home, `HomeScreen`:
 | Update, at the bottom | `AccountsScreen.updateKey` | Opens the typing of the actual balances; gray without `moveMoney` |
 | The type, in Add account | `AccountsScreen.typeKey(type)` | One choice per type; it never changes |
 | The name, in the dialog | `AccountsScreen.accountNameKey` | |
-| The custodian, in the dialog | `AccountsScreen.custodianKey` | A `MemberPicker`: one choice for nobody, `MemberPicker.optionKey('')`, and one for each person in the project |
+| The custodian, in the dialog | `AccountsScreen.custodianKey` | A `MemberPicker`: one choice for nobody, `MemberPicker.optionKey('')`, and one for each person in the project; the closed field shows the chosen one's name as `MemberPicker.optionKey(id).label` |
 
 The transfer, `TransferDialog`:
 

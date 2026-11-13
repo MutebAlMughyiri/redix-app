@@ -38,7 +38,7 @@ class MemberPicker extends StatelessWidget {
   /// Called with who is chosen; empty for nobody.
   final ValueChanged<String> onChanged;
 
-  /// The choice of the user [id] in the open list; of nobody when that is empty.
+  /// The choice of the user [id] in the open list; of nobody when that is empty. Its label is the name the closed field shows once it is chosen.
   static Key optionKey(String id) => Key('memberPicker.option.$id');
 
   @override
@@ -58,7 +58,7 @@ class MemberPicker extends StatelessWidget {
               for (final person in people.entries)
                 DropdownMenuItem(key: optionKey(person.key), value: person.key, child: Text(person.value, key: optionKey(person.key).title, overflow: TextOverflow.ellipsis)),
             ],
-            selectedItemBuilder: (_) => [for (final person in people.values) Text(person, overflow: TextOverflow.ellipsis)],
+            selectedItemBuilder: (_) => [for (final person in people.entries) Text(person.value, key: optionKey(person.key).label, overflow: TextOverflow.ellipsis)],
             onChanged: (chosen) => onChanged(chosen ?? userId),
           ),
         ),
