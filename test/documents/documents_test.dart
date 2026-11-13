@@ -7,6 +7,8 @@ import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/documents/documents_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/ui/messages.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
@@ -162,7 +164,7 @@ void main() {
 
     await swipeToRemove(tester, api, DocumentsScreen.documentKey('permit'));
 
-    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.byKey(ConfirmDialog.dialogKey), findsNothing);
     expect(api.sentDocuments.single.$1, 'DELETE /projects/project-0/documents/permit');
     expect(find.byKey(DocumentsScreen.documentKey('permit')), findsNothing);
   });
@@ -182,7 +184,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(DocumentsScreen.downloadKey('permit'))));
 
     expect(capture.savedOut.single, ('permit.pdf', 'application/pdf'));
-    expect(find.text('en reports.downloaded'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(messageKeyOf('reports.downloaded').label)).data, 'en reports.downloaded');
   });
 
   testWidgets('AC-04.1: a closed project shows its documents with no Add and no Remove', (tester) async {
