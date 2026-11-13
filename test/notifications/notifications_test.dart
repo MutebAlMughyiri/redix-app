@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/notifications/notifications_bell.dart';
 import 'package:redix/notifications/notifications_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
+import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 
@@ -23,20 +26,21 @@ void main() {
       ..addNotification(isRead: true);
     await pumpRedix(tester, api, stored: {'session': keptSession});
 
-    expect(find.descendant(of: find.byKey(NotificationsBell.buttonKey), matching: find.text('1')), findsOneWidget);
+    final badge = tester.widget<Badge>(find.byKey(NotificationsBell.buttonKey.label));
+    expect((badge.isLabelVisible, (badge.label! as Text).data), (true, '1'));
   });
 
   testWidgets('the list says what happened, in which project, in the words of the phone', (tester) async {
     await openList(tester, (api) => api.addNotification(kind: 'entryRejected'));
 
-    expect(find.text('en notifications.entryRejected'), findsOneWidget);
-    expect(find.textContaining('غصون 6'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(NotificationsScreen.rowKey('notification-0').title)).data, 'en notifications.entryRejected');
+    expect(tester.widget<Text>(find.byKey(NotificationsScreen.rowKey('notification-0').subtitle)).data, contains('غصون 6'));
   });
 
   testWidgets('with nothing told the list says so', (tester) async {
     await openList(tester, (api) {});
 
-    expect(find.text('en notifications.empty'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(ApiListBody.emptyKey)).data, 'en notifications.empty');
   });
 
   testWidgets('AC-20.1: tapping a decision opens the entry, and marks it seen', (tester) async {

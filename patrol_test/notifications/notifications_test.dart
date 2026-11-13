@@ -5,6 +5,7 @@ import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/notifications/notifications_bell.dart';
+import 'package:redix/notifications/notifications_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/ui/part_keys.dart';
 
@@ -24,12 +25,15 @@ Future<({Person manager, Person author, String entry})> withDecision() async {
   return (manager: manager, author: author, entry: entry);
 }
 
-/// Opens the first notification of the list showing now.
-Future<void> openOnly(PatrolIntegrationTester $) async {
+/// The id of the newest notification of [kind] that [person] was told, such as `entryRejected`.
+Future<String> toldOf(Person person, String kind) async => (await Given.notifications(person)).firstWhere((notification) => notification['kind'] == kind)['id'] as String;
+
+/// Opens from the bell the newest notification of [kind] that [person] was told.
+Future<void> openTold(PatrolIntegrationTester $, Person person, String kind) async {
+  final notification = $(NotificationsScreen.rowKey(await toldOf(person, kind)));
   await $(NotificationsBell.buttonKey).tap();
-  await $(keyStartingWith('notifications.row.')).waitUntilExists();
-  await $.pumpAndSettle();
-  await $.tester.tap(keyStartingWith('notifications.row.').first);
+  await $.reach(notification);
+  await notification.tap();
   await $.pumpAndSettle();
 }
 
@@ -46,14 +50,13 @@ void main() {
       final made = await withDecision();
       await $.onTheList(made.author);
       await $(NotificationsBell.buttonKey).tap();
-      await $(keyStartingWith('notifications.row.')).waitUntilExists();
-      expect(find.textContaining(made.author.projectName), findsWidgets);
+      await $.saysContaining(NotificationsScreen.rowKey(await toldOf(made.author, 'entryRejected')).subtitle, made.author.projectName);
     });
 
     phoneCase('AC-20.1: tapping a decision opens the entry, and marks it seen', ($) async {
       final made = await withDecision();
       await $.onTheList(made.author);
-      await openOnly($);
+      await openTold($, made.author, 'entryRejected');
       await $.says(AddEntryScreen.statusKey, $.words.entriesRejected);
     });
 
@@ -62,7 +65,7 @@ void main() {
       final author = await Given.member(manager, permissions: [Permission.recordEntries, Permission.chargeAnyAccount]);
       final entry = await Given.entry(author, accountId: await Given.account(manager));
       await $.onTheList(manager);
-      await openOnly($);
+      await openTold($, manager, 'entrySubmitted');
       await $.reach($(ApprovalsScreen.cardKey(entry)));
     });
 
@@ -70,14 +73,14 @@ void main() {
       final manager = await Given.registered();
       await Given.rejected(manager.projectId, 'الاسم مكرر');
       await $.onTheList(manager);
-      await openOnly($);
+      await openTold($, manager, 'projectRejected');
       await $.says(ProjectsScreen.reasonKey(manager.projectId), 'الاسم مكرر');
     });
 
     phoneCase('a notification already seen stops counting', ($) async {
       final made = await withDecision();
       await $.onTheList(made.author);
-      await openOnly($);
+      await openTold($, made.author, 'entryRejected');
       await $.reach($(AddEntryScreen.statusKey));
       for (var step = 0; step < 4 && find.byKey(ProjectsScreen.titleKey).evaluate().isEmpty; step++) {
         await $.back();

@@ -445,6 +445,9 @@ class Given {
   /// here and finds it on the phone by its key.
   static Future<List<Map<String, dynamic>>> history(Person person, String path) async => (await _getList('${person.project}/$path', await _tokenOf(person))).cast<Map<String, dynamic>>();
 
+  /// What [person] was told, newest first, as the API lists it.
+  static Future<List<Map<String, dynamic>>> notifications(Person person) async => (await _getList('/notifications', await _tokenOf(person))).cast<Map<String, dynamic>>();
+
   /// The columns of the item [itemId].
   static Future<List<Map<String, dynamic>>> columns(Person manager, String itemId) async => (await _getList('${manager.project}/items/$itemId/columns', await _tokenOf(manager))).cast<Map<String, dynamic>>();
 
