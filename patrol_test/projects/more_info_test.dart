@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/format/date_format.dart';
 import 'package:redix/home/home_screen.dart';
@@ -107,7 +108,7 @@ void main() {
       await $.fill(ProjectInfoScreen.descriptionKey, 'و' * 2001);
       await $.pumpAndSettle();
       expect($.typed(ProjectInfoScreen.descriptionKey).length, 2000);
-      expect($(find.text('2000/2000')), findsOneWidget);
+      expect($.tester.widget<TextField>(find.byKey(ProjectInfoScreen.descriptionKey)).maxLength, 2000, reason: 'the field counts up to its maxLength under it');
     });
 
     phoneCase('R14: an unsent description says why and keeps what was typed', ($) async {

@@ -70,8 +70,7 @@ void main() {
     phoneCase('NFR-04: the start date is today until changed, and shows as dd.MM.yyyy', ($) async {
       await onTheForm($);
       final today = DateTime.now();
-      final field = find.byKey(NewProjectScreen.startDateKey);
-      expect(find.descendant(of: field, matching: find.text(formatDate(today))), findsOneWidget);
+      await $.says(NewProjectScreen.startDateKey.label, formatDate(today));
       final day = today.day == 1 ? 2 : 1;
       await $.tapOn(NewProjectScreen.startDateKey);
       await $.pumpAndSettle();
@@ -80,7 +79,7 @@ void main() {
       await $.pumpAndSettle();
       await $.tester.tap(find.descendant(of: picker, matching: find.text(MaterialLocalizations.of($.tester.element(picker)).okButtonLabel)));
       await $.pumpAndSettle();
-      expect(find.descendant(of: field, matching: find.text(formatDate(DateTime(today.year, today.month, day)))), findsOneWidget);
+      await $.says(NewProjectScreen.startDateKey.label, formatDate(DateTime(today.year, today.month, day)));
     });
 
     phoneCase('Add unit waits for a name', ($) async {

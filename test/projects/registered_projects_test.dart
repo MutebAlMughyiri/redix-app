@@ -4,6 +4,8 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/registered_projects_screen.dart';
 import 'package:redix/settings/shared_settings_screen.dart';
 
+import 'package:redix/ui/messages.dart';
+import 'package:redix/ui/part_keys.dart';
 import '../app_harness.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/reason_sheet.dart';
@@ -24,7 +26,7 @@ void main() {
   testWidgets('a waiting project shows what is needed to decide', (tester) async {
     await openList(tester);
 
-    expect(find.text('غصون 8'), findsOneWidget);
+    expect(text(tester, RegisteredProjectsScreen.nameKey('registered-0')), 'غصون 8');
     expect(text(tester, RegisteredProjectsScreen.detailsKey('registered-0')), '05.11.2026 · الفلة الغربية');
     expect(text(tester, RegisteredProjectsScreen.managerKey('registered-0')), 'ريم · reem · 0500000000');
   });
@@ -70,7 +72,7 @@ void main() {
     api.registrationAnswer = (status: 409, code: 'notPending');
     await act(tester, api, () => tester.tap(find.byKey(RegisteredProjectsScreen.approveKey('registered-0'))));
 
-    expect(find.text('en registered.notPending'), findsOneWidget);
+    expect(text(tester, messageKeyOf('registered.notPending').label), 'en registered.notPending');
   });
 
   testWidgets('Reject names the project, sends the reason, and it leaves the list', (tester) async {

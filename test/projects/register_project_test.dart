@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/projects/new_project_screen.dart';
 
+import 'package:redix/ui/messages.dart';
+import 'package:redix/ui/part_keys.dart';
 import '../app_harness.dart';
 
 void main() {
@@ -70,7 +72,7 @@ void main() {
     expect(body['partners'], ['متعب'], reason: 'redix-api #109: the partners are declared when the project is registered');
     expect((body['displayName'], body['username'], body['mobile'], body['password']), ('ريم', 'reem', '0500000000', 'Chosen-pass-1'));
     expect(find.byKey(SignInScreen.usernameKey), findsOneWidget);
-    expect(find.text('en register.sent'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(messageKeyOf('register.sent').label)).data, 'en register.sent');
   });
 
   testWidgets('R5: the description written when registering goes with the project', (tester) async {

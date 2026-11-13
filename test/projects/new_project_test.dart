@@ -25,7 +25,7 @@ void main() {
     await tester.tap(find.byKey(NewProjectScreen.submitKey));
   });
 
-  Finder startDateShowing(DateTime date) => find.descendant(of: find.byKey(NewProjectScreen.startDateKey), matching: find.text(formatDate(date)));
+  String startDateShown(WidgetTester tester) => tester.widget<Text>(find.byKey(NewProjectScreen.startDateKey.label)).data!;
 
   testWidgets('a project is created with its units, at once, and the list shows it', (tester) async {
     final api = FakeApi();
@@ -202,7 +202,7 @@ void main() {
     await openForm(tester, api);
     final today = DateTime.now();
 
-    expect(startDateShowing(today), findsOneWidget);
+    expect(startDateShown(tester), formatDate(today));
 
     await act(tester, api, () => tester.tap(find.byKey(NewProjectScreen.startDateKey)));
     await act(tester, api, () async {
@@ -211,7 +211,7 @@ void main() {
       await tester.tap(find.text('OK'));
     });
     final picked = DateTime(today.year, today.month, 15);
-    expect(startDateShowing(picked), findsOneWidget);
+    expect(startDateShown(tester), formatDate(picked));
 
     await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
     await submit(tester, api);

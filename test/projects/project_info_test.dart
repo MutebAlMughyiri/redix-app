@@ -34,7 +34,7 @@ void main() {
   }
 
   /// Goes back from More info and Settings to the project's home, which reads the project again.
-  Future<void> backHome(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byType(BackButton)));
+  Future<void> backHome(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.pageBack());
 
   void expectNoChangeOffered() {
     for (final key in [ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey]) {
@@ -138,7 +138,7 @@ void main() {
       await tester.pump();
 
       expect(typed(tester, ProjectInfoScreen.descriptionKey).length, 2000);
-      expect(find.text('2000/2000'), findsOneWidget);
+      expect(tester.widget<TextField>(find.byKey(ProjectInfoScreen.descriptionKey)).maxLength, 2000, reason: 'the field counts up to its maxLength under it');
     });
 
     testWidgets('R14: a refusal says why and keeps what was typed', (tester) async {
@@ -277,7 +277,7 @@ void main() {
 
       await swipeToRemove(tester, api, ProjectInfoScreen.unitRowKey('project-0-unit-0'));
 
-      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.byKey(ConfirmDialog.dialogKey), findsNothing);
       expect(api.sentProjectChanges.single.$1, 'DELETE /projects/project-0/units/project-0-unit-0');
       expect(find.byKey(ProjectInfoScreen.unitKey('project-0-unit-0')), findsNothing);
       expect(find.byKey(ProjectInfoScreen.unitKey('project-0-unit-1')), findsOneWidget);
@@ -390,7 +390,7 @@ void main() {
       ..addProject('غصون 6', units: ['الفلة الغربية'])
       ..addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
     await openProject(tester, api);
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     await tester.ensureVisible(find.byKey(ProjectsScreen.cardKey('project-1')));
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
 

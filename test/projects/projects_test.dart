@@ -12,8 +12,7 @@ import 'package:redix/ui/app_color.dart';
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  String status(WidgetTester tester, String id) =>
-      tester.widget<Text>(find.descendant(of: find.byKey(ProjectsScreen.statusKey(id)), matching: find.byType(Text))).data!;
+  String status(WidgetTester tester, String id) => text(tester, ProjectsScreen.statusKey(id).label);
 
   Future<void> openProjects(WidgetTester tester, FakeApi api) async {
     await pumpRedix(tester, api, stored: {'session': keptSession});
@@ -227,7 +226,7 @@ void main() {
     api.online = false;
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.starKey('project-0'))));
 
-    expect(find.text('en projects.noConnection'), findsOneWidget);
+    expect(text(tester, messageKeyOf('projects.noConnection').label), 'en projects.noConnection');
     expect(star(tester, 'project-0'), Icons.star_border);
   });
 }
