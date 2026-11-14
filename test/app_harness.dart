@@ -45,7 +45,8 @@ Map<String, String> wordsIn(String language) => {
     'changePassword.submit', 'changePassword.mismatch', 'changePassword.invalidCredentials', 'changePassword.accountLocked',
     'changePassword.weakPassword', 'changePassword.noConnection', 'changePassword.refused',
     'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
-    'permissions.title', 'permissions.hint', 'permissions.count', 'permissions.mine', 'permissions.mineHint', 'projects.importSettings', 'projects.exportSettings', 'common.passwordRules',
+    'permissions.title', 'permissions.hint', 'permissions.count', 'permissions.mine', 'permissions.mineHint', 'projects.loadFile', 'projects.loadFileWhat', 'projects.loadFile.rowsRefused',
+    'projects.loadFile.notAProjectFile', 'projects.loadFile.newerVersion', 'projects.loadFile.projectHasEntries', 'projects.loadFile.attachmentNotInFile', 'projects.exportSettings', 'common.passwordRules',
     'permissions.readProject', 'permissions.readProjectHint', 'permissions.manageUsers', 'permissions.manageUsersHint', 'permissions.seeAllCapital', 'permissions.seeAllCapitalHint', 'permissions.seeChosenCapital', 'permissions.seeChosenCapitalHint', 'permissions.capitalGroup', 'permissions.manageProject', 'permissions.manageProjectHint', 'permissions.manageStructure', 'permissions.manageStructureHint', 'permissions.manageSettings', 'permissions.manageSettingsHint', 'permissions.addSupplier', 'permissions.addSupplierHint', 'permissions.chargeAnyAccount', 'permissions.chargeAnyAccountHint', 'permissions.recordEntries', 'permissions.recordEntriesHint', 'permissions.manageAnyEntry', 'permissions.manageAnyEntryHint', 'permissions.deleteEntries', 'permissions.deleteEntriesHint', 'permissions.removeApprovedEntries', 'permissions.removeApprovedEntriesHint', 'permissions.attachFiles', 'permissions.attachFilesHint', 'permissions.approveEntries', 'permissions.approveEntriesHint', 'permissions.moveMoney', 'permissions.moveMoneyHint', 'permissions.seeReports', 'permissions.seeReportsHint', 'permissions.generateReports', 'permissions.generateReportsHint',
     'users.addExisting', 'users.unknownUser', 'users.invalidPermission', 'users.lastManager', 'users.unknownPartner', 'users.otherProject',
     'signIn.registerProject', 'register.hint', 'register.sent', 'register.tooManyTries', 'register.invalidName', 'register.invalidUsername',
@@ -113,6 +114,10 @@ Map<String, String> wordsIn(String language) => {
   ])
     key: '$language $key',
   'partners.draftsBy': '$language partners.draftsBy {0}',
+  'projects.loadFileConfirm': '$language projects.loadFileConfirm {0} {1}',
+  'projects.loadFileDone': '$language projects.loadFileDone {0} {1} {2}',
+  'projects.loadFile.accountNotInProject': '$language projects.loadFile.accountNotInProject {0}',
+  'projects.loadFile.unknownChoice': '$language projects.loadFile.unknownChoice {0} {1}',
 };
 
 /// A kept session, as the secure storage holds it after a sign-in.
@@ -249,6 +254,9 @@ class FakeCapture extends InvoiceCapture {
 
   @override
   Future<PickedFile> fromAnyFile() async => files;
+
+  @override
+  Future<PickedFile> fromProjectFiles() async => files;
 }
 
 /// The phone's own fingerprint or face prompt, as the app's tests see it.
@@ -648,6 +656,12 @@ class FakeApi {
   /// What the app sent to reconcile the accounts, by path.
   final sentMoney = <(String, Map<String, dynamic>)>[];
 
+  /// The project files the app sent to load (UC-071): the path and the file's name.
+  final sentProjectFiles = <(String, String)>[];
+
+  /// What the API answers a project file's load: once loaded, how many entries in how many tables and the report, and the project then holds entries (D4, D15).
+  var projectFileAnswer = (status: 200, body: <String, Object>{'entries': 8, 'tables': 6, 'report': 7});
+
   /// What the API answers a reconciliation.
   var moneyAnswer = (status: 200, code: '');
 
@@ -848,6 +862,7 @@ class FakeApi {
       'description': description,
       'roleName': roleName,
       'isInactive': false,
+      'holdsEntries': false,
       'units': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}],
       'permissions': permissions,
     };
@@ -1871,6 +1886,13 @@ class FakeApi {
     }
     if (request.method == 'GET' && segments.length == 4 && segments[2] == 'entries' && segments[3] != 'mine') {
       return _json(const {'code': 'notFound'}, 404);
+    }
+    if (segments.length == 3 && segments[2] == 'project-file') {
+      sentProjectFiles.add((request.url.path, RegExp('filename="([^"]*)"').firstMatch(utf8.decode(request.bodyBytes, allowMalformed: true))?.group(1) ?? ''));
+      if (projectFileAnswer.status < 300) {
+        projects.singleWhere((project) => project['id'] == segments[1])['holdsEntries'] = true;
+      }
+      return _json(projectFileAnswer.body, projectFileAnswer.status);
     }
     if (segments.length >= 3 && segments[2] == 'documents') {
       if (request.method == 'GET') {

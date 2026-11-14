@@ -56,6 +56,8 @@ import 'reports/report_files.dart';
 import 'reports/reports_screen.dart';
 import 'reports/vat_statement_screen.dart';
 import 'projects/new_project_screen.dart';
+import 'projects/project_file_refusal.dart';
+import 'projects/project_file_refusals_screen.dart';
 import 'projects/project_info_screen.dart';
 import 'projects/projects.dart';
 import 'projects/projects_screen.dart';
@@ -221,7 +223,17 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.projectId, projects: _projects, accounts: _accountsOf(state.projectId), outbox: _outbox, sync: _sync, entries: _newestEntriesOf(state.projectId), notifications: _notifications, summary: _summaryOf(state.projectId), localConfig: widget.localConfig),
+        builder: (context, state) => HomeScreen(projectId: state.projectId, projects: _projects, accounts: _accountsOf(state.projectId), outbox: _outbox, sync: _sync, entries: _newestEntriesOf(state.projectId), notifications: _notifications, summary: _summaryOf(state.projectId), localConfig: widget.localConfig, capture: widget.capture),
+      ),
+      GoRoute(
+        path: ProjectFileRefusalsScreen.path,
+        builder: (context, state) => ProjectFileRefusalsScreen(
+          projectName: _projects.byId(state.projectId).name,
+          refusals: switch (state.extra) {
+            final List<ProjectFileRefusal> refusals => refusals,
+            _ => const [],
+          },
+        ),
       ),
       GoRoute(
         path: ApprovalsScreen.path,

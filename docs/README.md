@@ -38,6 +38,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | [Notifications](guide/notifications.md) | Everyone |
 | [Sharing an invoice](guide/share-invoice.md) | Whoever enters expenses |
 | [Documents](guide/documents.md) | Everyone in the project; whoever manages it keeps them |
+| [Load the project file](guide/project-file.md) | The manager who created the project |
 | [Reconciliation and capital](guide/money.md) | Everyone reads; finance enters |
 | [Revenue and the VAT statement](guide/revenue-and-vat.md) | Everyone reads; finance records |
 | [The summary and the reports](guide/reports.md) | Everyone reads; finance issues; owner and finance export |
@@ -86,3 +87,4 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-062](use-cases/UC-062-sign-out.md) | Sign out of this phone | Every signed-in user |
 | [UC-064](use-cases/UC-064-documents.md) | Keep a project's documents, any file, in optional groups | Everyone reads; whoever manages the project keeps and removes |
 | [UC-070](use-cases/UC-070-timeouts.md) | Give up on a request with no answer after the time the API decides | Nobody chooses it |
+| [UC-071](use-cases/UC-071-load-a-project-file.md) | Load a project's JSON file: its structure, entries, actual balances and last report | The manager who created the project |

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../accounts/accounts.dart';
+import '../attachments/invoice_capture.dart';
 import '../accounts/custody_card.dart';
 import '../auth/session.dart';
 import '../approvals/approvals_screen.dart';
@@ -18,6 +19,7 @@ import '../offline/waiting_screen.dart';
 import '../reports/summary.dart';
 import 'summary_card.dart';
 import '../projects/project.dart';
+import '../projects/project_file_loading.dart';
 import '../projects/project_settings_card.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
@@ -30,8 +32,11 @@ import '../config/local_config.dart';
 
 /// The home of the open project (UC-010): the project, with what the user's permissions allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
-  /// The home of the project [projectId], one of [projects], with [accounts], its accounts.
-  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.summary, required this.localConfig});
+  /// The home of the project [projectId], one of [projects], with [accounts], its accounts, reaching the phone's files through [capture].
+  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.summary, required this.localConfig, required this.capture});
+
+  /// The phone's files, which a project file is picked from (UC-071).
+  final InvoiceCapture capture;
 
   /// Its figures at a glance.
   final Summary summary;
@@ -156,8 +161,8 @@ class HomeScreen extends StatefulWidget {
   /// The way into the payment methods of the project [id], moved from Settings (Muteb, 9 Nov 2026).
   static Key paymentMethodsKey(String id) => Key('home.paymentMethods.$id');
 
-  /// Importing the settings of the project [id], grayed until it is built (Muteb, 9 Nov 2026).
-  static Key importSettingsKey(String id) => Key('home.importSettings.$id');
+  /// تحميل ملف المشروع in the project [id]'s settings, where importing its settings was (redix-api #132 D2): gray without إدارة المشروع and once the project holds an entry (D1, D4).
+  static Key loadFileKey(String id) => Key('home.loadFile.$id');
 
   /// تصدير إعدادات المشروع in the project [id]'s settings, grayed until redix-api #115 builds the export (redix-app #111).
   static Key exportSettingsKey(String id) => Key('home.exportSettings.$id');
@@ -202,6 +207,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _open(String path, Project project) async {
     await context.push(path, extra: project);
     await Future.wait([widget.projects.load(), _readAgain()]);
+  }
+
+  /// Loads a project file into [project] (UC-071), then reads again what the home shows, which the file filled.
+  Future<void> _loadFile(Project project) async {
+    await loadProjectFile(context, project, widget.projects, widget.capture);
+    await _readAgain();
   }
 
   void _toggleDetails() {
@@ -295,7 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             CustodyCard(accounts: widget.accounts),
             LatestEntries(project: project, entries: widget.entries, onOpen: (path) => _open(path, project), onRemoved: widget.summary.load),
-            if (showsDetails) ProjectSettingsCard(key: HomeScreen.cardKey(project.id), project: project, onOpen: (path) => _open(path, project)),
+            if (showsDetails) ProjectSettingsCard(key: HomeScreen.cardKey(project.id), project: project, onOpen: (path) => _open(path, project), onLoadFile: () => _loadFile(project)),
           ],
         ),
       ),

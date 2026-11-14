@@ -13,7 +13,7 @@ void main() {
   final first = [HomeScreen.contractsKey(project), HomeScreen.reportsKey(project), HomeScreen.itemReportsKey(project, SummarySide.expenses), HomeScreen.itemReportsKey(project, SummarySide.revenue)];
   final second = [HomeScreen.suppliersKey(project), HomeScreen.accountsKey(project), HomeScreen.partnersKey(project), HomeScreen.vatKey(project)];
   final third = [HomeScreen.approvalsKey(project), HomeScreen.documentsKey(project), HomeScreen.projectInfoKey(project), HomeScreen.myPermissionsKey(project)];
-  final fourth = [HomeScreen.usersKey(project), HomeScreen.categoriesKey(project), HomeScreen.paymentMethodsKey(project), HomeScreen.importSettingsKey(project)];
+  final fourth = [HomeScreen.usersKey(project), HomeScreen.categoriesKey(project), HomeScreen.paymentMethodsKey(project), HomeScreen.loadFileKey(project)];
   final fifth = [HomeScreen.exportSettingsKey(project)];
 
   /// The app started and the home of a project opened, in [locale], seen with [permissions].
@@ -79,7 +79,7 @@ void main() {
       expectPage(third, [first, second, fourth, fifth]);
       await swipeProjectSettings(tester);
       expectPage(fourth, [first, second, third, fifth]);
-      expect(isEnabled(tester, HomeScreen.importSettingsKey(project)), isFalse);
+      expect(isEnabled(tester, HomeScreen.loadFileKey(project)), isTrue, reason: 'redix-api #132: the manager loads a file into a project with no entry');
       await swipeProjectSettings(tester);
       expectPage(fifth, [first, second, third, fourth]);
       expect(isEnabled(tester, HomeScreen.exportSettingsKey(project)), isFalse, reason: 'redix-app #111: grayed until redix-api #115 builds it');

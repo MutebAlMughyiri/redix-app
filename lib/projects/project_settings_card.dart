@@ -23,18 +23,21 @@ import 'project_info_screen.dart';
 
 /// The open project's buttons, with what the signed-in user's permissions allow, four to a page, two by two, swiped sideways page by page with dots under them (Muteb,
 /// 11 Nov 2026), going round: on from the last page comes the first, and back from the first the last. The first page holds the four used most: Contracts, Reports, the item reports and Suppliers; then Accounts, Partners, the VAT refund, Approvals and
-/// Documents, then the project's own: More info, the user's own permissions, its users, its categories and items, its payment methods, and importing its settings, grayed
-/// until it is built. Nothing is kept: the card opens on its first page. Settings is an icon in the home's top bar. A finished project says first, in one line, that it is
-/// read-only (redix-api 93).
+/// Documents, then the project's own: More info, the user's own permissions, its users, its categories and items, its payment methods, loading its project file (redix-api
+/// #132), and exporting its settings, grayed until it is built. Nothing is kept: the card opens on its first page. Settings is an icon in the home's top bar. A finished project
+/// says first, in one line, that it is read-only (redix-api 93).
 class ProjectSettingsCard extends StatefulWidget {
-  /// The card of [project], calling [onOpen] with the route of the screen a button opens.
-  const ProjectSettingsCard({super.key, required this.project, required this.onOpen});
+  /// The card of [project], calling [onOpen] with the route of the screen a button opens, and [onLoadFile] to load the project's file.
+  const ProjectSettingsCard({super.key, required this.project, required this.onOpen, required this.onLoadFile});
 
   /// The project this card shows.
   final Project project;
 
   /// Opens the screen at a route of the project.
   final ValueChanged<String> onOpen;
+
+  /// Loads a project file into the project (UC-071).
+  final VoidCallback onLoadFile;
 
   /// How many buttons a page holds.
   static const perPage = 4;
@@ -56,13 +59,16 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
   }
 
   /// A button opening [path], gray for an empty path, a screen not built yet, and without [mayOpen], a screen the user may not open (redix-api #131: gray, never
-  /// hidden). Its name takes two lines at most.
-  Widget _button(Key key, IconData icon, String label, String path, {bool mayOpen = true}) => TextButton.icon(
+  /// hidden).
+  Widget _button(Key key, IconData icon, String label, String path, {bool mayOpen = true}) => _doing(key, icon, label, path.isEmpty || !mayOpen ? null : () => widget.onOpen(path));
+
+  /// The one look of the card's buttons: doing [onPressed], gray when it is null. Its name takes two lines at most.
+  Widget _doing(Key key, IconData icon, String label, VoidCallback? onPressed) => TextButton.icon(
     key: key,
     style: TextButton.styleFrom(alignment: AlignmentDirectional.centerStart),
     icon: Icon(icon, key: key.icon),
     label: Text(label, key: key.label, maxLines: 2, overflow: TextOverflow.ellipsis),
-    onPressed: path.isEmpty || !mayOpen ? null : () => widget.onOpen(path),
+    onPressed: onPressed,
   );
 
   /// [buttons] two to a row, in two rows sharing the page's height.
@@ -107,7 +113,7 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
       if (project.may(Permission.manageUsers)) _button(HomeScreen.usersKey(id), Icons.group_outlined, words.usersTitle, UsersScreen.pathOf(id)),
       if (project.may(Permission.manageStructure)) _button(HomeScreen.categoriesKey(id), Icons.category_outlined, words.categoriesTitle, CategoriesScreen.pathOf(id)),
       if (project.may(Permission.manageSettings)) _button(HomeScreen.paymentMethodsKey(id), Icons.credit_card_outlined, words.paymentMethodsTitle, PaymentMethodsScreen.pathOf(id)),
-      _button(HomeScreen.importSettingsKey(id), Icons.file_upload_outlined, words.projectsImportSettings, ''),
+      _doing(HomeScreen.loadFileKey(id), Icons.file_upload_outlined, words.projectsLoadFile, project.mayLoadFile ? widget.onLoadFile : null),
       _button(HomeScreen.exportSettingsKey(id), Icons.file_download_outlined, words.projectsExportSettings, ''),
     ];
     final pages = [for (var start = 0; start < buttons.length; start += ProjectSettingsCard.perPage) buttons.skip(start).take(ProjectSettingsCard.perPage).toList()];

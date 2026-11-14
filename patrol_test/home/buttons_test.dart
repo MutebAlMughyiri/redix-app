@@ -24,7 +24,7 @@ Future<Person> onTheHomeHolding(PatrolIntegrationTester $, List<Permission> perm
 
 /// Checks the button [button] of the home is on no page of the Project settings.
 Future<void> noButton(PatrolIntegrationTester $, Person member, Key button) async {
-  await $.goTo($(HomeScreen.importSettingsKey(member.projectId)));
+  await $.goTo($(HomeScreen.loadFileKey(member.projectId)));
   expect(await $.anyProjectSettingPage(button), isFalse);
 }
 
@@ -127,11 +127,10 @@ void main() {
       expect($.isEnabled(HomeScreen.addEntryKey(member.projectId)), isFalse);
     });
 
-    phoneCase('redix-api #114: Import settings is gray for everyone', ($) async {
-      final manager = await Given.manager();
-      await $.onTheHome(manager);
-      await $.goTo($(HomeScreen.importSettingsKey(manager.projectId)));
-      expect($.isEnabled(HomeScreen.importSettingsKey(manager.projectId)), isFalse);
+    phoneCase('redix-api #132, AC-53.2: without «إدارة المشروع» تحميل ملف المشروع is gray', ($) async {
+      final member = await onTheHomeHolding($, []);
+      await $.goTo($(HomeScreen.loadFileKey(member.projectId)));
+      expect($.isEnabled(HomeScreen.loadFileKey(member.projectId)), isFalse);
     });
   });
 }

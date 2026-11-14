@@ -15,6 +15,6 @@ Future<void> toggleDefaultProject(BuildContext context, Session session, Project
   if (refusal.isNotEmpty) {
     showMessage(messenger, words, refusal);
   } else if (!isDefault) {
-    showMessage(messenger, words, 'projects.defaultSet', value: project.name);
+    showMessage(messenger, words, 'projects.defaultSet', values: [project.name]);
   }
 }

@@ -159,7 +159,7 @@ void main() {
     expect((isTicked(tester, 'project-0'), isTicked(tester, 'project-1')), (false, false));
   });
 
-  testWidgets("Muteb, 9 Nov 2026: a project's More info, permissions, users, categories and items, and payment methods open from its home, beside a grayed import of its settings, and Settings holds none of them", (tester) async {
+  testWidgets("Muteb, 9 Nov 2026: a project's More info, permissions, users, categories and items, and payment methods open from its home, beside loading its project file (redix-api #132), and Settings holds none of them", (tester) async {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
 
@@ -167,12 +167,12 @@ void main() {
       await showProjectSetting(tester, key);
       expect(isEnabled(tester, key), isTrue, reason: '$key');
     }
-    await showProjectSetting(tester, HomeScreen.importSettingsKey('project-0'));
-    expect(isEnabled(tester, HomeScreen.importSettingsKey('project-0')), isFalse);
-    expect(tester.widget<Text>(find.byKey(HomeScreen.importSettingsKey('project-0').label)).data, 'en projects.importSettings');
+    await showProjectSetting(tester, HomeScreen.loadFileKey('project-0'));
+    expect(isEnabled(tester, HomeScreen.loadFileKey('project-0')), isTrue);
+    expect(tester.widget<Text>(find.byKey(HomeScreen.loadFileKey('project-0').label)).data, 'en projects.loadFile');
 
     await harness.openSettings(tester, api);
-    for (final word in ['projectInfo.title', 'permissions.mine', 'users.title', 'categories.title', 'paymentMethods.title', 'projects.importSettings']) {
+    for (final word in ['projectInfo.title', 'permissions.mine', 'users.title', 'categories.title', 'paymentMethods.title', 'projects.loadFile']) {
       expect(find.text('en $word'), findsNothing, reason: word);
     }
   });

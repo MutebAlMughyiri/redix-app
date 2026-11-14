@@ -1622,9 +1622,6 @@ mixin WordGetters {
   /// The word `projects.finished`.
   String get projectsFinished => text('projects.finished');
 
-  /// The word `projects.importSettings`.
-  String get projectsImportSettings => text('projects.importSettings');
-
   /// The word `projects.inactive`.
   String get projectsInactive => text('projects.inactive');
 
@@ -1636,6 +1633,39 @@ mixin WordGetters {
 
   /// The word `projects.loadFailed`.
   String get projectsLoadFailed => text('projects.loadFailed');
+
+  /// The word `projects.loadFile`.
+  String get projectsLoadFile => text('projects.loadFile');
+
+  /// The word `projects.loadFile.accountNotInProject`.
+  String get projectsLoadFileAccountNotInProject => text('projects.loadFile.accountNotInProject');
+
+  /// The word `projects.loadFile.attachmentNotInFile`.
+  String get projectsLoadFileAttachmentNotInFile => text('projects.loadFile.attachmentNotInFile');
+
+  /// The word `projects.loadFile.newerVersion`.
+  String get projectsLoadFileNewerVersion => text('projects.loadFile.newerVersion');
+
+  /// The word `projects.loadFile.notAProjectFile`.
+  String get projectsLoadFileNotAProjectFile => text('projects.loadFile.notAProjectFile');
+
+  /// The word `projects.loadFile.projectHasEntries`.
+  String get projectsLoadFileProjectHasEntries => text('projects.loadFile.projectHasEntries');
+
+  /// The word `projects.loadFile.rowsRefused`.
+  String get projectsLoadFileRowsRefused => text('projects.loadFile.rowsRefused');
+
+  /// The word `projects.loadFile.unknownChoice`.
+  String get projectsLoadFileUnknownChoice => text('projects.loadFile.unknownChoice');
+
+  /// The word `projects.loadFileConfirm`.
+  String get projectsLoadFileConfirm => text('projects.loadFileConfirm');
+
+  /// The word `projects.loadFileDone`.
+  String get projectsLoadFileDone => text('projects.loadFileDone');
+
+  /// The word `projects.loadFileWhat`.
+  String get projectsLoadFileWhat => text('projects.loadFileWhat');
 
   /// The word `projects.manager`.
   String get projectsManager => text('projects.manager');

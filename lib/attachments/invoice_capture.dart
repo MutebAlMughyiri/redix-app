@@ -103,6 +103,20 @@ class InvoiceCapture {
     }
   }
 
+  /// Opens the phone's files for a project's file, a `.json` kept as it is (UC-071, redix-api #132).
+  Future<PickedFile> fromProjectFiles() async {
+    try {
+      final picked = await FilePicker.pickFile(type: FileType.custom, allowedExtensions: const ['json']);
+      if (picked == null) {
+        return PickedFile.none();
+      }
+      return PickedFile.read(picked.name, picked.path ?? '', await picked.readAsBytes());
+    } on Exception catch (error) {
+      debugPrint('File not read: $error');
+      return PickedFile.failed('attachments.unreadable');
+    }
+  }
+
   /// Opens the phone's files for a picture or a PDF; a picture comes back under 1 MB.
   Future<PickedFile> fromFiles() async {
     try {

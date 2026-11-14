@@ -128,6 +128,9 @@ lib/
     new_project_screen.dart The form that registers a project: its name, its start date and its units
     project.dart            Where a project stands, as the API says it, each knowing its word so no reader needs to tell them apart
     project_settings_card.dart The open project's buttons, four to a page, swiped sideways and going round, with a dot for each page; the four used most first
+    project_file_loading.dart Loads a project file (UC-071): pick the .json, say yes, send it, then the bar says what was loaded or the refused list opens
+    project_file_refusal.dart One refusal of a project file's load, by the file's item, table and row, and whose word says why
+    project_file_refusals_screen.dart What a project file's load refused: nothing saved, every row listed at once
     project_choice.dart     One project on the list: its name, units and its status
     project_status_chip.dart Where a project stands, as a chip: the project list and More info draw the same one
     project_info_screen.dart More info (معلومات المشروع, redix-api 93): the project's own record on one page, its name, start date, status, units and description

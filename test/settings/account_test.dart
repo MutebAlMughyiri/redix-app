@@ -468,7 +468,7 @@ void main() {
 
       final cardMethod = api.addPaymentMethod(runningId, 'شبكة')['id'] as String;
       final longMethod = api.addPaymentMethod(runningId, 'تحويل بنكي عن طريق الحساب الجاري للمؤسسة', isActive: false)['id'] as String;
-      for (final key in [HomeScreen.myPermissionsKey(runningId), HomeScreen.usersKey(runningId), HomeScreen.categoriesKey(runningId), HomeScreen.importSettingsKey(runningId), HomeScreen.paymentMethodsKey(runningId)]) {
+      for (final key in [HomeScreen.myPermissionsKey(runningId), HomeScreen.usersKey(runningId), HomeScreen.categoriesKey(runningId), HomeScreen.loadFileKey(runningId), HomeScreen.paymentMethodsKey(runningId)]) {
         await showProjectSetting(tester, key);
         await bringIntoView(tester, find.byKey(key));
         expectFits(key);

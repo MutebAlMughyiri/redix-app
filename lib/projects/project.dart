@@ -44,11 +44,12 @@ class Project {
       description = json['description'] as String,
       roleName = json['roleName'] as String? ?? '',
       isInactive = json['isInactive'] as bool,
+      holdsEntries = json['holdsEntries'] as bool,
       units = [for (final unit in json['units'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
       _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()};
 
   /// No project: what Settings holds when it is opened from the project list, where the signed-in user may do nothing to a project.
-  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.active, rejectionReason = '', description = '', roleName = '', isInactive = false, units = const [], _permissions = const {};
+  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.active, rejectionReason = '', description = '', roleName = '', isInactive = false, holdsEntries = false, units = const [], _permissions = const {};
 
   /// True for no project.
   bool get isNone => id.isEmpty;
@@ -80,6 +81,9 @@ class Project {
   /// True once a manager made the signed-in user inactive in this project: he keeps his place, permissions and entries there, and cannot open it (redix-api #126 D1).
   final bool isInactive;
 
+  /// True once the project holds an entry, as the API says from the same fact its load refuses with, so no project file may be loaded into it (redix-api #132 D4, D15).
+  final bool holdsEntries;
+
   /// The project's units, in order.
   final List<Unit> units;
 
@@ -99,6 +103,9 @@ class Project {
 
   /// Whether the signed-in user may manage the project now: its units, its name, its documents, and closing it.
   bool get mayManageProject => !isFinished && may(Permission.manageProject);
+
+  /// Whether the signed-in user may load a project file into it now: the manager who created it (D1), into one that holds no entry yet (D4, redix-api #132).
+  bool get mayLoadFile => mayManageProject && !holdsEntries;
 
   /// Whether the signed-in user may change the project's structure now.
   bool get mayChangeStructure => !isFinished && may(Permission.manageStructure);

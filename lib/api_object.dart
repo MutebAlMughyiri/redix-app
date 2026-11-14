@@ -125,9 +125,9 @@ abstract class ApiObject<T> extends ChangeNotifier {
   @protected
   Future<String> deleteAt(String path, {String wordPrefix = ''}) => _send(path, () => _session.delete(path), wordPrefix);
 
-  /// Sends the file [bytes], named [name], with the form [fields] beside it, to the API [path], and answers as [change] does.
+  /// Sends the file [bytes], named [name], with the form [fields] beside it, to the API [path], and answers as [change] does, its refusal under [wordPrefix] when that is not empty.
   @protected
-  Future<String> sendFile(String path, String name, List<int> bytes, {Map<String, String> fields = const {}}) => _send(path, () => _session.postFile(path, name, bytes, fields: fields), '');
+  Future<String> sendFile(String path, String name, List<int> bytes, {Map<String, String> fields = const {}, String wordPrefix = ''}) => _send(path, () => _session.postFile(path, name, bytes, fields: fields), wordPrefix);
 
   Future<String> _send(String path, Future<http.Response> Function() send, String wordPrefix) async {
     final prefix = wordPrefix.isEmpty ? _wordPrefix : wordPrefix;
