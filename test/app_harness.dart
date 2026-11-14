@@ -1594,7 +1594,7 @@ class FakeApi {
     }
     if (segments[3] == 'existing') {
       final user = users.singleWhere((user) => user['username'] == body['username']);
-      give(user, projectId, reader);
+      give(user, projectId, ['readProject']);
       return _json(_inProject(user, projectId), 200);
     }
     final user = users.singleWhere((user) => user['id'] == segments[3]);
