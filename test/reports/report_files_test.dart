@@ -195,9 +195,9 @@ void main() {
         ],
       };
     }, permissions: const ['readProject', 'seeReports', 'seeAllCapital']);
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     await scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0', SummarySide.expenses));
-    await act(tester, api, () => tester.tap(find.text('التشطيب')));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.categoryKey('category-1'))));
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
 
     expect(isEnabled(tester, ReportFileButtons.buttonKey('البلاط', ReportFileKind.pdf)), isFalse);

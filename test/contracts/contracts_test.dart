@@ -448,7 +448,7 @@ void main() {
     expect(isEnabled(tester, ContractsScreen.nameKey(opened.running).body), isFalse);
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.nameKey(opened.running))));
 
-    expect(find.byType(ItemReportScreen), findsNothing);
+    expect(find.byKey(ItemReportScreen.totalKey), findsNothing);
     expect(opened.api.itemReportReads, isEmpty);
   });
 
@@ -471,7 +471,7 @@ void main() {
     expect(find.byKey(ContractsScreen.editKey), findsOneWidget);
     expect(isEnabled(tester, ContractsScreen.fileKey(ReportFileKind.pdf)), isFalse);
     expect(isEnabled(tester, ContractsScreen.fileKey(ReportFileKind.excel)), isFalse);
-    expect(find.text('en reports.needsGenerateReports'), findsNWidgets(2));
+    expect((text(tester, ContractsScreen.fileKey(ReportFileKind.pdf).subtitle), text(tester, ContractsScreen.fileKey(ReportFileKind.excel).subtitle)), ('en reports.needsGenerateReports', 'en reports.needsGenerateReports'));
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.fileKey(ReportFileKind.pdf)), warnIfMissed: false));
     expect(opened.api.sentFileReads, isEmpty);
   });
