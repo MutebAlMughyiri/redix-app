@@ -163,9 +163,8 @@ lib/
     payment_methods_screen.dart A project's payment methods: whoever keeps its settings adds, renames, disables and deletes them; one an expense was paid with is only disabled
     shared_settings_screen.dart    Settings (الإعدادات), one screen: who is signed in, Switch project, the default project, the registered projects for the admin, the language, fingerprint or face, the password change and signing out
   sharing/
-    attachable_entries.dart What in one item of a project can take a shared invoice, and the way to put it there
-    attachable_entry.dart   An expense entered without an invoice, which a shared file can go on
-    share_screen.dart       What opens when a picture or a PDF is shared to the app: put it on an expense entered without an invoice, or start a new expense with it
+    attachable_entries.dart The entries of a project a shared file's QR code matches, and the way to put a file on an entry
+    share_screen.dart       What opens when a picture or a PDF is shared to the app: put it on any entry the person may handle, found in القيود's list and its search, or start a new entry with it
   structure/
     add_column_dialog.dart  Asks for a new column: its name, its type, which never changes after, the choices of a list, whether entry requires it, and whether it prints
     add_item_dialog.dart    Asks for a new item's name and type, which is set once

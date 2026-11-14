@@ -4,6 +4,9 @@ import 'entry_kind.dart';
 
 /// What the search of a project's entries asks the API to keep (redix-app #84, #104): every filter set must hold, and a filter left empty keeps everything.
 class EntryFilter {
+  /// A filter keeping every entry; only the entries a shared file can go on, for the share screen, when [attachable] (redix-app #115 D6).
+  EntryFilter({this.attachable = false});
+
   /// Where an entry may stand, as the filter offers it: the word key of each.
   static const statuses = ['entries.pendingApproval', 'entries.approved', 'entries.rejected', 'entries.draft'];
 
@@ -27,6 +30,9 @@ class EntryFilter {
 
   /// The «رقم القيد» kept, the one entry with that number (redix-api #128, D4); 0 for any.
   var number = 0;
+
+  /// True to keep only the entries the signed-in user may put a shared file on, as the API decides (redix-app #115 D6); [clear] keeps it.
+  final bool attachable;
 
   /// True once a period is chosen.
   bool get hasPeriod => period != anyTime;

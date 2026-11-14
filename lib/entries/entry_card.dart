@@ -57,14 +57,17 @@ class SwipeableEntryCard extends StatelessWidget {
 /// An entry on a list: what it was for, how much, and who entered it when someone else did, its details line led by its «رقم القيد» (redix-api #128, D5). Where it stands is its
 /// frame's color alone; its page says the rest, a rejection's reason included (Muteb, 9 Nov 2026).
 class EntryCard extends StatelessWidget {
-  /// The tile of [entry], calling [onTap].
-  const EntryCard({super.key, required this.entry, required this.onTap});
+  /// The tile of [entry], calling [onTap], marked as the one chosen when [isChosen], as the share screen marks where a file goes (redix-app #115).
+  const EntryCard({super.key, required this.entry, required this.onTap, this.isChosen = false});
 
   /// The entry.
   final EntryRow entry;
 
   /// Called when it is tapped.
   final VoidCallback onTap;
+
+  /// True for the entry chosen, which the tile shows selected.
+  final bool isChosen;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +76,7 @@ class EntryCard extends StatelessWidget {
     return ListTile(
       key: EntriesScreen.rowKey(entry.id),
       onTap: onTap,
+      selected: isChosen,
       title: Text(entry.title, key: EntriesScreen.rowKey(entry.id).title),
       subtitle: Text(
         partsLine([entry.numberIn(words), if (!entry.isExpense) words.text(entry.kind.wordKey), entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.fill([entry.authorName])]),

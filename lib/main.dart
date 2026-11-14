@@ -168,6 +168,7 @@ class _RedixAppState extends State<RedixApp> {
   late final _entriesOf = _kept((projectId) => ProjectEntries(widget.session, projectId));
   late final _newestEntriesOf = _kept((projectId) => NewestEntries(widget.session, projectId, widget.localConfig));
   late final _searchedEntriesOf = _kept((projectId) => SearchedEntries(widget.session, projectId, widget.localConfig));
+  late final _shareEntriesOf = _kept((projectId) => SearchedEntries(widget.session, projectId, widget.localConfig));
   late final _openedEntryOf = _kept((projectId) => OpenedEntry(widget.session, projectId));
   late final _approvalsOf = _kept((projectId) => Approvals(widget.session, projectId));
   late final _offeredAccountsOf = _kept((projectId) => OfferedAccounts(widget.session, projectId));
@@ -197,8 +198,8 @@ class _RedixAppState extends State<RedixApp> {
           file: _shared,
           capture: widget.capture,
           projects: _projects,
-          tablesOf: _entryTablesOf,
-          entriesOf: _attachableOf,
+          entriesOf: _shareEntriesOf,
+          matchesOf: _attachableOf,
           attachmentsOf: _attachmentsOf,
           onDone: _letGoOfShared,
         ),

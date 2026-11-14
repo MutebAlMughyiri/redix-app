@@ -1997,17 +1997,8 @@ mixin WordGetters {
   /// The word `share.attached`.
   String get shareAttached => text('share.attached');
 
-  /// The word `share.chooseItem`.
-  String get shareChooseItem => text('share.chooseItem');
-
-  /// The word `share.empty`.
-  String get shareEmpty => text('share.empty');
-
   /// The word `share.entryNotAttachable`.
   String get shareEntryNotAttachable => text('share.entryNotAttachable');
-
-  /// The word `share.expense`.
-  String get shareExpense => text('share.expense');
 
   /// The word `share.invoiceAlreadyAttached`.
   String get shareInvoiceAlreadyAttached => text('share.invoiceAlreadyAttached');
@@ -2015,8 +2006,8 @@ mixin WordGetters {
   /// The word `share.loadFailed`.
   String get shareLoadFailed => text('share.loadFailed');
 
-  /// The word `share.matching`.
-  String get shareMatching => text('share.matching');
+  /// The word `share.matches`.
+  String get shareMatches => text('share.matches');
 
   /// The word `share.newExpense`.
   String get shareNewExpense => text('share.newExpense');
@@ -2035,6 +2026,9 @@ mixin WordGetters {
 
   /// The word `share.refused`.
   String get shareRefused => text('share.refused');
+
+  /// The word `share.searchEntries`.
+  String get shareSearchEntries => text('share.searchEntries');
 
   /// The word `share.supplierDiffers`.
   String get shareSupplierDiffers => text('share.supplierDiffers');

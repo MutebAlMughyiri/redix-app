@@ -21,11 +21,13 @@ class SearchedEntries extends NewestEntries {
     if (filter.hasPeriod) 'from': apiDate(filter.period.start),
     if (filter.hasPeriod) 'to': apiDate(filter.period.end),
     if (filter.hasNumber) 'number': '${filter.number}',
+    if (filter.attachable) 'attachable': 'true',
   };
 
-  /// Shows the first page with nothing typed or chosen, as the Entries screen opens: a search does not outlive its screen (redix-app #104, D4).
-  void open() {
-    filter = EntryFilter();
+  /// Shows the first page with nothing typed or chosen, as the Entries screen opens: a search does not outlive its screen (redix-app #104, D4). The share screen opens it
+  /// [attachable], keeping only the entries a shared file can go on (redix-app #115 D3, D6).
+  void open({bool attachable = false}) {
+    filter = EntryFilter(attachable: attachable);
     openFirstPage();
   }
 

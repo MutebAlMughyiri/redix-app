@@ -7,11 +7,14 @@ import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
+import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/sharing/share_screen.dart';
+import 'package:redix/ui/messages.dart';
+import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/screen_title.dart';
+import 'package:redix/ui/search_line.dart';
 
 import '../app_harness.dart';
-import 'package:redix/entries/table_picker.dart';
 
 const _vatNumber = '300000000000003';
 
@@ -45,32 +48,17 @@ void main() {
     return (api: api, capture: capture);
   }
 
-  Future<void> chooseItem(WidgetTester tester, FakeApi api) async {
-    await act(tester, api, () => tester.tap(find.byKey(ShareScreen.tableKey)));
-    final items = api.categories['project-0']!.single['items']! as List<Map<String, Object>>;
-    final table = (items.single['subgroups']! as List<Map<String, Object>>).first['id']! as String;
-    await act(tester, api, () => tester.tap(find.byKey(TablePicker.optionKey(table))));
-  }
+  /// The entries the share screen lists, by their row's key, in their order.
+  List<String> listed() => idsKeyedBy(EntriesScreen.rowKey);
 
-  testWidgets('findings row 177: the share screen picks from the one table list of Add entry, expense tables only', (tester) async {
-    late String revenueTable;
-    final (:api, capture: _) = await share(tester, (api) {
-      final refund = api.addItem(api.addCategory('project-0', 'استرجاع ضرائب'), 'استرجاع الضرائب', type: 'vatRefund');
-      revenueTable = (refund['subgroups']! as List<Map<String, Object>>).first['id']! as String;
-    });
+  testWidgets('AC-49.1, AC-46.10b, AC-46.10c, D3: a shared file opens the share screen with the file, its middle القيود\'s list and its search, asking the API only entries that take a file', (tester) async {
+    final (:api, capture: _) = await share(tester, (api) => api..addEntry(id: 'entry-1')..addEntry(id: 'entry-2', takesAFile: false));
 
-    await act(tester, api, () => tester.tap(find.byKey(ShareScreen.tableKey)));
-
-    final items = api.categories['project-0']!.first['items']! as List<Map<String, Object>>;
-    expect(find.byKey(TablePicker.optionKey((items.single['subgroups']! as List<Map<String, Object>>).first['id']! as String)), findsOneWidget);
-    expect(find.byKey(TablePicker.optionKey(revenueTable)), findsNothing);
-  });
-
-  testWidgets('AC-49.1: a shared file opens the attach screen', (tester) async {
-    await share(tester, (api) {});
-
-    expect(find.byKey(ShareScreen.tableKey), findsOneWidget);
     expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en share.title');
+    expect(find.byKey(ShareScreen.pictureKey), findsOneWidget);
+    expect(find.byKey(SearchLine.searchKey), findsOneWidget);
+    expect(api.entryQueries.last['attachable'], ['true']);
+    expect(listed(), ['entry-1']);
   });
 
   testWidgets('findings row 211 (Muteb, 13 Nov 2026): the shared picture\'s preview is a quarter of the screen\'s height, never a fixed number', (tester) async {
@@ -79,7 +67,7 @@ void main() {
     expect(tester.getSize(find.byKey(ShareScreen.pictureKey)).height, 2400 / 4);
   });
 
-  testWidgets('AC-49.1: not signed in, sign in comes first and the attach screen continues with the file', (tester) async {
+  testWidgets('AC-49.1: not signed in, sign in comes first and the share screen continues with the file', (tester) async {
     final (:api, :capture) = await share(tester, (api) {}, signedIn: false);
     expect(capture.cameraOpened, 0);
     expect(find.byKey(SignInScreen.usernameKey), findsOneWidget);
@@ -88,7 +76,7 @@ void main() {
     await tester.enterText(find.byKey(SignInScreen.passwordKey), 'correct-password');
     await act(tester, api, () => tester.tap(find.byKey(SignInScreen.submitKey)));
 
-    expect(find.byKey(ShareScreen.tableKey), findsOneWidget);
+    expect(find.byKey(ShareScreen.pictureKey), findsOneWidget);
   });
 
   testWidgets('without a project to enter in, the screen says so', (tester) async {
@@ -97,11 +85,13 @@ void main() {
     expect(find.byKey(ShareScreen.noProjectKey), findsOneWidget);
   });
 
-  testWidgets('with more than one project, the person chooses', (tester) async {
-    await share(tester, (api) => api.addProject('غصون 7', permissions: field, units: ['الفلة']));
+  testWidgets('with more than one project, the person chooses, and the list is the project chosen', (tester) async {
+    final (:api, capture: _) = await share(tester, (api) => api.addProject('غصون 7', permissions: field, units: ['الفلة']));
 
     expect(find.byKey(ShareScreen.projectKey('project-0')), findsOneWidget);
-    expect(find.byKey(ShareScreen.projectKey('project-1')), findsOneWidget);
+    await act(tester, api, () => tester.tap(find.byKey(ShareScreen.projectKey('project-1'))));
+
+    expect(api.sentReads, contains('/projects/project-1/entries'));
   });
 
   testWidgets('leaving lets go of the file', (tester) async {
@@ -109,71 +99,84 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.closeKey)));
 
-    expect(find.byKey(ShareScreen.tableKey), findsNothing);
+    expect(find.byKey(ShareScreen.pictureKey), findsNothing);
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
 
-  testWidgets('AC-49.2: the expense matching the QR code is marked and chosen', (tester) async {
+  testWidgets('AC-49.2, D4: the entry the QR code matches is pinned over the list, saying so, and chosen; the list does not hold it twice', (tester) async {
     final (:api, capture: _) = await share(tester, (api) {
       api
-        ..addAttachable(id: 'entry-other')
-        ..addAttachable(id: 'entry-match', isMatching: true, amount: 6000, supplierVatNumber: _vatNumber);
+        ..addEntry(id: 'entry-other')
+        ..addMatch(id: 'entry-match', supplierVatNumber: _vatNumber);
     }, qrText: _qrText());
 
-    await chooseItem(tester, api);
-
-    expect(find.byKey(ShareScreen.matchingKey('entry-match')), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(ShareScreen.matchingKey('entry-match'))).data, 'en share.matches');
     expect(find.byKey(ShareScreen.matchingKey('entry-other')), findsNothing);
+    expect(find.byKey(EntriesScreen.rowKey('entry-match')), findsOneWidget);
+    expect(tester.widget<ListTile>(find.byKey(EntriesScreen.rowKey('entry-match'))).selected, isTrue);
     expect(find.byKey(ShareScreen.attachKey), findsOneWidget);
     expect(find.byKey(ShareScreen.amountDiffersKey), findsNothing);
     expect(find.byKey(ShareScreen.supplierDiffersKey), findsNothing);
-    expect(api.sentReads.last, contains('attachable'));
+    expect(api.sentReads, contains('/projects/project-0/entries/attachable'));
   });
 
-  testWidgets('without a QR code nothing is chosen, and the attach button waits', (tester) async {
-    final (:api, capture: _) = await share(tester, (api) => api.addAttachable(id: 'entry-1'));
-
-    await chooseItem(tester, api);
+  testWidgets('without a QR code nothing is pinned or chosen, the API is not asked for a match, and the attach button waits', (tester) async {
+    final (:api, capture: _) = await share(tester, (api) => api.addEntry(id: 'entry-1'));
 
     expect(find.byKey(ShareScreen.attachKey), findsNothing);
+    expect(api.sentReads, isNot(contains('/projects/project-0/entries/attachable')));
+    expect(listed(), ['entry-1']);
   });
 
-  testWidgets('AC-49.3: choosing shows what differs from the QR code', (tester) async {
-    final (:api, capture: _) = await share(tester, (api) => api.addAttachable(id: 'entry-1', status: 'approved', amount: 5000, supplierVatNumber: '300000000000099'), qrText: _qrText());
+  testWidgets('AC-49.3: choosing an entry from the list shows what differs from the QR code', (tester) async {
+    final (:api, capture: _) = await share(tester, (api) => api.addEntry(id: 'entry-1', status: 'approved', amount: 5000, supplierVatNumber: '300000000000099'), qrText: _qrText());
 
-    await chooseItem(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(ShareScreen.entryKey('entry-1'))));
+    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-1'))));
 
+    expect(tester.widget<ListTile>(find.byKey(EntriesScreen.rowKey('entry-1'))).selected, isTrue);
     expect(find.byKey(ShareScreen.amountDiffersKey), findsOneWidget);
     expect(find.byKey(ShareScreen.supplierDiffersKey), findsOneWidget);
   });
 
-  testWidgets('D15: attaching keeps the file, puts it alone on the expense, and lets go of it', (tester) async {
-    final (:api, capture: _) = await share(tester, (api) => api.addAttachable(id: 'entry-1', amount: 6000, supplierVatNumber: _vatNumber), qrText: _qrText());
+  testWidgets('R3, D3: what is typed in the search is asked of the API, with only the entries that take a file', (tester) async {
+    final (:api, capture: _) = await share(tester, (api) {
+      api
+        ..addEntry(id: 'entry-1', itemName: 'بلاط الارضيات')
+        ..addEntry(id: 'entry-2', itemName: 'رمل');
+    });
 
-    await chooseItem(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(ShareScreen.entryKey('entry-1'))));
+    await searchFor(tester, api, 'بلاط');
+
+    expect(api.entryQueries.last['text'], ['بلاط']);
+    expect(api.entryQueries.last['attachable'], ['true']);
+    expect(listed(), ['entry-1']);
+  });
+
+  testWidgets('AC-46.10a, D15: attaching to an approved entry keeps the file, puts it on the entry, names the entry in the bar, and lets go of the file', (tester) async {
+    final (:api, capture: _) = await share(tester, (api) => api.addEntry(id: 'entry-1', status: 'approved', itemName: 'بلاط الارضيات'));
+
+    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-1'))));
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.attachKey)));
 
     expect(api.sentAttachments, hasLength(1));
     expect(api.sentInvoices.single.$1, 'entry-1');
     expect(api.sentInvoices.single.$2.keys, ['attachmentId']);
-    expect(find.byKey(ShareScreen.tableKey), findsNothing);
+    expect(tester.widget<Text>(find.byKey(messageKeyOf('share.attached').label)).data, 'en share.attached بلاط الارضيات');
+    expect(find.byKey(ShareScreen.pictureKey), findsNothing);
   });
 
-  testWidgets('BR-22: a file already on another expense is refused, and the person stays', (tester) async {
+  testWidgets('BR-22, G1: a file already on another entry is refused, and the person stays', (tester) async {
     final (:api, capture: _) = await share(tester, (api) {
       api
-        ..addAttachable(id: 'entry-1', amount: 6000, supplierVatNumber: _vatNumber)
+        ..addEntry(id: 'entry-1')
         ..invoiceAnswer = (status: 409, code: 'invoiceAlreadyAttached');
-    }, qrText: _qrText());
+    });
 
-    await chooseItem(tester, api);
-    await act(tester, api, () => tester.tap(find.byKey(ShareScreen.entryKey('entry-1'))));
+    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-1'))));
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.attachKey)));
 
     expect(tester.widget<Text>(find.byKey(ShareScreen.messageKey)).data, 'en share.invoiceAlreadyAttached');
-    expect(find.byKey(ShareScreen.tableKey), findsOneWidget);
+    expect(find.byKey(ShareScreen.pictureKey), findsOneWidget);
   });
 
   testWidgets('UC-046: a new expense opens with the shared file and its QR code, not the camera', (tester) async {
