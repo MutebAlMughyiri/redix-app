@@ -13,6 +13,8 @@ Under **Entries** the home lists the project's latest five entries, by anyone, e
 
 Everyone sees **[Accounts](accounts.md)**, **[Suppliers](suppliers.md)** and **[Contracts](contracts.md)** there. Whoever does the project's finance also sees **[Categories and items](categories.md)** and **[Payment methods](payment-methods.md)**, and everyone sees **[Partners](partners.md)**, each their own line. The project's own buttons follow: **More info**, **My permissions**, which shows what you may do in the project, ticked, without changing it, **Users** for whoever manages them, and **[Load the project file](project-file.md)**, for the manager, until the project holds an entry.
 
+**From the app's icon:** hold REDIX's icon on the phone's home screen and tap **إضافة قيد** to open Add entry in your [default project](projects.md) directly, in the app's language. Without a default project the project list opens; where you do not enter expenses, the project's home opens with the button gray; signed out, sign-in opens first.
+
 After you sign in, REDIX lists the projects you have access to. Tap one to open it: what you can do there follows your role in that project. To open the same project every time, tap its star and turn on **Open the default project directly**. To change project later, open **Settings**, then **Switch project**.
 
 A project whose manager made you inactive in it shows gray on the list, saying **Your account is inactive in this project.**, and does not open; your permissions and entries there stay for when you are made active again. If you have it open when it happens, the project list replaces it when you come back from one of its screens, when the app opens or comes back to the screen, or within 15 minutes.
@@ -33,6 +35,8 @@ Whoever does the project's finance renames the project, adds, renames and delete
 وتحت **القيود** تعرض الرئيسية آخر خمسة قيود في المشروع، من أي شخص، ويقول كل قيد إن كان بانتظار الاعتماد أو مرفوضاً؛ والمعتمد لا يقول شيئاً. ويجد زر البحث بجانب العنوان أي قيد ([القيود](entries.md)). و**[إضافة قيد](add-expense.md)** في الأسفل ما دام المشروع جارياً، زراً واحداً للشراء و[دفعة المقاول](contractor-payment.md) معاً، ويظهر رمادياً لمن لا يُدخل المصروفات.
 
 ويرى فيها الجميع **[الحسابات](accounts.md)** و**[الموردين](suppliers.md)** و**[العقود](contracts.md)**. ويرى من يتولى مالية المشروع أيضاً **[التصنيفات والبنود](categories.md)** و**[طرق الدفع](payment-methods.md)**، ويرى الجميع **[الشركاء](partners.md)**، كلٌّ سطره. وتليها أزرار المشروع نفسه: **معلومات المشروع**، و**صلاحياتي** التي تعرض ما تستطيعه في المشروع محدداً دون تغييره، و**المستخدمون** لمن يديرهم، و**[تحميل ملف المشروع](project-file.md)** للمدير ما دام المشروع بلا قيود.
+
+**من أيقونة التطبيق:** اضغط مطولاً على أيقونة REDIX في الشاشة الرئيسية للجوال ثم **إضافة قيد** لتفتح إضافة قيد في [مشروعك الافتراضي](projects.md) مباشرة، بلغة التطبيق. وبلا مشروع افتراضي تُفتح قائمة المشاريع، وحيث لا تُدخل المصروفات تُفتح رئيسية المشروع والزر رمادي، وإن لم تكن مسجلاً دخولك يُفتح تسجيل الدخول أولاً.
 
 بعد تسجيل الدخول، يعرض REDIX المشاريع المصرّح لك بها. اضغط أحدها لفتحه: وما يمكنك فعله فيه يتبع دورك في ذلك المشروع. لفتح المشروع نفسه كل مرة، اضغط نجمته وفعّل **فتح المشروع الافتراضي مباشرة**. ولتغيير المشروع لاحقاً، افتح **الإعدادات** ثم **تبديل المشروع**.
 

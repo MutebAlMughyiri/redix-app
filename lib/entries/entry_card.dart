@@ -64,18 +64,19 @@ class EntryCard extends StatelessWidget {
   /// Called when it is tapped.
   final VoidCallback onTap;
 
+  /// The card's line under [entry]'s title, in [words]: what it is unless an expense, its supplier, its date, and who entered it when someone else did. The home-screen
+  /// widget's rows read it too, so a row says what the card says (redix-app #86 D9).
+  static String detailsOf(EntryRow entry, Words words) =>
+      [if (!entry.isExpense) words.text(entry.kind.wordKey), if (entry.supplierName.isNotEmpty) entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.fill([entry.authorName])].join(' · ');
+
   @override
   Widget build(BuildContext context) {
-    final words = Words.of(context);
     final theme = Theme.of(context);
     return ListTile(
       key: EntriesScreen.rowKey(entry.id),
       onTap: onTap,
       title: Text(entry.title, key: EntriesScreen.rowKey(entry.id).title),
-      subtitle: Text(
-        [if (!entry.isExpense) words.text(entry.kind.wordKey), if (entry.supplierName.isNotEmpty) entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.fill([entry.authorName])].join(' · '),
-        key: EntriesScreen.detailsKey(entry.id),
-      ),
+      subtitle: Text(detailsOf(entry, Words.of(context)), key: EntriesScreen.detailsKey(entry.id)),
       trailing: Text(formatMoney(entry.amount), key: EntriesScreen.rowKey(entry.id).trailing, style: theme.textTheme.titleSmall),
     );
   }

@@ -266,6 +266,7 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 2. The phone keeps one language with its ETag. Kept words show at once and are refreshed in the background; another language is fetched from `GET /translations/{language}` first.
 3. A first start without a network has no words: `NoWordsScreen` shows only an icon and a retry button, and a retry loads the words again.
 4. Choosing a language in Settings fetches its words first; only then does `AppLanguage` keep the choice and tell `RedixApp`, which rebuilds in the new `locale`. Without a network nothing changes.
+5. Each time words load, `WordsDelegate.onLoaded` hands them to `LauncherAddEntry`, which writes «إضافة قيد» on the icon's menu and the home-screen widget in the app's language (redix-app #86 R5).
 
 ## Session and screens
 

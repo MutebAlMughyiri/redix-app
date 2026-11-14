@@ -19,6 +19,14 @@
 
 Add entry sits under its project's home in the router (`AddEntryScreen.path`, `entries/new`), so a link that opens it has the home behind it; reached by a link it reads its project from the list the landing read.
 
+## Outside the app
+
+Drawn by the phone's launcher, not by Flutter. One owner, `LauncherAddEntry` (`lib/launcher/launcher_add_entry.dart`), writes what they say from the app's words each time the words load, at start, at a change of language and at a retry (`WordsDelegate.onLoaded`), and nothing while the phone has no words yet.
+
+| Element | Where | Does |
+| --- | --- | --- |
+| «إضافة قيد» on the icon's menu | A dynamic shortcut through Flutter's `quick_actions` (D4), the menu's only item, titled `entries.new` | Opens `/add-entry`, also when the tap starts the app (`LauncherAddEntry.listen`) |
+
 ## API calls
 
 | Call | When |
@@ -34,3 +42,7 @@ Add entry sits under its project's home in the router (`AddEntryScreen.path`, `e
 | AC-86.3: without a default project, or with one the person is inactive in, the project list | `HomeScreen.addEntryLandingOf`, `Project.mayOpen` | `launcher/add_entry_landing_test.dart`: AC-86.3, twice |
 | AC-86.6: whoever may not record lands on the home, «إضافة قيد» gray | `HomeScreen.addEntryLandingOf`, `Project.mayEnterExpenses` | `launcher/add_entry_landing_test.dart`: AC-86.6 |
 | AC-86.5, G1: signed out, sign-in; then the home | the router's redirect in `main.dart` | `launcher/add_entry_landing_test.dart`: AC-86.5, G1 |
+| R1, AC-86.4: the icon's menu holds «إضافة قيد» alone, and the widget's button says it, in the app's language | `LauncherAddEntry.showWords`, `WordsDelegate.onLoaded` | `launcher/launcher_add_entry_test.dart`: R1, AC-86.4, in each language |
+| R5: a first start with no words writes nothing outside the app | `LauncherAddEntry.showWords` | `launcher/launcher_add_entry_test.dart`: R5 |
+| AC-86.1: a tap on the icon's «إضافة قيد», or a start from it, opens Add entry in the default project; a start from the icon itself, the home | `LauncherAddEntry.listen`, `RedixApp` | `launcher/launcher_add_entry_test.dart`: AC-86.1, three cases |
+| R10, AC-86.8: however the session ends, the widget's rows and their time are emptied; a renewal empties nothing | `LauncherAddEntry.forgetEntries`, `RedixApp` listening to `Session.access` | `launcher/launcher_add_entry_test.dart`: R10, AC-86.8; R10: a renewal |
