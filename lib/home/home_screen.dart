@@ -80,6 +80,17 @@ class HomeScreen extends StatefulWidget {
   /// Where [session] lands at app start and at sign-in, and nowhere else, so Switch project is never bounced (AC-37.1).
   static String landingOf(Session session) => session.defaultProjectId.isEmpty ? ProjectsScreen.path : pathOf(session.defaultProjectId);
 
+  /// Where «إضافة قيد» from outside the app lands, the icon's menu and the home-screen widget alike (redix-app #86, the rule, D3): Add entry in the default project of
+  /// [session] when the person may record there, its home when not, where the button is gray (R6, AC-86.6), and the project list when [projects] holds no default project
+  /// the person may open (R3, AC-86.3). Signed out, the router opens sign-in first (AC-86.5).
+  static String addEntryLandingOf(Session session, Projects projects) {
+    final project = projects.byId(session.defaultProjectId);
+    if (project.isNone || !project.mayOpen) {
+      return ProjectsScreen.path;
+    }
+    return project.mayEnterExpenses ? AddEntryScreen.pathOf(project.id) : pathOf(project.id);
+  }
+
   /// The card of the project [id].
   static Key cardKey(String id) => Key('home.card.$id');
 

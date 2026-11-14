@@ -88,3 +88,4 @@ Numbered in build order; the same number in the API's documentation is the same 
 | [UC-064](use-cases/UC-064-documents.md) | Keep a project's documents, any file, in optional groups | Everyone reads; whoever manages the project keeps and removes |
 | [UC-070](use-cases/UC-070-timeouts.md) | Give up on a request with no answer after the time the API decides | Nobody chooses it |
 | [UC-071](use-cases/UC-071-load-a-project-file.md) | Load a project's JSON file: its structure, entries, actual balances and last report | The manager who created the project |
+| [UC-072](use-cases/UC-072-add-entry-from-the-launcher.md) | Add an entry from the app's icon and the home-screen widget, which also lists the latest entries | Everyone who records entries |

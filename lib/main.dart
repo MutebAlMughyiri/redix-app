@@ -94,6 +94,7 @@ import 'accounts/account_history.dart';
 import 'accounts/account_history_screen.dart';
 import 'users/my_permissions_screen.dart';
 import 'entries/searched_entries.dart';
+import 'launcher/launcher_add_entry.dart';
 
 /// Starts the app with the session and the language kept from an earlier start, if any. An app built without its environment's config
 /// file stops here, rather than calling an address nobody chose.
@@ -224,7 +225,21 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(
         path: HomeScreen.path,
         builder: (context, state) => HomeScreen(projectId: state.projectId, projects: _projects, accounts: _accountsOf(state.projectId), outbox: _outbox, sync: _sync, entries: _newestEntriesOf(state.projectId), notifications: _notifications, summary: _summaryOf(state.projectId), localConfig: widget.localConfig, capture: widget.capture),
+        routes: [
+          GoRoute(
+            path: AddEntryScreen.path,
+            builder: (context, state) => _addEntryScreen(
+              state.projectId,
+              switch (state.extra) {
+                final Project project => project,
+                _ => _projects.byId(state.projectId),
+              },
+              state.uri.queryParameters,
+            ),
+          ),
+        ],
       ),
+      GoRoute(path: LauncherAddEntry.path, redirect: (context, state) => _addEntryLanding()),
       GoRoute(
         path: ProjectFileRefusalsScreen.path,
         builder: (context, state) => ProjectFileRefusalsScreen(
@@ -392,7 +407,6 @@ class _RedixAppState extends State<RedixApp> {
           files: _reportFiles,
         ),
       ),
-      GoRoute(path: AddEntryScreen.path, builder: (context, state) => _addEntryScreen(state.projectId, state.extra! as Project, state.uri.queryParameters)),
       GoRoute(
         path: EntriesScreen.path,
         builder: (context, state) => EntriesScreen(project: state.extra! as Project, entries: _searchedEntriesOf(state.projectId), startsSearching: state.uri.queryParameters.containsKey('search')),
@@ -451,6 +465,13 @@ class _RedixAppState extends State<RedixApp> {
       itemColumns: _columnsAt(Columns.itemPath(projectId, itemId)),
       defaultColumns: _columnsAt(Columns.templatePath(projectId, item.type)),
     );
+  }
+
+  /// Where «إضافة قيد» from the icon or the widget lands (redix-app #86, the rule), once the projects are read, so a start from the launcher knows whether the person may still
+  /// open the default project and record in it.
+  Future<String> _addEntryLanding() async {
+    await _projects.load();
+    return HomeScreen.addEntryLandingOf(widget.session, _projects);
   }
 
   String? _redirect(String location) {
