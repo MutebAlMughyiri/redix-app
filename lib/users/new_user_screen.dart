@@ -13,7 +13,8 @@ import '../ui/form_error.dart';
 import '../ui/form_button_style.dart';
 import '../ui/act_once.dart';
 
-/// The new user form (UC-007): their name, username, mobile and a temporary password they change at first sign-in (AC-02.1). A new login is born in a project.
+/// The new user form (UC-007): their name, username, mobile, email, which is required (redix-api #127, AC-07.8), and a temporary password they change at first sign-in (AC-02.1).
+/// A new login is born in a project.
 class NewUserScreen extends StatefulWidget {
   /// The form, adding to the project's [users], choosing among its [partners] whose capital the new one sees (redix-api #106).
   const NewUserScreen({super.key, required this.users, required this.partners});
@@ -38,6 +39,9 @@ class NewUserScreen extends StatefulWidget {
 
   /// The user's mobile.
   static const mobileKey = Key('newUser.mobile');
+
+  /// The user's email, where a code reaches them (redix-api #127).
+  static const emailKey = Key('newUser.email');
 
   /// What they are called in this project, beside their username (Muteb, 9 Nov 2026).
   static const roleNameKey = Key('newUser.roleName');
@@ -65,6 +69,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
   final _name = TextEditingController();
   final _username = TextEditingController();
   final _mobile = TextEditingController();
+  final _email = TextEditingController();
   final _roleName = TextEditingController();
   final _password = TextEditingController();
   var _message = '';
@@ -97,6 +102,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
     _name.dispose();
     _username.dispose();
     _mobile.dispose();
+    _email.dispose();
     _roleName.dispose();
     _password.dispose();
     super.dispose();
@@ -104,7 +110,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
 
   Future<void> _add() async {
     setState(() => _message = '');
-    final refusal = await widget.users.create(_name.text, _username.text, _roleName.text, _mobile.text, _password.text, _ticked, _chosen);
+    final refusal = await widget.users.create(_name.text, _username.text, _roleName.text, _mobile.text, _email.text, _password.text, _ticked, _chosen);
     if (!mounted) {
       return;
     }
@@ -140,6 +146,8 @@ class _NewUserScreenState extends State<NewUserScreen> {
               TextField(key: NewUserScreen.roleNameKey, controller: _roleName, decoration: field(words.usersRoleName)),
               const SizedBox(height: 16),
               TextField(key: NewUserScreen.mobileKey, controller: _mobile, keyboardType: TextInputType.phone, decoration: field(words.usersMobile)),
+              const SizedBox(height: 16),
+              TextField(key: NewUserScreen.emailKey, controller: _email, autocorrect: false, keyboardType: TextInputType.emailAddress, decoration: field(words.usersEmail)),
               const SizedBox(height: 16),
               TextField(
                 key: NewUserScreen.passwordKey,

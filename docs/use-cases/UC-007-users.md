@@ -19,7 +19,7 @@
 | Permissions | `UsersScreen.permissionsLineKey(id)` | How many permissions they hold in this project (UC-008) |
 | Disabled | `UsersScreen.statusKey(id)` | «معطّل», the badge of a person inactive in this project (redix-api #126 D1) |
 | The row's menu | `UsersScreen.menuKey(id)` | Edit, Permissions (`UsersScreen.permissionsKey`, UC-008), Reset password, and Disable or Enable |
-| Edit | `UsersScreen.editKey` | Opens the Edit dialog: `editNameKey`, `editRoleNameKey`, `editMobileKey` |
+| Edit | `UsersScreen.editKey` | Opens the Edit dialog: `editNameKey`, `editRoleNameKey`, `editMobileKey`, `editEmailKey` (redix-api #127) |
 | Reset password | `UsersScreen.resetPasswordKey` | Opens the Reset password dialog: `resetNameKey`, `resetExplainKey`, `resetPasswordFieldKey` |
 | Save, Cancel, in both dialogs | `ChangeDialog.saveKey`, `ChangeDialog.cancelKey` | Save sends the change, once while it is sent; Cancel closes the dialog unchanged |
 | Message, in both dialogs | `ChangeDialog.messageKey` | One line saying why it was refused, keeping what was typed |
@@ -38,6 +38,7 @@ New user, `NewUserScreen` at `/projects/:projectId/users/new`:
 | Username | `NewUserScreen.usernameKey` | 1 to 50 characters, unique; never changes |
 | What they are called in this project | `NewUserScreen.roleNameKey` | May be empty (UC-008) |
 | Mobile | `NewUserScreen.mobileKey` | Up to 20 characters; may be empty |
+| Email | `NewUserScreen.emailKey` | Required: one address no other account holds, where a forgotten password's code goes (redix-api #127, AC-07.8) |
 | Temporary password | `NewUserScreen.passwordKey` | At least 8 characters; shown as typed, to pass on |
 | Permissions | `NewUserScreen.permissionsHeadingKey`, `NewUserScreen.permissionKey(permission)` | What the new login may do in this project, See the project always ticked (UC-008) |
 | Add user | `NewUserScreen.submitKey` | Sends everything; disabled while waiting |
@@ -49,7 +50,7 @@ New user, `NewUserScreen` at `/projects/:projectId/users/new`:
 | --- | --- |
 | `GET /projects/{projectId}/users` | Opening Users, Try again, and after every answer to a change |
 | `POST /projects/{projectId}/users` | Add user |
-| `PUT /users/{userId}` | Saving Edit, when the name or the mobile changed |
+| `PUT /users/{userId}` | Saving Edit, when the name, the mobile or the email changed |
 | `PUT /projects/{projectId}/users/{userId}/role-name` | Saving Edit, when what they are called in this project changed |
 | `POST /users/{userId}/reset-password` | Saving Reset password |
 | `POST /projects/{projectId}/users/{userId}/disable`, `/enable` | Disable, once confirmed; Enable. Each answers the user, and is for this project alone (redix-api #126 D1) |
@@ -60,6 +61,8 @@ New user, `NewUserScreen` at `/projects/:projectId/users/new`:
 | --- | --- | --- |
 | A new user can sign in and must change the temporary password (AC-02.1) | The API; `RedixApp`'s redirect | `ProjectUsersTests.AManagerCreatesALoginInTheProjectWhoStartsAsTheLastRoleAndMustChangeThePassword`, in the API |
 | A refusal shows its own line, and nothing typed is lost | `Users`, `NewUserScreen` | `new_user_test.dart`: a taken username |
+| redix-api #127 AC-07.8: the form asks for the email and sends it; an email the API refuses says why, keeping what was typed | `NewUserScreen`, `Users.create` | `new_user_test.dart`: the form asks for the email, an email the API refuses; `patrol_test/users/new_user_test.dart` |
+| redix-api #127 AC-07.8: Edit starts from the email and sends a changed one with the name and mobile; one another account holds stays in the dialog saying so | `EditUserDialog`, `Users.edit` | `users_test.dart`: Edit starts from the email, an email another account holds; `patrol_test/users/change_user_test.dart` |
 | A row shows the username alone when there is no mobile | `UserRow` | `users_test.dart`: a row shows |
 | The temporary password shows as typed, so the project manager can pass it on | `NewUserScreen` | `new_user_test.dart`: the temporary password shows as typed |
 | Disabling asks first and says what it means; Cancel changes nothing | `UsersScreen`, `ConfirmDialog` | `users_test.dart`: disabling asks first |

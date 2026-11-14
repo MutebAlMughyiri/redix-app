@@ -22,6 +22,7 @@ void main() {
     await tester.enterText(find.byKey(NewUserScreen.nameKey), 'نواف');
     await tester.enterText(find.byKey(NewUserScreen.usernameKey), 'nawaf');
     await tester.enterText(find.byKey(NewUserScreen.mobileKey), '0500000000');
+    await tester.enterText(find.byKey(NewUserScreen.emailKey), 'nawaf@example.com');
     await tester.enterText(find.byKey(NewUserScreen.passwordKey), 'Temporary-1');
     await tester.ensureVisible(find.byKey(NewUserScreen.submitKey));
     await tester.tap(find.byKey(NewUserScreen.submitKey));
@@ -36,9 +37,29 @@ void main() {
 
     final (path, body) = api.sentUserChanges.single;
     expect(path, '/projects/project-0/users');
-    expect(body, {'displayName': 'نواف', 'username': 'nawaf', 'roleName': '', 'mobile': '0500000000', 'temporaryPassword': 'Temporary-1', 'permissions': ['readProject'], 'partnerIds': <String>[]});
+    expect(body, {'displayName': 'نواف', 'username': 'nawaf', 'roleName': '', 'mobile': '0500000000', 'email': 'nawaf@example.com', 'temporaryPassword': 'Temporary-1', 'permissions': ['readProject'], 'partnerIds': <String>[]});
     expect(find.byKey(NewUserScreen.submitKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(UsersScreen.nameKey('user-1'))).data, 'نواف');
+  });
+
+  testWidgets('redix-api #127 AC-07.8: the form asks for the email, which is sent with the new person', (tester) async {
+    final api = await openForm(tester);
+
+    expect(tester.widget<TextField>(find.byKey(NewUserScreen.emailKey)).decoration!.labelText, 'en users.email');
+    await fillAndSubmit(tester, api);
+
+    expect(api.sentUserChanges.single.$2['email'], 'nawaf@example.com');
+  });
+
+  testWidgets('redix-api #127 AC-07.8, R9: an email the API refuses keeps the form open saying why, with what was typed', (tester) async {
+    final api = await openForm(tester);
+    api.userAnswer = (status: 409, code: 'emailTaken');
+
+    await fillAndSubmit(tester, api);
+
+    expect(tester.widget<Text>(find.byKey(NewUserScreen.messageKey)).data, 'en users.emailTaken');
+    expect(typed(tester, NewUserScreen.emailKey), 'nawaf@example.com');
+    expect(find.byKey(NewUserScreen.submitKey), findsOneWidget);
   });
 
   testWidgets('Muteb, 9 Nov 2026: a role name typed beside the username is sent with the new user, and the list shows it beside the username', (tester) async {

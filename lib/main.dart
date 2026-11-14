@@ -17,6 +17,7 @@ import 'attachments/invoice_capture.dart';
 import 'attachments/picked_file.dart';
 import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
+import 'auth/forgot_password_screen.dart';
 import 'auth/sign_in_screen.dart';
 import 'contracts/contracts.dart';
 import 'contracts/contracts_screen.dart';
@@ -204,6 +205,7 @@ class _RedixAppState extends State<RedixApp> {
         ),
       ),
       GoRoute(path: SignInScreen.path, builder: (context, state) => SignInScreen(session: widget.session, language: widget.language)),
+      GoRoute(path: ForgotPasswordScreen.path, builder: (context, state) => const ForgotPasswordScreen()),
       GoRoute(path: ChangePasswordScreen.path, builder: (context, state) => ChangePasswordScreen(session: widget.session)),
       GoRoute(
         path: SharedSettingsScreen.path,
@@ -456,7 +458,7 @@ class _RedixAppState extends State<RedixApp> {
   String? _redirect(String location) {
     final session = widget.session;
     if (!session.isOpen) {
-      if (location == SignInScreen.path || location == NewProjectScreen.registerPath) {
+      if (location == SignInScreen.path || location == NewProjectScreen.registerPath || location == ForgotPasswordScreen.path) {
         return null;
       }
       _afterSignIn = location;

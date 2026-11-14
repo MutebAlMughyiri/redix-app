@@ -16,6 +16,7 @@ The business behind every page is the [BRS](https://claude.ai/artifact/JJPc1nSe6
 | Screen | Who sees it |
 | --- | --- |
 | [Sign in](guide/sign-in.md) | Everyone not signed in |
+| [Forgot password](guide/forgot-password.md) | Everyone not signed in |
 | [Change password](guide/change-password.md) | Everyone with a temporary password |
 | [Projects](guide/projects.md) | Everyone, by their role in each project |
 | [Home](guide/home.md) | Everyone, for the projects they have access to |

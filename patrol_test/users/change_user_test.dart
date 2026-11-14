@@ -38,6 +38,20 @@ void main() {
       await $.says(UsersScreen.nameKey(people.member.id), 'نواف الأول');
     });
 
+    phoneCase('redix-api #127 AC-07.8: Edit starts from the email and changes it', ($) async {
+      final people = await onThePeople($);
+      final email = 'changed-${Given.unique()}@example.com';
+      await $.menuChoice(UsersScreen.menuKey(people.member.id), UsersScreen.editKey);
+      await $.reach($(UsersScreen.editEmailKey));
+      expect($.typed(UsersScreen.editEmailKey), '${people.member.username}@example.com');
+      await $.fill(UsersScreen.editEmailKey, email);
+      await $(ChangeDialog.saveKey).tap();
+      await $.gone($(UsersScreen.editEmailKey));
+      await $.menuChoice(UsersScreen.menuKey(people.member.id), UsersScreen.editKey);
+      await $.reach($(UsersScreen.editEmailKey));
+      expect($.typed(UsersScreen.editEmailKey), email);
+    });
+
     phoneCase('reset password names the user, and they must change it at the next sign-in', ($) async {
       final people = await onThePeople($);
       await $.menuChoice(UsersScreen.menuKey(people.member.id), UsersScreen.resetPasswordKey);

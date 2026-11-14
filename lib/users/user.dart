@@ -8,6 +8,7 @@ class User {
       username = json['username'] as String,
       displayName = json['displayName'] as String,
       mobile = json['mobile'] as String,
+      email = json['email'] as String,
       isInactive = (json['projects'] as List<dynamic>).cast<Map<String, dynamic>>().any((line) => line['isInactive'] as bool),
       roleName = [for (final line in (json['projects'] as List<dynamic>).cast<Map<String, dynamic>>()) line['roleName'] as String? ?? ''].firstOrNull ?? '',
       _permissions = {
@@ -28,6 +29,9 @@ class User {
 
   /// The user's mobile; empty when none.
   final String mobile;
+
+  /// Where a code reaches the user, which their manager typed and may change (redix-api #127, AC-07.8); empty while none is set.
+  final String email;
 
   /// True once made inactive in this project, which they then cannot open; their permissions and entries here stay (redix-api #126 D1).
   final bool isInactive;

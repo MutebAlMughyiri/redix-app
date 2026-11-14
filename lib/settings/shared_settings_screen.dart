@@ -18,11 +18,14 @@ import '../words/app_language.dart';
 import '../words/language_switch.dart';
 import '../words/words.dart';
 import 'default_project_sheet.dart';
+import 'my_email_code_dialog.dart';
+import 'my_email_dialog.dart';
 import '../format/parts_line.dart';
 import '../ui/refusal_text.dart';
 
 /// Settings (الإعدادات), all on one screen (Muteb, 9 Nov 2026): who is signed in, the way back to the project list, the default project, the registered projects for the
-/// admin, the language (UC-004), the appearance (redix-app #87, #97), how many entries the home shows at a time (redix-app #105), signing in with fingerprint or face (UC-011), the way to change the password (UC-003), and signing out
+/// admin, the language (UC-004), the appearance (redix-app #87, #97), how many entries the home shows at a time (redix-app #105), signing in with fingerprint or face (UC-011), «بريدي», the
+/// user's own email changed with a code to the new address (redix-api #127, AC-10.4), the way to change the password (UC-003), and signing out
 /// (UC-062), each in its own border (Muteb, 10 Nov 2026: "i like borders for each component"). A project's own screens open from its home.
 class SharedSettingsScreen extends StatefulWidget {
   /// The screen for the user signed in through [session], opened from [project], whose [projects] the default is chosen among, switching [language] and the mode kept in
@@ -95,6 +98,18 @@ class SharedSettingsScreen extends StatefulWidget {
   /// The line that says why fingerprint or face did not change.
   static const biometricsMessageKey = Key('sharedSettings.biometricsMessage');
 
+  /// «بريدي»: the user's email, and the way to change it (redix-api #127, AC-10.4).
+  static const myEmailKey = Key('sharedSettings.myEmail');
+
+  /// The new address, in «بريدي»'s first step.
+  static const myEmailFieldKey = Key('sharedSettings.myEmailField');
+
+  /// The sentence naming the address the code went to, in «بريدي»'s second step.
+  static const myEmailSentToKey = Key('sharedSettings.myEmailSentTo');
+
+  /// The code, in «بريدي»'s second step.
+  static const myEmailCodeKey = Key('sharedSettings.myEmailCode');
+
   /// The way into the password change.
   static const changePasswordKey = Key('sharedSettings.changePassword');
 
@@ -113,6 +128,15 @@ class _SharedSettingsScreenState extends State<SharedSettingsScreen> {
     final refusal = await widget.session.setBiometrics(on: on, words: Words.of(context));
     if (mounted) {
       setState(() => _biometricsMessage = refusal);
+    }
+  }
+
+  /// The new address first; once its code is sent, the code (AC-10.4).
+  Future<void> _changeMyEmail() async {
+    var sentTo = '';
+    await showDialog<void>(context: context, builder: (_) => MyEmailDialog(session: widget.session, onSent: (email) => sentTo = email));
+    if (sentTo.isNotEmpty && mounted) {
+      await showDialog<void>(context: context, builder: (_) => MyEmailCodeDialog(session: widget.session, email: sentTo));
     }
   }
 
@@ -223,6 +247,16 @@ class _SharedSettingsScreenState extends State<SharedSettingsScreen> {
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   child: refusalText(context, words.text(_biometricsMessage), SharedSettingsScreen.biometricsMessageKey),
                 ),
+            ]),
+            _bordered([
+              ListTile(
+                key: SharedSettingsScreen.myEmailKey,
+                leading: Icon(Icons.alternate_email, key: SharedSettingsScreen.myEmailKey.icon),
+                title: Text(words.settingsMyEmail, key: SharedSettingsScreen.myEmailKey.title),
+                subtitle: Text(session.email, key: SharedSettingsScreen.myEmailKey.subtitle),
+                trailing: Icon(Icons.chevron_right, key: SharedSettingsScreen.myEmailKey.trailing),
+                onTap: _changeMyEmail,
+              ),
             ]),
             _row(SharedSettingsScreen.changePasswordKey, Icons.lock_outline, words.myAccountChangePassword, () => context.push(ChangePasswordScreen.path)),
             _bordered([

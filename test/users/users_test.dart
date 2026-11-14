@@ -14,10 +14,10 @@ import 'package:redix/ui/screen_title.dart';
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  Future<FakeApi> openProjectUsers(WidgetTester tester) async {
+  Future<FakeApi> openProjectUsers(WidgetTester tester, {String nawafEmail = ''}) async {
     final api = FakeApi()..addProject('غصون 6');
     final manager = api.addUser('متعب', username: 'muteb');
-    final nawaf = api.addUser('نواف', username: 'nawaf', mobile: '0500000000');
+    final nawaf = api.addUser('نواف', username: 'nawaf', mobile: '0500000000', email: nawafEmail);
     final disabled = api.addUser('سالم', username: 'salem');
     api
       ..give(manager, 'project-0', managerAndFinance)
@@ -156,7 +156,7 @@ void main() {
     });
 
     expect(find.byKey(ChangeDialog.saveKey), findsNothing);
-    expect(api.sentUserChanges.first.$2, {'displayName': 'نواف الأول', 'mobile': '0500000000'});
+    expect(api.sentUserChanges.first.$2, {'displayName': 'نواف الأول', 'mobile': '0500000000', 'email': ''});
     expect(text(tester, UsersScreen.nameKey('user-1')), 'نواف الأول');
   });
 
@@ -176,6 +176,35 @@ void main() {
 
     await choose(tester, api, 'user-1', UsersScreen.editKey);
     expect(tester.widget<TextField>(find.byKey(UsersScreen.editRoleNameKey)).controller!.text, 'مشرف مالي');
+  });
+
+  testWidgets('redix-api #127 AC-07.8: Edit starts from the email and sends a changed one with the name and mobile', (tester) async {
+    final api = await openProjectUsers(tester, nawafEmail: 'nawaf@example.com');
+
+    await choose(tester, api, 'user-1', UsersScreen.editKey);
+    expect(tester.widget<TextField>(find.byKey(UsersScreen.editEmailKey)).controller!.text, 'nawaf@example.com');
+    await act(tester, api, () async {
+      await tester.enterText(find.byKey(UsersScreen.editEmailKey), 'nawaf@redix.sa');
+      await tester.tap(find.byKey(ChangeDialog.saveKey));
+    });
+
+    final (path, body) = api.sentUserChanges.single;
+    expect(path, 'PUT /users/user-1');
+    expect(body, {'displayName': 'نواف', 'mobile': '0500000000', 'email': 'nawaf@redix.sa'});
+  });
+
+  testWidgets('redix-api #127 R9: an email another account holds stays in the dialog saying so', (tester) async {
+    final api = await openProjectUsers(tester);
+    await choose(tester, api, 'user-1', UsersScreen.editKey);
+
+    api.userAnswer = (status: 409, code: 'emailTaken');
+    await act(tester, api, () async {
+      await tester.enterText(find.byKey(UsersScreen.editEmailKey), 'taken@example.com');
+      await tester.tap(find.byKey(ChangeDialog.saveKey));
+    });
+
+    expect(text(tester, ChangeDialog.messageKey), 'en users.emailTaken');
+    expect(tester.widget<TextField>(find.byKey(UsersScreen.editEmailKey)).controller!.text, 'taken@example.com');
   });
 
   testWidgets('a refused edit stays in the dialog with what was typed', (tester) async {

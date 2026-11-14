@@ -69,6 +69,9 @@ class UsersScreen extends StatefulWidget {
   /// The mobile, in the Edit dialog.
   static const editMobileKey = Key('users.editMobile');
 
+  /// The email, in the Edit dialog (redix-api #127, AC-07.8).
+  static const editEmailKey = Key('users.editEmail');
+
   /// What the person is called in this project, in the dialog that changes them (Muteb, 9 Nov 2026).
   static const editRoleNameKey = Key('users.editRoleName');
 

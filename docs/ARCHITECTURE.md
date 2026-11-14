@@ -43,9 +43,11 @@ lib/
   auth/
     biometrics.dart         The fingerprint or face check
     change_password_screen.dart The change-password screen: the current password and the new one twice
+    forgot_password_screen.dart «نسيت كلمة المرور؟», open without a session: a code to the account's email, then the code and the new password twice (redix-api #127)
+    password_reset.dart     Asks the API for a reset code and resets with it, no session, in the phone's language
     permission.dart         What the API says a user may do, named as the API names it
     session.dart            The signed-in session: the tokens the API issued, kept only in the Keychain or Keystore, and the one way to call the API as the user
-    sign_in_screen.dart     The sign-in screen: username and password, or a fingerprint or face on a phone that uses them, with the language choice at the top so it can be read before signing in
+    sign_in_screen.dart     The sign-in screen: username and password, or a fingerprint or face on a phone that uses them, with the language choice at the top so it can be read before signing in, and «نسيت كلمة المرور؟»
   config/
     app_config.dart         The configurable values the API keeps: how long a request waits for its answer, and later anything else made configurable
   contractor_payments/
@@ -157,11 +159,13 @@ lib/
     year_chips.dart         A year chosen as chips, from this year back to firstYear
   settings/
     default_project_sheet.dart The choice of the default project, from Settings: every project the user may open with a tick, the default one ticked
+    my_email_dialog.dart    «بريدي», its first step: the new address, to which a code is sent (redix-api #127)
+    my_email_code_dialog.dart «بريدي», its second step: the code, which makes the new address the email
     payment_method.dart     A way a project pays, such as شبكة, as the API answers it
     payment_method_row.dart One payment method: its name, whether it is disabled and, for whoever keeps the settings, a menu of what can be done to it
     payment_methods.dart    A project's payment methods, and the one way to change them
     payment_methods_screen.dart A project's payment methods: whoever keeps its settings adds, renames, disables and deletes them; one an expense was paid with is only disabled
-    shared_settings_screen.dart    Settings (الإعدادات), one screen: who is signed in, Switch project, the default project, the registered projects for the admin, the language, fingerprint or face, the password change and signing out
+    shared_settings_screen.dart    Settings (الإعدادات), one screen: who is signed in, Switch project, the default project, the registered projects for the admin, the language, fingerprint or face, «بريدي», the password change and signing out
   sharing/
     attachable_entries.dart What in one item of a project can take a shared invoice, and the way to put it there
     attachable_entry.dart   An expense entered without an invoice, which a shared file can go on
@@ -230,8 +234,8 @@ lib/
     title_bar_add.dart      The plus in a title bar, for what is added rarely, grayed without the permission
   users/
     add_existing_user_dialog.dart Adds someone who already has a login to this project, by their exact username, so a manager never sees another project's people
-    edit_user_dialog.dart   Corrects a user's name and mobile
-    new_user_screen.dart    The new user form: their name, username, mobile and a temporary password they change at first sign-in
+    edit_user_dialog.dart   Corrects a user's name, mobile and email
+    new_user_screen.dart    The new user form: their name, username, mobile, email and a temporary password they change at first sign-in
     permission_tick.dart    One permission as a tick: its name and what it allows
     permission_ticks.dart   Every permission of a project as a tick, the capital ones under their headings with the partners to choose: the one list Permissions, صلاحياتي and the new-person form draw
     my_permissions_screen.dart صلاحياتي, from the home: what the signed-in user may do in the project, ticked, read only
