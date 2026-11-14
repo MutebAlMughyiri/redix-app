@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The «إضافة قيد» widget's ground and words while the phone is dark (redix-app #86). -->
+<resources>
+    <color name="add_entry_widget_surface">@android:color/black</color>
+    <color name="add_entry_widget_text">@android:color/white</color>
+    <color name="add_entry_widget_quiet">@android:color/darker_gray</color>
+</resources>

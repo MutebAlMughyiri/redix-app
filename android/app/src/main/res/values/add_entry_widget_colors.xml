@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The «إضافة قيد» widget's ground and words (redix-app #86), the phone's own light colors; values-night holds the dark ones. A file of its own, since
+     flutter_launcher_icons writes colors.xml. -->
+<resources>
+    <color name="add_entry_widget_surface">@android:color/white</color>
+    <color name="add_entry_widget_text">@android:color/black</color>
+    <color name="add_entry_widget_quiet">@android:color/darker_gray</color>
+</resources>

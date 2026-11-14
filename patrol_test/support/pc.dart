@@ -13,6 +13,9 @@ class Pc {
   /// Opens [link] as a tap on it in another app would.
   static Future<void> openLink(String link) => _ask('link?${Uri.encodeComponent(link)}');
 
+  /// Opens [link] as a tap on the «إضافة قيد» home-screen widget does: straight to the app, its button's link or a row's (redix-app #86).
+  static Future<void> tapTheWidget(String link) => _ask('widget?${Uri.encodeComponent(link)}');
+
   /// Copies the file named [name] from the app's own folder on the phone to its Download folder, where the phone's file picker lists it.
   static Future<void> copyToDownloads(String name) => _ask('to-downloads?${Uri.encodeComponent(name)}');
 

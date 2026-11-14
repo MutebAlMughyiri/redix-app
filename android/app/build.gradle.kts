@@ -67,4 +67,6 @@ flutter {
 
 dependencies {
     androidTestUtil("androidx.test:orchestrator:1.5.1")
+    // The «إضافة قيد» widget's rows (redix-app #86): Android's own list of RemoteViews, on every Android this app runs on; home_widget already brings this version.
+    implementation("androidx.core:core-remoteviews:1.1.0")
 }

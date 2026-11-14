@@ -98,7 +98,7 @@ lib/
     summary_card.dart     The project's figures at a glance: what waits for approval, the surplus, the completion, the reconciliation difference, and the revenue and expenses totals, each opening to its categories with their totals; a category opens nothing
     home_screen.dart        The home of the open project: the project, with what the user's permissions allow in it
   launcher/
-    launcher_add_entry.dart REDIX outside the app: «إضافة قيد» on the icon's menu and the home-screen widget, whose every tap opens the one link /add-entry (redix-app #86)
+    launcher_add_entry.dart REDIX outside the app: «إضافة قيد» on the icon's menu and the home-screen widget, with the latest entries under its button, whose every tap opens the one link /add-entry (redix-app #86); the widget itself is android/app/src/main/kotlin/sa/redix/AddEntryWidget.kt, drawing what this saves
   notifications/
     notification_row.dart   Something a person was told: its words come from kind, in their language
     notifications.dart      What the signed-in person was told
