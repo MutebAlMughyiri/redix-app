@@ -26,6 +26,7 @@ Drawn by the phone's launcher, not by Flutter. One owner, `LauncherAddEntry` (`l
 | Element | Where | Does |
 | --- | --- | --- |
 | «إضافة قيد» on the icon's menu | A dynamic shortcut through Flutter's `quick_actions` (D4), the menu's only item, titled `entries.new` | Opens `/add-entry`, also when the tap starts the app (`LauncherAddEntry.listen`) |
+| The home-screen widget's rows | Saved through `home_widget` each time the home reads «آخر القيود» (`HomeScreen`, `NewestEntries.firstPage`, D8): as many as «عدد القيود المعروضة», each its title, its card's details line (`EntryCard.detailsOf`) and its amount, with when they were read | A row opens its entry's own link (`EntryShare.linkOf`, `EntryLinkScreen`, D9); nothing reads in the background, and a read that fails leaves the rows as they were (G6) |
 
 ## API calls
 
@@ -46,3 +47,7 @@ Drawn by the phone's launcher, not by Flutter. One owner, `LauncherAddEntry` (`l
 | R5: a first start with no words writes nothing outside the app | `LauncherAddEntry.showWords` | `launcher/launcher_add_entry_test.dart`: R5 |
 | AC-86.1: a tap on the icon's «إضافة قيد», or a start from it, opens Add entry in the default project; a start from the icon itself, the home | `LauncherAddEntry.listen`, `RedixApp` | `launcher/launcher_add_entry_test.dart`: AC-86.1, three cases |
 | R10, AC-86.8: however the session ends, the widget's rows and their time are emptied; a renewal empties nothing | `LauncherAddEntry.forgetEntries`, `RedixApp` listening to `Session.access` | `launcher/launcher_add_entry_test.dart`: R10, AC-86.8; R10: a renewal |
+| R9, AC-86.7: the widget lists what «آخر القيود» read, as many as show at a time, each as its card says it, with when | `HomeScreen`, `NewestEntries.firstPage`, `LauncherAddEntry.showEntries`, `EntryCard.detailsOf` | `launcher/launcher_add_entry_test.dart`: R9, AC-86.7; R9, G7: at 8 |
+| R9: Show more adds nothing to the widget | `NewestEntries.firstPage` | `launcher/launcher_add_entry_test.dart`: R9: Show more |
+| AC-86.7: a row's link opens its entry | `EntryShare.linkOf`, `EntryLinkScreen` | `launcher/launcher_add_entry_test.dart`: AC-86.7: a row's link |
+| R10, AC-86.8: the rows read before signing out are gone once signed out | `LauncherAddEntry.forgetEntries` | `launcher/launcher_add_entry_test.dart`: R10, AC-86.8: the rows |
