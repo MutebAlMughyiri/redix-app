@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 import 'api.dart';
 import 'auth/session.dart';
 
-/// Something the API owns, as it last answered, and the way to change it. Nothing about it is kept on the phone.
+/// Something the API owns, as it last answered, and the way to change it. What it reads is kept on the phone by [Session.get], which answers with that copy while there
+/// is no network (FR-16), until sign-out.
 abstract class ApiObject<T> extends ChangeNotifier {
   /// What the API at [_path] answers, made from JSON by [_fromJson], whose word keys start with [_wordPrefix]; [_empty] until it answers.
   ApiObject(this._session, this._path, this._wordPrefix, this._fromJson, this._empty) : _value = _empty {
@@ -78,7 +79,7 @@ abstract class ApiObject<T> extends ChangeNotifier {
     SchedulerBinding.instance.addPostFrameCallback((_) => load());
   }
 
-  /// Reads it from the API.
+  /// Reads it from the API, through [readAt].
   Future<void> load() async {
     final path = _path;
     _isLoading = true;
@@ -87,12 +88,7 @@ abstract class ApiObject<T> extends ChangeNotifier {
     var value = _value;
     var message = '';
     try {
-      final response = await _session.get(path);
-      if (response.statusCode == 200) {
-        value = _fromJson(jsonOf(response));
-      } else {
-        message = loadFailedKey;
-      }
+      value = await readAt(path);
     } on Exception catch (error) {
       debugPrint('$path not read: $error');
       message = loadFailedKey;
@@ -105,14 +101,15 @@ abstract class ApiObject<T> extends ChangeNotifier {
     }
   }
 
-  /// What the API at [path] answers now, made as this is, without showing it: the next page of a list read a page at a time (redix-app #89). One that cannot be read throws.
+  /// What the API at [path] answers now, made as this is, without showing it: the one way it and the next page of a list read a page at a time (redix-app #89) are read.
+  /// One that cannot be read throws an [Exception], a copy kept in a shape this version no longer reads included ([madeFrom], redix-api #126).
   @protected
   Future<T> readAt(String path) async {
     final response = await _session.get(path);
     if (response.statusCode != 200) {
       throw http.ClientException('$path answered ${response.statusCode}');
     }
-    return _fromJson(jsonOf(response));
+    return madeFrom(response, _fromJson);
   }
 
   /// Sends a change to the API [path] and, once it has answered, reads this again, so what someone else changed shows as it is now.

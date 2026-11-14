@@ -37,10 +37,10 @@ On [Categories and items](../guide/categories.md), `CategoriesScreen`:
 | The choices, in Add column | `ItemColumnsScreen.choicesKey` | One a line; shown for a pick list |
 | Required, in a dialog | `ItemColumnsScreen.requiredKey` | Off for a new column; shown as it stands and disabled on a core column |
 | Shown in reports, in a dialog | `ItemColumnsScreen.showInReportsKey` | On for a new column; shown as it stands and disabled on a core column |
-| Save, in a dialog | `ItemColumnsScreen.saveKey` | |
-| Why refused, in a dialog | `ItemColumnsScreen.dialogMessageKey` | |
-| The delete question | `ItemColumnsScreen.deleteExplainKey`, `confirmDeleteKey`, `cancelDeleteKey` | |
-| The list's state | `ItemColumnsScreen.messageKey` | Could not read |
+| Save, Cancel, in a dialog | `ChangeDialog.saveKey`, `ChangeDialog.cancelKey` | |
+| Why refused, in a dialog | `ChangeDialog.messageKey` | |
+| The delete question, in the row | `ItemColumnsScreen.rowKey(id).question`, `.confirm`, `.cancel` | Asked by `SwipeToRemove` once the row is swiped (redix-api #119) |
+| The list's state | `ApiListBody.messageKey`, `retryKey` | Could not read, and Try again |
 
 The question after a change to the template, `ApplyToAllDialog`:
 

@@ -31,17 +31,15 @@ class EntryRecording {
   /// Whether the last entry waits on the phone for the network, rather than being sent.
   bool get wasKept => _wasKept;
 
-  /// What the entry [id] holds, to change it; empty when it cannot be read.
+  /// What the entry [id] holds, to change it; empty when it cannot be read, an answer that is not one entry (findings row 184) or a copy kept in a shape this version
+  /// no longer reads ([madeFrom], redix-api #126) included.
   Future<SavedEntry> read(String id) async {
     try {
       final response = await _session.get('/projects/$projectId/entries/$id');
       if (response.statusCode != 200) {
         return SavedEntry.none();
       }
-      return switch (jsonOf(response)) {
-        final Map<String, dynamic> json => SavedEntry.fromJson(json),
-        _ => SavedEntry.none(),
-      };
+      return madeFrom<SavedEntry>(response, (json) => SavedEntry.fromJson(json! as Map<String, dynamic>));
     } on Exception catch (error) {
       debugPrint('Entry not read: $error');
       return SavedEntry.none();

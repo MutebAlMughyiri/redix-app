@@ -32,7 +32,7 @@ Settings, `SharedSettingsScreen`, has **Default project** (`SharedSettingsScreen
 | Element | `Key` | Does |
 | --- | --- | --- |
 | Title, what the tick does | `DefaultProjectSheet.titleKey`, `hintKey` | |
-| A project's tick | `DefaultProjectSheet.optionKey(id)`, `.title` | Every approved project; the default is ticked. Ticking makes it the default and says so; ticking another moves it; unticking clears it |
+| A project's tick | `DefaultProjectSheet.optionKey(id)`, `.title` | Every project the user may open (`Project.mayOpen`): approved, and not one he was made inactive in (redix-api #126 D2); the default is ticked. Ticking makes it the default and says so; ticking another moves it; unticking clears it |
 
 The star and the tick change the default through one owner, `toggleDefaultProject`.
 
@@ -56,7 +56,7 @@ The button beside Settings, `HomeScreen.collapseKey`, hides the conclusion (`Sum
 | The buttons follow the role in the open project (AC-36.2) | `home_test.dart` |
 | The list has no change buttons | `projects_test.dart` |
 | AC-37.1: the star makes a project the default and a message says so; it moves and clears the default; a refusal says why | `projects_test.dart` |
-| Default project in Settings lists every approved project with a tick, none waiting or rejected; ticking sets and moves the default and says so, unticking clears it, a refusal says why | `shared_settings_test.dart` |
+| Default project in Settings lists every project the user may open with a tick, none waiting, rejected or one he was made inactive in; ticking sets and moves the default and says so, unticking clears it, a refusal says why | `shared_settings_test.dart` |
 | AC-37.1: a default opens directly at sign-in and at start | `home_test.dart` |
 | A project gone while open returns to the list | `home_test.dart` |
 | redix-api #126 D2: a project the user was made inactive in shows gray and disabled, saying so under its name, with no star, and does not open; one he is active in beside it opens | `projects_test.dart` |

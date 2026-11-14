@@ -39,7 +39,7 @@
 | A kept session opens home directly and is renewed in the background | `Session.restore` | `sign_in_test.dart`: a kept session |
 | Without a network a kept session stays open, so work goes on offline (FR-16) | `Session.restore` | `sign_in_test.dart`: without a network a kept session |
 | A session the API refuses ends on sign-in with a notice (AC-01.3, NFR-09) | `Session.restore` | `sign_in_test.dart`: a kept session the API refuses |
-| redix-api #126 R6: the session renews on its own when the app opens, when it comes back to the screen and 30 seconds before its access token runs out, one renewal waiting at a time and none after sign-out; each renewal reads the project list again | `Session`, `Projects` | `session_renewal_test.dart` |
+| redix-api #126 R6: the session renews on its own when the app opens, when it comes back to the screen and 30 seconds before its access token runs out, one renewal waiting at a time and none after sign-out; each of these renewals reads the project list again. A renewal after a refused request reads nothing again, so an API that refuses even a renewed token is renewed and read once more, never in a loop | `Session.renew`, `Session._renewAfterRefusal`, `Projects` | `session_renewal_test.dart`; `projects_test.dart`: an expired access token is renewed once for each list |
 
 ## Left to later use cases
 

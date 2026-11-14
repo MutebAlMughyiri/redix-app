@@ -18,7 +18,7 @@ New project, `NewProjectScreen`, signed in:
 
 | Element | `Key` | Does |
 | --- | --- | --- |
-| Copy categories and items from | `NewProjectScreen.structureSourceKey` | The default template unless changed, or an approved project on the user's list. The sign-in page's form has no such field |
+| Copy categories and items from | `NewProjectScreen.structureSourceKey` | The default template unless changed, or a project on the user's list he may open (`Project.mayOpen`): approved, and not one he was made inactive in (redix-api #126 D2). The sign-in page's form has no such field |
 
 [Categories and items](../guide/categories.md), `CategoriesScreen` at `/projects/:projectId/categories`:
 
@@ -40,11 +40,11 @@ New project, `NewProjectScreen`, signed in:
 | Its type, or Disabled | `CategoriesScreen.itemDetailsKey(id)` | |
 | Columns | `CategoriesScreen.itemColumnsKey(id)` | Opens [its columns](UC-013-item-columns.md) |
 | Its menu | `CategoriesScreen.itemMenuKey(id)` | Rename `renameItemKey`, Change type `changeTypeKey`, Tables `tablesKey`, the percentage of each table `tablePercentagesKey`, Disable `disableItemKey` or Enable `enableItemKey` |
-| The name, in a dialog | `CategoriesScreen.nameKey` | |
+| The name, in a dialog | `NameDialog.nameKey` | |
 | The type, in Add item | `CategoriesScreen.itemTypeKey(type)` | One choice per type, each in full; Purchases + contractor payments unless changed |
-| Save, in a dialog | `CategoriesScreen.saveKey` | |
-| Why refused, in a dialog | `CategoriesScreen.dialogMessageKey` | |
-| The list's states | `CategoriesScreen.messageKey`, `emptyKey` | Could not read; no categories |
+| Save, Cancel, in a dialog | `ChangeDialog.saveKey`, `ChangeDialog.cancelKey` | |
+| Why refused, in a dialog | `ChangeDialog.messageKey` | |
+| The list's states | `ApiListBody.messageKey`, `retryKey`, `emptyKey` | Could not read, and Try again; no categories |
 
 [Tables](../guide/categories.md#tables), `ItemTablesScreen` at `/projects/:projectId/items/:itemId/tables`:
 
@@ -84,7 +84,7 @@ New project, `NewProjectScreen`, signed in:
 | A named subgroup is removed by a swipe once confirmed in its row (redix-api #119); the general table and a contract do not swipe; one that entries use comes back and the refusal says why (redix-api #102) | `ItemTables.deleteSubgroup`, `SwipeToRemove` | `categories_test.dart`: a named subgroup is removed by a swipe; AC-46.8; a subgroup that entries use |
 | An item's type changes from its menu, starting from the one it has; one with entries keeps it and the dialog says why | `ChangeItemTypeDialog`, `ItemTypeChoice`, `Categories.changeItemType` | `categories_test.dart`: an item's type changes from its menu; an item with entries keeps its type |
 | A finished project shows its structure with nothing to change (AC-04.1) | `Project.mayChangeStructure` | `categories_test.dart`: a finished project |
-| AC-05.2: a new project can copy an approved earlier one, and the sign-in page offers none | `NewProjectScreen` | `categories_test.dart`: a new project |
+| AC-05.2: a new project can copy an approved earlier one, never one the user was made inactive in (redix-api #126 D2), and the sign-in page offers none | `NewProjectScreen`, `Project.mayOpen` | `categories_test.dart`: a new project |
 | AC-N03: nothing off a screen 360 points wide, in both languages | Each screen | `settings/account_test.dart`: AC-N03 |
 
 The real app and API run it together on a real phone in `patrol_test/structure/categories_test.dart`, `items_test.dart` and `item_tables_test.dart`, which take the guide's pictures.

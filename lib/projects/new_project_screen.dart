@@ -58,7 +58,7 @@ class NewProjectScreen extends StatefulWidget {
   /// The project's description, optional (redix-api 93).
   static const descriptionKey = Key('newProject.description');
 
-  /// Where the categories and items are copied from, on the form of someone signed in.
+  /// Where the categories and items are copied from, on the form of someone signed in: the default template, or a project he may open, never one he was made inactive in (AC-05.2, redix-api #126 D2).
   static const structureSourceKey = Key('newProject.structureSource');
 
   /// The next unit's name.
@@ -226,7 +226,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                   decoration: InputDecoration(labelText: words.projectsStructureSource),
                   items: [
                     DropdownMenuItem(key: NewProjectScreen.structureSourceOptionKey(''), value: '', child: Text(words.projectsDefaultTemplate, key: NewProjectScreen.structureSourceOptionKey('').label)),
-                    for (final project in widget.projects.all.where((project) => project.isApproved)) DropdownMenuItem(key: NewProjectScreen.structureSourceOptionKey(project.id), value: project.id, child: Text(project.name, key: NewProjectScreen.structureSourceOptionKey(project.id).label)),
+                    for (final project in widget.projects.all.where((project) => project.mayOpen)) DropdownMenuItem(key: NewProjectScreen.structureSourceOptionKey(project.id), value: project.id, child: Text(project.name, key: NewProjectScreen.structureSourceOptionKey(project.id).label)),
                   ],
                   onChanged: (id) => setState(() => _structureSourceId = id ?? ''),
                 ),

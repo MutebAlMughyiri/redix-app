@@ -6,7 +6,7 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 
 ```
 lib/
-  api.dart                  The API's address, from the environment's config file: `config/dev.json` for automated runs, `config/qa.json` for Muteb's own testing, `config/production.json` for a release (redix-api #118)
+  api.dart                  The API's address, from the environment's config file: `config/dev.json` for automated runs, `config/qa.json` for Muteb's own testing, `config/production.json` for a release (redix-api #118); and the one place an answer is read: `jsonOf`, `answerOf`, `refusalOf`, `madeFrom`
   api_list.dart             A list the API owns, as it last answered, and the way to change it
   api_object.dart           Something the API owns, as it last answered, and the way to change it
   main.dart                 The app: its theme, its languages, and its screens
@@ -153,7 +153,7 @@ lib/
     waiting_figures.dart    What waits for approval, as two figures: expenses, which lower the surplus once approved, and revenue with partners' money, which raises it
     year_chips.dart         A year chosen as chips, from this year back to firstYear
   settings/
-    default_project_sheet.dart The choice of the default project, from Settings: every approved project with a tick, the default one ticked
+    default_project_sheet.dart The choice of the default project, from Settings: every project the user may open with a tick, the default one ticked
     payment_method.dart     A way a project pays, such as شبكة, as the API answers it
     payment_method_row.dart One payment method: its name, whether it is disabled and, for whoever keeps the settings, a menu of what can be done to it
     payment_methods.dart    A project's payment methods, and the one way to change them
@@ -271,7 +271,7 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 
 ## Data the API owns
 
-Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `ApiList` reads the list again after every answer, so its order and each status have one source. A screen with two lists reads them at once. `Projects` and `Users` extend it, and hold only their own calls; `ApiListBody` draws its states on every such screen; a screen that filters its list hands it `keeps`, so a filter that keeps nothing says so in the list's own empty line. Every refusal becomes a word key in one place, `refusalOf` in `lib/api.dart`: the code the API names, or `refused` when it names none. A dragged row is the one thing shown before the API answers: `ApiList.reorder` keeps it where it was dropped, and a refused or lost order goes back to what the API holds. A change whose answer says more than a code reads `ApiList.lastAnswer`. A list whose address follows what is asked, like a search, moves with `ApiList.pointAt`, and an answer from the old address never shows.
+Settings such as projects keep nothing on the phone: the API owns every rule, the app sends the change and draws what the API answers. `ApiList` reads the list again after every answer, so its order and each status have one source. A screen with two lists reads them at once. `Projects` and `Users` extend it, and hold only their own calls; `ApiListBody` draws its states on every such screen; a screen that filters its list hands it `keeps`, so a filter that keeps nothing says so in the list's own empty line. Every refusal becomes a word key in one place, `refusalOf` in `lib/api.dart`: the code the API names, or `refused` when it names none. Every answer becomes what the app holds in one place too, `madeFrom` in `lib/api.dart`: one in a shape this version no longer reads, as a copy an earlier version kept on the phone may be, fails as nothing kept would (redix-api #126). A dragged row is the one thing shown before the API answers: `ApiList.reorder` keeps it where it was dropped, and a refused or lost order goes back to what the API holds. A change whose answer says more than a code reads `ApiList.lastAnswer`. A list whose address follows what is asked, like a search, moves with `ApiList.pointAt`, and an answer from the old address never shows.
 
 ## Rules every part follows
 

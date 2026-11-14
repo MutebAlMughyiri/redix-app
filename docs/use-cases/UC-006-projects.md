@@ -68,7 +68,7 @@ New project, `NewProjectScreen` at `/projects/new`:
 | Project name | `NewProjectScreen.nameKey` | Any name of 1 to 100 characters |
 | Description (optional) | `NewProjectScreen.descriptionKey` | Up to 2,000 characters, counted; also on Register a project (UC-066) |
 | Start date | `NewProjectScreen.startDateKey` | Today until changed; opens the date picker |
-| Copy categories and items from | `NewProjectScreen.structureSourceKey` | The default template unless changed, or an approved earlier project (UC-012) |
+| Copy categories and items from | `NewProjectScreen.structureSourceKey` | The default template unless changed, or an approved earlier project the user is not inactive in (UC-012, redix-api #126 D2) |
 | Unit name | `NewProjectScreen.unitNameKey` | The next unit to add |
 | Add unit | `NewProjectScreen.addUnitKey` | Adds it to the list below; disabled while the name is empty |
 | A unit | `NewProjectScreen.unitKey(index)` | A unit to be created with the project |

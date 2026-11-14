@@ -63,6 +63,21 @@ void main() {
     expect(api.sentReads, isEmpty);
   });
 
+  testWidgets('redix-api #126 R6: an API that refuses even a renewed token renews once for the refused project list and reads it once more, never renewing and reading in a loop', (tester) async {
+    final api = FakeApi()..addProject('غصون 6');
+    await pumpRedix(tester, api, stored: {'session': keptSession});
+    await sendToBackground(tester, api);
+    api
+      ..expiredAccessTokens.add('new-access')
+      ..refreshes = 0
+      ..sentReads.clear();
+
+    await bringBack(tester, api);
+
+    expect(api.refreshes, 2, reason: 'one on coming back, one for the refused read of the project list');
+    expect(api.sentReads.where((path) => path == '/projects'), hasLength(2), reason: 'read after coming back, and sent once more with the renewed token');
+  });
+
   testWidgets('redix-api #126 R6: the session renews on its own 30 seconds before its access token runs out', (tester) async {
     final api = FakeApi()..accessTokenLifetime = fifteenMinutes;
     await pumpRedix(tester, api, stored: {'session': keptSession});
