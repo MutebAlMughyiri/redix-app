@@ -141,7 +141,8 @@ void main() {
       final (:api, capture: _, refund: _, :partner, :account) = await openAddEntry(tester);
       await pick(tester, api, partner);
 
-      expect(find.byType(SwitchListTile), findsOneWidget, reason: 'only سحب; no "paid in cash"');
+      expect(find.byType(SwitchListTile), findsNothing, reason: 'no "paid in cash"; سحب is a choice of «نوع الحركة» since redix-api #129 R7');
+      expect(find.byKey(AddEntryScreen.columnKey('movementType')), findsOneWidget);
       expect(find.byKey(AddEntryScreen.amountKey), findsOneWidget);
       await tester.enterText(find.byKey(AddEntryScreen.amountKey), '1000');
       await act(tester, api, () => tester.tap(find.byKey(PaymentChoices.accountKey(account))));

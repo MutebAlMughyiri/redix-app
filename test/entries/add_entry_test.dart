@@ -412,7 +412,7 @@ void main() {
     await pickItem(tester, opened.api, opened.otherItem);
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    expect(opened.api.sentEntries.single['customValues'], isEmpty);
+    expect(opened.api.sentEntries.single['columnValues'], isEmpty);
   });
 
   testWidgets('the table sheet searches the items\' and the tables\' names in one spelling, and says when nothing matches', (tester) async {

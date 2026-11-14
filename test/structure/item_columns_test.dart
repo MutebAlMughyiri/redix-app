@@ -109,7 +109,6 @@ void main() {
       'isRequired': true,
       'showInReports': true,
       'choices': <Map<String, Object>>[],
-      'isEntryField': false,
       'applyToAllItems': false,
     });
     expect(text(tester, ItemColumnsScreen.nameKey(columnNamed(opened.api, itemPath, 'رقم أمر الشراء'))), 'رقم أمر الشراء');
@@ -179,7 +178,7 @@ void main() {
     await tester.enterText(find.byKey(ItemColumnsScreen.newChoicesKey), 'شمال\nجنوب');
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-    expect(opened.api.sentStructureChanges.single.$2['newOptions'], ['شمال', 'جنوب']);
+    expect(opened.api.sentStructureChanges.single.$2['newChoices'], [{'name': 'شمال'}, {'name': 'جنوب'}]);
     expect((list['choices']! as List<Map<String, Object>>).map((choice) => choice['name']), ['شرق', 'غرب', 'شمال', 'جنوب']);
   });
 
