@@ -6,13 +6,14 @@
 
 **No Revenue screen and no sales invoice** (Muteb, 8 Nov 2026: "remove those completely"). Revenue is entered from Add entry, on a revenue item's table, waits for approval, and shows in القيود with every other entry, where an approved one is removed by whoever holds the removal (redix-api #119). The sales invoice, its route and its table went; RedixReal held none. The VAT statement keeps its purchases.
 
-**Who uses it:** everyone in the project sees revenue; whoever moves money records; whoever sees all capital takes the statement's workbook.
+**Who uses it:** everyone in the project sees revenue; whoever moves money records; whoever holds `generateReports` («يُصدر التقارير») takes the statement's workbook, gray for anyone else (redix-api #131).
 
 Reports is on the project's home. The app shows and stores no VAT (redix-api #96, D4): `VatStatementScreen` chooses a quarter, a half-year or a custom period and hands on its Excel, whose VAT is a formula on each purchase's total (D19, D20).
 
 | Rule | Code | Test |
 | --- | --- | --- |
 | AC-32.2, D20: a quarter's Excel, and nothing else, for its first to its last day | `VatStatementScreen._period`, `ReportFileButtons` | `AC-32.2, D20: the third quarter of 2026 takes its Excel, and nothing else` |
+| redix-api #131: without «يُصدر التقارير» the statement's Excel shows gray, never hidden | `VatStatementScreen`, `ReportFileButtons.mayTake` | `redix-api #131: without «يُصدر التقارير» the statement's Excel shows gray, never hidden` |
 | AC-32.2: a half-year takes six months | `VatStatementScreen._period` | `AC-32.2: a half-year takes six months` |
 | A half-year is chosen by its year and its half alone: no quarter is offered | `YearChips`, `VatStatementScreen` | `a half-year is chosen by its year and its half alone: no quarter is offered` |
 | AC-32.2: a custom period never ends before it starts: the last day is picked from the first on, and a first day after the last moves the last day to it | `VatStatementScreen._pick` | `AC-32.2: a custom period never ends before it starts` |

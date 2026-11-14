@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../auth/permission.dart';
 import '../format/date_format.dart';
 import '../projects/project.dart';
 import '../ui/part_keys.dart';
@@ -136,8 +135,13 @@ class _VatStatementScreenState extends State<VatStatementScreen> {
             ),
           },
           const SizedBox(height: 12),
-          if (widget.project.may(Permission.seeAllCapital))
-            ReportFileButtons(files: widget.files, address: '/projects/${widget.project.id}/vat-statement?from=$from&to=$to', name: 'vat-$from-$to', kinds: const [ReportFileKind.excel]),
+          ReportFileButtons(
+            files: widget.files,
+            address: '/projects/${widget.project.id}/vat-statement?from=$from&to=$to',
+            name: 'vat-$from-$to',
+            mayTake: widget.project.mayTakeReportFiles,
+            kinds: const [ReportFileKind.excel],
+          ),
         ],
       ),
     );

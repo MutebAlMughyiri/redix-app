@@ -6,7 +6,7 @@
 
 **What it is for:** recording money that comes in other than capital, and taking the VAT statement the accountant files.
 
-**Who sees it:** everyone in the project. Whoever does the project's finance records, and whoever sees all capital takes the statement.
+**Who sees it:** everyone in the project. Whoever does the project's finance records, and whoever holds **Generate reports** takes the statement.
 
 Revenue shows in **القيود** with every other entry, saying it is revenue; once approved, whoever holds **Remove approved entries** removes it from there.
 
@@ -18,7 +18,7 @@ Revenue shows in **القيود** with every other entry, saying it is revenue; 
 
 **الغرض:** تسجيل ما يدخل من مال غير رأس المال، وأخذ كشف الضريبة الذي يقدّمه المحاسب.
 
-**من يراها:** كل من في المشروع. ويسجّل من يتولى مالية المشروع، ويأخذ الكشف من يرى رأس المال كله.
+**من يراها:** كل من في المشروع. ويسجّل من يتولى مالية المشروع، ويأخذ الكشف من يملك **يُصدر التقارير**.
 
 تظهر الإيرادات في **القيود** مع غيرها من القيود، ويقول كل منها إنه إيراد؛ وبعد اعتماده يحذفه من هناك من يملك **حذف القيود المعتمدة**.
 

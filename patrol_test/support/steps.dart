@@ -266,6 +266,8 @@ extension Steps on PatrolIntegrationTester {
   /// Whether the button [key] can be pressed.
   bool isEnabled(Key key) => switch (tester.widget(find.byKey(key))) {
     final IconButton icon => icon.onPressed != null,
+    final PopupMenuItem<Object?> choice => choice.enabled,
+    final InkWell card => card.onTap != null,
     final widget => (widget as ButtonStyleButton).enabled,
   };
 

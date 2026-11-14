@@ -41,6 +41,15 @@ void main() {
       expect(api.sentFileReads.single, '/projects/project-0/vat-statement/xlsx?from=2026-07-01&to=2026-09-30');
     });
 
+    testWidgets('redix-api #131: without «يُصدر التقارير» the statement\'s Excel shows gray, never hidden', (tester) async {
+      final api = await openVat(tester, (api) {}, permissions: const ['readProject', 'seeReports', 'seeAllCapital']);
+
+      await act(tester, api, () => tester.tap(find.byKey(YearChips.yearKey(2026))));
+      await act(tester, api, () => tester.tap(find.byKey(QuarterPicker.quarterKey(3))));
+
+      expect(isEnabled(tester, ReportFileButtons.buttonKey('vat-2026-07-01-2026-09-30', ReportFileKind.excel)), isFalse);
+    });
+
     testWidgets('AC-32.2: a half-year takes six months', (tester) async {
       final api = await openVat(tester, (api) {});
 

@@ -13,16 +13,18 @@ import '../ui/app_color.dart';
 import '../ui/row_menu.dart';
 
 /// One contract: its contractor, item and unit, how it stands, its value, paid and remaining, with a bar of how much is paid. Tapped, it opens its own table (Muteb, 12 Nov
-/// 2026). Its ⋮ holds what can be done to it, for whoever keeps the settings, and its PDF and Excel, for whoever sees all capital (BR-31).
+/// 2026) for whoever holds «يرى التقارير». Its ⋮ holds what can be done to it, for whoever keeps the settings, and its PDF and Excel, gray with the reason for whoever
+/// does not hold «يُصدر التقارير» (redix-api #131: gray, never hidden).
 class ContractCard extends StatelessWidget {
-  /// The card of [contract], changed through [contracts] while [mayChange], where [onAmend] opens its dialog and [onOpen] its table; its files are at [address], got through
-  /// [files] while [mayExport].
+  /// The card of [contract], changed through [contracts] while [mayChange], where [onAmend] opens its dialog and [onOpen] its table while [mayOpen]; its files are at
+  /// [address], got through [files] while [mayExport].
   const ContractCard({
     super.key,
     required this.contract,
     required this.contracts,
     required this.mayChange,
     required this.onAmend,
+    required this.mayOpen,
     required this.onOpen,
     required this.mayExport,
     required this.files,
@@ -41,10 +43,13 @@ class ContractCard extends StatelessWidget {
   /// Opens the dialog that amends it.
   final VoidCallback onAmend;
 
+  /// Whether the signed-in user may open its own table, a contract's report (redix-api #131).
+  final bool mayOpen;
+
   /// Opens its own table.
   final VoidCallback onOpen;
 
-  /// Whether the signed-in user may take its files.
+  /// Whether the signed-in user may take its files, holding «يُصدر التقارير» (redix-api #131).
   final bool mayExport;
 
   /// The way to its files.
@@ -52,9 +57,6 @@ class ContractCard extends StatelessWidget {
 
   /// Its report's address, which its files are named after.
   final String address;
-
-  /// True while its ⋮ holds something.
-  bool get _hasMenu => mayChange || mayExport;
 
   /// What waits for approval and, unless the value is open, what remains once it is approved: the figure Add entry works from.
   String _waitingLine(Words words) {
@@ -78,9 +80,9 @@ class ContractCard extends StatelessWidget {
       shape: contract.isOverrun ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: AppColor.refusal.of(context))) : null,
       child: InkWell(
         key: ContractsScreen.nameKey(contract.id).body,
-        onTap: onOpen,
+        onTap: mayOpen ? onOpen : null,
         child: Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(16, 8, _hasMenu ? 4 : 16, 16),
+          padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 4, 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -110,24 +112,27 @@ class ContractCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (_hasMenu)
-                    rowMenu(ContractsScreen.menuKey(contract.id), [
-                        if (mayChange) ...[
-                          rowMenuItem(ContractsScreen.editKey, words.contractsEdit, onAmend),
-                          if (contract.isActive)
-                            rowMenuItem(ContractsScreen.disableKey, words.contractsDisable, () => showRefusalOf(context, contracts.disable(contract)))
-                          else
-                            rowMenuItem(ContractsScreen.enableKey, words.contractsEnable, () => showRefusalOf(context, contracts.enable(contract))),
-                        ],
-                        if (mayExport)
-                          for (final kind in const [ReportFileKind.pdf, ReportFileKind.excel])
-                            rowMenuItem(ContractsScreen.fileKey(kind), words.text(kind.wordKey), () => handReportFile(context, files, address, contract.supplierName, kind)),
-                      ]),
+                  rowMenu(ContractsScreen.menuKey(contract.id), [
+                    if (mayChange) ...[
+                      rowMenuItem(ContractsScreen.editKey, words.contractsEdit, onAmend),
+                      if (contract.isActive)
+                        rowMenuItem(ContractsScreen.disableKey, words.contractsDisable, () => showRefusalOf(context, contracts.disable(contract)))
+                      else
+                        rowMenuItem(ContractsScreen.enableKey, words.contractsEnable, () => showRefusalOf(context, contracts.enable(contract))),
+                    ],
+                    for (final kind in const [ReportFileKind.pdf, ReportFileKind.excel])
+                      rowMenuItem(
+                        ContractsScreen.fileKey(kind),
+                        words.text(kind.wordKey),
+                        () => handReportFile(context, files, address, contract.supplierName, kind),
+                        reason: mayExport ? '' : words.reportsNeedsGenerateReports,
+                      ),
+                  ]),
                 ],
               ),
               const SizedBox(height: 8),
               Padding(
-                padding: EdgeInsetsDirectional.only(end: _hasMenu ? 12 : 0),
+                padding: const EdgeInsetsDirectional.only(end: 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

@@ -5,6 +5,7 @@ import 'package:redix/reports/summary.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/reports/reports_screen.dart';
 import 'package:redix/ui/search_scope.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
@@ -57,6 +58,28 @@ void main() {
       final member = await onTheHomeHolding($, [Permission.recordEntries]);
       await $.tapOn(HomeScreen.addEntryKey(member.projectId));
       await $.reach($(AddEntryScreen.tableKey));
+    });
+
+    phoneCase('redix-api #131: with seeReports, Reports, المصروفات and الإيرادات open', ($) async {
+      final member = await onTheHomeHolding($, [Permission.seeReports]);
+      await $.tapOn(HomeScreen.reportsKey(member.projectId));
+      await $.reach($(ReportsScreen.periodicHeadingKey));
+      await $.back();
+      await $.tapOn(HomeScreen.itemReportsKey(member.projectId, SummarySide.expenses));
+      await $.reach($(SearchIcons.searchKey));
+      await $.back();
+      await $.tapOn(HomeScreen.itemReportsKey(member.projectId, SummarySide.revenue));
+      await $.reach($(SearchIcons.searchKey));
+    });
+
+    phoneCase('redix-api #131: without seeReports, Reports, المصروفات and الإيرادات are gray, never hidden', ($) async {
+      final member = await onTheHomeHolding($, []);
+      final id = member.projectId;
+      for (final key in [HomeScreen.reportsKey(id), HomeScreen.itemReportsKey(id, SummarySide.expenses), HomeScreen.itemReportsKey(id, SummarySide.revenue)]) {
+        await $.goTo($(key));
+        expect($.isEnabled(key), isFalse, reason: '$key');
+      }
+      expect($.isEnabled(HomeScreen.contractsKey(id)), isTrue);
     });
 
     phoneCase('everyone has Accounts, Partners, Suppliers, Contracts, Reports, المصروفات, الإيرادات, Actual balances, VAT, Documents, More info and My permissions', ($) async {

@@ -13,6 +13,7 @@ import 'package:redix/suppliers/supplier_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/picker_field.dart';
 
 import '../app_harness.dart';
@@ -400,12 +401,14 @@ void main() {
     expect(text(tester, ApiListBody.emptyKey), 'en contracts.empty');
   });
 
-  testWidgets('without keeping the settings the contracts show with nothing to change', (tester) async {
+  testWidgets('without keeping the settings the contracts show with nothing to change: a contract\'s ⋮ holds its files alone', (tester) async {
     final opened = await openContracts(tester, permissions: field);
 
     expect(text(tester, ContractsScreen.remainingKey(opened.running)), '4,000.00');
     expect(isEnabled(tester, ContractsScreen.addKey), isFalse);
-    expect(find.byKey(ContractsScreen.menuKey(opened.running)), findsNothing);
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
+    expect(find.byKey(ContractsScreen.editKey), findsNothing);
+    expect(find.byKey(ContractsScreen.fileKey(ReportFileKind.pdf)), findsOneWidget);
   });
 
   testWidgets('a finished project shows its contracts with nothing to change: a contract\'s ⋮ holds its files alone', (tester) async {
@@ -439,8 +442,18 @@ void main() {
     expect(opened.api.itemReportReads.last, '/projects/project-0/reports/contracts/${opened.running}');
   });
 
-  testWidgets('Muteb, 12 Nov 2026: a contract\'s ⋮ holds its PDF and Excel for whoever sees all capital, and Contracts holds no file buttons of its own', (tester) async {
-    final opened = await openContracts(tester);
+  testWidgets('redix-api #131: without «يرى التقارير» a contract shows and opens no table, its report being a report', (tester) async {
+    final opened = await openContracts(tester, permissions: [for (final permission in managerAndFinance) if (permission != 'seeReports') permission]);
+
+    expect(isEnabled(tester, ContractsScreen.nameKey(opened.running).body), isFalse);
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.nameKey(opened.running))));
+
+    expect(find.byType(ItemReportScreen), findsNothing);
+    expect(opened.api.itemReportReads, isEmpty);
+  });
+
+  testWidgets('Muteb, 12 Nov 2026, redix-api #131: a contract\'s ⋮ holds its PDF and Excel for whoever holds «يُصدر التقارير», seeing all capital or not, and Contracts holds no file buttons of its own', (tester) async {
+    final opened = await openContracts(tester, permissions: [for (final permission in managerAndFinance) if (permission != 'seeAllCapital') permission]);
     expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)), findsNothing);
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
@@ -450,13 +463,16 @@ void main() {
     expect(find.byKey(ReportFileButtons.handingKey('مبلط الغربية', ReportFileKind.pdf, FileHandling.share)), findsOneWidget);
   });
 
-  testWidgets('BR-31: without seeing all capital a contract\'s ⋮ holds no files, only what keeping the settings allows', (tester) async {
-    final opened = await openContracts(tester, permissions: [for (final permission in managerAndFinance) if (permission != 'seeAllCapital') permission]);
+  testWidgets('redix-api #131: without «يُصدر التقارير» a contract\'s ⋮ shows its PDF and Excel gray, saying why, beside what keeping the settings allows', (tester) async {
+    final opened = await openContracts(tester, permissions: [for (final permission in managerAndFinance) if (permission != 'generateReports') permission]);
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
 
     expect(find.byKey(ContractsScreen.editKey), findsOneWidget);
-    expect(find.byKey(ContractsScreen.fileKey(ReportFileKind.pdf)), findsNothing);
-    expect(find.byKey(ContractsScreen.fileKey(ReportFileKind.excel)), findsNothing);
+    expect(isEnabled(tester, ContractsScreen.fileKey(ReportFileKind.pdf)), isFalse);
+    expect(isEnabled(tester, ContractsScreen.fileKey(ReportFileKind.excel)), isFalse);
+    expect(find.text('en reports.needsGenerateReports'), findsNWidgets(2));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.fileKey(ReportFileKind.pdf)), warnIfMissed: false));
+    expect(opened.api.sentFileReads, isEmpty);
   });
 }

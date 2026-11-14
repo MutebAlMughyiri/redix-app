@@ -1469,6 +1469,12 @@ mixin WordGetters {
   /// The word `permissions.deleteEntriesHint`.
   String get permissionsDeleteEntriesHint => text('permissions.deleteEntriesHint');
 
+  /// The word `permissions.generateReports`.
+  String get permissionsGenerateReports => text('permissions.generateReports');
+
+  /// The word `permissions.generateReportsHint`.
+  String get permissionsGenerateReportsHint => text('permissions.generateReportsHint');
+
   /// The word `permissions.hint`.
   String get permissionsHint => text('permissions.hint');
 
@@ -1543,6 +1549,12 @@ mixin WordGetters {
 
   /// The word `permissions.seeChosenCapitalHint`.
   String get permissionsSeeChosenCapitalHint => text('permissions.seeChosenCapitalHint');
+
+  /// The word `permissions.seeReports`.
+  String get permissionsSeeReports => text('permissions.seeReports');
+
+  /// The word `permissions.seeReportsHint`.
+  String get permissionsSeeReportsHint => text('permissions.seeReportsHint');
 
   /// The word `permissions.title`.
   String get permissionsTitle => text('permissions.title');
@@ -1846,6 +1858,9 @@ mixin WordGetters {
 
   /// The word `reports.loadFailed`.
   String get reportsLoadFailed => text('reports.loadFailed');
+
+  /// The word `reports.needsGenerateReports`.
+  String get reportsNeedsGenerateReports => text('reports.needsGenerateReports');
 
   /// The word `reports.noConnection`.
   String get reportsNoConnection => text('reports.noConnection');

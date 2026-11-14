@@ -16,7 +16,6 @@ import 'contract_card.dart';
 import 'contract_dialog.dart';
 import 'contracts.dart';
 import '../reports/report_files.dart';
-import '../auth/permission.dart';
 import '../ui/filter_line.dart';
 import '../ui/list_search.dart';
 import '../ui/search_scope.dart';
@@ -207,8 +206,9 @@ class _ContractsScreenState extends State<ContractsScreen> {
                     contracts: contracts,
                     mayChange: project.mayManageSettings,
                     onAmend: () => _ask(contract),
+                    mayOpen: project.maySeeReports,
                     onOpen: () => context.push(ItemReportScreen.contractPathOf(project.id, contract.id), extra: project),
-                    mayExport: project.may(Permission.seeAllCapital),
+                    mayExport: project.mayTakeReportFiles,
                     files: widget.files,
                     address: ItemReportScreen.contractPathOf(project.id, contract.id),
                   ),

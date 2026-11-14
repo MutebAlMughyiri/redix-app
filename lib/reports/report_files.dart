@@ -135,10 +135,10 @@ Future<void> handReportFile(BuildContext context, ReportFiles files, String addr
   );
 }
 
-/// The buttons that get a report's files: the PDF, the workbook, printing, and any [kinds] given.
+/// The buttons that get a report's files: the PDF, the workbook, printing, and any [kinds] given; gray, never hidden, for whoever may not take them (redix-api #131).
 class ReportFileButtons extends StatelessWidget {
-  /// The buttons of the report at [address], named [name], through [files].
-  const ReportFileButtons({super.key, required this.files, required this.address, required this.name, this.kinds = const [ReportFileKind.pdf, ReportFileKind.excel, ReportFileKind.print]});
+  /// The buttons of the report at [address], named [name], through [files], working while [mayTake].
+  const ReportFileButtons({super.key, required this.files, required this.address, required this.name, required this.mayTake, this.kinds = const [ReportFileKind.pdf, ReportFileKind.excel, ReportFileKind.print]});
 
   /// The button of [kind] for the report [name].
   static Key buttonKey(String name, ReportFileKind kind) => Key('reportFile.$name.${kind.name}');
@@ -158,6 +158,8 @@ class ReportFileButtons extends StatelessWidget {
   /// Which buttons show.
   final List<ReportFileKind> kinds;
 
+  /// Whether the signed-in user may take the files, holding «يُصدر التقارير» (redix-api #131).
+  final bool mayTake;
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +173,7 @@ class ReportFileButtons extends StatelessWidget {
             key: buttonKey(name, kind),
             icon: Icon(kind.icon, key: buttonKey(name, kind).icon),
             label: Text(words.text(kind.wordKey), key: buttonKey(name, kind).label),
-            onPressed: once(() => handReportFile(context, files, address, name, kind)),
+            onPressed: once(mayTake ? () => handReportFile(context, files, address, name, kind) : null),
           )),
       ],
     );

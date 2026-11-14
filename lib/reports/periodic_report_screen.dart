@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../auth/permission.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
@@ -87,11 +86,16 @@ class _PeriodicReportScreenState extends State<PeriodicReportScreen> {
       children: [
         Text('${words.reportsReportNumber} ${report.number} · ${formatDate(report.issuedAt)}', key: PeriodicReportScreen.titleKey, style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
-        if (project.may(Permission.seeAllCapital))
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: ReportFileButtons(files: widget.files, address: '/projects/${project.id}/periodic-reports/${report.number}', name: 'report-${report.number}', kinds: const [ReportFileKind.pdf, ReportFileKind.excel, ReportFileKind.print]),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: ReportFileButtons(
+            files: widget.files,
+            address: '/projects/${project.id}/periodic-reports/${report.number}',
+            name: 'report-${report.number}',
+            mayTake: project.mayTakeReportFiles,
+            kinds: const [ReportFileKind.pdf, ReportFileKind.excel, ReportFileKind.print],
           ),
+        ),
         _section('accounts', words.accountsTitle, [
           for (final (number, account) in report.accounts.indexed) _line(PeriodicReportScreen.lineKey('accounts', '$number'), account.label, account.amount),
           _line(PeriodicReportScreen.lineKey('accounts', 'total'), words.reconciliationsActualTotal, report.accountsTotal, isStrong: true),

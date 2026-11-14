@@ -69,13 +69,16 @@ void _nothing(FakeApi api) {}
 
 Finder Function(FakeApi api) _key(Key key) => (_) => find.byKey(key);
 
-/// The button keyed [key] in its working state: a screen's add button shows grayed without the permission rather than hidden (Muteb, 8 Nov 2026; issue #85).
-Finder Function(FakeApi api) _enabled(Key key) =>
-    (_) => find.byWidgetPredicate((widget) => widget.key == key && ((widget is ButtonStyleButton && widget.enabled) || (widget is IconButton && widget.onPressed != null)));
+/// The button keyed [key] in its working state: a screen's add button shows grayed without the permission rather than hidden (Muteb, 8 Nov 2026; issue #85), as do the
+/// reports' buttons, a menu's choices among them, and a contract's card (redix-api #131).
+Finder Function(FakeApi api) _enabled(Key key) => (_) => find.byWidgetPredicate((widget) => widget.key == key && works(widget));
+
+/// A report's file buttons that work: gray, never hidden, without «يُصدر التقارير» (redix-api #131).
+Finder _workingFiles(FakeApi api) => find.descendant(of: find.byType(ReportFileButtons), matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton && works(widget)));
 
 String _first(List<Map<String, Object>>? rows) => rows!.first['id']! as String;
 
-/// Opens the ⋮ of the project's first contract, which holds what keeping the settings allows and, for whoever sees all capital, its files (Muteb, 12 Nov 2026).
+/// Opens the ⋮ of the project's first contract, which holds what keeping the settings allows and its files, gray without «يُصدر التقارير» (Muteb, 12 Nov 2026; redix-api #131).
 Future<void> _openContractMenu(WidgetTester tester, FakeApi api, FakeCapture capture) => _tapKey(ContractsScreen.menuKey(_first(api.contracts[_project])))(tester, api, capture);
 
 final _summaryWithAnItem = <String, Object>{
@@ -201,36 +204,59 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.searchEntriesKey(_project)), _tapKey(EntriesScreen.rowKey('entry-0'))],
     control: _enabled(AddEntryScreen.changeKey),
   ),
+  (name: 'An enabled Reports on the home', permission: Permission.seeReports, arrange: _nothing, steps: [_openProject, _swipeTo(HomeScreen.reportsKey(_project))], control: _enabled(HomeScreen.reportsKey(_project))),
   (
-    name: 'A contract\'s files, in its ⋮ on Contracts',
-    permission: Permission.seeAllCapital,
-    arrange: (api) => api.addContract(_project, 'مبلط الغربية', value: 34000),
-    steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project)), _openContractMenu],
-    control: _key(ContractsScreen.fileKey(ReportFileKind.pdf)),
+    name: 'An enabled المصروفات on the home',
+    permission: Permission.seeReports,
+    arrange: _nothing,
+    steps: [_openProject, _swipeTo(HomeScreen.itemReportsKey(_project, SummarySide.expenses))],
+    control: _enabled(HomeScreen.itemReportsKey(_project, SummarySide.expenses)),
   ),
   (
-    name: 'A periodic report\'s files',
-    permission: Permission.seeAllCapital,
+    name: 'An enabled الإيرادات on the home',
+    permission: Permission.seeReports,
+    arrange: _nothing,
+    steps: [_openProject, _swipeTo(HomeScreen.itemReportsKey(_project, SummarySide.revenue))],
+    control: _enabled(HomeScreen.itemReportsKey(_project, SummarySide.revenue)),
+  ),
+  (
+    name: 'A contract that opens its own table',
+    permission: Permission.seeReports,
+    arrange: (api) => api.addContract(_project, 'مبلط الغربية', value: 34000),
+    steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project))],
+    control: (api) => _enabled(ContractsScreen.nameKey(_first(api.contracts[_project])).body)(api),
+  ),
+  (
+    name: 'A contract\'s working files, in its ⋮ on Contracts',
+    permission: Permission.generateReports,
+    arrange: (api) => api.addContract(_project, 'مبلط الغربية', value: 34000),
+    steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project)), _openContractMenu],
+    control: _enabled(ContractsScreen.fileKey(ReportFileKind.pdf)),
+  ),
+  (
+    name: 'A periodic report\'s working files',
+    permission: Permission.generateReports,
     arrange: (api) => api
       ..periodicRows.add({'number': 1, 'issuedAt': '2026-11-05T20:00:00Z', 'expenses': 140})
       ..periodicAnswer = issuedReport(),
     steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project)), _tapKey(ReportsScreen.periodicKey(1))],
-    control: _key(ReportFileButtons.buttonKey('report-1', ReportFileKind.pdf)),
+    control: _enabled(ReportFileButtons.buttonKey('report-1', ReportFileKind.pdf)),
   ),
   (
-    name: 'The VAT statement\'s files',
-    permission: Permission.seeAllCapital,
+    name: 'The VAT statement\'s working files',
+    permission: Permission.generateReports,
     arrange: _nothing,
     steps: [_openProject, (tester, api, capture) => openFromTheHome(tester, api, VatStatementScreen.pathOf(_project))],
-    control: (_) => find.byType(ReportFileButtons),
+    control: _workingFiles,
   ),
   (
-    name: 'An item report\'s files',
-    permission: Permission.seeAllCapital,
+    name: 'An item report\'s working files',
+    permission: Permission.generateReports,
     arrange: (api) => api.summaryAnswer = _summaryWithAnItem,
     steps: [_openProject, _tapKey(HomeScreen.itemReportsKey(_project, SummarySide.expenses)), _tapKey(ItemReportsScreen.categoryKey('category-1')), _tapKey(ItemReportsScreen.itemKey('item-1'))],
-    control: (_) => find.byType(ReportFileButtons),
+    control: _workingFiles,
   ),
+  (name: 'An enabled Issue a periodic report', permission: Permission.generateReports, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _enabled(ReportsScreen.issueKey)),
   (name: 'Approvals on the project card', permission: Permission.approveEntries, arrange: _nothing, steps: [_openProject, _swipeTo(HomeScreen.approvalsKey(_project))], control: _key(HomeScreen.approvalsKey(_project))),
   (
     name: 'Approve, reached from a notification',
@@ -287,7 +313,6 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.accountsKey(_project))],
     control: _enabled(AccountsScreen.transferKey),
   ),
-  (name: 'An enabled Issue a periodic report', permission: Permission.moveMoney, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _enabled(ReportsScreen.issueKey)),
   (
     name: 'A partner in Add entry\'s table list',
     permission: Permission.moveMoney,
@@ -321,8 +346,8 @@ void main() {
     return api;
   }
 
-  test('findings row 134: every permission that hides a control has one here; readProject is membership itself, chargeAnyAccount only widens the accounts offered, and seeChosenCapital only narrows the partners the API answers (redix-api #106)', () {
-    expect({for (final gate in _gates) gate.permission}, Permission.values.toSet().difference({Permission.readProject, Permission.chargeAnyAccount, Permission.seeChosenCapital}));
+  test('findings row 134: every permission that hides or grays a control has one here; readProject is membership itself, chargeAnyAccount only widens the accounts offered, seeChosenCapital only narrows the partners the API answers (redix-api #106), and seeAllCapital, since its files went to generateReports, only widens them (redix-api #131)', () {
+    expect({for (final gate in _gates) gate.permission}, Permission.values.toSet().difference({Permission.readProject, Permission.chargeAnyAccount, Permission.seeChosenCapital, Permission.seeAllCapital}));
   });
 
   for (final gate in _gates) {

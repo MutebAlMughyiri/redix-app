@@ -83,18 +83,50 @@ void main() {
     expect(find.text('en reports.downloaded'), findsOneWidget);
   });
 
-  testWidgets('BR-31: someone who does not see all capital reads the report and gets no files', (tester) async {
+  testWidgets('redix-api #131: someone holding «يرى التقارير» alone reads the report, and its Issue, PDF, Excel and Print show gray, never hidden', (tester) async {
     final (:api, capture: _) = await openReports(tester, (api) {
       api
         ..periodicRows.add({'number': 1, 'issuedAt': '2026-11-05T20:00:00Z', 'expenses': 140})
         ..periodicAnswer = issuedReport();
-    }, permissions: const ['readProject']);
+    }, permissions: const ['readProject', 'seeReports', 'moveMoney', 'seeAllCapital']);
 
     expect(isEnabled(tester, ReportsScreen.issueKey), isFalse);
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.periodicKey(1))));
 
     expect(find.byKey(PeriodicReportScreen.surplusKey), findsOneWidget);
-    expect(find.byKey(ReportFileButtons.buttonKey('report-1', ReportFileKind.pdf)), findsNothing);
+    for (final kind in ReportFileKind.values) {
+      expect(isEnabled(tester, ReportFileButtons.buttonKey('report-1', kind)), isFalse, reason: kind.name);
+    }
+    expect(api.sentFileReads, isEmpty);
+  });
+
+  testWidgets('redix-api #131: «يُصدر التقارير» issues and takes the files without moving money or seeing all capital', (tester) async {
+    final (:api, capture: _) = await openReports(tester, (api) {
+      api
+        ..periodicRows.add({'number': 1, 'issuedAt': '2026-11-05T20:00:00Z', 'expenses': 140})
+        ..periodicAnswer = issuedReport();
+    }, permissions: const ['readProject', 'seeReports', 'generateReports']);
+
+    expect(isEnabled(tester, ReportsScreen.issueKey), isTrue);
+    await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.periodicKey(1))));
+
+    for (final kind in ReportFileKind.values) {
+      expect(isEnabled(tester, ReportFileButtons.buttonKey('report-1', kind)), isTrue, reason: kind.name);
+    }
+  });
+
+  testWidgets('redix-api #131: a finished project issues nothing, and «يُصدر التقارير» still takes its files', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', status: 'finished', units: ['الفلة']);
+    api
+      ..periodicRows.add({'number': 1, 'issuedAt': '2026-11-05T20:00:00Z', 'expenses': 140})
+      ..periodicAnswer = issuedReport();
+    await openProject(tester, api);
+    await scrollAndTap(tester, api, HomeScreen.reportsKey('project-0'));
+
+    expect(isEnabled(tester, ReportsScreen.issueKey), isFalse);
+    await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.periodicKey(1))));
+
+    expect(isEnabled(tester, ReportFileButtons.buttonKey('report-1', ReportFileKind.pdf)), isTrue);
   });
 
   testWidgets('UC-057, D20: the VAT statement hands on its workbook for the period shown', (tester) async {
@@ -139,6 +171,31 @@ void main() {
 
     expect(find.byType(ItemReportScreen), findsOneWidget);
     expect(capture.sharedOut.single, ('البلاط.pdf', 'application/pdf'));
+  });
+
+  testWidgets('redix-api #131: without «يُصدر التقارير» an item report\'s PDF and Excel show gray', (tester) async {
+    final (:api, capture: _) = await openReports(tester, (api) {
+      api.summaryAnswer = {
+        ...api.summaryAnswer,
+        'categories': [
+          {
+            'id': 'category-1',
+            'name': 'التشطيب',
+            'total': 0,
+            'items': [
+              {'id': 'item-1', 'name': 'البلاط', 'total': 0},
+            ],
+          },
+        ],
+      };
+    }, permissions: const ['readProject', 'seeReports', 'seeAllCapital']);
+    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0', SummarySide.expenses));
+    await act(tester, api, () => tester.tap(find.text('التشطيب')));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
+
+    expect(isEnabled(tester, ReportFileButtons.buttonKey('البلاط', ReportFileKind.pdf)), isFalse);
+    expect(isEnabled(tester, ReportFileButtons.buttonKey('البلاط', ReportFileKind.excel)), isFalse);
   });
 
   testWidgets('a file that cannot be read says so', (tester) async {

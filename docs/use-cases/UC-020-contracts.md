@@ -28,8 +28,10 @@ The project's home, `HomeScreen`:
 | How it stands | `ContractsScreen.standingKey(id)` | Disabled, contract overrun, open value, not started, or in progress |
 | Value, Paid, Remaining | `ContractsScreen.valueOfKey(id)`, `paidKey(id)`, `remainingKey(id)` | An overrun shows in brackets, in red; an open value shows no remaining |
 | The bar of how much is paid | `ContractsScreen.progressKey(id)` | |
-| A contract's menu | `ContractsScreen.menuKey(id)` | Shown with `manageSettings` while the project runs |
-| Amend, Disable, Enable, in the menu | `ContractsScreen.editKey`, `disableKey`, `enableKey` | |
+| A contract's card, tapped | `ContractsScreen.nameKey(id).body` | Opens its own table, the contract's report, with `seeReports` (redix-api #131) |
+| A contract's menu | `ContractsScreen.menuKey(id)` | Always: it holds its files |
+| Amend, Disable, Enable, in the menu | `ContractsScreen.editKey`, `disableKey`, `enableKey` | Shown with `manageSettings` while the project runs |
+| PDF, Excel, in the menu | `ContractsScreen.fileKey(kind)` | Hand on the contract's file with `generateReports`; gray without it, saying why under its name (redix-api #131) |
 | The contractor, in the dialog that adds | `ContractsScreen.contractorKey` | Opens `SupplierPicker` (UC-018), with its quick add (UC-019) |
 | The item, in the dialog that adds | `ContractsScreen.itemKey` | An `ItemPicker` of what takes contractor payments |
 | A unit, in the dialog that adds | `ContractsScreen.unitKey(id)` | The project's units, and the shared one last |
@@ -71,7 +73,9 @@ The project's home, `HomeScreen`:
 | Saving with the keyboard up closes it with the dialog | `ChangeDialog` | `saving with the keyboard up closes it with the dialog` |
 | Disabled, it stays on the list, marked, and can be enabled | `ContractCard` | `a disabled contract stays on the list, marked, and can be enabled` |
 | A project with no contracts says so | `ApiListBody` | `a project with no contracts says so` |
-| Without keeping the settings there is nothing to change | `Project.mayManageSettings` | `without keeping the settings the contracts show with nothing to change` |
+| Without keeping the settings there is nothing to change: a contract's ⋮ holds its files alone | `Project.mayManageSettings` | `without keeping the settings the contracts show with nothing to change: a contract's ⋮ holds its files alone` |
+| redix-api #131: without «يرى التقارير» a contract opens no table, its report being a report | `ContractCard.mayOpen`, `Project.maySeeReports` | `redix-api #131: without «يرى التقارير» a contract shows and opens no table, its report being a report` |
+| redix-api #131: a contract's ⋮ holds its PDF and Excel for whoever holds «يُصدر التقارير», seeing all capital or not; gray, saying why, for anyone else | `ContractCard.mayExport`, `Project.mayTakeReportFiles`, `rowMenuItem` | `Muteb, 12 Nov 2026, redix-api #131: a contract's ⋮ holds its PDF and Excel for whoever holds «يُصدر التقارير» …`, `redix-api #131: without «يُصدر التقارير» a contract's ⋮ shows its PDF and Excel gray, saying why …` |
 | A finished project shows them with nothing to change (AC-04.1) | `Project.mayManageSettings` | `a finished project shows its contracts with nothing to change` |
 | A list that cannot be read says so | `ApiListBody` | `a list that cannot be read says so` |
 | It fits 360 points wide in both languages (AC-N03) | `ContractsScreen`, `ContractDialog` | `AC-N03` in `test/settings/account_test.dart` |

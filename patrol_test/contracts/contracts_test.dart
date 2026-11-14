@@ -295,24 +295,37 @@ void main() {
       await $.says(ApiListBody.emptyKey, $.words.contractsEmpty);
     });
 
-    phoneCase('without keeping the settings there is nothing to change', ($) async {
+    phoneCase('without keeping the settings there is nothing to change: a contract\'s ⋮ holds its files alone', ($) async {
       final manager = await Given.manager();
       final contract = await Given.contract(manager);
       final member = await Given.member(manager);
       await onContracts($, member);
       await $.reach($(ContractsScreen.nameKey(contract.id)));
       expect($.isEnabled(ContractsScreen.addKey), isFalse);
-      expect($(ContractsScreen.menuKey(contract.id)), findsNothing);
+      await $.tapOn(ContractsScreen.menuKey(contract.id));
+      await $.reach($(ContractsScreen.fileKey(ReportFileKind.pdf)));
+      expect($(ContractsScreen.editKey), findsNothing);
     });
 
-    phoneCase('BR-31: whoever does not see all capital gets no files: a contract has no ⋮ for them', ($) async {
+    phoneCase('redix-api #131: without «يُصدر التقارير» a contract\'s PDF and Excel show gray in its ⋮, saying why', ($) async {
       final manager = await Given.manager();
       final contract = await Given.contract(manager);
-      final member = await Given.member(manager, permissions: [Permission.recordEntries]);
+      final member = await Given.member(manager, permissions: [Permission.recordEntries, Permission.seeAllCapital]);
       await onContracts($, member);
-      await $.goTo($(ContractsScreen.nameKey(contract.id)));
-      expect($(ContractsScreen.menuKey(contract.id)), findsNothing);
-      expect($(keyStartingWith('reportFile.')), findsNothing);
+      await $.tapOn(ContractsScreen.menuKey(contract.id));
+      await $.reach($(ContractsScreen.fileKey(ReportFileKind.pdf)));
+      expect($.isEnabled(ContractsScreen.fileKey(ReportFileKind.pdf)), isFalse);
+      expect($.isEnabled(ContractsScreen.fileKey(ReportFileKind.excel)), isFalse);
+      await $.says(ContractsScreen.fileKey(ReportFileKind.pdf).subtitle, $.words.reportsNeedsGenerateReports);
+    });
+
+    phoneCase('redix-api #131: without «يرى التقارير» a contract opens no table', ($) async {
+      final manager = await Given.manager();
+      final contract = await Given.contract(manager);
+      final member = await Given.member(manager);
+      await onContracts($, member);
+      await $.reach($(ContractsScreen.nameKey(contract.id)));
+      expect($.isEnabled(ContractsScreen.nameKey(contract.id).body), isFalse);
     });
 
     phoneCase('a list that cannot be read says so', ($) async {

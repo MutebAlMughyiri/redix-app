@@ -37,6 +37,24 @@ void main() {
   int pageShown(WidgetTester tester, int pages) =>
       [for (var index = 0; index < pages; index++) tester.getSize(find.byKey(HomeScreen.settingsDotKey(project, index))).width].indexed.reduce((wide, dot) => dot.$2 > wide.$2 ? dot : wide).$1;
 
+  testWidgets('redix-api #131: without «يرى التقارير» Reports, المصروفات and الإيرادات show gray, never hidden, and Contracts still opens', (tester) async {
+    await openHome(tester, permissions: [for (final permission in managerAndFinance) if (permission != 'seeReports') permission]);
+
+    expectPage(first, [second, third, fourth, fifth]);
+    expect(isEnabled(tester, HomeScreen.reportsKey(project)), isFalse);
+    expect(isEnabled(tester, HomeScreen.itemReportsKey(project, SummarySide.expenses)), isFalse);
+    expect(isEnabled(tester, HomeScreen.itemReportsKey(project, SummarySide.revenue)), isFalse);
+    expect(isEnabled(tester, HomeScreen.contractsKey(project)), isTrue);
+  });
+
+  testWidgets('redix-api #131: with «يرى التقارير» Reports, المصروفات and الإيرادات open', (tester) async {
+    await openHome(tester, permissions: const ['readProject', 'seeReports']);
+
+    expect(isEnabled(tester, HomeScreen.reportsKey(project)), isTrue);
+    expect(isEnabled(tester, HomeScreen.itemReportsKey(project, SummarySide.expenses)), isTrue);
+    expect(isEnabled(tester, HomeScreen.itemReportsKey(project, SummarySide.revenue)), isTrue);
+  });
+
   testWidgets('the card opens on its first page: the four used most, two by two, with a dot per page and the first one wide', (tester) async {
     await openHome(tester);
 

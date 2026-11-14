@@ -9,7 +9,7 @@ enum Permission {
   /// Add people to a project and tick their permissions.
   manageUsers,
 
-  /// See every partner in a project and their capital, and take the report files; holding it takes [seeChosenCapital].
+  /// See every partner in a project and their capital; holding it takes [seeChosenCapital].
   seeAllCapital,
 
   /// See only the partners chosen for one in a project, and their capital (redix-api #106); holding it takes [seeAllCapital].
@@ -49,7 +49,13 @@ enum Permission {
   approveEntries,
 
   /// Enter what counts at once in a project: capital movements, revenue and reconciling.
-  moveMoney;
+  moveMoney,
+
+  /// «يرى التقارير»: open a project's reports, the periodic report, an item's, a contract's and the VAT statement (redix-api #131).
+  seeReports,
+
+  /// «يُصدر التقارير»: issue a project's periodic report and take every report's Excel and PDF, whose capital shows only the partners one sees (redix-api #131).
+  generateReports;
 
   /// What can be ticked in a project, in this order: every permission but the system's own.
   static List<Permission> get inAProject => values.where((permission) => permission != approveProjects).toList();

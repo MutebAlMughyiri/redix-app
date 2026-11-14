@@ -85,22 +85,44 @@ void main() {
       await $.reach($(ReportsScreen.noneIssuedKey));
     });
 
-    phoneCase('whoever does not move money cannot issue', ($) async {
-      final member = await Given.member(await Given.manager());
+    phoneCase('redix-api #131: without «يُصدر التقارير» Issue shows gray, moving money and seeing all capital or not', ($) async {
+      final member = await Given.member(await Given.manager(), permissions: [Permission.seeReports, Permission.moveMoney, Permission.seeAllCapital]);
       await onReports($, member);
       await $.reach($(ReportsScreen.issueKey));
       expect($.isEnabled(ReportsScreen.issueKey), isFalse);
     });
 
-    phoneCase('BR-31: whoever does not see all capital reads the report and gets no files', ($) async {
+    phoneCase('redix-api #131: «يُصدر التقارير» issues without moving money', ($) async {
+      final member = await Given.member(await Given.manager(), permissions: [Permission.seeReports, Permission.generateReports]);
+      await onReports($, member);
+      await $.tapOn(ReportsScreen.issueKey);
+      await $.reach($(ConfirmDialog.confirmKey));
+      await $(ConfirmDialog.confirmKey).tap();
+      await $.reach($(ReportsScreen.periodicKey(1)));
+    });
+
+    phoneCase('redix-api #131: whoever holds «يرى التقارير» alone reads the report, its PDF, Excel and Print gray, never hidden', ($) async {
       final manager = await Given.manager();
       await Given.reportIssued(manager);
-      final member = await Given.member(manager, permissions: const <Permission>[]);
+      final member = await Given.member(manager, permissions: [Permission.seeReports, Permission.seeAllCapital]);
       await onReports($, member);
       await $.tapOn(ReportsScreen.periodicKey(1));
       await $.reach($(PeriodicReportScreen.surplusKey));
-      expect($(ReportFileButtons.buttonKey('report-1', ReportFileKind.excel)), findsNothing);
-      expect($(ReportFileButtons.buttonKey('report-1', ReportFileKind.pdf)), findsNothing);
+      for (final kind in ReportFileKind.values) {
+        await $.reach($(ReportFileButtons.buttonKey('report-1', kind)));
+        expect($.isEnabled(ReportFileButtons.buttonKey('report-1', kind)), isFalse, reason: kind.name);
+      }
+    });
+
+    phoneCase('redix-api #131: «يُصدر التقارير» takes the files without seeing all capital', ($) async {
+      final manager = await Given.manager();
+      await Given.reportIssued(manager);
+      final member = await Given.member(manager, permissions: [Permission.seeReports, Permission.generateReports]);
+      await onReports($, member);
+      await $.tapOn(ReportsScreen.periodicKey(1));
+      await $.tapOn(ReportFileButtons.buttonKey('report-1', ReportFileKind.excel));
+      await $.tapOn(ReportFileButtons.handingKey('report-1', ReportFileKind.excel, FileHandling.save));
+      await $.messageShows('reports.downloaded');
     });
 
     phoneCase('a file that cannot be read says so', ($) async {

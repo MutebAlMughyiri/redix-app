@@ -132,7 +132,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
           buttonKey: ReportsScreen.issueKey,
           icon: Icons.post_add,
           label: words.reportsIssue.fill(['${widget.nextReport.value.number}']),
-          onPressed: project.mayMoveMoney ? () => _askToIssue(widget.nextReport.value) : null,
+          onPressed: project.mayIssueReports ? () => _askToIssue(widget.nextReport.value) : null,
         ),
       ),
     );

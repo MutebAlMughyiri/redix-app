@@ -112,6 +112,15 @@ class Project {
   /// Whether the signed-in user may enter what counts at once in the project now.
   bool get mayMoveMoney => !isFinished && may(Permission.moveMoney);
 
+  /// Whether the signed-in user may open the project's reports: the periodic report, an item's, a contract's and the VAT statement (redix-api #131).
+  bool get maySeeReports => may(Permission.seeReports);
+
+  /// Whether the signed-in user may issue the project's next periodic report now (redix-api #131).
+  bool get mayIssueReports => !isFinished && may(Permission.generateReports);
+
+  /// Whether the signed-in user may take a report's Excel and PDF, a finished project's too (redix-api #131).
+  bool get mayTakeReportFiles => may(Permission.generateReports);
+
   /// Whether the signed-in user may change the project's settings now.
   bool get mayManageSettings => !isFinished && may(Permission.manageSettings);
 

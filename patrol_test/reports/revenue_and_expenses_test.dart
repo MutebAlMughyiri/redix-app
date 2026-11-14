@@ -95,6 +95,19 @@ void main() {
       await $.shareSheetOffers('.pdf');
     });
 
+    phoneCase('redix-api #131: without «يُصدر التقارير» an item report\'s PDF and Excel show gray', ($) async {
+      final manager = await Given.manager();
+      await Given.entriesApproved(manager, [await Given.entry(manager)]);
+      final table = await Given.firstPurchaseTable(manager);
+      final member = await Given.member(manager, permissions: [Permission.seeReports, Permission.seeAllCapital]);
+      await onReports($, member);
+      await openCategory($, table.category);
+      await $.tapOn(ItemReportsScreen.itemKey(table.itemId));
+      await $.goTo($(ReportFileButtons.buttonKey(table.itemName, ReportFileKind.pdf)));
+      expect($.isEnabled(ReportFileButtons.buttonKey(table.itemName, ReportFileKind.pdf)), isFalse);
+      expect($.isEnabled(ReportFileButtons.buttonKey(table.itemName, ReportFileKind.excel)), isFalse);
+    });
+
     phoneCase('AC-30.1: a waiting entry is not in the report', ($) async {
       final manager = await Given.manager();
       await Given.entry(manager);
@@ -106,7 +119,7 @@ void main() {
 
     phoneCase('BR-31, redix-api #106: with a chosen partner someone sees only that partner\'s table',($) async {
       final manager = await Given.manager();
-      final member = await Given.member(manager, permissions: const <Permission>[]);
+      final member = await Given.member(manager, permissions: [Permission.seeReports]);
       final own = await Given.partner(manager, 'نواف');
       final other = await Given.partner(manager, 'هيثم');
       await Given.choosePartner(manager, member, own);

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../auth/permission.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
@@ -178,11 +177,10 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
     children: [
       amountLine(ItemReportScreen.totalKey, words.reportsItemTotal, report.total, labelStyle: Theme.of(context).textTheme.titleMedium, amountStyle: Theme.of(context).textTheme.titleLarge),
       const SizedBox(height: 12),
-      if (widget.project.may(Permission.seeAllCapital))
-        Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child: ReportFileButtons(files: widget.files, address: widget.address, name: report.itemName, kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
-        ),
+      Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: ReportFileButtons(files: widget.files, address: widget.address, name: report.itemName, mayTake: widget.project.mayTakeReportFiles, kinds: const [ReportFileKind.pdf, ReportFileKind.excel]),
+      ),
       for (final subgroup in report.subgroups)
         if (ListSearch.groupOf(_nameOf(subgroup, words), subgroup.rows, _textOf, _typed) case (isShown: true, :final children)) _subgroup(subgroup, children),
       for (final contract in report.contracts)

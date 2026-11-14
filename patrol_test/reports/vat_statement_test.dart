@@ -82,11 +82,11 @@ void main() {
       await $.reach($(find.descendant(of: find.byKey(VatStatementScreen.toKey), matching: find.text(formatDate(day)))));
     });
 
-    phoneCase('whoever does not see all capital gets no workbook', ($) async {
-      final member = await Given.member(await Given.manager(), permissions: const <Permission>[]);
+    phoneCase('redix-api #131: without «يُصدر التقارير» the workbook shows gray, never hidden', ($) async {
+      final member = await Given.member(await Given.manager(), permissions: [Permission.seeReports, Permission.seeAllCapital]);
       await onStatement($, member);
-      await $.pumpAndSettle();
-      expect($(keyStartingWith('reportFile.vat-')), findsNothing);
+      await $.reach(excelButton($));
+      expect($.tester.widget<ButtonStyleButton>(keyStartingWith('reportFile.vat-')).enabled, isFalse);
     });
   });
 }
