@@ -12,7 +12,10 @@
 | --- | --- |
 | Find an entry | Type in the search: an item, a supplier or contractor, who entered it, an old bill's number or an amount. Spelling such as أ and ا counts as one, and Arabic or Western digits both work. |
 | Narrow the list | Tap **Purchases** or **Contractor payments**, any of the statuses, and **Period** to choose a from and to date. The line under the filters says how many entries show. |
+| Reach an entry by its number | Tap **Entry number**, type the number and tap **Search**: the list shows that entry alone, if you may see it. Save it empty to show every number again. |
 | Show everything again | Tap **Clear filters**. Mine or All stays as you chose. |
+
+Every entry has a number in the project, its **entry number**, given when the server first keeps it and never changed: its row starts with it, «Entry 312», and its page is titled by it. An entry still waiting on your phone has none until it is sent.
 
 Each entry's frame says where it stands: teal for a draft, orange while it waits for approval, red once rejected, and plain once approved. Open it to read its status and, if rejected, why.
 
@@ -37,7 +40,10 @@ An approved entry never changes. Removing it takes it out of every list and figu
 | --- | --- |
 | تجد قيداً | اكتب في البحث: بنداً أو مورداً أو مقاولاً أو من أدخله أو رقم فاتورة قديمة أو مبلغاً. تُعدّ الحروف مثل أ وا حرفاً واحداً، وتصلح الأرقام العربية والإنجليزية. |
 | تضيّق القائمة | اضغط **مشتريات** أو **دفعات مقاولين**، وأي حالة، و**الفترة** لتختار تاريخ البداية والنهاية. ويبيّن السطر تحت عوامل التصفية عدد القيود الظاهرة. |
+| تصل إلى قيد برقمه | اضغط **رقم القيد**، واكتب الرقم واضغط **بحث**: تعرض القائمة ذلك القيد وحده إن كان لك أن تراه. احفظه فارغاً لتعود كل الأرقام. |
 | تعرض الكل من جديد | اضغط **مسح التصفية**. ويبقى قيودي أو الكل كما اخترت. |
+
+لكل قيد رقم في المشروع، **رقم القيد**، يُعطى حين يحفظه الخادم أول مرة ولا يتغيّر: يبدأ به سطره، «قيد 312»، وتُعنون به صفحته. والقيد الذي ما زال على هاتفك بانتظار الإرسال لا رقم له حتى يُرسل.
 
 ويقول إطار كل قيد أين يقف: أخضر مزرق للمسودة، وبرتقالي بانتظار الاعتماد، وأحمر للمرفوض، وعادي بعد الاعتماد. افتحه لترى حالته، وسبب رفضه إن رُفض.
 

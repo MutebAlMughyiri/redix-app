@@ -25,16 +25,23 @@ class EntryFilter {
   /// The days kept, both ends included.
   var period = anyTime;
 
+  /// The «رقم القيد» kept, the one entry with that number (redix-api #128, D4); 0 for any.
+  var number = 0;
+
   /// True once a period is chosen.
   bool get hasPeriod => period != anyTime;
 
-  /// True while a kind, a status or a period narrows what shows: what the clear chip under the search line clears.
-  bool get isNarrowed => chosenKinds.isNotEmpty || chosenStatuses.isNotEmpty || hasPeriod;
+  /// True once a «رقم القيد» is chosen.
+  bool get hasNumber => number > 0;
 
-  /// Clears the kinds, the statuses and the period. What was typed stays, as the search line still shows it, and so does whose entries show.
+  /// True while a kind, a status, a period or a «رقم القيد» narrows what shows: what the clear chip under the search line clears.
+  bool get isNarrowed => chosenKinds.isNotEmpty || chosenStatuses.isNotEmpty || hasPeriod || hasNumber;
+
+  /// Clears the kinds, the statuses, the period and the «رقم القيد». What was typed stays, as the search line still shows it, and so does whose entries show.
   void clear() {
     chosenKinds.clear();
     chosenStatuses.clear();
     period = anyTime;
+    number = 0;
   }
 }

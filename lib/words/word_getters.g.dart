@@ -926,6 +926,18 @@ mixin WordGetters {
   /// The word `entries.notYours`.
   String get entriesNotYours => text('entries.notYours');
 
+  /// The word `entries.number`.
+  String get entriesNumber => text('entries.number');
+
+  /// The word `entries.numberAsk`.
+  String get entriesNumberAsk => text('entries.numberAsk');
+
+  /// The word `entries.numberFilterSet`.
+  String get entriesNumberFilterSet => text('entries.numberFilterSet');
+
+  /// The word `entries.numberOf`.
+  String get entriesNumberOf => text('entries.numberOf');
+
   /// The word `entries.pendingApproval`.
   String get entriesPendingApproval => text('entries.pendingApproval');
 

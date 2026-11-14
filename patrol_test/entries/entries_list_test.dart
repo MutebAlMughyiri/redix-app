@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/auth/permission.dart';
+import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/screen_title.dart';
 import 'package:redix/ui/search_line.dart';
 import 'package:redix/ui/search_scope.dart';
+import 'package:redix/words/word_fill.dart';
 
 import '../support/given.dart';
 import '../support/phone_case.dart';
@@ -17,6 +23,13 @@ import '../support/steps.dart';
 Future<void> onEntries(PatrolIntegrationTester $, Person person) async {
   await $.fromTheHome(person, HomeScreen.searchEntriesKey(person.projectId));
   await $.reach($(SearchLine.searchKey));
+}
+
+/// Asks the «رقم القيد» filter for [number], in its one-field dialog (redix-api #128).
+Future<void> findNumber(PatrolIntegrationTester $, int number) async {
+  await $.filterBy(EntriesScreen.numberKey);
+  await $(NameDialog.nameKey).enterText('$number');
+  await $.tapOn(ChangeDialog.saveKey);
 }
 
 void main() {
@@ -146,6 +159,34 @@ void main() {
       await $.gone($(EntriesScreen.moreKey));
       await $.goTo($(EntriesScreen.rowKey(oldestFirst.first)));
       expect($(EntriesScreen.rowKey(oldestFirst.first)), findsOneWidget);
+    });
+
+    phoneCase('redix-api #128, AC-54.4, AC-54.5: a card\'s details start «قيد N», the «رقم القيد» filter keeps that entry alone, and its page is titled by it', ($) async {
+      final manager = await Given.manager();
+      final account = await Given.account(manager);
+      final other = await Given.entry(manager, accountId: account);
+      final found = await Given.entry(manager, amount: 250, accountId: account);
+      final number = await Given.numberOf(manager, found);
+      await onEntries($, manager);
+      await $.reach($(EntriesScreen.detailsKey(found)));
+      expect($.tester.widget<Text>(find.byKey(EntriesScreen.detailsKey(found))).data, startsWith($.words.entriesNumberOf.fill(['$number'])));
+      await findNumber($, number);
+      await $.gone($(EntriesScreen.rowKey(other)));
+      await $.reach($(EntriesScreen.rowKey(found)));
+      expect($.tester.widget<Text>(find.byKey(EntriesScreen.numberKey.label)).data, $.words.entriesNumberFilterSet.fill(['$number']));
+      await $.tapOn(EntriesScreen.rowKey(found));
+      await $.reach($(AddEntryScreen.statusKey));
+      expect($.tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, $.words.entriesNumberOf.fill(['$number']));
+    });
+
+    phoneCase('redix-api #128, AC-54.5, R9: the number of an entry the person may not see, another\'s draft, lists nothing, as a number no entry has', ($) async {
+      final manager = await Given.manager();
+      final account = await Given.account(manager);
+      final draft = await Given.entry(manager, sent: false, accountId: account);
+      final member = await Given.member(manager, permissions: [Permission.recordEntries, Permission.chargeAnyAccount]);
+      await onEntries($, member);
+      await findNumber($, await Given.numberOf(manager, draft));
+      await $.reach($(ApiListBody.emptyKey));
     });
 
     phoneCase('a search that finds nothing says so', ($) async {

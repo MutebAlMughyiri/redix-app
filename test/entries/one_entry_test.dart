@@ -248,9 +248,9 @@ void main() {
       await act(tester, api, () => tester.pageBack());
 
       expect(text(tester, EntriesScreen.rowKey('entry-0').title), 'استرجاع ضرائب');
-      expect(text(tester, EntriesScreen.detailsKey('entry-0')), startsWith('en categories.tableRevenue'));
+      expect(text(tester, EntriesScreen.detailsKey('entry-0')), startsWith('en entries.numberOf 1 · en categories.tableRevenue'), reason: 'redix-api #128, D5: the number leads the details line');
       expect(text(tester, EntriesScreen.rowKey('entry-1').title), 'نواف');
-      expect(text(tester, EntriesScreen.detailsKey('entry-1')), startsWith('en capital.withdrawal'));
+      expect(text(tester, EntriesScreen.detailsKey('entry-1')), startsWith('en entries.numberOf 2 · en capital.withdrawal'));
     });
 
     testWidgets('R14, redix-api #119: an approved revenue entry\'s sheet offers no Edit, and no حذف without the removal; a rejected one offers Fix, as an expense\'s does', (tester) async {

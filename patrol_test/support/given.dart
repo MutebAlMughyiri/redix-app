@@ -451,6 +451,9 @@ class Given {
   /// The entries of the project of [person], as the API lists them.
   static Future<List<Map<String, dynamic>>> entries(Person person) async => (await _getList('${person.project}/entries', await _tokenOf(person))).cast<Map<String, dynamic>>();
 
+  /// The «رقم القيد» the API gave the entry [entryId] of the project of [person] (redix-api #128): a case learns it here and finds it on the phone.
+  static Future<int> numberOf(Person person, String entryId) async => (await entries(person)).singleWhere((row) => row['id'] == entryId)['number'] as int;
+
   /// The newest lines of the History at [path] of the project of [person], such as `accounts/history`, as the API answers them to [person]: a case learns a line's id
   /// here and finds it on the phone by its key.
   static Future<List<Map<String, dynamic>>> history(Person person, String path) async => (await _getList('${person.project}/$path', await _tokenOf(person))).cast<Map<String, dynamic>>();

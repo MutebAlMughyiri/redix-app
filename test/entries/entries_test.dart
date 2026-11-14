@@ -21,6 +21,10 @@ import 'package:redix/ui/app_color.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/screen_title.dart';
+import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/offline/outbox.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -506,7 +510,7 @@ void main() {
     await openActions(tester, api, 'entry-0');
 
     expect(tester.takeException(), isNull);
-    expect(text(tester, ScreenTitle.titleKey), 'en entries.view');
+    expect(text(tester, ScreenTitle.titleKey), 'en entries.numberOf 1', reason: 'redix-api #128, AC-54.4: the page is titled by its number');
   });
 
   group('AC-19.1: fixing a rejected entry', () {
@@ -544,7 +548,7 @@ void main() {
     testWidgets('redix-app #90 (Muteb, 9 Nov 2026: "let me show all entered details en read mode"): a tap opens the entry read only, its photo and every value as it was filled, with no way to type or take another file', (tester) async {
       await openRejected(tester, change: false);
 
-      expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en entries.view');
+      expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en entries.numberOf 1');
       expect(tester.widget<Text>(find.byKey(AddEntryScreen.statusKey)).data, 'en entries.rejected');
       expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
       expect(find.byKey(AddEntryScreen.cameraKey), findsNothing);
@@ -571,7 +575,7 @@ void main() {
       await openAgainWithNoNetwork(tester, api);
 
       expect(tester.takeException(), isNull);
-      expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en entries.view');
+      expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en entries.numberOf 1');
       expect(typed(tester, AddEntryScreen.descriptionKey), '');
     });
 
@@ -895,6 +899,63 @@ void main() {
       expect(shownRows(tester), ['entry-3']);
     });
 
+    /// Opens the «رقم القيد» filter and saves [typed] in its dialog.
+    Future<void> askNumber(WidgetTester tester, FakeApi api, String typed) async {
+      await scrollAndTap(tester, api, EntriesScreen.numberKey);
+      await tester.enterText(find.byKey(NameDialog.nameKey), typed);
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
+    }
+
+    testWidgets('redix-api #128, AC-54.5, D4: the «رقم القيد» chip asks for the number on a number keyboard, keeps that entry alone, says it, and clearing shows all again', (tester) async {
+      final api = await openSearch(tester);
+      await openFilters(tester, api);
+      await scrollAndTap(tester, api, EntriesScreen.numberKey);
+
+      expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).keyboardType, TextInputType.number);
+      await tester.enterText(find.byKey(NameDialog.nameKey), '٣');
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
+
+      expect(api.entryQueries.last['number'], ['3']);
+      expect(shownRows(tester), ['entry-2']);
+      expect(text(tester, EntriesScreen.numberKey.label), 'en entries.numberFilterSet 3');
+      expect(text(tester, EntriesScreen.detailsKey('entry-2')), startsWith('en entries.numberOf 3 · '));
+
+      await scrollAndTap(tester, api, EntriesScreen.clearKey);
+      expect(api.entryQueries.last.containsKey('number'), isFalse);
+      expect(shownRows(tester), ['entry-3', 'entry-2', 'entry-1', 'entry-0']);
+      expect(text(tester, EntriesScreen.numberKey.label), 'en entries.number');
+    });
+
+    testWidgets('redix-api #128, AC-54.5: the number narrows with every other filter, and one no entry has, or one with another filter it fails, lists nothing', (tester) async {
+      final api = await openSearch(tester);
+      await openFilters(tester, api);
+
+      await askNumber(tester, api, '2');
+      await choose(tester, api, EntriesScreen.kindChoiceKey, EntriesScreen.kindKey('contractorPayment'));
+      expect(shownRows(tester), ['entry-1']);
+      expect(api.entryQueries.last['kinds'], ['contractorPayment']);
+
+      await choose(tester, api, EntriesScreen.kindChoiceKey, EntriesScreen.kindKey('contractorPayment'));
+      await choose(tester, api, EntriesScreen.kindChoiceKey, EntriesScreen.kindKey('purchase'));
+      expect(shownRows(tester), isEmpty);
+
+      await askNumber(tester, api, '99');
+      expect(api.entryQueries.last['number'], ['99']);
+      expect(find.byKey(ApiListBody.emptyKey), findsOneWidget);
+    });
+
+    testWidgets('redix-api #128, D4: a number saved empty keeps every number again', (tester) async {
+      final api = await openSearch(tester);
+      await openFilters(tester, api);
+      await askNumber(tester, api, '2');
+
+      await askNumber(tester, api, '');
+
+      expect(api.entryQueries.last.containsKey('number'), isFalse);
+      expect(shownRows(tester), ['entry-3', 'entry-2', 'entry-1', 'entry-0']);
+      expect(text(tester, EntriesScreen.numberKey.label), 'en entries.number');
+    });
+
     testWidgets('redix-app #104: clearing the filters keeps what was typed, which the search line still shows', (tester) async {
       final api = await openSearch(tester);
 
@@ -946,6 +1007,47 @@ void main() {
       expect(api.entryQueries.last['kinds'], ['purchase']);
       expect(api.entryQueries.last.containsKey('mine'), isFalse);
     });
+  });
+
+  testWidgets('redix-api #128, AC-54.4, D5: on the home, every card\'s details line starts with its «رقم القيد», whoever entered it', (tester) async {
+    await openHome(tester, (api) {
+      api
+        ..addEntry(number: 312)
+        ..addEntry(number: 318, isMine: false, kind: 'revenue', status: 'approved');
+    });
+
+    expect(text(tester, EntriesScreen.detailsKey('entry-0')), startsWith('en entries.numberOf 312 · شركة البواني'));
+    expect(text(tester, EntriesScreen.detailsKey('entry-1')), startsWith('en entries.numberOf 318 · '));
+  });
+
+  testWidgets('redix-api #128, AC-54.4: an entry opened is titled by its «رقم القيد»', (tester) async {
+    final api = await openHome(tester, (api) => api.addEntry(number: 312, status: 'approved'));
+
+    await openActions(tester, api, 'entry-0');
+
+    expect(text(tester, ScreenTitle.titleKey), 'en entries.numberOf 312');
+  });
+
+  testWidgets('redix-api #128, AC-54.7: an entry waiting on the phone shows no «رقم القيد», and shows the one the API gave once it is kept there', (tester) async {
+    final api = FakeApi()
+      ..addProject('غصون 6', permissions: field, units: ['الفلة الغربية'])
+      ..entryAnswer = (status: 503, body: const {});
+    final store = MemoryStore();
+    await store.write('outbox', 'entry-9', '{"ownerId":"user-signed-in","projectId":"project-0","route":"entries","body":{"id":"entry-9","amount":9,"date":"2026-11-05"},"fileName":"","refusal":"","title":"بند اللياسة","details":"شركة البواني"}');
+    await openProject(tester, api, store: store);
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
+
+    expect(text(tester, WaitingScreen.detailsKey('entry-9')), isNot(contains('entries.numberOf')));
+
+    api
+      ..entryAnswer = (status: 201, body: const {})
+      ..addEntry(id: 'entry-9', number: 57);
+    await act(tester, api, () => tester.pump(Outbox.tryEvery));
+    await act(tester, api, () => tester.pageBack());
+    await act(tester, api, () => tester.tap(find.byKey(HomeScreen.searchEntriesKey('project-0'))));
+
+    expect(api.sentEntryPaths, contains('/projects/project-0/entries'));
+    expect(text(tester, EntriesScreen.detailsKey('entry-9')), startsWith('en entries.numberOf 57 · '));
   });
 
   testWidgets('AC-16.2: an offline change that arrives after approval says it was not applied', (tester) async {

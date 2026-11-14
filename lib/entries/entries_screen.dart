@@ -4,12 +4,15 @@ import 'package:go_router/go_router.dart';
 import '../format/date_format.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
+import '../ui/arabic_spelling.dart';
 import '../ui/filter_line.dart';
 import '../ui/list_search.dart';
 import '../ui/search_scope.dart';
 import '../ui/part_keys.dart';
 import '../ui/messages.dart';
+import '../ui/name_dialog.dart';
 import '../ui/screen_title.dart';
+import '../words/word_fill.dart';
 import '../words/words.dart';
 import 'add_entry_screen.dart';
 import 'entry_filter.dart';
@@ -53,6 +56,9 @@ class EntriesScreen extends StatefulWidget {
 
   /// The filter of the period.
   static const periodKey = Key('entries.period');
+
+  /// The filter of the «رقم القيد», which asks for the number (redix-api #128, D4).
+  static const numberKey = Key('entries.number');
 
   /// The button clearing the filters.
   static const clearKey = Key('entries.clear');
@@ -110,13 +116,29 @@ class _EntriesScreenState extends State<EntriesScreen> {
     }
   }
 
+  /// Asks for the «رقم القيد» the list keeps, on a number keyboard, in the house's one-field dialog (redix-api #128, D4); saving it empty keeps every number.
+  Future<void> _askNumber(Words words) => showDialog<void>(
+    context: context,
+    builder: (_) => NameDialog(
+      title: words.entriesNumberAsk,
+      label: words.entriesNumber,
+      saveLabel: words.commonSearch,
+      name: _filter.hasNumber ? '${_filter.number}' : '',
+      keyboardType: TextInputType.number,
+      onSave: (typed) async {
+        _change(() => _filter.number = int.tryParse(typedForApi(typed)) ?? 0);
+        return '';
+      },
+    ),
+  );
+
   /// Opens [path] and, on coming back, reads the entries again, as the home does: what was opened may have changed there.
   Future<void> _open(String path) async {
     await context.push(path, extra: widget.project);
     await widget.entries.load();
   }
 
-  /// The filters folded under the search line: whose, which kinds, where they stand, when, and the way to clear them.
+  /// The filters folded under the search line: whose, which kinds, where they stand, when, which «رقم القيد», and the way to clear them.
   List<Widget> _filters(Words words) => [
     FilterLine.toggle(key: EntriesScreen.mineKey, label: words.entriesMine, isOn: _filter.onlyMine, onChanged: (on) => _change(() => _filter.onlyMine = on)),
     FilterLine.choices<EntryKind>(
@@ -142,6 +164,12 @@ class _EntriesScreenState extends State<EntriesScreen> {
       label: _filter.hasPeriod ? '${words.entriesPeriod}: ${formatDate(_filter.period.start)} – ${formatDate(_filter.period.end)}' : words.entriesPeriod,
       isOn: _filter.hasPeriod,
       onChanged: (_) => _pickPeriod(),
+    ),
+    FilterLine.toggle(
+      key: EntriesScreen.numberKey,
+      label: _filter.hasNumber ? words.entriesNumberFilterSet.fill(['${_filter.number}']) : words.entriesNumber,
+      isOn: _filter.hasNumber,
+      onChanged: (_) => _askNumber(words),
     ),
     if (_filter.isNarrowed) FilterLine.action(key: EntriesScreen.clearKey, label: words.entriesClearFilters, onPressed: () => _change(_filter.clear)),
   ];

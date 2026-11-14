@@ -1,5 +1,7 @@
 import '../auth/permission.dart';
 import '../projects/project.dart';
+import '../words/word_fill.dart';
+import '../words/words.dart';
 import 'entry_kind.dart';
 import 'entry_status.dart';
 
@@ -8,6 +10,7 @@ class EntryRow {
   /// No entry: approved and nobody's, so nothing may be done to it; [isNone] says so.
   EntryRow.none()
     : id = '',
+      number = 0,
       kind = EntryKind.purchase,
       status = EntryStatus.approved,
       rejectionReason = '',
@@ -30,6 +33,7 @@ class EntryRow {
   /// An entry as the API answers it.
   EntryRow.fromJson(Map<String, dynamic> json)
     : id = json['id'] as String,
+      number = json['number'] as int,
       kind = EntryKind.values.byName(json['kind'] as String),
       status = EntryStatus.values.byName(json['status'] as String),
       rejectionReason = json['rejectionReason'] as String,
@@ -48,6 +52,9 @@ class EntryRow {
 
   /// The entry's id.
   final String id;
+
+  /// «رقم القيد», its number in the project, given by the server when it first kept the entry (redix-api #128, FR-54); 0 for none.
+  final int number;
 
   /// What it is.
   final EntryKind kind;
@@ -93,6 +100,9 @@ class EntryRow {
 
   /// How much more it takes than its account holds; zero when its account covers it, or once decided (redix-app #89).
   final double accountShortBy;
+
+  /// «قيد 312», what names it by its number (redix-api #128, AC-54.4): the one owner of how an entry is called by it, empty while it has none.
+  String numberIn(Words words) => number > 0 ? words.entriesNumberOf.fill(['$number']) : '';
 
   /// What names it on a list: a partner's money's partner, otherwise its item.
   String get title => titleOf(partnerName, itemName);

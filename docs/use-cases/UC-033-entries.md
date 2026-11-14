@@ -9,7 +9,8 @@
 | Element | Key |
 | --- | --- |
 | On the home, under القيود: the search, the way to all | `HomeScreen.searchEntriesKey`, `entriesKey` |
-| The search, and the filters: whose, kind, status, period, clearing them, how many show | `EntriesScreen.searchKey`, `mineKey`, `allKey`, `kindKey(kind)`, `statusFilterKey(wordKey)`, `periodKey`, `clearKey`, `foundKey` |
+| The search, and the filters: whose, kind, status, period, «رقم القيد», clearing them, how many show | `EntriesScreen.searchKey`, `mineKey`, `allKey`, `kindKey(kind)`, `statusFilterKey(wordKey)`, `periodKey`, `numberKey` (its dialog `NameDialog.nameKey`, `ChangeDialog.saveKey`), `clearKey`, `foundKey` |
+| A row's details line, led by «قيد 312» (redix-api #128) | `EntriesScreen.detailsKey(id)` |
 | A row, where it stands by its frame's color alone: teal a draft, orange waiting, red rejected, plain once approved (redix-app #90; Muteb, 9 Nov 2026) | `EntriesScreen.rowKey`, `rowKey(id).card` |
 | An entry read only (redix-app #90): where it stands, and what can be done to it | `AddEntryScreen.statusKey`, `changeKey`, `cannotChangeKey`, `sendDraftKey`, `removeKey`; a draft, waiting or rejected entry is deleted by swiping its row, `rowKey(id).swipe`, on القيود and on the home alike (redix-api #102) |
 | The reason at the top of the form | `AddEntryScreen.rejectionKey` |
@@ -50,9 +51,12 @@
 | R9: a link that cannot be read says why and offers to try again, never that the entry is gone | `EntryLinkScreen`, `LoadFailure` | `entry_share_test.dart`: R9: a link that cannot be read |
 | R8: signed out with a temporary password, the link opens once the password is changed, since the change returns to sign-in, which decides where a person lands | `ChangePasswordScreen._save`, `RedixApp._redirect` | `entry_share_test.dart`: R8: signed out with a temporary password |
 | A finished project says nothing about swiping an entry away | `Project.mayDeleteEntries` | `entries_test.dart`: a finished project says nothing about swiping |
+| AC-54.4, D5 (redix-api #128): every card's details line, on the home and on القيود, starts with «قيد 312», its «رقم القيد»; the entry's page is titled «قيد 312», «قيد» until it answers | `EntryRow.numberIn`, `EntryCard`, `AddEntryScreen._title` | `entries_test.dart`: redix-api #128, AC-54.4, two tests; `one_entry_test.dart`: No Revenue screen |
+| AC-54.5, D4: the «رقم القيد» chip asks the number in the one-field dialog on a number keyboard, digits in either script; set, it says «رقم القيد: 312», keeps that entry alone with every other filter, and clearing, or saving it empty, keeps every number; a number no entry the person may see has lists nothing | `EntriesScreen._askNumber`, `EntryFilter.number`, `SearchedEntries.query`, `NameDialog.keyboardType` | `entries_test.dart`: search, redix-api #128, three tests |
+| AC-54.7: an entry waiting on the phone shows no number; it shows the one the API gave once it is kept there | `WaitingScreen`, `EntryRow.number` | `entries_test.dart`: redix-api #128, AC-54.7 |
 
 ## On a real phone
 
-`patrol_test/entries/open_and_change_test.dart` opens every kind of entry on the HUAWEI, the contractor payment's included, and `patrol_test/money/contract_figures_test.dart` opens saved payments to check their contract's figures. `patrol_test/entries/share_entry_test.dart` shares an entry to the phone's Notepad and reads the text back.
+`patrol_test/entries/entries_list_test.dart` finds an entry by its «رقم القيد», reads it on its card and in its page's title, and finds nothing by the number of another's draft (redix-api #128; written, not yet run). `patrol_test/entries/open_and_change_test.dart` opens every kind of entry on the HUAWEI, the contractor payment's included, and `patrol_test/money/contract_figures_test.dart` opens saved payments to check their contract's figures. `patrol_test/entries/share_entry_test.dart` shares an entry to the phone's Notepad and reads the text back.
 
 A link tapped in WhatsApp reaches REDIX through the Android manifest's `https` intent filter for `LINK_HOST`, which no widget test runs. It was checked on the HUAWEI on 8 Nov 2026: a link to a made-up entry, opened as a browser opens it, reached REDIX, which said the entry cannot be found. On a phone without REDIX the link opens nothing until go-live (redix-app #83, D6).

@@ -657,9 +657,13 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   /// The entry read only, as the lists show it, read by its id (findings row 201); none until it answers.
   EntryRow get _row => widget.opened.value;
 
+  /// The page's title: «قيد 312» for an entry read, by its number (redix-api #128, AC-54.4), «قيد» until it answers; Add entry or its change otherwise.
   String get _title {
     final words = Words.of(context);
-    return _reading ? words.entriesView : (widget.editingId.isEmpty ? words.entriesNew : words.entriesEdit);
+    if (_reading) {
+      return _row.isNone ? words.entriesView : _row.numberIn(words);
+    }
+    return widget.editingId.isEmpty ? words.entriesNew : words.entriesEdit;
   }
 
   @override

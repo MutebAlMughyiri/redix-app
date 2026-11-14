@@ -3,8 +3,8 @@ import '../ui/arabic_spelling.dart';
 import 'entry_filter.dart';
 import 'newest_entries.dart';
 
-/// A project's entries as the Entries screen searches them, on the API, a page at a time (redix-app #104): what was typed, whose, which kinds, where they stand and when,
-/// as many at a time as this phone shows, Show more reading as many again. No screen reads every entry for it.
+/// A project's entries as the Entries screen searches them, on the API, a page at a time (redix-app #104): what was typed, whose, which kinds, where they stand, when and
+/// which «رقم القيد» (redix-api #128), as many at a time as this phone shows, Show more reading as many again. No screen reads every entry for it.
 class SearchedEntries extends NewestEntries {
   /// The entries of the project [projectId], seen through [session], searched as many at a time as [localConfig] keeps.
   SearchedEntries(super.session, super.projectId, super.localConfig);
@@ -20,6 +20,7 @@ class SearchedEntries extends NewestEntries {
     if (filter.chosenStatuses.isNotEmpty) 'statuses': [for (final status in filter.chosenStatuses) status.replaceFirst('entries.', '')],
     if (filter.hasPeriod) 'from': apiDate(filter.period.start),
     if (filter.hasPeriod) 'to': apiDate(filter.period.end),
+    if (filter.hasNumber) 'number': '${filter.number}',
   };
 
   /// Shows the first page with nothing typed or chosen, as the Entries screen opens: a search does not outlive its screen (redix-app #104, D4).

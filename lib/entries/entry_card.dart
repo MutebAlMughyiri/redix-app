@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../format/date_format.dart';
 import '../format/number_format.dart';
+import '../format/parts_line.dart';
 import '../projects/project.dart';
 import '../ui/part_keys.dart';
 import '../ui/swipe_to_remove.dart';
@@ -53,7 +54,8 @@ class SwipeableEntryCard extends StatelessWidget {
   );
 }
 
-/// An entry on a list: what it was for, how much, and who entered it when someone else did. Where it stands is its frame's color alone; its page says the rest, a rejection's reason included (Muteb, 9 Nov 2026).
+/// An entry on a list: what it was for, how much, and who entered it when someone else did, its details line led by its «رقم القيد» (redix-api #128, D5). Where it stands is its
+/// frame's color alone; its page says the rest, a rejection's reason included (Muteb, 9 Nov 2026).
 class EntryCard extends StatelessWidget {
   /// The tile of [entry], calling [onTap].
   const EntryCard({super.key, required this.entry, required this.onTap});
@@ -73,7 +75,7 @@ class EntryCard extends StatelessWidget {
       onTap: onTap,
       title: Text(entry.title, key: EntriesScreen.rowKey(entry.id).title),
       subtitle: Text(
-        [if (!entry.isExpense) words.text(entry.kind.wordKey), if (entry.supplierName.isNotEmpty) entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.fill([entry.authorName])].join(' · '),
+        partsLine([entry.numberIn(words), if (!entry.isExpense) words.text(entry.kind.wordKey), entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.fill([entry.authorName])]),
         key: EntriesScreen.detailsKey(entry.id),
       ),
       trailing: Text(formatMoney(entry.amount), key: EntriesScreen.rowKey(entry.id).trailing, style: theme.textTheme.titleSmall),
