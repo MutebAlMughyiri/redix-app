@@ -5,6 +5,7 @@ import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../ui/change_dialog.dart';
+import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
 import '../words/word_fill.dart';
 import '../words/words.dart';
@@ -83,7 +84,7 @@ class _TransferDialogState extends State<TransferDialog> {
         value: chosen.id,
         isExpanded: true,
         isDense: true,
-        items: [for (final account in offered) DropdownMenuItem(key: TransferDialog.choiceKey(key, account.id), value: account.id, child: Text(account.name, overflow: TextOverflow.ellipsis))],
+        items: [for (final account in offered) DropdownMenuItem(key: TransferDialog.choiceKey(key, account.id), value: account.id, child: Text(account.name, key: TransferDialog.choiceKey(key, account.id).label, overflow: TextOverflow.ellipsis))],
         onChanged: (id) => onChanged(_active.firstWhere((account) => account.id == id)),
       ),
     ),

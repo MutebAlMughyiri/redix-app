@@ -338,7 +338,7 @@ void main() {
     await type(tester, AddEntryScreen.columnKey('custom.area'), '١٢٥٫٥');
     await type(tester, AddEntryScreen.columnKey('custom.note'), 'نص');
     await tapVisible(tester, opened.api, AddEntryScreen.columnKey('custom.colour'));
-    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.columnOptionKey('custom.colour', 'choice-blue')).hitTestable()));
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.columnOptionKey('custom.colour', 'choice-blue').label).hitTestable()));
     await tapVisible(tester, opened.api, AddEntryScreen.columnKey('custom.day'));
     await act(tester, opened.api, () => tester.tap(find.text('OK')));
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
@@ -549,7 +549,7 @@ void main() {
     final opened = await openExpense(tester);
     await fill(tester, opened);
     await tapVisible(tester, opened.api, AddEntryScreen.columnKey('entryType'));
-    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.columnOptionKey('entryType', 'choice-creditNote')).last));
+    await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.columnOptionKey('entryType', 'choice-creditNote').label).hitTestable()));
     await type(tester, AddEntryScreen.amountKey, '320');
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);

@@ -97,7 +97,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.addKey)));
     await tester.enterText(find.byKey(ItemColumnsScreen.columnNameKey), 'رقم أمر الشراء');
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.dataTypeKey)));
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.dataTypeOptionKey(ColumnDataType.number)).hitTestable()));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.dataTypeOptionKey(ColumnDataType.number).label).hitTestable()));
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.requiredKey)));
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
@@ -123,7 +123,7 @@ void main() {
     await tester.enterText(find.byKey(ItemColumnsScreen.columnNameKey), 'اللون');
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.dataTypeKey)));
     expect(find.byKey(ItemColumnsScreen.dataTypeOptionKey(ColumnDataType.file)), findsNothing);
-    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.dataTypeOptionKey(ColumnDataType.list)).hitTestable()));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.dataTypeOptionKey(ColumnDataType.list).label).hitTestable()));
     await tester.enterText(find.byKey(ItemColumnsScreen.choicesKey), 'أبيض\nرمادي');
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 

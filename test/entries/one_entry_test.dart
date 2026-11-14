@@ -128,7 +128,7 @@ void main() {
       await pick(tester, api, partner);
 
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.columnKey('movementType'))));
-      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.columnOptionKey('movementType', 'choice-withdrawal')).last));
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.columnOptionKey('movementType', 'choice-withdrawal').label).hitTestable()));
       await tester.enterText(find.byKey(AddEntryScreen.amountKey), '300');
       await act(tester, api, () => tester.tap(find.byKey(PaymentChoices.accountKey(account))));
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.filesKey)));
