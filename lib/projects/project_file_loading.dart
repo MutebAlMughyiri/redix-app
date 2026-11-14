@@ -13,8 +13,8 @@ import 'project_file_refusals_screen.dart';
 import 'projects.dart';
 
 /// Loads a project file into [project] (UC-071, FR-53, redix-api #132): its manager picks the `.json` through [capture] and says yes to what loading it does, in their name,
-/// and [projects] sends it. The bar then says what was loaded, from the API's own answer (say only what happened); every row refused opens the refused list, nothing saved
-/// (D3, D14); any other refusal is the bar's. Picking nothing changes nothing.
+/// and [projects] sends it. The bar then says what was loaded, from the API's own answer (say only what happened), naming no report for a file that carries none (D9);
+/// every row refused opens the refused list, nothing saved (D3, D14); any other refusal is the bar's. Picking nothing changes nothing.
 Future<void> loadProjectFile(BuildContext context, Project project, Projects projects, InvoiceCapture capture) async {
   final words = Words.of(context);
   final messenger = ScaffoldMessenger.of(context);
@@ -42,7 +42,7 @@ Future<void> _send(BuildContext context, Project project, Projects projects, Pic
   final refusal = await whileBusy(context, projects.loadFile(project, file));
   if (refusal.isEmpty) {
     final loaded = projects.lastLoad;
-    showMessage(messenger, words, 'projects.loadFileDone', values: ['${loaded.entries}', '${loaded.tables}', '${loaded.report}']);
+    showMessage(messenger, words, loaded.report > 0 ? 'projects.loadFileDone' : 'projects.loadFileDoneNoReport', values: ['${loaded.entries}', '${loaded.tables}', '${loaded.report}']);
   } else if (refusal == 'projects.loadFile.rowsRefused' && context.mounted) {
     await context.push(ProjectFileRefusalsScreen.pathOf(project.id), extra: projects.lastRefusals);
   } else {

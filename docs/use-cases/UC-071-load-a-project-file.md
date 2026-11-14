@@ -14,7 +14,7 @@
 | --- | --- | --- |
 | تحميل ملف المشروع | `HomeScreen.loadFileKey(id)` | Opens the phone's files for a `.json`; gray without `manageProject`, on a closed project, and once the project holds an entry (`Project.mayLoadFile`, D4, D15) |
 | The question | `ConfirmDialog.titleKey`, `explanationKey`, `confirmKey`, `cancelKey` | Names the file and the project, and says what loading does in the manager's name |
-| What was loaded | `messageKeyOf('projects.loadFileDone')` | The bar: how many entries in how many tables, and the report, from the API's own answer |
+| What was loaded | `messageKeyOf('projects.loadFileDone')`, `messageKeyOf('projects.loadFileDoneNoReport')` | The bar: how many entries in how many tables, and the report, from the API's own answer; for a file with no report, the word that names none (D9) |
 | Another refusal | `messageKeyOf('projects.loadFile.<code>')` | The bar: not a project file, a newer one, a project holding entries |
 
 `ProjectFileRefusalsScreen` at `/projects/:projectId/project-file/refused`, opened when rows are refused:
@@ -40,5 +40,7 @@
 | FR-53: the question names the file and the project, and going back sends nothing | `loadProjectFile` | `project_file_loading_test.dart`: FR-53: the picked file is named in the question |
 | FR-53, AC-53.1: once loaded the bar says what the API loaded, and the button turns gray | `loadProjectFile`, `Projects.loadFile`, `Projects.lastLoad` | `project_file_loading_test.dart`: FR-53, AC-53.1; Patrol `project_file_test.dart`: AC-53.1 |
 | AC-53.5, D14: every refused row is listed by its item, table and row, each in its owner's word, and nothing changes | `ProjectFileRefusalsScreen`, `ProjectFileRefusal`, `ProjectFileOwner` | `project_file_loading_test.dart`: AC-53.5, D14; Patrol `project_file_test.dart`: AC-53.5 |
+| D9: a file that carries no report is loaded with a bar that names no report | `loadProjectFile` | `project_file_loading_test.dart`: D9: a file that carries no report |
+| AC-29.3: a report the project issued already is listed with its number | `ProjectFileRefusal.reasonIn` | `project_file_loading_test.dart`: AC-29.3: a report the project issued already |
 | AC-53.9: a file that is not a project file says so in the bar | `loadProjectFile` | `project_file_loading_test.dart`: AC-53.9; Patrol `project_file_test.dart`: AC-53.9 |
 | Picking nothing asks nothing and sends nothing | `loadProjectFile`, `InvoiceCapture.fromProjectFiles` | `project_file_loading_test.dart`: a person who picks nothing |

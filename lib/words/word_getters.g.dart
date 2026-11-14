@@ -1652,6 +1652,9 @@ mixin WordGetters {
   /// The word `projects.loadFile.projectHasEntries`.
   String get projectsLoadFileProjectHasEntries => text('projects.loadFile.projectHasEntries');
 
+  /// The word `projects.loadFile.reportAlreadyIssued`.
+  String get projectsLoadFileReportAlreadyIssued => text('projects.loadFile.reportAlreadyIssued');
+
   /// The word `projects.loadFile.rowsRefused`.
   String get projectsLoadFileRowsRefused => text('projects.loadFile.rowsRefused');
 
@@ -1663,6 +1666,9 @@ mixin WordGetters {
 
   /// The word `projects.loadFileDone`.
   String get projectsLoadFileDone => text('projects.loadFileDone');
+
+  /// The word `projects.loadFileDoneNoReport`.
+  String get projectsLoadFileDoneNoReport => text('projects.loadFileDoneNoReport');
 
   /// The word `projects.loadFileWhat`.
   String get projectsLoadFileWhat => text('projects.loadFileWhat');

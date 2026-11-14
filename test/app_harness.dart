@@ -116,6 +116,8 @@ Map<String, String> wordsIn(String language) => {
   'partners.draftsBy': '$language partners.draftsBy {0}',
   'projects.loadFileConfirm': '$language projects.loadFileConfirm {0} {1}',
   'projects.loadFileDone': '$language projects.loadFileDone {0} {1} {2}',
+  'projects.loadFileDoneNoReport': '$language projects.loadFileDoneNoReport {0} {1}',
+  'projects.loadFile.reportAlreadyIssued': '$language projects.loadFile.reportAlreadyIssued {0}',
   'projects.loadFile.accountNotInProject': '$language projects.loadFile.accountNotInProject {0}',
   'projects.loadFile.unknownChoice': '$language projects.loadFile.unknownChoice {0} {1}',
 };

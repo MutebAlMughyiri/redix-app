@@ -94,6 +94,32 @@ void main() {
     expect(isEnabled(tester, loadFile), isTrue);
   });
 
+  testWidgets('D9: a file that carries no report is loaded with a bar that names no report', (tester) async {
+    final (api, _) = await onTheHome(tester);
+    api.projectFileAnswer = (status: 200, body: {'entries': 0, 'tables': 0, 'report': 0});
+
+    await act(tester, api, () => tester.tap(find.byKey(loadFile)));
+    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
+
+    expect(text(tester, messageKeyOf('projects.loadFileDoneNoReport').label), 'en projects.loadFileDoneNoReport 0 0');
+    expect(find.byKey(messageKeyOf('projects.loadFileDone')), findsNothing);
+  });
+
+  testWidgets('AC-29.3: a report the project issued already is listed with its number, and nothing is loaded', (tester) async {
+    final (api, _) = await onTheHome(tester);
+    api.projectFileAnswer = (status: 400, body: {
+      'code': 'rowsRefused',
+      'rows': [
+        {'category': '', 'item': '', 'table': '', 'row': 0, 'owner': 'file', 'code': 'reportAlreadyIssued', 'columnKey': '', 'value': '7', 'column': ''},
+      ],
+    });
+
+    await act(tester, api, () => tester.tap(find.byKey(loadFile)));
+    await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
+
+    expect(text(tester, ProjectFileRefusalsScreen.refusalKey(0).subtitle), 'en projects.loadFile.reportAlreadyIssued 7');
+  });
+
   testWidgets('AC-53.9: a file that is not a project file says so in the bar, and opens no list', (tester) async {
     final (api, _) = await onTheHome(tester);
     api.projectFileAnswer = (status: 400, body: {'code': 'notAProjectFile'});

@@ -4,7 +4,7 @@ import '../words/words.dart';
 
 /// Whose rule refused a part of a project file, as the API names it, each knowing the start of its words' keys: a refusal shows its owner's own word (redix-api #132 D14).
 enum ProjectFileOwner {
-  /// The file itself, read as a project: an account the project lacks, a file named in a row, a choice the lists do not hold.
+  /// The file itself, read as a project: an account the project lacks, a file named in a row, a choice the lists do not hold, a report the project issued already.
   file('projects.loadFile'),
 
   /// Add entry, which every row goes through (AC-53.4).
