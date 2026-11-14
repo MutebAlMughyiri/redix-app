@@ -2190,11 +2190,11 @@ Future<void> chooseFromMenu(WidgetTester tester, FakeApi api, Key menuKey, Key i
   await act(tester, api, () => tester.tap(find.byKey(itemKey)));
 }
 
-/// Opens the [MemberPicker] keyed [pickerKey] and chooses [userId] in its list; nobody when that is empty. The open list draws over the closed one, so the last match is the one tapped.
+/// Opens the [MemberPicker] keyed [pickerKey] and chooses [userId] in its list, nobody when that is empty, by tapping the choice's name: the part of the open list a tap reaches.
 Future<void> chooseMember(WidgetTester tester, FakeApi api, Key pickerKey, String userId) async {
   await tester.ensureVisible(find.byKey(pickerKey.field));
   await act(tester, api, () => tester.tap(find.byKey(pickerKey.field)));
-  await act(tester, api, () => tester.tap(find.byKey(MemberPicker.optionKey(userId))));
+  await act(tester, api, () => tester.tap(find.byKey(MemberPicker.optionKey(userId).title).hitTestable()));
 }
 
 /// The color the frame of the entry [id]'s row is drawn in, which alone says where the entry stands (Muteb, 9 Nov 2026).

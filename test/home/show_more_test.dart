@@ -6,6 +6,7 @@ import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/shared_settings_screen.dart';
+import 'package:redix/ui/part_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../app_harness.dart';
@@ -38,7 +39,7 @@ void main() {
   Future<void> chooseCount(WidgetTester tester, FakeApi api, int count) async {
     await tester.ensureVisible(find.byKey(SharedSettingsScreen.entriesShownChoiceKey));
     await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.entriesShownChoiceKey)));
-    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.entriesShownOptionKey(count))));
+    await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.entriesShownOptionKey(count).title).hitTestable()));
   }
 
   testWidgets('R1: Settings offers any number from 5 to 20, shows 5 until one is chosen, and keeps the choice on the phone', (tester) async {

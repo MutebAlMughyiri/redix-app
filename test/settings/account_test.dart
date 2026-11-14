@@ -624,6 +624,12 @@ void main() {
         AddEntryScreen.sendKey,
         AddEntryScreen.draftKey,
       ].forEach(expectFits);
+      api.addColumn(columnsPath, 'نوع القيد', key: 'entryType', dataType: 'list', isCore: true, choices: [FakeApi.choice('choice-purchase', 'شراء', sign: 'plus'), FakeApi.choice('choice-creditNote', 'مرتجع', sign: 'minus')]);
+      await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
+      await act(tester, api, () => tester.tap(find.byKey(TablePicker.optionKey((tiles['subgroups']! as List<Map<String, Object>>).first['id']! as String))));
+      await tester.ensureVisible(find.byKey(AddEntryScreen.columnKey('entryType')));
+      await tester.pumpAndSettle();
+      expectFits(AddEntryScreen.columnKey('entryType'));
       await pressBack(tester, api);
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey(runningId))));
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
