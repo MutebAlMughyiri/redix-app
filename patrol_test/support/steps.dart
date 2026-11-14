@@ -37,6 +37,16 @@ var _localConfig = LocalConfig();
 /// Every widget whose key starts with [start].
 Finder keyStartingWith(String start) => find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith(start));
 
+/// Whether what holds the focus, the field the keyboard types into, sits inside the element keyed [key].
+bool holdsFocus(Key key) {
+  var inside = false;
+  FocusManager.instance.primaryFocus?.context?.visitAncestorElements((element) => !(inside = element.widget.key == key));
+  return inside;
+}
+
+/// Every widget keyed by [keyOf] for any id, such as the rows of a list whose ids a case does not know: the widgets whose key starts as [keyOf] keys an empty id.
+Finder keyedBy(Key Function(String id) keyOf) => keyStartingWith((keyOf('') as ValueKey<String>).value);
+
 /// The steps every case is written in, each finding what it needs by its exact key.
 extension Steps on PatrolIntegrationTester {
   /// The words of the screen showing now.
@@ -160,7 +170,7 @@ extension Steps on PatrolIntegrationTester {
   /// release while its work stays (Muteb, 12 Nov 2026): the VAT refund.
   Future<void> openPathFromTheHome(Person person, String path) async {
     await onTheHome(person);
-    final card = find.byType(ProjectSettingsCard);
+    final card = find.byKey(HomeScreen.cardKey(person.projectId));
     await this(card).waitUntilExists();
     unawaited(GoRouter.of(tester.element(card)).push(path, extra: tester.widget<ProjectSettingsCard>(card).project));
     await pumpAndSettle();
@@ -198,6 +208,9 @@ extension Steps on PatrolIntegrationTester {
     await signIn(person.username, person.password);
     await openProject(person.projectId);
   }
+
+  /// Whether the element keyed [key] sits in its screen's title bar: within the height the screen's app bar takes from the top.
+  bool isInTitleBar(Key key) => tester.getRect(find.byKey(key)).bottom <= Scaffold.of(tester.element(find.byKey(key))).appBarMaxHeight!;
 
   /// How far down the screen [key] is.
   double topOf(Key key) => tester.getTopLeft(find.byKey(key)).dy;
@@ -292,7 +305,7 @@ extension Steps on PatrolIntegrationTester {
   }
 
   /// The pages of the home's Project settings, four buttons each, swiped sideways and going round (Muteb, 11 Nov 2026).
-  Finder get projectSettingPages => find.descendant(of: find.byType(ProjectSettingsCard), matching: find.byType(PageView));
+  Finder get projectSettingPages => keyedBy(HomeScreen.settingsPagesKey);
 
   /// What brings [finder] into view: the Project settings' card for one of their buttons, since scrolling the button would also turn the pages; else [finder] itself.
   Finder _scrolledFor(Finder finder) => find.descendant(of: projectSettingPages, matching: finder).evaluate().isNotEmpty ? projectSettingPages : finder;
@@ -366,7 +379,7 @@ extension Steps on PatrolIntegrationTester {
   /// The id in the key of the element whose key starts with [prefix] and that shows [text]: a case names what it makes and learns its id from that name once, then finds it by its key.
   /// It waits for a dialog still saving to close first, since the name typed in its field is not the element.
   Future<String> idShowing(String prefix, String text) async {
-    await until(() => find.byType(ChangeDialog).evaluate().isEmpty);
+    await until(() => find.byKey(ChangeDialog.dialogKey).evaluate().isEmpty);
     await pumpAndSettle();
     if (find.text(text).evaluate().isEmpty) {
       await this(find.text(text)).scrollTo(view: scrolledList);

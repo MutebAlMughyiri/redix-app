@@ -25,8 +25,8 @@ void main() {
     final api = FakeApi()..addProject('غصون 6');
     await openProject(tester, api);
 
-    final icon = find.descendant(of: find.byType(AppBar), matching: find.byKey(HomeScreen.sharedSettingsKey('project-0')));
-    expect(icon, findsOneWidget);
+    final icon = find.byKey(HomeScreen.sharedSettingsKey('project-0'));
+    expect(isInTitleBar(tester, HomeScreen.sharedSettingsKey('project-0')), isTrue);
     final gear = tester.widget<Icon>(find.byKey(HomeScreen.sharedSettingsKey('project-0').icon));
     expect((gear.icon, gear.color), (Icons.settings_outlined, null), reason: 'a color of its own would not follow a light or a dark theme');
     expect(find.byKey(HomeScreen.sharedSettingsKey('project-0').label), findsNothing);

@@ -13,10 +13,13 @@ import 'package:redix/offline/waiting_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/suppliers/supplier_search.dart';
 import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 
 import '../app_harness.dart';
 
 void main() {
+  String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
+
   PendingEntry pending(String id, {String ownerId = 'user-signed-in', String refusal = ''}) => PendingEntry(
     ownerId: ownerId,
     projectId: 'project-0',
@@ -131,7 +134,7 @@ void main() {
     final store = await storeHolding([pending('entry-1', refusal: 'expenses.unknownSupplier'), pending('entry-2', refusal: 'expenses.unknownSupplier')]);
     final api = await openHome(tester, store);
 
-    expect(find.text('en offline.title · 2'), findsOneWidget);
+    expect(text(tester, HomeScreen.waitingKey('project-0').title), 'en offline.title · 2');
 
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
 
@@ -215,7 +218,7 @@ void main() {
 
     await swipeToRemove(tester, api, WaitingScreen.rowKey('entry-1'));
 
-    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.byKey(ConfirmDialog.dialogKey), findsNothing);
     expect(await store.namesIn('outbox'), isEmpty);
     expect(find.byKey(WaitingScreen.emptyKey), findsOneWidget);
   });
@@ -228,7 +231,7 @@ void main() {
     await openProject(tester, api, store: store);
     await act(tester, api, () => tester.pump(Outbox.tryEvery));
 
-    expect(find.text('en offline.title · 1'), findsOneWidget);
+    expect(text(tester, HomeScreen.waitingKey('project-0').title), 'en offline.title · 1');
     expect(jsonDecode(await store.read('outbox', 'entry-1'))['refusal'], '');
   });
 
@@ -240,8 +243,6 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
     return api;
   }
-
-  String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   testWidgets('redix-app #103: a refused row spans the screen and says its table, amount, supplier, date, that its bill waits, and why it was refused', (tester) async {
     final entry = PendingEntry(
@@ -261,7 +262,7 @@ void main() {
     expect(text(tester, WaitingScreen.detailsKey('entry-1')), allOf(contains('شركة النخيل'), contains(formatDate(DateTime(2026, 11, 11))), contains('en offline.withFile')));
     expect(text(tester, WaitingScreen.stateKey('entry-1')), 'en expenses.unknownSupplier');
     expect(find.byKey(WaitingScreen.autoSendKey), findsOneWidget);
-    final screen = tester.getSize(find.byType(Scaffold).last).width;
+    final screen = tester.view.physicalSize.width / tester.view.devicePixelRatio;
     expect(tester.getSize(find.byKey(WaitingScreen.rowKey('entry-1'))).width, greaterThan(screen - 48));
   });
 

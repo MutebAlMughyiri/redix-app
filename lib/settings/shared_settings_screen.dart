@@ -50,6 +50,9 @@ class SharedSettingsScreen extends StatefulWidget {
   /// Who is signed in: their name over the name they sign in with and, opened from a project, what they are called there.
   static const whoKey = Key('sharedSettings.who');
 
+  /// What Settings shows under its title, which scrolls.
+  static const bodyKey = Key('sharedSettings.body');
+
   /// The way back to the project list.
   static const switchProjectKey = Key('sharedSettings.switchProject');
 
@@ -145,6 +148,7 @@ class _SharedSettingsScreenState extends State<SharedSettingsScreen> {
       body: ListenableBuilder(
         listenable: Listenable.merge([session, widget.projects, widget.localConfig]),
         builder: (context, _) => ListView(
+          key: SharedSettingsScreen.bodyKey,
           padding: ApiListBody.padding,
           children: [
             _bordered([

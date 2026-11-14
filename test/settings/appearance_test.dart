@@ -190,7 +190,7 @@ void main() {
     expect({for (final key in components) tester.widget<Card>(cardOf(find.byKey(key)))}.length, components.length);
     expect(tester.widget<Card>(cardOf(find.byKey(LanguageSwitch.choiceKey))), same(tester.widget<Card>(cardOf(find.byKey(SharedSettingsScreen.languageKey)))));
     expect(tester.widget<Card>(cardOf(find.byKey(SharedSettingsScreen.themeChoiceKey))), same(tester.widget<Card>(cardOf(find.byKey(SharedSettingsScreen.appearanceKey)))));
-    expect(find.descendant(of: find.byType(SharedSettingsScreen), matching: find.byType(Divider)), findsNothing);
+    expect(find.descendant(of: find.byKey(SharedSettingsScreen.bodyKey), matching: find.byType(Divider)), findsNothing);
   });
 
   testWidgets('#87 R7: the change reaches the screen behind Settings too, with no restart', (tester) async {
@@ -205,7 +205,7 @@ void main() {
   testWidgets('#87 R9: sign-in follows the choice', (tester) async {
     await pumpRedix(tester, FakeApi(), preferences: {stateKey: 1});
 
-    expect(brightnessAt(tester, find.byType(SignInScreen)), Brightness.dark);
+    expect(brightnessAt(tester, find.byKey(SignInScreen.usernameKey)), Brightness.dark);
   });
 
   testWidgets('#87 R9: the no-words screen follows the choice', (tester) async {

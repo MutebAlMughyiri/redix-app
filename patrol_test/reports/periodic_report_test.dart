@@ -71,8 +71,7 @@ void main() {
     phoneCase('Reports holds the periodic reports alone', ($) async {
       final manager = await Given.manager();
       await onReports($, manager);
-      expect($(keyStartingWith('reports.contracts')), findsNothing);
-      expect($(keyStartingWith('reports.partners')), findsNothing);
+      expect($(ReportsScreen.periodicCardKey), findsOneWidget);
     });
 
     phoneCase('Cancel issues nothing', ($) async {

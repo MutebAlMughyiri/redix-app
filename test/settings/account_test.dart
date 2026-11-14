@@ -364,9 +364,10 @@ void main() {
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.newProjectKey)));
       [NewProjectScreen.nameKey, NewProjectScreen.descriptionKey, NewProjectScreen.startDateKey, NewProjectScreen.unitNameKey, NewProjectScreen.addUnitKey].forEach(expectFits);
-      await tester.scrollUntilVisible(find.byKey(NewProjectScreen.submitKey), 200, scrollable: find.ancestor(of: find.byKey(NewProjectScreen.nameKey), matching: find.byType(Scrollable)).first);
+      await tester.ensureVisible(find.byKey(NewProjectScreen.submitKey));
+      await tester.pumpAndSettle();
       [NewProjectScreen.partnerNameKey, NewProjectScreen.addPartnerKey, NewProjectScreen.submitKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await pressBack(tester, api);
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey(runningId))));
       [HomeScreen.titleKey, HomeScreen.sharedSettingsKey(runningId)].forEach(expectFits);
@@ -379,14 +380,14 @@ void main() {
       await scrollAndTap(tester, api, HomeScreen.projectInfoKey(runningId));
       [ProjectInfoScreen.nameKey, ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.detailsKey, ProjectInfoScreen.statusKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.unitMenuKey('$runningId-unit-0')]
           .forEach(expectFits);
-      await tester.scrollUntilVisible(find.byKey(ProjectInfoScreen.closeKey), 80, scrollable: find.byType(Scrollable).first);
+      await tester.dragUntilVisible(find.byKey(ProjectInfoScreen.closeKey), find.byKey(ProjectInfoScreen.bodyKey), const Offset(0, -80));
       await tester.ensureVisible(find.byKey(ProjectInfoScreen.closeKey));
       await tester.pumpAndSettle();
       [ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.closeKey)));
       [ConfirmDialog.explanationKey, ConfirmDialog.confirmKey, ConfirmDialog.cancelKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.cancelKey)));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await pressBack(tester, api);
 
       final bone = api.addCategory(runningId, 'العظم');
       final tiles = api.addItem(bone, 'بند الدرابزين والألمنيوم مع التركيب الكامل', subgroups: ['مواد']);
@@ -418,7 +419,7 @@ void main() {
         for (final type in ItemType.values.where((type) => !type.isRevenue)) CategoriesScreen.itemTypeKey(type),
         ChangeDialog.saveKey,
       ].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
 
       final columnsPath = Columns.itemPath(runningId, tilesId);
       final dateColumn = api.addColumn(columnsPath, 'التاريخ', dataType: 'date', isCore: true, isRequired: true, showInReports: true)['id'] as String;
@@ -445,7 +446,7 @@ void main() {
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.addKey)));
       [ItemColumnsScreen.columnNameKey, ItemColumnsScreen.dataTypeKey, ItemColumnsScreen.requiredKey, ItemColumnsScreen.showInReportsKey, ChangeDialog.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
       await act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.templateKey)));
       await tester.ensureVisible(find.byKey(ItemColumnsScreen.menuKey(templateDate)));
       await tester.pumpAndSettle();
@@ -453,7 +454,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
       [ApplyToAllDialog.explainKey, ApplyToAllDialog.applyKey, ApplyToAllDialog.templateOnlyKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ApplyToAllDialog.templateOnlyKey)));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await pressBack(tester, api);
 
       await tester.ensureVisible(find.byKey(CategoriesScreen.itemMenuKey(tilesId)));
       await tester.pumpAndSettle();
@@ -462,8 +463,8 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.tablesKey)));
       final subgroupId = (tiles['subgroups']! as List<Map<String, Object>>).last['id'] as String;
       [ItemTablesScreen.hintKey, ItemTablesScreen.addKey, ItemTablesScreen.handleKey(subgroupId), ItemTablesScreen.tableNameKey(subgroupId), ItemTablesScreen.detailsKey(subgroupId), ItemTablesScreen.menuKey(subgroupId)].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await pressBack(tester, api);
+      await pressBack(tester, api);
 
       final cardMethod = api.addPaymentMethod(runningId, 'شبكة')['id'] as String;
       final longMethod = api.addPaymentMethod(runningId, 'تحويل بنكي عن طريق الحساب الجاري للمؤسسة', isActive: false)['id'] as String;
@@ -485,8 +486,8 @@ void main() {
       [PaymentMethodsScreen.renameKey, PaymentMethodsScreen.disableKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(PaymentMethodsScreen.renameKey)));
       [NameDialog.nameKey, ChangeDialog.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
+      await pressBack(tester, api);
 
       api.addMember('user-nawaf', 'نواف بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني بالمشروع');
       final bankAccount = api.addAccount(runningId, 'حساب جارٍ باسم طويل جداً في بنك من البنوك المحلية', balance: 64250.75)['id'] as String;
@@ -505,7 +506,7 @@ void main() {
         AccountsScreen.menuKey(bankAccount),
       ].forEach(expectFits);
       for (final id in [custody, oldAccount]) {
-        await tester.scrollUntilVisible(find.byKey(AccountsScreen.balanceKey(id)), 100);
+        await tester.dragUntilVisible(find.byKey(AccountsScreen.balanceKey(id)), listRows, const Offset(0, -100));
         [AccountsScreen.detailsKey(id), AccountsScreen.balanceKey(id)].forEach(expectFits);
       }
       await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.addKey)));
@@ -518,15 +519,15 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.custodianKey.field)));
       expect(tester.getRect(find.byKey(MemberPicker.optionKey('user-nawaf'))).width, lessThanOrEqualTo(360));
       await act(tester, api, () => tester.tap(find.byKey(MemberPicker.optionKey(''))));
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
       await tester.ensureVisible(find.byKey(AccountsScreen.menuKey(custody)));
       await tester.pumpAndSettle();
       await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.menuKey(custody))));
       [AccountsScreen.editKey, AccountsScreen.disableKey, AccountsScreen.deleteKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.editKey)));
       [AccountsScreen.accountNameKey, AccountsScreen.custodianKey, ChangeDialog.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
+      await pressBack(tester, api);
       expectFits(HomeScreen.custodyKey(custody));
       expectFits(HomeScreen.custodyBalanceKey(custody));
 
@@ -550,8 +551,8 @@ void main() {
       [PartnersScreen.editKey, PartnersScreen.deleteKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.editKey)));
       [PartnersScreen.partnerNameKey, PartnersScreen.loginKey, PartnersScreen.loginHintKey, ChangeDialog.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
+      await pressBack(tester, api);
 
       final supplier = api.addSupplier(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', vatNumber: '322222222222223', defaultItemName: 'البلاط والرخام')['id'] as String;
       await showProjectSetting(tester, HomeScreen.suppliersKey(runningId));
@@ -562,15 +563,15 @@ void main() {
       [SuppliersScreen.addKey, SuppliersScreen.nameKey(supplier), SuppliersScreen.detailsKey(supplier), SuppliersScreen.menuKey(supplier)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(SuppliersScreen.addKey)));
       [SuppliersScreen.supplierNameKey, SuppliersScreen.vatNumberKey, SuppliersScreen.mobileKey, SuppliersScreen.defaultItemKey, ChangeDialog.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
       final project = Project.fromJson(jsonDecode(jsonEncode(running)) as Map<String, dynamic>);
-      await act(tester, api, () async => unawaited(SupplierPicker.show(tester.element(find.byType(SuppliersScreen)), project, Suppliers(session, runningId))));
+      await act(tester, api, () async => unawaited(SupplierPicker.show(tester.element(find.byKey(SuppliersScreen.addKey)), project, Suppliers(session, runningId))));
       [SupplierPicker.searchKey, SupplierPicker.closeKey, SupplierPicker.rowKey(supplier), SupplierPicker.detailsKey(supplier), SupplierPicker.quickAddKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(SupplierPicker.quickAddKey)));
       [SuppliersScreen.supplierNameKey, SuppliersScreen.vatNumberKey, ChangeDialog.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
       await act(tester, api, () => tester.tap(find.byKey(SupplierPicker.closeKey)));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await pressBack(tester, api);
 
       final overrun = api.addContract(runningId, 'شركة الأفق العالية للسيراميك والبورسلان والمواد الإنشائية', itemName: 'البلاط والرخام للواجهات الداخلية', value: 999999999.99, paid: 1099999999.99, unitPrice: 380, quantity: 50, notes: 'زيادة بملحق', hasPayments: true)['id'] as String;
       final open = api.addContract(runningId, 'دهان داخلي', isOpenValue: true, paid: 12000)['id'] as String;
@@ -594,15 +595,15 @@ void main() {
       [ContractsScreen.addKey, SearchIcons.searchKey, SearchIcons.filtersKey, for (final filter in ContractFilter.values) ContractsScreen.filterKey(filter), ...contractKeys(overrun)].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
       [ContractsScreen.contractorKey, ContractsScreen.itemKey, ContractsScreen.openValueKey, ContractsScreen.valueKey, ContractsScreen.unitPriceKey, ContractsScreen.quantityKey, ContractsScreen.notesKey, ContractsScreen.addDocumentKey, ChangeDialog.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.menuKey(overrun))));
       [ContractsScreen.editKey, ContractsScreen.disableKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ContractsScreen.editKey)));
       [ContractsScreen.partiesKey, ContractsScreen.openValueKey, ContractsScreen.valueKey, ChangeDialog.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
-      await tester.scrollUntilVisible(find.byKey(ContractsScreen.menuKey(open)), 200, scrollable: listRows);
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
+      await tester.dragUntilVisible(find.byKey(ContractsScreen.menuKey(open)), listRows, const Offset(0, -200));
       contractKeys(open).forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await pressBack(tester, api);
 
       await showProjectSetting(tester, HomeScreen.addEntryKey(runningId));
       await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey(runningId)));
@@ -623,7 +624,7 @@ void main() {
         AddEntryScreen.sendKey,
         AddEntryScreen.draftKey,
       ].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await pressBack(tester, api);
       await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey(runningId))));
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
       await act(tester, api, () => tester.tap(find.byKey(TablePicker.optionKey(api.contracts[runningId]!.first['id']! as String))));
@@ -648,7 +649,7 @@ void main() {
         AddEntryScreen.sendKey,
         AddEntryScreen.draftKey,
       ].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await pressBack(tester, api);
 
       await scrollAndTap(tester, api, HomeScreen.usersKey(runningId));
       [
@@ -666,24 +667,25 @@ void main() {
       [UsersScreen.editKey, UsersScreen.permissionsKey, UsersScreen.resetPasswordKey, UsersScreen.disableKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.resetPasswordKey)));
       [UsersScreen.resetExplainKey, UsersScreen.resetPasswordFieldKey, ChangeDialog.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
 
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.menuKey('user-1'))));
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.permissionsKey)));
       [UserPermissionsScreen.nameKey, UserPermissionsScreen.hintKey, UserPermissionsScreen.permissionKey(Permission.readProject), UserPermissionsScreen.permissionKey(Permission.manageUsers)].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await pressBack(tester, api);
 
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.addExistingKey)));
       [UsersScreen.existingUsernameKey, ChangeDialog.saveKey].forEach(expectFits);
-      await act(tester, api, () => tester.tap(find.text('$language common.cancel')));
+      await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
 
       await act(tester, api, () => tester.tap(find.byKey(UsersScreen.newUserKey)));
       [NewUserScreen.nameKey, NewUserScreen.usernameKey, NewUserScreen.mobileKey, NewUserScreen.passwordKey].forEach(expectFits);
-      await tester.scrollUntilVisible(find.byKey(NewUserScreen.submitKey), 300, scrollable: find.descendant(of: find.byType(NewUserScreen), matching: find.byType(Scrollable)).first);
+      await tester.ensureVisible(find.byKey(NewUserScreen.submitKey));
+      await tester.pumpAndSettle();
       expectFits(NewUserScreen.submitKey);
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await pressBack(tester, api);
+      await pressBack(tester, api);
+      await pressBack(tester, api);
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
       [SharedSettingsScreen.whoKey, SharedSettingsScreen.switchProjectKey, SharedSettingsScreen.defaultProjectKey, SharedSettingsScreen.registeredKey].forEach(expectFits);
@@ -697,11 +699,11 @@ void main() {
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(RegisteredProjectsScreen.rejectKey('registered-0'))));
       [ReasonSheet.reasonKey, ReasonSheet.sendKey].forEach(expectFits);
-      await act(tester, api, () => tester.tapAt(const Offset(4, 4)));
-      await act(tester, api, () => tester.tap(find.byType(BackButton)));
+      await pressBack(tester, api);
+      await pressBack(tester, api);
 
       [SharedSettingsScreen.languageKey, LanguageSwitch.arabicKey, LanguageSwitch.englishKey].forEach(expectFits);
-      await tester.scrollUntilVisible(find.byKey(SharedSettingsScreen.signOutKey), 200, scrollable: find.byType(Scrollable).first);
+      await tester.dragUntilVisible(find.byKey(SharedSettingsScreen.signOutKey), find.byKey(SharedSettingsScreen.bodyKey), const Offset(0, -200));
       [SharedSettingsScreen.biometricsKey, SharedSettingsScreen.changePasswordKey, SharedSettingsScreen.signOutKey].forEach(expectFits);
     });
   }

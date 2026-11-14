@@ -25,7 +25,7 @@ The project's home, `HomeScreen`:
 | Their login, or No login | `PartnersScreen.detailsKey(id)` | |
 | Edit | `PartnersScreen.editKey(id)` | Opens the dialog; shown with `manageSettings` |
 | The name, in the dialog | `PartnersScreen.partnerNameKey` | |
-| The login, in the dialog | `PartnersScreen.loginKey` | A `MemberPicker`: one choice for no login, `MemberPicker.optionKey('')`, and one for each person in the project, `MemberPicker.optionKey(userId)` |
+| The login, in the dialog | `PartnersScreen.loginKey` | A `MemberPicker`: one choice for no login, `MemberPicker.optionKey('')`, and one for each person in the project, `MemberPicker.optionKey(userId)`; the closed field shows the chosen one's name as `MemberPicker.optionKey(userId).label` |
 | What the login is for, in the dialog | `PartnersScreen.loginHintKey` | |
 | Save, in the dialog | `PartnersScreen.saveKey` | |
 | Why refused, in the dialog | `PartnersScreen.dialogMessageKey` | |

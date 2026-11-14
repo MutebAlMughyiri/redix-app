@@ -95,7 +95,7 @@ void main() {
       final api = FakeApi()..addProject('غصون 6', permissions: permissions);
       arrange(api);
       await pumpRedix(tester, api, stored: isSignedIn ? {'session': keptSession} : const {});
-      await act(tester, api, () async => GoRouter.of(tester.element(find.byType(Scaffold).first)).go(EntryLinkScreen.pathOf(projectId, entryId)));
+      await act(tester, api, () async => GoRouter.of(tester.element(find.byKey(isSignedIn ? ProjectsScreen.sharedSettingsKey : SignInScreen.usernameKey))).go(EntryLinkScreen.pathOf(projectId, entryId)));
       return api;
     }
 
@@ -164,7 +164,7 @@ void main() {
       await pumpRedix(tester, api, stored: {'session': keptSession});
       api.online = false;
 
-      await act(tester, api, () async => GoRouter.of(tester.element(find.byType(Scaffold).first)).go(EntryLinkScreen.pathOf('project-0', 'entry-0')));
+      await act(tester, api, () async => GoRouter.of(tester.element(find.byKey(ProjectsScreen.sharedSettingsKey))).go(EntryLinkScreen.pathOf('project-0', 'entry-0')));
 
       expect(find.byKey(EntryLinkScreen.notFoundKey), findsNothing);
       expect(find.byKey(ApiListBody.retryKey), findsOneWidget);
@@ -206,7 +206,7 @@ void main() {
 
         expect(tester.widget<Text>(find.byKey(EntryLinkScreen.notFoundKey)).data, 'en entries.notFound');
         expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsNothing);
-        expect(find.byType(BottomSheet), findsNothing);
+        expect(find.byKey(AddEntryScreen.statusKey), findsNothing);
       });
     }
   });

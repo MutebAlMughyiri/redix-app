@@ -79,8 +79,8 @@ void main() {
       await $.tapOn(CategoriesScreen.itemColumnsKey(bone.itemId));
       await $.reach($(ItemColumnsScreen.addKey));
       expect($.isEnabled(ItemColumnsScreen.addKey), isFalse);
-      expect($(keyStartingWith('columns.handle.')), findsNothing);
-      expect($(keyStartingWith('columns.edit.')), findsNothing);
+      expect($(keyedBy(ItemColumnsScreen.handleKey)), findsNothing);
+      expect($(keyedBy(ItemColumnsScreen.menuKey)), findsNothing);
     });
 
     phoneCase('payment methods offer nothing to change', ($) async {
@@ -90,7 +90,7 @@ void main() {
       await $.tapOn(HomeScreen.paymentMethodsKey(manager.projectId));
       await $.reach($(PaymentMethodsScreen.addKey));
       expect($.isEnabled(PaymentMethodsScreen.addKey), isFalse);
-      expect($(keyStartingWith('paymentMethods.menu.')), findsNothing);
+      expect($(keyedBy(PaymentMethodsScreen.menuKey)), findsNothing);
     });
 
     phoneCase('accounts offer nothing to change', ($) async {
@@ -111,7 +111,7 @@ void main() {
       await $.tapOn(HomeScreen.partnersKey(manager.projectId));
       await $.idShowing('partners.name.', 'متعب');
       expect($.isEnabled(PartnersScreen.addKey), isFalse);
-      expect($(keyStartingWith('partners.edit.')), findsNothing);
+      expect($(keyedBy(PartnersScreen.menuKey)), findsNothing);
     });
 
     phoneCase('suppliers offer nothing to change', ($) async {
@@ -121,7 +121,7 @@ void main() {
       await $.tapOn(HomeScreen.suppliersKey(manager.projectId));
       await $.reach($(SuppliersScreen.addKey));
       expect($.isEnabled(SuppliersScreen.addKey), isFalse);
-      expect($(keyStartingWith('suppliers.menu.')), findsNothing);
+      expect($(keyedBy(SuppliersScreen.menuKey)), findsNothing);
     });
 
     phoneCase('contracts offer nothing to change: a contract\'s ⋮ holds its files alone (Muteb, 12 Nov 2026)', ($) async {

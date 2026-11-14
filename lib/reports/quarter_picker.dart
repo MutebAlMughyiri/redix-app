@@ -7,6 +7,12 @@ import 'year_chips.dart';
 /// The first day of the quarter [date] falls in.
 DateTime quarterStartOf(DateTime date) => DateTime(date.year, (date.month - 1) ~/ 3 * 3 + 1);
 
+/// The first and the last day of the quarter [date] falls in (AC-32.2).
+(DateTime, DateTime) quarterOf(DateTime date) {
+  final start = quarterStartOf(date);
+  return (start, DateTime(start.year, start.month + 3, 0));
+}
+
 /// A quarter chosen by its year and its number, each as chips, from the year [firstYear] to this one.
 class QuarterPicker extends StatelessWidget {
   /// The picker showing [start], from [firstYear], answering [onChanged] with the first day of the quarter chosen.

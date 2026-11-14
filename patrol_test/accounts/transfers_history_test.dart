@@ -41,8 +41,21 @@ Future<void> onHistory(PatrolIntegrationTester $) async {
   await $.reach($(SearchIcons.searchKey));
 }
 
-/// Waits until a line of History says [text].
-Future<void> historySays(PatrolIntegrationTester $, String text) => $.until(() => find.text(text).evaluate().isNotEmpty);
+/// The id of the one line of the accounts' History of [person]'s project that [isLine] picks, as the API answers it to [person].
+Future<int> historyLine(Person person, bool Function(Map<String, dynamic> line) isLine) async => (await Given.history(person, 'accounts/history')).singleWhere(isLine)['id'] as int;
+
+/// The ids of every line of the accounts' History of [person]'s project.
+Future<List<int>> historyLines(Person person) async => [for (final line in await Given.history(person, 'accounts/history')) line['id'] as int];
+
+/// Waits until the History line [line] says [text].
+Future<void> historySays(PatrolIntegrationTester $, int line, String text) => $.says(AccountHistoryScreen.lineKey(line).title, text);
+
+/// History shows none of [lines].
+void showsNoneOf(PatrolIntegrationTester $, List<int> lines) {
+  for (final line in lines) {
+    expect($(AccountHistoryScreen.lineKey(line)), findsNothing);
+  }
+}
 
 void main() {
   phoneClass('Transfers, deleting and History on Accounts (redix-app #89)', () {
@@ -150,10 +163,10 @@ void main() {
       await Given.transferred(b, theirs, await Given.account(b), 100);
       await onAccounts($, a);
       await onHistory($);
-      await historySays($, $.words.historyTransfer.fill([formatMoney(400), aFirst, aSecond]));
-      await historySays($, $.words.historyCheck.fill([formatMoney(1000)]));
+      await historySays($, await historyLine(a, (line) => line['kind'] == 'transfer'), $.words.historyTransfer.fill([formatMoney(400), aFirst, aSecond]));
+      await historySays($, await historyLine(a, (line) => line['kind'] == 'check'), $.words.historyCheck.fill([formatMoney(1000)]));
       await $.picture('account-history');
-      expect(find.textContaining(bName), findsNothing);
+      showsNoneOf($, await historyLines(b));
     });
 
     phoneCase('H3: a person in two projects sees each project\'s lines only under it', ($) async {
@@ -167,8 +180,8 @@ void main() {
       await Given.joined(both, by: b);
       await onAccounts($, both);
       await onHistory($);
-      await historySays($, $.words.historyAccountCreated.fill([aName]));
-      expect(find.textContaining(bName), findsNothing);
+      await historySays($, await historyLine(a, (line) => line['account'] == aName), $.words.historyAccountCreated.fill([aName]));
+      showsNoneOf($, await historyLines(b));
       await $.back();
       await $.back();
       await $(HomeScreen.sharedSettingsKey(both.projectId)).tap();
@@ -176,8 +189,8 @@ void main() {
       await $.openProject(b.projectId);
       await $.tapOn(HomeScreen.accountsKey(b.projectId));
       await onHistory($);
-      await historySays($, $.words.historyAccountCreated.fill([bName]));
-      expect(find.textContaining(aName), findsNothing);
+      await historySays($, await historyLine(b, (line) => line['account'] == bName), $.words.historyAccountCreated.fill([bName]));
+      showsNoneOf($, await historyLines(a));
     });
 
     phoneCase('H7: a deleted account\'s lines stay in its project\'s History with its name', ($) async {
@@ -189,8 +202,8 @@ void main() {
       await $(ConfirmDialog.confirmKey).tap();
       await $.gone($(AccountsScreen.rowKey(spare)));
       await onHistory($);
-      await historySays($, $.words.historyAccountDeleted.fill([name]));
-      await historySays($, $.words.historyAccountCreated.fill([name]));
+      await historySays($, await historyLine(manager, (line) => line['kind'] == 'accountDeleted'), $.words.historyAccountDeleted.fill([name]));
+      await historySays($, await historyLine(manager, (line) => line['kind'] == 'accountCreated' && line['account'] == name), $.words.historyAccountCreated.fill([name]));
     });
 
     phoneCase('H9: a partner\'s money shows in History only to whoever sees all capital', ($) async {
@@ -200,14 +213,15 @@ void main() {
       final partner = await Given.partner(manager, 'هيثم');
       await Given.entriesApproved(manager, [await Given.partnerMoney(manager, partner, amount: 5000, accountId: account)]);
       final reader = await Given.member(manager);
+      final partnerMoney = await historyLine(manager, (line) => line['kind'] == 'entryIn' && line['entryKind'] == 'capitalIn');
       await onAccounts($, manager);
       await onHistory($);
-      await $.until(() => find.textContaining($.words.capitalContribution).evaluate().isNotEmpty);
+      await $.saysContaining(AccountHistoryScreen.lineKey(partnerMoney).title, $.words.capitalContribution);
       await $.startApp();
       await onAccounts($, reader);
       await onHistory($);
-      await historySays($, $.words.historyAccountCreated.fill([name]));
-      expect(find.textContaining($.words.capitalContribution), findsNothing);
+      await historySays($, await historyLine(reader, (line) => line['kind'] == 'accountCreated' && line['account'] == name), $.words.historyAccountCreated.fill([name]));
+      expect($(AccountHistoryScreen.lineKey(partnerMoney)), findsNothing);
     });
 
     phoneCase('redix-app #104: History asks the API for what was typed, and choosing an account under the arrow keeps it', ($) async {
@@ -219,20 +233,22 @@ void main() {
       await Given.funded(manager, first, 1000);
       await Given.transferred(manager, first, second, 100);
       await Given.account(manager, name: 'صندوق ${Given.unique()}');
+      final transferLine = await historyLine(manager, (line) => line['kind'] == 'transfer');
+      final firstAddedLine = await historyLine(manager, (line) => line['kind'] == 'accountCreated' && line['account'] == firstName);
+      final secondAddedLine = await historyLine(manager, (line) => line['kind'] == 'accountCreated' && line['account'] == secondName);
       await onAccounts($, manager);
       await onHistory($);
       final transfer = $.words.historyTransfer.fill([formatMoney(100), firstName, secondName]);
-      final firstAdded = $.words.historyAccountCreated.fill([firstName]);
-      await historySays($, firstAdded);
+      await historySays($, firstAddedLine, $.words.historyAccountCreated.fill([firstName]));
 
       await $.searchFor(secondName);
-      await historySays($, transfer);
-      await $.until(() => find.text(firstAdded).evaluate().isEmpty);
+      await historySays($, transferLine, transfer);
+      await $.gone($(AccountHistoryScreen.lineKey(firstAddedLine)));
 
       await $.chooseIn(AccountHistoryScreen.accountChoiceKey, AccountHistoryScreen.accountKey(first));
       await $.saysContaining(AccountHistoryScreen.accountChoiceKey.label, firstName);
-      await historySays($, transfer);
-      expect(find.text($.words.historyAccountCreated.fill([secondName])), findsNothing);
+      await historySays($, transferLine, transfer);
+      expect($(AccountHistoryScreen.lineKey(secondAddedLine)), findsNothing);
     });
 
     phoneCase('H10: What I did keeps the signed-in person\'s own lines', ($) async {
@@ -248,8 +264,8 @@ void main() {
       await onAccounts($, mover);
       await onHistory($);
       await $.filterBy(AccountHistoryScreen.mineKey);
-      await historySays($, $.words.historyTransfer.fill([formatMoney(100), firstName, secondName]));
-      expect(find.textContaining(formatMoney(50)), findsNothing);
+      await historySays($, await historyLine(manager, (line) => line['kind'] == 'transfer' && line['amount'] == 100), $.words.historyTransfer.fill([formatMoney(100), firstName, secondName]));
+      expect($(AccountHistoryScreen.lineKey(await historyLine(manager, (line) => line['kind'] == 'transfer' && line['amount'] == 50))), findsNothing);
     });
   });
 }

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/reports/summary.dart';
+import 'package:redix/reports/quarter_picker.dart';
 import 'package:redix/reports/vat_statement_screen.dart';
 import 'package:redix/accounts/accounts_screen.dart';
 import 'package:redix/approvals/approvals_screen.dart';
@@ -45,8 +46,8 @@ const _project = 'project-0';
 const _every = [...admin, ...managerAndFinance, 'removeApprovedEntries'];
 
 Step _tap(Finder Function(FakeApi api) target) => (tester, api, capture) async {
-  await bringIntoView(tester, target(api).last);
-  await act(tester, api, () => tester.tap(target(api).last));
+  await bringIntoView(tester, target(api));
+  await act(tester, api, () => tester.tap(target(api)));
 };
 
 /// Taps the widget keyed [key], swiping the home's Project settings to its page first when it is one of their buttons.
@@ -72,9 +73,6 @@ Finder Function(FakeApi api) _key(Key key) => (_) => find.byKey(key);
 /// The button keyed [key] in its working state: a screen's add button shows grayed without the permission rather than hidden (Muteb, 8 Nov 2026; issue #85), as do the
 /// reports' buttons, a menu's choices among them, and a contract's card (redix-api #131).
 Finder Function(FakeApi api) _enabled(Key key) => (_) => find.byWidgetPredicate((widget) => widget.key == key && works(widget));
-
-/// A report's file buttons that work: gray, never hidden, without «يُصدر التقارير» (redix-api #131).
-Finder _workingFiles(FakeApi api) => find.descendant(of: find.byType(ReportFileButtons), matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton && works(widget)));
 
 String _first(List<Map<String, Object>>? rows) => rows!.first['id']! as String;
 
@@ -247,14 +245,14 @@ final List<Gate> _gates = [
     permission: Permission.generateReports,
     arrange: _nothing,
     steps: [_openProject, (tester, api, capture) => openFromTheHome(tester, api, VatStatementScreen.pathOf(_project))],
-    control: _workingFiles,
+    control: _enabled(ReportFileButtons.buttonKey(VatStatementScreen.fileNameOf(quarterOf(DateTime.now())), ReportFileKind.excel)),
   ),
   (
     name: 'An item report\'s working files',
     permission: Permission.generateReports,
     arrange: (api) => api.summaryAnswer = _summaryWithAnItem,
     steps: [_openProject, _tapKey(HomeScreen.itemReportsKey(_project, SummarySide.expenses)), _tapKey(ItemReportsScreen.categoryKey('category-1')), _tapKey(ItemReportsScreen.itemKey('item-1'))],
-    control: _workingFiles,
+    control: _enabled(ReportFileButtons.buttonKey('البلاط', ReportFileKind.pdf)),
   ),
   (name: 'An enabled Issue a periodic report', permission: Permission.generateReports, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _enabled(ReportsScreen.issueKey)),
   (name: 'Approvals on the project card', permission: Permission.approveEntries, arrange: _nothing, steps: [_openProject, _swipeTo(HomeScreen.approvalsKey(_project))], control: _key(HomeScreen.approvalsKey(_project))),
@@ -294,7 +292,7 @@ final List<Gate> _gates = [
     arrange: (api) => api
       ..addPartner(_project, 'متعب')
       ..addMovement(),
-    steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project)), _tap((_) => find.text('متعب'))],
+    steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project)), _tap((api) => find.byKey(PartnersScreen.nameKey(_first(api.partners[_project]))))],
     control: _key(MovementsScreen.rowKey('movement-0').bar),
   ),
   (

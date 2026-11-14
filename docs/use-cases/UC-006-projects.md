@@ -12,6 +12,7 @@
 
 | Element | `Key` | Does |
 | --- | --- | --- |
+| What Settings shows | `SharedSettingsScreen.bodyKey` | Every part below, scrolled up and down |
 | Who is signed in | `SharedSettingsScreen.whoKey` | Their name over their username |
 | Switch project | `SharedSettingsScreen.switchProjectKey` | Goes to the list (UC-010) |
 | Default project | `SharedSettingsScreen.defaultProjectKey` | Chooses the project sign-in opens |
@@ -22,6 +23,7 @@ More info opens from a project's home (`HomeScreen.projectInfoKey`), for everyon
 
 | Element | `Key` | Does |
 | --- | --- | --- |
+| What More info shows | `ProjectInfoScreen.bodyKey` | Every part below, scrolled up and down |
 | Name | `ProjectInfoScreen.nameKey` | The project's name |
 | Rename | `ProjectInfoScreen.renameKey` | Active projects, with `manageProject`: asks for the name, starting from the current one (BR-38) |
 | Details | `ProjectInfoScreen.detailsKey` | The start date, and Read-only once finished |

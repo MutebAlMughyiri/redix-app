@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/attachments/attachment_screen.dart';
 import 'package:redix/documents/documents_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../support/given.dart';
@@ -54,7 +54,7 @@ void main() {
       await onDocuments($, manager);
       await fillDocument($, 'رخصة البناء', 'التراخيص');
       await $.pickFromThePhone(DocumentsScreen.fileKey, madeUpDocumentName, madeUpDocument);
-      await $(find.text(madeUpDocumentName)).waitUntilExists();
+      await $.says(DocumentsScreen.fileKey.label, madeUpDocumentName);
       await $(ChangeDialog.saveKey).tap();
       await $.idShowing('documents.document.', 'رخصة البناء');
       await $.reach($(DocumentsScreen.groupHeadingKey('التراخيص')));
@@ -65,10 +65,10 @@ void main() {
       await onDocuments($, manager);
       await fillDocument($, 'عقد الأرض', '');
       await $.pickFromThePhone(DocumentsScreen.fileKey, madeUpDocumentName, madeUpDocument);
-      await $(find.text(madeUpDocumentName)).waitUntilExists();
+      await $.says(DocumentsScreen.fileKey.label, madeUpDocumentName);
       await $(ChangeDialog.saveKey).tap();
       await $.idShowing('documents.document.', 'عقد الأرض');
-      expect($(keyStartingWith('documents.group.')), findsNothing);
+      expect($(keyedBy(DocumentsScreen.groupHeadingKey)), findsNothing);
     });
 
     phoneCase('redix-api #102, #119: a swipe removes one once confirmed in its row', ($) async {
@@ -76,7 +76,7 @@ void main() {
       final document = await Given.document(manager);
       await onDocuments($, manager);
       await $.swipeAway(DocumentsScreen.documentKey(document));
-      expect(find.byType(AlertDialog), findsNothing);
+      expect($(ConfirmDialog.dialogKey), findsNothing);
       await $.gone($(DocumentsScreen.documentKey(document)));
     });
 

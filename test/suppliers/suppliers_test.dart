@@ -4,6 +4,8 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/structure/item_picker.dart';
 import 'package:redix/suppliers/suppliers_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
+import 'package:redix/ui/messages.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
@@ -54,7 +56,8 @@ void main() {
 
     expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/suppliers');
     expect(opened.api.sentSettingsChanges.single.$2, {'name': 'شركة الأفق', 'vatNumber': '311111111111113'});
-    expect(find.text('شركة الأفق'), findsOneWidget);
+    final added = opened.api.suppliers['project-0']!.singleWhere((supplier) => supplier['name'] == 'شركة الأفق')['id']! as String;
+    expect(text(tester, SuppliersScreen.nameKey(added)), 'شركة الأفق');
     expect(find.byKey(SuppliersScreen.supplierNameKey), findsNothing);
   });
 
@@ -162,7 +165,7 @@ void main() {
     await openMenu(tester, opened.api, opened.approved);
     await act(tester, opened.api, () => tester.tap(find.byKey(SuppliersScreen.disableKey)));
 
-    expect(find.text('en suppliers.generalCashSupplier'), findsOneWidget);
+    expect(text(tester, messageKeyOf('suppliers.generalCashSupplier').label), 'en suppliers.generalCashSupplier');
     expect(text(tester, SuppliersScreen.detailsKey(opened.approved)), isNot(contains('en suppliers.disabled')));
   });
 

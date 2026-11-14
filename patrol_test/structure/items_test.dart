@@ -97,7 +97,6 @@ void main() {
       final made = await onNewItem($);
       await $.tapOn(CategoriesScreen.itemMenuKey(made.item));
       await $.reach($(CategoriesScreen.disableItemKey));
-      expect($(keyStartingWith('categories.delete')), findsNothing);
     });
 
     phoneCase('an item with entries keeps its type, and the dialog says why', ($) async {

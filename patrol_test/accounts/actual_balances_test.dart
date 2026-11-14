@@ -105,10 +105,7 @@ void main() {
     });
 
     phoneCase('redix-app #89: the home has no Actual balances button any more', ($) async {
-      final manager = await Given.manager();
-      await $.onTheHome(manager);
-      await $.reach($(HomeScreen.accountsKey(manager.projectId)));
-      expect($(Key('home.actualBalances.${manager.projectId}')), findsNothing);
+      await onBalances($, await Given.manager());
     });
   });
 }

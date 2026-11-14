@@ -11,6 +11,10 @@ import 'package:redix/home/home_screen.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/ui/messages.dart';
+import 'package:redix/ui/screen_title.dart';
+import 'package:redix/structure/item_column.dart';
 import 'package:redix/ui/api_list_body.dart';
 
 void main() {
@@ -38,6 +42,9 @@ void main() {
 
   String templateColumn(FakeApi api, int index) => api.columns[templatePath]![index]['id'] as String;
 
+  /// The id the API gave the column named [name] at [path].
+  String columnNamed(FakeApi api, String path, String name) => api.columns[path]!.singleWhere((column) => column['name'] == name)['id']! as String;
+
   Future<void> showTemplate(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.tap(find.byKey(ItemColumnsScreen.templateKey)));
 
   Future<void> addColumn(WidgetTester tester, FakeApi api, String name) => act(tester, api, () async {
@@ -58,8 +65,8 @@ void main() {
   testWidgets('it opens on this item, saying where the item sits and what it is', (tester) async {
     final opened = await openColumns(tester);
 
-    expect(find.text('en columns.title'), findsOneWidget);
-    expect(find.text('البلاط'), findsWidgets);
+    expect(text(tester, ScreenTitle.titleKey), 'en columns.title');
+    expect(text(tester, ScreenTitle.subjectKey), 'البلاط');
     expect(text(tester, ItemColumnsScreen.itemDetailsKey), 'التشطيب · en categories.typeBoth');
     expect(text(tester, ItemColumnsScreen.nameKey(opened.date)), 'التاريخ');
   });
@@ -90,11 +97,11 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.addKey)));
     await tester.enterText(find.byKey(ItemColumnsScreen.columnNameKey), 'رقم أمر الشراء');
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.dataTypeKey)));
-    await act(tester, opened.api, () => tester.tap(find.text('en columns.typeNumber').last));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.dataTypeOptionKey(ColumnDataType.number)).hitTestable()));
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.requiredKey)));
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-    expect(find.byType(ApplyToAllDialog), findsNothing);
+    expect(find.byKey(ApplyToAllDialog.dialogKey), findsNothing);
     expect(opened.api.sentStructureChanges.single.$1, itemPath);
     expect(opened.api.sentStructureChanges.single.$2, {
       'name': 'رقم أمر الشراء',
@@ -105,7 +112,7 @@ void main() {
       'isEntryField': false,
       'applyToAllItems': false,
     });
-    expect(find.text('رقم أمر الشراء'), findsOneWidget);
+    expect(text(tester, ItemColumnsScreen.nameKey(columnNamed(opened.api, itemPath, 'رقم أمر الشراء'))), 'رقم أمر الشراء');
   });
 
   testWidgets('a pick list sends its choices, one a line, and offers no file type', (tester) async {
@@ -115,8 +122,8 @@ void main() {
     expect(find.byKey(ItemColumnsScreen.choicesKey), findsNothing);
     await tester.enterText(find.byKey(ItemColumnsScreen.columnNameKey), 'اللون');
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.dataTypeKey)));
-    expect(find.text('en columns.typeFile'), findsNothing);
-    await act(tester, opened.api, () => tester.tap(find.text('en columns.typeList').last));
+    expect(find.byKey(ItemColumnsScreen.dataTypeOptionKey(ColumnDataType.file)), findsNothing);
+    await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.dataTypeOptionKey(ColumnDataType.list)).hitTestable()));
     await tester.enterText(find.byKey(ItemColumnsScreen.choicesKey), 'أبيض\nرمادي');
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
@@ -194,7 +201,7 @@ void main() {
 
     await swipeToRemove(tester, opened.api, ItemColumnsScreen.rowKey(opened.area));
 
-    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.byKey(ConfirmDialog.dialogKey), findsNothing);
 
     expect(opened.api.sentStructureChanges.single.$1, 'DELETE $itemPath/${opened.area}?applyToAllItems=false');
     expect(find.byKey(ItemColumnsScreen.nameKey(opened.area)), findsNothing);
@@ -206,7 +213,7 @@ void main() {
 
     await swipeToRemove(tester, opened.api, ItemColumnsScreen.rowKey(opened.unit));
 
-    expect(find.text('en columns.coreColumn'), findsOneWidget);
+    expect(text(tester, messageKeyOf('columns.coreColumn').label), 'en columns.coreColumn');
     expect(find.byKey(ItemColumnsScreen.nameKey(opened.unit)), findsOneWidget);
   });
 
@@ -215,7 +222,7 @@ void main() {
 
     await drag(tester, opened.api, ItemColumnsScreen.handleKey(opened.date), 300);
 
-    expect(find.byType(ApplyToAllDialog), findsNothing);
+    expect(find.byKey(ApplyToAllDialog.dialogKey), findsNothing);
     expect(opened.api.sentStructureChanges.single.$1, '$itemPath/reorder');
     expect((opened.api.sentStructureChanges.single.$2['ids'] as List<dynamic>).first, opened.unit);
     expect(tester.getTopLeft(find.byKey(ItemColumnsScreen.rowKey(opened.unit))).dy, lessThan(tester.getTopLeft(find.byKey(ItemColumnsScreen.rowKey(opened.date))).dy));
@@ -225,11 +232,11 @@ void main() {
     final opened = await openColumns(tester);
 
     await showTemplate(tester, opened.api);
-    expect(find.text('تاريخ القالب'), findsOneWidget);
-    expect(find.text('التاريخ'), findsNothing);
+    expect(text(tester, ItemColumnsScreen.nameKey(templateColumn(opened.api, 0))), 'تاريخ القالب');
+    expect(find.byKey(ItemColumnsScreen.nameKey(opened.date)), findsNothing);
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ItemColumnsScreen.thisItemKey)));
-    expect(find.text('التاريخ'), findsOneWidget);
+    expect(text(tester, ItemColumnsScreen.nameKey(opened.date)), 'التاريخ');
   });
 
   group('AC-41.3: a change to the default template', () {
@@ -238,7 +245,7 @@ void main() {
       await showTemplate(tester, opened.api);
 
       await addColumn(tester, opened.api, 'رقم أمر الشراء');
-      expect(find.byType(ApplyToAllDialog), findsOneWidget);
+      expect(find.byKey(ApplyToAllDialog.dialogKey), findsOneWidget);
       expect(text(tester, ApplyToAllDialog.explainKey), 'en columns.applyExplain');
       expect(opened.api.sentStructureChanges, isEmpty);
 
@@ -246,7 +253,7 @@ void main() {
 
       expect(opened.api.sentStructureChanges.single.$1, templatePath);
       expect(opened.api.sentStructureChanges.single.$2['applyToAllItems'], isFalse);
-      expect(find.text('رقم أمر الشراء'), findsOneWidget);
+      expect(text(tester, ItemColumnsScreen.nameKey(columnNamed(opened.api, templatePath, 'رقم أمر الشراء'))), 'رقم أمر الشراء');
     });
 
     testWidgets('adding with Apply to all items says so', (tester) async {

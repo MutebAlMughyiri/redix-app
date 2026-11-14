@@ -112,7 +112,6 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
     ];
     final pages = [for (var start = 0; start < buttons.length; start += ProjectSettingsCard.perPage) buttons.skip(start).take(ProjectSettingsCard.perPage).toList()];
     return Card.outlined(
-      key: HomeScreen.cardKey(id),
       margin: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

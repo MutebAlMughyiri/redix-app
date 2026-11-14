@@ -39,9 +39,9 @@ void main() {
     });
 
     expect(tester.getTopLeft(find.byKey(ApprovalsScreen.cardKey('entry-0'))).dy, lessThan(tester.getTopLeft(find.byKey(ApprovalsScreen.cardKey('entry-1'))).dy));
-    expect(find.text('شركة البواني'), findsNWidgets(2));
-    expect(find.text('1,150.00'), findsOneWidget);
-    expect(find.text('شراء من السوق'), findsOneWidget);
+    expect((text(tester, ApprovalsScreen.supplierKey('entry-0')), text(tester, ApprovalsScreen.supplierKey('entry-1'))), ('شركة البواني', 'شركة البواني'));
+    expect(text(tester, ApprovalsScreen.amountKey('entry-0')), '1,150.00');
+    expect(text(tester, ApprovalsScreen.descriptionKey('entry-1')), 'شراء من السوق');
     expect(find.byKey(ApprovalsScreen.fileKey('entry-0')), findsOneWidget);
     expect(find.byKey(ApprovalsScreen.fileKey('entry-1')), findsNothing);
   });
@@ -49,7 +49,7 @@ void main() {
   testWidgets('nothing waiting says so', (tester) async {
     await openInbox(tester, (_) {});
 
-    expect(find.text('en approvals.empty'), findsOneWidget);
+    expect(text(tester, ApiListBody.emptyKey), 'en approvals.empty');
   });
 
   testWidgets('a filter shows purchases or contractor payments alone', (tester) async {
@@ -152,7 +152,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.selectKey('entry-0'))));
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.selectKey('entry-2'))));
-    expect(find.text('en approvals.approveSelected · 2'), findsOneWidget);
+    expect(text(tester, ApprovalsScreen.approveSelectedKey.label), 'en approvals.approveSelected · 2');
 
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.approveSelectedKey)));
 
@@ -214,7 +214,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.fileKey('entry-0'))));
 
     expect(find.byKey(AttachmentScreen.pictureKey), findsOneWidget);
-    expect(find.byType(InteractiveViewer), findsOneWidget);
+    expect(tester.widget<InteractiveViewer>(find.byKey(AttachmentScreen.zoomKey)).maxScale, greaterThan(1));
   });
 
   testWidgets('a PDF is handed to the phone by its own name, and a file that cannot be read says so', (tester) async {
@@ -229,7 +229,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(AttachmentScreen.openFileKey)));
     expect(capture.sharedOut.single, ('bill-2617.pdf', 'application/pdf'));
 
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     await act(tester, api, () => tester.tap(find.byKey(ApprovalsScreen.fileKey('entry-1'))));
     expect(find.byKey(AttachmentScreen.failedKey), findsOneWidget);
   });

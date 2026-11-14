@@ -7,6 +7,8 @@ import 'package:redix/entries/table_picker.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/ui/messages.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../app_harness.dart';
 
@@ -72,7 +74,7 @@ void main() {
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     expect(opened.api.sentEntries.single['amount'], 5000);
-    expect(find.text('en contractorPayments.savedOverrun'), findsOneWidget);
+    expect(shown(tester, messageKeyOf('contractorPayments.savedOverrun').label), 'en contractorPayments.savedOverrun');
   });
 
   testWidgets('what waits for approval shows beside what was paid, and counts in what remains', (tester) async {
@@ -210,7 +212,7 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.sendKey);
 
-    expect(find.text('en expenses.requiredColumnMissing'), findsWidgets);
+    expect(shown(tester, AddEntryScreen.messageKey), 'en expenses.requiredColumnMissing');
   });
 
   testWidgets('who holds no recordEntries has no way in', (tester) async {

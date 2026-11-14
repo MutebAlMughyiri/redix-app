@@ -9,6 +9,8 @@ import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/confirm_dialog.dart';
+import 'package:redix/ui/messages.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -50,7 +52,8 @@ void main() {
 
     expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/payment-methods');
     expect(opened.api.sentSettingsChanges.single.$2, {'name': 'مدى'});
-    expect(find.text('مدى'), findsOneWidget);
+    final added = opened.api.paymentMethods['project-0']!.singleWhere((method) => method['name'] == 'مدى')['id']! as String;
+    expect(text(tester, PaymentMethodsScreen.nameKey(added)), 'مدى');
   });
 
   testWidgets('a refused name stays in the dialog with its reason', (tester) async {
@@ -92,7 +95,7 @@ void main() {
 
     await swipeToRemove(tester, opened.api, PaymentMethodsScreen.rowKey(opened.card));
 
-    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.byKey(ConfirmDialog.dialogKey), findsNothing);
 
     expect(opened.api.sentSettingsChanges.last.$1, 'DELETE /projects/project-0/payment-methods/${opened.card}');
     expect(find.byKey(PaymentMethodsScreen.nameKey(opened.card)), findsNothing);
@@ -104,7 +107,7 @@ void main() {
 
     await swipeToRemove(tester, opened.api, PaymentMethodsScreen.rowKey(opened.card));
 
-    expect(find.text('en paymentMethods.paymentMethodUsed'), findsOneWidget);
+    expect(text(tester, messageKeyOf('paymentMethods.paymentMethodUsed').label), 'en paymentMethods.paymentMethodUsed');
     expect(find.byKey(PaymentMethodsScreen.nameKey(opened.card)), findsOneWidget);
   });
 
@@ -114,7 +117,7 @@ void main() {
 
     await chooseInMenu(tester, opened.api, opened.card, PaymentMethodsScreen.disableKey);
 
-    expect(find.text('en paymentMethods.projectFinished'), findsOneWidget);
+    expect(text(tester, messageKeyOf('paymentMethods.projectFinished').label), 'en paymentMethods.projectFinished');
   });
 
   testWidgets('a finished project shows its methods with nothing to change', (tester) async {
@@ -139,7 +142,7 @@ void main() {
     final opened = await openMethods(tester);
     opened.api.online = false;
 
-    await act(tester, opened.api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, opened.api, () => tester.pageBack());
     await scrollAndTap(tester, opened.api, HomeScreen.paymentMethodsKey('project-0'));
 
     expect(find.byKey(ApiListBody.messageKey), findsNothing);

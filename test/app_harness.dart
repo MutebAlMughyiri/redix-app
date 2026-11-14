@@ -441,6 +441,9 @@ class FakeApi {
   /// Where each file was sent: an entry's file, or a document's.
   final sentAttachmentPaths = <String>[];
 
+  /// The id the API gave each file it kept, in the order they were sent.
+  final keptAttachmentIds = <String>[];
+
   /// The status and problem code the API answers to a file; 2xx keeps it. An empty code sends none.
   var attachmentAnswer = (status: 201, code: '');
 
@@ -1906,7 +1909,9 @@ class FakeApi {
       if (attachmentAnswer.status >= 300) {
         return _json({if (attachmentAnswer.code.isNotEmpty) 'code': attachmentAnswer.code}, attachmentAnswer.status);
       }
-      return _json({'id': 'attachment-${_nextStructureId++}', 'fileName': RegExp('filename="([^"]*)"').firstMatch(latin1.decode(request.bodyBytes))!.group(1)!}, attachmentAnswer.status);
+      final id = 'attachment-${_nextStructureId++}';
+      keptAttachmentIds.add(id);
+      return _json({'id': id, 'fileName': RegExp('filename="([^"]*)"').firstMatch(latin1.decode(request.bodyBytes))!.group(1)!}, attachmentAnswer.status);
     }
     if (segments.length >= 3 && segments[2] == 'members') {
       return _json(members, 200);
@@ -1993,6 +1998,16 @@ Future<void> _passThrough(WidgetTester tester, FakeApi api, List<AppLifecycleSta
   }
 });
 
+/// Whether what holds the focus, the field the keyboard types into, sits inside the element keyed [key].
+bool holdsFocus(Key key) {
+  var inside = false;
+  FocusManager.instance.primaryFocus?.context?.visitAncestorElements((element) => !(inside = element.widget.key == key));
+  return inside;
+}
+
+/// True when the element keyed [key] sits in its screen's title bar: within the height the screen's app bar takes from the top.
+bool isInTitleBar(WidgetTester tester, Key key) => tester.getRect(find.byKey(key)).bottom <= Scaffold.of(tester.element(find.byKey(key))).appBarMaxHeight!;
+
 /// True when the button keyed [key] works; a screen's add button shows grayed without the permission rather than hidden (issue #85).
 bool isEnabled(WidgetTester tester, Key key) => works(tester.widget(find.byKey(key)));
 
@@ -2010,8 +2025,20 @@ Future<void> openProject(WidgetTester tester, FakeApi api, {InvoiceCapture? capt
   await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
 }
 
+/// Every widget keyed by [keyOf] for any id, such as the rows of a list: the widgets whose key starts as [keyOf] keys an empty id.
+Finder keyedBy(Key Function(String id) keyOf) {
+  final start = (keyOf('') as ValueKey<String>).value;
+  return find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith(start));
+}
+
+/// The id in the key of each widget keyed by [keyOf], in the order they show.
+List<String> idsKeyedBy(Key Function(String id) keyOf) {
+  final start = (keyOf('') as ValueKey<String>).value;
+  return [for (final element in keyedBy(keyOf).evaluate()) (element.widget.key! as ValueKey<String>).value.substring(start.length)];
+}
+
 /// The pages of the home's Project settings, four buttons each (Muteb, 11 Nov 2026).
-final projectSettingPages = find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith('home.settingsPages.'));
+final projectSettingPages = keyedBy(HomeScreen.settingsPagesKey);
 
 /// Swipes the home's Project settings one page on, as a person does: toward the start of the reading line, so in Arabic the next page comes from the left; back a page
 /// when [back].
@@ -2050,8 +2077,8 @@ void expectErrorAbove(WidgetTester tester, Key errorKey, Key fieldKey) {
 
 /// Opens the screen at [path] from the open project's home, as a Project settings button would, for a screen whose button is grayed until a later release while its
 /// work stays (Muteb, 12 Nov 2026): the VAT refund.
-Future<void> openFromTheHome(WidgetTester tester, FakeApi api, String path) {
-  final card = find.byType(ProjectSettingsCard);
+Future<void> openFromTheHome(WidgetTester tester, FakeApi api, String path, {String projectId = 'project-0'}) {
+  final card = find.byKey(HomeScreen.cardKey(projectId));
   final project = tester.widget<ProjectSettingsCard>(card).project;
   return act(tester, api, () async => unawaited(GoRouter.of(tester.element(card)).push(path, extra: project)));
 }
@@ -2063,8 +2090,8 @@ Future<void> scrollAndTap(WidgetTester tester, FakeApi api, Key key) async {
   await act(tester, api, () => tester.tap(find.byKey(key)));
 }
 
-/// What scrolls a list's rows, as opposed to the search line over it, whose field scrolls its own text (redix-app #104).
-final listRows = find.descendant(of: find.byKey(ApiListBody.rowsKey), matching: find.byType(Scrollable)).first;
+/// What is dragged to scroll a list's rows, as opposed to the search line over it, whose field scrolls its own text (redix-app #104).
+final listRows = find.byKey(ApiListBody.rowsKey);
 
 /// Opens a list's filter line from the title bar's filter icon (redix-app #104, version 3); nothing when it shows already.
 Future<void> openFilters(WidgetTester tester, FakeApi api) async {
@@ -2083,7 +2110,7 @@ Future<void> searchFor(WidgetTester tester, FakeApi api, String typed) async {
     await act(tester, api, () => tester.tap(find.byKey(SearchIcons.searchKey)));
   }
   await act(tester, api, () async {
-    await tester.enterText(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(TextField)), typed);
+    await tester.enterText(find.byKey(SearchLine.searchKey), typed);
     await tester.pump(SearchLine.apiPause);
   });
 }
@@ -2116,13 +2143,17 @@ Future<void> swipeToRemove(WidgetTester tester, FakeApi api, Key rowKey) async {
 Future<void> openProjectInfo(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) =>
     scrollAndTap(tester, api, HomeScreen.projectInfoKey(projectId));
 
-/// Taps [finder] and lets the app run half a second, with its requests reaching [api], without waiting for it to settle: a screen shows a spinner, which never settles,
-/// while [api] holds an answer back.
-Future<void> tapWhileWaiting(WidgetTester tester, FakeApi api, Finder finder) => http.runWithClient(() async {
-  await tester.tap(finder);
+/// Runs [action], a tap or going back, and lets the app run half a second, with its requests reaching [api], without waiting for it to settle: a screen shows a spinner,
+/// which never settles, while [api] holds an answer back.
+Future<void> actWhileWaiting(WidgetTester tester, FakeApi api, Future<void> Function() action) => http.runWithClient(() async {
+  await action();
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 500));
 }, () => api.client);
+
+/// Goes back with the phone's own back, as a person does in any language: it closes what is open, a sheet or a screen. tester.pageBack() taps the title bar's arrow,
+/// which it finds by its English tooltip alone.
+Future<void> pressBack(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.binding.handlePopRoute());
 
 /// Runs [action] and lets the app settle, with the app's requests reaching [api].
 Future<void> act(WidgetTester tester, FakeApi api, Future<void> Function() action) => http.runWithClient(() async {

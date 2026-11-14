@@ -30,6 +30,9 @@ class VatStatementScreen extends StatefulWidget {
   /// The address of the screen for the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId/reports/vat';
 
+  /// The name the statement gives its files for [period], from its first to its last day (AC-32.2, D20).
+  static String fileNameOf((DateTime, DateTime) period) => 'vat-${apiDate(period.$1)}-${apiDate(period.$2)}';
+
   /// The choice of a half-year.
   static const halfYearKey = Key('vat.halfYear');
 
@@ -66,7 +69,7 @@ class _VatStatementScreenState extends State<VatStatementScreen> {
   var _to = DateTime.now();
 
   (DateTime, DateTime) get _period => switch (_mode) {
-    _Mode.quarter => (_quarter, DateTime(_quarter.year, _quarter.month + 3, 0)),
+    _Mode.quarter => quarterOf(_quarter),
     _Mode.halfYear => (DateTime(_quarter.year, _secondHalf ? 7 : 1), DateTime(_quarter.year, _secondHalf ? 12 : 6, _secondHalf ? 31 : 30)),
     _Mode.custom => (_from, _to),
   };
@@ -82,9 +85,9 @@ class _VatStatementScreenState extends State<VatStatementScreen> {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    final (first, last) = _period;
-    final from = apiDate(first);
-    final to = apiDate(last);
+    final period = _period;
+    final from = apiDate(period.$1);
+    final to = apiDate(period.$2);
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.vatTitle, subject: widget.project.name)),
       body: ListView(
@@ -138,7 +141,7 @@ class _VatStatementScreenState extends State<VatStatementScreen> {
           ReportFileButtons(
             files: widget.files,
             address: '/projects/${widget.project.id}/vat-statement?from=$from&to=$to',
-            name: 'vat-$from-$to',
+            name: VatStatementScreen.fileNameOf(period),
             mayTake: widget.project.mayTakeReportFiles,
             kinds: const [ReportFileKind.excel],
           ),

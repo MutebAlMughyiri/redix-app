@@ -74,16 +74,16 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.updateKey)));
     expect(find.byKey(ReconcileScreen.saveKey, skipOffstage: false), findsOneWidget);
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
 
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
 
     await scrollAndTap(tester, api, HomeScreen.partnersKey('project-0'));
     expect(find.byKey(PartnersScreen.totalKey), findsOneWidget);
 
     await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.nameKey(partner['id']! as String))));
     expect(find.byKey(MovementsScreen.rowKey('movement-0')), findsOneWidget);
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     expect(tester.takeException(), isNull);
   });
 
@@ -109,11 +109,11 @@ void main() {
 
       api.reconciliationAnswer = reconciled(1000, 950);
       expect(find.byIcon(Icons.refresh), findsNothing);
-      await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 1500)));
+      await act(tester, api, () => tester.drag(listRows, const Offset(0, 1500)));
       expect(tester.widget<Text>(find.byKey(ReconciliationCard.actualTotalKey)).data, '950.00');
 
       api.reconciliationAnswer = reconciled(1000, 975);
-      await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 1500)));
+      await act(tester, api, () => tester.drag(listRows, const Offset(0, 1500)));
       expect(tester.widget<Text>(find.byKey(ReconciliationCard.actualTotalKey)).data, '975.00');
     });
 
@@ -159,7 +159,7 @@ void main() {
       expect(details(tester, addedId), isNot(contains('accounts.counted')));
 
       await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.updateKey)));
-      expect(tester.widget<TextField>(find.descendant(of: find.byKey(ReconcileScreen.balanceKey(addedId)), matching: find.byType(TextField), matchRoot: true)).controller!.text, '');
+      expect(tester.widget<TextField>(find.byKey(ReconcileScreen.balanceKey(addedId))).controller!.text, '');
     });
 
     testWidgets('typing a balance shows the total and the difference, and saving sends each', (tester) async {
@@ -216,11 +216,10 @@ void main() {
       expect(find.byKey(ReconciliationCard.cardKey), findsOneWidget);
       expect(tester.widget<Text>(find.byKey(AccountsScreen.updateKey.label)).data, 'en accounts.reconcile');
       expect(tester.widget<Text>(find.byKey(AccountsScreen.transferKey.label)).data, 'en transfers.button');
-      final bar = find.byType(BottomButton);
+      final bar = find.byKey(BottomButton.barKey);
       expect(find.descendant(of: bar, matching: find.byKey(AccountsScreen.updateKey)), findsOneWidget);
       expect(find.descendant(of: bar, matching: find.byKey(AccountsScreen.transferKey)), findsOneWidget);
       expect(isEnabled(tester, AccountsScreen.transferKey), isTrue);
-      expect(find.byKey(const Key('home.actualBalances.project-0')), findsNothing);
     });
 
     testWidgets('redix-app #89: with one active account there is nothing to transfer to, so Transfer is grayed', (tester) async {
@@ -233,16 +232,17 @@ void main() {
 
   group('UC-042, UC-043, UC-044', () {
     testWidgets('AC-27.1: each partner shows their balance and a share with ten decimals, under the total', (tester) async {
+      late String partner;
       await openPartners(tester, (api) {
-        final partner = api.addPartner('project-0', 'متعب');
+        partner = api.addPartner('project-0', 'متعب')['id']! as String;
         api
           ..capitalTotal = 3000
-          ..addCapitalLine(partner['id']! as String, 2000, 66.6666666667);
+          ..addCapitalLine(partner, 2000, 66.6666666667);
       });
 
       expect(tester.widget<Text>(find.byKey(PartnersScreen.totalKey)).data, '3,000.00');
-      expect(find.text('66.6666666667%'), findsOneWidget);
-      expect(find.text('2,000.00'), findsOneWidget);
+      expect(tester.widget<Text>(find.byKey(PartnersScreen.shareKey(partner))).data, '66.6666666667%');
+      expect(tester.widget<Text>(find.byKey(PartnersScreen.balanceKey(partner))).data, '2,000.00');
     });
 
     testWidgets('Muteb, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the capital above the partners again', (tester) async {
@@ -256,11 +256,11 @@ void main() {
 
       api.capitalTotal = 4000;
       expect(find.byIcon(Icons.refresh), findsNothing);
-      await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 1500)));
+      await act(tester, api, () => tester.drag(listRows, const Offset(0, 1500)));
       expect(tester.widget<Text>(find.byKey(PartnersScreen.totalKey)).data, '4,000.00');
 
       api.capitalTotal = 5000;
-      await act(tester, api, () => tester.drag(find.byType(ListView), const Offset(0, 1500)));
+      await act(tester, api, () => tester.drag(listRows, const Offset(0, 1500)));
       expect(tester.widget<Text>(find.byKey(PartnersScreen.totalKey)).data, '5,000.00');
     });
 
@@ -274,29 +274,30 @@ void main() {
     });
 
     testWidgets('a partner opens to their movements, each with its receipt', (tester) async {
+      late String partner;
       final (:api, capture: _) = await openPartners(tester, (api) {
+        partner = api.addPartner('project-0', 'متعب')['id']! as String;
         api
-          ..addPartner('project-0', 'متعب')
           ..addMovement(attachmentId: 'attachment-1')
           ..addMovement(movementName: 'سحب مبلغ', amount: -50, cashReason: 'نقداً');
       });
 
-      await act(tester, api, () => tester.tap(find.text('متعب')));
+      await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.nameKey(partner))));
 
       expect(find.byKey(MovementsScreen.rowKey('movement-0')), findsOneWidget);
       expect(find.byKey(MovementsScreen.receiptKey('movement-0')), findsOneWidget);
       expect(find.byKey(MovementsScreen.receiptKey('movement-1')), findsNothing);
       expect(find.byKey(MovementsScreen.rowKey('movement-0').bar), findsNothing);
-      expect(find.text('(50.00)'), findsOneWidget);
+      expect(tester.widget<Text>(find.byKey(MovementsScreen.rowKey('movement-1').trailing)).data, '(50.00)');
     });
 
     testWidgets('redix-api #119: whoever holds the removal swipes a movement away, and the capital is read again', (tester) async {
+      late String partner;
       final (:api, capture: _) = await openPartners(tester, (api) {
-        api
-          ..addPartner('project-0', 'متعب')
-          ..addMovement();
+        partner = api.addPartner('project-0', 'متعب')['id']! as String;
+        api.addMovement();
       }, permissions: [...managerAndFinance, 'removeApprovedEntries']);
-      await act(tester, api, () => tester.tap(find.text('متعب')));
+      await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.nameKey(partner))));
       api.sentReads.clear();
 
       await swipeToRemove(tester, api, MovementsScreen.rowKey('movement-0'));

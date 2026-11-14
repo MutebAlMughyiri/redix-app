@@ -103,7 +103,7 @@ void main() {
     testWidgets('#85: ${action.name} is the one bottom button, full width, as إضافة قيد is', (tester) async {
       await open(tester, action);
 
-      final button = find.descendant(of: find.byType(BottomButton), matching: find.byKey(action.key));
+      final button = find.descendant(of: find.byKey(BottomButton.barKey), matching: find.byKey(action.key));
       expect(isEnabled(tester, action.key), isTrue);
       expect(tester.getSize(button).width, 900 - 16);
       expect(tester.widget<Icon>(find.byKey(action.key.icon)).icon, action.icon);
@@ -140,7 +140,7 @@ void main() {
       icon: Icons.sync_alt,
     ));
 
-    final bar = find.byType(BottomButton);
+    final bar = find.byKey(BottomButton.barKey);
     expect(bar, findsOneWidget);
     for (final key in [AccountsScreen.transferKey, AccountsScreen.updateKey]) {
       expect(isEnabled(tester, key), isTrue);
@@ -153,11 +153,11 @@ void main() {
     testWidgets('redix-app #106 R1, R3: ${action.name} adds from a + in the title bar that says what it adds, and has no bottom button', (tester) async {
       await open(tester, action);
 
-      expect(find.descendant(of: find.byType(AppBar), matching: find.byKey(action.key)), findsOneWidget);
+      expect(isInTitleBar(tester, action.key), isTrue);
       expect(tester.widget<Icon>(find.byKey(action.key.icon)).icon, Icons.add);
       expect(tester.widget<IconButton>(find.byKey(action.key)).tooltip, tooltip);
       expect(isEnabled(tester, action.key), isTrue);
-      expect(find.byType(BottomButton), findsNothing);
+      expect(find.byKey(BottomButton.barKey), findsNothing);
     });
 
     if (permission != null) {
@@ -184,12 +184,12 @@ void main() {
     await tester.pumpAndSettle();
     await scrollAndTap(tester, api, HomeScreen.suppliersKey(_project));
 
-    await tester.scrollUntilVisible(find.byKey(SuppliersScreen.rowKey(last)), 200, scrollable: listRows);
+    await tester.dragUntilVisible(find.byKey(SuppliersScreen.rowKey(last)), listRows, const Offset(0, -200));
     await tester.pumpAndSettle();
     await tester.drag(listRows, const Offset(0, -400));
     await tester.pumpAndSettle();
 
-    final buttonTop = tester.getTopLeft(find.byType(BottomButton)).dy;
+    final buttonTop = tester.getTopLeft(find.byKey(BottomButton.barKey)).dy;
     expect(tester.getBottomLeft(find.byKey(SuppliersScreen.rowKey(last))).dy, lessThanOrEqualTo(buttonTop));
   });
 }

@@ -39,7 +39,8 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(SearchIcons.searchKey)));
 
     expect(find.byKey(SearchLine.searchKey), findsOneWidget);
-    expect(tester.widget<EditableText>(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(EditableText))).focusNode.hasFocus, isTrue);
+    expect(tester.widget<SearchBar>(find.byKey(SearchLine.searchKey)).autoFocus, isTrue);
+    expect(holdsFocus(SearchLine.searchKey), isTrue, reason: 'the line holds the focus, ready to type');
     await searchFor(tester, api, 'الافق');
     expect(find.byKey(SuppliersScreen.rowKey(palm)), findsNothing);
 
@@ -76,7 +77,7 @@ void main() {
     final (api, horizon, palm) = await onSuppliers(tester);
     await act(tester, api, () => tester.tap(find.byKey(SearchIcons.searchKey)));
 
-    await tester.enterText(find.descendant(of: find.byKey(SearchLine.searchKey), matching: find.byType(TextField)), 'الافق');
+    await tester.enterText(find.byKey(SearchLine.searchKey), 'الافق');
     await tester.pump();
 
     expect(find.byKey(SuppliersScreen.rowKey(horizon)), findsOneWidget);
@@ -134,7 +135,7 @@ void main() {
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
     final handle = find.byKey(CategoriesScreen.categoryHandleKey(finishingId));
-    bool drags() => tester.widget<ReorderableDragStartListener>(find.descendant(of: handle, matching: find.byType(ReorderableDragStartListener))).enabled;
+    bool drags() => tester.widget<ReorderableDragStartListener>(find.byKey(CategoriesScreen.categoryHandleKey(finishingId).body)).enabled;
 
     expect(drags(), isTrue);
 

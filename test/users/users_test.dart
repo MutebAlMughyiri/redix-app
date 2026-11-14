@@ -9,6 +9,7 @@ import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/messages.dart';
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/screen_title.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -44,8 +45,8 @@ void main() {
   testWidgets('the title names the project, and a row in it shows the roles alone', (tester) async {
     await openProjectUsers(tester);
 
-    expect(find.text('en users.title'), findsOneWidget);
-    expect(find.text('غصون 6'), findsOneWidget);
+    expect(text(tester, ScreenTitle.titleKey), 'en users.title');
+    expect(text(tester, ScreenTitle.subjectKey), 'غصون 6');
     expect(text(tester, UsersScreen.permissionsLineKey('user-0')), 'en permissions.count');
     expect(text(tester, UsersScreen.permissionsLineKey('user-1')), 'en permissions.count');
   });

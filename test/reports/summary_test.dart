@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/contracts/contracts_screen.dart';
 import 'package:redix/format/number_format.dart';
 import 'package:redix/home/summary_card.dart';
@@ -13,6 +12,7 @@ import 'package:redix/reports/summary.dart';
 import 'package:redix/reports/item_reports_screen.dart';
 import 'package:redix/reports/report_files.dart';
 
+import 'package:redix/ui/screen_title.dart';
 import '../app_harness.dart';
 
 void main() {
@@ -85,12 +85,12 @@ void main() {
   testWidgets('what waits opens the inbox, and coming back reads the figures again', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures(pendingCount: 6));
 
-    expect(find.text('en summary.pending'.replaceFirst('{0}', '6')), findsOneWidget);
+    expect(text(tester, SummaryCard.pendingKey.title), 'en summary.pending'.replaceFirst('{0}', '6'));
     await act(tester, api, () => tester.tap(find.byKey(SummaryCard.pendingKey)));
-    expect(find.byType(ApprovalsScreen), findsOneWidget);
+    expect(text(tester, ScreenTitle.titleKey), 'en approvals.title');
 
     api.summaryAnswer = figures(surplus: 2500);
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
 
     expect(tester.widget<Text>(find.byKey(SummaryCard.surplusKey)).data, '2,500.00');
   });
@@ -103,7 +103,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(SummaryCard.pendingKey)));
 
     api.entryRows.single['status'] = 'approved';
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
 
     expect(frameOf(tester, 'entry-0'), AppColor.frame);
   });
@@ -116,7 +116,7 @@ void main() {
 
     api.entryRows.single['status'] = 'approved';
     expect(find.byIcon(Icons.refresh), findsNothing);
-    await act(tester, api, () => tester.drag(find.byType(ListView).first, const Offset(0, 1500)));
+    await act(tester, api, () => tester.drag(listRows, const Offset(0, 1500)));
 
     expect(frameOf(tester, 'entry-0'), AppColor.frame);
   });
@@ -157,9 +157,9 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(SummaryCard.categoryKey('category-1'))));
 
-    expect(find.text('التشطيب'), findsOneWidget);
+    expect(text(tester, SummaryCard.categoryKey('category-1').title), 'التشطيب');
     expect(find.byKey(ItemReportsScreen.itemKey('item-1')), findsNothing);
-    expect(find.byType(ItemReportScreen), findsNothing);
+    expect(find.byKey(ItemReportScreen.totalKey), findsNothing);
     expect(text(tester, HomeScreen.itemReportsKey('project-0', SummarySide.expenses).label), 'en summary.expenses');
     expect(text(tester, HomeScreen.itemReportsKey('project-0', SummarySide.revenue).label), 'en summary.revenue');
   });
@@ -168,15 +168,15 @@ void main() {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
     await openSide(tester, api, SummarySide.expenses);
 
-    expect(find.text('en summary.expenses'), findsOneWidget);
+    expect(text(tester, ScreenTitle.titleKey), 'en summary.expenses');
     expect(find.byType(SegmentedButton<SummarySide>), findsNothing);
     expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsOneWidget);
     expect(find.byKey(ItemReportsScreen.categoryKey('category-9')), findsNothing);
 
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     await openSide(tester, api, SummarySide.revenue);
 
-    expect(find.text('en summary.revenue'), findsOneWidget);
+    expect(text(tester, ScreenTitle.titleKey), 'en summary.revenue');
     expect(find.byKey(ItemReportsScreen.categoryKey('category-9')), findsOneWidget);
     expect(find.byKey(ItemReportsScreen.categoryKey('category-1')), findsNothing);
   });
@@ -201,7 +201,7 @@ void main() {
     expect(text(tester, ItemReportsScreen.itemKey('item-capital').title), 'رأس المال');
     expect(text(tester, ItemReportsScreen.itemKey('item-capital').trailing), formatMoney(4000));
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-capital'))));
-    expect(find.byType(ItemReportScreen), findsOneWidget);
+    expect(find.byKey(ItemReportScreen.totalKey), findsOneWidget);
   });
 
   testWidgets('the surplus comes first, then the completion, then the difference, and nothing without sales', (tester) async {
@@ -330,19 +330,20 @@ void main() {
         };
     });
     await openSide(tester, api, SummarySide.expenses);
-    await act(tester, api, () => tester.tap(find.text('التشطيب')));
+    await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.categoryKey('category-1'))));
     await act(tester, api, () => tester.tap(find.byKey(ItemReportsScreen.itemKey('item-1'))));
 
     expect(tester.widget<Text>(find.byKey(ItemReportScreen.totalKey)).data, '3,000.00');
     expect(tester.widget<Text>(find.byKey(ItemReportScreen.subgroupTotalKey('subgroup-1'))).data, '1,000.00');
-    expect(find.textContaining('اللون: أبيض'), findsOneWidget);
-    expect(find.textContaining('المورد: البواني'), findsOneWidget, reason: 'redix-api #129 R1: each of its table\'s columns shows, a list by its choice');
-    expect(find.textContaining('سعر الحبة: 50.00'), findsOneWidget, reason: 'an amount shows as money');
-    expect(find.text('بلاط أرضيات'), findsOneWidget, reason: 'redix-api #129 D1: «الوصف» is the row\'s title, not one of its details');
+    final details = text(tester, ItemReportScreen.rowKey('entry-1').subtitle);
+    expect(details, contains('اللون: أبيض'));
+    expect(details, contains('المورد: البواني'), reason: 'redix-api #129 R1: each of its table\'s columns shows, a list by its choice');
+    expect(details, contains('سعر الحبة: 50.00'), reason: 'an amount shows as money');
+    expect(text(tester, ItemReportScreen.rowKey('entry-1').title), 'بلاط أرضيات', reason: 'redix-api #129 D1: «الوصف» is the row\'s title, not one of its details');
     expect(find.textContaining('الوصف:'), findsNothing);
     expect(find.textContaining('رقم الفاتورة'), findsNothing);
     expect(find.byKey(ItemReportScreen.overrunKey('contract-1')), findsOneWidget);
-    expect(find.textContaining('(500.00)'), findsOneWidget);
+    expect(text(tester, ItemReportScreen.contractKey('contract-1')), contains('(500.00)'));
   });
 
   testWidgets('Muteb, 9 Nov 2026: Reports holds the periodic reports alone; the home opens the item reports and the VAT refund, and Contracts no files of its own', (tester) async {
@@ -359,12 +360,12 @@ void main() {
     for (final gone in ['en reports.contracts', 'en reports.partners', 'en vat.title', 'en reports.revenueAndExpenses']) {
       expect(find.text(gone), findsNothing, reason: gone);
     }
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
 
     await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
     await tester.ensureVisible(projectSettingPages);
     await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
-    expect(find.byType(ContractsScreen), findsOneWidget);
+    expect(find.byKey(ContractsScreen.addKey), findsOneWidget);
     expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)), findsNothing, reason: 'Muteb, 12 Nov 2026: each contract holds its own files in its ⋮');
   });
 }

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/ui/part_keys.dart';
+import 'package:redix/ui/messages.dart';
+import 'package:redix/ui/screen_title.dart';
 import 'package:redix/users/permission_ticks.dart';
 import 'package:redix/users/user_permissions_screen.dart';
 import 'package:redix/users/users_screen.dart';
@@ -29,7 +31,7 @@ void main() {
     return api;
   }
 
-  Finder tick(Permission permission) => find.descendant(of: find.byKey(UserPermissionsScreen.permissionKey(permission)), matching: find.byType(CheckboxListTile));
+  Finder tick(Permission permission) => find.byKey(UserPermissionsScreen.permissionKey(permission).body);
 
   bool isTicked(WidgetTester tester, Permission permission) => tester.widget<CheckboxListTile>(tick(permission)).value!;
 
@@ -45,8 +47,8 @@ void main() {
 
     await toggle(tester, api, Permission.approveEntries);
     api.sentReads.clear();
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
-    await tapWhileWaiting(tester, api, find.byType(BackButton));
+    await act(tester, api, () => tester.pageBack());
+    await actWhileWaiting(tester, api, () => tester.pageBack());
     expect(api.sentReads, isNot(contains('/projects')));
 
     saved.complete();
@@ -59,8 +61,8 @@ void main() {
     await openScreen(tester);
 
     expect(tester.widget<Text>(find.byKey(UserPermissionsScreen.nameKey)).data, 'نواف');
-    expect(find.text('en permissions.title'), findsOneWidget);
-    expect(find.text('غصون 6'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en permissions.title');
+    expect(tester.widget<Text>(find.byKey(ScreenTitle.subjectKey)).data, 'غصون 6');
     for (final permission in Permission.inAProject) {
       expect(find.byKey(UserPermissionsScreen.permissionKey(permission)), findsOneWidget);
     }
@@ -88,7 +90,7 @@ void main() {
     api.userAnswer = (status: 409, code: 'lastManager');
     await toggle(tester, api, Permission.readProject);
 
-    expect(find.text('en users.lastManager'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(messageKeyOf('users.lastManager').label)).data, 'en users.lastManager');
     expect(isTicked(tester, Permission.readProject), isTrue);
   });
 
@@ -98,7 +100,7 @@ void main() {
     await toggle(tester, api, Permission.readProject);
     expect(find.byKey(UserPermissionsScreen.nameKey), findsNothing);
 
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     expect(find.byKey(UsersScreen.rowKey('user-1')), findsNothing);
     expect(find.byKey(UsersScreen.rowKey('user-0')), findsOneWidget);
   });

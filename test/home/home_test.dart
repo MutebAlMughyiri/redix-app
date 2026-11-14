@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/projects/project_info_screen.dart';
@@ -24,7 +25,7 @@ void main() {
 
     expect(text(tester, HomeScreen.titleKey), 'غصون 6');
 
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
 
@@ -37,7 +38,7 @@ void main() {
     expect(text(tester, HomeScreen.titleKey), 'غصون 6');
     expect(text(tester, HomeScreen.roleNameKey), 'مدير المشروع');
 
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
     expect(text(tester, HomeScreen.titleKey), 'غصون 7');
     expect(find.byKey(HomeScreen.roleNameKey), findsNothing);
@@ -51,7 +52,7 @@ void main() {
     await showProjectSetting(tester, HomeScreen.usersKey('project-0'));
     expect(find.byKey(HomeScreen.usersKey('project-0')), findsOneWidget);
 
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
 
     for (final (key, shown) in [(HomeScreen.projectInfoKey('project-1'), findsOneWidget), (HomeScreen.usersKey('project-1'), findsNothing), (HomeScreen.categoriesKey('project-1'), findsNothing)]) {
@@ -68,7 +69,7 @@ void main() {
     await pumpRedix(tester, api, stored: {'session': keptDirect});
 
     expect(text(tester, HomeScreen.titleKey), 'غصون 6');
-    expect(find.byType(BackButton), findsNothing);
+    expect(GoRouter.of(tester.element(find.byKey(HomeScreen.titleKey))).canPop(), isFalse, reason: 'nothing behind the home, so no back arrow');
   });
 
   testWidgets('Switch project reaches the list from a project opened directly, and stays there', (tester) async {
@@ -90,7 +91,7 @@ void main() {
 
     await openSettings(tester, api);
     api.projects.clear();
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
 
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
@@ -219,7 +220,7 @@ void main() {
 
     await scrollAndTap(tester, api, HomeScreen.usersKey('project-0'));
     api.projects.single['permissions'] = ['readProject'];
-    await act(tester, api, () => tester.tap(find.byType(BackButton)));
+    await act(tester, api, () => tester.pageBack());
 
     await showProjectSetting(tester, HomeScreen.usersKey('project-0'));
     expect(find.byKey(HomeScreen.usersKey('project-0')), findsNothing);

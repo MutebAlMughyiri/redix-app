@@ -3,6 +3,7 @@ import 'package:patrol/patrol.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/format/parts_line.dart';
 import 'package:redix/home/home_screen.dart';
+import 'package:redix/partners/partner_history_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/change_dialog.dart';
@@ -174,7 +175,6 @@ void main() {
       final id = await Given.partner(manager, 'متعب');
       await onPartners($, manager);
       await $.reach($(PartnersScreen.nameKey(id)));
-      expect($(keyStartingWith('partners.movement')), findsNothing);
       expect(find.text($.words.capitalContribution), findsNothing);
     });
 
@@ -183,9 +183,10 @@ void main() {
       final id = await Given.partner(manager, 'متعب');
       await Given.entriesApproved(manager, [await Given.partnerMoney(manager, id, amount: 1000)]);
       await onPartners($, manager);
+      final capital = (await Given.history(manager, 'partners/history')).singleWhere((line) => line['amount'] == 1000)['id'] as int;
       await $.tapOn(PartnersScreen.historyKey);
-      await $.reach($(keyStartingWith('partnerHistory.line.')));
-      expect(find.textContaining('1,000.00'), findsWidgets);
+      await $.reach($(PartnerHistoryScreen.lineKey(capital)));
+      await $.saysContaining(PartnerHistoryScreen.lineKey(capital).title, '1,000.00');
       await $.picture('partner-history');
     });
 

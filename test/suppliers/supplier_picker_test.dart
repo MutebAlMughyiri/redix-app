@@ -55,7 +55,7 @@ void main() {
     final session = await pumpRedix(tester, api, stored: {'session': keptSession});
     final suppliers = Suppliers(session, 'project-0');
     final picked = <Supplier>[];
-    await act(tester, api, () async => unawaited(SupplierPicker.show(tester.element(find.byType(ProjectsScreen)), project, suppliers).then(picked.add)));
+    await act(tester, api, () async => unawaited(SupplierPicker.show(tester.element(find.byKey(ProjectsScreen.sharedSettingsKey)), project, suppliers).then(picked.add)));
     return (api: api, project: project, suppliers: suppliers, palm: palm['id'] as String, oasis: oasis['id'] as String, picked: picked);
   }
 
@@ -167,7 +167,7 @@ void main() {
     expect(find.byKey(SupplierPicker.searchKey), findsNothing);
     expect(opened.picked.single.name, 'شركة الأفق');
     expect(opened.picked.single.status, SupplierStatus.pendingApproval);
-    expect(opened.picked.single.detailsIn(Words.of(tester.element(find.byType(ProjectsScreen)))), startsWith('en suppliers.pendingApproval'));
+    expect(opened.picked.single.detailsIn(Words.of(tester.element(find.byKey(ProjectsScreen.sharedSettingsKey)))), startsWith('en suppliers.pendingApproval'));
   });
 
   testWidgets('the quick add says a new supplier waits for approval to whoever does not keep the settings', (tester) async {
@@ -241,7 +241,7 @@ void main() {
     final opened = await openPicker(tester, permissions: field);
 
     await quickAdd(tester, opened.api);
-    await act(tester, opened.api, () => tester.tap(find.text('en common.cancel')));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
 
     expect(find.byKey(SupplierPicker.searchKey), findsOneWidget);
     expect(opened.picked, isEmpty);
@@ -264,7 +264,7 @@ void main() {
     await act(tester, opened.api, () => tester.enterText(find.byKey(SupplierPicker.searchKey), 'نخي'));
     await act(tester, opened.api, () => tester.tap(find.byKey(SupplierPicker.closeKey)));
 
-    await act(tester, opened.api, () async => unawaited(SupplierPicker.show(tester.element(find.byType(ProjectsScreen)), opened.project, opened.suppliers)));
+    await act(tester, opened.api, () async => unawaited(SupplierPicker.show(tester.element(find.byKey(ProjectsScreen.sharedSettingsKey)), opened.project, opened.suppliers)));
 
     expect(opened.api.supplierSearches.last, isEmpty);
     expect(find.byKey(SupplierPicker.rowKey(opened.oasis)), findsOneWidget);

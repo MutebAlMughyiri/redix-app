@@ -332,6 +332,12 @@ class Given {
     return (id: made['id'] as String, itemId: item['id'] as String, supplierId: supplier['id'] as String, contractor: name);
   }
 
+  /// The ids of the documents the contract [contractId] of [manager]'s project carries, in the order they were kept.
+  static Future<List<String>> contractDocumentIds(Person manager, String contractId) async {
+    final all = (await _getList('${manager.project}/contracts', await _tokenOf(manager))).cast<Map<String, dynamic>>();
+    return [for (final document in all.singleWhere((contract) => contract['id'] == contractId)['documents'] as List<dynamic>) (document as Map<String, dynamic>)['id'] as String];
+  }
+
   /// [manager] disables the contract [contractId].
   static Future<void> contractDisabled(Person manager, String contractId) async {
     await _post('${manager.project}/contracts/$contractId/disable', {}, await _tokenOf(manager));
@@ -445,6 +451,13 @@ class Given {
   /// The entries of the project of [person], as the API lists them.
   static Future<List<Map<String, dynamic>>> entries(Person person) async => (await _getList('${person.project}/entries', await _tokenOf(person))).cast<Map<String, dynamic>>();
 
+  /// The newest lines of the History at [path] of the project of [person], such as `accounts/history`, as the API answers them to [person]: a case learns a line's id
+  /// here and finds it on the phone by its key.
+  static Future<List<Map<String, dynamic>>> history(Person person, String path) async => (await _getList('${person.project}/$path', await _tokenOf(person))).cast<Map<String, dynamic>>();
+
+  /// What [person] was told, newest first, as the API lists it.
+  static Future<List<Map<String, dynamic>>> notifications(Person person) async => (await _getList('/notifications', await _tokenOf(person))).cast<Map<String, dynamic>>();
+
   /// The columns of the item [itemId].
   static Future<List<Map<String, dynamic>>> columns(Person manager, String itemId) async => (await _getList('${manager.project}/items/$itemId/columns', await _tokenOf(manager))).cast<Map<String, dynamic>>();
 
@@ -462,6 +475,12 @@ class Given {
   static Future<String> categoryOf(Person manager, String itemId) async {
     final categories = (await _getList('${manager.project}/categories', await _tokenOf(manager))).cast<Map<String, dynamic>>();
     return categories.firstWhere((category) => (category['items'] as List<dynamic>).any((item) => item['id'] == itemId))['name'] as String;
+  }
+
+  /// The id of the category named [name] in the project of [manager].
+  static Future<String> categoryNamed(Person manager, String name) async {
+    final categories = (await _getList('${manager.project}/categories', await _tokenOf(manager))).cast<Map<String, dynamic>>();
+    return categories.singleWhere((category) => category['name'] == name)['id'] as String;
   }
 
   /// Whether the API lets [username] sign in with [password] now.

@@ -8,6 +8,7 @@ import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/sharing/share_screen.dart';
+import 'package:redix/ui/screen_title.dart';
 
 import '../app_harness.dart';
 import 'package:redix/entries/table_picker.dart';
@@ -69,7 +70,7 @@ void main() {
     await share(tester, (api) {});
 
     expect(find.byKey(ShareScreen.tableKey), findsOneWidget);
-    expect(find.text('en share.title'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en share.title');
   });
 
   testWidgets('findings row 211 (Muteb, 13 Nov 2026): the shared picture\'s preview is a quarter of the screen\'s height, never a fixed number', (tester) async {
@@ -171,7 +172,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.entryKey('entry-1'))));
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.attachKey)));
 
-    expect(find.text('en share.invoiceAlreadyAttached'), findsOneWidget);
+    expect(tester.widget<Text>(find.byKey(ShareScreen.messageKey)).data, 'en share.invoiceAlreadyAttached');
     expect(find.byKey(ShareScreen.tableKey), findsOneWidget);
   });
 

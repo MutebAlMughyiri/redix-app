@@ -95,7 +95,7 @@ void main() {
   testWidgets("the dialog shows a contract's documents, and a document picked is kept and named on save", (tester) async {
     await openAmendWithFiles(tester, pdf);
     final api = apiOfDocuments;
-    expect(find.text('العقد.pdf'), findsOneWidget);
+    expect(text(tester, ContractsScreen.documentKey('kept-document')), 'العقد.pdf');
 
     await tapVisible(tester, api, ContractsScreen.addDocumentKey);
     expect(api.sentAttachments, hasLength(1));
@@ -113,7 +113,7 @@ void main() {
     await tapVisible(tester, api, ContractsScreen.addDocumentKey);
 
     expect(api.sentAttachmentPaths.single, '/projects/project-0/attachments/document');
-    expect(find.text('quantities.xlsx'), findsOneWidget);
+    expect(text(tester, ContractsScreen.documentKey(api.keptAttachmentIds.single)), 'quantities.xlsx');
   });
 
   testWidgets('a document the API refuses says why, and nothing is named on save', (tester) async {
@@ -150,14 +150,14 @@ void main() {
     final opened = await openContracts(tester);
 
     expect(text(tester, ContractsScreen.remainingKey(opened.running)), '4,000.00');
-    expect(find.descendant(of: find.byKey(ContractsScreen.standingKey(opened.running)), matching: find.text('en contracts.running')), findsOneWidget);
+    expect(text(tester, ContractsScreen.standingKey(opened.running).label), 'en contracts.running');
   });
 
   testWidgets('AC-07.1: an overrun shows its remaining in brackets, with an alert', (tester) async {
     final opened = await openContracts(tester);
 
     expect(text(tester, ContractsScreen.remainingKey(opened.overrun)), '(1,000.00)');
-    expect(find.descendant(of: find.byKey(ContractsScreen.standingKey(opened.overrun)), matching: find.text('en contracts.overrun')), findsOneWidget);
+    expect(text(tester, ContractsScreen.standingKey(opened.overrun).label), 'en contracts.overrun');
     expect(tester.widget<LinearProgressIndicator>(find.byKey(ContractsScreen.progressKey(opened.overrun))).value, 1);
   });
 
@@ -180,7 +180,7 @@ void main() {
     expect(text(tester, ContractsScreen.valueOfKey(opened.open)), 'en contracts.open');
     expect(text(tester, ContractsScreen.paidKey(opened.open)), '12,000.00');
     expect(text(tester, ContractsScreen.remainingKey(opened.open)), '—');
-    expect(find.descendant(of: find.byKey(ContractsScreen.standingKey(opened.open)), matching: find.text('en contracts.openValue')), findsOneWidget);
+    expect(text(tester, ContractsScreen.standingKey(opened.open).label), 'en contracts.openValue');
   });
 
   testWidgets('a contract with nothing paid has not started', (tester) async {
@@ -192,7 +192,7 @@ void main() {
     await tester.pumpAndSettle();
     await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
 
-    expect(find.descendant(of: find.byKey(ContractsScreen.standingKey(contract)), matching: find.text('en contracts.notStarted')), findsOneWidget);
+    expect(text(tester, ContractsScreen.standingKey(contract).label), 'en contracts.notStarted');
     expect(text(tester, ContractsScreen.termsKey(contract)), 'البلاط · 380 × 50');
   });
 
@@ -200,9 +200,9 @@ void main() {
     final opened = await openContracts(tester);
     await openFilters(tester, opened.api);
 
-    expect(find.text('en contracts.filterAll · 3'), findsOneWidget);
-    expect(find.text('en contracts.filterOverrun · 1'), findsOneWidget);
-    expect(find.text('en contracts.filterOpenValue · 1'), findsOneWidget);
+    expect(text(tester, ContractsScreen.filterKey(ContractFilter.all).label), 'en contracts.filterAll · 3');
+    expect(text(tester, ContractsScreen.filterKey(ContractFilter.overrun).label), 'en contracts.filterOverrun · 1');
+    expect(text(tester, ContractsScreen.filterKey(ContractFilter.openValue).label), 'en contracts.filterOpenValue · 1');
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.filterKey(ContractFilter.overrun))));
     expect(find.byKey(ContractsScreen.nameKey(opened.overrun)), findsOneWidget);
@@ -233,7 +233,7 @@ void main() {
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.addKey)));
     await pickContractor(tester, opened.api, opened.contractor);
-    expect(find.text('شركة النخيل'), findsOneWidget);
+    expect(text(tester, ContractsScreen.contractorKey.label), 'شركة النخيل');
     await pickItem(tester, opened.api, opened.item);
     await tester.enterText(find.byKey(ContractsScreen.valueKey), '٣٤٬٠٠٠');
     await tester.enterText(find.byKey(ContractsScreen.unitPriceKey), '380');
@@ -262,11 +262,11 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(SupplierPicker.quickAddKey)));
     await tester.enterText(find.byKey(SuppliersScreen.supplierNameKey), 'مبلط جديد');
     await tester.enterText(find.byKey(SuppliersScreen.vatNumberKey), '311111111111113');
-    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey).last));
+    await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey).hitTestable()));
 
     expect(find.byKey(SupplierPicker.searchKey), findsNothing);
     expect(find.byKey(ContractsScreen.contractorKey), findsOneWidget);
-    expect(find.text('مبلط جديد'), findsOneWidget);
+    expect(text(tester, ContractsScreen.contractorKey.label), 'مبلط جديد');
   });
 
   testWidgets('nothing chosen is sent as nothing chosen, which the API refuses by name, and the dialog stays', (tester) async {
@@ -383,11 +383,11 @@ void main() {
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.disableKey)));
-    expect(find.descendant(of: find.byKey(ContractsScreen.standingKey(opened.running)), matching: find.text('en contracts.disabled')), findsOneWidget);
+    expect(text(tester, ContractsScreen.standingKey(opened.running).label), 'en contracts.disabled');
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.menuKey(opened.running))));
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.enableKey)));
-    expect(find.descendant(of: find.byKey(ContractsScreen.standingKey(opened.running)), matching: find.text('en contracts.running')), findsOneWidget);
+    expect(text(tester, ContractsScreen.standingKey(opened.running).label), 'en contracts.running');
   });
 
   testWidgets('a project with no contracts says so', (tester) async {
@@ -438,7 +438,7 @@ void main() {
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.nameKey(opened.running))));
 
-    expect(find.byType(ItemReportScreen), findsOneWidget);
+    expect(find.byKey(ItemReportScreen.totalKey), findsOneWidget);
     expect(opened.api.itemReportReads.last, '/projects/project-0/reports/contracts/${opened.running}');
   });
 

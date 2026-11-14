@@ -34,11 +34,7 @@ Future<String> approvedPayment(Person manager, MadeContract contract, num amount
 }
 
 /// The standing of the contract [id] says [text].
-Future<void> standsAs(PatrolIntegrationTester $, String id, String text) async {
-  final standing = find.descendant(of: find.byKey(ContractsScreen.standingKey(id)), matching: find.text(text));
-  await $.until(() => standing.evaluate().isNotEmpty);
-  expect(standing, findsOneWidget);
-}
+Future<void> standsAs(PatrolIntegrationTester $, String id, String text) => $.says(ContractsScreen.standingKey(id).label, text);
 
 void main() {
   phoneClass('A contract\'s figures as its payments move (AC-07.1 and AC-12.1)', () {

@@ -62,7 +62,7 @@ void main() {
       await $.tapOn(HomeScreen.approvalsKey(manager.projectId));
       await $.tapOn(ApprovalsScreen.fileKey(entry));
       await $.reach($(AttachmentScreen.pictureKey));
-      expect(find.byType(InteractiveViewer), findsOneWidget);
+      expect($.tester.widget<InteractiveViewer>(find.byKey(AttachmentScreen.zoomKey)).maxScale, greaterThan(1));
     });
 
     phoneCase('a PDF goes to the phone by its own name', ($) async {
@@ -92,7 +92,7 @@ void main() {
       await Given.contractorPayment(manager, await Given.contract(manager));
       await onApprovals($, manager);
       await $.openFilters();
-      await $(find.textContaining('3')).waitUntilExists();
+      await $.saysContaining(ApprovalsScreen.allKey.label, '3');
       expect($.tester.widget<Text>(find.byKey(ApprovalsScreen.purchasesKey.label)).data, contains('2'));
       expect($.tester.widget<Text>(find.byKey(ApprovalsScreen.contractorPaymentsKey.label)).data, contains('1'));
     });
