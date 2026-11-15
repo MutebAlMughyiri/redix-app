@@ -10,6 +10,7 @@ import '../entries/entry_row.dart';
 import '../entries/entry_share.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
+import '../words/word_fill.dart';
 import '../words/words.dart';
 
 /// REDIX outside the app (redix-app #86): «إضافة قيد» on the icon's menu, through Flutter's `quick_actions` (D4), and on the home-screen widget, through `home_widget`
@@ -31,7 +32,7 @@ class LauncherAddEntry {
   /// The rows under the widget's button, as JSON: each entry's title, details and amount as its card says them, and its link (D8, D9).
   static const widgetEntries = 'addEntryEntries';
 
-  /// When the rows were read (D8).
+  /// When the rows were read, «آخر تحديث 15/11/2026 10:30» (D8).
   static const widgetReadAt = 'addEntryReadAt';
 
   static const _shortcut = 'addEntry';
@@ -59,7 +60,7 @@ class LauncherAddEntry {
       widgetEntries: jsonEncode([
         for (final entry in entries) {'title': entry.title, 'details': EntryCard.detailsOf(entry, words), 'amount': formatMoney(entry.amount), 'link': EntryShare.linkOf(projectId, entry)},
       ]),
-      widgetReadAt: '${formatDate(readAt)} ${formatTime(readAt)}',
+      widgetReadAt: words.homeWidgetReadAt.fill(['${formatDate(readAt)} ${formatTime(readAt)}']),
     });
   }
 

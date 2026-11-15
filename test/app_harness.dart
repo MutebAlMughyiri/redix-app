@@ -120,6 +120,7 @@ Map<String, String> wordsIn(String language) => {
   'share.attached': '$language share.attached {0}',
   'entries.numberFilterSet': '$language entries.numberFilterSet {0}',
   'settings.emailConfirm': '$language settings.emailConfirm {0}',
+  'home.widgetReadAt': '$language home.widgetReadAt {0}',
   'projects.loadFileConfirm': '$language projects.loadFileConfirm {0} {1}',
   'projects.loadFileDone': '$language projects.loadFileDone {0} {1} {2}',
   'projects.loadFileDoneNoReport': '$language projects.loadFileDoneNoReport {0} {1}',

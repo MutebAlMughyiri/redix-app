@@ -112,7 +112,7 @@ void main() {
     /// The links of the newest [count] entries [api] holds, as the home lists them.
     List<String> newestLinks(FakeApi api, int count) => [for (final entry in api.entryRows.take(count)) 'https://redix.test/projects/project-0/entries/${entry['id']}/open'];
 
-    testWidgets('redix-app #86 R9, AC-86.7: under the button the widget lists the entries «آخر القيود» read, as many as show at a time, each as its card says it, with when they were read', (tester) async {
+    testWidgets('redix-app #86 R9, AC-86.7: under the button the widget lists the entries «آخر القيود» read, as many as show at a time, each as its card says it, and «آخر تحديث» with when they were read', (tester) async {
       final launcher = FakeLauncher();
       final api = await openHome(tester, 7);
 
@@ -124,7 +124,7 @@ void main() {
         'amount': '106.00',
         'link': 'https://redix.test/projects/project-0/entries/$newest/open',
       });
-      expect(launcher.saved[LauncherAddEntry.widgetReadAt], startsWith(formatDate(DateTime.now())));
+      expect(launcher.saved[LauncherAddEntry.widgetReadAt], startsWith('en home.widgetReadAt ${formatDate(DateTime.now())} '));
     });
 
     testWidgets('redix-app #86 R9, G7: with «عدد القيود المعروضة» at 8 the widget lists 8, as the home does', (tester) async {

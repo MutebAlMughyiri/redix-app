@@ -1298,6 +1298,9 @@ mixin WordGetters {
   /// The word `home.showDetails`.
   String get homeShowDetails => text('home.showDetails');
 
+  /// The word `home.widgetReadAt`.
+  String get homeWidgetReadAt => text('home.widgetReadAt');
+
   /// The word `myAccount.arabic`.
   String get myAccountArabic => text('myAccount.arabic');
 
