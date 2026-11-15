@@ -266,7 +266,7 @@ class _ShareScreenState extends State<ShareScreen> {
           children: [
             Expanded(
               child: NestedScrollView(
-                headerSliverBuilder: (context, _) => [SliverList.list(children: header)],
+                headerSliverBuilder: (context, _) => [SliverToBoxAdapter(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: header))],
                 body: ApiListBody<EntryRow>(
                   list: entries,
                   emptyText: words.entriesEmpty,

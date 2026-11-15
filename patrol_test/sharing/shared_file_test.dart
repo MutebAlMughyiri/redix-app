@@ -76,9 +76,10 @@ void main() {
 
     phoneCase('AC-49.3, R3: an entry found by the search and chosen shows what differs from the QR code', ($) async {
       final manager = await Given.manager();
-      final entry = await Given.entry(manager, amount: 500, notes: 'بلاط ${Given.unique()}');
+      final supplier = await Given.supplier(manager, name: 'مؤسسة البلاط ${Given.unique()}');
+      final entry = await Given.entry(manager, amount: 500, supplierId: supplier);
       await shareInto($, manager);
-      await $.searchFor('بلاط');
+      await $.searchFor('البلاط');
       await $.tapOn(EntriesScreen.rowKey(entry));
       await $.reach($(ShareScreen.amountDiffersKey));
     });
@@ -99,7 +100,7 @@ void main() {
       final manager = await Given.manager();
       final member = await Given.member(manager, permissions: [Permission.recordEntries, Permission.attachFiles, Permission.chargeAnyAccount]);
       final theirs = await Given.entry(manager);
-      final own = await Given.entry(member);
+      final own = await Given.entry(member, accountId: await Given.account(manager));
       await shareInto($, member);
       await $.goTo($(EntriesScreen.rowKey(own)));
       expect($(EntriesScreen.rowKey(theirs)), findsNothing);

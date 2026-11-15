@@ -47,6 +47,7 @@ void main() {
       final changed = 'changed-${Given.unique()}@example.com';
       await $.onTheList(member);
       await $(ProjectsScreen.sharedSettingsKey).tap();
+      await $.goTo($(SharedSettingsScreen.myEmailKey));
       await $.says(SharedSettingsScreen.myEmailKey.subtitle, email);
       await $.tapOn(SharedSettingsScreen.myEmailKey);
       await $.fill(SharedSettingsScreen.myEmailFieldKey, changed);
