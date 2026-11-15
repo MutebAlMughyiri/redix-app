@@ -225,7 +225,7 @@ class Session extends ChangeNotifier {
   }
 
   /// Makes the address the last code went to the user's email once [code] is entered (redix-api #127, AC-10.4), then renews the session, which says it. Returns an empty string once
-  /// made, otherwise the word key of the refusal: `auth.codeWrong`, `users.emailTaken` or `auth.noConnection`.
+  /// made, otherwise the word key of the refusal: `auth.codeWrong`, `users.emailTaken` or `users.noConnection`, the word the first step says too.
   Future<String> confirmEmail(String code) async {
     try {
       final response = await post('/me/email/confirm', {'code': code});
@@ -236,7 +236,7 @@ class Session extends ChangeNotifier {
       return '';
     } on Exception catch (error) {
       debugPrint('Email not confirmed: $error');
-      return 'auth.noConnection';
+      return 'users.noConnection';
     }
   }
 

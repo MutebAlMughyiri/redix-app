@@ -68,6 +68,20 @@ void main() {
     expect(text(tester, SharedSettingsScreen.myEmailKey.subtitle), 'muteb@example.com');
   });
 
+  testWidgets('redix-api #127: a lost network says the same word in both steps', (tester) async {
+    final api = await openSettings(tester);
+    api.unreachable.add('/me/email');
+    await askCode(tester, api, 'muteb@redix.sa');
+    final asking = text(tester, ChangeDialog.messageKey);
+    api.unreachable.clear();
+    await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
+    api.unreachable.add('/me/email/confirm');
+
+    await enterCode(tester, api, '482913');
+
+    expect([asking, text(tester, ChangeDialog.messageKey)], ['en users.noConnection', 'en users.noConnection']);
+  });
+
   testWidgets('redix-api #127 R9: an address another account holds is refused in the first step, and no code is asked', (tester) async {
     final api = await openSettings(tester);
     api.codeAnswers['/me/email'] = (status: 409, code: 'emailTaken');
