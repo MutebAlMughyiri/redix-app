@@ -39,7 +39,7 @@ void main() {
       final launcher = FakeLauncher();
       await pumpRedix(tester, FakeApi()..online = false);
 
-      expect(find.byType(NoWordsScreen), findsOneWidget);
+      expect(find.byKey(NoWordsScreen.retryKey), findsOneWidget);
       expect(launcher.shortcuts, isEmpty);
       expect(launcher.saved, isEmpty);
     });
