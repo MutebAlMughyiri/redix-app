@@ -67,6 +67,21 @@ void main() {
     expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsOneWidget);
   });
 
+  testWidgets('redix-api #126: a project list kept with a status this version does not know answers as nothing kept when the network is gone, and the spinner stops', (tester) async {
+    final api = FakeApi()..online = false;
+    final store = MemoryStore();
+    await store.write('copies', '/projects', jsonEncode([{...api.addProject('غصون 6'), 'status': 'archived'}]));
+    await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: keptWords('en'), store: store);
+
+    expect(tester.takeException(), isNull);
+    expect(tester.widget<Text>(find.byKey(ApiListBody.messageKey)).data, 'en projects.loadFailed');
+
+    api.online = true;
+    await act(tester, api, () => tester.tap(find.byKey(ApiListBody.retryKey)));
+
+    expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsOneWidget);
+  });
+
   testWidgets('redix-api #126: a project list kept in the shape this version reads answers when the network is gone', (tester) async {
     final api = FakeApi()..online = false;
     final store = MemoryStore();
