@@ -101,6 +101,22 @@ void main() {
     await act(tester, api, session.signOut);
   });
 
+  testWidgets('redix-api #126 R6: a phone whose clock runs 20 minutes fast renews on time, by the API\'s clock, not at once and again forever', (tester) async {
+    final api = FakeApi()
+      ..accessTokenLifetime = fifteenMinutes
+      ..serverClockBehind = const Duration(minutes: 20);
+    final session = await pumpRedix(tester, api, stored: {'session': keptSession});
+    api.refreshes = 0;
+
+    await act(tester, api, () => tester.pump(fifteenMinutes - Session.renewsBeforeExpiry - const Duration(seconds: 1)));
+    final early = api.refreshes;
+    api.accessTokenLifetime = Duration.zero;
+    await act(tester, api, () => tester.pump(const Duration(seconds: 2)));
+
+    expect([early, api.refreshes], [0, 1]);
+    await act(tester, api, session.signOut);
+  });
+
   testWidgets('redix-api #126 R6: one renewal waits at a time: renewing on coming back replaces the one the earlier answer set', (tester) async {
     final api = FakeApi()..accessTokenLifetime = fifteenMinutes;
     await pumpRedix(tester, api, stored: {'session': keptSession});

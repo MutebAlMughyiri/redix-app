@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show HttpDate;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -370,6 +371,9 @@ class FakeApi {
   /// How long an access token lasts, which every session answer says as `accessTokenExpiresAt` (redix-api #126). Zero leaves it out, so a case that is not about
   /// renewing on time leaves no renewal waiting when it ends, which flutter_test refuses.
   var accessTokenLifetime = Duration.zero;
+
+  /// How far the API's clock runs behind the phone's, which its Date header says: a phone whose clock is fast still renews on time.
+  var serverClockBehind = Duration.zero;
 
   /// The status and problem code `POST /auth/change-password` answers; 200 changes the password, and an empty code an empty body.
   var changePasswordAnswer = (status: 200, code: '');
@@ -855,13 +859,14 @@ class FakeApi {
     if (path == '/auth/change-password' && status == 200) {
       mustChangePassword = false;
     }
-    final expiresAt = accessTokenLifetime == Duration.zero ? '' : ', "accessTokenExpiresAt": "${DateTime.now().toUtc().add(accessTokenLifetime).toIso8601String()}"';
+    final serverNow = DateTime.now().toUtc().subtract(serverClockBehind);
+    final expiresAt = accessTokenLifetime == Duration.zero ? '' : ', "accessTokenExpiresAt": "${serverNow.add(accessTokenLifetime).toIso8601String()}"';
     final body = status == 200
         ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}"$expiresAt, "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "usesBiometrics": $usesBiometrics, "userId": "$userId", "username": "muteb", "displayName": "متعب المغيري", "email": "$email"}'
         : code.isEmpty
         ? ''
         : '{"code": "$code"}';
-    return http.Response.bytes(utf8.encode(body), status);
+    return http.Response.bytes(utf8.encode(body), status, headers: {'date': HttpDate.format(serverNow)});
   });
 
   /// Adds a project to what the API holds, with [units] named in order.

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' show HttpDate;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -351,18 +352,22 @@ class Session extends ChangeNotifier {
     final body = utf8.decode(response.bodyBytes);
     final session = jsonDecode(body) as Map<String, dynamic>;
     _apply(session);
-    _renewBeforeExpiry(session['accessTokenExpiresAt'] as String? ?? '');
+    _renewBeforeExpiry(session['accessTokenExpiresAt'] as String? ?? '', _answeredAt(response));
     await _storage.write(key: _storageKey, value: body);
     notifyListeners();
   }
 
-  /// Sets the one renewal for [renewsBeforeExpiry] before the access token runs out at [expiresAt], replacing the one set before; none when the answer said no time.
-  void _renewBeforeExpiry(String expiresAt) {
+  /// Sets the one renewal for [renewsBeforeExpiry] before the access token runs out at [expiresAt], replacing the one set before; none when the answer said no time. It counts
+  /// from [answeredAt], the API's own clock, so a phone whose clock runs fast or slow renews on time instead of at once and again forever.
+  void _renewBeforeExpiry(String expiresAt, DateTime answeredAt) {
     _renewalTimer.cancel();
     if (expiresAt.isNotEmpty) {
-      _renewalTimer = Timer(DateTime.parse(expiresAt).difference(DateTime.now()) - renewsBeforeExpiry, renew);
+      _renewalTimer = Timer(DateTime.parse(expiresAt).difference(answeredAt) - renewsBeforeExpiry, renew);
     }
   }
+
+  /// When the API answered [response], by its own clock, as its Date header says; the phone's clock for an answer that says none.
+  static DateTime _answeredAt(http.Response response) => HttpDate.parse(response.headers['date'] ?? HttpDate.format(DateTime.now()));
 
   Future<void> _end(String notice) async {
     _renewalTimer.cancel();
