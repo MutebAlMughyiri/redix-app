@@ -186,7 +186,6 @@ class _RedixAppState extends State<RedixApp> {
   final _partnerMovements = <String, CapitalMovements>{};
   final _itemTables = <String, ItemTables>{};
   late final _reportFiles = ReportFiles(widget.session, widget.capture);
-  static const _launcher = LauncherAddEntry();
 
   late final _router = GoRouter(
     initialLocation: HomeScreen.landingOf(widget.session),
@@ -516,14 +515,14 @@ class _RedixAppState extends State<RedixApp> {
     unawaited(_outbox.start());
     _sharing = widget.capture.shared().listen(_openShared);
     _lifecycle = AppLifecycleListener(onResume: widget.session.renew);
-    unawaited(_launcher.listen(_router.go));
+    unawaited(LauncherAddEntry.listen(_router.go));
     widget.session.access.addListener(_forgetEntriesOnceClosed);
   }
 
   /// Empties the home-screen widget's rows however the session ends, signed out or refused (redix-app #86 R10).
   void _forgetEntriesOnceClosed() {
     if (!widget.session.isOpen) {
-      unawaited(_launcher.forgetEntries());
+      unawaited(LauncherAddEntry.forgetEntries());
     }
   }
 
@@ -553,7 +552,7 @@ class _RedixAppState extends State<RedixApp> {
         locale: widget.language.locale,
         onGenerateTitle: (context) => Words.of(context).appTitle,
         localizationsDelegates: [
-          WordsDelegate(_wordsAttempt, onRefreshed: _reloadWords, onLoaded: _launcher.showWords),
+          WordsDelegate(_wordsAttempt, onRefreshed: _reloadWords, onLoaded: LauncherAddEntry.showWords),
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
