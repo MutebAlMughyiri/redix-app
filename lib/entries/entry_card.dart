@@ -69,19 +69,20 @@ class EntryCard extends StatelessWidget {
   /// True for the entry chosen, which the tile shows selected.
   final bool isChosen;
 
+  /// The card's line under [entry]'s title, in [words]: its number, what it is unless an expense, its supplier, its date, and who entered it when someone else did. The
+  /// home-screen widget's rows read it too, so a row says what the card says (redix-app #86 D9).
+  static String detailsOf(EntryRow entry, Words words) =>
+      partsLine([entry.numberIn(words), if (!entry.isExpense) words.text(entry.kind.wordKey), entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.fill([entry.authorName])]);
+
   @override
   Widget build(BuildContext context) {
-    final words = Words.of(context);
     final theme = Theme.of(context);
     return ListTile(
       key: EntriesScreen.rowKey(entry.id),
       onTap: onTap,
       selected: isChosen,
       title: Text(entry.title, key: EntriesScreen.rowKey(entry.id).title),
-      subtitle: Text(
-        partsLine([entry.numberIn(words), if (!entry.isExpense) words.text(entry.kind.wordKey), entry.supplierName, formatDate(entry.date), if (!entry.isMine) words.entriesEnteredBy.fill([entry.authorName])]),
-        key: EntriesScreen.detailsKey(entry.id),
-      ),
+      subtitle: Text(detailsOf(entry, Words.of(context)), key: EntriesScreen.detailsKey(entry.id)),
       trailing: Text(formatMoney(entry.amount), key: EntriesScreen.rowKey(entry.id).trailing, style: theme.textTheme.titleSmall),
     );
   }

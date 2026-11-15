@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The widget picker's line in English (redix-app #86 G5). -->
+<resources>
+    <string name="add_entry_widget_description">A button to add an entry</string>
+</resources>

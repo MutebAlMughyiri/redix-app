@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The «إضافة قيد» widget in the launcher's picker (redix-app #86): the app's name and one line, the only words shown before the app runs (G5). It is drawn again only
+     when the app saves what it shows: nothing reads in the background (D8). Shrunk to one row, it shows the button alone. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/add_entry_widget_description"
+    android:initialLayout="@layout/add_entry_widget"
+    android:minWidth="180dp"
+    android:minHeight="110dp"
+    android:minResizeWidth="110dp"
+    android:minResizeHeight="40dp"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellWidth="3"
+    android:targetCellHeight="3"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />

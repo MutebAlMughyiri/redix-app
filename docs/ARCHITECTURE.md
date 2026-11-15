@@ -97,6 +97,8 @@ lib/
   home/
     summary_card.dart     The project's figures at a glance: what waits for approval, the surplus, the completion, the reconciliation difference, and the revenue and expenses totals, each opening to its categories with their totals; a category opens nothing
     home_screen.dart        The home of the open project: the project, with what the user's permissions allow in it
+  launcher/
+    launcher_add_entry.dart REDIX outside the app: «إضافة قيد» on the icon's menu and the home-screen widget, with the latest entries under its button, whose every tap opens the one link /add-entry (redix-app #86); the widget itself is android/app/src/main/kotlin/sa/redix/AddEntryWidget.kt, drawing what this saves
   notifications/
     notification_row.dart   Something a person was told: its words come from kind, in their language
     notifications.dart      What the signed-in person was told
@@ -263,6 +265,7 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 2. The phone keeps one language with its ETag. Kept words show at once and are refreshed in the background; another language is fetched from `GET /translations/{language}` first.
 3. A first start without a network has no words: `NoWordsScreen` shows only an icon and a retry button, and a retry loads the words again.
 4. Choosing a language in Settings fetches its words first; only then does `AppLanguage` keep the choice and tell `RedixApp`, which rebuilds in the new `locale`. Without a network nothing changes.
+5. Each time words load, `WordsDelegate.onLoaded` hands them to `LauncherAddEntry`, which writes «إضافة قيد» on the icon's menu and the home-screen widget in the app's language (redix-app #86 R5).
 
 ## Session and screens
 
@@ -270,6 +273,7 @@ The code holds a word's key, never its value. `Words.of(context).appTitle` reads
 2. `go_router` sends every route to `/sign-in` while the session is closed, to `/change-password` while the password is temporary, and away from sign-in once open; it listens to `Session.access`, so a sign-in, a password change or an ended session moves the screen at once, and nothing else does: a refresh of `go_router` rebuilds the open screens without the `extra` they were opened with (redix-api #126).
 3. Every request made as the user goes through `Session.post`: it sends the access token, and on a `401` renews the session once and sends again. Renewals run one after another, because each replaces the refresh token the next one needs. A read waits for what was sent before it, so leaving a screen while a change is on its way cannot show the old value. `Session.get` keeps each list it reads, and answers from that copy when the network fails; `ProjectSync` fills the copies on opening a project; `Outbox` holds entries waiting for the network (UC-029).
 4. Each screen declares its `path` and its element `Key`s.
+5. «إضافة قيد» from the icon's menu or the home-screen widget is one link, `/add-entry`; its route reads the projects, then lands as `HomeScreen.addEntryLandingOf` says: Add entry in the default project, its home, or the project list (redix-app #86). Add entry sits under its project's home, so a link that opens it has the home behind it.
 
 ## Data the API owns
 

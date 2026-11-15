@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../config/local_config.dart';
+import 'entry_row.dart';
 import 'project_entries.dart';
 
 /// The newest of a project's entries, as many at a time as this phone shows (redix-app #105): the home reads only these, never the whole list, and each Show more reads as many
@@ -50,4 +51,7 @@ class NewestEntries extends ProjectEntries {
 
   /// True while the last read filled every page asked for, so older entries may follow.
   bool get mayHaveMore => all.length >= _asked;
+
+  /// The newest entries, as many as show at a time, whatever Show more added: what the home-screen widget lists (redix-app #86 R9).
+  List<EntryRow> get firstPage => all.take(_localConfig.entriesShown).toList();
 }

@@ -142,8 +142,8 @@ class AddEntryScreen extends StatefulWidget {
   /// The project's accounts, any active one of which revenue reaches and a partner's money moves through.
   final Accounts projectAccounts;
 
-  /// The screen's route.
-  static const path = '/projects/:projectId/entries/new';
+  /// The screen's route, under its project's home, so a link that opens it has the home behind it to come back to (redix-app #86 D3).
+  static const path = 'entries/new';
 
   /// The route of a new entry in the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId/entries/new';

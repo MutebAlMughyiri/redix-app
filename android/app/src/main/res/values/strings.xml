@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The widget picker's line, shown before the app runs, so it cannot come from the app's words (redix-app #86 G5). Arabic, as the app speaks on a phone in any language
+     other than English. -->
+<resources>
+    <string name="add_entry_widget_description">زر لإضافة قيد</string>
+</resources>

@@ -26,6 +26,8 @@ while ($true) {
     '/network/off' { adb -s $Device reverse --remove tcp:5010 2>&1 | Out-Null }
     '/network/on' { adb -s $Device reverse tcp:5010 tcp:5010 2>&1 | Out-Null }
     '/link' { adb -s $Device shell am start -a android.intent.action.VIEW -d ([uri]::UnescapeDataString($query)) $App 2>&1 | Out-Null }
+    # A tap on the Add entry home-screen widget: the link straight to the app's activity, as AddEntryWidget sends it, so no link filter is asked (redix-app #86).
+    '/widget' { adb -s $Device shell am start -a android.intent.action.VIEW -d ([uri]::UnescapeDataString($query)) -n "$App/sa.redix.MainActivity" 2>&1 | Out-Null }
     '/to-downloads' {
       $name = [uri]::UnescapeDataString($query)
       adb -s $Device shell cp "/sdcard/Android/data/$App/files/$name" "/sdcard/Download/$name" 2>&1 | Out-Null

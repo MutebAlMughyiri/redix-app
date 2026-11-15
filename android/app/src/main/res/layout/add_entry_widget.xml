@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The «إضافة قيد» home-screen widget (redix-app #86): the button on top, the latest entries under it, and when they were read. Every word is the app's, set by
+     AddEntryWidget from what the app saved; the root's id lets the launcher round its corners as it rounds every widget's. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/add_entry_widget_surface"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <FrameLayout
+        android:id="@+id/add_entry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ic_launcher_background"
+        android:minHeight="48dp">
+
+        <TextView
+            android:id="@+id/add_entry_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableStart="@drawable/ic_add_entry"
+            android:drawablePadding="8dp"
+            android:drawableTint="@android:color/white"
+            android:textAppearance="@android:style/TextAppearance.Material.Button"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white" />
+    </FrameLayout>
+
+    <ListView
+        android:id="@+id/entries"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@null" />
+
+    <TextView
+        android:id="@+id/read_at"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:textAlignment="viewStart"
+        android:textAppearance="@android:style/TextAppearance.Material.Caption"
+        android:textColor="@color/add_entry_widget_quiet" />
+</LinearLayout>

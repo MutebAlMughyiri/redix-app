@@ -37,6 +37,7 @@ Reach for these; never build beside them.
 | Something read from the API | `http` | `ApiObject`, `ApiList` (`lib/api_object.dart`, `lib/api_list.dart`) |
 | Work done while offline | `http` | `Outbox` (`lib/offline/outbox.dart`) |
 | Share, save, receive a file | `share_plus`, `file_saver`, `receive_sharing_intent` | `lib/attachments/invoice_capture.dart` |
+| The icon's menu, the home-screen widget | `quick_actions`, `home_widget` | `LauncherAddEntry` (`lib/launcher/launcher_add_entry.dart`) |
 
 ## A worked case
 

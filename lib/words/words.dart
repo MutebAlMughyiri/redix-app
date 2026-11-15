@@ -83,7 +83,8 @@ class Words with WordGetters {
 /// Loads [Words] through Flutter's localization, so a change of language loads that language's words.
 class WordsDelegate extends LocalizationsDelegate<Words> {
   /// A delegate for this [attempt]; a new attempt reloads the words, which is how the no-network screen retries, and [onRefreshed] asks for one when newer words arrive.
-  const WordsDelegate(this.attempt, {required this.onRefreshed});
+  /// [onLoaded] hears each set of words once loaded.
+  const WordsDelegate(this.attempt, {required this.onRefreshed, required this.onLoaded});
 
   /// Counts the retries; a different value makes Flutter load the words again.
   final int attempt;
@@ -91,11 +92,19 @@ class WordsDelegate extends LocalizationsDelegate<Words> {
   /// Called when words fetched in the background differ from those shown, so the app makes a new attempt and shows them at once.
   final VoidCallback onRefreshed;
 
+  /// Called with the words each time they load, at start, at a change of language and at a retry, for what shows them outside the app: the icon's menu and the
+  /// home-screen widget (redix-app #86 R5).
+  final ValueChanged<Words> onLoaded;
+
   @override
   bool isSupported(Locale locale) => Words.languages.contains(locale.languageCode);
 
   @override
-  Future<Words> load(Locale locale) => Words.load(locale.languageCode, onRefreshed: onRefreshed);
+  Future<Words> load(Locale locale) async {
+    final words = await Words.load(locale.languageCode, onRefreshed: onRefreshed);
+    onLoaded(words);
+    return words;
+  }
 
   @override
   bool shouldReload(WordsDelegate old) => old.attempt != attempt;

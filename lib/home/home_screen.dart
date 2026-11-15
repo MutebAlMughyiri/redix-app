@@ -29,6 +29,7 @@ import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 import '../config/local_config.dart';
+import '../launcher/launcher_add_entry.dart';
 
 /// The home of the open project (UC-010): the project, with what the user's permissions allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
@@ -79,6 +80,17 @@ class HomeScreen extends StatefulWidget {
 
   /// Where [session] lands at app start and at sign-in, and nowhere else, so Switch project is never bounced (AC-37.1).
   static String landingOf(Session session) => session.defaultProjectId.isEmpty ? ProjectsScreen.path : pathOf(session.defaultProjectId);
+
+  /// Where «إضافة قيد» from outside the app lands, the icon's menu and the home-screen widget alike (redix-app #86, the rule, D3): Add entry in the default project of
+  /// [session] when the person may record there, its home when not, where the button is gray (R6, AC-86.6), and the project list when [projects] holds no default project
+  /// the person may open (R3, AC-86.3). Signed out, the router opens sign-in first (AC-86.5).
+  static String addEntryLandingOf(Session session, Projects projects) {
+    final project = projects.byId(session.defaultProjectId);
+    if (project.isNone || !project.mayOpen) {
+      return ProjectsScreen.path;
+    }
+    return project.mayEnterExpenses ? AddEntryScreen.pathOf(project.id) : pathOf(project.id);
+  }
 
   /// The card of the project [id].
   static Key cardKey(String id) => Key('home.card.$id');
@@ -185,13 +197,24 @@ class _HomeScreenState extends State<HomeScreen> {
     widget.accounts.loadOnOpen();
     widget.entries.openFirstPage();
     widget.projects.addListener(_leaveIfGone);
+    widget.entries.addListener(_showOnTheWidget);
     unawaited(widget.sync.refresh(widget.projectId));
   }
 
   @override
   void dispose() {
     widget.projects.removeListener(_leaveIfGone);
+    widget.entries.removeListener(_showOnTheWidget);
     super.dispose();
+  }
+
+  /// Hands the home-screen widget the newest entries each time they are read, as many as show at a time, so it lists what «آخر القيود» lists (redix-app #86 R9, D8). A
+  /// read that failed leaves the widget as it was (G6).
+  void _showOnTheWidget() {
+    final entries = widget.entries;
+    if (!entries.isLoading && entries.message.isEmpty) {
+      unawaited(const LauncherAddEntry().showEntries(widget.projectId, entries.firstPage, Words.of(context)));
+    }
   }
 
   /// They may be taken out of the project at any time, and then the project is gone from their list; or made inactive in it, which they learn at the latest at the next
