@@ -153,7 +153,7 @@ class _ShareScreenState extends State<ShareScreen> {
   /// Lists [project]'s entries a file can go on, and reads what the QR code matches there (D3, D4).
   void _list(Project project) {
     _listed = project.id;
-    widget.entriesOf(project.id).open(attachable: true);
+    widget.entriesOf(project.id).open();
     unawaited(_findMatches(project.id));
   }
 
