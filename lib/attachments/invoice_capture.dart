@@ -90,23 +90,15 @@ class InvoiceCapture {
       FileSaver.instance.saveToDownloads(name: name, bytes: bytes, includeExtension: false, mimeType: MimeType.custom, customMimeType: mimeType);
 
   /// Opens the phone's files for any file, kept as it is: a project's document (UC-064).
-  Future<PickedFile> fromAnyFile() async {
-    try {
-      final picked = await FilePicker.pickFile(type: FileType.any);
-      if (picked == null) {
-        return PickedFile.none();
-      }
-      return PickedFile.read(picked.name, picked.path ?? '', await picked.readAsBytes());
-    } on Exception catch (error) {
-      debugPrint('File not read: $error');
-      return PickedFile.failed('attachments.unreadable');
-    }
-  }
+  Future<PickedFile> fromAnyFile() => _keptAsItIs(() => FilePicker.pickFile(type: FileType.any));
 
   /// Opens the phone's files for a project's file, a `.json` kept as it is (UC-071, redix-api #132).
-  Future<PickedFile> fromProjectFiles() async {
+  Future<PickedFile> fromProjectFiles() => _keptAsItIs(() => FilePicker.pickFile(type: FileType.custom, allowedExtensions: const ['json']));
+
+  /// The file [pick] chose from the phone's files, kept as it is; none when nothing was chosen, and unreadable when it could not be read.
+  static Future<PickedFile> _keptAsItIs(Future<PlatformFile?> Function() pick) async {
     try {
-      final picked = await FilePicker.pickFile(type: FileType.custom, allowedExtensions: const ['json']);
+      final picked = await pick();
       if (picked == null) {
         return PickedFile.none();
       }
