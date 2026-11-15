@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/config/app_config.dart';
+import 'package:redix/attachments/attachment_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
+import 'package:redix/format/date_format.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/ui/search_line.dart';
 import 'package:redix/ui/search_scope.dart';
@@ -514,7 +516,11 @@ void main() {
   });
 
   group('AC-19.1: fixing a rejected entry', () {
-    Future<FakeApi> openRejected(WidgetTester tester, {bool change = true, String attachmentId = 'attachment-1', num amount = 1150, MemoryStore? store}) async {
+    /// A file of the entry as its own route answers it under `attachments` (redix-app #115, AC-46.10g).
+    Map<String, Object> fileOf(String attachmentId, {String role = 'invoice', String fileName = 'invoice.png', String contentType = 'image/png', String uploadedAt = '2026-11-05T09:00:00'}) =>
+        {'attachmentId': attachmentId, 'role': role, 'fileName': fileName, 'contentType': contentType, 'uploadedAt': uploadedAt};
+
+    Future<FakeApi> openRejected(WidgetTester tester, {bool change = true, String attachmentId = 'attachment-1', List<Map<String, Object>> moreFiles = const [], num amount = 1150, MemoryStore? store}) async {
       final api = await openEntries(tester, store: store, (api) {
         final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'بند اللياسة', subgroups: ['مواد']);
         api
@@ -531,9 +537,7 @@ void main() {
             'expense': {'itemId': item['id']!, 'subgroupId': (item['subgroups']! as List<Map<String, Object>>).first['id']!, 'paymentMethodId': method['id']!},
             'purchase': {'supplierId': supplier['id']!},
             'contractorPayment': {'contractId': '00000000-0000-0000-0000-000000000000', 'isOutsideContract': false},
-            'attachments': [
-              {'attachmentId': attachmentId},
-            ],
+            'attachments': [fileOf(attachmentId), ...moreFiles],
           };
       });
       await openActions(tester, api, 'entry-0');
@@ -603,6 +607,34 @@ void main() {
       await openRejected(tester);
 
       expect(typed(tester, AddEntryScreen.descriptionKey), 'دفعة أولى');
+    });
+
+    testWidgets('redix-app #115 AC-46.10g, R9: an entry read only lists every file it holds, the oldest first, each its role and its date, and a tap opens one as a file opens anywhere', (tester) async {
+      final api = await openRejected(tester, change: false, moreFiles: [fileOf('attachment-shared', uploadedAt: '2026-11-15T10:00:00')]);
+
+      expect(text(tester, AddEntryScreen.fileKey('attachment-1').title), 'en entries.fileInvoice · ${formatDate(DateTime(2026, 11, 5))}');
+      expect(text(tester, AddEntryScreen.fileKey('attachment-shared').title), 'en entries.fileInvoice · ${formatDate(DateTime(2026, 11, 15))}');
+      expect(tester.getTopLeft(find.byKey(AddEntryScreen.fileKey('attachment-1'))).dy, lessThan(tester.getTopLeft(find.byKey(AddEntryScreen.fileKey('attachment-shared'))).dy));
+
+      await scrollAndTap(tester, api, AddEntryScreen.fileKey('attachment-shared'));
+
+      expect(find.byKey(AttachmentScreen.pictureKey), findsOneWidget);
+      expect(api.sentReads, contains('/projects/project-0/attachments/attachment-shared'));
+    });
+
+    testWidgets('redix-app #115 AC-46.10g: an entry being changed lists no file, as Add entry shows its own file alone', (tester) async {
+      await openRejected(tester, moreFiles: [fileOf('attachment-receipt', role: 'receipt'), fileOf('attachment-bank', role: 'bankReceipt'), fileOf('attachment-other', role: 'other')]);
+
+      for (final file in ['attachment-1', 'attachment-receipt', 'attachment-bank', 'attachment-other']) {
+        expect(find.byKey(AddEntryScreen.fileKey(file)), findsNothing);
+      }
+    });
+
+    testWidgets('redix-app #115 AC-46.10g: each file read only is named by its own role', (tester) async {
+      await openRejected(tester, change: false, moreFiles: [fileOf('attachment-receipt', role: 'receipt'), fileOf('attachment-bank', role: 'bankReceipt'), fileOf('attachment-other', role: 'other')]);
+
+      expect([for (final file in ['attachment-1', 'attachment-receipt', 'attachment-bank', 'attachment-other']) text(tester, AddEntryScreen.fileKey(file).title).split(' · ').first],
+          ['en entries.fileInvoice', 'en entries.fileReceipt', 'en entries.fileBankReceipt', 'en entries.fileOther']);
     });
 
     testWidgets('findings row 185: a kept PDF shows under the name it was kept with, its Arabic name too', (tester) async {

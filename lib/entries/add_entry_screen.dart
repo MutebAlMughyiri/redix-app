@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 
 import '../accounts/offered_accounts.dart';
+import '../attachments/attachment_screen.dart';
 import '../attachments/attachments.dart';
 import '../attachments/invoice_capture.dart';
 import '../attachments/picked_file.dart';
@@ -24,6 +25,7 @@ import '../expenses/payment_choices.dart';
 import '../expenses/qr_summary.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
+import '../format/parts_line.dart';
 import '../projects/project.dart';
 import '../settings/payment_methods.dart';
 import '../structure/column_label.dart';
@@ -165,6 +167,9 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The line that says why the file was not taken.
   static const invoiceMessageKey = Key('addEntry.invoiceMessage');
+
+  /// The line of the file [attachmentId] on an entry read only, which opens it (redix-app #115, AC-46.10g).
+  static Key fileKey(String attachmentId) => Key('addEntry.file.$attachmentId');
 
   /// The title over what the QR code holds.
   static const qrReadKey = Key('addEntry.qrRead');
@@ -697,6 +702,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
               isReading: _reading,
             ),
             IgnorePointer(ignoring: _reading, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: _entryFields(words, ownFields))),
+            if (_reading) ..._files(words),
             const SizedBox(height: 16),
             if (!_reading) _formActions(words) else if (!_row.isNone) _readingActions(words),
           ],
@@ -705,6 +711,17 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       ),
     );
   }
+
+  /// Every file an entry read only holds, the oldest first, each «فاتورة · 15/11/2026», opening as a file opens anywhere in the app (redix-app #115, AC-46.10g, D7).
+  List<Widget> _files(Words words) => [
+    for (final file in _saved.attachments)
+      ListTile(
+        key: AddEntryScreen.fileKey(file.attachmentId),
+        leading: Icon(Icons.attach_file, key: AddEntryScreen.fileKey(file.attachmentId).icon),
+        title: Text(partsLine([words.text(file.role.wordKey), formatDate(file.uploadedAt)]), key: AddEntryScreen.fileKey(file.attachmentId).title),
+        onTap: () => context.push(AttachmentScreen.pathOf(widget.project.id, file.attachmentId, fileName: file.fileName), extra: file.contentType),
+      ),
+  ];
 
   /// Where an entry read only stands, in its status's color (redix-app #90).
   Widget _standing(Words words) {

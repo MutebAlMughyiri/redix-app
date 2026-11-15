@@ -944,6 +944,18 @@ mixin WordGetters {
   /// The word `entries.entryWaitingForDecision`.
   String get entriesEntryWaitingForDecision => text('entries.entryWaitingForDecision');
 
+  /// The word `entries.fileBankReceipt`.
+  String get entriesFileBankReceipt => text('entries.fileBankReceipt');
+
+  /// The word `entries.fileInvoice`.
+  String get entriesFileInvoice => text('entries.fileInvoice');
+
+  /// The word `entries.fileOther`.
+  String get entriesFileOther => text('entries.fileOther');
+
+  /// The word `entries.fileReceipt`.
+  String get entriesFileReceipt => text('entries.fileReceipt');
+
   /// The word `entries.fix`.
   String get entriesFix => text('entries.fix');
 

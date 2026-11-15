@@ -26,4 +26,4 @@ The first screen after signing in continues with the file. The capital movement 
 
 Who may attach, which entries take a file, and that an entry with files takes another beside them (AC-46.10e, AC-46.10f) are the API's: `InvoiceAttachEndpoints.AttachableBy` and `EntryChanges.MayHandle`, proved by redix-api's `InvoiceAttachTests`. `patrol_test/sharing/shared_file_test.dart` shares a made-up invoice into the app on the HUAWEI (written for redix-app #115, not yet run).
 
-**Not built yet:** AC-46.10g, the entry's page showing every file it holds (R9, D7): the page shows its first file, as before; see redix-app #115's decisions.
+The entry's page lists every file it holds, a shared one among them (AC-46.10g, R9, D7): UC-033's `AddEntryScreen._files`.

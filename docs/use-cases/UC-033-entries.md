@@ -13,6 +13,7 @@
 | A row's details line, led by «قيد 312» (redix-api #128) | `EntriesScreen.detailsKey(id)` |
 | A row, where it stands by its frame's color alone: teal a draft, orange waiting, red rejected, plain once approved (redix-app #90; Muteb, 9 Nov 2026) | `EntriesScreen.rowKey`, `rowKey(id).card` |
 | An entry read only (redix-app #90): where it stands, and what can be done to it | `AddEntryScreen.statusKey`, `changeKey`, `cannotChangeKey`, `sendDraftKey`, `removeKey`; a draft, waiting or rejected entry is deleted by swiping its row, `rowKey(id).swipe`, on القيود and on the home alike (redix-api #102) |
+| Every file an entry read only holds, each opening it (redix-app #115, AC-46.10g) | `AddEntryScreen.fileKey(attachmentId)`, its `.icon` and `.title` |
 | The reason at the top of the form | `AddEntryScreen.rejectionKey` |
 | Share, in an entry's title bar read only and in the message once it is saved or sent (redix-app #83) | `AddEntryScreen.shareKey`; the message's action, `messageKeyOf(wordKey).icon` |
 | Where a shared link lands: looking for the entry, and saying it cannot be found | `EntryLinkScreen.loadingKey`, `notFoundKey` |
@@ -29,6 +30,7 @@
 | R8: a period keeps the entries dated inside it, both ends included | `EntryFilter.keeps` | `entries_test.dart`: search, R8: a period |
 | Everyone sees all entries, and starts on their own | `EntriesScreen` | `entries_test.dart`: everyone sees |
 | Tapping an entry opens it read only, its photo and every value as it was filled, with no way to type or take another file; تعديل turns it into the form, keeping the photo, and saving sends the file it holds no second time (redix-app #90) | `AddEntryScreen` (`isReading`), `Attachments.read`, `EntryFile.showKept`, `InvoiceSection.isReading` | `entries_test.dart`: redix-app #90: a tap opens the entry read only; the reason shows at the top; saving goes to that entry |
+| AC-46.10g, R9, D7 (redix-app #115): an entry read only lists every file it holds, the oldest first, each its role's word and the day it was sent, «فاتورة · 15/11/2026»; a tap opens it in `AttachmentScreen`, as a file opens anywhere in the app; an entry being changed lists none, as Add entry shows its own file alone | `AddEntryScreen._files`, `SavedEntry.attachments`, `EntryAttachment`, `EntryAttachmentRole` | `entries_test.dart`: redix-app #115 AC-46.10g, three tests |
 | Whoever approves finds اعتماد beside تعديل on a waiting entry read only; approving there approves it as Approvals does and goes back, a refusal for that entry says why and keeps it open; it shows grayed for whoever may not approve, and no draft or approved entry offers it. Approvals and its card stay as they are (Muteb, 9 Nov 2026) | `AddEntryScreen._approve`, `Approvals.approve` | `entries_test.dart`: Muteb, 9 Nov 2026, four tests |
 | A draft of their own can be changed, sent or deleted | `AddEntryScreen._readingActions` | `entries_test.dart`: a draft of their own |
 | What waits offers the field تعديل grayed, saying why, and someone else's too (redix-app #90, D4) | `EntryRow.allows`, `AddEntryScreen._readingActions` | `entries_test.dart`: redix-app #90 D4, two tests |

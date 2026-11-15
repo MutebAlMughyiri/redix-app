@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'entry_attachment.dart';
 import 'entry_status.dart';
 
 /// An entry as the API keeps it, whatever its table, read to fill Add entry when it is changed (UC-033, findings row 165, redix-api #110).
@@ -21,7 +22,7 @@ class SavedEntry {
       paymentMethodId: expense['paymentMethodId'] as String,
       supplierId: purchase['supplierId'] as String,
       isOutsideContract: payment['isOutsideContract'] as bool,
-      attachmentId: files.isEmpty ? '' : files.first['attachmentId'] as String,
+      attachments: [for (final file in files) EntryAttachment.fromJson(file)],
       columnValues: (jsonDecode(entry['columnValues'] as String) as Map<String, dynamic>).map((key, value) => MapEntry(key, '$value')),
     );
   }
@@ -37,7 +38,7 @@ class SavedEntry {
       paymentMethodId = '',
       supplierId = '',
       isOutsideContract = false,
-      attachmentId = '',
+      attachments = const [],
       columnValues = const {};
 
   SavedEntry._({
@@ -50,7 +51,7 @@ class SavedEntry {
     required this.paymentMethodId,
     required this.supplierId,
     required this.isOutsideContract,
-    required this.attachmentId,
+    required this.attachments,
     required this.columnValues,
   });
 
@@ -81,8 +82,11 @@ class SavedEntry {
   /// True for a payment outside its contract.
   final bool isOutsideContract;
 
-  /// Its file; empty when it has none.
-  final String attachmentId;
+  /// Every file it holds, the oldest first, which its page lists (redix-app #115, AC-46.10g); none when it has none.
+  final List<EntryAttachment> attachments;
+
+  /// Its first file, the one Add entry shows and sends again; empty when it has none.
+  String get attachmentId => attachments.isEmpty ? '' : attachments.first.attachmentId;
 
   /// The values of its item's columns it keeps under their keys, the unit price, the quantity, the product, «نوع القيد» and «نوع الحركة» among them (redix-api #129, R5).
   final Map<String, String> columnValues;

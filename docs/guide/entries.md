@@ -19,7 +19,7 @@ Every entry has a number in the project, its **entry number**, given when the se
 
 Each entry's frame says where it stands: teal for a draft, orange while it waits for approval, red once rejected, and plain once approved. Open it to read its status and, if rejected, why.
 
-Tap an entry to open it as it was filled, its photo included, and see what you can do with it at the bottom; Share is at the top:
+Tap an entry to open it as it was filled, its photo included, and see what you can do with it at the bottom; Share is at the top. Under its values it lists every file it holds, the oldest first, each with what it is and the day it was sent, such as **Invoice · 15/11/2026**, a file shared to it later too; tap one to open it:
 
 | It is | Who | What they can do |
 | --- | --- | --- |
@@ -47,7 +47,7 @@ An approved entry never changes. Removing it takes it out of every list and figu
 
 ويقول إطار كل قيد أين يقف: أخضر مزرق للمسودة، وبرتقالي بانتظار الاعتماد، وأحمر للمرفوض، وعادي بعد الاعتماد. افتحه لترى حالته، وسبب رفضه إن رُفض.
 
-اضغط قيداً لتفتحه كما أُدخل، بصورته، وترى في أسفله ما يمكنك فعله؛ والمشاركة في أعلاه:
+اضغط قيداً لتفتحه كما أُدخل، بصورته، وترى في أسفله ما يمكنك فعله؛ والمشاركة في أعلاه. وتحت قيمه كل ملف فيه، الأقدم أولاً، وكلٌّ بما هو ويوم إرساله، مثل **فاتورة · 15/11/2026**، ومنها ما شوركه لاحقاً؛ اضغط أحدها لفتحه:
 
 | حالته | من | ما يمكنه |
 | --- | --- | --- |
