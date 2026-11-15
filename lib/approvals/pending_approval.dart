@@ -1,11 +1,13 @@
 import '../entries/entry_kind.dart';
 import '../entries/entry_row.dart';
+import '../words/words.dart';
 
 /// An entry waiting for Finance's decision (UC-031).
 class PendingApproval {
   /// An entry as the API answers it.
   PendingApproval.fromJson(Map<String, dynamic> json)
     : id = json['id'] as String,
+      number = json['number'] as int,
       kind = EntryKind.values.byName(json['kind'] as String),
       date = DateTime.parse(json['entryDate'] as String),
       amount = (json['amount'] as num).toDouble(),
@@ -25,6 +27,9 @@ class PendingApproval {
 
   /// The entry's id.
   final String id;
+
+  /// «رقم القيد», its number in the project (redix-api #128, FR-54).
+  final int number;
 
   /// What it is.
   final EntryKind kind;
@@ -73,6 +78,9 @@ class PendingApproval {
 
   /// How much more what waits on its account takes than the account holds; zero when it covers all of it. Nothing blocks it, but the inbox notes it (R5).
   final double accountShortBy;
+
+  /// «قيد 312», what leads its details line, as it leads the entry card's (redix-api #128, AC-54.4).
+  String numberIn(Words words) => EntryRow.numberOf(number, words);
 
   /// What names it on its card: a capital movement's partner, otherwise its item.
   String get title => EntryRow.titleOf(partnerName, itemName);

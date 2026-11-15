@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/attachments/attachment_screen.dart';
+import 'package:redix/format/date_format.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/part_keys.dart';
@@ -44,6 +45,22 @@ void main() {
     expect(text(tester, ApprovalsScreen.descriptionKey('entry-1')), 'شراء من السوق');
     expect(find.byKey(ApprovalsScreen.fileKey('entry-0')), findsOneWidget);
     expect(find.byKey(ApprovalsScreen.fileKey('entry-1')), findsNothing);
+  });
+
+  testWidgets("redix-api #128, AC-54.4: each row's details line starts with its entry's «قيد 312», as the entry card does, then its older bill's number and its date", (tester) async {
+    await openInbox(tester, (api) => api.addPending(number: 312));
+
+    expect(text(tester, ApprovalsScreen.dateKey('entry-0')), 'en entries.numberOf 312 · 2617 · ${formatDate(DateTime(2026, 11, 5))}');
+  });
+
+  testWidgets("redix-api #128, AC-54.4: each row says its own entry's number, not its place in the inbox", (tester) async {
+    await openInbox(tester, (api) {
+      api
+        ..addPending(number: 318)
+        ..addPending(number: 312);
+    });
+
+    expect([for (final id in ['entry-0', 'entry-1']) text(tester, ApprovalsScreen.dateKey(id)).split(' · ').first], ['en entries.numberOf 318', 'en entries.numberOf 312']);
   });
 
   testWidgets('nothing waiting says so', (tester) async {

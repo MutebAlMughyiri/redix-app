@@ -612,6 +612,7 @@ class FakeApi {
 
   /// Adds an entry waiting for a decision.
   Map<String, Object> addPending({
+    int number = 1,
     String kind = 'purchase',
     double amount = 1150,
     String description = '',
@@ -625,6 +626,7 @@ class FakeApi {
   }) {
     final entry = <String, Object>{
       'id': 'entry-${pendingEntries.length}',
+      'number': number,
       'kind': kind,
       'entryDate': '2026-11-05',
       'amount': amount,

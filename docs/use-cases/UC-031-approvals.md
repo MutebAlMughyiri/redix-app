@@ -10,7 +10,7 @@
 | --- | --- |
 | The way in, on the home | `HomeScreen.approvalsKey` |
 | The filters | `ApprovalsScreen.allKey`, `purchasesKey`, `contractorPaymentsKey` |
-| An entry's card | `ApprovalsScreen.cardKey` |
+| An entry's card, and its details line led by «قيد 312» (redix-api #128) | `ApprovalsScreen.cardKey`, `dateKey` |
 | Its selection, Approve, Reject and file | `ApprovalsScreen.selectKey`, `approveKey`, `rejectKey`, `fileKey` |
 | Why it could not be approved | `ApprovalsScreen.failedKey` |
 | Show everything waiting, when a shared link opened one entry (redix-app #83) | `ApprovalsScreen.showAllKey` |
@@ -22,6 +22,7 @@
 | --- | --- | --- |
 | Only whoever decides entries has a way in | `ProjectSettingsCard`, `project.may` | `approvals_test.dart`: only whoever decides |
 | AC-18.1: what waits shows what Finance needs, in the API's order | `ApprovalsScreen._details` | `approvals_test.dart`: AC-18.1: what waits |
+| AC-54.4 (redix-api #128): each row's details line starts with its entry's own «قيد 312», as the entry card's does, then an older bill's number and the date | `ApprovalsScreen._details`, `PendingApproval.numberIn`, `EntryRow.numberOf` | `approvals_test.dart`: redix-api #128, AC-54.4, two tests |
 | AC-18.1: a picture opens to zoom into | `AttachmentScreen` | `approvals_test.dart`: AC-18.1: a picture |
 | A PDF goes to the phone by its own name, and an unreadable file says so | `AttachmentScreen`, `PendingApproval.fileName` | `approvals_test.dart`: a PDF is handed to the phone by its own name |
 | A file that is not a picture, a PDF included, goes to the phone through `InvoiceCapture.shareFile` by its own name; an entry's file, whose name the app is not given, goes as invoice.pdf | `AttachmentScreen`, the attachment route | `documents_test.dart`: UC-064: a PDF is handed to the phone by its own name too |

@@ -106,8 +106,12 @@ class EntryRow {
   /// How much more it takes than its account holds; zero when its account covers it, or once decided (redix-app #89).
   final double accountShortBy;
 
-  /// «قيد 312», what names it by its number (redix-api #128, AC-54.4): the one owner of how an entry is called by it, empty while it has none.
-  String numberIn(Words words) => number > 0 ? words.entriesNumberOf.fill(['$number']) : '';
+  /// «قيد 312», what names it by its number (redix-api #128, AC-54.4), empty while it has none.
+  String numberIn(Words words) => numberOf(number, words);
+
+  /// «قيد 312», what names an entry by its [number] in [words] (redix-api #128, AC-54.4): the one owner of how an entry is called by it, on its card and in Approvals alike,
+  /// empty for 0, none yet.
+  static String numberOf(int number, Words words) => number > 0 ? words.entriesNumberOf.fill(['$number']) : '';
 
   /// What names it on a list: a partner's money's partner, otherwise its item.
   String get title => titleOf(partnerName, itemName);

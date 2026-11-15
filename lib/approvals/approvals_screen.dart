@@ -186,7 +186,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
         Text(entry.title, key: ApprovalsScreen.itemKey(entry.id), style: theme.textTheme.titleSmall),
         if (entry.supplierName.isNotEmpty) Text(entry.supplierName, key: ApprovalsScreen.supplierKey(entry.id)),
         if (entry.kindWordKey.isNotEmpty) Text(words.text(entry.kindWordKey), key: ApprovalsScreen.kindKey(entry.id)),
-        Text(partsLine([entry.invoiceNumber, formatDate(entry.date)]), key: ApprovalsScreen.dateKey(entry.id), style: small),
+        Text(partsLine([entry.numberIn(words), entry.invoiceNumber, formatDate(entry.date)]), key: ApprovalsScreen.dateKey(entry.id), style: small),
         Text('${words.approvalsEnteredBy}: ${entry.authorName} · ${entry.accountName}', key: ApprovalsScreen.enteredByKey(entry.id), style: small),
         if (entry.accountShortBy > 0)
           Container(
