@@ -24,7 +24,6 @@ class ItemEntryRow {
     : entryId = json['entryId'] as String,
       date = DateTime.parse(json['date'] as String),
       amount = (json['amount'] as num).toDouble(),
-      isOutsideContract = json['isOutsideContract'] as bool,
       values = (json['values'] as List<dynamic>).cast<String>();
 
   /// The entry.
@@ -35,9 +34,6 @@ class ItemEntryRow {
 
   /// What was paid.
   final double amount;
-
-  /// True for a payment outside its contract.
-  final bool isOutsideContract;
 
   /// What it shows under each of its table's columns, in their order (redix-api #129, R1).
   final List<String> values;
