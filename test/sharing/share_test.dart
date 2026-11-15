@@ -182,7 +182,7 @@ void main() {
   testWidgets('UC-046: a new expense opens with the shared file and its QR code, not the camera', (tester) async {
     final (:api, :capture) = await share(tester, (api) {}, qrText: _qrText());
 
-    await act(tester, api, () => tester.tap(find.byKey(ShareScreen.newExpenseKey)));
+    await act(tester, api, () => tester.tap(find.byKey(ShareScreen.newEntryKey)));
 
     expect(capture.cameraOpened, 0);
     expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);

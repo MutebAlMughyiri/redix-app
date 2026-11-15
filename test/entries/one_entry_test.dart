@@ -278,9 +278,9 @@ void main() {
       capture.share(picture());
       await act(tester, api, () async {});
 
-      await tester.ensureVisible(find.byKey(ShareScreen.newExpenseKey));
+      await tester.ensureVisible(find.byKey(ShareScreen.newEntryKey));
       await tester.pumpAndSettle();
-      await act(tester, api, () => tester.tap(find.byKey(ShareScreen.newExpenseKey)));
+      await act(tester, api, () => tester.tap(find.byKey(ShareScreen.newEntryKey)));
       await pick(tester, api, partner);
       await tester.enterText(find.byKey(AddEntryScreen.amountKey), '1000');
       await act(tester, api, () => tester.tap(find.byKey(PaymentChoices.accountKey(account))));

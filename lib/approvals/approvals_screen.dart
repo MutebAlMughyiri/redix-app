@@ -96,8 +96,8 @@ class ApprovalsScreen extends StatefulWidget {
   /// The supplier of the entry [id].
   static Key supplierKey(String id) => Key('approvals.supplier.$id');
 
-  /// The bill number and date of the entry [id].
-  static Key dateKey(String id) => Key('approvals.date.$id');
+  /// The line under the entry [id]'s name: its «قيد 312», an older bill's number and its date (redix-api #128).
+  static Key detailsKey(String id) => Key('approvals.details.$id');
 
   /// Who entered the entry [id], and from which account.
   static Key enteredByKey(String id) => Key('approvals.enteredBy.$id');
@@ -105,7 +105,7 @@ class ApprovalsScreen extends StatefulWidget {
   /// The note on the entry [id] saying its account does not hold enough for it (redix-app #89, R5).
   static Key shortKey(String id) => Key('approvals.short.$id');
 
-  /// The notes of the entry [id].
+  /// «الوصف» of the entry [id] (redix-api #129).
   static Key descriptionKey(String id) => Key('approvals.description.$id');
 
   /// The amount of the entry [id].
@@ -186,7 +186,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
         Text(entry.title, key: ApprovalsScreen.itemKey(entry.id), style: theme.textTheme.titleSmall),
         if (entry.supplierName.isNotEmpty) Text(entry.supplierName, key: ApprovalsScreen.supplierKey(entry.id)),
         if (entry.kindWordKey.isNotEmpty) Text(words.text(entry.kindWordKey), key: ApprovalsScreen.kindKey(entry.id)),
-        Text(partsLine([entry.numberIn(words), entry.invoiceNumber, formatDate(entry.date)]), key: ApprovalsScreen.dateKey(entry.id), style: small),
+        Text(partsLine([entry.numberIn(words), entry.invoiceNumber, formatDate(entry.date)]), key: ApprovalsScreen.detailsKey(entry.id), style: small),
         Text('${words.approvalsEnteredBy}: ${entry.authorName} · ${entry.accountName}', key: ApprovalsScreen.enteredByKey(entry.id), style: small),
         if (entry.accountShortBy > 0)
           Container(

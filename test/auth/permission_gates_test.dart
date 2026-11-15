@@ -194,7 +194,7 @@ final List<Gate> _gates = [
     steps: [_openProject, _tapKey(HomeScreen.contractsKey(_project)), _tapKey(ContractsScreen.addKey)],
     control: _key(ContractsScreen.addDocumentKey),
   ),
-  (name: 'A shared file as a new expense', permission: Permission.attachFiles, arrange: _nothing, steps: [_shareAPicture], control: _key(ShareScreen.newExpenseKey)),
+  (name: 'A shared file as a new expense', permission: Permission.attachFiles, arrange: _nothing, steps: [_shareAPicture], control: _key(ShareScreen.newEntryKey)),
   (
     name: 'An enabled Edit on someone else\'s entry',
     permission: Permission.manageAnyEntry,

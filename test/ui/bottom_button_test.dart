@@ -58,7 +58,7 @@ final List<MainAction> _mainActions = [
     icon: Icons.add,
   ),
   (name: 'Projects', arrange: _nothing, reach: [], key: ProjectsScreen.newProjectKey, icon: Icons.add),
-  (name: 'Share: a new entry with the file', arrange: _nothing, reach: [], key: ShareScreen.newExpenseKey, icon: Icons.add),
+  (name: 'Share: a new entry with the file', arrange: _nothing, reach: [], key: ShareScreen.newEntryKey, icon: Icons.add),
   (
     name: 'Approvals: approve selected',
     arrange: (api) => api.addPending(),
@@ -87,7 +87,7 @@ void main() {
     action.arrange(api);
     final capture = FakeCapture();
     await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
-    if (action.key == ShareScreen.newExpenseKey) {
+    if (action.key == ShareScreen.newEntryKey) {
       capture.share(PickedFile('receipt.png', '', Uint8List.fromList(onePixelPng)));
       await act(tester, api, () async {});
     }

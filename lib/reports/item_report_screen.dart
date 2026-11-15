@@ -95,16 +95,16 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
 
   /// A row as its table prints it (redix-api #129, R1): «الوصف» its title, then what it shows under each other column of its table, a date and an amount as the app writes them, then its amount.
   Widget _row(ItemEntryRow row, List<ReportColumn> columns) {
-    final described = columns.indexWhere((column) => column.key == 'description');
+    final descriptionIndex = columns.indexWhere((column) => column.key == 'description');
     final details = [
       for (var index = 0; index < columns.length && index < row.values.length; index++)
-        if (index != described && row.values[index].isNotEmpty) '${columns[index].name}: ${_shown(columns[index], row.values[index])}',
+        if (index != descriptionIndex && row.values[index].isNotEmpty) '${columns[index].name}: ${_shown(columns[index], row.values[index])}',
     ];
     return ListTile(
       key: ItemReportScreen.rowKey(row.entryId),
       dense: true,
       contentPadding: EdgeInsets.zero,
-      title: Text(described >= 0 && described < row.values.length ? row.values[described] : '', key: ItemReportScreen.rowKey(row.entryId).title),
+      title: Text(descriptionIndex >= 0 && descriptionIndex < row.values.length ? row.values[descriptionIndex] : '', key: ItemReportScreen.rowKey(row.entryId).title),
       subtitle: Text(partsLine(details), key: ItemReportScreen.rowKey(row.entryId).subtitle),
       trailing: Text(formatMoney(row.amount), key: ItemReportScreen.rowKey(row.entryId).trailing),
     );

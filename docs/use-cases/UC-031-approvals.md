@@ -10,7 +10,7 @@
 | --- | --- |
 | The way in, on the home | `HomeScreen.approvalsKey` |
 | The filters | `ApprovalsScreen.allKey`, `purchasesKey`, `contractorPaymentsKey` |
-| An entry's card, and its details line led by «قيد 312» (redix-api #128) | `ApprovalsScreen.cardKey`, `dateKey` |
+| An entry's card, and its details line led by «قيد 312» (redix-api #128) | `ApprovalsScreen.cardKey`, `detailsKey` |
 | Its selection, Approve, Reject and file | `ApprovalsScreen.selectKey`, `approveKey`, `rejectKey`, `fileKey` |
 | Why it could not be approved | `ApprovalsScreen.failedKey` |
 | Show everything waiting, when a shared link opened one entry (redix-app #83) | `ApprovalsScreen.showAllKey` |

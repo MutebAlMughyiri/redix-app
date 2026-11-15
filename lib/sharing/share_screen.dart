@@ -57,7 +57,7 @@ class ShareScreen extends StatefulWidget {
   static const attachKey = Key('share.attach');
 
   /// The button starting a new entry with it.
-  static const newExpenseKey = Key('share.newExpense');
+  static const newEntryKey = Key('share.newEntry');
 
   /// The line saying why it was refused.
   static const messageKey = Key('share.message');
@@ -108,7 +108,7 @@ class ShareScreen extends StatefulWidget {
 class _ShareScreenState extends State<ShareScreen> {
   var _qr = InvoiceQr.none();
   var _projectId = '';
-  var _listed = '';
+  var _listedProjectId = '';
   var _chosen = '';
   var _message = '';
 
@@ -134,8 +134,8 @@ class _ShareScreenState extends State<ShareScreen> {
       return;
     }
     setState(() => _qr = qr);
-    if (_listed.isNotEmpty) {
-      await _findMatches(_listed);
+    if (_listedProjectId.isNotEmpty) {
+      await _findMatches(_listedProjectId);
     }
   }
 
@@ -145,14 +145,14 @@ class _ShareScreenState extends State<ShareScreen> {
 
   /// Lists the first project's entries once the projects are read.
   void _listOnceProjectsCome() {
-    if (_listed.isEmpty && _open.isNotEmpty) {
+    if (_listedProjectId.isEmpty && _open.isNotEmpty) {
       _list(_project);
     }
   }
 
   /// Lists [project]'s entries a file can go on, and reads what the QR code matches there (D3, D4).
   void _list(Project project) {
-    _listed = project.id;
+    _listedProjectId = project.id;
     widget.entriesOf(project.id).open();
     unawaited(_findMatches(project.id));
   }
@@ -161,7 +161,7 @@ class _ShareScreenState extends State<ShareScreen> {
   Future<void> _findMatches(String projectId) async {
     final matches = widget.matchesOf(projectId);
     await matches.findFor(_qr);
-    if (mounted && matches.all.isNotEmpty && _listed == projectId) {
+    if (mounted && matches.all.isNotEmpty && _listedProjectId == projectId) {
       setState(() => _chosen = matches.all.first.id);
     }
   }
@@ -193,7 +193,7 @@ class _ShareScreenState extends State<ShareScreen> {
     setState(() => _message = refusal);
   }
 
-  Future<void> _newExpense() async {
+  Future<void> _newEntry() async {
     final saved = await context.push<bool>(AddEntryScreen.sharedPathOf(_project.id), extra: _project);
     if (saved ?? false) {
       widget.onDone();
@@ -308,7 +308,7 @@ class _ShareScreenState extends State<ShareScreen> {
         ),
         bottomNavigationBar: ListenableBuilder(
           listenable: widget.projects,
-          builder: (context, _) => _open.isEmpty ? const SizedBox.shrink() : BottomButton(buttonKey: ShareScreen.newExpenseKey, label: words.shareNewExpense, onPressed: _newExpense),
+          builder: (context, _) => _open.isEmpty ? const SizedBox.shrink() : BottomButton(buttonKey: ShareScreen.newEntryKey, label: words.shareNewExpense, onPressed: _newEntry),
         ),
         body: ListenableBuilder(
           listenable: widget.projects,

@@ -50,7 +50,7 @@ void main() {
   testWidgets("redix-api #128, AC-54.4: each row's details line starts with its entry's «قيد 312», as the entry card does, then its older bill's number and its date", (tester) async {
     await openInbox(tester, (api) => api.addPending(number: 312));
 
-    expect(text(tester, ApprovalsScreen.dateKey('entry-0')), 'en entries.numberOf 312 · 2617 · ${formatDate(DateTime(2026, 11, 5))}');
+    expect(text(tester, ApprovalsScreen.detailsKey('entry-0')), 'en entries.numberOf 312 · 2617 · ${formatDate(DateTime(2026, 11, 5))}');
   });
 
   testWidgets("redix-api #128, AC-54.4: each row says its own entry's number, not its place in the inbox", (tester) async {
@@ -60,7 +60,7 @@ void main() {
         ..addPending(number: 312);
     });
 
-    expect([for (final id in ['entry-0', 'entry-1']) text(tester, ApprovalsScreen.dateKey(id)).split(' · ').first], ['en entries.numberOf 318', 'en entries.numberOf 312']);
+    expect([for (final id in ['entry-0', 'entry-1']) text(tester, ApprovalsScreen.detailsKey(id)).split(' · ').first], ['en entries.numberOf 318', 'en entries.numberOf 312']);
   });
 
   testWidgets('nothing waiting says so', (tester) async {

@@ -108,7 +108,7 @@ void main() {
     phoneCase('UC-046: a new expense opens with the shared file and its QR code', ($) async {
       final manager = await Given.manager();
       await shareInto($, manager);
-      await $.tapOn(ShareScreen.newExpenseKey);
+      await $.tapOn(ShareScreen.newEntryKey);
       await $.reach($(AddEntryScreen.invoicePictureKey));
       await $.reach($(AddEntryScreen.qrReadKey));
     });
@@ -117,7 +117,7 @@ void main() {
       final manager = await Given.manager();
       final partner = await Given.partner(manager, 'هيثم');
       await shareInto($, manager);
-      await $.tapOn(ShareScreen.newExpenseKey);
+      await $.tapOn(ShareScreen.newEntryKey);
       await $.reach($(AddEntryScreen.invoicePictureKey));
       await $.tapOn(AddEntryScreen.tableKey);
       await $(TablePicker.searchKey).enterText('هيثم');
