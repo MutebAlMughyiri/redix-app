@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../format/date_format.dart';
 import '../format/number_format.dart';
+import '../format/parts_line.dart';
 import '../projects/project.dart';
 import '../ui/api_object_body.dart';
 import '../ui/list_search.dart';
@@ -104,7 +105,7 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
       dense: true,
       contentPadding: EdgeInsets.zero,
       title: Text(described >= 0 && described < row.values.length ? row.values[described] : '', key: ItemReportScreen.rowKey(row.entryId).title),
-      subtitle: Text(details.join(' · '), key: ItemReportScreen.rowKey(row.entryId).subtitle),
+      subtitle: Text(partsLine(details), key: ItemReportScreen.rowKey(row.entryId).subtitle),
       trailing: Text(formatMoney(row.amount), key: ItemReportScreen.rowKey(row.entryId).trailing),
     );
   }

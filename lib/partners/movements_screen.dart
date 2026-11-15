@@ -74,7 +74,6 @@ class _MovementsScreenState extends State<MovementsScreen> {
   Widget _row(CapitalMovement movement) {
     final words = Words.of(context);
     final project = widget.project;
-    final parts = [if (movement.movementName.isNotEmpty) movement.movementName, formatDate(movement.date), movement.accountName];
     return SwipeToRemove(
       rowKey: MovementsScreen.rowKey(movement.id),
       mayRemove: project.mayRemoveApprovedEntries,
@@ -84,7 +83,7 @@ class _MovementsScreenState extends State<MovementsScreen> {
         key: MovementsScreen.rowKey(movement.id),
         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),
         title: Text(movement.description.isEmpty ? movement.movementName : movement.description, key: MovementsScreen.rowKey(movement.id).title),
-        subtitle: Text(parts.join(' · '), key: MovementsScreen.rowKey(movement.id).subtitle),
+        subtitle: Text(partsLine([movement.movementName, formatDate(movement.date), movement.accountName]), key: MovementsScreen.rowKey(movement.id).subtitle),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

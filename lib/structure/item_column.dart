@@ -1,4 +1,5 @@
 import '../format/number_format.dart';
+import '../words/words.dart';
 
 /// What a column holds (FR-41), as the API names it, each knowing its word.
 enum ColumnDataType {
@@ -59,6 +60,9 @@ class ColumnChoice {
 
   /// The sign it gives the amount.
   final ChoiceSign sign;
+
+  /// The choice as a column's list shows it in [words]: its name, then its sign's word when it gives one, «مرتجع (−)» (redix-api #129).
+  String labelIn(Words words) => sign == ChoiceSign.none ? name : '$name (${words.text(sign.wordKey)})';
 }
 
 /// A column (العمود) of one item or of the default template, as the API answers it. The rules live in the API; the app only draws what it is told.

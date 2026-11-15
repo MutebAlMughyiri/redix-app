@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../format/parts_line.dart';
 import '../ui/change_dialog.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
@@ -77,7 +78,7 @@ class _EditColumnDialogState extends State<EditColumnDialog> {
           onChanged: mayChangeMore ? (value) => setState(() => _showInReports = value) : null,
         ),
         if (widget.column.gainsChoices) ...[
-          Text(widget.column.choices.map((choice) => choice.sign == ChoiceSign.none ? choice.name : '${choice.name} (${words.text(choice.sign.wordKey)})').join(' · '), key: ItemColumnsScreen.existingChoicesKey),
+          Text(partsLine([for (final choice in widget.column.choices) choice.labelIn(words)]), key: ItemColumnsScreen.existingChoicesKey),
           const SizedBox(height: 8),
           TextField(
             key: ItemColumnsScreen.newChoicesKey,
