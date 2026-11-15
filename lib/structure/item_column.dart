@@ -112,7 +112,7 @@ class ItemColumn {
   /// Whether it prints in the reports.
   final bool showInReports;
 
-  /// True for a column the entry answers in a field of its own, its date, supplier, amount, account, method, file, contract or notes; false for one Add entry draws as a field of
+  /// True for a column the entry answers in a field of its own, its date, supplier, amount, account, method, file, contract or description «الوصف» (redix-api #129); false for one Add entry draws as a field of
   /// the column itself, the unit price, the quantity, the product, «نوع القيد» and «نوع الحركة» among them (redix-api #129, R3).
   final bool isEntryField;
 

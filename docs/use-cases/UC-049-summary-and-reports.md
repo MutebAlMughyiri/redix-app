@@ -6,7 +6,7 @@
 
 **Who uses it:** everyone in the project. Only whoever decides entries sees the way to what waits; only the manager sets the completion.
 
-The home reads the figures again whenever it comes back into view, so an approval shows as soon as Finance returns (AC-34.1). The contracts report is the contracts screen (UC-020), reached from the home, which holds its PDF and Excel for whoever sees all capital; the item reports, the actual balances and the VAT refund open from the home's buttons too, and Reports holds the periodic reports alone (Muteb, 9 Nov 2026).
+The home reads the figures again whenever it comes back into view, so an approval shows as soon as Finance returns (AC-34.1). The contracts report is the contracts screen (UC-020), reached from the home, which holds its PDF and Excel for whoever holds «يُصدر التقارير» (redix-api #131); the item reports, the actual balances and the VAT refund open from the home's buttons too, and Reports holds the periodic reports alone (Muteb, 9 Nov 2026).
 
 | Rule | Code | Test |
 | --- | --- | --- |

@@ -69,7 +69,9 @@ lib/
     entry_share.dart        An entry as text for any app the phone shares to, ending in its link
     entry_recording.dart    Records a project's entries on the API through one route, whatever their table, or keeps them in the outbox while there is no network
     entry_kind.dart         What an entry is, named as the API names it, with the word key that names it: the one owner the filter, the entries list and Approvals read
-    entry_row.dart          An entry on a list
+    entry_row.dart          An entry on a list, and how an entry is called by its number, «قيد 312» (redix-api #128)
+    entry_attachment.dart   A file an entry holds, as its page lists it: its role, name, type and when it was sent (redix-app #115)
+    entry_attachment_role.dart What a file is to its entry, with the word that names it on the entry's page
     entry_status.dart       Where an entry stands, named as the API names it, and the color that marks it (redix-app #90)
     entry_tables.dart       One table an entry may go into, and what it asks beyond every entry
     entry_card.dart         An entry on a list of project's entries: tapping it opens its actions, and swiping it removes it where the user may delete it
@@ -78,7 +80,7 @@ lib/
     opened_entry.dart       The entry a page opened, read by its id as the lists show it, whichever list opened it: where it stands, sending and reversing it (findings row 201)
     project_entries.dart    A project's entries, newest first: everyone who reads the project sees them all, and only their own drafts
     searched_entries.dart   The Entries screen's search: the newest entries with what was typed and chosen sent to the API, a page at a time
-    saved_entry.dart        An entry as the API keeps it, whatever its table, read to fill Add entry when it is changed
+    saved_entry.dart        An entry as the API keeps it, whatever its table, with every file it holds, read to fill Add entry when it is changed and to list its files
     table_picker.dart       The field that chooses the table an expense goes into, opening a sheet of every table on offer: by category, each item with its general table first and its named tables and contracts under it, with a search over the items' and the tables' names
   expenses/
     column_value_field.dart The field of one custom column, drawn from what the column holds: a required one is marked
@@ -147,7 +149,7 @@ lib/
     unit_row.dart           One unit on More info: its name and, for whoever manages the open project, a menu to rename it and a swipe that removes it
   reports/
     summary.dart          One item's total, one category's, and the project's figures
-    item_report.dart        One purchase or payment in an item's report
+    item_report.dart        An item's report: its tables' columns and each purchase or payment under them, as the API prints them (redix-api #129)
     item_report_screen.dart Everything spent on one item: a table per subgroup, then each contract with its value, paid and remaining
     periodic_report_screen.dart One periodic report as it was issued: what everyone may read, and its files for whoever may export them
     periodic_reports.dart   A periodic report issued
@@ -220,7 +222,7 @@ lib/
     form_section.dart       One section of a long form: its children on a card, evenly spaced
     labelled_chips.dart     A choice among a few, drawn as chips under what is being chosen
     list_search.dart        What a list is searched by, on the phone or on the API, what its search line says and its filters, and how the phone matches what was typed
-    name_dialog.dart        Asks for one name, for adding or renaming anything in a project
+    name_dialog.dart        Asks for one name, for adding or renaming anything in a project, or one «رقم القيد» for the entries' filter
     part_keys.dart          The keys of the parts inside a keyed element: its label, icon, title, subtitle and the field it is drawn as
     picker_field.dart       A field whose value is chosen elsewhere: it looks like a text field, shows what was chosen, and opens the choice when tapped
     picker_sheet.dart       Opens a sheet of choices, the same for every picker

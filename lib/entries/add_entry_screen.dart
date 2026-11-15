@@ -585,7 +585,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     });
   }
 
-
   bool _requires(String key) => _columns.any((column) => column.key == key && column.isRequired);
 
   String _nameOf(String key, String word) => columnLabel(context, _columns, key, word);
