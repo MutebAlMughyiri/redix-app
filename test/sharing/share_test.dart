@@ -34,10 +34,12 @@ String _qrText({double total = 6000}) {
 PickedFile _picture() => PickedFile('invoice.png', '', Uint8List.fromList(onePixelPng));
 
 void main() {
-  Future<({FakeApi api, FakeCapture capture})> share(WidgetTester tester, void Function(FakeApi api) arrange, {String qrText = '', PickedFile? file, List<String> permissions = field, bool signedIn = true}) async {
-    tester.view.physicalSize = const Size(800, 2400);
+  Future<({FakeApi api, FakeCapture capture})> share(WidgetTester tester, void Function(FakeApi api) arrange, {String qrText = '', PickedFile? file, List<String> permissions = field, bool signedIn = true, Size screen = const Size(800, 2400), double textScale = 1}) async {
+    tester.view.physicalSize = screen;
     tester.view.devicePixelRatio = 1;
+    tester.platformDispatcher.textScaleFactorTestValue = textScale;
     addTearDown(tester.view.reset);
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة الغربية']);
     api.addItem(api.addCategory('project-0', 'التشطيب'), 'اللياسة');
     arrange(api);
@@ -118,6 +120,18 @@ void main() {
     expect(find.byKey(ShareScreen.amountDiffersKey), findsNothing);
     expect(find.byKey(ShareScreen.supplierDiffersKey), findsNothing);
     expect(api.sentReads, contains('/projects/project-0/entries/attachable'));
+  });
+
+  testWidgets('findings row 254: on a small phone with large text the picture, the QR code and the pinned match scroll away, so the list still has room', (tester) async {
+    final (:api, capture: _) = await share(tester, (api) {
+      api
+        ..addEntry(id: 'entry-other')
+        ..addMatch(id: 'entry-match', supplierVatNumber: _vatNumber);
+    }, qrText: _qrText(), screen: const Size(360, 640), textScale: 2);
+
+    await act(tester, api, () => tester.drag(find.byType(NestedScrollView), const Offset(0, -600)));
+
+    expect(tester.getRect(find.byKey(EntriesScreen.rowKey('entry-other'))).overlaps(tester.getRect(find.byType(NestedScrollView))), isTrue);
   });
 
   testWidgets('without a QR code nothing is pinned or chosen, the API is not asked for a match, and the attach button waits', (tester) async {

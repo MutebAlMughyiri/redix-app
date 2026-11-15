@@ -236,39 +236,44 @@ class _ShareScreenState extends State<ShareScreen> {
       builder: (context, _) {
         final matched = {for (final entry in matches.all) entry.id};
         final chosen = [...matches.all, ...entries.all].where((entry) => entry.id == _chosen).take(1);
+        final header = [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: 12,
+              children: [
+                if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: ShareScreen.messageKey),
+                if (widget.file.isPdf) ListTile(key: ShareScreen.fileKey, leading: Icon(Icons.picture_as_pdf_outlined, key: ShareScreen.fileKey.icon), title: Text(widget.file.name, key: ShareScreen.fileKey.title)) else SizedBox(height: MediaQuery.sizeOf(context).height * 0.25, child: Image.memory(widget.file.bytes, key: ShareScreen.pictureKey, fit: BoxFit.contain)),
+                if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: false, onAddSupplier: () {}),
+                if (_open.length > 1)
+                  LabelledChips(
+                    key: ShareScreen.projectChoiceKey,
+                    label: words.shareProject,
+                    choices: _open,
+                    keyOf: (choice) => ShareScreen.projectKey(choice.id),
+                    nameOf: (choice) => choice.name,
+                    isChosen: (choice) => choice.id == project.id,
+                    onChosen: _chooseProject,
+                  ),
+              ],
+            ),
+          ),
+          ..._pinned(matches.all),
+        ];
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                spacing: 12,
-                children: [
-                  if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: ShareScreen.messageKey),
-                  if (widget.file.isPdf) ListTile(key: ShareScreen.fileKey, leading: Icon(Icons.picture_as_pdf_outlined, key: ShareScreen.fileKey.icon), title: Text(widget.file.name, key: ShareScreen.fileKey.title)) else SizedBox(height: MediaQuery.sizeOf(context).height * 0.25, child: Image.memory(widget.file.bytes, key: ShareScreen.pictureKey, fit: BoxFit.contain)),
-                  if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: false, onAddSupplier: () {}),
-                  if (_open.length > 1)
-                    LabelledChips(
-                      key: ShareScreen.projectChoiceKey,
-                      label: words.shareProject,
-                      choices: _open,
-                      keyOf: (choice) => ShareScreen.projectKey(choice.id),
-                      nameOf: (choice) => choice.name,
-                      isChosen: (choice) => choice.id == project.id,
-                      onChosen: _chooseProject,
-                    ),
-                ],
-              ),
-            ),
-            ..._pinned(matches.all),
             Expanded(
-              child: ApiListBody<EntryRow>(
-                list: entries,
-                emptyText: words.entriesEmpty,
-                keeps: (entry) => !matched.contains(entry.id),
-                search: ListSearch.onApi(hint: words.shareSearchEntries),
-                itemBuilder: _card,
+              child: NestedScrollView(
+                headerSliverBuilder: (context, _) => [SliverList.list(children: header)],
+                body: ApiListBody<EntryRow>(
+                  list: entries,
+                  emptyText: words.entriesEmpty,
+                  keeps: (entry) => !matched.contains(entry.id),
+                  search: ListSearch.onApi(hint: words.shareSearchEntries),
+                  itemBuilder: _card,
+                ),
               ),
             ),
             for (final entry in chosen)
