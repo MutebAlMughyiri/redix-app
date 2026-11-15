@@ -300,7 +300,7 @@ extension Steps on PatrolIntegrationTester {
   Future<void> chooseMember(Key pickerKey, String id) async {
     await tapOn(pickerKey.field);
     await pumpAndSettle();
-    await tester.tap(find.byKey(MemberPicker.optionKey(id)));
+    await tester.tap(find.byKey(MemberPicker.optionKey(id).title).hitTestable());
     await pumpAndSettle();
   }
 

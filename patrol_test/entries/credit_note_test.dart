@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/suppliers/supplier_picker.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../support/entry_steps.dart';
 import '../support/given.dart';
@@ -23,7 +24,7 @@ Future<({Person manager, String account, String bill, String supplier})> onCredi
   await $.tapOn(SupplierPicker.rowKey(supplier));
   await $.pumpAndSettle();
   await $.tapOn(AddEntryScreen.columnKey('entryType'));
-  await $.tapOn(AddEntryScreen.columnOptionKey('entryType', Given.creditNoteChoiceId));
+  await $.tapOn(AddEntryScreen.columnOptionKey('entryType', Given.creditNoteChoiceId).label);
   await $.pumpAndSettle();
   return (manager: manager, account: account, bill: bill, supplier: supplier);
 }

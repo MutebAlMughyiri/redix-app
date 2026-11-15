@@ -173,7 +173,8 @@ void main() {
       await $.fill(ContractsScreen.valueKey, '2000');
       await $(ChangeDialog.saveKey).tap();
       await $.gone($(ContractsScreen.valueKey));
-      expect($.tester.testTextInput.isVisible, isFalse);
+      await $.until(() => $.tester.view.viewInsets.bottom == 0);
+      expect($.tester.view.viewInsets.bottom, 0);
       await $.says(ContractsScreen.valueOfKey(contract.id), '2,000.00');
     });
 

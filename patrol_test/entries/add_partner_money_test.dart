@@ -3,6 +3,7 @@ import 'package:redix/auth/permission.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/table_picker.dart';
 import 'package:redix/expenses/payment_choices.dart';
+import 'package:redix/ui/part_keys.dart';
 
 import '../support/entry_steps.dart';
 import '../support/given.dart';
@@ -36,7 +37,7 @@ void main() {
       await $.pickTable(partner, search: 'هيثم');
       await $.fill(AddEntryScreen.amountKey, '700');
       await $.tapOn(AddEntryScreen.columnKey('movementType'));
-      await $.tapOn(AddEntryScreen.columnOptionKey('movementType', Given.withdrawalChoiceId));
+      await $.tapOn(AddEntryScreen.columnOptionKey('movementType', Given.withdrawalChoiceId).label);
       await $.tapOn(PaymentChoices.accountKey(account));
       await $.sendEntry();
       await $.messageShows('expenses.sent');

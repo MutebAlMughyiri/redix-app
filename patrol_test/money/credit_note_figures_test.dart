@@ -33,7 +33,7 @@ Future<void> fillNote(PatrolIntegrationTester $, ({Person manager, String accoun
   await $.tapOn(SupplierPicker.rowKey(made.supplier));
   await $.pumpAndSettle();
   await $.tapOn(AddEntryScreen.columnKey('entryType'));
-  await $.tapOn(AddEntryScreen.columnOptionKey('entryType', Given.creditNoteChoiceId));
+  await $.tapOn(AddEntryScreen.columnOptionKey('entryType', Given.creditNoteChoiceId).label);
   await $.pumpAndSettle();
   await $.fill(AddEntryScreen.amountKey, amount);
   await $.choosePayment(made.manager, made.account);

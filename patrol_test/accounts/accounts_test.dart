@@ -9,6 +9,7 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/change_dialog.dart';
+import 'package:redix/ui/part_keys.dart';
 import 'package:redix/words/language_switch.dart';
 
 import '../support/given.dart';
@@ -125,7 +126,7 @@ void main() {
       await Given.removed(member, by: manager);
       await onAccounts($, manager);
       await $.menuChoice(AccountsScreen.menuKey(custody), AccountsScreen.editKey);
-      await $(MemberPicker.optionKey(member.id)).waitUntilExists();
+      await $(MemberPicker.optionKey(member.id).label).waitUntilExists();
     });
 
     phoneCase('BR-15: disabled, it says so on the row, and Enable brings it back', ($) async {
