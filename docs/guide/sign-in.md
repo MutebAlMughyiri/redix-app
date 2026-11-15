@@ -23,7 +23,7 @@ If you turned on fingerprint or face in [Settings](settings.md), the app asks fo
 | No connection to the server. Try again. | The phone cannot reach REDIX; check the network. |
 | Your session ended. Sign in again. | You were away too long, or your account changed. |
 
-Forgot your password? The financial supervisor sets a new one for you.
+Forgot your password? Tap **Forgot your password?** under **Sign in**: a code goes to your email, and you choose a new password with it. See [Forgot password](forgot-password.md). Your project manager can still set a temporary one for you.
 
 ## العربية
 
@@ -44,4 +44,4 @@ Forgot your password? The financial supervisor sets a new one for you.
 | لا يوجد اتصال بالخادم. حاول مرة أخرى. | لا يصل الجوال إلى REDIX؛ تحقق من الشبكة. |
 | انتهت الجلسة. سجّل الدخول مرة أخرى. | غبت طويلاً، أو تغيّر حسابك. |
 
-نسيت كلمة المرور؟ يضع لك المشرف المالي كلمة جديدة.
+نسيت كلمة المرور؟ اضغط **نسيت كلمة المرور؟** تحت **دخول**: يصل رمز إلى بريدك، وتختار به كلمة مرور جديدة. انظر [نسيت كلمة المرور](forgot-password.md). ويبقى بوسع مدير مشروعك أن يضع لك كلمة مؤقتة.

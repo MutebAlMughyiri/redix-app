@@ -36,6 +36,15 @@ Settings, `SharedSettingsScreen`, has **Default project** (`SharedSettingsScreen
 
 The star and the tick change the default through one owner, `toggleDefaultProject`.
 
+Settings has **«بريدي»** (`SharedSettingsScreen.myEmailKey`, `.title`, `.subtitle` the email the session says), the person's own email (redix-api #127, AC-10.4). Tapping it opens two steps, each a `ChangeDialog`:
+
+| Element | `Key` | Does |
+| --- | --- | --- |
+| The new address | `SharedSettingsScreen.myEmailFieldKey` | Starts from the email; «أرسل الرمز» (`ChangeDialog.saveKey`) sends a code to it in the phone's language (`POST /me/email`) |
+| The sentence | `SharedSettingsScreen.myEmailSentToKey` | «أدخل الرمز المرسل إلى {0}.» with the new address |
+| Code | `SharedSettingsScreen.myEmailCodeKey` | «حفظ» (`ChangeDialog.saveKey`) makes the address the email (`POST /me/email/confirm`), then the session is renewed and «بريدي» shows it; until then the old one holds |
+| Message | `ChangeDialog.messageKey` | Why a step was refused, keeping what was typed |
+
 The home, `HomeScreen` at `/projects/:projectId`, shows the project's card; its Settings hold Users (`manageUsers`) and More info, where Add unit and Close project are (`manageProject`, UC-006). Settings has **Switch project** (`SharedSettingsScreen.switchProjectKey`), which goes to the list.
 
 The button beside Settings, `HomeScreen.collapseKey`, hides the conclusion (`SummaryCard`) and the project's buttons (`ProjectSettingsCard`) completely, and shows them again. The phone keeps it as `summary_projectSetting_state`, 1 expanded and 0 collapsed, through `LocalConfig`.
@@ -62,4 +71,6 @@ The button beside Settings, `HomeScreen.collapseKey`, hides the conclusion (`Sum
 | redix-api #126 D2: a project the user was made inactive in shows gray and disabled, saying so under its name, with no star, and does not open; one he is active in beside it opens | `projects_test.dart` |
 | redix-api #126 R4: made inactive in the open project, the project list replaces its screens at the next renewal; still active, the home stays | `home_test.dart` |
 | Switch project reaches the list | `shared_settings_test.dart` |
+| redix-api #127 AC-10.4: «بريدي» shows the session's email; a new address is sent a code in the phone's language, its sentence names it, the code makes it the email and «بريدي» shows it; until then the old one stays | `SharedSettingsScreen`, `MyEmailDialog`, `MyEmailCodeDialog`, `Session.askEmailCode`, `Session.confirmEmail` | `my_email_test.dart`; `patrol_test/settings/shared_settings_screen_test.dart` |
+| redix-api #127: a wrong code stays in its dialog saying so; an address another account holds is refused in the first step, and no code is asked; asking too often says so | `MyEmailDialog`, `MyEmailCodeDialog` | `my_email_test.dart`; `patrol_test/settings/shared_settings_screen_test.dart` |
 | On a real phone, against the real API | `patrol_test/projects/project_list_test.dart`, `patrol_test/projects/default_project_test.dart`, `patrol_test/home/collapse_home_test.dart` |

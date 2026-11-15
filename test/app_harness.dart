@@ -39,7 +39,9 @@ Map<String, String> wordsIn(String language) => {
     'biometrics.signIn', 'biometrics.hint', 'biometrics.or', 'biometrics.failed', 'biometrics.usePassword', 'biometrics.promptTitle', 'biometrics.promptCancel', 'biometrics.notAvailable', 'biometrics.notChanged',
     'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.defaultSet', 'sharedSettings.defaultProject', 'sharedSettings.defaultProjectHint', 'sharedSettings.switchProject',
     'sharedSettings.appearance', 'sharedSettings.themeSystem', 'sharedSettings.themeLight', 'sharedSettings.themeDark', 'sharedSettings.entriesShown', 'sharedSettings.entriesShownHint',
-    'signIn.username', 'signIn.password', 'signIn.hint', 'signIn.submit', 'signIn.forgotPassword',
+    'signIn.username', 'signIn.password', 'signIn.hint', 'signIn.submit',
+    'auth.forgotPassword', 'auth.loginOrEmail', 'auth.sendCode', 'auth.codeSent', 'auth.code', 'auth.resetWithCode', 'auth.passwordReset', 'auth.codeWrong', 'auth.tooManyRequests',
+    'auth.weakPassword', 'auth.noConnection', 'auth.refused', 'users.email', 'users.emailInvalid', 'users.emailTaken', 'settings.myEmail',
     'signIn.invalidCredentials', 'signIn.accountLocked', 'signIn.sessionExpired', 'signIn.noConnection', 'signIn.refused',
     'changePassword.title', 'changePassword.hint', 'changePassword.current', 'changePassword.new', 'changePassword.confirm',
     'changePassword.submit', 'changePassword.mismatch', 'changePassword.invalidCredentials', 'changePassword.accountLocked',
@@ -117,6 +119,7 @@ Map<String, String> wordsIn(String language) => {
   'entries.numberOf': '$language entries.numberOf {0}',
   'share.attached': '$language share.attached {0}',
   'entries.numberFilterSet': '$language entries.numberFilterSet {0}',
+  'settings.emailConfirm': '$language settings.emailConfirm {0}',
   'projects.loadFileConfirm': '$language projects.loadFileConfirm {0} {1}',
   'projects.loadFileDone': '$language projects.loadFileDone {0} {1} {2}',
   'projects.loadFileDoneNoReport': '$language projects.loadFileDoneNoReport {0} {1}',
@@ -483,6 +486,16 @@ class FakeApi {
   /// How many times the app told the API it signed out.
   var signOuts = 0;
 
+  /// The signed-in user's email, as every session says it (redix-api #127); a confirmed new address replaces it.
+  var email = '';
+
+  /// The status and problem code `POST /auth/forgot-password`, `POST /auth/reset-with-code`, `POST /me/email` and `POST /me/email/confirm` answer, by path; a path not named
+  /// answers as the API does when it takes the request (redix-api #127). An empty code sends none.
+  final codeAnswers = <String, ({int status, String code})>{};
+
+  /// The requests about a code by email the app sent, as path, body and the language it asked in (redix-api #127).
+  final sentCodeRequests = <(String, Map<String, dynamic>, String)>[];
+
   /// Refresh tokens already replaced. One sent again answers 401, as the real API answers it.
   final _replacedRefreshTokens = <String>{};
 
@@ -798,6 +811,9 @@ class FakeApi {
       signOuts++;
       return http.Response('', 204);
     }
+    if (path == '/auth/forgot-password' || path == '/auth/reset-with-code' || path.startsWith('/me/email')) {
+      return _answerCode(request);
+    }
     if (path.endsWith('/sync')) {
       syncs++;
       final since = request.url.queryParameters['since'] ?? '';
@@ -838,7 +854,7 @@ class FakeApi {
     }
     final expiresAt = accessTokenLifetime == Duration.zero ? '' : ', "accessTokenExpiresAt": "${DateTime.now().toUtc().add(accessTokenLifetime).toIso8601String()}"';
     final body = status == 200
-        ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}"$expiresAt, "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "usesBiometrics": $usesBiometrics, "userId": "$userId", "username": "muteb", "displayName": "متعب المغيري"}'
+        ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}"$expiresAt, "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "usesBiometrics": $usesBiometrics, "userId": "$userId", "username": "muteb", "displayName": "متعب المغيري", "email": "$email"}'
         : code.isEmpty
         ? ''
         : '{"code": "$code"}';
@@ -1544,13 +1560,26 @@ class FakeApi {
     return _json({}, 200);
   }
 
+  /// Answers a request about a code by email as [codeAnswers] says, keeping what was sent; a confirmed address becomes [email] (redix-api #127).
+  http.Response _answerCode(http.Request request) {
+    final path = request.url.path;
+    final body = _bodyOf(request);
+    sentCodeRequests.add((path, body, request.headers['Accept-Language'] ?? ''));
+    final answer = codeAnswers[path] ?? (status: path.endsWith('confirm') || path.endsWith('reset-with-code') ? 204 : 202, code: '');
+    if (path == '/me/email/confirm' && answer.status == 204) {
+      email = sentCodeRequests.lastWhere((sent) => sent.$1 == '/me/email').$2['email'] as String;
+    }
+    return answer.code.isEmpty ? http.Response('', answer.status) : _json({'code': answer.code}, answer.status);
+  }
+
   /// Adds a user to what the API holds.
-  Map<String, Object> addUser(String displayName, {required String username, String mobile = ''}) {
+  Map<String, Object> addUser(String displayName, {required String username, String mobile = '', String email = ''}) {
     final user = <String, Object>{
       'id': 'user-${users.length}',
       'username': username,
       'displayName': displayName,
       'mobile': mobile,
+      'email': email,
       'mustChangePassword': false,
       'projects': <Map<String, Object>>[],
     };
@@ -1604,7 +1633,7 @@ class FakeApi {
       return _json({if (userAnswer.code.isNotEmpty) 'code': userAnswer.code}, userAnswer.status);
     }
     if (segments.length == 3) {
-      final user = addUser(body['displayName'] as String, username: body['username'] as String, mobile: body['mobile'] as String);
+      final user = addUser(body['displayName'] as String, username: body['username'] as String, mobile: body['mobile'] as String, email: body['email'] as String);
       give(user, projectId, ['readProject', ...(body['permissions'] as List<dynamic>).cast<String>()]);
       (user['projects'] as List<Map<String, Object>>).singleWhere((line) => line['projectId'] == projectId)
         ..['roleName'] = body['roleName'] as String
@@ -1660,6 +1689,7 @@ class FakeApi {
     if (!path.endsWith('/reset-password')) {
       user['displayName'] = body['displayName'] as String;
       user['mobile'] = body['mobile'] as String;
+      user['email'] = body['email'] as String;
     }
     return _json(user, 200);
   }

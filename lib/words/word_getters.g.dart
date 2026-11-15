@@ -233,6 +233,42 @@ mixin WordGetters {
   /// The word `attachments.unreadable`.
   String get attachmentsUnreadable => text('attachments.unreadable');
 
+  /// The word `auth.code`.
+  String get authCode => text('auth.code');
+
+  /// The word `auth.codeSent`.
+  String get authCodeSent => text('auth.codeSent');
+
+  /// The word `auth.codeWrong`.
+  String get authCodeWrong => text('auth.codeWrong');
+
+  /// The word `auth.forgotPassword`.
+  String get authForgotPassword => text('auth.forgotPassword');
+
+  /// The word `auth.loginOrEmail`.
+  String get authLoginOrEmail => text('auth.loginOrEmail');
+
+  /// The word `auth.noConnection`.
+  String get authNoConnection => text('auth.noConnection');
+
+  /// The word `auth.passwordReset`.
+  String get authPasswordReset => text('auth.passwordReset');
+
+  /// The word `auth.refused`.
+  String get authRefused => text('auth.refused');
+
+  /// The word `auth.resetWithCode`.
+  String get authResetWithCode => text('auth.resetWithCode');
+
+  /// The word `auth.sendCode`.
+  String get authSendCode => text('auth.sendCode');
+
+  /// The word `auth.tooManyRequests`.
+  String get authTooManyRequests => text('auth.tooManyRequests');
+
+  /// The word `auth.weakPassword`.
+  String get authWeakPassword => text('auth.weakPassword');
+
   /// The word `biometrics.failed`.
   String get biometricsFailed => text('biometrics.failed');
 
@@ -859,6 +895,18 @@ mixin WordGetters {
 
   /// The word `documents.title`.
   String get documentsTitle => text('documents.title');
+
+  /// The word `email.confirmBody`.
+  String get emailConfirmBody => text('email.confirmBody');
+
+  /// The word `email.confirmSubject`.
+  String get emailConfirmSubject => text('email.confirmSubject');
+
+  /// The word `email.resetBody`.
+  String get emailResetBody => text('email.resetBody');
+
+  /// The word `email.resetSubject`.
+  String get emailResetSubject => text('email.resetSubject');
 
   /// The word `entries.approved`.
   String get entriesApproved => text('entries.approved');
@@ -1988,6 +2036,12 @@ mixin WordGetters {
   /// The word `revenue.total`.
   String get revenueTotal => text('revenue.total');
 
+  /// The word `settings.emailConfirm`.
+  String get settingsEmailConfirm => text('settings.emailConfirm');
+
+  /// The word `settings.myEmail`.
+  String get settingsMyEmail => text('settings.myEmail');
+
   /// The word `share.amountDiffers`.
   String get shareAmountDiffers => text('share.amountDiffers');
 
@@ -2071,9 +2125,6 @@ mixin WordGetters {
 
   /// The word `signIn.accountLocked`.
   String get signInAccountLocked => text('signIn.accountLocked');
-
-  /// The word `signIn.forgotPassword`.
-  String get signInForgotPassword => text('signIn.forgotPassword');
 
   /// The word `signIn.hint`.
   String get signInHint => text('signIn.hint');
@@ -2317,6 +2368,15 @@ mixin WordGetters {
 
   /// The word `users.edit`.
   String get usersEdit => text('users.edit');
+
+  /// The word `users.email`.
+  String get usersEmail => text('users.email');
+
+  /// The word `users.emailInvalid`.
+  String get usersEmailInvalid => text('users.emailInvalid');
+
+  /// The word `users.emailTaken`.
+  String get usersEmailTaken => text('users.emailTaken');
 
   /// The word `users.enable`.
   String get usersEnable => text('users.enable');

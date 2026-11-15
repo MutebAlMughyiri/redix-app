@@ -96,7 +96,8 @@ class Given {
     return person;
   }
 
-  /// A new person in the project of [manager], holding [permissions] beside seeing it. With [temporary] they still hold the password they must change.
+  /// A new person in the project of [manager], holding [permissions] beside seeing it, reached at an email of their username's (redix-api #127). With [temporary] they still
+  /// hold the password they must change.
   static Future<Person> member(Person manager, {bool temporary = false, List<Permission> permissions = const [], String name = '', String mobile = '', String roleName = ''}) async {
     final mark = unique();
     final username = 'member-$mark';
@@ -106,6 +107,7 @@ class Given {
       'displayName': displayName,
       'username': username,
       'mobile': mobile,
+      'email': '$username@example.com',
       'temporaryPassword': temporaryPassword,
       'permissions': [for (final permission in permissions) permission.name],
       'roleName': roleName,

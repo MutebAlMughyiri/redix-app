@@ -6,6 +6,8 @@
 
 <img src="images/my-account.png" alt="Settings, scrolled to your account" width="300">
 
+<img src="images/my-email.png" alt="My email, its code" width="300">
+
 ## English
 
 **What it is for:** who you are, the way back to your project list, your default project, the app's language, the dark mode, and your own account, all on one screen, each in its own frame. A project's own screens open from its [home](home.md).
@@ -20,8 +22,11 @@
 | Language | Everyone | العربية or English, chosen at once |
 | Dark mode | Everyone | Turns every screen dark at once, and back to light; this phone keeps the choice |
 | Sign in with fingerprint or face | Everyone | See below |
+| My email | Everyone | Your email, where a forgotten password's code goes. See below |
 | Change password | Everyone | Opens the password change; the back arrow returns here |
 | Sign out | Everyone | Leaves this phone, after you confirm |
+
+**My email:** tap it, type the new address and tap **Send the code**. A code goes to the new address; type it and tap **Save**. Only then does the new address replace the old one. The admin, and whoever registered a project, set their email here.
 
 **Sign out:** you will need your username and password to sign in again. Your language and the dark mode stay, and your other phones stay signed in.
 
@@ -41,8 +46,11 @@
 | اللغة | الجميع | العربية أو English، تُختار مباشرة |
 | الوضع الداكن | الجميع | يجعل كل الشاشات داكنة مباشرة، ويعيدها فاتحة؛ ويحفظ هذا الجوال اختيارك |
 | الدخول بالبصمة أو الوجه | الجميع | انظر أدناه |
+| بريدي | الجميع | بريدك، وإليه يصل رمز كلمة المرور المنسية. انظر أدناه |
 | تغيير كلمة المرور | الجميع | يفتح تغيير كلمة المرور؛ وسهم الرجوع يعيدك إلى هنا |
 | تسجيل الخروج | الجميع | يغادر هذا الجوال بعد أن تؤكّد |
+
+**بريدي:** اضغطه، واكتب العنوان الجديد، واضغط **أرسل الرمز**. يصل رمز إلى العنوان الجديد؛ اكتبه واضغط **حفظ**. وعندها فقط يحل العنوان الجديد محل القديم. ومسؤول النظام ومن سجّل مشروعًا يضعان بريدهما هنا.
 
 **تسجيل الخروج:** ستحتاج إلى اسم المستخدم وكلمة المرور للدخول مرة أخرى. تبقى لغتك والوضع الداكن، وتبقى جوالاتك الأخرى مسجّلة.
 

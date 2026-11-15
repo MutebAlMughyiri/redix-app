@@ -6,7 +6,7 @@ import 'user.dart';
 import 'users.dart';
 import 'users_screen.dart';
 
-/// Corrects a user's name and mobile, and what they are called in this project. A username never changes.
+/// Corrects a user's name, mobile and email (redix-api #127, AC-07.8), and what they are called in this project. A username never changes.
 class EditUserDialog extends StatefulWidget {
   /// The dialog changing [user] through [users].
   const EditUserDialog({super.key, required this.user, required this.users});
@@ -24,12 +24,14 @@ class EditUserDialog extends StatefulWidget {
 class _EditUserDialogState extends State<EditUserDialog> {
   late final _name = TextEditingController(text: widget.user.displayName);
   late final _mobile = TextEditingController(text: widget.user.mobile);
+  late final _email = TextEditingController(text: widget.user.email);
   late final _roleName = TextEditingController(text: widget.user.roleName);
 
   @override
   void dispose() {
     _name.dispose();
     _mobile.dispose();
+    _email.dispose();
     _roleName.dispose();
     super.dispose();
   }
@@ -40,7 +42,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
     return ChangeDialog(
       title: words.usersEdit,
       saveLabel: words.usersSave,
-      onSave: () => widget.users.edit(widget.user, _name.text, _mobile.text, _roleName.text),
+      onSave: () => widget.users.edit(widget.user, _name.text, _mobile.text, _email.text, _roleName.text),
       children: [
         TextField(
           key: UsersScreen.editNameKey,
@@ -59,6 +61,14 @@ class _EditUserDialogState extends State<EditUserDialog> {
           controller: _mobile,
           keyboardType: TextInputType.phone,
           decoration: InputDecoration(labelText: words.usersMobile),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          key: UsersScreen.editEmailKey,
+          controller: _email,
+          autocorrect: false,
+          keyboardType: TextInputType.emailAddress,
+          decoration: InputDecoration(labelText: words.usersEmail),
         ),
       ],
     );

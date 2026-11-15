@@ -7,11 +7,12 @@ import '../ui/part_keys.dart';
 import '../words/app_language.dart';
 import '../words/language_switch.dart';
 import '../words/words.dart';
+import 'forgot_password_screen.dart';
 import 'session.dart';
 import '../ui/form_button_style.dart';
 import '../ui/act_once.dart';
 
-/// The sign-in screen (UC-002, تسجيل الدخول): username and password, or a fingerprint or face on a phone that uses them (UC-011), with the language choice at the top so it can be read before signing in (UC-004). A refusal shows as one line that never says which field was wrong (AC-01.2).
+/// The sign-in screen (UC-002, تسجيل الدخول): username and password, or a fingerprint or face on a phone that uses them (UC-011), with the language choice at the top so it can be read before signing in (UC-004). A refusal shows as one line that never says which field was wrong (AC-01.2). «نسيت كلمة المرور؟» opens the reset by a code to the account's email (redix-api #127, AC-02.6).
 class SignInScreen extends StatefulWidget {
   /// The screen, signing in to [session], in the language [language] holds.
   const SignInScreen({super.key, required this.session, required this.language});
@@ -55,7 +56,7 @@ class SignInScreen extends StatefulWidget {
   /// What to do.
   static const hintKey = Key('signIn.hint');
 
-  /// Who to ask for a forgotten password.
+  /// The link «نسيت كلمة المرور؟», which resets a forgotten password with a code by email (redix-api #127).
   static const forgotKey = Key('signIn.forgot');
 
   @override
@@ -185,8 +186,7 @@ class _SignInScreenState extends State<SignInScreen> {
               ),
               const SizedBox(height: 16),
               TextButton(key: SignInScreen.registerKey, onPressed: () => context.push(NewProjectScreen.registerPath), child: Text(words.signInRegisterProject, key: SignInScreen.registerKey.label)),
-              const SizedBox(height: 16),
-              Text(words.signInForgotPassword, key: SignInScreen.forgotKey, style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
+              TextButton(key: SignInScreen.forgotKey, onPressed: () => context.push(ForgotPasswordScreen.path), child: Text(words.authForgotPassword, key: SignInScreen.forgotKey.label)),
             ],
           ),
         ),

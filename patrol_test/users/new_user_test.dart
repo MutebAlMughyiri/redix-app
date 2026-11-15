@@ -21,11 +21,12 @@ Future<Person> onTheForm(PatrolIntegrationTester $) async {
   return manager;
 }
 
-/// Fills in the form.
-Future<void> fillForm(PatrolIntegrationTester $, String username, {String name = 'نواف', String password = 'Temporary-2'}) async {
+/// Fills in the form, with an email of the username's (redix-api #127).
+Future<void> fillForm(PatrolIntegrationTester $, String username, {String name = 'نواف', String password = 'Temporary-2', String email = ''}) async {
   await $.fill(NewUserScreen.nameKey, name);
   await $.fill(NewUserScreen.usernameKey, username);
   await $.fill(NewUserScreen.mobileKey, '0533333333');
+  await $.fill(NewUserScreen.emailKey, email.isEmpty ? '$username@example.com' : email);
   await $.fill(NewUserScreen.passwordKey, password);
 }
 
@@ -55,6 +56,23 @@ void main() {
       await $.signOutFromTheHome(manager.projectId);
       await $.signIn(username, 'Temporary-2');
       await $.reach($(ChangePasswordScreen.currentKey));
+    });
+
+    phoneCase('redix-api #127 AC-07.8: an email that is not one address is refused, and the form stays with what was typed', ($) async {
+      await onTheForm($);
+      await fillForm($, 'nawaf-${Given.unique()}', email: 'nawaf');
+      await send($);
+      await $.says(NewUserScreen.messageKey, $.words.usersEmailInvalid);
+      await $.goTo($(NewUserScreen.emailKey));
+      expect($.typed(NewUserScreen.emailKey), 'nawaf');
+    });
+
+    phoneCase('redix-api #127 R9: an email another account holds is refused', ($) async {
+      final manager = await onTheForm($);
+      final member = await Given.member(manager);
+      await fillForm($, 'nawaf-${Given.unique()}', email: '${member.username}@example.com');
+      await send($);
+      await $.says(NewUserScreen.messageKey, $.words.usersEmailTaken);
     });
 
     phoneCase('the temporary password shows as typed, so the manager can pass it on', ($) async {

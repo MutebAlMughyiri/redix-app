@@ -37,6 +37,7 @@ class Session extends ChangeNotifier {
   var _userId = '';
   var _username = '';
   var _displayName = '';
+  var _email = '';
   var _renewal = Future<void>.value();
   var _sending = Future<void>.value();
   var _mustChangePassword = false;
@@ -205,6 +206,40 @@ class Session extends ChangeNotifier {
   /// Their name as it shows on entries; empty when nobody is.
   String get displayName => _displayName;
 
+  /// Their email, which Settings shows under «بريدي» (redix-api #127, AC-10.4); empty while none is set.
+  String get email => _email;
+
+  /// Asks for a code to [email], the new address typed in Settings › «بريدي» (redix-api #127, AC-10.4), in [language], the phone's (AC-02.10); the email stays as it was until the
+  /// code is entered. Returns an empty string once sent, otherwise the word key of the refusal: `users.emailInvalid`, `users.emailTaken`, `auth.tooManyRequests` or `users.noConnection`.
+  Future<String> askEmailCode(String email, String language) async {
+    try {
+      final response = await post('/me/email', {'email': email}, language: language);
+      if (response.statusCode == 429) {
+        return 'auth.tooManyRequests';
+      }
+      return response.statusCode < 300 ? '' : refusalOf(answerOf(response), 'users');
+    } on Exception catch (error) {
+      debugPrint('Email code not asked: $error');
+      return 'users.noConnection';
+    }
+  }
+
+  /// Makes the address the last code went to the user's email once [code] is entered (redix-api #127, AC-10.4), then renews the session, which says it. Returns an empty string once
+  /// made, otherwise the word key of the refusal: `auth.codeWrong`, `users.emailTaken` or `auth.noConnection`.
+  Future<String> confirmEmail(String code) async {
+    try {
+      final response = await post('/me/email/confirm', {'code': code});
+      if (response.statusCode >= 300) {
+        return response.statusCode == 409 ? 'users.emailTaken' : refusalOf(answerOf(response), 'auth');
+      }
+      await renew();
+      return '';
+    } on Exception catch (error) {
+      debugPrint('Email not confirmed: $error');
+      return 'auth.noConnection';
+    }
+  }
+
   /// Reads the API [path] as the signed-in user, renewing an expired access token like [post]. A list read is kept, and without a network the kept copy answers (FR-16).
   Future<http.Response> get(String path) async {
     try {
@@ -234,10 +269,13 @@ class Session extends ChangeNotifier {
   /// What the API [path] answered when last read; empty when it was not.
   Future<String> copyOf(String path) => store.read(_copies, path);
 
-  /// Sends [body] as JSON to the API [path] as the signed-in user. An expired access token is renewed once and the request sent again;
-  /// a session the API refuses to renew ends.
-  Future<http.Response> post(String path, Map<String, Object> body) =>
-      _remember(_send(() => timed(http.post(apiUri(path), headers: {...jsonHeaders, ..._authorized}, body: jsonEncode(body)))));
+  /// Sends [body] as JSON to the API [path] as the signed-in user, asking for its words in [language] when one is named (redix-api #127). An expired access token is renewed
+  /// once and the request sent again; a session the API refuses to renew ends.
+  Future<http.Response> post(String path, Map<String, Object> body, {String language = ''}) => _remember(_send(() => timed(http.post(
+    apiUri(path),
+    headers: {...jsonHeaders, ..._authorized, if (language.isNotEmpty) 'Accept-Language': language},
+    body: jsonEncode(body),
+  ))));
 
   /// Sends [body] as JSON to the API [path] as a plain edit of what the path names (redix-api #98), renewing an expired access token like [post].
   Future<http.Response> put(String path, Map<String, Object> body) =>
@@ -341,6 +379,7 @@ class Session extends ChangeNotifier {
     _userId = session['userId'] as String? ?? '';
     _username = session['username'] as String? ?? '';
     _displayName = session['displayName'] as String? ?? '';
+    _email = session['email'] as String? ?? '';
     _mustChangePassword = session['mustChangePassword'] as bool? ?? false;
     _permissions = {...(session['permissions'] as List<dynamic>? ?? []).cast<String>()};
     _defaultProjectId = session['defaultProjectId'] as String? ?? '';
