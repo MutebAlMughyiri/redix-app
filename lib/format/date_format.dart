@@ -8,3 +8,6 @@ String apiDate(DateTime date) => date.toIso8601String().substring(0, 10);
 String formatTime(DateTime time) => '${_twoDigits(time.hour)}:${_twoDigits(time.minute)}';
 
 String _twoDigits(int number) => number.toString().padLeft(2, '0');
+
+/// A moment the API sends, which it marks UTC, as the phone's own time: when a history line, a file, a notification or a report happened.
+DateTime momentOf(String sent) => DateTime.parse(sent).toLocal();

@@ -1,6 +1,7 @@
 import '../api_list.dart';
 import '../attachments/picked_file.dart';
 import '../auth/session.dart';
+import '../format/date_format.dart';
 
 /// A document kept for the project (UC-064): any file under a name, in a group when one was given.
 class Document {
@@ -12,7 +13,7 @@ class Document {
       attachmentId = json['attachmentId'] as String,
       fileName = json['fileName'] as String,
       contentType = json['contentType'] as String,
-      uploadedAt = DateTime.parse(json['uploadedAt'] as String);
+      uploadedAt = momentOf(json['uploadedAt'] as String);
 
   /// The document.
   final String id;

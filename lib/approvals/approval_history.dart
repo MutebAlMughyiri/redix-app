@@ -30,7 +30,7 @@ class ApprovalHistoryLine implements HistoryLine {
   /// The line the API describes in [json].
   ApprovalHistoryLine.fromJson(Map<String, dynamic> json)
     : id = json['id'] as int,
-      at = DateTime.parse(json['at'] as String).toLocal(),
+      at = momentOf(json['at'] as String),
       by = json['by'] as String,
       kind = ApprovalHistoryKind.values.byName(json['kind'] as String),
       item = json['item'] as String,

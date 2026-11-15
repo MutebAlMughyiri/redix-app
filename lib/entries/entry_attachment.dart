@@ -1,3 +1,4 @@
+import '../format/date_format.dart';
 import 'entry_attachment_role.dart';
 
 /// A file an entry holds, as its page lists it (redix-app #115, AC-46.10g): what it is to the entry, its name and type, which open it, and when it was sent.
@@ -8,7 +9,7 @@ class EntryAttachment {
       role = EntryAttachmentRole.values.byName(json['role'] as String),
       fileName = json['fileName'] as String,
       contentType = json['contentType'] as String,
-      uploadedAt = DateTime.parse(json['uploadedAt'] as String);
+      uploadedAt = momentOf(json['uploadedAt'] as String);
 
   /// The file's id.
   final String attachmentId;

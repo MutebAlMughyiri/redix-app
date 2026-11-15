@@ -95,7 +95,7 @@ lib/
     history_list.dart       A history, newest first, a page at a time: of every thing it covers or one, everyone's lines or the user's own, and those holding what was typed
     history_view.dart       The one look of a history, the accounts' and the partners': the search line, its filters, the lines and المزيد
   format/
-    date_format.dart        A date as the app shows it, in both languages: Gregorian dd.MM.yyyy
+    date_format.dart        A date as the app shows it, in both languages: Gregorian dd.MM.yyyy; a moment the API sends, read in the phone's own time (momentOf)
     number_format.dart      A number as a person types it: no separators, and as few decimals as it needs, at most two, so 15 is 15 and 7.5 is 7.5
     parts_line.dart         The non-empty parts of a line joined by a middle dot, the one way a row writes its details
   home/

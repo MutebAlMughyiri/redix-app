@@ -55,7 +55,7 @@ class PartnerHistoryLine implements HistoryLine {
   /// The line the API describes in [json].
   PartnerHistoryLine.fromJson(Map<String, dynamic> json)
     : id = json['id'] as int,
-      at = DateTime.parse(json['at'] as String).toLocal(),
+      at = momentOf(json['at'] as String),
       by = json['by'] as String,
       kind = PartnerHistoryKind.values.byName(json['kind'] as String),
       partner = json['partner'] as String,

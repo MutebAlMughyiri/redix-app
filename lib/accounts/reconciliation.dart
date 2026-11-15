@@ -1,5 +1,6 @@
 import '../api_object.dart';
 import '../auth/session.dart';
+import '../format/date_format.dart';
 
 /// One account against the books.
 class ReconciliationBalance {
@@ -31,7 +32,7 @@ class ReconciliationBalance {
 class ReconciliationFigures {
   /// The figures as the API answers them.
   ReconciliationFigures.fromJson(Map<String, dynamic> json)
-    : at = DateTime.parse(json['at'] as String),
+    : at = momentOf(json['at'] as String),
       surplus = (json['surplus'] as num).toDouble(),
       actualTotal = (json['actualTotal'] as num).toDouble(),
       difference = (json['difference'] as num).toDouble(),

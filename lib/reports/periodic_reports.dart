@@ -1,12 +1,13 @@
 import '../api_list.dart';
 import '../api_object.dart';
 import '../auth/session.dart';
+import '../format/date_format.dart';
 import 'waiting_figures.dart';
 
 /// A periodic report issued.
 class PeriodicReportRow {
   /// A row as the API answers it.
-  PeriodicReportRow.fromJson(Map<String, dynamic> json) : number = json['number'] as int, issuedAt = DateTime.parse(json['issuedAt'] as String);
+  PeriodicReportRow.fromJson(Map<String, dynamic> json) : number = json['number'] as int, issuedAt = momentOf(json['issuedAt'] as String);
 
   /// Its number.
   final int number;
@@ -80,7 +81,7 @@ class PeriodicReportFigures {
   /// The report as the API answers it.
   PeriodicReportFigures.fromJson(Map<String, dynamic> json)
     : number = json['number'] as int,
-      issuedAt = DateTime.parse(json['issuedAt'] as String),
+      issuedAt = momentOf(json['issuedAt'] as String),
       accounts = [for (final row in json['accounts'] as List<dynamic>) ReportLine((row as Map<String, dynamic>)['name'] as String, (row['balance'] as num).toDouble())],
       accountsTotal = (json['accountsTotal'] as num).toDouble(),
       previousExpenses = (json['previousExpenses'] as num).toDouble(),

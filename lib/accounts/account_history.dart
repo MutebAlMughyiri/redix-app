@@ -72,7 +72,7 @@ class AccountHistoryLine implements HistoryLine {
   /// The line the API describes in [json].
   AccountHistoryLine.fromJson(Map<String, dynamic> json)
     : id = json['id'] as int,
-      at = DateTime.parse(json['at'] as String).toLocal(),
+      at = momentOf(json['at'] as String),
       by = json['by'] as String,
       kind = AccountHistoryKind.values.byName(json['kind'] as String),
       account = json['account'] as String,

@@ -1,3 +1,5 @@
+import '../format/date_format.dart';
+
 /// Something a person was told (UC-036): its words come from [kind], in their language.
 class NotificationRow {
   /// A notification as the API sends it.
@@ -7,7 +9,7 @@ class NotificationRow {
       projectId = json['projectId'] as String,
       projectName = json['projectName'] as String,
       entryId = json['entryId'] as String,
-      at = DateTime.parse(json['at'] as String),
+      at = momentOf(json['at'] as String),
       isRead = json['isRead'] as bool;
 
   /// The notification's id.
