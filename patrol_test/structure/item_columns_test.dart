@@ -61,27 +61,27 @@ String detailsOf(PatrolIntegrationTester $, String id) => $.tester.widget<Text>(
 void main() {
   phoneClass('An item\'s columns (UC-013)', () {
     phoneCase('AC-41.1: a required column is added to this item, asking nothing about other items', ($) async {
-      await onColumns($);
+      final made = await onColumns($);
       await $.tapOn(ItemColumnsScreen.addKey);
       await $(ItemColumnsScreen.columnNameKey).enterText('المساحة م²');
       await $(ItemColumnsScreen.requiredKey).tap();
       await $(ChangeDialog.saveKey).tap();
-      final id = await $.idShowing('columns.name.', 'المساحة م²');
+      final id = await $.idOf('columns.name.', () => Given.columnNamed(made.manager, made.item, 'المساحة م²'));
       await $.goTo($(ItemColumnsScreen.nameKey(id)));
       await $.picture('item-columns');
     });
 
     phoneCase('a pick list sends its choices', ($) async {
-      await onColumns($);
+      final made = await onColumns($);
       await addList($, 'الجهة', 'شرق');
-      final id = await $.idShowing('columns.name.', 'الجهة');
+      final id = await $.idOf('columns.name.', () => Given.columnNamed(made.manager, made.item, 'الجهة'));
       expect(detailsOf($, id), contains($.words.columnsTypeList));
     });
 
     phoneCase('a list a person added gains choices, and those it has stay', ($) async {
-      await onColumns($);
+      final made = await onColumns($);
       await addList($, 'الجهة', 'شرق');
-      final id = await $.idShowing('columns.name.', 'الجهة');
+      final id = await $.idOf('columns.name.', () => Given.columnNamed(made.manager, made.item, 'الجهة'));
       await $.menuChoice(ItemColumnsScreen.menuKey(id), ItemColumnsScreen.editKey);
       await $(ItemColumnsScreen.newChoicesKey).enterText('غرب');
       await $(ChangeDialog.saveKey).tap();
@@ -93,9 +93,9 @@ void main() {
     });
 
     phoneCase('redix-api #102, #119: a swipe deletes a column once confirmed in its row', ($) async {
-      await onColumns($);
+      final made = await onColumns($);
       await addList($, 'الجهة', 'شرق');
-      final id = await $.idShowing('columns.name.', 'الجهة');
+      final id = await $.idOf('columns.name.', () => Given.columnNamed(made.manager, made.item, 'الجهة'));
       await $.swipeAway(ItemColumnsScreen.rowKey(id));
       expect($(ConfirmDialog.dialogKey), findsNothing);
       await $.gone($(ItemColumnsScreen.nameKey(id)));
@@ -113,13 +113,13 @@ void main() {
       final bone = await Given.aCategoryAndItem(manager);
       await Given.column(manager, bone.itemId, 'رقم الأمر');
       await openColumns($, manager, bone.categoryId, bone.itemId);
-      final id = await $.idShowing('columns.name.', 'رقم الأمر');
+      final id = await $.idOf('columns.name.', () => Given.columnNamed(manager, bone.itemId, 'رقم الأمر'));
       expect(detailsOf($, id), contains($.words.columnsCustom));
     });
 
     phoneCase('a core column changes its name only', ($) async {
-      await onColumns($);
-      final id = await $.idShowing('columns.name.', 'التاريخ');
+      final made = await onColumns($);
+      final id = await $.idOf('columns.name.', () => Given.columnNamed(made.manager, made.item, 'التاريخ'));
       await $.menuChoice(ItemColumnsScreen.menuKey(id), ItemColumnsScreen.editKey);
       await $.reach($(ItemColumnsScreen.requiredKey));
       expect($.tester.widget<SwitchListTile>(find.byKey(ItemColumnsScreen.requiredKey)).onChanged, isNull);
@@ -132,8 +132,8 @@ void main() {
       await Given.column(manager, bone.itemId, 'العمود الأول');
       await Given.column(manager, bone.itemId, 'العمود الثاني');
       await openColumns($, manager, bone.categoryId, bone.itemId);
-      final first = await $.idShowing('columns.name.', 'العمود الأول');
-      final second = await $.idShowing('columns.name.', 'العمود الثاني');
+      final first = await $.idOf('columns.name.', () => Given.columnNamed(manager, bone.itemId, 'العمود الأول'));
+      final second = await $.idOf('columns.name.', () => Given.columnNamed(manager, bone.itemId, 'العمود الثاني'));
       await $.goTo($(ItemColumnsScreen.nameKey(second)));
       expect($.topOf(ItemColumnsScreen.nameKey(first)), lessThan($.topOf(ItemColumnsScreen.nameKey(second))));
       await $.dragDown(ItemColumnsScreen.handleKey(first), distance: 100);
@@ -159,17 +159,17 @@ void main() {
     });
 
     phoneCase('AC-41.2: a core column has a lock, no delete, and does not swipe', ($) async {
-      await onColumns($);
-      final id = await $.idShowing('columns.name.', 'التاريخ');
+      final made = await onColumns($);
+      final id = await $.idOf('columns.name.', () => Given.columnNamed(made.manager, made.item, 'التاريخ'));
       expect($(ItemColumnsScreen.lockKey(id)), findsOneWidget);
       expect($(ItemColumnsScreen.rowKey(id).swipe), findsNothing);
       expect($(ItemColumnsScreen.rowKey(id).bar), findsNothing);
     });
 
     phoneCase('redix-api #102: a short swipe deletes nothing', ($) async {
-      await onColumns($);
+      final made = await onColumns($);
       await addList($, 'الجهة', 'شرق');
-      final id = await $.idShowing('columns.name.', 'الجهة');
+      final id = await $.idOf('columns.name.', () => Given.columnNamed(made.manager, made.item, 'الجهة'));
       await $.swipeToAsk(ItemColumnsScreen.rowKey(id), share: 0.15);
       await Future<void>.delayed(const Duration(seconds: 1));
       await $.pumpAndSettle();
@@ -177,9 +177,9 @@ void main() {
     });
 
     phoneCase('AC-41.3: no dialog offers a type to change', ($) async {
-      await onColumns($);
+      final made = await onColumns($);
       await addList($, 'الجهة', 'شرق');
-      final id = await $.idShowing('columns.name.', 'الجهة');
+      final id = await $.idOf('columns.name.', () => Given.columnNamed(made.manager, made.item, 'الجهة'));
       await $.menuChoice(ItemColumnsScreen.menuKey(id), ItemColumnsScreen.editKey);
       await $.reach($(ItemColumnsScreen.requiredKey));
       expect($(ItemColumnsScreen.dataTypeKey), findsNothing);
@@ -206,7 +206,7 @@ void main() {
       final bone = await Given.aCategoryAndItem(manager);
       await Given.column(manager, bone.itemId, 'رقم الأمر');
       await openColumns($, manager, bone.categoryId, bone.itemId);
-      final id = await $.idShowing('columns.name.', 'رقم الأمر');
+      final id = await $.idOf('columns.name.', () => Given.columnNamed(manager, bone.itemId, 'رقم الأمر'));
       await $.menuChoice(ItemColumnsScreen.menuKey(id), ItemColumnsScreen.editKey);
       await $.reach($(ItemColumnsScreen.requiredKey));
       expect($(ItemColumnsScreen.newChoicesKey), findsNothing);

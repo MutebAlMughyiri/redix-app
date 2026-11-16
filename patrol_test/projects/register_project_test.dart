@@ -40,7 +40,7 @@ Future<void> send(PatrolIntegrationTester $) async {
 /// Signs in as whoever registered [project], standing on the list, and answers the project's id.
 Future<String> signInToFind(PatrolIntegrationTester $, String username, String password, String project) async {
   await $.signIn(username, password);
-  return $.idShowing('projects.card.', project);
+  return $.idOf('projects.card.', () => Given.projectNamed(Person(id: '', username: username, password: password, displayName: '', projectId: '', projectName: ''), project));
 }
 
 void main() {
@@ -105,11 +105,12 @@ void main() {
       await send($);
       final id = await signInToFind($, username, password, project);
       await Given.approved(id);
+      final registrant = Person(id: '', username: username, password: password, displayName: '', projectId: id, projectName: project);
       await $.restartApp();
       await $.openProject(id);
       await $.tapOn(HomeScreen.partnersKey(id));
-      await $.idShowing('partners.name.', 'متعب');
-      await $.idShowing('partners.name.', 'نواف');
+      await $.idOf('partners.name.', () => Given.partnerNamed(registrant, 'متعب'));
+      await $.idOf('partners.name.', () => Given.partnerNamed(registrant, 'نواف'));
       expect($(PartnersScreen.addKey), findsOneWidget);
     });
 

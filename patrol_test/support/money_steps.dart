@@ -69,7 +69,7 @@ extension MoneySteps on PatrolIntegrationTester {
   Future<void> openReportCategory(Person person, String categoryName) async {
     await tapOn(HomeScreen.itemReportsKey(person.projectId, SummarySide.expenses));
     await reach(this(SearchIcons.searchKey));
-    final id = await idShowing('itemReports.category.', categoryName);
+    final id = await idOf('itemReports.category.', () => Given.categoryNamed(person, categoryName));
     await tapOn(ItemReportsScreen.categoryKey(id));
     await pumpAndSettle();
   }

@@ -37,7 +37,7 @@ void main() {
       await onPartners($, manager);
       await fillPartner($, 'هيثم');
       await $(ChangeDialog.saveKey).tap();
-      await $.idShowing('partners.name.', 'هيثم');
+      await $.idOf('partners.name.', () => Given.partnerNamed(manager, 'هيثم'));
     });
 
     phoneCase('a partner is added with their account, chosen from the project\'s people', ($) async {
@@ -48,7 +48,7 @@ void main() {
       await chooseLogin($, manager.id);
       await $.picture('partner-dialog');
       await $(ChangeDialog.saveKey).tap();
-      final id = await $.idShowing('partners.name.', 'مدير المشروع');
+      final id = await $.idOf('partners.name.', () => Given.partnerNamed(manager, 'مدير المشروع'));
       await $.says(PartnersScreen.detailsKey(id), 'مدير المشروع');
       await $.picture('partners');
     });
@@ -68,7 +68,7 @@ void main() {
       await onPartners($, manager);
       await fillPartner($, 'هيثم');
       await $(ChangeDialog.saveKey).tap();
-      final id = await $.idShowing('partners.name.', 'هيثم');
+      final id = await $.idOf('partners.name.', () => Given.partnerNamed(manager, 'هيثم'));
       await $.says(PartnersScreen.detailsKey(id), $.words.partnersNoLogin);
     });
 

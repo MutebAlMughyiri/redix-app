@@ -38,7 +38,7 @@ void main() {
       await onTables($, made.manager, made.category, made.item);
       await $.tapOn(ItemTablesScreen.addKey);
       await $.saveName('دفعات العظم');
-      await $.idShowing('tables.name.', 'دفعات العظم');
+      await $.idOf('tables.name.', () => Given.tableNamed(made.manager, made.item, 'دفعات العظم'));
       await $.picture('tables');
     });
 
@@ -55,7 +55,7 @@ void main() {
       final made = await newItem(type: 'both');
       final table = await Given.subgroup(made.manager, made.item, 'الجلاي');
       await onTables($, made.manager, made.category, made.item);
-      await $.idShowing('tables.name.', made.itemName);
+      await $.idOf('tables.name.', () => Given.tableNamed(made.manager, made.item, made.itemName));
       await $.says(ItemTablesScreen.tableNameKey(table), 'الجلاي');
     });
 
@@ -105,7 +105,7 @@ void main() {
     phoneCase('redix-api #102: the general table and a contract\'s table do not swipe', ($) async {
       final made = await newItem(type: 'both');
       await onTables($, made.manager, made.category, made.item);
-      final general = await $.idShowing('tables.name.', made.itemName);
+      final general = await $.idOf('tables.name.', () => Given.tableNamed(made.manager, made.item, made.itemName));
       expect($(ItemTablesScreen.rowKey(general).swipe), findsNothing);
       expect($(ItemTablesScreen.rowKey(general).bar), findsNothing);
     });

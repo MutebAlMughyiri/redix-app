@@ -40,7 +40,7 @@ void main() {
       await onAccounts($, manager);
       await fillBank($, 'حساب المؤسسة');
       await $(ChangeDialog.saveKey).tap();
-      final id = await $.idShowing('accounts.name.', 'حساب المؤسسة');
+      final id = await $.idOf('accounts.name.', () => Given.accountNamed(manager, 'حساب المؤسسة'));
       await $.says(AccountsScreen.balanceKey(id), '0.00');
       await Given.funded(manager, id, 64250.75);
       await $.pullDown();
@@ -57,7 +57,7 @@ void main() {
       await $.chooseMember(AccountsScreen.custodianKey, manager.id);
       await $.picture('account-dialog');
       await $(ChangeDialog.saveKey).tap();
-      final id = await $.idShowing('accounts.name.', 'كاش مع مدير المشروع');
+      final id = await $.idOf('accounts.name.', () => Given.accountNamed(manager, 'كاش مع مدير المشروع'));
       await Given.funded(manager, id, 2750);
       await $.pullDown();
       await $.says(AccountsScreen.balanceKey(id), '2,750.00');
@@ -76,7 +76,7 @@ void main() {
       await $.tapOn(HomeScreen.accountsKey(manager.projectId));
       await fillBank($, 'حساب الموقع');
       await $(ChangeDialog.saveKey).tap();
-      final id = await $.idShowing('accounts.name.', 'حساب الموقع');
+      final id = await $.idOf('accounts.name.', () => Given.accountNamed(manager, 'حساب الموقع'));
       await $.says(AccountsScreen.balanceKey(id), '0.00');
     });
 
@@ -115,7 +115,7 @@ void main() {
       await onAccounts($, manager);
       await fillBank($, 'حساب بلا عهدة');
       await $(ChangeDialog.saveKey).tap();
-      final id = await $.idShowing('accounts.name.', 'حساب بلا عهدة');
+      final id = await $.idOf('accounts.name.', () => Given.accountNamed(manager, 'حساب بلا عهدة'));
       expect(detailsOf($, id), isNot(contains('ريم')));
     });
 

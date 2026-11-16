@@ -483,10 +483,58 @@ class Given {
   }
 
   /// The id of the category named [name] in the project of [manager].
-  static Future<String> categoryNamed(Person manager, String name) async {
-    final categories = (await _getList('${manager.project}/categories', await _tokenOf(manager))).cast<Map<String, dynamic>>();
-    return categories.singleWhere((category) => category['name'] == name)['id'] as String;
+  static Future<String> categoryNamed(Person manager, String name) => idNamed(manager, '${manager.project}/categories', name);
+
+  // The ids of what a case named, each list's from its own route (findings row 236): a case learns an id from the API, never from the screen.
+
+  /// The id of the account named [name] in [person]'s project.
+  static Future<String> accountNamed(Person person, String name) => idNamed(person, '${person.project}/accounts', name);
+
+  /// The id of the contract with the contractor named [contractor] in [person]'s project.
+  static Future<String> contractWith(Person person, String contractor) => idNamed(person, '${person.project}/contracts', contractor, field: 'supplierName');
+
+  /// The id of the document named [name] in [person]'s project.
+  static Future<String> documentNamed(Person person, String name) => idNamed(person, '${person.project}/documents', name);
+
+  /// The id of the table named [name] that Add entry offers [person], as its table picker lists it.
+  static Future<String> entryTableNamed(Person person, String name) => idNamed(person, '${person.project}/entry-tables', name, inList: 'tables');
+
+  /// The id of the entry of [amount] [person] sees in their project.
+  static Future<String> entryOf(Person person, num amount) => idNamed(person, '${person.project}/entries', '$amount', field: 'amount');
+
+  /// The id of the item named [name] in [person]'s project, in whichever category.
+  static Future<String> itemNamed(Person person, String name) => idNamed(person, '${person.project}/categories', name, inList: 'items');
+
+  /// The id of the supplier named [name] in [person]'s project.
+  static Future<String> supplierNamed(Person person, String name) => idNamed(person, '${person.project}/suppliers', name);
+
+  /// The id of the partner named [name] in [person]'s project.
+  static Future<String> partnerNamed(Person person, String name) => idNamed(person, '${person.project}/partners', name);
+
+  /// The id of the unit named [name] in [person]'s project.
+  static Future<String> unitNamed(Person person, String name) => idNamed(person, '/projects', name, inList: 'units');
+
+  /// The id of the project named [name] on [person]'s list of projects.
+  static Future<String> projectNamed(Person person, String name) => idNamed(person, '/projects', name);
+
+  /// The id of the payment method named [name] in [person]'s project.
+  static Future<String> paymentMethodNamed(Person person, String name) => idNamed(person, '${person.project}/payment-methods', name);
+
+  /// The id of the column named [name] of the item [itemId].
+  static Future<String> columnNamed(Person person, String itemId, String name) => idNamed(person, '${person.project}/items/$itemId/columns', name);
+
+  /// The id of the column named [name] of the template the item [itemId] is made from: its project's default columns for the item's type.
+  static Future<String> templateColumnNamed(Person person, String itemId, String name) async {
+    final items = _rowsUnder(await _get('${person.project}/categories', await _tokenOf(person)), 'items');
+    final type = items.singleWhere((item) => item['id'] == itemId)['type'];
+    return idNamed(person, '${person.project}/default-columns/$type', name);
   }
+
+  /// The id of the table named [name] of the item [itemId].
+  static Future<String> tableNamed(Person person, String itemId, String name) => idNamed(person, '${person.project}/items/$itemId/tables', name);
+
+  /// The id of the person called [displayName] in [person]'s project.
+  static Future<String> userNamed(Person person, String displayName) => idNamed(person, '${person.project}/users', displayName, field: 'displayName');
 
   /// Whether the API lets [username] sign in with [password] now.
   static Future<bool> canSignIn(String username, String password) async => (await _signIn(username, password)).statusCode == 200;
@@ -527,12 +575,43 @@ class Given {
 
   static Future<void> _delete(String path, String token) async => _bodyOf('DELETE $path', await http.delete(Uri.parse('$_base$path'), headers: {'Authorization': 'Bearer $token'}));
 
-  static Future<List<dynamic>> _getList(String path, String token) async {
+  static Future<List<dynamic>> _getList(String path, String token) async => await _get(path, token) as List<dynamic>;
+
+  static Future<Object?> _get(String path, String token) async {
     final answer = await http.get(Uri.parse('$_base$path'), headers: {'Authorization': 'Bearer $token'});
     if (answer.statusCode != 200) {
       throw StateError('GET $path answered ${answer.statusCode}: ${answer.body}');
     }
-    return jsonDecode(utf8.decode(answer.bodyBytes)) as List<dynamic>;
+    return jsonDecode(utf8.decode(answer.bodyBytes));
+  }
+
+  /// The id of the one row named [name] in what the API answers at [path] for [person] (findings row 236): a case learns the id of what it made from the API, never from the
+  /// screen. [inList] names the lists its rows sit in, such as each category's `items`; empty for a list the API answers whole. [field] is what names a row, compared as a
+  /// number when the API holds one there. Fails unless exactly one row is named so.
+  static Future<String> idNamed(Person person, String path, String name, {String inList = '', String field = 'name'}) async {
+    final answer = await _get(path, await _tokenOf(person));
+    bool named(Map<String, dynamic> row) => row[field] is num ? row[field] == num.tryParse(name) : '${row[field]}' == name;
+    final rows = (inList.isEmpty ? (answer! as List<dynamic>).whereType<Map<String, dynamic>>() : _rowsUnder(answer, inList)).where(named).toList();
+    if (rows.length != 1) {
+      throw StateError('GET $path holds ${rows.length} rows whose $field is $name');
+    }
+    return rows.single['id'] as String;
+  }
+
+  /// Every row of every list held under the name [inList] anywhere in [json].
+  static Iterable<Map<String, dynamic>> _rowsUnder(Object? json, String inList) sync* {
+    if (json is List<dynamic>) {
+      for (final element in json) {
+        yield* _rowsUnder(element, inList);
+      }
+    } else if (json is Map<String, dynamic>) {
+      for (final entry in json.entries) {
+        if (entry.key == inList && entry.value is List<dynamic>) {
+          yield* (entry.value as List<dynamic>).whereType<Map<String, dynamic>>();
+        }
+        yield* _rowsUnder(entry.value, inList);
+      }
+    }
   }
 
   static Map<String, dynamic> _bodyOf(String what, http.Response answer) {

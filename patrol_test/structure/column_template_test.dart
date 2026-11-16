@@ -11,7 +11,7 @@ import '../support/phone_case.dart';
 import '../support/steps.dart';
 
 /// A new manager standing on the columns template that an item of theirs shares.
-Future<Person> onTemplate(PatrolIntegrationTester $) async {
+Future<({Person manager, String itemId})> onTemplate(PatrolIntegrationTester $) async {
   final manager = await Given.manager(project: 'غصون 7');
   final bone = await Given.aCategoryAndItem(manager);
   await $.fromTheHome(manager, HomeScreen.categoriesKey(manager.projectId));
@@ -20,7 +20,7 @@ Future<Person> onTemplate(PatrolIntegrationTester $) async {
   await $(keyedBy(ItemColumnsScreen.lockKey)).waitUntilExists();
   await $.tapOn(ItemColumnsScreen.templateKey);
   await $(keyedBy(ItemColumnsScreen.lockKey)).waitUntilExists();
-  return manager;
+  return (manager: manager, itemId: bone.itemId);
 }
 
 /// Adds a column to the template, standing on the question that follows.
@@ -41,29 +41,29 @@ void main() {
     });
 
     phoneCase('AC-41.3: applying reaches the items that exist', ($) async {
-      await onTemplate($);
+      final made = await onTemplate($);
       await addToTemplate($, 'رقم أمر الشراء');
       await $(ApplyToAllDialog.applyKey).tap();
-      await $.idShowing('columns.name.', 'رقم أمر الشراء');
+      await $.idOf('columns.name.', () => Given.templateColumnNamed(made.manager, made.itemId, 'رقم أمر الشراء'));
       await $.tapOn(ItemColumnsScreen.thisItemKey);
-      await $.idShowing('columns.name.', 'رقم أمر الشراء');
+      await $.idOf('columns.name.', () => Given.columnNamed(made.manager, made.itemId, 'رقم أمر الشراء'));
     });
 
     phoneCase('AC-41.3: keeping it to new items leaves the existing ones as they were', ($) async {
-      await onTemplate($);
+      final made = await onTemplate($);
       await addToTemplate($, 'رقم أمر الشراء');
       await $(ApplyToAllDialog.templateOnlyKey).tap();
-      await $.idShowing('columns.name.', 'رقم أمر الشراء');
+      await $.idOf('columns.name.', () => Given.templateColumnNamed(made.manager, made.itemId, 'رقم أمر الشراء'));
       await $.tapOn(ItemColumnsScreen.thisItemKey);
       await $(keyedBy(ItemColumnsScreen.lockKey)).waitUntilExists();
       expect(find.text('رقم أمر الشراء'), findsNothing);
     });
 
     phoneCase('AC-41.3: renaming, reordering or deleting in the template asks too', ($) async {
-      await onTemplate($);
+      final made = await onTemplate($);
       await addToTemplate($, 'رقم أمر الشراء');
       await $(ApplyToAllDialog.templateOnlyKey).tap();
-      final id = await $.idShowing('columns.name.', 'رقم أمر الشراء');
+      final id = await $.idOf('columns.name.', () => Given.templateColumnNamed(made.manager, made.itemId, 'رقم أمر الشراء'));
       await $.menuChoice(ItemColumnsScreen.menuKey(id), ItemColumnsScreen.editKey);
       await $(ItemColumnsScreen.columnNameKey).enterText('رقم الأمر');
       await $(ChangeDialog.saveKey).tap();

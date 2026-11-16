@@ -38,7 +38,7 @@ void main() {
       await $.tapOn(SharedSettingsScreen.switchProjectKey);
       await $.openProject(manager.projectId);
       await $.tapOn(HomeScreen.usersKey(manager.projectId));
-      await $.idShowing('users.name.', 'نواف');
+      await $.idOf('users.name.', () => Given.userNamed(manager, 'نواف'));
       await $.picture('users-arabic');
     });
 
@@ -46,7 +46,7 @@ void main() {
       final manager = await Given.manager();
       final other = await Given.member(await Given.manager());
       await $.fromTheHome(manager, HomeScreen.usersKey(manager.projectId));
-      await $.idShowing('users.name.', manager.displayName);
+      await $.idOf('users.name.', () async => manager.id);
       expect($(UsersScreen.nameKey(other.id)), findsNothing);
     });
 

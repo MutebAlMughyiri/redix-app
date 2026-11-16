@@ -43,7 +43,7 @@ void main() {
       await $(OneFieldDialog.fieldKey).enterText('الدهان');
       await $.tapOn(CategoriesScreen.itemTypeKey(ItemType.purchases));
       await $(ChangeDialog.saveKey).tap();
-      final id = await $.idShowing('categories.itemName.', 'الدهان');
+      final id = await $.idOf('categories.itemName.', () => Given.itemNamed(manager, 'الدهان'));
       expect(detailsOf($, id), contains($.words.categoriesTypePurchases));
     });
 

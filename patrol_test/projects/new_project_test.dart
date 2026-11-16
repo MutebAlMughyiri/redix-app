@@ -36,14 +36,14 @@ void main() {
     });
 
     phoneCase('a signed-in person starts a project, with its units, under their own login', ($) async {
-      await onTheForm($);
+      final person = await onTheForm($);
       expect($(NewProjectScreen.managerNameKey), findsNothing);
       final project = 'Project ${Given.unique()}';
       await $.fill(NewProjectScreen.nameKey, project);
       await $.fill(NewProjectScreen.unitNameKey, 'الفلة الغربية');
       await $.tapOn(NewProjectScreen.addUnitKey);
       await send($);
-      final id = await $.idShowing('projects.card.', project);
+      final id = await $.idOf('projects.card.', () => Given.projectNamed(person, project));
       await $.says(ProjectsScreen.detailsKey(id), 'الفلة الغربية');
       await $.says(ProjectsScreen.statusKey(id).label, $.words.projectsPending);
     });
@@ -59,12 +59,12 @@ void main() {
       await $.tapOn(NewProjectScreen.structureSourceKey);
       await $.tapOn(NewProjectScreen.structureSourceOptionKey(manager.projectId).label);
       await send($);
-      final id = await $.idShowing('projects.card.', project);
+      final id = await $.idOf('projects.card.', () => Given.projectNamed(manager, project));
       await Given.approved(id);
       await $.restartApp();
       await $.openProject(id);
       await $.tapOn(HomeScreen.categoriesKey(id));
-      await $.idShowing('categories.name.', category);
+      await $.idOf('categories.name.', () => Given.idNamed(manager, '/projects/$id/categories', category));
     });
 
     phoneCase('NFR-04: the start date is today until changed, and shows as dd.MM.yyyy', ($) async {

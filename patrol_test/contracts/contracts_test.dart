@@ -39,9 +39,9 @@ Future<void> paid(Person manager, MadeContract contract, num amount) async {
 }
 
 /// Picks the first item a contract can take in the dialog showing now.
-Future<void> pickItem(PatrolIntegrationTester $, String name) async {
+Future<void> pickItem(PatrolIntegrationTester $, Person person, String name) async {
   await $.tapOn(ContractsScreen.itemKey);
-  final id = await $.idShowing('itemPicker.option.', name);
+  final id = await $.idOf('itemPicker.option.', () => Given.itemNamed(person, name));
   await $.goTo($(ItemPicker.optionKey(id)));
   await $(ItemPicker.optionKey(id)).tap();
   await $.pumpAndSettle();
@@ -56,11 +56,11 @@ void main() {
       await $.tapOn(ContractsScreen.addKey);
       await $(ContractsScreen.contractorKey).tap();
       await $.tapOn(SupplierPicker.rowKey(supplier));
-      await pickItem($, 'البناء');
+      await pickItem($, manager, 'البناء');
       await $.fill(ContractsScreen.valueKey, '34000');
       await $.picture('contract-dialog');
       await $(ChangeDialog.saveKey).tap();
-      final id = await $.idShowing('contracts.name.', 'مبلط الغربية');
+      final id = await $.idOf('contracts.name.', () => Given.contractWith(manager, 'مبلط الغربية'));
       await $.says(ContractsScreen.valueOfKey(id), '34,000.00');
       await $.picture('contracts');
     });

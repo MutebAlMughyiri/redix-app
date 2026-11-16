@@ -95,7 +95,7 @@ void main() {
     phoneCase('the last manager of a project cannot be disabled, and the refusal says why', ($) async {
       final manager = await Given.manager();
       await $.fromTheHome(manager, HomeScreen.usersKey(manager.projectId));
-      final id = await $.idShowing('users.name.', manager.displayName);
+      final id = await $.idOf('users.name.', () async => manager.id);
       await $.menuChoice(UsersScreen.menuKey(id), UsersScreen.disableKey);
       await $(ConfirmDialog.confirmKey).tap();
       await $.messageSays('users.lastManager', $.words.usersLastManager);

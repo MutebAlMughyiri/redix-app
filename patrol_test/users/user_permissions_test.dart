@@ -75,7 +75,7 @@ void main() {
     phoneCase('a refusal shows its word, and nothing changes', ($) async {
       final manager = await Given.manager();
       await $.fromTheHome(manager, HomeScreen.usersKey(manager.projectId));
-      final id = await $.idShowing('users.name.', manager.displayName);
+      final id = await $.idOf('users.name.', () async => manager.id);
       await $.menuChoice(UsersScreen.menuKey(id), UsersScreen.permissionsKey);
       final key = UserPermissionsScreen.permissionKey(Permission.manageUsers);
       await $.tapOn(key);

@@ -19,13 +19,13 @@ void main() {
       await $.fromTheHome(manager, HomeScreen.paymentMethodsKey(manager.projectId));
       await $.tapOn(PaymentMethodsScreen.addKey);
       await $.saveName('حوالة بنكية');
-      await $.idShowing('paymentMethods.name.', 'حوالة بنكية');
+      await $.idOf('paymentMethods.name.', () => Given.paymentMethodNamed(manager, 'حوالة بنكية'));
     });
 
     phoneCase('disabled, it stays on the list and says so', ($) async {
       final manager = await Given.manager();
       await $.fromTheHome(manager, HomeScreen.paymentMethodsKey(manager.projectId));
-      final id = await $.idShowing('paymentMethods.name.', (await Given.paymentMethods(manager)).first['name'] as String);
+      final id = await $.idOf('paymentMethods.name.', () async => (await Given.paymentMethods(manager)).first['id'] as String);
       await $.menuChoice(PaymentMethodsScreen.menuKey(id), PaymentMethodsScreen.disableKey);
       await $.says(PaymentMethodsScreen.disabledKey(id), $.words.paymentMethodsDisabled);
       await $.picture('payment-methods');

@@ -87,11 +87,11 @@ void main() {
       await Given.supplier(made.manager, name: name);
       await $.onTheHome(made.manager);
       await $.tapOn(HomeScreen.suppliersKey(made.manager.projectId));
-      await $.idShowing('suppliers.name.', name);
+      await $.idOf('suppliers.name.', () => Given.supplierNamed(made.manager, name));
       await $.back();
       await Pc.cutNetwork();
       await $.tapOn(HomeScreen.suppliersKey(made.manager.projectId));
-      await $.idShowing('suppliers.name.', name);
+      await $.idOf('suppliers.name.', () => Given.supplierNamed(made.manager, name));
     });
 
     phoneCase('opening a project keeps every list the sync answers', ($) async {

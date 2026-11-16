@@ -21,8 +21,8 @@ Future<void> onReports(PatrolIntegrationTester $, Person person, {SummarySide si
 }
 
 /// Opens the category [name] and answers its id.
-Future<String> openCategory(PatrolIntegrationTester $, String name) async {
-  final id = await $.idShowing('itemReports.category.', name);
+Future<String> openCategory(PatrolIntegrationTester $, Person person, String name) async {
+  final id = await $.idOf('itemReports.category.', () => Given.categoryNamed(person, name));
   await $.tapOn(ItemReportsScreen.categoryKey(id));
   await $.pumpAndSettle();
   return id;
@@ -36,11 +36,11 @@ void main() {
       await Given.entriesApproved(manager, [await Given.entry(manager, accountId: account), await Given.revenue(manager, accountId: account)]);
       final table = await Given.firstPurchaseTable(manager);
       await onReports($, manager);
-      final expenses = await $.idShowing('itemReports.category.', table.category);
+      final expenses = await $.idOf('itemReports.category.', () => Given.categoryNamed(manager, table.category));
       expect($(ItemReportsScreen.categoryKey(await Given.categoryNamed(manager, 'استرجاع ضرائب'))), findsNothing);
       await $.back();
       await $.tapOn(HomeScreen.itemReportsKey(manager.projectId, SummarySide.revenue));
-      await $.idShowing('itemReports.category.', 'استرجاع ضرائب');
+      await $.idOf('itemReports.category.', () => Given.categoryNamed(manager, 'استرجاع ضرائب'));
       expect($(ItemReportsScreen.categoryKey(expenses)), findsNothing);
     });
 
@@ -49,7 +49,7 @@ void main() {
       await Given.entriesApproved(manager, [await Given.entry(manager, amount: 150)]);
       final table = await Given.firstPurchaseTable(manager);
       await onReports($, manager);
-      await openCategory($, table.category);
+      await openCategory($, manager, table.category);
       await $.says(ItemReportsScreen.itemKey(table.itemId).trailing, '150.00');
       await $.tapOn(ItemReportsScreen.itemKey(table.itemId));
       await $.says(ItemReportScreen.totalKey, '150.00');
@@ -64,7 +64,7 @@ void main() {
       await $.onTheHome(manager);
       await $.tapOn(HomeScreen.itemReportsKey(manager.projectId, SummarySide.expenses));
       final categories = await Given.categoryOf(manager, contract.itemId);
-      await openCategory($, categories);
+      await openCategory($, manager, categories);
       await $.tapOn(ItemReportsScreen.itemKey(contract.itemId));
       await $.reach($(ItemReportScreen.subgroupKey(subgroup)));
       await $.goTo($(ItemReportScreen.contractCardKey(contract.id)));
@@ -76,8 +76,8 @@ void main() {
       final partner = await Given.partner(manager, 'هيثم');
       await Given.entriesApproved(manager, [await Given.partnerMoney(manager, partner, amount: 500)]);
       await onReports($, manager, side: SummarySide.revenue);
-      await openCategory($, 'رأس المال');
-      final item = await $.idShowing('itemReports.item.', 'رأس المال');
+      await openCategory($, manager, 'رأس المال');
+      final item = await $.idOf('itemReports.item.', () => Given.itemNamed(manager, 'رأس المال'));
       await $.tapOn(ItemReportsScreen.itemKey(item));
       await $.reach($(ItemReportScreen.subgroupKey(partner)));
     });
@@ -87,7 +87,7 @@ void main() {
       await Given.entriesApproved(manager, [await Given.entry(manager)]);
       final table = await Given.firstPurchaseTable(manager);
       await onReports($, manager);
-      await openCategory($, table.category);
+      await openCategory($, manager, table.category);
       await $.tapOn(ItemReportsScreen.itemKey(table.itemId));
       await $.goTo($(ReportFileButtons.buttonKey(table.itemName, ReportFileKind.pdf)));
       await $.tapOn(ReportFileButtons.buttonKey(table.itemName, ReportFileKind.pdf));
@@ -101,7 +101,7 @@ void main() {
       final table = await Given.firstPurchaseTable(manager);
       final member = await Given.member(manager, permissions: [Permission.seeReports, Permission.seeAllCapital]);
       await onReports($, member);
-      await openCategory($, table.category);
+      await openCategory($, member, table.category);
       await $.tapOn(ItemReportsScreen.itemKey(table.itemId));
       await $.goTo($(ReportFileButtons.buttonKey(table.itemName, ReportFileKind.pdf)));
       expect($.isEnabled(ReportFileButtons.buttonKey(table.itemName, ReportFileKind.pdf)), isFalse);
@@ -125,8 +125,8 @@ void main() {
       await Given.choosePartner(manager, member, own);
       await Given.entriesApproved(manager, [await Given.partnerMoney(manager, own), await Given.partnerMoney(manager, other)]);
       await onReports($, member, side: SummarySide.revenue);
-      await openCategory($, 'رأس المال');
-      final item = await $.idShowing('itemReports.item.', 'رأس المال');
+      await openCategory($, member, 'رأس المال');
+      final item = await $.idOf('itemReports.item.', () => Given.itemNamed(member, 'رأس المال'));
       await $.tapOn(ItemReportsScreen.itemKey(item));
       await $.reach($(ItemReportScreen.subgroupKey(own)));
       expect($(ItemReportScreen.subgroupKey(other)), findsNothing);

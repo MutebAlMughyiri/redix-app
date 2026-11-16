@@ -74,7 +74,7 @@ void main() {
       await $.onAddEntry(manager);
       await $.tapOn(AddEntryScreen.tableKey);
       await $(TablePicker.searchKey).enterText('اعمال');
-      await $.idShowing('tablePicker.option.', 'أعمال الحفر');
+      await $.idOf('tablePicker.option.', () => Given.entryTableNamed(manager, 'أعمال الحفر'));
     });
 
     phoneCase('choosing a supplier fills its usual item\'s general table while none is chosen', ($) async {

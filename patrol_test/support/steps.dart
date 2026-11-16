@@ -29,7 +29,7 @@ import 'given.dart';
 import 'made_up_invoice.dart';
 import 'package:redix/config/local_config.dart';
 import '../../test/support/ui_checks.dart' as checks;
-import '../../test/support/ui_checks.dart' show keyStartingWith, keyedBy;
+import '../../test/support/ui_checks.dart' show keyedBy;
 
 export '../../test/support/ui_checks.dart' show holdsFocus, keyStartingWith, keyedBy;
 
@@ -362,19 +362,18 @@ extension Steps on PatrolIntegrationTester {
     }
   }
 
-  /// The id in the key of the element whose key starts with [prefix] and that shows [text]: a case names what it makes and learns its id from that name once, then finds it by its key.
-  /// It waits for a dialog still saving to close first, since the name typed in its field is not the element.
-  Future<String> idShowing(String prefix, String text) async {
+  /// The id [read] learns from the API, Given.idNamed, of what a case named, once a dialog still saving has closed, with its element keyed [prefix] and that id brought into
+  /// view: a case learns an id from the API and finds the element by its key, never by the text it shows (findings row 236).
+  Future<String> idOf(String prefix, Future<String> Function() read) async {
     await until(() => find.byKey(ChangeDialog.dialogKey).evaluate().isEmpty);
     await pumpAndSettle();
-    if (find.text(text).evaluate().isEmpty) {
-      await this(find.text(text)).scrollTo(view: scrolledList);
+    final id = await read();
+    final keyed = this(Key('$prefix$id'));
+    if (keyed.evaluate().isEmpty) {
+      await keyed.scrollTo(view: scrolledList);
     }
-    final keyed = this(find.ancestor(of: find.text(text), matching: keyStartingWith(prefix), matchRoot: true));
     await keyed.waitUntilExists();
-    final ids = {for (final element in keyed.evaluate()) (element.widget.key! as ValueKey<String>).value.substring(prefix.length)}.where((id) => !id.contains('.')).toSet();
-    expect(ids, hasLength(1), reason: 'one $prefix showing $text');
-    return ids.single;
+    return id;
   }
 
   /// Swipes the row keyed [rowKey] from its end toward its start by [share] of its width, as removing it does, in whichever language the phone reads.

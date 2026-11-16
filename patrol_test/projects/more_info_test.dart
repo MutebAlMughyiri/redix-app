@@ -86,8 +86,8 @@ void main() {
       await $.reach($(ProjectInfoScreen.nameKey));
       await $.says(ProjectInfoScreen.detailsKey, '${$.words.projectsStartDate} ${formatDate(DateTime.now())}');
       await $.says(ProjectInfoScreen.statusKey.label, $.words.projectsActive);
-      final first = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
-      final second = await $.idShowing('projectInfo.unit.', 'الفلة الجنوبية');
+      final first = await $.idOf('projectInfo.unit.', () => Given.unitNamed(manager, 'الفلة الغربية'));
+      final second = await $.idOf('projectInfo.unit.', () => Given.unitNamed(manager, 'الفلة الجنوبية'));
       expect($.tester.getTopLeft(find.byKey(ProjectInfoScreen.unitKey(first))).dy, lessThan($.tester.getTopLeft(find.byKey(ProjectInfoScreen.unitKey(second))).dy));
     });
 

@@ -41,7 +41,7 @@ void main() {
       await $.homeFigures(surplus: '(120.75)', revenue: '0.00', expenses: '120.75');
       await $.reach($(SummaryCard.expensesKey));
       await $(SummaryCard.expensesKey.body).tap();
-      final id = await $.idShowing('summary.category.', table.category);
+      final id = await $.idOf('summary.category.', () => Given.categoryNamed(manager, table.category));
       await $.says(SummaryCard.categoryKey(id).trailing, '120.75');
       await $.openReportCategory(manager, table.category);
       await $.says(ItemReportsScreen.itemKey(table.itemId).trailing, '120.75');

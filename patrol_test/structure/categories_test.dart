@@ -21,14 +21,14 @@ void main() {
       await $.fromTheHome(manager, HomeScreen.categoriesKey(manager.projectId));
       await $.tapOn(CategoriesScreen.addCategoryKey);
       await $.saveName('تكاليف إدارية');
-      await $.idShowing('categories.name.', 'تكاليف إدارية');
+      await $.idOf('categories.name.', () => Given.categoryNamed(manager, 'تكاليف إدارية'));
       await $.picture('categories');
     });
 
     phoneCase('AC-39.1: dragging a category sends the order, and it stays where it was dropped', ($) async {
       final manager = await Given.manager();
       await $.fromTheHome(manager, HomeScreen.categoriesKey(manager.projectId));
-      final land = await $.idShowing('categories.name.', 'تكلفة الأراضي');
+      final land = await $.idOf('categories.name.', () => Given.categoryNamed(manager, 'تكلفة الأراضي'));
       final top = $.topOf(CategoriesScreen.categoryNameKey(land));
       await $.dragDown(CategoriesScreen.categoryHandleKey(land));
       expect($.topOf(CategoriesScreen.categoryNameKey(land)), greaterThan(top));
@@ -98,7 +98,7 @@ void main() {
     phoneCase('a refused or lost order goes back to what the API holds', ($) async {
       final manager = await Given.manager();
       await $.fromTheHome(manager, HomeScreen.categoriesKey(manager.projectId));
-      final land = await $.idShowing('categories.name.', 'تكلفة الأراضي');
+      final land = await $.idOf('categories.name.', () => Given.categoryNamed(manager, 'تكلفة الأراضي'));
       final top = $.topOf(CategoriesScreen.categoryNameKey(land));
       await Pc.cutNetwork();
       await $.dragDown(CategoriesScreen.categoryHandleKey(land));

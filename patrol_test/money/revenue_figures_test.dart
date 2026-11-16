@@ -10,10 +10,10 @@ import '../support/phone_case.dart';
 import '../support/steps.dart';
 
 /// Picks the VAT refund table in Add entry by searching for it.
-Future<void> pickRefund(PatrolIntegrationTester $) async {
+Future<void> pickRefund(PatrolIntegrationTester $, Person person) async {
   await $.tapOn(AddEntryScreen.tableKey);
   await $(TablePicker.searchKey).enterText('استرجاع');
-  final id = await $.idShowing('tablePicker.option.', 'استرجاع الضرائب');
+  final id = await $.idOf('tablePicker.option.', () => Given.entryTableNamed(person, 'استرجاع الضرائب'));
   await $.tapOn(TablePicker.optionKey(id));
   await $.pumpAndSettle();
 }
@@ -24,7 +24,7 @@ void main() {
       final manager = await Given.manager();
       final account = await Given.account(manager);
       await $.onAddEntry(manager);
-      await pickRefund($);
+      await pickRefund($, manager);
       await $.fill(AddEntryScreen.amountKey, '300.75');
       await $.tapOn(PaymentChoices.accountKey(account));
       await $.sendEntry();

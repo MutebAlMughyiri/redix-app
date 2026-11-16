@@ -11,10 +11,10 @@ import '../support/phone_case.dart';
 import '../support/steps.dart';
 
 /// Picks the VAT refund table in Add entry by searching for it, and answers its id.
-Future<String> pickRefund(PatrolIntegrationTester $) async {
+Future<String> pickRefund(PatrolIntegrationTester $, Person person) async {
   await $.tapOn(AddEntryScreen.tableKey);
   await $(TablePicker.searchKey).enterText('استرجاع');
-  final id = await $.idShowing('tablePicker.option.', 'استرجاع الضرائب');
+  final id = await $.idOf('tablePicker.option.', () => Given.entryTableNamed(person, 'استرجاع الضرائب'));
   await $.tapOn(TablePicker.optionKey(id));
   await $.pumpAndSettle();
   return id;
@@ -26,7 +26,7 @@ void main() {
       final manager = await Given.manager();
       final account = await Given.account(manager);
       await $.onAddEntry(manager);
-      await pickRefund($);
+      await pickRefund($, manager);
       await $.fill(AddEntryScreen.amountKey, '300');
       await $.tapOn(PaymentChoices.accountKey(account));
       await $.sendEntry();
@@ -39,16 +39,16 @@ void main() {
       await $.onAddEntry(manager);
       await $.tapOn(AddEntryScreen.tableKey);
       await $(TablePicker.searchKey).enterText('استرجاع الضرائب');
-      await $.idShowing('tablePicker.option.', 'استرجاع الضرائب');
+      await $.idOf('tablePicker.option.', () => Given.entryTableNamed(manager, 'استرجاع الضرائب'));
       await $(TablePicker.searchKey).enterText('أسترجاع الضرائب');
-      await $.idShowing('tablePicker.option.', 'استرجاع الضرائب');
+      await $.idOf('tablePicker.option.', () => Given.entryTableNamed(manager, 'استرجاع الضرائب'));
     });
 
     phoneCase('redix-api #110: a revenue entry is saved as a draft and sent later', ($) async {
       final manager = await Given.manager();
       final account = await Given.account(manager);
       await $.onAddEntry(manager);
-      await pickRefund($);
+      await pickRefund($, manager);
       await $.fill(AddEntryScreen.amountKey, '300');
       await $.tapOn(PaymentChoices.accountKey(account));
       await $.saveDraft();
@@ -60,7 +60,7 @@ void main() {
     phoneCase('R10: an amount that is no number stops it', ($) async {
       final manager = await Given.manager();
       await $.onAddEntry(manager);
-      await pickRefund($);
+      await pickRefund($, manager);
       await $.fill(AddEntryScreen.amountKey, 'abc');
       await $.sendEntry();
       await $.says(AddEntryScreen.messageKey, $.words.expensesInvalidAmount);

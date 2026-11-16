@@ -28,9 +28,9 @@ Future<void> openNew(PatrolIntegrationTester $, String name) async {
 }
 
 /// Saves the dialog and answers the id of the supplier called [name].
-Future<String> saveAndFind(PatrolIntegrationTester $, String name) async {
+Future<String> saveAndFind(PatrolIntegrationTester $, Person person, String name) async {
   await $(ChangeDialog.saveKey).tap();
-  return $.idShowing('suppliers.name.', name);
+  return $.idOf('suppliers.name.', () => Given.supplierNamed(person, name));
 }
 
 void main() {
@@ -46,7 +46,7 @@ void main() {
       await $.tapOn(ItemPicker.optionKey(table.itemId));
       await $.pumpAndSettle();
       await $.picture('supplier-dialog');
-      await saveAndFind($, 'شركة النخيل');
+      await saveAndFind($, manager, 'شركة النخيل');
       await $.picture('suppliers');
     });
 
@@ -65,7 +65,7 @@ void main() {
       final manager = await Given.manager();
       await onSuppliers($, manager);
       await openNew($, 'مورد بالاسم فقط');
-      final id = await saveAndFind($, 'مورد بالاسم فقط');
+      final id = await saveAndFind($, manager, 'مورد بالاسم فقط');
       expect($(SuppliersScreen.nameKey(id)), findsOneWidget);
     });
 
@@ -76,7 +76,7 @@ void main() {
       final western = Given.vatNumber();
       final arabic = String.fromCharCodes(western.codeUnits.map((unit) => 0x0660 + unit - 0x30));
       await $(SuppliersScreen.vatNumberKey).enterText(arabic);
-      final id = await saveAndFind($, 'مورد الأرقام');
+      final id = await saveAndFind($, manager, 'مورد الأرقام');
       await $.says(SuppliersScreen.detailsKey(id), western);
     });
 
@@ -85,7 +85,7 @@ void main() {
       await onSuppliers($, manager);
       await openNew($, 'مورد بلا رقم');
       expect(find.byType(Switch), findsNothing);
-      await saveAndFind($, 'مورد بلا رقم');
+      await saveAndFind($, manager, 'مورد بلا رقم');
     });
 
     phoneCase('editing starts from the supplier and changes it', ($) async {
@@ -168,7 +168,7 @@ void main() {
     phoneCase('the general cash supplier stays active, and the refusal says why', ($) async {
       final manager = await Given.manager();
       await onSuppliers($, manager);
-      final id = await $.idShowing('suppliers.name.', 'مورد نقدي عام');
+      final id = await $.idOf('suppliers.name.', () => Given.supplierNamed(manager, 'مورد نقدي عام'));
       await $.menuChoice(SuppliersScreen.menuKey(id), SuppliersScreen.disableKey);
       await $.messageSays('suppliers.generalCashSupplier', $.words.suppliersGeneralCashSupplier);
     });

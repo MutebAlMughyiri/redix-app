@@ -56,7 +56,7 @@ void main() {
       await $.pickFromThePhone(DocumentsScreen.fileKey, madeUpDocumentName, madeUpDocument);
       await $.says(DocumentsScreen.fileKey.label, madeUpDocumentName);
       await $(ChangeDialog.saveKey).tap();
-      await $.idShowing('documents.document.', 'رخصة البناء');
+      await $.idOf('documents.document.', () => Given.documentNamed(manager, 'رخصة البناء'));
       await $.reach($(DocumentsScreen.groupHeadingKey('التراخيص')));
     });
 
@@ -67,7 +67,7 @@ void main() {
       await $.pickFromThePhone(DocumentsScreen.fileKey, madeUpDocumentName, madeUpDocument);
       await $.says(DocumentsScreen.fileKey.label, madeUpDocumentName);
       await $(ChangeDialog.saveKey).tap();
-      await $.idShowing('documents.document.', 'عقد الأرض');
+      await $.idOf('documents.document.', () => Given.documentNamed(manager, 'عقد الأرض'));
       expect($(keyedBy(DocumentsScreen.groupHeadingKey)), findsNothing);
     });
 

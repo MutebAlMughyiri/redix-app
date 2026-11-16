@@ -32,7 +32,7 @@ void main() {
       await Given.closed(manager);
       await $.onTheHome(manager);
       await $.tapOn(HomeScreen.usersKey(manager.projectId));
-      await $.idShowing('users.name.', manager.displayName);
+      await $.idOf('users.name.', () async => manager.id);
     });
 
     phoneCase('its reports stay available', ($) async {
@@ -109,7 +109,7 @@ void main() {
       await Given.closed(manager);
       await $.onTheHome(manager);
       await $.tapOn(HomeScreen.partnersKey(manager.projectId));
-      await $.idShowing('partners.name.', 'متعب');
+      await $.idOf('partners.name.', () => Given.partnerNamed(manager, 'متعب'));
       expect($.isEnabled(PartnersScreen.addKey), isFalse);
       expect($(keyedBy(PartnersScreen.menuKey)), findsNothing);
     });

@@ -91,7 +91,7 @@ void main() {
       await $.onTheHome(manager);
       await $.reach($(SummaryCard.expensesKey));
       await $(SummaryCard.expensesKey.body).tap();
-      final id = await $.idShowing('summary.category.', table.category);
+      final id = await $.idOf('summary.category.', () => Given.categoryNamed(manager, table.category));
       await $.says(SummaryCard.categoryKey(id).trailing, '100.00');
     });
 
@@ -102,8 +102,8 @@ void main() {
       await $.onTheHome(manager);
       await $.says(SummaryCard.revenueKey, '800.00');
       await $(SummaryCard.revenueKey.body).tap();
-      final capital = await $.idShowing('summary.category.', 'رأس المال');
-      final refund = await $.idShowing('summary.category.', 'استرجاع ضرائب');
+      final capital = await $.idOf('summary.category.', () => Given.categoryNamed(manager, 'رأس المال'));
+      final refund = await $.idOf('summary.category.', () => Given.categoryNamed(manager, 'استرجاع ضرائب'));
       await $.says(SummaryCard.categoryKey(capital).trailing, '500.00');
       await $.says(SummaryCard.categoryKey(refund).trailing, '300.00');
       expect($.topOf(SummaryCard.categoryKey(capital)), lessThan($.topOf(SummaryCard.categoryKey(refund))));
@@ -177,7 +177,7 @@ void main() {
       await $.onTheHome(manager);
       await $.reach($(SummaryCard.expensesKey));
       await $(SummaryCard.expensesKey.body).tap();
-      final id = await $.idShowing('summary.category.', table.category);
+      final id = await $.idOf('summary.category.', () => Given.categoryNamed(manager, table.category));
       await $(SummaryCard.categoryKey(id)).tap();
       await $.pumpAndSettle();
       expect($(ItemReportsScreen.categoryKey(id)), findsNothing);

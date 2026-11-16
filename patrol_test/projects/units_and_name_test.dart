@@ -38,13 +38,13 @@ void main() {
       await $.onMoreInfo(manager);
       await openAddUnit($);
       await $.saveName('الملحق');
-      await $.idShowing('projectInfo.unit.', 'الملحق');
+      await $.idOf('projectInfo.unit.', () => Given.unitNamed(manager, 'الملحق'));
     });
 
     phoneCase('BR-38: renaming a unit starts from its name, and the row follows', ($) async {
       final manager = await Given.manager(units: ['الفلة الغربية']);
       await $.onMoreInfo(manager);
-      final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
+      final unit = await $.idOf('projectInfo.unit.', () => Given.unitNamed(manager, 'الفلة الغربية'));
       await $.tapOn(ProjectInfoScreen.unitMenuKey(unit));
       await $.tapOn(ProjectInfoScreen.renameUnitKey);
       await $.reach($(OneFieldDialog.fieldKey));
@@ -56,11 +56,11 @@ void main() {
     phoneCase('redix-api #102, #119: a swipe deletes a unit once confirmed in its row', ($) async {
       final manager = await Given.manager(units: ['الفلة الغربية', 'الفلة الجنوبية']);
       await $.onMoreInfo(manager);
-      final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
+      final unit = await $.idOf('projectInfo.unit.', () => Given.unitNamed(manager, 'الفلة الغربية'));
       await $.swipeAway(ProjectInfoScreen.unitRowKey(unit));
       expect($(ConfirmDialog.dialogKey), findsNothing);
       await $.gone($(ProjectInfoScreen.unitKey(unit)));
-      await $.idShowing('projectInfo.unit.', 'الفلة الجنوبية');
+      await $.idOf('projectInfo.unit.', () => Given.unitNamed(manager, 'الفلة الجنوبية'));
     });
 
     phoneCase('BR-37: a repeated unit name is refused in Add unit', ($) async {
@@ -75,7 +75,7 @@ void main() {
     phoneCase('redix-api #102: a short swipe deletes nothing', ($) async {
       final manager = await Given.manager(units: ['الفلة الغربية']);
       await $.onMoreInfo(manager);
-      final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
+      final unit = await $.idOf('projectInfo.unit.', () => Given.unitNamed(manager, 'الفلة الغربية'));
       await $.swipeToAsk(ProjectInfoScreen.unitRowKey(unit), share: 0.15);
       await Future<void>.delayed(const Duration(seconds: 1));
       await $.pumpAndSettle();
@@ -95,7 +95,7 @@ void main() {
     phoneCase('BR-38: a unit that cannot be deleted comes back, and the refusal says why', ($) async {
       final manager = await Given.manager(units: ['الفلة الغربية']);
       await $.onMoreInfo(manager);
-      final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
+      final unit = await $.idOf('projectInfo.unit.', () => Given.unitNamed(manager, 'الفلة الغربية'));
       await Given.closed(manager);
       await $.swipeAway(ProjectInfoScreen.unitRowKey(unit));
       await $.says(messageKeyOf('projects.projectFinished').label, $.words.projectsProjectFinished);

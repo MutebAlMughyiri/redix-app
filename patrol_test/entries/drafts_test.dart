@@ -26,7 +26,7 @@ void main() {
       await $.fill(AddEntryScreen.amountKey, '700');
       await $.tapOn(PaymentChoices.accountKey(account));
       await $.saveDraft();
-      final id = await $.idShowing('entries.row.', '700.00');
+      final id = await $.idOf('entries.row.', () => Given.entryOf(manager, 700));
       await $.tapOn(EntriesScreen.rowKey(id));
       await $.tapOn(AddEntryScreen.sendDraftKey);
       await $.says(SummaryCard.pendingKey.title, $.words.summaryPending.replaceFirst('{0}', '1'));

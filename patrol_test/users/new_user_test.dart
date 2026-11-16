@@ -39,11 +39,11 @@ Future<void> send(PatrolIntegrationTester $) async {
 void main() {
   phoneClass('New user (UC-007 and UC-008)', () {
     phoneCase('a new user is created with a temporary password', ($) async {
-      await onTheForm($);
+      final manager = await onTheForm($);
       await fillForm($, 'patrol-nawaf-${Given.unique()}');
       await $.picture('new-user');
       await send($);
-      await $.idShowing('users.name.', 'نواف');
+      await $.idOf('users.name.', () => Given.userNamed(manager, 'نواف'));
     });
 
     phoneCase('AC-02.1: they sign in and must change it', ($) async {
@@ -51,7 +51,7 @@ void main() {
       final username = 'nawaf-${Given.unique()}';
       await fillForm($, username);
       await send($);
-      await $.idShowing('users.name.', 'نواف');
+      await $.idOf('users.name.', () => Given.userNamed(manager, 'نواف'));
       await $.back();
       await $.signOutFromTheHome(manager.projectId);
       await $.signIn(username, 'Temporary-2');
@@ -90,7 +90,7 @@ void main() {
       expect($.canTick(NewUserScreen.permissionKey(Permission.readProject)), isFalse);
       await $.tapOn(NewUserScreen.permissionKey(Permission.approveEntries));
       await send($);
-      await $.idShowing('users.name.', 'نواف');
+      await $.idOf('users.name.', () => Given.userNamed(manager, 'نواف'));
       expect(await Given.permissionsOf(manager, username), containsAll(['readProject', 'approveEntries']));
     });
 
