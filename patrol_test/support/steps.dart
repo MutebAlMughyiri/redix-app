@@ -27,25 +27,16 @@ import 'package:redix/words/words.dart';
 
 import 'given.dart';
 import 'made_up_invoice.dart';
-import 'package:redix/config/local_config.dart';
+import 'package:redix/config/local_config.dart';
+import '../../test/support/ui_checks.dart' as checks;
+import '../../test/support/ui_checks.dart' show keyStartingWith, keyedBy;
+
+export '../../test/support/ui_checks.dart' show holdsFocus, keyStartingWith, keyedBy;
 
 /// The app's session while it is open, and whether it is open: every case of a class shares the one open app.
 var _session = Session();
 var _appIsOpen = false;
 var _localConfig = LocalConfig();
-
-/// Every widget whose key starts with [start].
-Finder keyStartingWith(String start) => find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith(start));
-
-/// Whether what holds the focus, the field the keyboard types into, sits inside the element keyed [key].
-bool holdsFocus(Key key) {
-  var inside = false;
-  FocusManager.instance.primaryFocus?.context?.visitAncestorElements((element) => !(inside = element.widget.key == key));
-  return inside;
-}
-
-/// Every widget keyed by [keyOf] for any id, such as the rows of a list whose ids a case does not know: the widgets whose key starts as [keyOf] keys an empty id.
-Finder keyedBy(Key Function(String id) keyOf) => keyStartingWith((keyOf('') as ValueKey<String>).value);
 
 /// The steps every case is written in, each finding what it needs by its exact key.
 extension Steps on PatrolIntegrationTester {
@@ -210,7 +201,7 @@ extension Steps on PatrolIntegrationTester {
   }
 
   /// Whether the element keyed [key] sits in its screen's title bar: within the height the screen's app bar takes from the top.
-  bool isInTitleBar(Key key) => tester.getRect(find.byKey(key)).bottom <= Scaffold.of(tester.element(find.byKey(key))).appBarMaxHeight!;
+  bool isInTitleBar(Key key) => checks.isInTitleBar(tester, key);
 
   /// How far down the screen [key] is.
   double topOf(Key key) => tester.getTopLeft(find.byKey(key)).dy;
@@ -277,12 +268,7 @@ extension Steps on PatrolIntegrationTester {
   String typed(Key key) => tester.widget<TextField>(find.byKey(key)).controller!.text;
 
   /// Whether the button [key] can be pressed.
-  bool isEnabled(Key key) => switch (tester.widget(find.byKey(key))) {
-    final IconButton icon => icon.onPressed != null,
-    final PopupMenuItem<Object?> choice => choice.enabled,
-    final InkWell card => card.onTap != null,
-    final widget => (widget as ButtonStyleButton).enabled,
-  };
+  bool isEnabled(Key key) => checks.isEnabled(tester, key);
 
   /// Brings the field [key] into view and types [text] into it.
   Future<void> fill(Key key, String text) async {

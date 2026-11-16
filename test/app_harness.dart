@@ -29,7 +29,10 @@ import 'package:redix/words/app_language.dart';
 import 'package:redix/ui/app_color.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:redix/config/local_config.dart';
+import 'package:redix/config/local_config.dart';
+import 'support/ui_checks.dart';
+
+export 'support/ui_checks.dart';
 
 /// The words the fake API serves: each key's value names its language and key, so a test reads which word is shown.
 Map<String, String> wordsIn(String language) => {
@@ -2062,37 +2065,10 @@ Future<void> _passThrough(WidgetTester tester, FakeApi api, List<AppLifecycleSta
   }
 });
 
-/// Whether what holds the focus, the field the keyboard types into, sits inside the element keyed [key].
-bool holdsFocus(Key key) {
-  var inside = false;
-  FocusManager.instance.primaryFocus?.context?.visitAncestorElements((element) => !(inside = element.widget.key == key));
-  return inside;
-}
-
-/// True when the element keyed [key] sits in its screen's title bar: within the height the screen's app bar takes from the top.
-bool isInTitleBar(WidgetTester tester, Key key) => tester.getRect(find.byKey(key)).bottom <= Scaffold.of(tester.element(find.byKey(key))).appBarMaxHeight!;
-
-/// True when the button keyed [key] works; a screen's add button shows grayed without the permission rather than hidden (issue #85).
-bool isEnabled(WidgetTester tester, Key key) => works(tester.widget(find.byKey(key)));
-
-/// True when [widget], a button, a menu's choice or a card, does something when tapped; without its permission a report's control shows gray, never hidden (redix-api #131).
-bool works(Widget widget) => switch (widget) {
-  final IconButton icon => icon.onPressed != null,
-  final PopupMenuItem<Object?> choice => choice.enabled,
-  final InkWell card => card.onTap != null,
-  final widget => (widget as ButtonStyleButton).enabled,
-};
-
 /// Starts the app signed in, with [capture] as the phone's camera and files and [store] as its storage, and opens the first project from the list.
 Future<void> openProject(WidgetTester tester, FakeApi api, {InvoiceCapture? capture, LocalStore? store}) async {
   await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture, store: store);
   await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
-}
-
-/// Every widget keyed by [keyOf] for any id, such as the rows of a list: the widgets whose key starts as [keyOf] keys an empty id.
-Finder keyedBy(Key Function(String id) keyOf) {
-  final start = (keyOf('') as ValueKey<String>).value;
-  return find.byWidgetPredicate((widget) => widget.key is ValueKey<String> && (widget.key! as ValueKey<String>).value.startsWith(start));
 }
 
 /// The id in the key of each widget keyed by [keyOf], in the order they show.
