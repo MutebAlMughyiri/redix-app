@@ -1,4 +1,4 @@
-package sa.redix
+package redix
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager

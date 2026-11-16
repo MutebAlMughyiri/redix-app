@@ -1,8 +1,8 @@
 # What a Patrol case on the phone cannot do for itself. The Patrol run starts this on the PC, and a case asks it over port 5011 (patrol_test/support/pc.dart).
 # The run names the phone and the file each case's line is kept in, so no path on a PC sits in the repo (redix-api #118).
 param([Parameter(Mandatory)][string]$Device, [Parameter(Mandatory)][string]$Results)
-# The app Patrol runs: always dev (redix-app #95). Its activity keeps the code's own package, sa.redix.
-$App = 'sa.redix.dev'
+# The app Patrol runs: always dev (redix-app #95). Its activity keeps the code's own package, redix.
+$App = 'redix.dev'
 # The phone's own dark mode as it was before a case first changed it, so /phone/restore puts back whatever Muteb chose (redix-app #97); empty while nothing changed it.
 $phoneMode = ''
 
@@ -27,7 +27,7 @@ while ($true) {
     '/network/on' { adb -s $Device reverse tcp:5010 tcp:5010 2>&1 | Out-Null }
     '/link' { adb -s $Device shell am start -a android.intent.action.VIEW -d ([uri]::UnescapeDataString($query)) $App 2>&1 | Out-Null }
     # A tap on the Add entry home-screen widget: the link straight to the app's activity, as AddEntryWidget sends it, so no link filter is asked (redix-app #86).
-    '/widget' { adb -s $Device shell am start -a android.intent.action.VIEW -d ([uri]::UnescapeDataString($query)) -n "$App/sa.redix.MainActivity" 2>&1 | Out-Null }
+    '/widget' { adb -s $Device shell am start -a android.intent.action.VIEW -d ([uri]::UnescapeDataString($query)) -n "$App/redix.MainActivity" 2>&1 | Out-Null }
     '/to-downloads' {
       $name = [uri]::UnescapeDataString($query)
       adb -s $Device shell cp "/sdcard/Android/data/$App/files/$name" "/sdcard/Download/$name" 2>&1 | Out-Null
@@ -35,7 +35,7 @@ while ($true) {
     }
     '/share-in' {
       $type, $file = [uri]::UnescapeDataString($query) -split '\|', 2
-      adb -s $Device shell am start -a android.intent.action.SEND -t $type --eu android.intent.extra.STREAM "file://$file" -n "$App/sa.redix.MainActivity" 2>&1 | Out-Null
+      adb -s $Device shell am start -a android.intent.action.SEND -t $type --eu android.intent.extra.STREAM "file://$file" -n "$App/redix.MainActivity" 2>&1 | Out-Null
     }
     '/phone/dark' { Set-PhoneMode 'yes' }
     '/phone/light' { Set-PhoneMode 'no' }

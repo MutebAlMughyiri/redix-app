@@ -1,4 +1,4 @@
-package sa.redix;
+package redix;
 
 import androidx.test.platform.app.InstrumentationRegistry;
 import org.junit.Test;

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "sa.redix"
+    namespace = "redix"
     compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
@@ -18,11 +18,11 @@ android {
 
     defaultConfig {
         // The environment's config file decides the app's id, its name and its link host (redix-app #95, #83): the --dart-define values the app is built
-        // with. Without one the app is sa.redix, REDIX and redix.test, the production names.
+        // with. Without one the app is redix.prod, REDIX and redix.test, the production names.
         val dartDefines = (project.findProperty("dart-defines") as String? ?: "").split(",").filter { it.isNotEmpty() }
             .map { String(Base64.getDecoder().decode(it)) }
             .associate { it.substringBefore("=") to it.substringAfter("=") }
-        applicationId = "sa.redix" + (dartDefines["APP_ID_SUFFIX"] ?: "")
+        applicationId = "redix" + (dartDefines["APP_ID_SUFFIX"] ?: ".prod")
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

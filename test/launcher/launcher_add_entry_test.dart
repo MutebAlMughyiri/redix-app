@@ -36,7 +36,7 @@ void main() {
         expect(launcher.shortcuts.single['localizedTitle'], '$language entries.new');
         expect(launcher.saved[LauncherAddEntry.widgetLabel], '$language entries.new');
         expect(launcher.saved[LauncherAddEntry.widgetLink], 'https://redix.test${LauncherAddEntry.path}');
-        expect(launcher.updated.last, 'sa.redix.AddEntryWidget');
+        expect(launcher.updated.last, 'redix.AddEntryWidget');
       });
     }
 

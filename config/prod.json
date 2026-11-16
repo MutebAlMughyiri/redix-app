@@ -1,0 +1,6 @@
+{
+  "API_BASE_URL": "",
+  "LINK_HOST": "redix.test",
+  "APP_ID_SUFFIX": ".prod",
+  "APP_NAME": "REDIX"
+}

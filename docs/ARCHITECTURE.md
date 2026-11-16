@@ -6,7 +6,7 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 
 ```
 lib/
-  api.dart                  The API's address, from the environment's config file: `config/dev.json` for automated runs, `config/qa.json` for Muteb's own testing, `config/production.json` for a release (redix-api #118); and the one place an answer is read: `jsonOf`, `answerOf`, `refusalOf`, `madeFrom`
+  api.dart                  The API's address, from the environment's config file: `config/dev.json` for automated runs, `config/qa.json` for Muteb's own testing, `config/prod.json` for a release (redix-api #118); and the one place an answer is read: `jsonOf`, `answerOf`, `refusalOf`, `madeFrom`
   api_list.dart             A list the API owns, as it last answered, and the way to change it
   api_object.dart           Something the API owns, as it last answered, and the way to change it
   main.dart                 The app: its theme, its languages, and its screens
@@ -102,7 +102,7 @@ lib/
     summary_card.dart     The project's figures at a glance: what waits for approval, the surplus, the completion, the reconciliation difference, and the revenue and expenses totals, each opening to its categories with their totals; a category opens nothing
     home_screen.dart        The home of the open project: the project, with what the user's permissions allow in it
   launcher/
-    launcher_add_entry.dart REDIX outside the app: «إضافة قيد» on the icon's menu and the home-screen widget, with the latest entries under its button, whose every tap opens the one link /add-entry (redix-app #86); the widget itself is android/app/src/main/kotlin/sa/redix/AddEntryWidget.kt, drawing what this saves
+    launcher_add_entry.dart REDIX outside the app: «إضافة قيد» on the icon's menu and the home-screen widget, with the latest entries under its button, whose every tap opens the one link /add-entry (redix-app #86); the widget itself is android/app/src/main/kotlin/redix/AddEntryWidget.kt, drawing what this saves
   notifications/
     notification_row.dart   Something a person was told: its words come from kind, in their language
     notifications.dart      What the signed-in person was told
@@ -297,7 +297,7 @@ Settings such as projects keep nothing on the phone: the API owns every rule, th
 | A screen's main action is `BottomButton`: one full-width filled button in the `Scaffold`'s `bottomNavigationBar`, its bar keyed `BottomButton.barKey`, a plus unless the action says otherwise; no screen draws a floating button. Adding what is added rarely is `TitleBarAdd`, a plus in the title bar instead (Accounts, Partners, Documents, Payment methods, Users: redix-app #101, #106). Without the permission either shows grayed, never hidden | `lib/ui/bottom_button.dart` |
 | One class to a file: a screen's card, row and dialogs are files of their own | Each feature folder |
 | Every public class and member has a doc comment | The lint `public_member_api_docs` |
-| The environment's config file (`--dart-define-from-file=config/dev.json` or `config/qa.json`, named as the API's environments `Dev` and `QA`) decides the API's address and, through `build.gradle.kts`, the app's id, its name and its link host; none is built in, and without the file the app is `sa.redix`, REDIX, `redix.test`, the production names (redix-app #95) | `apiBaseUrl`, `config/`, `build.gradle.kts` |
+| The environment's config file (`--dart-define-from-file=config/dev.json`, `config/qa.json` or `config/prod.json`, named as the API's environments `Dev`, `QA` and `Prod`) decides the API's address and, through `build.gradle.kts`, the app's id, its name and its link host; none is built in, and without the file the app is `redix.prod`, REDIX, `redix.test`, the production names (redix-app #95) | `apiBaseUrl`, `config/`, `build.gradle.kts` |
 
 ## Tests
 

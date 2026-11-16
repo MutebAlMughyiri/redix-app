@@ -1,4 +1,4 @@
-package sa.redix
+package redix
 
 import io.flutter.embedding.android.FlutterActivity
 

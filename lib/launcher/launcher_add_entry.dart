@@ -34,7 +34,7 @@ abstract final class LauncherAddEntry {
 
   static const _shortcut = 'addEntry';
   static const _shortcutIcon = 'ic_add_entry';
-  static const _widgetProvider = 'sa.redix.AddEntryWidget';
+  static const _widgetProvider = 'redix.AddEntryWidget';
 
   /// Opens [path] through [open] when the icon's «إضافة قيد» is tapped, the tap that started the app included (R1, AC-86.1).
   static Future<void> listen(ValueChanged<String> open) => _reach('The icon\'s menu', () => const QuickActions().initialize((_) => open(path)));
