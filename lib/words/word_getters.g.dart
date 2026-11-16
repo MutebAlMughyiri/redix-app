@@ -296,23 +296,8 @@ mixin WordGetters {
   /// The word `biometrics.usePassword`.
   String get biometricsUsePassword => text('biometrics.usePassword');
 
-  /// The word `capital.account`.
-  String get capitalAccount => text('capital.account');
-
-  /// The word `capital.amount`.
-  String get capitalAmount => text('capital.amount');
-
-  /// The word `capital.balance`.
-  String get capitalBalance => text('capital.balance');
-
   /// The word `capital.contribution`.
   String get capitalContribution => text('capital.contribution');
-
-  /// The word `capital.date`.
-  String get capitalDate => text('capital.date');
-
-  /// The word `capital.description`.
-  String get capitalDescription => text('capital.description');
 
   /// The word `capital.imageTooLarge`.
   String get capitalImageTooLarge => text('capital.imageTooLarge');
@@ -329,12 +314,6 @@ mixin WordGetters {
   /// The word `capital.noMovements`.
   String get capitalNoMovements => text('capital.noMovements');
 
-  /// The word `capital.noPartners`.
-  String get capitalNoPartners => text('capital.noPartners');
-
-  /// The word `capital.partner`.
-  String get capitalPartner => text('capital.partner');
-
   /// The word `capital.pendingEntries`.
   String get capitalPendingEntries => text('capital.pendingEntries');
 
@@ -344,17 +323,8 @@ mixin WordGetters {
   /// The word `capital.receiptHint`.
   String get capitalReceiptHint => text('capital.receiptHint');
 
-  /// The word `capital.save`.
-  String get capitalSave => text('capital.save');
-
-  /// The word `capital.share`.
-  String get capitalShare => text('capital.share');
-
   /// The word `capital.total`.
   String get capitalTotal => text('capital.total');
-
-  /// The word `capital.type`.
-  String get capitalType => text('capital.type');
 
   /// The word `capital.withdrawal`.
   String get capitalWithdrawal => text('capital.withdrawal');
@@ -619,9 +589,6 @@ mixin WordGetters {
 
   /// The word `columns.showInReports`.
   String get columnsShowInReports => text('columns.showInReports');
-
-  /// The word `columns.sign`.
-  String get columnsSign => text('columns.sign');
 
   /// The word `columns.signMinus`.
   String get columnsSignMinus => text('columns.signMinus');
@@ -1049,9 +1016,6 @@ mixin WordGetters {
   /// The word `entries.tableSearchHint`.
   String get entriesTableSearchHint => text('entries.tableSearchHint');
 
-  /// The word `entries.tiedProjectRefused`.
-  String get entriesTiedProjectRefused => text('entries.tiedProjectRefused');
-
   /// The word `entries.title`.
   String get entriesTitle => text('entries.title');
 
@@ -1138,9 +1102,6 @@ mixin WordGetters {
 
   /// The word `expenses.invoiceAlreadyAttached`.
   String get expensesInvoiceAlreadyAttached => text('expenses.invoiceAlreadyAttached');
-
-  /// The word `expenses.item`.
-  String get expensesItem => text('expenses.item');
 
   /// The word `expenses.keptOnPhone`.
   String get expensesKeptOnPhone => text('expenses.keptOnPhone');
@@ -1850,9 +1811,6 @@ mixin WordGetters {
   /// The word `reconciliations.surplus`.
   String get reconciliationsSurplus => text('reconciliations.surplus');
 
-  /// The word `reconciliations.title`.
-  String get reconciliationsTitle => text('reconciliations.title');
-
   /// The word `reconciliations.unknownAccount`.
   String get reconciliationsUnknownAccount => text('reconciliations.unknownAccount');
 
@@ -1928,12 +1886,6 @@ mixin WordGetters {
   /// The word `reports.current`.
   String get reportsCurrent => text('reports.current');
 
-  /// The word `reports.date`.
-  String get reportsDate => text('reports.date');
-
-  /// The word `reports.description`.
-  String get reportsDescription => text('reports.description');
-
   /// The word `reports.difference`.
   String get reportsDifference => text('reports.difference');
 
@@ -1978,9 +1930,6 @@ mixin WordGetters {
 
   /// The word `reports.noneIssued`.
   String get reportsNoneIssued => text('reports.noneIssued');
-
-  /// The word `reports.number`.
-  String get reportsNumber => text('reports.number');
 
   /// The word `reports.openValue`.
   String get reportsOpenValue => text('reports.openValue');
@@ -2036,20 +1985,11 @@ mixin WordGetters {
   /// The word `revenue.amount`.
   String get revenueAmount => text('revenue.amount');
 
-  /// The word `revenue.date`.
-  String get revenueDate => text('revenue.date');
-
   /// The word `revenue.file`.
   String get revenueFile => text('revenue.file');
 
   /// The word `revenue.loadFailed`.
   String get revenueLoadFailed => text('revenue.loadFailed');
-
-  /// The word `revenue.title`.
-  String get revenueTitle => text('revenue.title');
-
-  /// The word `revenue.total`.
-  String get revenueTotal => text('revenue.total');
 
   /// The word `settings.emailConfirm`.
   String get settingsEmailConfirm => text('settings.emailConfirm');
