@@ -57,7 +57,7 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
   }
 
   Widget _card(Words words, ThemeData theme, RegisteredProject project) {
-    final details = [formatDate(project.startDate), ...project.units].join(' · ');
+    final details = partsLine([formatDate(project.startDate), ...project.units]);
     final manager = partsLine([project.managerName, project.managerUsername, project.managerMobile]);
     return Card.outlined(
       key: RegisteredProjectsScreen.cardKey(project.id),

@@ -1,3 +1,4 @@
+import '../format/parts_line.dart';
 import '../words/words.dart';
 
 /// Where a supplier stands, as the API names it.
@@ -54,9 +55,9 @@ class Supplier {
   final int timesUsed;
 
   /// What a list says about it, in [words]: that it is disabled or pending approval, its VAT number when it has one, and its default item.
-  String detailsIn(Words words) => [
+  String detailsIn(Words words) => partsLine([
     if (!isActive) words.suppliersDisabled else if (status == SupplierStatus.pendingApproval) words.suppliersPendingApproval,
     if (vatNumber.isNotEmpty) vatNumber,
     if (defaultItemName.isNotEmpty) defaultItemName,
-  ].join(' · ');
+  ]);
 }

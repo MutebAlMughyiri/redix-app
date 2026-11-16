@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../format/parts_line.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'project.dart';
@@ -30,7 +31,7 @@ class ProjectChoice extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final theme = Theme.of(context);
-    final units = project.units.isEmpty ? words.projectsNoUnits : project.units.map((unit) => unit.name).join(' · ');
+    final units = project.units.isEmpty ? words.projectsNoUnits : partsLine(project.units.map((unit) => unit.name));
     final details = project.isInactive ? words.projectsInactive : project.isFinished ? words.projectsReadOnly : units;
     return Card.outlined(
       key: ProjectsScreen.cardKey(project.id),

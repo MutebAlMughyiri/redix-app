@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../format/number_format.dart';
+import '../format/parts_line.dart';
 import '../reports/report_files.dart';
 import '../ui/part_keys.dart';
 import '../ui/messages.dart';
@@ -64,10 +65,10 @@ class ContractCard extends StatelessWidget {
     return contract.isOpenValue ? waiting : '$waiting · ${formatMoney(contract.remainingAfter(0))} ${words.contractsAfterApproval}';
   }
 
-  String _terms() => [
+  String _terms() => partsLine([
     contract.itemName,
     if (contract.unitPrice > 0 && contract.quantity > 0) '${formatPlain(contract.unitPrice)} × ${formatPlain(contract.quantity)}' else if (contract.unitPrice > 0) formatPlain(contract.unitPrice),
-  ].join(' · ');
+  ]);
 
   @override
   Widget build(BuildContext context) {

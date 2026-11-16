@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../format/parts_line.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
@@ -169,7 +170,7 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: Text(
-              [widget.categoryName, words.text(widget.item.type.wordKey), if (widget.item.type.isRevenue) words.columnsRevenueTakesNoColumns].join(' · '),
+              partsLine([widget.categoryName, words.text(widget.item.type.wordKey), if (widget.item.type.isRevenue) words.columnsRevenueTakesNoColumns]),
               key: ItemColumnsScreen.itemDetailsKey,
               style: textTheme.bodySmall,
             ),

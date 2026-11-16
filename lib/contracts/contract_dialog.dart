@@ -6,6 +6,7 @@ import '../attachments/attachment.dart';
 import '../attachments/attachments.dart';
 import '../attachments/invoice_capture.dart';
 import '../format/number_format.dart';
+import '../format/parts_line.dart';
 import '../projects/project.dart';
 import '../structure/item_picker.dart';
 import '../structure/offered_items.dart';
@@ -163,7 +164,7 @@ class _ContractDialogState extends State<ContractDialog> {
       saveLabel: _isNew ? words.contractsNew : words.contractsSave,
       onSave: _save,
       children: [
-        if (contract.hasPayments) Text([contract.supplierName, contract.itemName].join(' · '), key: ContractsScreen.partiesKey) else ..._parties(words),
+        if (contract.hasPayments) Text(partsLine([contract.supplierName, contract.itemName]), key: ContractsScreen.partiesKey) else ..._parties(words),
         SwitchListTile(
           key: ContractsScreen.openValueKey,
           contentPadding: EdgeInsets.zero,

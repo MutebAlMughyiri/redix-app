@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../format/parts_line.dart';
 import '../ui/row_menu.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
@@ -40,7 +41,7 @@ class ColumnRow extends StatelessWidget {
       contentPadding: const EdgeInsetsDirectional.fromSTEB(12, 0, 4, 0),
       leading: mayChange ? DragHandle(key: ItemColumnsScreen.handleKey(column.id), index: index) : null,
       title: Text(column.name, key: ItemColumnsScreen.nameKey(column.id)),
-      subtitle: Text(details.join(' · '), key: ItemColumnsScreen.detailsKey(column.id)),
+      subtitle: Text(partsLine(details), key: ItemColumnsScreen.detailsKey(column.id)),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

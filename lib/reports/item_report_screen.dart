@@ -156,11 +156,11 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
           children: [
             Text(contract.contractorName, key: ItemReportScreen.contractorKey(contract.id), style: theme.textTheme.titleSmall),
             Text(
-              [
+              partsLine([
                 '${words.reportsContractValue}: ${contract.isOpenValue ? words.reportsOpenValue : formatMoney(contract.value)}',
                 '${words.reportsPaid}: ${formatMoney(contract.paid)}',
                 if (!contract.isOpenValue) '${words.reportsRemaining}: ${formatMoney(contract.remaining)}',
-              ].join(' · '),
+              ]),
               key: ItemReportScreen.contractKey(contract.id),
             ),
             if (contract.isOverrun) refusalText(context, words.reportsOverrun, ItemReportScreen.overrunKey(contract.id)),
