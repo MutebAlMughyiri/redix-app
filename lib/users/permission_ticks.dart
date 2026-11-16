@@ -6,7 +6,8 @@ import '../ui/part_keys.dart';
 import '../words/words.dart';
 import 'permission_tick.dart';
 
-/// Every permission of a project as a tick, in the API's order: the two capital ticks under the heading رأس المال, and under رأس مال شركاء محددين, while it is ticked, the project's
+/// Every permission of a project as a tick, in the API's order, each group under its heading (Permission.groupWordKey): the two capital ticks under رأس المال, the two report ticks under
+/// التقارير, and under رأس مال شركاء محددين, while it is ticked, the project's
 /// partners to tick (BR-31, redix-api #106). The one list the Permissions screen, صلاحياتي and the new-person form draw.
 class PermissionTicks extends StatelessWidget {
   /// The ticks, each keyed [keyOf], ticked as [holds] says, changed through [onChangedOf]; the [partners] under the chosen-capital tick ticked as [chosen] says, changed through [onChooseOf].
@@ -50,6 +51,9 @@ class PermissionTicks extends StatelessWidget {
   /// The heading over the two capital ticks.
   static const capitalGroupKey = Key('permissions.capitalGroup');
 
+  /// The heading over the two report ticks (redix-api #131).
+  static const reportsGroupKey = Key('permissions.reportsGroup');
+
   /// The tick of the partner [id], under رأس مال شركاء محددين.
   static Key partnerKey(String id) => Key('permissions.partner.$id');
 
@@ -76,14 +80,15 @@ class PermissionTicks extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
+    final shown = Permission.inAProject.where(shows).toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (final permission in Permission.inAProject.where(shows)) ...[
-          if (permission == Permission.seeAllCapital || (permission == Permission.seeChosenCapital && !shows(Permission.seeAllCapital)))
+        for (final (place, permission) in shown.indexed) ...[
+          if (permission.groupWordKey.isNotEmpty && (place == 0 || shown[place - 1].groupWordKey != permission.groupWordKey))
             Padding(
               padding: const EdgeInsets.only(top: 8, bottom: 8),
-              child: Text(words.permissionsCapitalGroup, key: capitalGroupKey, style: Theme.of(context).textTheme.titleSmall),
+              child: Text(words.text(permission.groupWordKey), key: Key(permission.groupWordKey), style: Theme.of(context).textTheme.titleSmall),
             ),
           PermissionTick(key: keyOf(permission), permission: permission, value: holds(permission), onChanged: onChangedOf(permission)),
           if (permission == Permission.seeChosenCapital && holds(permission)) ...partners.map(_partnerTick),

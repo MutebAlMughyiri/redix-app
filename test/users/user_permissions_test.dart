@@ -120,6 +120,18 @@ void main() {
     expect(partnerTick(api, 'سعد'), findsOneWidget);
   });
 
+  testWidgets('redix-api #131: the two report ticks sit under التقارير, the way the capital ticks sit under رأس المال', (tester) async {
+    await openScreen(tester);
+    final heading = find.byKey(PermissionTicks.reportsGroupKey);
+
+    await tester.scrollUntilVisible(find.byKey(UserPermissionsScreen.permissionKey(Permission.generateReports)), 100);
+
+    expect(heading, findsOneWidget);
+    final above = tester.getTopLeft(heading).dy;
+    expect(above, lessThan(tester.getTopLeft(find.byKey(UserPermissionsScreen.permissionKey(Permission.seeReports))).dy));
+    expect(tester.getTopLeft(find.byKey(UserPermissionsScreen.permissionKey(Permission.moveMoney))).dy, lessThan(above));
+  });
+
   testWidgets('redix-api #106: ticking a partner chooses them for the person, and رأس مال كل الشركاء takes chosen capital and closes the list', (tester) async {
     final api = await openScreen(tester);
     await toggle(tester, api, Permission.seeChosenCapital);

@@ -68,4 +68,11 @@ enum Permission {
 
   /// The key of the word explaining it.
   String get hintKey => 'permissions.${name}Hint';
+
+  /// The key of the word heading the group of ticks it sits in: «رأس المال» over the capital ticks, «التقارير» over the report ticks (redix-api #131); empty for a tick under none.
+  String get groupWordKey => switch (this) {
+    seeAllCapital || seeChosenCapital => 'permissions.capitalGroup',
+    seeReports || generateReports => 'permissions.reportsGroup',
+    _ => '',
+  };
 }

@@ -1574,6 +1574,9 @@ mixin WordGetters {
   /// The word `permissions.removeApprovedEntriesHint`.
   String get permissionsRemoveApprovedEntriesHint => text('permissions.removeApprovedEntriesHint');
 
+  /// The word `permissions.reportsGroup`.
+  String get permissionsReportsGroup => text('permissions.reportsGroup');
+
   /// The word `permissions.seeAllCapital`.
   String get permissionsSeeAllCapital => text('permissions.seeAllCapital');
 
