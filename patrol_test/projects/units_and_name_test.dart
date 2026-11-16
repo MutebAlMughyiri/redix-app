@@ -4,7 +4,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/messages.dart';
 
@@ -15,7 +15,7 @@ import '../support/steps.dart';
 /// Opens Add unit on More info.
 Future<void> openAddUnit(PatrolIntegrationTester $) async {
   await $.tapOn(ProjectInfoScreen.addUnitKey);
-  await $.reach($(NameDialog.nameKey));
+  await $.reach($(OneFieldDialog.fieldKey));
 }
 
 void main() {
@@ -24,8 +24,8 @@ void main() {
       final manager = await Given.manager();
       await $.onMoreInfo(manager);
       await $.menuChoice(ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.renameKey);
-      await $.reach($(NameDialog.nameKey));
-      expect($.typed(NameDialog.nameKey), manager.projectName);
+      await $.reach($(OneFieldDialog.fieldKey));
+      expect($.typed(OneFieldDialog.fieldKey), manager.projectName);
       final renamed = 'Renamed ${Given.unique()}';
       await $.saveName(renamed);
       await $.says(ProjectInfoScreen.nameKey, renamed);
@@ -47,8 +47,8 @@ void main() {
       final unit = await $.idShowing('projectInfo.unit.', 'الفلة الغربية');
       await $.tapOn(ProjectInfoScreen.unitMenuKey(unit));
       await $.tapOn(ProjectInfoScreen.renameUnitKey);
-      await $.reach($(NameDialog.nameKey));
-      expect($.typed(NameDialog.nameKey), 'الفلة الغربية');
+      await $.reach($(OneFieldDialog.fieldKey));
+      expect($.typed(OneFieldDialog.fieldKey), 'الفلة الغربية');
       await $.saveName('ملحق الفلة');
       await $.says(ProjectInfoScreen.unitKey(unit), 'ملحق الفلة');
     });
@@ -69,7 +69,7 @@ void main() {
       await openAddUnit($);
       await $.saveName('الفلة الغربية');
       await $.says(ChangeDialog.messageKey, $.words.projectsUnitNameTaken);
-      expect($.typed(NameDialog.nameKey), 'الفلة الغربية');
+      expect($.typed(OneFieldDialog.fieldKey), 'الفلة الغربية');
     });
 
     phoneCase('redix-api #102: a short swipe deletes nothing', ($) async {
@@ -88,7 +88,7 @@ void main() {
       await $.menuChoice(ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.renameKey);
       await $.saveName(' ');
       await $.says(ChangeDialog.messageKey, $.words.projectsInvalidName);
-      expect($(NameDialog.nameKey), findsOneWidget);
+      expect($(OneFieldDialog.fieldKey), findsOneWidget);
       await $.says(ProjectInfoScreen.nameKey, manager.projectName);
     });
 

@@ -14,6 +14,7 @@ import '../ui/part_keys.dart';
 import '../ui/reason_sheet.dart';
 import '../ui/screen_title.dart';
 import '../ui/messages.dart';
+import '../ui/notice_box.dart';
 import '../words/words.dart';
 import 'approvals.dart';
 import 'pending_approval.dart';
@@ -189,15 +190,13 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
         Text(partsLine([entry.numberIn(words), entry.invoiceNumber, formatDate(entry.date)]), key: ApprovalsScreen.detailsKey(entry.id), style: small),
         Text('${words.approvalsEnteredBy}: ${entry.authorName} · ${entry.accountName}', key: ApprovalsScreen.enteredByKey(entry.id), style: small),
         if (entry.accountShortBy > 0)
-          Container(
-            key: ApprovalsScreen.shortKey(entry.id),
-            margin: const EdgeInsets.symmetric(vertical: 4),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(color: AppColor.noticeSurface.of(context), borderRadius: BorderRadius.circular(8)),
-            child: Text(
-              words.approvalsAccountShort.fill([entry.accountName, formatMoney(entry.accountBalance), formatMoney(entry.accountWaiting), formatMoney(entry.accountShortBy)]),
-              key: ApprovalsScreen.shortKey(entry.id).label,
-              style: small,
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4),
+            child: NoticeBox(
+              key: ApprovalsScreen.shortKey(entry.id),
+              text: words.approvalsAccountShort.fill([entry.accountName, formatMoney(entry.accountBalance), formatMoney(entry.accountWaiting), formatMoney(entry.accountShortBy)]),
+              textKey: ApprovalsScreen.shortKey(entry.id).label,
+              style: small ?? const TextStyle(),
             ),
           ),
         if (entry.description.isNotEmpty) Text(entry.description, key: ApprovalsScreen.descriptionKey(entry.id), style: small),

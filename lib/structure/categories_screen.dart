@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
-import '../ui/name_dialog.dart';
+import '../ui/one_field_dialog.dart';
 import '../ui/messages.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
@@ -150,7 +150,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           onPressed: project.mayChangeStructure
               ? () => showDialog<void>(
                   context: context,
-                  builder: (_) => NameDialog(title: words.categoriesNew, label: words.categoriesCategoryName, saveLabel: words.categoriesNew, onSave: categories.addCategory),
+                  builder: (_) => OneFieldDialog(title: words.categoriesNew, label: words.categoriesCategoryName, saveLabel: words.categoriesNew, onSave: categories.addCategory),
                 )
               : null,
         ),

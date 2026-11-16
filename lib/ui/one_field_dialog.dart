@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'change_dialog.dart';
 
-/// Asks for one name, for adding or renaming anything in a project; or for one number, such as the «رقم القيد» an entry is found by (redix-api #128), typed on the [keyboardType] it asks.
-class NameDialog extends StatefulWidget {
+/// Asks for one field: a name, for adding or renaming anything in a project, or a number, such as the «رقم القيد» an entry is found by (redix-api #128), typed on the [keyboardType] it asks.
+class OneFieldDialog extends StatefulWidget {
   /// The dialog [title] with a field labelled [label], starting from [name] and typed on [keyboardType]. The [saveLabel] button calls [onSave] with what was typed.
-  const NameDialog({super.key, required this.title, required this.label, required this.saveLabel, this.name = '', this.keyboardType = TextInputType.text, required this.onSave});
+  const OneFieldDialog({super.key, required this.title, required this.label, required this.saveLabel, this.name = '', this.keyboardType = TextInputType.text, required this.onSave});
 
   /// The dialog's title.
   final String title;
@@ -25,14 +25,14 @@ class NameDialog extends StatefulWidget {
   /// Sends the name, answering an empty string once saved, otherwise the word key of the refusal.
   final Future<String> Function(String name) onSave;
 
-  /// The name.
-  static const nameKey = Key('name.name');
+  /// The one field: the name or the number typed.
+  static const fieldKey = Key('oneField.field');
 
   @override
-  State<NameDialog> createState() => _NameDialogState();
+  State<OneFieldDialog> createState() => _OneFieldDialogState();
 }
 
-class _NameDialogState extends State<NameDialog> {
+class _OneFieldDialogState extends State<OneFieldDialog> {
   late final _name = TextEditingController(text: widget.name);
 
   @override
@@ -48,7 +48,7 @@ class _NameDialogState extends State<NameDialog> {
     onSave: () => widget.onSave(_name.text),
     children: [
       TextField(
-        key: NameDialog.nameKey,
+        key: OneFieldDialog.fieldKey,
         controller: _name,
         autofocus: true,
         keyboardType: widget.keyboardType,

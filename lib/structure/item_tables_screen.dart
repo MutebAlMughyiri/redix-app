@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../projects/project.dart';
 import '../ui/row_menu.dart';
 import '../ui/bottom_button.dart';
-import '../ui/name_dialog.dart';
+import '../ui/one_field_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/messages.dart';
 import '../ui/screen_title.dart';
@@ -79,7 +79,7 @@ class _ItemTablesScreenState extends State<ItemTablesScreen> {
   void _ask({required String title, required String saveLabel, String name = '', required Future<String> Function(String name) onSave}) {
     showDialog<void>(
       context: context,
-      builder: (_) => NameDialog(title: title, label: Words.of(context).categoriesSubgroupName, saveLabel: saveLabel, name: name, onSave: onSave),
+      builder: (_) => OneFieldDialog(title: title, label: Words.of(context).categoriesSubgroupName, saveLabel: saveLabel, name: name, onSave: onSave),
     );
   }
 

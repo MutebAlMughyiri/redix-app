@@ -43,7 +43,7 @@ import '../app_harness.dart';
 import 'package:redix/words/language_switch.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/change_dialog.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 import 'package:redix/ui/screen_title.dart';
 import 'package:redix/ui/reason_sheet.dart';
 
@@ -413,7 +413,7 @@ void main() {
 
       await act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.addItemKey(boneId))));
       [
-        NameDialog.nameKey,
+        OneFieldDialog.fieldKey,
         CategoriesScreen.sideKey(isRevenue: false),
         CategoriesScreen.sideKey(isRevenue: true),
         for (final type in ItemType.values.where((type) => !type.isRevenue)) CategoriesScreen.itemTypeKey(type),
@@ -485,7 +485,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(PaymentMethodsScreen.menuKey(cardMethod))));
       [PaymentMethodsScreen.renameKey, PaymentMethodsScreen.disableKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(PaymentMethodsScreen.renameKey)));
-      [NameDialog.nameKey, ChangeDialog.saveKey].forEach(expectFits);
+      [OneFieldDialog.fieldKey, ChangeDialog.saveKey].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
       await pressBack(tester, api);
 

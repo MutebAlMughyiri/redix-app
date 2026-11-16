@@ -17,7 +17,7 @@ import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/settings/shared_settings_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/messages.dart';
 import 'package:redix/ui/swipe_to_remove.dart';
@@ -27,7 +27,7 @@ import 'package:redix/words/words.dart';
 
 import 'given.dart';
 import 'made_up_invoice.dart';
-import 'package:redix/config/local_config.dart';
+import 'package:redix/config/local_config.dart';
 import '../../test/support/ui_checks.dart' as checks;
 import '../../test/support/ui_checks.dart' show keyStartingWith, keyedBy;
 
@@ -176,8 +176,8 @@ extension Steps on PatrolIntegrationTester {
 
   /// Types [name] into the dialog showing now and saves it.
   Future<void> saveName(String name) async {
-    await reach(this(NameDialog.nameKey));
-    await this(NameDialog.nameKey).enterText(name);
+    await reach(this(OneFieldDialog.fieldKey));
+    await this(OneFieldDialog.fieldKey).enterText(name);
     await this(ChangeDialog.saveKey).tap();
   }
 

@@ -7,7 +7,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/category.dart';
 import 'package:redix/ui/change_dialog.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 
 import '../support/given.dart';
 import '../support/phone_case.dart';
@@ -40,7 +40,7 @@ void main() {
       final category = await Given.category(manager, 'Category ${Given.unique()}');
       await onCategory($, manager, category);
       await $.tapOn(CategoriesScreen.addItemKey(category));
-      await $(NameDialog.nameKey).enterText('الدهان');
+      await $(OneFieldDialog.fieldKey).enterText('الدهان');
       await $.tapOn(CategoriesScreen.itemTypeKey(ItemType.purchases));
       await $(ChangeDialog.saveKey).tap();
       final id = await $.idShowing('categories.itemName.', 'الدهان');
@@ -117,7 +117,7 @@ void main() {
       await $.menuChoice(CategoriesScreen.itemMenuKey(made.item), CategoriesScreen.renameItemKey);
       await $.saveName(' ');
       await $.says(ChangeDialog.messageKey, $.words.categoriesInvalidName);
-      expect($(NameDialog.nameKey), findsOneWidget);
+      expect($(OneFieldDialog.fieldKey), findsOneWidget);
     });
 
     phoneCase('AC-05.3: a disabled item is not offered in Add entry', ($) async {

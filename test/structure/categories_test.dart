@@ -18,7 +18,7 @@ import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/api_list_body.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
@@ -44,7 +44,7 @@ void main() {
   Future<void> open(WidgetTester tester, FakeApi api, String categoryId) => act(tester, api, () => tester.tap(find.byKey(CategoriesScreen.categoryTileKey(categoryId))));
 
   Future<void> save(WidgetTester tester, FakeApi api, String name) => act(tester, api, () async {
-    await tester.enterText(find.byKey(NameDialog.nameKey), name);
+    await tester.enterText(find.byKey(OneFieldDialog.fieldKey), name);
     await tester.tap(find.byKey(ChangeDialog.saveKey));
   });
 
@@ -127,7 +127,7 @@ void main() {
 
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.categoryMenuKey(opened.bone))));
     await act(tester, opened.api, () => tester.tap(find.byKey(CategoriesScreen.renameCategoryKey(opened.bone))));
-    expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).controller!.text, 'العظم');
+    expect(tester.widget<TextField>(find.byKey(OneFieldDialog.fieldKey)).controller!.text, 'العظم');
     await save(tester, opened.api, 'الهيكل');
     expect(text(tester, CategoriesScreen.categoryNameKey(opened.bone)), 'الهيكل');
 

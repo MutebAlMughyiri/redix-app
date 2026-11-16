@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../ui/part_keys.dart';
 import '../words/words.dart';
+import 'new_password_fields.dart';
 import 'session.dart';
 import 'sign_in_screen.dart';
 import '../ui/form_button_style.dart';
@@ -95,20 +96,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: ChangePasswordScreen.messageKey),
               TextField(key: ChangePasswordScreen.currentKey, controller: _current, decoration: field(words.changePasswordCurrent), obscureText: true),
               const SizedBox(height: 16),
-              TextField(
-                key: ChangePasswordScreen.newKey,
-                controller: _new,
-                decoration: field(words.changePasswordNew).copyWith(helperText: words.commonPasswordRules, helperMaxLines: 2),
-                obscureText: true,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                key: ChangePasswordScreen.confirmKey,
-                controller: _confirm,
-                decoration: field(words.changePasswordConfirm),
-                obscureText: true,
-                onSubmitted: (_) => once(_save)?.call(),
-              ),
+              NewPasswordFields(newKey: ChangePasswordScreen.newKey, newPassword: _new, confirmKey: ChangePasswordScreen.confirmKey, confirmation: _confirm, onSubmitted: once(_save)),
               const SizedBox(height: 24),
               FilledButton(
                 key: ChangePasswordScreen.submitKey,

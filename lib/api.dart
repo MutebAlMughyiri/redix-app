@@ -41,3 +41,7 @@ Map<String, dynamic> answerOf(http.Response response) {
 
 /// The word key, under [prefix], of the refusal [answer] names: `prefix.code`, or `prefix.refused` when it names no code.
 String refusalOf(Map<String, dynamic> answer, String prefix) => '$prefix.${answer['code'] as String? ?? 'refused'}';
+
+/// The word key of why [response] was refused: asking too often, which a limited route answers with no code of its own, says [tooMany]; any other refusal what [refusalOf] says
+/// under [prefix]. The one place a 429 is told apart.
+String refusalIn(http.Response response, String prefix, {String tooMany = 'auth.tooManyRequests'}) => response.statusCode == 429 ? tooMany : refusalOf(answerOf(response), prefix);

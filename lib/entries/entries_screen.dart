@@ -10,7 +10,7 @@ import '../ui/list_search.dart';
 import '../ui/search_scope.dart';
 import '../ui/part_keys.dart';
 import '../ui/messages.dart';
-import '../ui/name_dialog.dart';
+import '../ui/one_field_dialog.dart';
 import '../ui/screen_title.dart';
 import '../words/word_fill.dart';
 import '../words/words.dart';
@@ -119,7 +119,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
   /// Asks for the «رقم القيد» the list keeps, on a number keyboard, in the house's one-field dialog (redix-api #128, D4); saving it empty keeps every number.
   Future<void> _askNumber(Words words) => showDialog<void>(
     context: context,
-    builder: (_) => NameDialog(
+    builder: (_) => OneFieldDialog(
       title: words.entriesNumberAsk,
       label: words.entriesNumber,
       saveLabel: words.commonSearch,

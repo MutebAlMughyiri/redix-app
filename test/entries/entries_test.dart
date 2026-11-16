@@ -23,7 +23,7 @@ import 'package:redix/ui/app_color.dart';
 
 import '../app_harness.dart';
 import 'package:redix/ui/screen_title.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/offline/outbox.dart';
@@ -934,7 +934,7 @@ void main() {
     /// Opens the «رقم القيد» filter and saves [typed] in its dialog.
     Future<void> askNumber(WidgetTester tester, FakeApi api, String typed) async {
       await scrollAndTap(tester, api, EntriesScreen.numberKey);
-      await tester.enterText(find.byKey(NameDialog.nameKey), typed);
+      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), typed);
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
     }
 
@@ -943,8 +943,8 @@ void main() {
       await openFilters(tester, api);
       await scrollAndTap(tester, api, EntriesScreen.numberKey);
 
-      expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).keyboardType, TextInputType.number);
-      await tester.enterText(find.byKey(NameDialog.nameKey), '٣');
+      expect(tester.widget<TextField>(find.byKey(OneFieldDialog.fieldKey)).keyboardType, TextInputType.number);
+      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), '٣');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
       expect(api.entryQueries.last['number'], ['3']);

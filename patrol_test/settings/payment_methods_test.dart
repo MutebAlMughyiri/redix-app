@@ -6,7 +6,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/settings/payment_methods_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 
 import '../support/given.dart';
 import '../support/phone_case.dart';
@@ -45,8 +45,8 @@ void main() {
       await $.fromTheHome(manager, HomeScreen.paymentMethodsKey(manager.projectId));
       final id = method['id'] as String;
       await $.menuChoice(PaymentMethodsScreen.menuKey(id), PaymentMethodsScreen.renameKey);
-      await $.reach($(NameDialog.nameKey));
-      expect($.typed(NameDialog.nameKey), method['name']);
+      await $.reach($(OneFieldDialog.fieldKey));
+      expect($.typed(OneFieldDialog.fieldKey), method['name']);
       await $.saveName('اسم جديد');
       await $.says(PaymentMethodsScreen.nameKey(id), 'اسم جديد');
     });
@@ -100,7 +100,7 @@ void main() {
       await $.tapOn(PaymentMethodsScreen.addKey);
       await $.saveName(' ');
       await $.says(ChangeDialog.messageKey, $.words.paymentMethodsInvalidName);
-      expect($(NameDialog.nameKey), findsOneWidget);
+      expect($(OneFieldDialog.fieldKey), findsOneWidget);
     });
   });
 }

@@ -5,7 +5,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/structure/item_tables_screen.dart';
 import 'package:redix/ui/confirm_dialog.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 
 import '../support/entry_steps.dart';
@@ -64,8 +64,8 @@ void main() {
       final table = await Given.subgroup(made.manager, made.item, 'الجلاي');
       await onTables($, made.manager, made.category, made.item);
       await $.menuChoice(ItemTablesScreen.menuKey(table), ItemTablesScreen.renameKey);
-      await $.reach($(NameDialog.nameKey));
-      expect($.typed(NameDialog.nameKey), 'الجلاي');
+      await $.reach($(OneFieldDialog.fieldKey));
+      expect($.typed(OneFieldDialog.fieldKey), 'الجلاي');
       await $.saveName('السيراميك');
       await $.says(ItemTablesScreen.tableNameKey(table), 'السيراميك');
     });

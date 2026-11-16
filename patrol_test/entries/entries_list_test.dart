@@ -7,7 +7,7 @@ import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/change_dialog.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/screen_title.dart';
 import 'package:redix/ui/search_line.dart';
@@ -28,7 +28,7 @@ Future<void> onEntries(PatrolIntegrationTester $, Person person) async {
 /// Asks the «رقم القيد» filter for [number], in its one-field dialog (redix-api #128).
 Future<void> findNumber(PatrolIntegrationTester $, int number) async {
   await $.filterBy(EntriesScreen.numberKey);
-  await $(NameDialog.nameKey).enterText('$number');
+  await $(OneFieldDialog.fieldKey).enterText('$number');
   await $.tapOn(ChangeDialog.saveKey);
 }
 

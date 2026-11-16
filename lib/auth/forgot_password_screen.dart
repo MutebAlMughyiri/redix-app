@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../ui/act_once.dart';
-import '../ui/app_color.dart';
 import '../ui/form_button_style.dart';
 import '../ui/form_error.dart';
 import '../ui/messages.dart';
+import '../ui/notice_box.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
+import 'new_password_fields.dart';
 import 'password_reset.dart';
 import 'sign_in_screen.dart';
 
@@ -97,7 +98,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final words = Words.of(context);
-    final theme = Theme.of(context);
     return ActOnce(builder: (once) => Scaffold(
       appBar: AppBar(title: Text(words.authForgotPassword, key: ScreenTitle.titleKey)),
       body: SafeArea(
@@ -124,11 +124,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
               if (_isSent) ...[
                 const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(color: AppColor.noticeSurface.of(context), borderRadius: BorderRadius.circular(8)),
-                  child: Text(words.authCodeSent, key: ForgotPasswordScreen.sentKey, style: theme.textTheme.bodyMedium),
-                ),
+                NoticeBox(text: words.authCodeSent, textKey: ForgotPasswordScreen.sentKey),
                 const SizedBox(height: 16),
                 TextField(
                   key: ForgotPasswordScreen.codeKey,
@@ -137,20 +133,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   decoration: InputDecoration(labelText: words.authCode),
                 ),
                 const SizedBox(height: 16),
-                TextField(
-                  key: ForgotPasswordScreen.newKey,
-                  controller: _new,
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: words.changePasswordNew, helperText: words.commonPasswordRules, helperMaxLines: 2),
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  key: ForgotPasswordScreen.confirmKey,
-                  controller: _confirm,
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: words.changePasswordConfirm),
-                  onSubmitted: (_) => once(_reset)?.call(),
-                ),
+                NewPasswordFields(newKey: ForgotPasswordScreen.newKey, newPassword: _new, confirmKey: ForgotPasswordScreen.confirmKey, confirmation: _confirm, onSubmitted: once(_reset)),
                 const SizedBox(height: 24),
                 FilledButton(
                   key: ForgotPasswordScreen.resetKey,

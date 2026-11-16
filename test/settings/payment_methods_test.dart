@@ -8,7 +8,7 @@ import 'package:redix/home/home_screen.dart';
 import '../app_harness.dart';
 import 'package:redix/ui/change_dialog.dart';
 import 'package:redix/ui/api_list_body.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/ui/messages.dart';
 
@@ -26,7 +26,7 @@ void main() {
   }
 
   Future<void> saveName(WidgetTester tester, FakeApi api, String name) => act(tester, api, () async {
-    await tester.enterText(find.byKey(NameDialog.nameKey), name);
+    await tester.enterText(find.byKey(OneFieldDialog.fieldKey), name);
     await tester.tap(find.byKey(ChangeDialog.saveKey));
   });
 
@@ -64,14 +64,14 @@ void main() {
     await saveName(tester, opened.api, ' ');
 
     expect(text(tester, ChangeDialog.messageKey), 'en paymentMethods.invalidName');
-    expect(find.byKey(NameDialog.nameKey), findsOneWidget);
+    expect(find.byKey(OneFieldDialog.fieldKey), findsOneWidget);
   });
 
   testWidgets('renaming starts from the name and sends the new one', (tester) async {
     final opened = await openMethods(tester);
 
     await chooseInMenu(tester, opened.api, opened.card, PaymentMethodsScreen.renameKey);
-    expect(tester.widget<TextField>(find.byKey(NameDialog.nameKey)).controller!.text, 'شبكة');
+    expect(tester.widget<TextField>(find.byKey(OneFieldDialog.fieldKey)).controller!.text, 'شبكة');
     await saveName(tester, opened.api, 'بطاقة');
 
     expect(opened.api.sentSettingsChanges.single.$1, 'PUT /projects/project-0/payment-methods/${opened.card}');

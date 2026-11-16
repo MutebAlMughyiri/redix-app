@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../projects/project.dart';
-import '../ui/name_dialog.dart';
+import '../ui/one_field_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/messages.dart';
 import '../words/words.dart';
@@ -35,7 +35,7 @@ class CategoryCard extends StatelessWidget {
     final words = Words.of(context);
     showDialog<void>(
       context: context,
-      builder: (_) => NameDialog(
+      builder: (_) => OneFieldDialog(
         title: words.categoriesRename,
         label: words.categoriesCategoryName,
         saveLabel: words.categoriesSave,

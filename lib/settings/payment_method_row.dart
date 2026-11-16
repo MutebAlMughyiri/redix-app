@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../ui/name_dialog.dart';
+import '../ui/one_field_dialog.dart';
 import '../ui/messages.dart';
 import '../ui/swipe_to_remove.dart';
 import '../words/words.dart';
@@ -28,7 +28,7 @@ class PaymentMethodRow extends StatelessWidget {
     final words = Words.of(context);
     showDialog<void>(
       context: context,
-      builder: (_) => NameDialog(
+      builder: (_) => OneFieldDialog(
         title: words.paymentMethodsRename,
         label: words.paymentMethodsName,
         saveLabel: words.paymentMethodsSave,

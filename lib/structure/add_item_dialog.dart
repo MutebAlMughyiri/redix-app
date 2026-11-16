@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../ui/change_dialog.dart';
-import '../ui/name_dialog.dart';
+import '../ui/one_field_dialog.dart';
 import '../words/words.dart';
 import 'categories.dart';
 import 'category.dart';
@@ -41,7 +41,7 @@ class _AddItemDialogState extends State<AddItemDialog> {
       onSave: () => widget.categories.addItem(widget.category, _name.text, _type),
       children: [
         TextField(
-          key: NameDialog.nameKey,
+          key: OneFieldDialog.fieldKey,
           controller: _name,
           autofocus: true,
           decoration: InputDecoration(labelText: words.categoriesItemName),

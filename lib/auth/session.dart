@@ -218,10 +218,7 @@ class Session extends ChangeNotifier {
   Future<String> askEmailCode(String email, String language) async {
     try {
       final response = await post('/me/email', {'email': email}, language: language);
-      if (response.statusCode == 429) {
-        return 'auth.tooManyRequests';
-      }
-      return response.statusCode < 300 ? '' : refusalOf(answerOf(response), 'users');
+      return response.statusCode < 300 ? '' : refusalIn(response, 'users');
     } on Exception catch (error) {
       debugPrint('Email code not asked: $error');
       return 'users.noConnection';

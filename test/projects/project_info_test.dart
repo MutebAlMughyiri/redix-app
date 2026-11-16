@@ -4,7 +4,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/projects/project_info_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/messages.dart';
 
@@ -174,7 +174,7 @@ void main() {
       await tap(tester, api, ProjectInfoScreen.nameMenuKey);
 
       await tap(tester, api, ProjectInfoScreen.renameKey);
-      await tester.enterText(find.byKey(NameDialog.nameKey), 'غصون السادس');
+      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), 'غصون السادس');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
       expect(text(tester, ProjectInfoScreen.nameKey), 'غصون السادس');
@@ -190,8 +190,8 @@ void main() {
       await tap(tester, api, ProjectInfoScreen.nameMenuKey);
 
       await tap(tester, api, ProjectInfoScreen.renameKey);
-      expect(typed(tester, NameDialog.nameKey), 'غصون 6');
-      await tester.enterText(find.byKey(NameDialog.nameKey), 'غصون السادس');
+      expect(typed(tester, OneFieldDialog.fieldKey), 'غصون 6');
+      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), 'غصون السادس');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
       expect(api.sentProjectChanges.single.$1, 'PUT /projects/project-0');
@@ -208,7 +208,7 @@ void main() {
       await tap(tester, api, ProjectInfoScreen.renameKey);
 
       api.projectAnswer = (status: 400, code: 'invalidName');
-      await tester.enterText(find.byKey(NameDialog.nameKey), ' ');
+      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), ' ');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
       expect(text(tester, ChangeDialog.messageKey), 'en projects.invalidName');
@@ -222,7 +222,7 @@ void main() {
       await openInfo(tester, api);
 
       await tap(tester, api, ProjectInfoScreen.addUnitKey);
-      await tester.enterText(find.byKey(NameDialog.nameKey), 'الفلة الجنوبية');
+      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), 'الفلة الجنوبية');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
       expect(find.byKey(ChangeDialog.saveKey), findsNothing);
@@ -237,11 +237,11 @@ void main() {
       await tap(tester, api, ProjectInfoScreen.addUnitKey);
 
       api.projectAnswer = (status: 409, code: 'unitNameTaken');
-      await tester.enterText(find.byKey(NameDialog.nameKey), 'الفلة الغربية');
+      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), 'الفلة الغربية');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
       expect(text(tester, ChangeDialog.messageKey), 'en projects.unitNameTaken');
-      expect(typed(tester, NameDialog.nameKey), 'الفلة الغربية');
+      expect(typed(tester, OneFieldDialog.fieldKey), 'الفلة الغربية');
     });
 
     testWidgets('BR-38: a unit is renamed from its menu, starting from its name', (tester) async {
@@ -249,8 +249,8 @@ void main() {
       await openInfo(tester, api);
 
       await chooseInUnitMenu(tester, api, 'project-0-unit-0', ProjectInfoScreen.renameUnitKey);
-      expect(typed(tester, NameDialog.nameKey), 'الفلة الغربية');
-      await tester.enterText(find.byKey(NameDialog.nameKey), 'الفلة الجنوبية');
+      expect(typed(tester, OneFieldDialog.fieldKey), 'الفلة الغربية');
+      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), 'الفلة الجنوبية');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
       expect(api.sentProjectChanges.single.$1, 'PUT /projects/project-0/units/project-0-unit-0');
@@ -264,7 +264,7 @@ void main() {
       await chooseInUnitMenu(tester, api, 'project-0-unit-0', ProjectInfoScreen.renameUnitKey);
 
       api.projectAnswer = (status: 409, code: 'unitNameTaken');
-      await tester.enterText(find.byKey(NameDialog.nameKey), 'الفلة الشرقية');
+      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), 'الفلة الشرقية');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
       expect(text(tester, ChangeDialog.messageKey), 'en projects.unitNameTaken');

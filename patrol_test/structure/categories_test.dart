@@ -4,7 +4,7 @@ import 'package:patrol/patrol.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/structure/categories_screen.dart';
 import 'package:redix/ui/change_dialog.dart';
-import 'package:redix/ui/name_dialog.dart';
+import 'package:redix/ui/one_field_dialog.dart';
 
 import '../support/given.dart';
 import '../support/pc.dart';
@@ -60,10 +60,10 @@ void main() {
       await $.tapOn(CategoriesScreen.categoryTileKey(id));
       await $.pumpAndSettle();
       await $.menuChoice(CategoriesScreen.categoryMenuKey(id), CategoriesScreen.renameCategoryKey(id));
-      await $.reach($(NameDialog.nameKey));
-      expect($.typed(NameDialog.nameKey), name);
+      await $.reach($(OneFieldDialog.fieldKey));
+      expect($.typed(OneFieldDialog.fieldKey), name);
       await $.saveName('اسم جديد');
-      await $.gone($(NameDialog.nameKey));
+      await $.gone($(OneFieldDialog.fieldKey));
       await $.goTo($(CategoriesScreen.categoryNameKey(id)));
       await $.says(CategoriesScreen.categoryNameKey(id), 'اسم جديد');
     });
@@ -92,7 +92,7 @@ void main() {
       await $.tapOn(CategoriesScreen.addCategoryKey);
       await $.saveName(' ');
       await $.says(ChangeDialog.messageKey, $.words.categoriesInvalidName);
-      expect($(NameDialog.nameKey), findsOneWidget);
+      expect($(OneFieldDialog.fieldKey), findsOneWidget);
     });
 
     phoneCase('a refused or lost order goes back to what the API holds', ($) async {

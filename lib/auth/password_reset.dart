@@ -23,7 +23,7 @@ Future<String> _send(String path, Map<String, String> body, String language) asy
     if (response.statusCode < 300) {
       return '';
     }
-    return response.statusCode == 429 ? 'auth.tooManyRequests' : refusalOf(answerOf(response), 'auth');
+    return refusalIn(response, 'auth');
   } on Exception catch (error) {
     debugPrint('$path not sent: $error');
     return 'auth.noConnection';

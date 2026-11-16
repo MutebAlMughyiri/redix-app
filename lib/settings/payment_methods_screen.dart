@@ -4,7 +4,7 @@ import '../projects/project.dart';
 import '../ui/title_bar_add.dart';
 import '../ui/screen_title.dart';
 import '../ui/api_list_body.dart';
-import '../ui/name_dialog.dart';
+import '../ui/one_field_dialog.dart';
 import '../words/words.dart';
 import 'payment_method_row.dart';
 import 'payment_methods.dart';
@@ -70,7 +70,7 @@ class _PaymentMethodsScreenState extends State<PaymentMethodsScreen> {
       appBar: AppBar(
         title: ScreenTitle(words.paymentMethodsTitle, subject: widget.project.name),
         actions: [
-          TitleBarAdd(buttonKey: PaymentMethodsScreen.addKey, tooltip: words.paymentMethodsNew, onPressed: project.mayManageSettings ? () => showDialog<void>( context: context, builder: (_) => NameDialog(title: words.paymentMethodsNew, label: words.paymentMethodsName, saveLabel: words.paymentMethodsNew, onSave: paymentMethods.add), ) : null),
+          TitleBarAdd(buttonKey: PaymentMethodsScreen.addKey, tooltip: words.paymentMethodsNew, onPressed: project.mayManageSettings ? () => showDialog<void>( context: context, builder: (_) => OneFieldDialog(title: words.paymentMethodsNew, label: words.paymentMethodsName, saveLabel: words.paymentMethodsNew, onSave: paymentMethods.add), ) : null),
         ],
       ),
       body: Column(

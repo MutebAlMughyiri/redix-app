@@ -40,10 +40,7 @@ Future<String> registerProject(
     if (response.statusCode < 300) {
       return '';
     }
-    if (response.statusCode == 429) {
-      return 'register.tooManyTries';
-    }
-    return refusalOf(answerOf(response), 'register');
+    return refusalIn(response, 'register', tooMany: 'register.tooManyTries');
   } on Exception catch (error) {
     debugPrint('Project not registered: $error');
     return 'register.noConnection';

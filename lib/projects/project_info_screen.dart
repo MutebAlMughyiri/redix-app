@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../format/date_format.dart';
 import '../ui/confirm_dialog.dart';
-import '../ui/name_dialog.dart';
+import '../ui/one_field_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/messages.dart';
 import '../ui/row_menu.dart';
@@ -104,7 +104,7 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
     final words = Words.of(context);
     showDialog<void>(
       context: context,
-      builder: (_) => NameDialog(title: words.projectsRename, label: words.projectsName, saveLabel: words.projectsSave, name: project.name, onSave: (name) => widget.projects.rename(project, name)),
+      builder: (_) => OneFieldDialog(title: words.projectsRename, label: words.projectsName, saveLabel: words.projectsSave, name: project.name, onSave: (name) => widget.projects.rename(project, name)),
     );
   }
 
@@ -112,7 +112,7 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
     final words = Words.of(context);
     showDialog<void>(
       context: context,
-      builder: (_) => NameDialog(title: words.projectsAddUnit, label: words.projectsUnitName, saveLabel: words.projectsAddUnit, onSave: (name) => widget.projects.addUnit(project, name)),
+      builder: (_) => OneFieldDialog(title: words.projectsAddUnit, label: words.projectsUnitName, saveLabel: words.projectsAddUnit, onSave: (name) => widget.projects.addUnit(project, name)),
     );
   }
 
@@ -120,7 +120,7 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
     final words = Words.of(context);
     showDialog<void>(
       context: context,
-      builder: (_) => NameDialog(
+      builder: (_) => OneFieldDialog(
         title: words.projectsRenameUnit,
         label: words.projectsUnitName,
         saveLabel: words.projectsSave,
