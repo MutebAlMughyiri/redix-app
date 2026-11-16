@@ -49,10 +49,10 @@ abstract final class LauncherAddEntry {
     await _save({widgetLabel: words.entriesNew, widgetLink: 'https://$linkHost$path'});
   }
 
-  /// Lists [entries], the newest the home of the project [projectId] read, under the widget's button with when they were read: each row as its entry card says it in
-  /// [words], and opening its entry's own link (R9, D8, D9, AC-86.7).
-  static Future<void> showEntries(String projectId, List<EntryRow> entries, Words words) {
-    final readAt = DateTime.now();
+  /// Lists [entries], the newest the home of the project [projectId] read, under the widget's button with [answeredAt], when the API answered them, a kept copy's time
+  /// when the phone had no network: each row as its entry card says it in [words], and opening its entry's own link (R9, D8, D9, AC-86.7).
+  static Future<void> showEntries(String projectId, List<EntryRow> entries, DateTime answeredAt, Words words) {
+    final readAt = answeredAt.toLocal();
     return _save({
       widgetEntries: jsonEncode([
         for (final entry in entries) {'title': entry.title, 'details': EntryCard.detailsOf(entry, words), 'amount': formatMoney(entry.amount), 'link': EntryShare.linkOf(projectId, entry)},

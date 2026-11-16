@@ -213,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _showOnTheWidget() {
     final entries = widget.entries;
     if (!entries.isLoading && entries.message.isEmpty) {
-      unawaited(LauncherAddEntry.showEntries(widget.projectId, entries.firstPage, Words.of(context)));
+      unawaited(LauncherAddEntry.showEntries(widget.projectId, entries.firstPage, entries.answeredAt, Words.of(context)));
     }
   }
 

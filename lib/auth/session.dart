@@ -33,6 +33,9 @@ class Session extends ChangeNotifier {
   static const _storageKey = 'session';
   static const _copies = 'copies';
 
+  /// Where each kept copy's moment is kept, by the same path: when the API answered it, as an HTTP date.
+  static const _copyMoments = 'copyMoments';
+
   var _accessToken = '';
   var _refreshToken = '';
   var _userId = '';
@@ -241,7 +244,8 @@ class Session extends ChangeNotifier {
     }
   }
 
-  /// Reads the API [path] as the signed-in user, renewing an expired access token like [post]. A list read is kept, and without a network the kept copy answers (FR-16).
+  /// Reads the API [path] as the signed-in user, renewing an expired access token like [post]. A list read is kept, and without a network the kept copy answers (FR-16),
+  /// dated when it was read, so what shows it can say how old it is.
   Future<http.Response> get(String path) async {
     try {
       final response = await read(path);
@@ -254,7 +258,8 @@ class Session extends ChangeNotifier {
       if (copy.isEmpty) {
         rethrow;
       }
-      return http.Response.bytes(utf8.encode(copy), 200);
+      final moment = await store.read(_copyMoments, path);
+      return http.Response.bytes(utf8.encode(copy), 200, headers: {if (moment.isNotEmpty) 'date': moment});
     }
   }
 
@@ -264,8 +269,11 @@ class Session extends ChangeNotifier {
     return _send(() => timed(http.get(apiUri(path), headers: _authorized), file: file));
   }
 
-  /// Keeps [text] as what the API [path] answers, until sign-out.
-  Future<void> keepCopy(String path, String text) => store.write(_copies, path, text);
+  /// Keeps [text] as what the API [path] answers now, until sign-out.
+  Future<void> keepCopy(String path, String text) async {
+    await store.write(_copies, path, text);
+    await store.write(_copyMoments, path, HttpDate.format(DateTime.now()));
+  }
 
   /// What the API [path] answered when last read; empty when it was not.
   Future<String> copyOf(String path) => store.read(_copies, path);
@@ -352,7 +360,7 @@ class Session extends ChangeNotifier {
     final body = utf8.decode(response.bodyBytes);
     final session = jsonDecode(body) as Map<String, dynamic>;
     _apply(session);
-    _renewBeforeExpiry(session['accessTokenExpiresAt'] as String? ?? '', _answeredAt(response));
+    _renewBeforeExpiry(session['accessTokenExpiresAt'] as String? ?? '', answeredAt(response));
     await _storage.write(key: _storageKey, value: body);
     notifyListeners();
   }
@@ -366,8 +374,8 @@ class Session extends ChangeNotifier {
     }
   }
 
-  /// When the API answered [response], by its own clock, as its Date header says; the phone's clock for an answer that says none.
-  static DateTime _answeredAt(http.Response response) => HttpDate.parse(response.headers['date'] ?? HttpDate.format(DateTime.now()));
+  /// When the API answered [response], by its own clock, as its Date header says, a kept copy's when it was read; the phone's clock for an answer that says none.
+  static DateTime answeredAt(http.Response response) => HttpDate.parse(response.headers['date'] ?? HttpDate.format(DateTime.now()));
 
   Future<void> _end(String notice) async {
     _renewalTimer.cancel();
@@ -375,6 +383,7 @@ class Session extends ChangeNotifier {
     _apply({});
     await _storage.delete(key: _storageKey);
     await store.clear(_copies);
+    await store.clear(_copyMoments);
     notifyListeners();
   }
 

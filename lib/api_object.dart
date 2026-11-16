@@ -20,12 +20,16 @@ abstract class ApiObject<T> extends ChangeNotifier {
   final T _empty;
 
   T _value;
+  var _answeredAt = DateTime.fromMillisecondsSinceEpoch(0);
   var _message = '';
   var _isLoading = false;
   var _lastAnswer = const <String, dynamic>{};
 
   /// What the API last answered.
   T get value => _value;
+
+  /// When it was last answered, by the API's clock: the moment a copy kept on the phone was read when it answered without a network (FR-16).
+  DateTime get answeredAt => _answeredAt;
 
   /// The word key saying it could not be read.
   @protected
@@ -106,6 +110,7 @@ abstract class ApiObject<T> extends ChangeNotifier {
     if (response.statusCode != 200) {
       throw http.ClientException('$path answered ${response.statusCode}');
     }
+    _answeredAt = Session.answeredAt(response);
     return madeFrom(response, _fromJson);
   }
 

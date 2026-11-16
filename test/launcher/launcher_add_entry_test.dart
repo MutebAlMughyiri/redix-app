@@ -1,8 +1,13 @@
+import 'dart:io' show HttpDate;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
+import 'package:redix/config/local_config.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
+import 'package:redix/entries/newest_entries.dart';
 import 'package:redix/format/date_format.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/launcher/launcher_add_entry.dart';
@@ -125,6 +130,23 @@ void main() {
         'link': 'https://redix.test/projects/project-0/entries/$newest/open',
       });
       expect(launcher.saved[LauncherAddEntry.widgetReadAt], startsWith('en home.widgetReadAt ${formatDate(DateTime.now())} '));
+    });
+
+    testWidgets('findings row 241: entries the home reads without a network say when their kept copy was read, the time the widget shows, not now', (tester) async {
+      final store = MemoryStore();
+      final api = apiWithDefault()..addEntry(amount: 100);
+      final session = await pumpRedix(tester, api, stored: {'session': keptWithDefault}, store: store);
+      final keptAt = DateTime.utc(2026, 1, 1, 9);
+      store.kept['copyMoments']!.updateAll((_, _) => HttpDate.format(keptAt));
+      final localConfig = LocalConfig();
+      await localConfig.restore();
+      final entries = NewestEntries(session, 'project-0', localConfig);
+
+      api.online = false;
+      await http.runWithClient(entries.load, () => api.client);
+
+      expect((entries.message, entries.firstPage.length), ('', 1));
+      expect(entries.answeredAt, keptAt);
     });
 
     testWidgets('redix-app #86 R9, G7: with «عدد القيود المعروضة» at 8 the widget lists 8, as the home does', (tester) async {
