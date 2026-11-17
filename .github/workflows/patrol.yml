@@ -1,0 +1,70 @@
+# Every Patrol class on an Android emulator, against the Go API built from redix-api's main: nightly, and whenever someone starts it from
+# Actions. It runs apart from CI, which checks every push in minutes, because it takes over an hour (Muteb, 18 Nov 2026). The tests stay in
+# this repo beside the widget keys they use, so a renamed key fails the app's own analysis at once.
+name: Patrol
+
+on:
+  schedule:
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+
+jobs:
+  patrol:
+    runs-on: ubuntu-latest
+    env:
+      REDIX_Environment: Dev
+      REDIX_Admin__Username: ci-admin
+      REDIX_Admin__Password: Ci-admin-passw0rd
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          path: redix-app
+      - uses: actions/checkout@v7
+        with:
+          repository: MutebAlMughyiri/redix-api
+          token: ${{ secrets.REDIX_API_TOKEN }}
+          path: redix-api
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: redix-api/go-backend/go.mod
+          cache-dependency-path: redix-api/go-backend/go.sum
+      - name: Start the API, which brings its database up to date as it starts
+        working-directory: redix-api/go-backend
+        run: |
+          curl -sSfL https://github.com/typst/typst/releases/download/v0.15.1/typst-x86_64-unknown-linux-musl.tar.xz | tar -xJ -C "$RUNNER_TEMP"
+          export REDIX_Typst__Path="$RUNNER_TEMP/typst-x86_64-unknown-linux-musl/typst"
+          export REDIX_Jwt__SigningKey="$(openssl rand -base64 64 | tr -d '\n')"
+          export REDIX_Database__Path="$RUNNER_TEMP/RedixDev.db"
+          go build -o "$RUNNER_TEMP/redix-server" ./cmd/server
+          nohup "$RUNNER_TEMP/redix-server" > api.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf http://localhost:5010/health && break; sleep 2; done
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+      - run: dart pub global activate patrol_cli 4.8.0
+      - run: flutter pub get
+        working-directory: redix-app
+      - name: Free disk space for the emulator
+        run: |
+          sudo rm -rf /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL /usr/share/swift /usr/local/share/boost
+          df -h /
+      - name: Let the emulator use hardware acceleration
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          working-directory: redix-app
+          script: |
+            adb reverse tcp:5010 tcp:5010 && adb reverse tcp:5011 tcp:5011
+            nohup pwsh -NoProfile -File tool/patrol_pc_helper.ps1 -Device emulator-5554 -Results "$RUNNER_TEMP/patrol-results.log" > "$RUNNER_TEMP/pc-helper.log" 2>&1 &
+            patrol test --device emulator-5554 --dart-define-from-file=config/dev.json --dart-define=TEST_USERNAME=${{ env.REDIX_Admin__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Admin__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd
