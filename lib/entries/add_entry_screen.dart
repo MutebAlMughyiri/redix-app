@@ -505,6 +505,12 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   /// The accounts the table's entry may use.
   ApiList<Account> get _accounts => _table.isExpense ? widget.accounts : widget.projectAccounts;
 
+  /// The accounts the entry may go through, as its form offers them (redix-app #109).
+  List<Account> get _offered => _payment.offeredIn(_accounts.all, asksPaymentMethod: _table.isExpense, methods: widget.paymentMethods.all);
+
+  /// True while the expense's payment method pays from no account the user may use: it cannot be sent (R8).
+  bool get _noAccountForMethod => _table.isExpense && _payment.paymentMethodId.isNotEmpty && _accounts.all.any((account) => account.isActive) && _offered.isEmpty;
+
   double get _typedAmount {
     final number = parseNumber(_amount.text);
     return number.isNaN ? 0 : number;
@@ -517,7 +523,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
 
   /// What is sent for the entry, whatever its table (redix-api #110): what every entry has, its item's column values, then what only its table asks.
   Map<String, Object> _body(bool submit) {
-    final accountId = _payment.chosenAccountIn(_accounts.all.where((account) => account.isActive).toList());
+    final accountId = _payment.chosenAccountIn(_offered);
     return {
       'id': _entryId,
       if (!_table.isNone) ...{'itemId': _table.itemId, 'tableId': _table.id},
@@ -538,6 +544,9 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   String get _whatIsWrong {
     if (_amount.text.trim().isNotEmpty && parseNumber(_amount.text).isNaN) {
       return 'expenses.invalidAmount';
+    }
+    if (_noAccountForMethod) {
+      return 'expenses.noAccountForMethod';
     }
     return _isDeduction && _description.text.trim().isEmpty ? 'expenses.deductionNeedsDescription' : '';
   }
@@ -845,7 +854,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     children: [
       Expanded(
         flex: 2,
-        child: FilledButton(key: AddEntryScreen.sendKey, onPressed: once(() => _save(true)), child: Text(words.expensesSend, key: AddEntryScreen.sendKey.label)),
+        child: FilledButton(key: AddEntryScreen.sendKey, onPressed: _noAccountForMethod ? null : once(() => _save(true)), child: Text(words.expensesSend, key: AddEntryScreen.sendKey.label)),
       ),
       Expanded(
         child: OutlinedButton(key: AddEntryScreen.draftKey, onPressed: once(() => _save(false)), child: Text(words.expensesSaveDraft, key: AddEntryScreen.draftKey.label)),

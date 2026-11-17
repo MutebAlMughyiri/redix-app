@@ -46,11 +46,16 @@ extension EntrySteps on PatrolIntegrationTester {
   /// Registers a new supplier as [person] and picks it in Add entry, as a purchase asks.
   Future<void> chooseANewSupplier(Person person) async => chooseSupplier(await Given.supplier(person));
 
-  /// Chooses how an expense was paid: the first method the project offers, unless [methodId] is given, and the account [accountId].
+  /// Chooses how an expense was paid: the first method the project offers, unless [methodId] is given, then the account [accountId] among those the method
+  /// pays from. The one account a method pays from is named on its own line, chosen already (redix-app #109, D2).
   Future<void> choosePayment(Person person, String accountId, {String methodId = ''}) async {
     final method = methodId.isEmpty ? (await Given.paymentMethods(person)).first['id'] as String : methodId;
     await tapOn(PaymentChoices.paymentMethodKey(method));
-    await tapOn(PaymentChoices.accountKey(accountId));
+    if (this(PaymentChoices.accountKey(accountId)).exists) {
+      await tapOn(PaymentChoices.accountKey(accountId));
+    } else {
+      await reach(this(PaymentChoices.paidFromKey));
+    }
     await pumpAndSettle();
   }
 

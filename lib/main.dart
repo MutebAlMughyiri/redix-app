@@ -296,7 +296,7 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: ItemColumnsScreen.path, builder: (context, state) => _itemColumnsScreen(state.projectId, state.pathParameters['itemId'] ?? '', state.extra! as Project)),
       GoRoute(
         path: PaymentMethodsScreen.path,
-        builder: (context, state) => PaymentMethodsScreen(project: state.extra! as Project, paymentMethods: _paymentMethodsOf(state.projectId)),
+        builder: (context, state) => PaymentMethodsScreen(project: state.extra! as Project, paymentMethods: _paymentMethodsOf(state.projectId), accounts: _accountsOf(state.projectId)),
       ),
       GoRoute(
         path: AccountsScreen.path,

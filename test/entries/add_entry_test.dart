@@ -66,6 +66,10 @@ void main() {
     );
   }
 
+  /// Has the active payment method pay from the account named [name] alone (redix-app #109).
+  void payOnlyFrom(FakeApi api, String name) =>
+      api.paymentMethods['project-0']!.first['accountIds'] = [api.accounts['project-0']!.singleWhere((account) => account['name'] == name)['id']! as String];
+
   Future<void> tapVisible(WidgetTester tester, FakeApi api, Key key) async {
     await tester.ensureVisible(find.byKey(key));
     await tester.pumpAndSettle();
@@ -455,12 +459,43 @@ void main() {
     expect((opened.api.sentEntries.single['itemId'], opened.api.sentEntries.single['tableId']), (opened.item, subgroups.last['id']));
   });
 
-  testWidgets('open question 4: Field is offered only what they hold, and one account is already chosen', (tester) async {
+  testWidgets('open question 4, redix-app #109 D2: Field is offered only what they hold, and the one account is named on its line and sent', (tester) async {
     final opened = await openExpense(tester);
+    await fill(tester, opened);
 
-    expect(find.byKey(PaymentChoices.accountKey(opened.custody)), findsOneWidget);
+    expect(shown(tester, PaymentChoices.paidFromKey), 'en expenses.paidFrom: عهدتي');
+    expect(find.byKey(PaymentChoices.accountKey(opened.custody)), findsNothing);
     expect(find.byKey(PaymentChoices.accountKey(opened.bank)), findsNothing);
-    expect(RadioGroup.maybeOf<String>(tester.element(find.byKey(PaymentChoices.accountKey(opened.custody))))!.groupValue, opened.custody);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
+
+    expect(opened.api.sentEntries.single['accountId'], opened.custody);
+  });
+
+  testWidgets('redix-app #109 R1: the payment method is asked first, and no account shows before it is chosen', (tester) async {
+    final opened = await openExpense(tester, permissions: managerAndFinance);
+
+    expect(find.byKey(PaymentChoices.accountHeadingKey), findsNothing);
+    await tapVisible(tester, opened.api, PaymentChoices.paymentMethodKey(opened.method));
+
+    expect(tester.getTopLeft(find.byKey(PaymentChoices.methodChoiceKey)).dy, lessThan(tester.getTopLeft(find.byKey(PaymentChoices.accountHeadingKey)).dy));
+  });
+
+  testWidgets('redix-app #109 R5: only the accounts the chosen method pays from are offered', (tester) async {
+    final opened = await openExpense(tester, permissions: managerAndFinance, arrange: (api) => payOnlyFrom(api, 'حساب المؤسسة'));
+    await fill(tester, opened);
+
+    expect(shown(tester, PaymentChoices.paidFromKey), 'en expenses.paidFrom: حساب المؤسسة');
+    expect(find.byKey(PaymentChoices.accountKey(opened.custody)), findsNothing);
+  });
+
+  testWidgets('redix-app #109 R8: a method paying from no account the person holds says so, and the expense cannot be sent', (tester) async {
+    final opened = await openExpense(tester, arrange: (api) => payOnlyFrom(api, 'حساب المؤسسة'));
+    await fill(tester, opened);
+
+    expect(find.byKey(PaymentChoices.noAccountForMethodKey), findsOneWidget);
+    expect(tester.widget<FilledButton>(find.byKey(AddEntryScreen.sendKey)).onPressed, isNull);
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
+    expect(opened.api.sentEntries, isEmpty);
   });
 
   testWidgets('ChargeAnyAccount: Finance is offered every account and chooses one', (tester) async {
@@ -503,8 +538,9 @@ void main() {
     api.online = true;
     await act(tester, api, () => tester.tap(find.byKey(PaymentChoices.retryKey)));
 
-    expect(shown(tester, PaymentChoices.accountKey(custody).title), 'عهدتي');
     expect(find.byKey(PaymentChoices.listMessageKey), findsNothing);
+    expect(find.byKey(PaymentChoices.methodChoiceKey), findsOneWidget);
+    expect(custody, isNotEmpty);
   });
 
   testWidgets('D10: an expense has one date, sent as its payment date, and no payment of its own', (tester) async {

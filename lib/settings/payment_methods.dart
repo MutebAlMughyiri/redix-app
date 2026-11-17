@@ -10,11 +10,12 @@ class PaymentMethods extends ApiList<PaymentMethod> {
   /// The project these payment methods belong to.
   final String projectId;
 
-  /// Adds a payment method named [name] at the end of the list.
-  Future<String> add(String name) => change('/projects/$projectId/payment-methods', {'name': name});
+  /// Adds a payment method named [name] at the end of the list, paying from the accounts [accountIds] (redix-app #109).
+  Future<String> add(String name, Set<String> accountIds) => change('/projects/$projectId/payment-methods', {'name': name, 'accountIds': accountIds.toList()});
 
-  /// Names [method] [name].
-  Future<String> rename(PaymentMethod method, String name) => put('/projects/$projectId/payment-methods/${method.id}', {'name': name});
+  /// Names [method] [name], paying from the accounts [accountIds].
+  Future<String> rename(PaymentMethod method, String name, Set<String> accountIds) =>
+      put('/projects/$projectId/payment-methods/${method.id}', {'name': name, 'accountIds': accountIds.toList()});
 
   /// Takes [method] out of entry; it stays on the entries that used it.
   Future<String> disable(PaymentMethod method) => change('/projects/$projectId/payment-methods/${method.id}/disable', {});

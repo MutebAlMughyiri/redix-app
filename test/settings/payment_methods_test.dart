@@ -51,9 +51,47 @@ void main() {
     await saveName(tester, opened.api, 'مدى');
 
     expect(opened.api.sentSettingsChanges.single.$1, '/projects/project-0/payment-methods');
-    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'مدى'});
+    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'مدى', 'accountIds': <String>[]});
     final added = opened.api.paymentMethods['project-0']!.singleWhere((method) => method['name'] == 'مدى')['id']! as String;
     expect(text(tester, PaymentMethodsScreen.nameKey(added)), 'مدى');
+  });
+
+  /// A project with a bank account and a custody, and شبكة paying from [paysFrom] of them, opened as far as its payment methods.
+  Future<({FakeApi api, String card, String bank, String custody})> openWithAccounts(WidgetTester tester, {List<String> paysFrom = const ['bank', 'custody']}) async {
+    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance);
+    final bank = api.addAccount('project-0', 'حساب المؤسسة')['id']! as String;
+    final custody = api.addAccount('project-0', 'عهدتي', type: 'cashCustody')['id']! as String;
+    final named = {'bank': bank, 'custody': custody};
+    final card = api.addPaymentMethod('project-0', 'شبكة', accountIds: [for (final name in paysFrom) named[name]!])['id']! as String;
+    await openProject(tester, api);
+    await scrollAndTap(tester, api, HomeScreen.paymentMethodsKey('project-0'));
+    return (api: api, card: card, bank: bank, custody: custody);
+  }
+
+  bool ticked(WidgetTester tester, String accountId) => tester.widget<CheckboxListTile>(find.byKey(PaymentMethodsScreen.accountTickKey(accountId))).value!;
+
+  testWidgets('redix-app #109 R3, D1b: a new method starts with every account ticked, and sends the ones left ticked', (tester) async {
+    final opened = await openWithAccounts(tester);
+    await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.addKey)));
+
+    expect(ticked(tester, opened.bank) && ticked(tester, opened.custody), isTrue);
+    await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.accountTickKey(opened.bank))));
+    await saveName(tester, opened.api, 'نقداً');
+
+    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'نقداً', 'accountIds': [opened.custody]});
+  });
+
+  testWidgets('redix-app #109 R3: the row of a method names the accounts it pays from, and its dialog starts from them', (tester) async {
+    final opened = await openWithAccounts(tester, paysFrom: ['custody']);
+
+    expect(text(tester, PaymentMethodsScreen.paysFromKey(opened.card)), 'en paymentMethods.paysFrom: عهدتي');
+    await chooseInMenu(tester, opened.api, opened.card, PaymentMethodsScreen.renameKey);
+    expect(ticked(tester, opened.custody), isTrue);
+    expect(ticked(tester, opened.bank), isFalse);
+    await act(tester, opened.api, () => tester.tap(find.byKey(PaymentMethodsScreen.accountTickKey(opened.bank))));
+    await saveName(tester, opened.api, 'شبكة');
+
+    expect(opened.api.sentSettingsChanges.last.$2, {'name': 'شبكة', 'accountIds': [opened.custody, opened.bank]});
   });
 
   testWidgets('a refused name stays in the dialog with its reason', (tester) async {
@@ -75,7 +113,7 @@ void main() {
     await saveName(tester, opened.api, 'بطاقة');
 
     expect(opened.api.sentSettingsChanges.single.$1, 'PUT /projects/project-0/payment-methods/${opened.card}');
-    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'بطاقة'});
+    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'بطاقة', 'accountIds': <String>[]});
     expect(text(tester, PaymentMethodsScreen.nameKey(opened.card)), 'بطاقة');
   });
 

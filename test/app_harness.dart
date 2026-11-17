@@ -29,7 +29,8 @@ import 'package:redix/words/app_language.dart';
 import 'package:redix/ui/app_color.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:redix/config/local_config.dart';
+import 'package:redix/config/local_config.dart';
+
 import 'support/ui_checks.dart';
 
 export 'support/ui_checks.dart';
@@ -44,6 +45,7 @@ Map<String, String> wordsIn(String language) => {
     'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.defaultSet', 'sharedSettings.defaultProject', 'sharedSettings.defaultProjectHint', 'sharedSettings.switchProject',
     'sharedSettings.appearance', 'sharedSettings.themeSystem', 'sharedSettings.themeLight', 'sharedSettings.themeDark', 'sharedSettings.entriesShown', 'sharedSettings.entriesShownHint',
     'signIn.username', 'signIn.password', 'signIn.hint', 'signIn.submit',
+    'expenses.paidFrom', 'expenses.noAccountForMethod', 'expenses.accountNotForMethod', 'paymentMethods.paysFrom', 'paymentMethods.paysFromNothing', 'paymentMethods.unknownAccount',
     'auth.forgotPassword', 'auth.loginOrEmail', 'auth.sendCode', 'auth.codeSent', 'auth.code', 'auth.resetWithCode', 'auth.passwordReset', 'auth.codeWrong', 'auth.tooManyRequests',
     'auth.weakPassword', 'auth.noConnection', 'auth.refused', 'users.email', 'users.emailInvalid', 'users.emailTaken', 'settings.myEmail',
     'signIn.invalidCredentials', 'signIn.accountLocked', 'signIn.sessionExpired', 'signIn.noConnection', 'signIn.refused',
@@ -907,9 +909,11 @@ class FakeApi {
     ..['isInactive'] = true
     ..['permissions'] = <String>[];
 
-  /// Adds a payment method to the project [projectId], as the API holds it.
-  Map<String, Object> addPaymentMethod(String projectId, String name, {bool isActive = true}) {
-    final method = <String, Object>{'id': 'method-${_nextStructureId++}', 'name': name, 'isActive': isActive};
+  /// Adds a payment method to the project [projectId], as the API holds it: paying from [accountIds], or from every account the project has when none are
+  /// named (redix-app #109, R4).
+  Map<String, Object> addPaymentMethod(String projectId, String name, {bool isActive = true, List<String> accountIds = const []}) {
+    final paysFrom = accountIds.isNotEmpty ? [...accountIds] : [for (final account in accounts[projectId] ?? const <Map<String, Object>>[]) account['id']! as String];
+    final method = <String, Object>{'id': 'method-${_nextStructureId++}', 'name': name, 'isActive': isActive, 'accountIds': paysFrom};
     paymentMethods.putIfAbsent(projectId, () => []).add(method);
     return method;
   }
@@ -927,7 +931,7 @@ class FakeApi {
     }
     switch (segments.sublist(3)) {
       case []:
-        addPaymentMethod(segments[1], body['name'] as String);
+        addPaymentMethod(segments[1], body['name'] as String, accountIds: [for (final id in body['accountIds'] as List<dynamic>? ?? const []) id as String]);
       case [final id] when request.method == 'DELETE':
         list.removeWhere((row) => row['id'] == id);
       case [final id, 'disable']:
@@ -935,7 +939,11 @@ class FakeApi {
       case [final id, 'enable']:
         list.singleWhere((row) => row['id'] == id)['isActive'] = true;
       case [final id]:
-        list.singleWhere((row) => row['id'] == id)['name'] = body['name'] as String;
+        final method = list.singleWhere((row) => row['id'] == id);
+        method['name'] = body['name'] as String;
+        if (body['accountIds'] case final List<dynamic> accountIds) {
+          method['accountIds'] = [for (final accountId in accountIds) accountId as String];
+        }
     }
     return _json({}, 200);
   }
@@ -967,6 +975,9 @@ class FakeApi {
       'isUsed': isUsed,
     };
     accounts.putIfAbsent(projectId, () => []).add(account);
+    for (final method in paymentMethods[projectId] ?? const <Map<String, Object>>[]) {
+      (method['accountIds']! as List<String>).add(account['id']! as String);
+    }
     return account;
   }
 

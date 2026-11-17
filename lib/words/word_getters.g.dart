@@ -1061,6 +1061,9 @@ mixin WordGetters {
   /// The word `expenses.account`.
   String get expensesAccount => text('expenses.account');
 
+  /// The word `expenses.accountNotForMethod`.
+  String get expensesAccountNotForMethod => text('expenses.accountNotForMethod');
+
   /// The word `expenses.accountNotOffered`.
   String get expensesAccountNotOffered => text('expenses.accountNotOffered');
 
@@ -1112,11 +1115,17 @@ mixin WordGetters {
   /// The word `expenses.noAccount`.
   String get expensesNoAccount => text('expenses.noAccount');
 
+  /// The word `expenses.noAccountForMethod`.
+  String get expensesNoAccountForMethod => text('expenses.noAccountForMethod');
+
   /// The word `expenses.noConnection`.
   String get expensesNoConnection => text('expenses.noConnection');
 
   /// The word `expenses.notYourEntry`.
   String get expensesNotYourEntry => text('expenses.notYourEntry');
+
+  /// The word `expenses.paidFrom`.
+  String get expensesPaidFrom => text('expenses.paidFrom');
 
   /// The word `expenses.paymentMethod`.
   String get expensesPaymentMethod => text('expenses.paymentMethod');
@@ -1454,6 +1463,12 @@ mixin WordGetters {
   /// The word `paymentMethods.paymentMethodUsed`.
   String get paymentMethodsPaymentMethodUsed => text('paymentMethods.paymentMethodUsed');
 
+  /// The word `paymentMethods.paysFrom`.
+  String get paymentMethodsPaysFrom => text('paymentMethods.paysFrom');
+
+  /// The word `paymentMethods.paysFromNothing`.
+  String get paymentMethodsPaysFromNothing => text('paymentMethods.paysFromNothing');
+
   /// The word `paymentMethods.projectFinished`.
   String get paymentMethodsProjectFinished => text('paymentMethods.projectFinished');
 
@@ -1468,6 +1483,9 @@ mixin WordGetters {
 
   /// The word `paymentMethods.title`.
   String get paymentMethodsTitle => text('paymentMethods.title');
+
+  /// The word `paymentMethods.unknownAccount`.
+  String get paymentMethodsUnknownAccount => text('paymentMethods.unknownAccount');
 
   /// The word `permissions.addSupplier`.
   String get permissionsAddSupplier => text('permissions.addSupplier');
