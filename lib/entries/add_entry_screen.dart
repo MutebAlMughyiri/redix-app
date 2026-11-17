@@ -314,7 +314,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   var _columns = <ItemColumn>[];
   var _columnsMessage = '';
   var _supplier = Supplier.none();
-  var _date = DateTime.now();
+  late var _date = widget.project.todayBy(widget.tables.clock);
   var _isOutside = false;
   var _askingRemove = false;
   final _payment = PaymentChoice();
@@ -490,7 +490,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   }
 
   Future<void> _chooseDate(DateTime current, ValueChanged<DateTime> onChosen) async {
-    final chosen = await pickEntryDate(context, widget.project, current);
+    final chosen = await pickEntryDate(context, widget.project, widget.tables.clock, current);
     if (mounted) {
       setState(() => onChosen(chosen));
     }

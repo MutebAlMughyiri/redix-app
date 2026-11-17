@@ -123,6 +123,16 @@ void main() {
     expect(opened.api.sentEntries.single['amount'], 6000);
   });
 
+  testWidgets("redix-app #107 R2, D2: the date starts at the project's today by the server's clock, whatever the phone's says", (tester) async {
+    final opened = await openExpense(tester, arrange: (api) => api.serverClockBehind = const Duration(days: 2));
+    await fill(tester, opened);
+
+    await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
+
+    final riyadh = DateTime.now().toUtc().subtract(const Duration(days: 2)).add(const Duration(hours: 3));
+    expect(opened.api.sentEntries.single['date'], riyadh.toIso8601String().substring(0, 10));
+  });
+
   testWidgets('saving a draft sends what was typed and chosen, never a figure, with an id made on the phone', (tester) async {
     final opened = await openExpense(tester);
     await fill(tester, opened);

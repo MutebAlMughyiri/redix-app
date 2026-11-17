@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../attachments/invoice_capture.dart';
 import '../auth/session.dart';
+import '../auth/server_clock.dart';
 import '../ui/busy.dart';
 import '../ui/part_keys.dart';
 import '../ui/messages.dart';
@@ -84,6 +85,9 @@ class ReportFiles {
   ReportFiles(this._session, this._capture);
 
   final Session _session;
+
+  /// The server's clock, as the session these are read through knows it (redix-app #107).
+  ServerClock get clock => _session.clock;
   final InvoiceCapture _capture;
 
   /// Gets the file at [address] of [kind], named [name], and does [handing] with it. Returns the word key of what to tell the person: why it could not, or that it was saved; empty when there is nothing to say.

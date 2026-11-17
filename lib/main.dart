@@ -63,6 +63,7 @@ import 'projects/project_info_screen.dart';
 import 'projects/projects.dart';
 import 'projects/projects_screen.dart';
 import 'projects/registered_projects.dart';
+import 'projects/time_zones.dart';
 import 'projects/registered_projects_screen.dart';
 import 'projects/project.dart';
 import 'settings/payment_methods.dart';
@@ -147,6 +148,7 @@ class _RedixAppState extends State<RedixApp> {
   /// Renews the session each time the app comes back to the screen, so it learns soon what changed while it was away (redix-api #126 R6).
   late final AppLifecycleListener _lifecycle;
   late final _projects = Projects(widget.session);
+  late final _timeZones = TimeZones(widget.session);
   late final _outbox = Outbox(widget.session, widget.session.store);
   late final _sync = ProjectSync(widget.session);
   late final _registered = RegisteredProjects(widget.session);
@@ -222,7 +224,7 @@ class _RedixAppState extends State<RedixApp> {
           localConfig: widget.localConfig,
         ),
       ),
-      GoRoute(path: ProjectInfoScreen.path, builder: (context, state) => ProjectInfoScreen(project: state.extra! as Project, projects: _projects)),
+      GoRoute(path: ProjectInfoScreen.path, builder: (context, state) => ProjectInfoScreen(project: state.extra! as Project, projects: _projects, timeZones: _timeZones)),
       GoRoute(path: MyPermissionsScreen.path, builder: (context, state) => MyPermissionsScreen(project: state.extra! as Project, projects: _projects, partners: _partnersOf(state.projectId))),
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(

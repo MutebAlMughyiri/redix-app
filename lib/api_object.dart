@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 import 'api.dart';
 import 'auth/session.dart';
+import 'auth/server_clock.dart';
 
 /// Something the API owns, as it last answered, and the way to change it. What it reads is kept on the phone by [Session.get], which answers with that copy while there
 /// is no network (FR-16), until sign-out.
@@ -15,6 +16,9 @@ abstract class ApiObject<T> extends ChangeNotifier {
 
   final Session _session;
   String _path;
+
+  /// The server's clock, as the session this reads through knows it (redix-app #107).
+  ServerClock get clock => _session.clock;
   final String _wordPrefix;
   final T Function(Object? json) _fromJson;
   final T _empty;

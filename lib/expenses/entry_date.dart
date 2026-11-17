@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../auth/server_clock.dart';
 import '../projects/project.dart';
 
-/// Asks for an entry's date in [project], from [current]: within its period and not in the future (BR-12). Left without choosing, it answers [current].
-Future<DateTime> pickEntryDate(BuildContext context, Project project, DateTime current) async {
-  final today = DateTime.now();
+/// Asks for an entry's date in [project], from [current]: within its period and not after its today by [clock] (BR-12, redix-app #107). Left without choosing, it
+/// answers [current].
+Future<DateTime> pickEntryDate(BuildContext context, Project project, ServerClock clock, DateTime current) async {
+  final today = project.todayBy(clock);
   final start = project.startDate;
   final first = start.isBefore(today) ? start : today;
   final initial = current.isBefore(first) || current.isAfter(today) ? today : current;

@@ -1778,6 +1778,9 @@ mixin WordGetters {
   /// The word `projects.structureSource`.
   String get projectsStructureSource => text('projects.structureSource');
 
+  /// The word `projects.timeZone`.
+  String get projectsTimeZone => text('projects.timeZone');
+
   /// The word `projects.unitName`.
   String get projectsUnitName => text('projects.unitName');
 
@@ -1789,6 +1792,9 @@ mixin WordGetters {
 
   /// The word `projects.unknownSource`.
   String get projectsUnknownSource => text('projects.unknownSource');
+
+  /// The word `projects.unknownTimeZone`.
+  String get projectsUnknownTimeZone => text('projects.unknownTimeZone');
 
   /// The word `reconciliations.accountMissing`.
   String get reconciliationsAccountMissing => text('reconciliations.accountMissing');
@@ -2269,6 +2275,60 @@ mixin WordGetters {
 
   /// The word `swipe.removed`.
   String get swipeRemoved => text('swipe.removed');
+
+  /// The word `timeZone.amman`.
+  String get timeZoneAmman => text('timeZone.amman');
+
+  /// The word `timeZone.bahrain`.
+  String get timeZoneBahrain => text('timeZone.bahrain');
+
+  /// The word `timeZone.beijing`.
+  String get timeZoneBeijing => text('timeZone.beijing');
+
+  /// The word `timeZone.cairo`.
+  String get timeZoneCairo => text('timeZone.cairo');
+
+  /// The word `timeZone.dhaka`.
+  String get timeZoneDhaka => text('timeZone.dhaka');
+
+  /// The word `timeZone.doha`.
+  String get timeZoneDoha => text('timeZone.doha');
+
+  /// The word `timeZone.dubai`.
+  String get timeZoneDubai => text('timeZone.dubai');
+
+  /// The word `timeZone.istanbul`.
+  String get timeZoneIstanbul => text('timeZone.istanbul');
+
+  /// The word `timeZone.karachi`.
+  String get timeZoneKarachi => text('timeZone.karachi');
+
+  /// The word `timeZone.kuwait`.
+  String get timeZoneKuwait => text('timeZone.kuwait');
+
+  /// The word `timeZone.london`.
+  String get timeZoneLondon => text('timeZone.london');
+
+  /// The word `timeZone.losAngeles`.
+  String get timeZoneLosAngeles => text('timeZone.losAngeles');
+
+  /// The word `timeZone.manila`.
+  String get timeZoneManila => text('timeZone.manila');
+
+  /// The word `timeZone.muscat`.
+  String get timeZoneMuscat => text('timeZone.muscat');
+
+  /// The word `timeZone.newDelhi`.
+  String get timeZoneNewDelhi => text('timeZone.newDelhi');
+
+  /// The word `timeZone.newYork`.
+  String get timeZoneNewYork => text('timeZone.newYork');
+
+  /// The word `timeZone.paris`.
+  String get timeZoneParis => text('timeZone.paris');
+
+  /// The word `timeZone.riyadh`.
+  String get timeZoneRiyadh => text('timeZone.riyadh');
 
   /// The word `transfers.accountDisabled`.
   String get transfersAccountDisabled => text('transfers.accountDisabled');

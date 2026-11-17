@@ -55,7 +55,7 @@ class _TransferDialogState extends State<TransferDialog> {
   late var _to = _active.firstWhere((account) => account.id != _from.id);
   final _amount = TextEditingController();
   final _notes = TextEditingController();
-  var _date = DateTime.now();
+  late var _date = widget.project.todayBy(widget.accounts.clock);
 
   @override
   void dispose() {
@@ -118,7 +118,7 @@ class _TransferDialogState extends State<TransferDialog> {
           label: words.transfersDate,
           value: formatDate(_date),
           onTap: () async {
-            final date = await pickEntryDate(context, widget.project, _date);
+            final date = await pickEntryDate(context, widget.project, widget.accounts.clock, _date);
             setState(() => _date = date);
           },
         ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'time_zones.dart';
+import '../ui/picker_sheet.dart';
 
 import '../format/date_format.dart';
 import '../ui/confirm_dialog.dart';
@@ -19,13 +21,16 @@ import '../ui/act_once.dart';
 /// whoever manages it renames it, adds, renames and deletes units, keeps its description and closes it, while it is open (AC-04.1).
 class ProjectInfoScreen extends StatefulWidget {
   /// The page of [project], read live from [projects], which is also the way to change it.
-  const ProjectInfoScreen({super.key, required this.project, required this.projects});
+  const ProjectInfoScreen({super.key, required this.project, required this.projects, required this.timeZones});
 
   /// The project, as Settings held it when the page was opened.
   final Project project;
 
   /// The projects, among them this one.
   final Projects projects;
+
+  /// The zones a project may be in, which whoever manages it chooses among (redix-app #107).
+  final TimeZones timeZones;
 
   /// The screen's route.
   static const path = '/projects/:projectId/info';
@@ -87,12 +92,59 @@ class ProjectInfoScreen extends StatefulWidget {
   /// The button that closes the project.
   static const closeKey = Key('projectInfo.close');
 
+  /// The line naming the project's time zone (redix-app #107).
+  static const timeZoneKey = Key('projectInfo.timeZone');
+
+  /// The menu of the time zone, for whoever manages the project.
+  static const timeZoneMenuKey = Key('projectInfo.timeZoneMenu');
+
+  /// Change, in the time zone's menu.
+  static const changeTimeZoneKey = Key('projectInfo.changeTimeZone');
+
+  /// The zone [name] in the sheet of zones.
+  static Key timeZoneOptionKey(String name) => Key('projectInfo.timeZoneOption.$name');
+
   @override
   State<ProjectInfoScreen> createState() => _ProjectInfoScreenState();
 }
 
 class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
   late final _description = TextEditingController(text: widget.project.description);
+
+  @override
+  void initState() {
+    super.initState();
+    widget.timeZones.loadOnOpen();
+  }
+
+  /// The word of [timeZone]'s city, its name until the list of zones has answered.
+  String _cityOf(Words words, String timeZone) {
+    final zone = widget.timeZones.all.where((zone) => zone.name == timeZone);
+    return zone.isEmpty ? timeZone : words.text(zone.first.wordKey);
+  }
+
+  void _askForTimeZone(Project project) {
+    final words = Words.of(context);
+    showPickerSheet<void>(
+      context,
+      (sheetContext) => ListView(
+        shrinkWrap: true,
+        children: [
+          for (final zone in widget.timeZones.all)
+            ListTile(
+              key: ProjectInfoScreen.timeZoneOptionKey(zone.name),
+              title: Text(words.text(zone.wordKey)),
+              trailing: Text(utcOffsetText(zone.utcOffsetMinutes)),
+              selected: zone.name == project.timeZone,
+              onTap: () {
+                Navigator.pop(sheetContext);
+                showRefusalOf(context, widget.projects.setTimeZone(project, zone.name));
+              },
+            ),
+        ],
+      ),
+    );
+  }
 
   @override
   void dispose() {
@@ -201,6 +253,21 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
                   Text(project.isFinished ? '$startDate · ${words.projectsReadOnly}' : startDate, key: ProjectInfoScreen.detailsKey, style: theme.textTheme.bodySmall),
                   projectStatusChip(context, project, ProjectInfoScreen.statusKey),
                 ],
+              ),
+              ListenableBuilder(
+                listenable: widget.timeZones,
+                builder: (context, _) => Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '${words.projectsTimeZone}: ${_cityOf(words, project.timeZone)} (${utcOffsetText(project.utcOffsetMinutes)})',
+                        key: ProjectInfoScreen.timeZoneKey,
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ),
+                    if (mayChange) rowMenu(ProjectInfoScreen.timeZoneMenuKey, [rowMenuItem(ProjectInfoScreen.changeTimeZoneKey, words.projectsTimeZone, () => _askForTimeZone(project))]),
+                  ],
+                ),
               ),
               const Divider(height: 24),
               OverflowBar(

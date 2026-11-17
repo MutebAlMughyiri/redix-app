@@ -45,6 +45,7 @@ Map<String, String> wordsIn(String language) => {
     'projects.choose', 'projects.chooseHint', 'projects.defaultProject', 'projects.defaultSet', 'sharedSettings.defaultProject', 'sharedSettings.defaultProjectHint', 'sharedSettings.switchProject',
     'sharedSettings.appearance', 'sharedSettings.themeSystem', 'sharedSettings.themeLight', 'sharedSettings.themeDark', 'sharedSettings.entriesShown', 'sharedSettings.entriesShownHint',
     'signIn.username', 'signIn.password', 'signIn.hint', 'signIn.submit',
+    'projects.timeZone', 'timeZone.riyadh', 'timeZone.beijing', 'timeZone.newYork',
     'expenses.paidFrom', 'expenses.noAccountForMethod', 'expenses.accountNotForMethod', 'paymentMethods.paysFrom', 'paymentMethods.paysFromNothing', 'paymentMethods.unknownAccount',
     'auth.forgotPassword', 'auth.loginOrEmail', 'auth.sendCode', 'auth.codeSent', 'auth.code', 'auth.resetWithCode', 'auth.passwordReset', 'auth.codeWrong', 'auth.tooManyRequests',
     'auth.weakPassword', 'auth.noConnection', 'auth.refused', 'users.email', 'users.emailInvalid', 'users.emailTaken', 'settings.myEmail',
@@ -802,6 +803,9 @@ class FakeApi {
     } else if (!path.startsWith('/auth')) {
       await holdWrites;
     }
+    if (path == '/time-zones') {
+      return _json(timeZones, 200);
+    }
     if (path.startsWith('/translations/')) {
       return http.Response.bytes(utf8.encode(jsonEncode(wordsIn(request.url.pathSegments.last))), 200, headers: {'etag': '"1"'});
     }
@@ -864,7 +868,6 @@ class FakeApi {
     if (path == '/auth/change-password' && status == 200) {
       mustChangePassword = false;
     }
-    final serverNow = DateTime.now().toUtc().subtract(serverClockBehind);
     final expiresAt = accessTokenLifetime == Duration.zero ? '' : ', "accessTokenExpiresAt": "${serverNow.add(accessTokenLifetime).toIso8601String()}"';
     final body = status == 200
         ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}"$expiresAt, "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "usesBiometrics": $usesBiometrics, "userId": "$userId", "username": "muteb", "displayName": "متعب المغيري", "email": "$email"}'
@@ -897,6 +900,8 @@ class FakeApi {
       'isInactive': false,
       'holdsEntries': false,
       'units': [for (final (index, unit) in units.indexed) {'id': '$id-unit-$index', 'name': unit}],
+      'timeZone': 'Asia/Riyadh',
+      'utcOffsetMinutes': 180,
       'permissions': permissions,
     };
     projects.add(project);
@@ -1733,7 +1738,18 @@ class FakeApi {
   Map<String, dynamic> _bodyOf(http.Request request) => request.body.isEmpty ? <String, dynamic>{} : jsonDecode(request.body) as Map<String, dynamic>;
 
   /// Answers as bytes with no character set, as a JSON reply may arrive, so reading Arabic takes UTF-8 on the app's side.
-  http.Response _json(Object body, int status) => http.Response.bytes(utf8.encode(jsonEncode(body)), status);
+  http.Response _json(Object body, int status) =>
+      http.Response.bytes(utf8.encode(jsonEncode(body)), status, headers: {'date': HttpDate.format(serverNow)});
+
+  /// The server's clock as every answer says it, in its Date header: the phone's, [serverClockBehind] behind (redix-app #107).
+  DateTime get serverNow => DateTime.now().toUtc().subtract(serverClockBehind);
+
+  /// The zones a project may be in, as the API offers them: a few of its list.
+  final timeZones = <Map<String, Object>>[
+    {'name': 'Asia/Riyadh', 'wordKey': 'timeZone.riyadh', 'utcOffsetMinutes': 180},
+    {'name': 'Asia/Shanghai', 'wordKey': 'timeZone.beijing', 'utcOffsetMinutes': 480},
+    {'name': 'America/New_York', 'wordKey': 'timeZone.newYork', 'utcOffsetMinutes': -300},
+  ];
 
   /// Adds a project waiting for the admin.
   void addRegistered(String name, {String managerName = 'ريم', String managerUsername = 'reem', String managerMobile = '0500000000', List<String> units = const ['الفلة الغربية'], String description = ''}) {
@@ -2010,6 +2026,10 @@ class FakeApi {
     final units = project['units'] as List<Map<String, String>>;
     if (path.endsWith('/close')) {
       project['status'] = 'finished';
+    } else if (path.endsWith('/time-zone')) {
+      final zone = timeZones.singleWhere((zone) => zone['name'] == body['timeZone']);
+      project['timeZone'] = zone['name']!;
+      project['utcOffsetMinutes'] = zone['utcOffsetMinutes']!;
     } else if (path.endsWith('/description')) {
       project['description'] = (body['description'] as String).trim();
     } else if (segments.length == 2) {

@@ -63,10 +63,11 @@ class VatStatementScreen extends StatefulWidget {
 
 class _VatStatementScreenState extends State<VatStatementScreen> {
   var _mode = _Mode.quarter;
-  var _quarter = quarterStartOf(DateTime.now());
-  var _secondHalf = DateTime.now().month > 6;
-  var _from = quarterStartOf(DateTime.now());
-  var _to = DateTime.now();
+  late final _today = widget.project.todayBy(widget.files.clock);
+  late var _quarter = quarterStartOf(_today);
+  late var _secondHalf = _today.month > 6;
+  late var _from = quarterStartOf(_today);
+  late var _to = _today;
 
   (DateTime, DateTime) get _period => switch (_mode) {
     _Mode.quarter => quarterOf(_quarter),

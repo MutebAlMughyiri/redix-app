@@ -42,6 +42,9 @@ class Projects extends ApiList<Project> {
   /// Keeps [description] as what [project] is; empty clears it. Returns an empty string once kept, otherwise the word key of the refusal.
   Future<String> describe(Project project, String description) => put('/projects/${project.id}/description', {'description': description});
 
+  /// Puts [project] in the zone [timeZone], one the API offers (redix-app #107). Returns an empty string once put, otherwise the word key of the refusal.
+  Future<String> setTimeZone(Project project, String timeZone) => put('/projects/${project.id}/time-zone', {'timeZone': timeZone});
+
   /// Names the [unit] of [project] [name]. Returns an empty string once named, otherwise the word key of the refusal.
   Future<String> renameUnit(Project project, Unit unit, String name) => put('/projects/${project.id}/units/${unit.id}', {'name': name});
 

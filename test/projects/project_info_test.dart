@@ -37,10 +37,35 @@ void main() {
   Future<void> backHome(WidgetTester tester, FakeApi api) => act(tester, api, () => tester.pageBack());
 
   void expectNoChangeOffered() {
-    for (final key in [ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey]) {
+    for (final key in [ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.timeZoneMenuKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey]) {
       expect(find.byKey(key), findsNothing, reason: '$key');
     }
   }
+
+  group("the project's time zone (redix-app #107)", () {
+    testWidgets("R2: More info names the zone the project's today is counted in, by its city and how far it is ahead of UTC", (tester) async {
+      final api = FakeApi()..addProject('غصون 6');
+      await openInfo(tester, api);
+
+      expect(text(tester, ProjectInfoScreen.timeZoneKey), 'en projects.timeZone: en timeZone.riyadh (UTC+3)');
+    });
+
+    testWidgets("D3: whoever manages the project chooses another zone from the API's list, and the line follows", (tester) async {
+      final api = FakeApi()..addProject('غصون 6');
+      await openInfo(tester, api);
+
+      await tap(tester, api, ProjectInfoScreen.timeZoneMenuKey);
+      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.changeTimeZoneKey)));
+      for (final zone in ['Asia/Riyadh', 'Asia/Shanghai', 'America/New_York']) {
+        expect(find.byKey(ProjectInfoScreen.timeZoneOptionKey(zone)), findsOneWidget, reason: zone);
+      }
+      await act(tester, api, () => tester.tap(find.byKey(ProjectInfoScreen.timeZoneOptionKey('Asia/Shanghai'))));
+
+      expect(api.sentProjectChanges.last.$1, 'PUT /projects/project-0/time-zone');
+      expect(api.sentProjectChanges.last.$2, {'timeZone': 'Asia/Shanghai'});
+      expect(text(tester, ProjectInfoScreen.timeZoneKey), 'en projects.timeZone: en timeZone.beijing (UTC+8)');
+    });
+  });
 
   group('what More info shows', () {
     testWidgets('R1: the start date, status and units in order, which the home no longer shows', (tester) async {
@@ -69,7 +94,7 @@ void main() {
       final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
       await openInfo(tester, api);
 
-      for (final key in [ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.unitMenuKey('project-0-unit-0'), ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey]) {
+      for (final key in [ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.timeZoneMenuKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.unitMenuKey('project-0-unit-0'), ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey]) {
         expect(find.byKey(key), findsOneWidget, reason: '$key');
       }
     });

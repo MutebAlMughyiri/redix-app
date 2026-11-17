@@ -1,4 +1,5 @@
 import '../auth/permission.dart';
+import '../auth/server_clock.dart';
 
 /// Where a project stands, as the API says it (FR-04), each knowing its word so no reader needs to tell them apart.
 enum ProjectStatus {
@@ -46,10 +47,30 @@ class Project {
       isInactive = json['isInactive'] as bool,
       holdsEntries = json['holdsEntries'] as bool,
       units = [for (final unit in json['units'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
+      timeZone = json['timeZone'] as String? ?? riyadh,
+      utcOffsetMinutes = json['utcOffsetMinutes'] as int? ?? riyadhOffsetMinutes,
       _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()};
 
   /// No project: what Settings holds when it is opened from the project list, where the signed-in user may do nothing to a project.
-  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.active, rejectionReason = '', description = '', roleName = '', isInactive = false, holdsEntries = false, units = const [], _permissions = const {};
+  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.active, rejectionReason = '', description = '', roleName = '', isInactive = false, holdsEntries = false, units = const [], timeZone = riyadh, utcOffsetMinutes = riyadhOffsetMinutes, _permissions = const {};
+
+  /// The zone of every project whose manager chose none, and of a project kept on the phone before zones came (redix-app #107, D1).
+  static const riyadh = 'Asia/Riyadh';
+
+  /// Riyadh's offset, three hours ahead of UTC all year.
+  static const riyadhOffsetMinutes = 180;
+
+  /// The time zone the project is in, its IANA name: its entries' today is counted there.
+  final String timeZone;
+
+  /// How far its zone was ahead of UTC when the API answered, in minutes.
+  final int utcOffsetMinutes;
+
+  /// The project's today: the server's clock in the project's zone, the same online and offline (redix-app #107, BR-12).
+  DateTime todayBy(ServerClock clock) {
+    final local = clock.now().toUtc().add(Duration(minutes: utcOffsetMinutes));
+    return DateTime(local.year, local.month, local.day);
+  }
 
   /// True for no project.
   bool get isNone => id.isEmpty;

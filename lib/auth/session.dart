@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import '../api.dart';
 import '../offline/folder_store.dart';
 import '../offline/local_store.dart';
+import 'server_clock.dart';
 import '../words/words.dart';
 import 'biometrics.dart';
 import 'permission.dart';
@@ -21,6 +22,9 @@ class Session extends ChangeNotifier {
 
   /// What this phone keeps of what it read, and of what waits to be sent.
   final LocalStore store;
+
+  /// The server's clock as the phone knows it, learned from every answer (redix-app #107, D2).
+  late final clock = ServerClock(store);
 
   /// The tries at the fingerprint or face before only the password works (AC-35.2).
   static const maxUnlockAttempts = 3;
@@ -109,6 +113,7 @@ class Session extends ChangeNotifier {
   /// Reads the session kept from an earlier sign-in, then renews it in the background. A session the API refuses ends, with a notice;
   /// without a network the kept session stays open, so the app works offline (FR-16). On a phone that uses biometrics it waits for [unlock].
   Future<void> restore() async {
+    await clock.open();
     final kept = await _kept();
     _usesBiometrics = kept['usesBiometrics'] as bool? ?? false;
     if (!_usesBiometrics) {
@@ -314,6 +319,7 @@ class Session extends ChangeNotifier {
 
   Future<http.Response> _send(Future<http.Response> Function() request) async {
     final response = await request();
+    await clock.learn(response);
     if (response.statusCode != 401) {
       return response;
     }
