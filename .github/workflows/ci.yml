@@ -77,4 +77,7 @@ jobs:
           arch: x86_64
           target: google_apis
           working-directory: redix-app
-          script: adb reverse tcp:5010 tcp:5010 && patrol test --device emulator-5554 --dart-define-from-file=config/dev.json --dart-define=TEST_USERNAME=${{ env.REDIX_Admin__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Admin__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd
+          script: |
+            adb reverse tcp:5010 tcp:5010 && adb reverse tcp:5011 tcp:5011
+            nohup pwsh -NoProfile -File tool/patrol_pc_helper.ps1 -Device emulator-5554 -Results "$RUNNER_TEMP/patrol-results.log" > "$RUNNER_TEMP/pc-helper.log" 2>&1 &
+            patrol test --device emulator-5554 --dart-define-from-file=config/dev.json --dart-define=TEST_USERNAME=${{ env.REDIX_Admin__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Admin__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd
