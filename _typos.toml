@@ -1,0 +1,20 @@
+# The spelling check CI runs (redix-api #125, R4 and R7). A word here is right as written; a real typo is fixed, never added.
+[files]
+extend-exclude = [
+  "*.storyboard",
+  "lib/words/word_getters.g.dart",
+  "assets/translations/",
+  "pubspec.lock",
+]
+
+[default.extend-words]
+# The Testin project, named in the skills brought from it.
+Testin = "Testin"
+testin = "testin"
+# Muteb's own words, quoted as he typed them.
+poin = "poin"
+disabel = "disabel"
+conclution = "conclution"
+fram = "fram"
+lables = "lables"
+toogle = "toogle"
