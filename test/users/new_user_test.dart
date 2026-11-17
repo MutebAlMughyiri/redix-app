@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/users/permission_ticks.dart';
 import 'package:redix/auth/permission.dart';
 import 'package:redix/users/new_user_screen.dart';
 import 'package:redix/users/users_screen.dart';
@@ -9,8 +10,9 @@ import 'package:redix/ui/part_keys.dart';
 import '../app_harness.dart';
 
 void main() {
-  Future<FakeApi> openForm(WidgetTester tester) async {
+  Future<FakeApi> openForm(WidgetTester tester, {void Function(FakeApi api)? arrange}) async {
     final api = FakeApi()..addProject('غصون 6');
+    arrange?.call(api);
     api.give(api.addUser('متعب', username: 'muteb'), 'project-0', managerAndFinance);
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.usersKey('project-0'));
@@ -84,6 +86,63 @@ void main() {
 
     expect(api.sentUserChanges.single.$2['permissions'], ['readProject', 'recordEntries']);
     expect(find.byKey(NewUserScreen.permissionKey(Permission.approveProjects)), findsNothing);
+  });
+
+  testWidgets('a tick taken off again is not sent', (tester) async {
+    final api = await openForm(tester);
+    final recordEntries = find.byKey(NewUserScreen.permissionKey(Permission.recordEntries).body);
+    await tester.ensureVisible(recordEntries);
+    await tester.tap(recordEntries);
+    await tester.pump();
+    await tester.tap(recordEntries);
+    await tester.pump();
+    await fillAndSubmit(tester, api);
+
+    expect(api.sentUserChanges.single.$2['permissions'], ['readProject']);
+  });
+
+  group('redix-api #106: the partners a new person sees', () {
+    Future<(FakeApi, String, String)> openWithPartners(WidgetTester tester) async {
+      late String khaled;
+      late String saad;
+      final api = await openForm(tester, arrange: (api) {
+        khaled = api.addPartner('project-0', 'خالد')['id']! as String;
+        saad = api.addPartner('project-0', 'سعد')['id']! as String;
+      });
+      return (api, khaled, saad);
+    }
+
+    Future<void> tap(WidgetTester tester, Key key) async {
+      await tester.ensureVisible(find.byKey(key));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(key));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('the partners ticked under رأس مال شركاء محددين are sent with the new person; one unticked again is not', (tester) async {
+      final (api, khaled, saad) = await openWithPartners(tester);
+      await tap(tester, NewUserScreen.permissionKey(Permission.seeChosenCapital).body);
+      await tap(tester, PermissionTicks.partnerKey(khaled).body);
+      await tap(tester, PermissionTicks.partnerKey(saad).body);
+      await tap(tester, PermissionTicks.partnerKey(saad).body);
+
+      expect(tester.widget<CheckboxListTile>(find.byKey(PermissionTicks.partnerKey(khaled).body)).value, isTrue);
+      await fillAndSubmit(tester, api);
+
+      expect(api.sentUserChanges.single.$2['permissions'], ['readProject', 'seeChosenCapital']);
+      expect(api.sentUserChanges.single.$2['partnerIds'], [khaled]);
+    });
+
+    testWidgets('رأس مال كل الشركاء takes رأس مال شركاء محددين, and the partners chosen under it are not sent', (tester) async {
+      final (api, khaled, _) = await openWithPartners(tester);
+      await tap(tester, NewUserScreen.permissionKey(Permission.seeChosenCapital).body);
+      await tap(tester, PermissionTicks.partnerKey(khaled).body);
+      await tap(tester, NewUserScreen.permissionKey(Permission.seeAllCapital).body);
+      await fillAndSubmit(tester, api);
+
+      expect(api.sentUserChanges.single.$2['permissions'], ['readProject', 'seeAllCapital']);
+      expect(api.sentUserChanges.single.$2['partnerIds'], isEmpty);
+    });
   });
 
   testWidgets('a mobile typed in Arabic digits is sent in Western digits', (tester) async {

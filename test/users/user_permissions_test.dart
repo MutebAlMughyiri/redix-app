@@ -132,6 +132,19 @@ void main() {
     expect(tester.getTopLeft(find.byKey(UserPermissionsScreen.permissionKey(Permission.moveMoney))).dy, lessThan(above));
   });
 
+  testWidgets('redix-api #106: unticking a chosen partner takes them from the person', (tester) async {
+    final api = await openScreen(tester);
+    await toggle(tester, api, Permission.seeChosenCapital);
+    final khaled = api.partners['project-0']!.first['id']! as String;
+    await tester.scrollUntilVisible(find.byKey(PermissionTicks.partnerKey(khaled)), 100);
+    await act(tester, api, () => tester.tap(find.byKey(PermissionTicks.partnerKey(khaled).body)));
+
+    await act(tester, api, () => tester.tap(find.byKey(PermissionTicks.partnerKey(khaled).body)));
+
+    expect(api.sentUserChanges.last.$1, 'DELETE /projects/project-0/users/user-1/partners/$khaled');
+    expect(tester.widget<CheckboxListTile>(find.byKey(PermissionTicks.partnerKey(khaled).body)).value, isFalse);
+  });
+
   testWidgets('redix-api #106: ticking a partner chooses them for the person, and رأس مال كل الشركاء takes chosen capital and closes the list', (tester) async {
     final api = await openScreen(tester);
     await toggle(tester, api, Permission.seeChosenCapital);

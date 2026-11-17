@@ -33,9 +33,6 @@ class EntriesScreen extends StatefulWidget {
   /// The address of the screen.
   static const path = '/projects/:projectId/entries';
 
-  /// The address of the screen for the project [projectId].
-  static String pathOf(String projectId) => '/projects/$projectId/entries';
-
   /// The address of the screen for the project [projectId], ready to type a search.
   static String searchPathOf(String projectId) => '/projects/$projectId/entries?search=1';
 

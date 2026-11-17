@@ -17,6 +17,7 @@ import 'package:redix/home/home_screen.dart';
 
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/messages.dart';
+import 'package:redix/ui/swipe_to_remove.dart';
 import 'package:redix/ui/confirm_dialog.dart';
 import 'package:redix/offline/waiting_screen.dart';
 import 'package:redix/ui/app_color.dart';
@@ -366,6 +367,30 @@ void main() {
     expect(find.byKey(messageKeyOf('swipe.removed')), findsNothing);
     expect(api.sentEntryChanges.map((change) => change.$2), ['delete', 'restore', 'delete']);
   });
+
+  testWidgets('redix-api #119: an undo the API refuses says why, and the entry stays removed', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: [...managerAndFinance, 'removeApprovedEntries']);
+    await swipeToRemove(tester, api, EntriesScreen.rowKey('entry-0'));
+
+    api.entryChangeAnswer = (status: 409, code: 'notRemoved');
+    await act(tester, api, () => tester.tap(find.byKey(messageKeyOf('swipe.removed').icon)));
+
+    expect(find.byKey(messageKeyOf('entries.notRemoved')), findsOneWidget);
+    expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
+  });
+
+  testWidgets('redix-api #119: a tap away from the question closes it, and nothing is removed', (tester) async {
+    final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: [...managerAndFinance, 'removeApprovedEntries']);
+    await swipeToAsk(tester, api, EntriesScreen.rowKey('entry-0'));
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').question), findsOneWidget);
+
+    await act(tester, api, () => tester.tapAt(const Offset(8, 8)));
+
+    expect(find.byKey(EntriesScreen.rowKey('entry-0').question), findsNothing);
+    expect(api.sentEntryChanges, isEmpty);
+  });
+
+  test('a row whose removal cannot be undone answers no refusal from its undo', () async => expect(await SwipeToRemove.noUndo(), ''));
 
   testWidgets('redix-api #119: a refused removal stays open, saying why', (tester) async {
     final api = await openEntries(tester, (api) {

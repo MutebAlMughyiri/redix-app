@@ -193,6 +193,19 @@ void main() {
     }
   });
 
+  testWidgets('redix-api #106: صلاحياتي of a person seeing chosen partners shows them ticked, and none can be unticked there', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', permissions: [...field, 'seeChosenCapital']);
+    final khaled = api.addPartner('project-0', 'خالد')['id']! as String;
+    await openProject(tester, api);
+    await showProjectSetting(tester, HomeScreen.myPermissionsKey('project-0'));
+    await scrollAndTap(tester, api, HomeScreen.myPermissionsKey('project-0'));
+    await tester.scrollUntilVisible(find.byKey(PermissionTicks.partnerKey(khaled)), 100);
+
+    final tick = tester.widget<CheckboxListTile>(find.byKey(PermissionTicks.partnerKey(khaled).body));
+    expect(tick.value, isTrue);
+    expect(tick.onChanged, isNull);
+  });
+
   testWidgets('Muteb, 12 Nov 2026: صلاحياتي is searched: what was typed keeps the permissions whose name or what it allows holds it, the capital heading over a capital tick kept', (tester) async {
     final api = FakeApi()..addProject('غصون 6', permissions: field);
     await openProject(tester, api);

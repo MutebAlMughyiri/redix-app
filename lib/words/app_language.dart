@@ -9,9 +9,6 @@ class AppLanguage extends ChangeNotifier {
 
   var _chosen = '';
 
-  /// The chosen language code, `ar` or `en`; empty while the app follows the phone's language.
-  String get chosen => _chosen;
-
   /// The locale the app shows; null lets Flutter follow the phone, Arabic for any language the app does not have.
   Locale? get locale => _chosen.isEmpty ? null : Locale(_chosen);
 

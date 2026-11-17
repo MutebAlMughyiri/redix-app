@@ -90,6 +90,19 @@ void main() {
       expect(text(tester, AccountsScreen.balanceKey(opened.custody)), '600.00');
     });
 
+    testWidgets("redix-app #107 R2: the transfer's day opens on the project's today by the server's clock, and the day chosen is sent", (tester) async {
+      final opened = await openAccounts(tester, arrange: (api) => api.serverClockBehind = const Duration(days: 2));
+      await openTransfer(tester, opened.api);
+      await tester.enterText(find.byKey(TransferDialog.amountKey), '400');
+
+      await act(tester, opened.api, () => tester.tap(find.byKey(TransferDialog.dateKey)));
+      await act(tester, opened.api, () => tester.tap(find.text('OK')));
+      await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
+
+      final riyadh = DateTime.now().toUtc().subtract(const Duration(days: 2)).add(const Duration(hours: 3));
+      expect(opened.api.sentTransfers.single.$2['date'], riyadh.toIso8601String().substring(0, 10));
+    });
+
     testWidgets('an amount that is not a number is refused in the dialog, and nothing is sent', (tester) async {
       final opened = await openAccounts(tester);
       await openTransfer(tester, opened.api);

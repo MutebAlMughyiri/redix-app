@@ -10,6 +10,7 @@ import 'package:redix/home/home_screen.dart';
 import 'package:redix/partners/movements_screen.dart';
 import 'package:redix/partners/partners_screen.dart';
 import 'package:redix/ui/bottom_button.dart';
+import 'package:redix/ui/messages.dart';
 
 import '../app_harness.dart';
 
@@ -289,6 +290,23 @@ void main() {
       expect(find.byKey(MovementsScreen.receiptKey('movement-1')), findsNothing);
       expect(find.byKey(MovementsScreen.rowKey('movement-0').bar), findsNothing);
       expect(tester.widget<Text>(find.byKey(MovementsScreen.rowKey('movement-1').trailing)).data, '(50.00)');
+    });
+
+    testWidgets('redix-api #119: a movement swiped away comes back from the bar, and the capital is read again', (tester) async {
+      late String partner;
+      final (:api, capture: _) = await openPartners(tester, (api) {
+        partner = api.addPartner('project-0', 'متعب')['id']! as String;
+        api.addMovement();
+      }, permissions: [...managerAndFinance, 'removeApprovedEntries']);
+      await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.nameKey(partner))));
+      await swipeToRemove(tester, api, MovementsScreen.rowKey('movement-0'));
+      api.sentReads.clear();
+
+      await act(tester, api, () => tester.tap(find.byKey(messageKeyOf('swipe.removed').icon)));
+
+      expect(api.sentEntryChanges.map((change) => (change.$1, change.$2)), [('movement-0', 'delete'), ('movement-0', 'restore')]);
+      expect(find.byKey(MovementsScreen.rowKey('movement-0')), findsOneWidget);
+      expect(api.sentReads, contains('/projects/project-0/capital'));
     });
 
     testWidgets('redix-api #119: whoever holds the removal swipes a movement away, and the capital is read again', (tester) async {
