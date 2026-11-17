@@ -22,20 +22,8 @@ jobs:
 
   patrol:
     runs-on: ubuntu-latest
-    services:
-      sqlserver:
-        image: mcr.microsoft.com/mssql/server:2025-latest
-        env:
-          ACCEPT_EULA: Y
-          MSSQL_SA_PASSWORD: Ci-only-Passw0rd
-        ports:
-          - 1433:1433
-        options: >-
-          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Ci-only-Passw0rd -C -Q 'SELECT 1'"
-          --health-interval 10s
-          --health-retries 12
     env:
-      ConnectionStrings__Redix: Server=localhost;Database=Redix;User Id=sa;Password=Ci-only-Passw0rd;TrustServerCertificate=True
+      REDIX_Environment: Dev
       REDIX_Admin__Username: ci-admin
       REDIX_Admin__Password: Ci-admin-passw0rd
     steps:
@@ -47,17 +35,19 @@ jobs:
           repository: MutebAlMughyiri/redix-api
           token: ${{ secrets.REDIX_API_TOKEN }}
           path: redix-api
-      - uses: actions/setup-dotnet@v6
+      - uses: actions/setup-go@v5
         with:
-          dotnet-version: 10.0.x
-      - name: Create the database and start the API
-        working-directory: redix-api
+          go-version-file: redix-api/go-backend/go.mod
+          cache-dependency-path: redix-api/go-backend/go.sum
+      - name: Start the API, which brings its database up to date as it starts
+        working-directory: redix-api/go-backend
         run: |
+          curl -sSfL https://github.com/typst/typst/releases/download/v0.15.1/typst-x86_64-unknown-linux-musl.tar.xz | tar -xJ -C "$RUNNER_TEMP"
+          export REDIX_Typst__Path="$RUNNER_TEMP/typst-x86_64-unknown-linux-musl/typst"
           export REDIX_Jwt__SigningKey="$(openssl rand -base64 64 | tr -d '\n')"
-          dotnet tool install --global dotnet-ef
-          dotnet build src/Redix.Api
-          dotnet ef database update --project src/Redix.Api --no-build
-          nohup dotnet run --project src/Redix.Api --launch-profile dev --no-build > api.log 2>&1 &
+          export REDIX_Database__Path="$RUNNER_TEMP/RedixDev.db"
+          go build -o "$RUNNER_TEMP/redix-server" ./cmd/server
+          nohup "$RUNNER_TEMP/redix-server" > api.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://localhost:5010/health && break; sleep 2; done
       - uses: actions/setup-java@v5
         with:

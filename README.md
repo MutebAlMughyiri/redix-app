@@ -74,6 +74,6 @@ dart run tool/update_guide_images.dart
 
 The last line copies the screenshots the Patrol tests took into the user guide's `docs/guide/images/`.
 
-`flutter test` runs the widget tests, with the API replaced by a fake. `patrol test` runs the real app end to end on a running emulator (`patrol_cli`: `dart pub global activate patrol_cli`), so the API must be running too: `dotnet run --project src/Redix.Api --launch-profile http` in redix-api.
+`flutter test` runs the widget tests, with the API replaced by a fake. `patrol test` runs the real app end to end on a running emulator (`patrol_cli`: `dart pub global activate patrol_cli`), so the API must be running too: `REDIX_Environment=Dev go run ./cmd/server` in redix-api's `go-backend`.
 
-CI runs all three on every push. Its Patrol job checks out redix-api with the `REDIX_API_TOKEN` secret (a fine-grained token with read access to redix-api), starts SQL Server and the API, then runs Patrol on an Android emulator.
+CI runs all three on every push. Its Patrol job checks out redix-api with the `REDIX_API_TOKEN` secret (a fine-grained token with read access to redix-api), starts the Go API as Dev on a fresh SQLite file, then runs Patrol on an Android emulator.
