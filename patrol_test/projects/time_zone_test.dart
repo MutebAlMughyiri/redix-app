@@ -18,6 +18,7 @@ void main() {
       final manager = await Given.manager();
       await $.onMoreInfo(manager);
       await $.menuChoice(ProjectInfoScreen.timeZoneMenuKey, ProjectInfoScreen.changeTimeZoneKey);
+      await $(ProjectInfoScreen.timeZoneOptionKey('Asia/Shanghai')).scrollTo(view: find.byKey(ProjectInfoScreen.timeZonesKey));
       await $.tapOn(ProjectInfoScreen.timeZoneOptionKey('Asia/Shanghai'));
       await $.says(ProjectInfoScreen.timeZoneKey, '${$.words.projectsTimeZone}: ${$.words.timeZoneBeijing} (UTC+8)');
       await $.restartApp();

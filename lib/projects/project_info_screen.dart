@@ -101,6 +101,9 @@ class ProjectInfoScreen extends StatefulWidget {
   /// Change, in the time zone's menu.
   static const changeTimeZoneKey = Key('projectInfo.changeTimeZone');
 
+  /// The sheet's list of the zones the API offers.
+  static const timeZonesKey = Key('projectInfo.timeZones');
+
   /// The zone [name] in the sheet of zones.
   static Key timeZoneOptionKey(String name) => Key('projectInfo.timeZoneOption.$name');
 
@@ -128,6 +131,7 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
     showPickerSheet<void>(
       context,
       (sheetContext) => ListView(
+        key: ProjectInfoScreen.timeZonesKey,
         shrinkWrap: true,
         children: [
           for (final zone in widget.timeZones.all)
