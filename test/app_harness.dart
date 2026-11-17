@@ -36,6 +36,13 @@ import 'support/ui_checks.dart';
 export 'support/ui_checks.dart';
 
 /// The words the fake API serves: each key's value names its language and key, so a test reads which word is shown.
+/// Today in Riyadh, the zone of the fake API's projects, [behind] the server's clock: the day an entry starts at, whatever the zone of the machine the
+/// tests run on (redix-app #107). CI runs in UTC, three hours behind Riyadh.
+DateTime riyadhToday({Duration behind = Duration.zero}) {
+  final riyadh = DateTime.now().toUtc().subtract(behind).add(const Duration(hours: 3));
+  return DateTime(riyadh.year, riyadh.month, riyadh.day);
+}
+
 Map<String, String> wordsIn(String language) => {
   for (final key in [
     'app.title',

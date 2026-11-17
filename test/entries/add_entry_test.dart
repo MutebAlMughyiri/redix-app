@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/format/date_format.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/expenses/payment_choices.dart';
@@ -129,8 +130,7 @@ void main() {
 
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
-    final riyadh = DateTime.now().toUtc().subtract(const Duration(days: 2)).add(const Duration(hours: 3));
-    expect(opened.api.sentEntries.single['date'], riyadh.toIso8601String().substring(0, 10));
+    expect(opened.api.sentEntries.single['date'], apiDate(riyadhToday(behind: const Duration(days: 2))));
   });
 
   testWidgets('saving a draft sends what was typed and chosen, never a figure, with an id made on the phone', (tester) async {
@@ -143,7 +143,7 @@ void main() {
     final body = opened.api.sentEntries.single;
     expect(body['itemId'], opened.item);
     expect(body['supplierId'], opened.supplier);
-    expect(body['date'], DateTime.now().toIso8601String().substring(0, 10));
+    expect(body['date'], apiDate(riyadhToday()));
     expect(body['description'], 'مواد لياسة · ملاحظة');
     expect(body.containsKey('product'), isFalse);
     expect(body.containsKey('notes'), isFalse);
@@ -561,7 +561,7 @@ void main() {
     await tapVisible(tester, opened.api, AddEntryScreen.draftKey);
 
     final body = opened.api.sentEntries.single;
-    expect(body['date'], DateTime.now().toIso8601String().substring(0, 10));
+    expect(body['date'], apiDate(riyadhToday()));
     expect(body.containsKey('paymentAmount'), isFalse);
     expect(body.containsKey('bankFees'), isFalse);
   });

@@ -138,7 +138,7 @@ void main() {
     final (:api, :capture) = await openReports(tester, (api) {});
     await act(tester, api, () => tester.pageBack());
     await openFromTheHome(tester, api, VatStatementScreen.pathOf('project-0'));
-    final quarter = quarterOf(DateTime.now());
+    final quarter = quarterOf(riyadhToday());
     final name = VatStatementScreen.fileNameOf(quarter);
     final from = apiDate(quarter.$1);
     final to = apiDate(quarter.$2);

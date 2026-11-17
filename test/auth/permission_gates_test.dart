@@ -245,7 +245,7 @@ final List<Gate> _gates = [
     permission: Permission.generateReports,
     arrange: _nothing,
     steps: [_openProject, (tester, api, capture) => openFromTheHome(tester, api, VatStatementScreen.pathOf(_project))],
-    control: _enabled(ReportFileButtons.buttonKey(VatStatementScreen.fileNameOf(quarterOf(DateTime.now())), ReportFileKind.excel)),
+    control: _enabled(ReportFileButtons.buttonKey(VatStatementScreen.fileNameOf(quarterOf(riyadhToday())), ReportFileKind.excel)),
   ),
   (
     name: 'An item report\'s working files',

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/format/date_format.dart';
 import 'package:redix/attachments/picked_file.dart';
 import 'package:redix/entries/table_picker.dart';
 import 'package:redix/entries/add_entry_screen.dart';
@@ -174,7 +175,7 @@ void main() {
     expect(sent['paymentMethodId'], opened.method);
     expect(sent['accountId'], isNotNull);
     expect(sent['description'], 'دفعة الدور الأرضي');
-    expect(sent['date'], DateTime.now().toIso8601String().substring(0, 10));
+    expect(sent['date'], apiDate(riyadhToday()));
     expect(sent['submit'], isFalse);
     expect(sent.containsKey('invoiceNumber'), isFalse);
   });
