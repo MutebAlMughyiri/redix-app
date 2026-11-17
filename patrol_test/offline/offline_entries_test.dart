@@ -5,7 +5,6 @@ import 'package:redix/auth/permission.dart';
 import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
-import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/offline/waiting_screen.dart';
 import 'package:redix/projects/projects_screen.dart';
@@ -46,7 +45,7 @@ Future<void> readyOnTheHome(PatrolIntegrationTester $, ({Person manager, String 
   await $.tapOn(HomeScreen.addEntryKey(made.manager.projectId));
   await $.pickTable(made.tableId);
   await $.chooseSupplier(made.supplier);
-  await $.goTo($(PaymentChoices.accountKey(made.account)));
+  await $.choosePayment(made.manager, made.account);
   await $.back();
   await $.reach($(HomeScreen.titleKey));
 }

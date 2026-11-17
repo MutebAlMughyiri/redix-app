@@ -7,7 +7,6 @@ import 'package:redix/auth/sign_in_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/entries/entries_screen.dart';
 import 'package:redix/entries/entry_link_screen.dart';
-import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/ui/part_keys.dart';
 import 'package:redix/ui/messages.dart';
 
@@ -121,8 +120,7 @@ void main() {
       await $.pickTable(table.tableId);
       await $.chooseANewSupplier(manager);
       await $.fill(AddEntryScreen.amountKey, '100');
-      await $.tapOn(PaymentChoices.paymentMethodKey((await Given.paymentMethods(manager)).first['id'] as String));
-      await $.tapOn(PaymentChoices.accountKey(account));
+      await $.choosePayment(manager, account);
       await Pc.cutNetwork();
       await $.sendEntry();
       await $.messageShows('expenses.keptOnPhone');

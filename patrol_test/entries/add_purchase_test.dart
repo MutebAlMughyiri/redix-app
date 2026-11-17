@@ -177,11 +177,14 @@ void main() {
     phoneCase('open question 4: with chargeAnyAccount any account is offered', ($) async {
       final manager = await Given.manager();
       final account = await Given.account(manager);
+      final second = await Given.account(manager);
       final table = await Given.firstPurchaseTable(manager);
       final member = await Given.member(manager, permissions: [Permission.recordEntries, Permission.chargeAnyAccount]);
       await $.onAddEntry(member);
       await $.pickTable(table.tableId);
+      await $.tapOn(PaymentChoices.paymentMethodKey((await Given.paymentMethods(manager)).first['id'] as String));
       await $.goTo($(PaymentChoices.accountKey(account)));
+      await $.goTo($(PaymentChoices.accountKey(second)));
     });
 
     phoneCase('AC-14.1: a deduction is a negative amount, sent with why in its notes', ($) async {
@@ -254,10 +257,11 @@ void main() {
       final other = await Given.account(manager);
       final table = await Given.firstPurchaseTable(manager);
       final member = await Given.member(manager, permissions: [Permission.recordEntries]);
-      final custody = await Given.account(manager, custodian: member);
+      await Given.account(manager, name: 'كاش مع العضو', custodian: member);
       await $.onAddEntry(member);
       await $.pickTable(table.tableId);
-      await $.goTo($(PaymentChoices.accountKey(custody)));
+      await $.tapOn(PaymentChoices.paymentMethodKey((await Given.paymentMethods(manager)).first['id'] as String));
+      await $.says(PaymentChoices.paidFromKey, '${$.words.expensesPaidFrom}: كاش مع العضو');
       expect($(PaymentChoices.accountKey(other)), findsNothing);
     });
 

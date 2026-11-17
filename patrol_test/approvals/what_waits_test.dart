@@ -4,7 +4,6 @@ import 'package:patrol/patrol.dart';
 import 'package:redix/approvals/approvals_screen.dart';
 import 'package:redix/attachments/attachment_screen.dart';
 import 'package:redix/entries/add_entry_screen.dart';
-import 'package:redix/expenses/payment_choices.dart';
 import 'package:redix/home/home_screen.dart';
 import 'package:redix/ui/api_list_body.dart';
 import 'package:redix/ui/part_keys.dart';
@@ -33,8 +32,7 @@ Future<String> sentWithFile(PatrolIntegrationTester $, Person manager, String na
   await $.chooseANewSupplier(manager);
   await $.pickFromThePhone(AddEntryScreen.filesKey, name, bytes);
   await $.fill(AddEntryScreen.amountKey, '100');
-  await $.tapOn(PaymentChoices.paymentMethodKey((await Given.paymentMethods(manager)).first['id'] as String));
-  await $.tapOn(PaymentChoices.accountKey(account));
+  await $.choosePayment(manager, account);
   await $.sendEntry();
   await $.messageShows('expenses.sent');
   return (await Given.waitingIds(manager)).single;
