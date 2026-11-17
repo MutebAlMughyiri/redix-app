@@ -6,8 +6,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
@@ -39,15 +39,15 @@ jobs:
       REDIX_Admin__Username: ci-admin
       REDIX_Admin__Password: Ci-admin-passw0rd
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           path: redix-app
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: MutebAlMughyiri/redix-api
           token: ${{ secrets.REDIX_API_TOKEN }}
           path: redix-api
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
       - name: Create the database and start the API
@@ -59,7 +59,7 @@ jobs:
           dotnet ef database update --project src/Redix.Api --no-build
           nohup dotnet run --project src/Redix.Api --launch-profile dev --no-build > api.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://localhost:5010/health && break; sleep 2; done
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 21
