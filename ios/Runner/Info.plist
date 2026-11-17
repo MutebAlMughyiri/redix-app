@@ -6,6 +6,8 @@
 	<string>REDIX photographs your invoices with the camera.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>يفتح REDIX بوجهك دون كلمة المرور. REDIX opens with your face, without your password.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

@@ -1,10 +1,16 @@
 import java.util.Base64
+import java.util.Properties
 
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// REDIX's upload key (redix-app #118): android/key.properties, written from GitHub's secrets by the test-builds workflow, never in the repo.
+// Without it, as on Muteb's PC, a release build is signed with the debug key and never leaves the PC; the workflow checks the key before it uploads.
+val uploadKeyFile = rootProject.file("key.properties")
+val uploadKey = Properties().apply { if (uploadKeyFile.exists()) uploadKeyFile.inputStream().use { load(it) } }
 
 android {
     namespace = "redix"
@@ -46,11 +52,20 @@ android {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
     }
 
+    signingConfigs {
+        if (uploadKeyFile.exists()) {
+            create("upload") {
+                storeFile = file(uploadKey.getProperty("storeFile"))
+                storePassword = uploadKey.getProperty("storePassword")
+                keyAlias = uploadKey.getProperty("keyAlias")
+                keyPassword = uploadKey.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("upload") ?: signingConfigs.getByName("debug")
         }
     }
 }

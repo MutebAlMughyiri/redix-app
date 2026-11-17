@@ -22,6 +22,18 @@ jobs:
       - run: flutter test
       - run: flutter build apk --debug --dart-define-from-file=config/dev.json
 
+  ios:
+    # The iPhone app compiles, unsigned, on every push: no Mac has ever built it (redix-app #118, R8).
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+      - run: flutter pub get
+      - run: flutter build ios --release --no-codesign --dart-define-from-file=config/prod.json
+
   patrol:
     runs-on: ubuntu-latest
     env:
