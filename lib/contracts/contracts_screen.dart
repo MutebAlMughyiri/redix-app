@@ -9,6 +9,7 @@ import '../ui/api_list_body.dart';
 import '../ui/bottom_button.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
+import '../ui/section.dart';
 import '../words/words.dart';
 import 'contract.dart';
 import 'contract_card.dart';
@@ -51,6 +52,9 @@ class ContractsScreen extends StatefulWidget {
 
   /// The button that adds a contract.
   static const addKey = Key('contracts.add');
+
+  /// The section holding the filter chips with their counts (redix-app #96).
+  static const filtersKey = Key('contracts.filters');
 
   /// Amend, in a contract's menu.
   static const editKey = Key('contracts.edit');
@@ -171,18 +175,20 @@ class _ContractsScreenState extends State<ContractsScreen> {
             listenable: contracts,
             builder: (context, _) => Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Wrap(
-                spacing: 8,
-                children: [
-                  for (final filter in ContractFilter.values)
-                    ChoiceChip(
-                      key: ContractsScreen.filterKey(filter),
-                      label: Text('${words.text(filter.wordKey)} · ${contracts.all.where(filter.keeps).length}', key: ContractsScreen.filterKey(filter).label),
-                      selected: _filter == filter,
-                      onSelected: (_) => setState(() => _filter = filter),
-                    ),
-                ],
-              ),
+              child: Section(key: ContractsScreen.filtersKey, [
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    for (final filter in ContractFilter.values)
+                      ChoiceChip(
+                        key: ContractsScreen.filterKey(filter),
+                        label: Text('${words.text(filter.wordKey)} · ${contracts.all.where(filter.keeps).length}', key: ContractsScreen.filterKey(filter).label),
+                        selected: _filter == filter,
+                        onSelected: (_) => setState(() => _filter = filter),
+                      ),
+                  ],
+                ),
+              ]),
             ),
           ),
           if (project.may(Permission.seeAllCapital))

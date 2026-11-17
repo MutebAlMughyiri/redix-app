@@ -38,9 +38,8 @@ class SwipeToRemove extends StatelessWidget {
     final swipe = rowKey.swipe;
     final framed = Card.outlined(
       key: rowKey.card,
-      margin: const EdgeInsets.only(bottom: 8),
       clipBehavior: Clip.antiAlias,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: side == BorderSide.none ? BorderSide(color: AppColor.frame.of(context)) : side),
+      shape: side == BorderSide.none ? null : RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: side),
       child: Stack(
         children: [
           child,

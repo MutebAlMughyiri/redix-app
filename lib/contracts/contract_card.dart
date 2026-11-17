@@ -45,7 +45,6 @@ class ContractCard extends StatelessWidget {
     final theme = Theme.of(context);
     return Card.outlined(
       key: ContractsScreen.nameKey(contract.id).card,
-      margin: const EdgeInsets.only(bottom: 8),
       shape: contract.isOverrun ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: AppColor.refusal.of(context))) : null,
       child: Padding(
         padding: EdgeInsetsDirectional.fromSTEB(16, 8, mayChange ? 4 : 16, 16),

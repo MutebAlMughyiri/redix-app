@@ -6,6 +6,7 @@ import '../ui/name_dialog.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/section.dart';
 import '../words/words.dart';
 import 'project.dart';
 import 'projects.dart';
@@ -34,6 +35,12 @@ class ProjectInfoScreen extends StatefulWidget {
 
   /// The project's name.
   static const nameKey = Key('projectInfo.name');
+
+  /// The section holding the project's name, start date and status (redix-app #96).
+  static const projectSectionKey = Key('projectInfo.projectSection');
+
+  /// The section holding the description, or the way to change it.
+  static const descriptionSectionKey = Key('projectInfo.descriptionSection');
 
   /// The button that renames the project.
   static const renameKey = Key('projectInfo.rename');
@@ -180,27 +187,29 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              Row(
-                children: [
-                  Expanded(child: Text(project.name, key: ProjectInfoScreen.nameKey, style: theme.textTheme.titleLarge)),
-                  if (mayChange)
-                    IconButton(
-                      key: ProjectInfoScreen.renameKey,
-                      tooltip: words.projectsRename,
-                      icon: Icon(Icons.edit_outlined, key: ProjectInfoScreen.renameKey.icon),
-                      onPressed: () => _askToRename(project),
-                    ),
-                ],
-              ),
-              OverflowBar(
-                alignment: MainAxisAlignment.spaceBetween,
-                overflowSpacing: 4,
-                children: [
-                  Text(project.isFinished ? '$startDate · ${words.projectsReadOnly}' : startDate, key: ProjectInfoScreen.detailsKey, style: theme.textTheme.bodySmall),
-                  projectStatusChip(context, project, ProjectInfoScreen.statusKey),
-                ],
-              ),
-              const Divider(height: 24),
+              Section(key: ProjectInfoScreen.projectSectionKey, [
+                Row(
+                  children: [
+                    Expanded(child: Text(project.name, key: ProjectInfoScreen.nameKey, style: theme.textTheme.titleLarge)),
+                    if (mayChange)
+                      IconButton(
+                        key: ProjectInfoScreen.renameKey,
+                        tooltip: words.projectsRename,
+                        icon: Icon(Icons.edit_outlined, key: ProjectInfoScreen.renameKey.icon),
+                        onPressed: () => _askToRename(project),
+                      ),
+                  ],
+                ),
+                OverflowBar(
+                  alignment: MainAxisAlignment.spaceBetween,
+                  overflowSpacing: 4,
+                  children: [
+                    Text(project.isFinished ? '$startDate · ${words.projectsReadOnly}' : startDate, key: ProjectInfoScreen.detailsKey, style: theme.textTheme.bodySmall),
+                    projectStatusChip(context, project, ProjectInfoScreen.statusKey),
+                  ],
+                ),
+              ]),
+              const SizedBox(height: 8),
               OverflowBar(
                 alignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -217,12 +226,12 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
               if (project.units.isEmpty) Text(words.projectsNoUnits, key: ProjectInfoScreen.noUnitsKey, style: theme.textTheme.bodyMedium),
               for (final unit in project.units)
                 UnitRow(unit: unit, mayChange: mayChange, onRename: () => _askToRenameUnit(project, unit), onRemove: () => widget.projects.deleteUnit(project, unit)),
-              const Divider(height: 24),
+              const SizedBox(height: 16),
               Text(words.projectInfoDescription, key: ProjectInfoScreen.descriptionHeadingKey, style: theme.textTheme.titleSmall),
               const SizedBox(height: 8),
-              ..._descriptionParts(words, theme, project, mayChange),
+              Section(key: ProjectInfoScreen.descriptionSectionKey, _descriptionParts(words, theme, project, mayChange)),
               if (mayChange) ...[
-                const Divider(height: 32),
+                const SizedBox(height: 16),
                 OutlinedButton.icon(
                   key: ProjectInfoScreen.closeKey,
                   style: OutlinedButton.styleFrom(foregroundColor: AppColor.refusal.of(context)),

@@ -44,7 +44,6 @@ class UserRow extends StatelessWidget {
     final words = Words.of(context);
     return Card.outlined(
       key: UsersScreen.rowKey(user.id),
-      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         key: UsersScreen.rowKey(user.id).body,
         leading: CircleAvatar(key: UsersScreen.rowKey(user.id).icon, child: Text(user.displayName.characters.take(1).toString(), key: UsersScreen.rowKey(user.id).label)),

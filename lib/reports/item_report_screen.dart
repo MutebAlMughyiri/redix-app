@@ -99,7 +99,6 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
     final words = Words.of(context);
     return Card.outlined(
       key: ItemReportScreen.subgroupKey(subgroup.id),
-      margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -123,7 +122,6 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
     final theme = Theme.of(context);
     return Card.outlined(
       key: ItemReportScreen.contractCardKey(contract.id),
-      margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -164,8 +162,13 @@ class _ItemReportScreenState extends State<ItemReportScreen> {
                 builder: (report) => Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    amountLine(ItemReportScreen.totalKey, words.reportsItemTotal, report.total, labelStyle: Theme.of(context).textTheme.titleMedium, amountStyle: Theme.of(context).textTheme.titleLarge),
-                    const SizedBox(height: 12),
+                    Card.outlined(
+                      key: ItemReportScreen.totalKey.card,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: amountLine(ItemReportScreen.totalKey, words.reportsItemTotal, report.total, labelStyle: Theme.of(context).textTheme.titleMedium, amountStyle: Theme.of(context).textTheme.titleLarge),
+                      ),
+                    ),
                     if (widget.project.may(Permission.seeAllCapital))
                       Padding(
                         padding: const EdgeInsets.only(bottom: 12),

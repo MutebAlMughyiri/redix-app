@@ -61,7 +61,6 @@ class _RegisteredProjectsScreenState extends State<RegisteredProjectsScreen> {
     final manager = partsLine([project.managerName, project.managerUsername, project.managerMobile]);
     return Card.outlined(
       key: RegisteredProjectsScreen.cardKey(project.id),
-      margin: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

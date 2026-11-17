@@ -104,7 +104,6 @@ class _PartnersScreenState extends State<PartnersScreen> {
 
   Widget _total(Words words) => Card.outlined(
     key: PartnersScreen.totalKey.card,
-    margin: const EdgeInsets.only(bottom: 12),
     child: Padding(
       padding: const EdgeInsets.all(16),
       child: ApiObjectBody(
@@ -125,7 +124,6 @@ class _PartnersScreenState extends State<PartnersScreen> {
     final project = widget.project;
     return Card.outlined(
       key: PartnersScreen.rowKey(partner.id),
-      margin: const EdgeInsets.only(bottom: 8),
       child: ListenableBuilder(
         listenable: widget.capital,
         builder: (context, _) {

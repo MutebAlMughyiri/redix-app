@@ -10,6 +10,7 @@ import '../words/words.dart';
 import 'reconciliation.dart';
 import '../ui/refusal_text.dart';
 import '../ui/act_once.dart';
+import '../ui/section.dart';
 
 /// What each account and custody really holds (UC-041), with the total and the difference as they are typed.
 class ReconcileScreen extends StatefulWidget {
@@ -24,6 +25,9 @@ class ReconcileScreen extends StatefulWidget {
 
   /// The total as typed.
   static const totalKey = Key('reconcile.total');
+
+  /// The section holding each account's actual balance, their total and the difference (redix-app #96).
+  static const balancesKey = Key('reconcile.balances');
 
   /// The difference as typed.
   static const differenceKey = Key('reconcile.difference');
@@ -96,16 +100,18 @@ class _ReconcileScreenState extends State<ReconcileScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           spacing: 12,
           children: [
-            for (final row in figures.balances)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  entryField(key: ReconcileScreen.balanceKey(row.accountId), controller: _fields[row.accountId]!, label: row.accountName, isNumber: true, isSigned: true, onChanged: (_) => setState(() {})),
-                  Text('${words.reconciliationsBooks}: ${formatMoney(row.booksBalance)}', key: ReconcileScreen.booksKey(row.accountId), style: theme.textTheme.bodySmall),
-                ],
-              ),
-            Text('${words.reconciliationsActualTotal}: ${formatMoney(_total)}', key: ReconcileScreen.totalKey),
-            Text('${words.reconciliationsDifference}: ${formatMoney(_total - figures.surplus)}', key: ReconcileScreen.differenceKey, style: theme.textTheme.titleMedium),
+            Section(key: ReconcileScreen.balancesKey, [
+              for (final row in figures.balances)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    entryField(key: ReconcileScreen.balanceKey(row.accountId), controller: _fields[row.accountId]!, label: row.accountName, isNumber: true, isSigned: true, onChanged: (_) => setState(() {})),
+                    Text('${words.reconciliationsBooks}: ${formatMoney(row.booksBalance)}', key: ReconcileScreen.booksKey(row.accountId), style: theme.textTheme.bodySmall),
+                  ],
+                ),
+              Text('${words.reconciliationsActualTotal}: ${formatMoney(_total)}', key: ReconcileScreen.totalKey),
+              Text('${words.reconciliationsDifference}: ${formatMoney(_total - figures.surplus)}', key: ReconcileScreen.differenceKey, style: theme.textTheme.titleMedium),
+            ]),
             if (_message.isNotEmpty) refusalText(context, words.text(_message), ReconcileScreen.messageKey),
             ActOnce(builder: (once) => FilledButton(key: ReconcileScreen.saveKey, onPressed: once(_save), child: Text(words.reconciliationsSave, key: ReconcileScreen.saveKey.label))),
           ],

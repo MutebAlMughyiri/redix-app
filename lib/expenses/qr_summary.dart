@@ -6,9 +6,9 @@ import '../words/words.dart';
 import '../entries/add_entry_screen.dart';
 import '../ui/part_keys.dart';
 import 'invoice_qr.dart';
-import '../ui/app_color.dart';
 
-/// What was read from the invoice's QR code (AC-11.1): its five fields, and an offer to add the seller when no supplier holds its number.
+/// What was read from the invoice's QR code (AC-11.1): its five fields, and an offer to add the seller when no supplier holds its number. It sits inside the invoice's
+/// section, so it has no border of its own (redix-app #96, D1).
 class QrSummary extends StatelessWidget {
   /// The summary of [qr]. When [offerSupplier], it says no supplier holds the number, and [onAddSupplier] adds it.
   const QrSummary({super.key, required this.qr, required this.offerSupplier, required this.onAddSupplier});
@@ -28,30 +28,23 @@ class QrSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     final words = Words.of(context);
     final theme = Theme.of(context);
-    return Card.filled(
+    return Column(
       key: AddEntryScreen.qrSummaryKey,
-      margin: const EdgeInsets.only(top: 12),
-      color: AppColor.activeSurface.of(context),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(words.expensesQrRead, key: AddEntryScreen.qrReadKey, style: theme.textTheme.titleSmall),
-            const SizedBox(height: 4),
-            Text(qr.sellerName, key: AddEntryScreen.qrSellerKey),
-            Text(qr.vatNumber, key: AddEntryScreen.qrVatNumberKey),
-            Text('${formatDate(qr.issuedAt)} ${_timeOf(qr.issuedAt)}', key: AddEntryScreen.qrTimeKey),
-            Text('${words.expensesTotal} ${formatMoney(qr.total)}', key: AddEntryScreen.qrAmountsKey),
-            if (offerSupplier) ...[
-              const SizedBox(height: 8),
-              Text(words.expensesQrSupplierMissing, key: AddEntryScreen.qrSupplierMissingKey),
-              const SizedBox(height: 4),
-              OutlinedButton(key: AddEntryScreen.qrAddSupplierKey, onPressed: onAddSupplier, child: Text(words.expensesQrAddSupplier, key: AddEntryScreen.qrAddSupplierKey.label)),
-            ],
-          ],
-        ),
-      ),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(words.expensesQrRead, key: AddEntryScreen.qrReadKey, style: theme.textTheme.titleSmall),
+        const SizedBox(height: 4),
+        Text(qr.sellerName, key: AddEntryScreen.qrSellerKey),
+        Text(qr.vatNumber, key: AddEntryScreen.qrVatNumberKey),
+        Text('${formatDate(qr.issuedAt)} ${_timeOf(qr.issuedAt)}', key: AddEntryScreen.qrTimeKey),
+        Text('${words.expensesTotal} ${formatMoney(qr.total)}', key: AddEntryScreen.qrAmountsKey),
+        if (offerSupplier) ...[
+          const SizedBox(height: 8),
+          Text(words.expensesQrSupplierMissing, key: AddEntryScreen.qrSupplierMissingKey),
+          const SizedBox(height: 4),
+          OutlinedButton(key: AddEntryScreen.qrAddSupplierKey, onPressed: onAddSupplier, child: Text(words.expensesQrAddSupplier, key: AddEntryScreen.qrAddSupplierKey.label)),
+        ],
+      ],
     );
   }
 }

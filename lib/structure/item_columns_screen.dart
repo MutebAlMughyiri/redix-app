@@ -6,6 +6,7 @@ import '../ui/bottom_button.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
 import '../ui/swipe_to_remove.dart';
+import '../ui/section.dart';
 import '../words/words.dart';
 import 'add_column_dialog.dart';
 import 'apply_to_all_dialog.dart';
@@ -105,6 +106,9 @@ class ItemColumnsScreen extends StatefulWidget {
   /// The choice of changing the template's columns or this item's.
   static const scopeKey = Key('columns.scope');
 
+  /// The section holding the choice of the template or this item, with its hint (redix-app #96).
+  static const scopeSectionKey = Key('itemColumns.scopeSection');
+
   @override
   State<ItemColumnsScreen> createState() => _ItemColumnsScreenState();
 }
@@ -173,27 +177,20 @@ class _ItemColumnsScreenState extends State<ItemColumnsScreen> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SegmentedButton<bool>(
-              key: ItemColumnsScreen.scopeKey,
-              showSelectedIcon: false,
-              segments: [
-                ButtonSegment(value: true, label: Text(words.columnsTemplate, key: ItemColumnsScreen.templateKey)),
-                ButtonSegment(value: false, label: Text(words.columnsThisItem, key: ItemColumnsScreen.thisItemKey)),
-              ],
-              selected: {_showsTemplate},
-              onSelectionChanged: (selected) => _show(template: selected.single),
-            ),
-          ),
-          if (mayChange)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(words.columnsHint, key: ItemColumnsScreen.hintKey, style: textTheme.bodySmall),
+            child: Section(key: ItemColumnsScreen.scopeSectionKey, [
+              SegmentedButton<bool>(
+                key: ItemColumnsScreen.scopeKey,
+                showSelectedIcon: false,
+                segments: [
+                  ButtonSegment(value: true, label: Text(words.columnsTemplate, key: ItemColumnsScreen.templateKey)),
+                  ButtonSegment(value: false, label: Text(words.columnsThisItem, key: ItemColumnsScreen.thisItemKey)),
                 ],
+                selected: {_showsTemplate},
+                onSelectionChanged: (selected) => _show(template: selected.single),
               ),
-            ),
+              if (mayChange) Text(words.columnsHint, key: ItemColumnsScreen.hintKey, style: textTheme.bodySmall),
+            ]),
+          ),
           Expanded(
             child: ApiListBody(
               list: _columns,

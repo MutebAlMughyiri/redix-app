@@ -10,6 +10,7 @@ import 'users.dart';
 import '../ui/form_refusal.dart';
 import '../ui/form_button_style.dart';
 import '../ui/act_once.dart';
+import '../ui/section.dart';
 
 /// The new user form (UC-007): their name, username, mobile and a temporary password they change at first sign-in (AC-02.1). A new login is born in a project.
 class NewUserScreen extends StatefulWidget {
@@ -27,6 +28,9 @@ class NewUserScreen extends StatefulWidget {
 
   /// The user's name.
   static const nameKey = Key('newUser.name');
+
+  /// The section holding the new user's name, username, role name, mobile and temporary password (redix-app #96).
+  static const fieldsKey = Key('newUser.fields');
 
   /// The user's username.
   static const usernameKey = Key('newUser.username');
@@ -99,24 +103,22 @@ class _NewUserScreenState extends State<NewUserScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            TextField(
-              key: NewUserScreen.nameKey,
-              controller: _name,
-              decoration: field(words.usersName, helper: words.usersNameHint),
-            ),
-            const SizedBox(height: 16),
-            TextField(key: NewUserScreen.usernameKey, controller: _username, autocorrect: false, decoration: field(words.usersUsername)),
-            const SizedBox(height: 16),
-            TextField(key: NewUserScreen.roleNameKey, controller: _roleName, decoration: field(words.usersRoleName)),
-            const SizedBox(height: 16),
-            TextField(key: NewUserScreen.mobileKey, controller: _mobile, keyboardType: TextInputType.phone, decoration: field(words.usersMobile)),
-            const SizedBox(height: 16),
-            TextField(
-              key: NewUserScreen.passwordKey,
-              controller: _password,
-              autocorrect: false,
-              decoration: field(words.usersTemporaryPassword, helper: words.usersTemporaryPasswordHint),
-            ),
+            Section(key: NewUserScreen.fieldsKey, [
+              TextField(
+                key: NewUserScreen.nameKey,
+                controller: _name,
+                decoration: field(words.usersName, helper: words.usersNameHint),
+              ),
+              TextField(key: NewUserScreen.usernameKey, controller: _username, autocorrect: false, decoration: field(words.usersUsername)),
+              TextField(key: NewUserScreen.roleNameKey, controller: _roleName, decoration: field(words.usersRoleName)),
+              TextField(key: NewUserScreen.mobileKey, controller: _mobile, keyboardType: TextInputType.phone, decoration: field(words.usersMobile)),
+              TextField(
+                key: NewUserScreen.passwordKey,
+                controller: _password,
+                autocorrect: false,
+                decoration: field(words.usersTemporaryPassword, helper: words.usersTemporaryPasswordHint),
+              ),
+            ]),
             const SizedBox(height: 16),
             Text(words.permissionsTitle, key: NewUserScreen.permissionsHeadingKey, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),

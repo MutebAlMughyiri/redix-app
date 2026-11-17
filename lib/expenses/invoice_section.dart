@@ -8,13 +8,10 @@ import '../ui/part_keys.dart';
 import '../ui/app_color.dart';
 import '../ui/refusal_text.dart';
 
-/// The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files. Not shown to whoever may not attach files in [project].
+/// The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files. Shown only where [showsIn] says.
 class InvoiceSection extends StatelessWidget {
-  /// The section of [project] showing [file], or [emptyLabel] until there is one, with [message] saying why the last try gave none, calling [onCamera] and [onFiles].
-  const InvoiceSection({super.key, required this.project, required this.file, required this.emptyLabel, required this.message, required this.onCamera, required this.onFiles, this.isReading = false});
-
-  /// The project the file goes to.
-  final Project project;
+  /// The part showing [file], or [emptyLabel] until there is one, with [message] saying why the last try gave none, calling [onCamera] and [onFiles].
+  const InvoiceSection({super.key, required this.file, required this.emptyLabel, required this.message, required this.onCamera, required this.onFiles, this.isReading = false});
 
   /// The invoice chosen; none yet when empty.
   final PickedFile file;
@@ -43,23 +40,24 @@ class InvoiceSection extends StatelessWidget {
       color: AppColor.mutedSurface.of(context),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Icon(file.isNone ? Icons.receipt_long_outlined : Icons.picture_as_pdf_outlined, key: AddEntryScreen.invoiceNameKey.icon),
           const SizedBox(height: 4),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4),
-            child: Text(file.isNone ? emptyLabel : file.name, key: AddEntryScreen.invoiceNameKey, style: theme.textTheme.bodySmall, textAlign: TextAlign.center, maxLines: 3, overflow: TextOverflow.ellipsis),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Text(file.isNone ? emptyLabel : file.name, key: AddEntryScreen.invoiceNameKey, style: theme.textTheme.bodySmall, maxLines: 3, overflow: TextOverflow.ellipsis),
           ),
         ],
       ),
     );
   }
 
+  /// Whether [project]'s form shows the file at all: an entry read only shows the file it has, a new one shows it to whoever may attach files.
+  static bool showsIn(Project project, PickedFile file, {required bool isReading}) => isReading ? !file.isNone : project.mayAttachFiles;
+
   @override
   Widget build(BuildContext context) {
-    if (isReading ? file.isNone : !project.mayAttachFiles) {
-      return const SizedBox.shrink();
-    }
     final words = Words.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

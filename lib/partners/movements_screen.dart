@@ -76,7 +76,6 @@ class _MovementsScreenState extends State<MovementsScreen> {
     ];
     return Card.outlined(
       key: MovementsScreen.rowKey(movement.id),
-      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         key: MovementsScreen.rowKey(movement.id).body,
         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),

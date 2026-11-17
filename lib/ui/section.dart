@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'part_keys.dart';
 
-/// One section of a long form: its [children] on a card, evenly spaced.
-class FormSection extends StatelessWidget {
+/// One component of loose parts, the fields of a form or a list's filter, in its one border, evenly spaced (redix-app #96). Its parts carry no border of their own, and a
+/// list's rows, which have theirs, never sit inside it.
+class Section extends StatelessWidget {
   /// The section holding [children], keyed [key] so a test finds it by its key.
-  const FormSection(this.children, {required Key super.key});
+  const Section(this.children, {required Key super.key});
 
   /// What the section holds, from top to bottom.
   final List<Widget> children;
@@ -13,7 +14,6 @@ class FormSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Card.outlined(
     key: key.card,
-    margin: const EdgeInsets.only(top: 16),
     child: Padding(
       padding: const EdgeInsets.all(16),
       child: Column(

@@ -6,6 +6,7 @@ import '../auth/sign_in_screen.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/section.dart';
 import '../words/words.dart';
 import 'project.dart';
 import 'project_registration.dart';
@@ -96,6 +97,12 @@ class NewProjectScreen extends StatefulWidget {
   /// The heading over the manager.
   static const managerHeadingKey = Key('newProject.managerHeading');
 
+  /// The section holding the project's name, description, start date and, signed in, where its structure is copied from (redix-app #96).
+  static const projectSectionKey = Key('newProject.projectSection');
+
+  /// The section holding the manager's name, username, mobile and password, on the public form.
+  static const managerSectionKey = Key('newProject.managerSection');
+
   /// The choice of the project [id] to copy the structure from; the default template's is empty.
   static Key structureSourceOptionKey(String id) => Key('newProject.structureSource.$id');
 
@@ -174,23 +181,35 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
           children: [
             Text(words.registerHint, key: NewProjectScreen.hintKey, style: theme.textTheme.bodyMedium),
             const SizedBox(height: 16),
-            TextField(
-              key: NewProjectScreen.nameKey,
-              controller: _name,
-              decoration: InputDecoration(labelText: words.projectsName),
-            ),
+            Section(key: NewProjectScreen.projectSectionKey, [
+              TextField(
+                key: NewProjectScreen.nameKey,
+                controller: _name,
+                decoration: InputDecoration(labelText: words.projectsName),
+              ),
+              TextField(
+                key: NewProjectScreen.descriptionKey,
+                controller: _description,
+                minLines: 2,
+                maxLines: 6,
+                maxLength: Project.descriptionMaxLength,
+                decoration: InputDecoration(labelText: words.projectsDescription),
+              ),
+              PickerField(key: NewProjectScreen.startDateKey, label: words.projectsStartDate, value: formatDate(_startDate), icon: Icons.calendar_today_outlined, onTap: _pickStartDate),
+              if (!widget.isPublic)
+                DropdownButtonFormField<String>(
+                  key: NewProjectScreen.structureSourceKey,
+                  initialValue: _structureSourceId,
+                  isExpanded: true,
+                  decoration: InputDecoration(labelText: words.projectsStructureSource),
+                  items: [
+                    DropdownMenuItem(key: NewProjectScreen.structureSourceOptionKey(''), value: '', child: Text(words.projectsDefaultTemplate, key: NewProjectScreen.structureSourceOptionKey('').label)),
+                    for (final project in widget.projects.all.where((project) => project.isApproved)) DropdownMenuItem(key: NewProjectScreen.structureSourceOptionKey(project.id), value: project.id, child: Text(project.name, key: NewProjectScreen.structureSourceOptionKey(project.id).label)),
+                  ],
+                  onChanged: (id) => setState(() => _structureSourceId = id ?? ''),
+                ),
+            ]),
             const SizedBox(height: 16),
-            TextField(
-              key: NewProjectScreen.descriptionKey,
-              controller: _description,
-              minLines: 2,
-              maxLines: 6,
-              maxLength: Project.descriptionMaxLength,
-              decoration: InputDecoration(labelText: words.projectsDescription),
-            ),
-            const SizedBox(height: 16),
-            PickerField(key: NewProjectScreen.startDateKey, label: words.projectsStartDate, value: formatDate(_startDate), icon: Icons.calendar_today_outlined, onTap: _pickStartDate),
-            const SizedBox(height: 24),
             TypedNames(
               names: _units,
               heading: words.projectsUnits,
@@ -202,7 +221,7 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               rowKey: NewProjectScreen.unitKey,
               onChanged: () => setState(() {}),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             TypedNames(
               names: _partners,
               heading: words.partnersTitle,
@@ -214,52 +233,37 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
               rowKey: NewProjectScreen.partnerKey,
               onChanged: () => setState(() {}),
             ),
-            if (!widget.isPublic) ...[
-              const SizedBox(height: 24),
-              DropdownButtonFormField<String>(
-                key: NewProjectScreen.structureSourceKey,
-                initialValue: _structureSourceId,
-                isExpanded: true,
-                decoration: InputDecoration(labelText: words.projectsStructureSource),
-                items: [
-                  DropdownMenuItem(key: NewProjectScreen.structureSourceOptionKey(''), value: '', child: Text(words.projectsDefaultTemplate, key: NewProjectScreen.structureSourceOptionKey('').label)),
-                  for (final project in widget.projects.all.where((project) => project.isApproved)) DropdownMenuItem(key: NewProjectScreen.structureSourceOptionKey(project.id), value: project.id, child: Text(project.name, key: NewProjectScreen.structureSourceOptionKey(project.id).label)),
-                ],
-                onChanged: (id) => setState(() => _structureSourceId = id ?? ''),
-              ),
-            ],
             if (widget.isPublic) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
               Text(words.projectsManager, key: NewProjectScreen.managerHeadingKey, style: theme.textTheme.titleSmall),
-              const SizedBox(height: 12),
-              TextField(
-                key: NewProjectScreen.managerNameKey,
-                controller: _managerName,
-                decoration: InputDecoration(labelText: words.usersName, helperText: words.usersNameHint),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                key: NewProjectScreen.usernameKey,
-                controller: _username,
-                autocorrect: false,
-                decoration: InputDecoration(labelText: words.usersUsername),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                key: NewProjectScreen.mobileKey,
-                controller: _mobile,
-                keyboardType: TextInputType.phone,
-                decoration: InputDecoration(labelText: words.usersMobile),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                key: NewProjectScreen.passwordKey,
-                controller: _password,
-                obscureText: true,
-                decoration: InputDecoration(labelText: words.signInPassword),
-              ),
+              const SizedBox(height: 8),
+              Section(key: NewProjectScreen.managerSectionKey, [
+                TextField(
+                  key: NewProjectScreen.managerNameKey,
+                  controller: _managerName,
+                  decoration: InputDecoration(labelText: words.usersName, helperText: words.usersNameHint),
+                ),
+                TextField(
+                  key: NewProjectScreen.usernameKey,
+                  controller: _username,
+                  autocorrect: false,
+                  decoration: InputDecoration(labelText: words.usersUsername),
+                ),
+                TextField(
+                  key: NewProjectScreen.mobileKey,
+                  controller: _mobile,
+                  keyboardType: TextInputType.phone,
+                  decoration: InputDecoration(labelText: words.usersMobile),
+                ),
+                TextField(
+                  key: NewProjectScreen.passwordKey,
+                  controller: _password,
+                  obscureText: true,
+                  decoration: InputDecoration(labelText: words.signInPassword),
+                ),
+              ]),
             ],
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
             ActOnce(builder: (once) => FilledButton(
               key: NewProjectScreen.submitKey,
               onPressed: once(_create),

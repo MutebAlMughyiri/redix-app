@@ -267,7 +267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 final waiting = widget.outbox.of(project.id).length;
                 return waiting == 0
                     ? const SizedBox.shrink()
-                    : Card.filled(
+                    : Card.outlined(
                         key: HomeScreen.waitingKey(project.id).card,
                         child: ListTile(
                           key: HomeScreen.waitingKey(project.id),

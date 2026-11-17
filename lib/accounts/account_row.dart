@@ -41,7 +41,6 @@ class AccountRow extends StatelessWidget {
     final words = Words.of(context);
     return Card.outlined(
       key: AccountsScreen.rowKey(account.id),
-      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         key: AccountsScreen.rowKey(account.id).body,
         contentPadding: const EdgeInsetsDirectional.fromSTEB(16, 0, 4, 0),

@@ -28,6 +28,9 @@ extension PartKeys on Key? {
   /// The key of the card that holds the element.
   Key get card => ValueKey((this, 'card'));
 
+  /// The key of the section that holds the element, when it is the section's only part (redix-app #96).
+  Key get section => ValueKey((this, 'section'));
+
   /// The key of the bar that draws the element's share.
   Key get bar => ValueKey((this, 'bar'));
 

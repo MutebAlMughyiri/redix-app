@@ -14,7 +14,7 @@ import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../projects/projects.dart';
 import '../ui/bottom_button.dart';
-import '../ui/form_section.dart';
+import '../ui/section.dart';
 import '../ui/labelled_chips.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
@@ -27,6 +27,7 @@ import '../ui/refusal_text.dart';
 import '../entries/table_picker.dart';
 import '../entries/entry_tables.dart';
 import '../ui/act_once.dart';
+import '../ui/screen_message.dart';
 
 /// What opens when a picture or a PDF is shared to the app (UC-038, FR-49): put it on an expense entered without an invoice (UC-039), or start a new expense with it (UC-046).
 class ShareScreen extends StatefulWidget {
@@ -86,6 +87,9 @@ class ShareScreen extends StatefulWidget {
 
   /// The file shared, when it is a PDF.
   static const fileKey = Key('share.file');
+
+  /// The section holding the shared file and what its QR code read (redix-app #96).
+  static const fileSectionKey = Key('share.fileSection');
 
   /// The line asking for an item first.
   static const chooseItemKey = Key('share.chooseItem');
@@ -263,19 +267,23 @@ class _ShareScreenState extends State<ShareScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         spacing: 12,
         children: [
-          if (widget.file.isPdf) ListTile(key: ShareScreen.fileKey, leading: Icon(Icons.picture_as_pdf_outlined, key: ShareScreen.fileKey.icon), title: Text(widget.file.name, key: ShareScreen.fileKey.title)) else SizedBox(height: 160, child: Image.memory(widget.file.bytes, key: ShareScreen.pictureKey, fit: BoxFit.contain)),
-          if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: false, onAddSupplier: () {}),
+          Section(key: ShareScreen.fileSectionKey, [
+            if (widget.file.isPdf) ListTile(key: ShareScreen.fileKey, leading: Icon(Icons.picture_as_pdf_outlined, key: ShareScreen.fileKey.icon), title: Text(widget.file.name, key: ShareScreen.fileKey.title)) else SizedBox(height: 160, child: Image.memory(widget.file.bytes, key: ShareScreen.pictureKey, fit: BoxFit.contain)),
+            if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: false, onAddSupplier: () {}),
+          ]),
           if (_open.length > 1)
-            LabelledChips(
-              key: ShareScreen.projectChoiceKey,
-              label: words.shareProject,
-              choices: _open,
-              keyOf: (choice) => ShareScreen.projectKey(choice.id),
-              nameOf: (choice) => choice.name,
-              isChosen: (choice) => choice.id == project.id,
-              onChosen: _chooseProject,
-            ),
-          FormSection(key: ShareScreen.forSectionKey, [
+            Section(key: ShareScreen.projectChoiceKey.section, [
+              LabelledChips(
+                key: ShareScreen.projectChoiceKey,
+                label: words.shareProject,
+                choices: _open,
+                keyOf: (choice) => ShareScreen.projectKey(choice.id),
+                nameOf: (choice) => choice.name,
+                isChosen: (choice) => choice.id == project.id,
+                onChosen: _chooseProject,
+              ),
+            ]),
+          Section(key: ShareScreen.forSectionKey, [
             TablePicker(key: ShareScreen.tableKey, tables: widget.tablesOf(project.id), chosen: _table, keeps: (table) => table.isExpense, onChanged: _chooseTable),
             if (_table.isNone) Text(words.shareChooseItem, key: ShareScreen.chooseItemKey) else _expenses(),
           ]),
@@ -303,7 +311,7 @@ class _ShareScreenState extends State<ShareScreen> {
           if (_open.isNotEmpty) {
             return _body();
           }
-          return widget.projects.isLoading ? const Center(child: CircularProgressIndicator(key: ShareScreen.loadingKey)) : Center(child: Text(widget.projects.message.isEmpty ? words.shareNoProject : words.text(widget.projects.message), key: ShareScreen.noProjectKey));
+          return widget.projects.isLoading ? const Center(child: CircularProgressIndicator(key: ShareScreen.loadingKey)) : ScreenMessage(widget.projects.message.isEmpty ? words.shareNoProject : words.text(widget.projects.message), textKey: ShareScreen.noProjectKey);
         },
       ),
     );

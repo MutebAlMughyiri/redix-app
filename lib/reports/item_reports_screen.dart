@@ -7,6 +7,7 @@ import '../ui/api_list_body.dart';
 import '../ui/api_object_body.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
+import '../ui/section.dart';
 import '../words/words.dart';
 import 'summary.dart';
 import 'item_report_screen.dart';
@@ -71,35 +72,42 @@ class _ItemReportsScreenState extends State<ItemReportsScreen> {
             padding: const EdgeInsets.all(16),
             physics: ApiListBody.physics,
             children: [
-              SegmentedButton<SummarySide>(
-                key: ItemReportsScreen.sideKey,
-                segments: [
-                  ButtonSegment(value: SummarySide.revenue, label: Text(words.summaryRevenue, key: ItemReportsScreen.sideOptionKey(SummarySide.revenue))),
-                  ButtonSegment(value: SummarySide.expenses, label: Text(words.summaryExpenses, key: ItemReportsScreen.sideOptionKey(SummarySide.expenses))),
-                ],
-                selected: {_side},
-                onSelectionChanged: (selection) => setState(() => _side = selection.single),
-              ),
-              const SizedBox(height: 8),
-              for (final category in _side.categoriesOf(figures))
-                ExpansionTile(
-                  key: ItemReportsScreen.categoryKey(category.id),
-                  title: CategoryShare(category: category, sideTotal: _side.totalOf(figures), parts: ItemReportsScreen.categoryKey(category.id)),
-                  children: [
-                    for (final item in category.items)
-                      ListTile(
-                        key: ItemReportsScreen.itemKey(item.id),
-                        title: Text(item.name, key: ItemReportsScreen.itemKey(item.id).title),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(formatMoney(item.total), key: ItemReportsScreen.itemKey(item.id).trailing),
-                            Icon(Icons.chevron_right, key: ItemReportsScreen.itemKey(item.id).icon),
-                          ],
-                        ),
-                        onTap: () => context.push(ItemReportScreen.pathOf(project.id, item.id), extra: project),
-                      ),
+              Section(key: ItemReportsScreen.sideKey.section, [
+                SegmentedButton<SummarySide>(
+                  key: ItemReportsScreen.sideKey,
+                  segments: [
+                    ButtonSegment(value: SummarySide.revenue, label: Text(words.summaryRevenue, key: ItemReportsScreen.sideOptionKey(SummarySide.revenue))),
+                    ButtonSegment(value: SummarySide.expenses, label: Text(words.summaryExpenses, key: ItemReportsScreen.sideOptionKey(SummarySide.expenses))),
                   ],
+                  selected: {_side},
+                  onSelectionChanged: (selection) => setState(() => _side = selection.single),
+                ),
+              ]),
+              for (final category in _side.categoriesOf(figures))
+                Card.outlined(
+                  key: ItemReportsScreen.categoryKey(category.id).card,
+                  clipBehavior: Clip.antiAlias,
+                  child: ExpansionTile(
+                    key: ItemReportsScreen.categoryKey(category.id),
+                    shape: const Border(),
+                    collapsedShape: const Border(),
+                    title: CategoryShare(category: category, sideTotal: _side.totalOf(figures), parts: ItemReportsScreen.categoryKey(category.id)),
+                    children: [
+                      for (final item in category.items)
+                        ListTile(
+                          key: ItemReportsScreen.itemKey(item.id),
+                          title: Text(item.name, key: ItemReportsScreen.itemKey(item.id).title),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(formatMoney(item.total), key: ItemReportsScreen.itemKey(item.id).trailing),
+                              Icon(Icons.chevron_right, key: ItemReportsScreen.itemKey(item.id).icon),
+                            ],
+                          ),
+                          onTap: () => context.push(ItemReportScreen.pathOf(project.id, item.id), extra: project),
+                        ),
+                    ],
+                  ),
                 ),
             ],
           ),

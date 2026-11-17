@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'part_keys.dart';
+import 'section.dart';
 import 'swipe_to_remove.dart';
 
 /// What a [TypedNames] holds: the names added, each with the number its row keeps when another is swiped off, and the one still being typed.
@@ -67,6 +68,7 @@ class TypedNames extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       Text(heading, key: headingKey, style: Theme.of(context).textTheme.titleSmall),
+      const SizedBox(height: 8),
       for (final (number, name) in names._rows)
         SwipeToRemove(
           rowKey: rowKey(number),
@@ -78,29 +80,30 @@ class TypedNames extends StatelessWidget {
           },
           child: ListTile(key: rowKey(number), contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: 16), title: Text(name, key: rowKey(number).title)),
         ),
-      const SizedBox(height: 12),
-      TextField(
-        key: fieldKey,
-        controller: names.field,
-        decoration: InputDecoration(
-          labelText: label,
-          suffixIcon: ValueListenableBuilder(
-            valueListenable: names.field,
-            builder: (context, typed, _) => TextButton.icon(
-              key: addKey,
-              icon: Icon(Icons.add, key: addKey.icon),
-              label: Text(addLabel, key: addKey.label),
-              onPressed: typed.text.trim().isEmpty
-                  ? null
-                  : () {
-                      names._rows.add((names._next++, typed.text));
-                      names.field.clear();
-                      onChanged();
-                    },
+      Section(key: fieldKey.section, [
+        TextField(
+          key: fieldKey,
+          controller: names.field,
+          decoration: InputDecoration(
+            labelText: label,
+            suffixIcon: ValueListenableBuilder(
+              valueListenable: names.field,
+              builder: (context, typed, _) => TextButton.icon(
+                key: addKey,
+                icon: Icon(Icons.add, key: addKey.icon),
+                label: Text(addLabel, key: addKey.label),
+                onPressed: typed.text.trim().isEmpty
+                    ? null
+                    : () {
+                        names._rows.add((names._next++, typed.text));
+                        names.field.clear();
+                        onChanged();
+                      },
+              ),
             ),
           ),
         ),
-      ),
+      ]),
     ],
   );
 }

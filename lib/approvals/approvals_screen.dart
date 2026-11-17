@@ -22,6 +22,7 @@ import '../ui/app_color.dart';
 import '../format/parts_line.dart';
 import '../ui/refusal_text.dart';
 import '../ui/act_once.dart';
+import '../ui/section.dart';
 import '../words/word_fill.dart';
 
 /// Finance's inbox (UC-031, UC-032): what waits, oldest first, to approve one at a time or many at once, or to reject saying why.
@@ -37,6 +38,9 @@ class ApprovalsScreen extends StatefulWidget {
 
   /// The button showing everything waiting, when one entry is shown alone.
   static const showAllKey = Key('approvals.showAll');
+
+  /// The section holding Show all and the filter chips with their counts (redix-app #96).
+  static const filtersKey = Key('approvals.filters');
 
   /// The address of the screen.
   static const path = '/projects/:projectId/approvals';
@@ -199,18 +203,17 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
           : BottomButton(buttonKey: ApprovalsScreen.approveSelectedKey, icon: Icons.done_all, label: '${words.approvalsApproveSelected} · ${_selected.length}', onPressed: () => _approve(_selected.toList())),
       body: Column(
         children: [
-          if (_focus.isNotEmpty)
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: TextButton(key: ApprovalsScreen.showAllKey, onPressed: () => setState(() => _focus = ''), child: Text(words.approvalsShowAll, key: ApprovalsScreen.showAllKey.label)),
-            ),
           ListenableBuilder(
             listenable: widget.approvals,
             builder: (context, _) => Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: SizedBox(
-                width: double.infinity,
-                child: Wrap(
+              child: Section(key: ApprovalsScreen.filtersKey, [
+                if (_focus.isNotEmpty)
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: TextButton(key: ApprovalsScreen.showAllKey, onPressed: () => setState(() => _focus = ''), child: Text(words.approvalsShowAll, key: ApprovalsScreen.showAllKey.label)),
+                  ),
+                Wrap(
                   spacing: 8,
                   children: [
                     for (final (filter, key, label) in [
@@ -226,7 +229,7 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
                       ),
                   ],
                 ),
-              ),
+              ]),
             ),
           ),
           Expanded(
@@ -236,7 +239,6 @@ class _ApprovalsScreenState extends State<ApprovalsScreen> {
               keeps: (entry) => (_focus.isEmpty || entry.id == _focus) && _filter.keeps(entry),
               itemBuilder: (entry) => Card.outlined(
                       key: ApprovalsScreen.cardKey(entry.id),
-                      margin: const EdgeInsets.only(bottom: 8),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: EntryStatus.pendingApproval.sideIn(context)),
                       child: Padding(
                         padding: const EdgeInsetsDirectional.fromSTEB(4, 8, 12, 8),

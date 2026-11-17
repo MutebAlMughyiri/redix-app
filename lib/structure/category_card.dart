@@ -78,7 +78,6 @@ class CategoryCard extends StatelessWidget {
     final mayChange = project.mayChangeStructure;
     return Card.outlined(
       key: CategoriesScreen.cardKey(category.id).card,
-      margin: const EdgeInsets.only(bottom: 12),
       clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
         key: CategoriesScreen.categoryTileKey(category.id),

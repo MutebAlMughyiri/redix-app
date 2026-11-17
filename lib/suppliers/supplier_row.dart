@@ -33,7 +33,6 @@ class SupplierRow extends StatelessWidget {
     final words = Words.of(context);
     return Card.outlined(
       key: SuppliersScreen.rowKey(supplier.id),
-      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         key: SuppliersScreen.rowKey(supplier.id).body,
         contentPadding: EdgeInsetsDirectional.fromSTEB(16, 0, mayChange ? 4 : 16, 0),

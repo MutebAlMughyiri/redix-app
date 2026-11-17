@@ -10,6 +10,7 @@ import 'session.dart';
 import '../ui/refusal_text.dart';
 import '../ui/form_button_style.dart';
 import '../ui/act_once.dart';
+import '../ui/section.dart';
 
 /// The sign-in screen (UC-002, تسجيل الدخول): username and password, or a fingerprint or face on a phone that uses them (UC-011), with the language choice at the top so it can be read before signing in (UC-004). A refusal shows as one line that never says which field was wrong (AC-01.2).
 class SignInScreen extends StatefulWidget {
@@ -33,6 +34,12 @@ class SignInScreen extends StatefulWidget {
 
   /// The username field.
   static const usernameKey = Key('signIn.username');
+
+  /// The section holding the language choice, bordered as Settings' is (redix-app #96).
+  static const languageSectionKey = Key('signIn.languageSection');
+
+  /// The section holding the username and the password.
+  static const fieldsKey = Key('signIn.fields');
 
   /// The password field.
   static const passwordKey = Key('signIn.password');
@@ -106,8 +113,8 @@ class _SignInScreenState extends State<SignInScreen> {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
           children: [
-            Align(alignment: AlignmentDirectional.centerEnd, child: LanguageSwitch(language: widget.language)),
-            const SizedBox(height: 16),
+            Section(key: SignInScreen.languageSectionKey, [LanguageSwitch(language: widget.language)]),
+            const SizedBox(height: 8),
             Align(
               alignment: AlignmentDirectional.centerStart,
               child: ClipRRect(
@@ -119,24 +126,25 @@ class _SignInScreenState extends State<SignInScreen> {
             Text(words.appTitle, key: SignInScreen.titleKey, style: theme.textTheme.headlineMedium),
             const SizedBox(height: 8),
             Text(words.signInHint, key: SignInScreen.hintKey, style: theme.textTheme.bodyLarge),
-            const SizedBox(height: 32),
-            TextField(
-              key: SignInScreen.usernameKey,
-              controller: _username,
-              decoration: InputDecoration(labelText: words.signInUsername),
-              autofillHints: const [AutofillHints.username],
-              textInputAction: TextInputAction.next,
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              key: SignInScreen.passwordKey,
-              controller: _password,
-              decoration: InputDecoration(labelText: words.signInPassword),
-              autofillHints: const [AutofillHints.password],
-              obscureText: true,
-              onSubmitted: (_) => once(_signIn)?.call(),
-            ),
             const SizedBox(height: 24),
+            Section(key: SignInScreen.fieldsKey, [
+              TextField(
+                key: SignInScreen.usernameKey,
+                controller: _username,
+                decoration: InputDecoration(labelText: words.signInUsername),
+                autofillHints: const [AutofillHints.username],
+                textInputAction: TextInputAction.next,
+              ),
+              TextField(
+                key: SignInScreen.passwordKey,
+                controller: _password,
+                decoration: InputDecoration(labelText: words.signInPassword),
+                autofillHints: const [AutofillHints.password],
+                obscureText: true,
+                onSubmitted: (_) => once(_signIn)?.call(),
+              ),
+            ]),
+            const SizedBox(height: 16),
             FilledButton(
               key: SignInScreen.submitKey,
               onPressed: once(_signIn),
@@ -163,16 +171,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Row(
-                            children: [
-                              const Expanded(child: Divider()),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12),
-                                child: Text(words.biometricsOr, key: SignInScreen.orKey, style: theme.textTheme.bodySmall),
-                              ),
-                              const Expanded(child: Divider()),
-                            ],
-                          ),
+                          Text(words.biometricsOr, key: SignInScreen.orKey, style: theme.textTheme.bodySmall),
                           const SizedBox(height: 16),
                           OutlinedButton.icon(
                             key: SignInScreen.unlockKey,
@@ -189,7 +188,7 @@ class _SignInScreenState extends State<SignInScreen> {
             const SizedBox(height: 16),
             TextButton(key: SignInScreen.registerKey, onPressed: () => context.push(NewProjectScreen.registerPath), child: Text(words.signInRegisterProject, key: SignInScreen.registerKey.label)),
             const SizedBox(height: 16),
-            Text(words.signInForgotPassword, key: SignInScreen.forgotKey, style: theme.textTheme.bodySmall, textAlign: TextAlign.center),
+            Text(words.signInForgotPassword, key: SignInScreen.forgotKey, style: theme.textTheme.bodySmall),
           ],
         ),
       ),

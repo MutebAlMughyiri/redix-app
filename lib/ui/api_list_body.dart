@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api_list.dart';
 import 'load_failure.dart';
+import 'screen_message.dart';
 
 /// The body of a screen that shows an [ApiList]: why it could not load with a way to try again, loading, empty, or its items, which are read again when pulled down.
 class ApiListBody<T> extends StatelessWidget {
@@ -59,18 +60,11 @@ class ApiListBody<T> extends StatelessWidget {
 
   Widget _state(BuildContext context) {
     if (list.message.isNotEmpty) {
-      return Center(child: LoadFailure(message: list.message, onRetry: list.load));
+      return LoadFailure(message: list.message, onRetry: list.load);
     }
     final kept = list.all.where(keeps).toList();
     if (kept.isEmpty) {
-      return Center(
-        child: list.isLoading && list.all.isEmpty
-            ? const CircularProgressIndicator(key: loadingKey)
-            : Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(emptyText, key: emptyKey, textAlign: TextAlign.center),
-              ),
-      );
+      return list.isLoading && list.all.isEmpty ? const Center(child: CircularProgressIndicator(key: loadingKey)) : ScreenMessage(emptyText, textKey: emptyKey);
     }
     return RefreshIndicator(onRefresh: refresh, child: listOf([for (final item in kept) itemBuilder(item)]));
   }

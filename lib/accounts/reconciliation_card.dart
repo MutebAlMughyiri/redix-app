@@ -60,7 +60,6 @@ class ReconciliationCard extends StatelessWidget {
     final words = Words.of(context);
     return Card.outlined(
       key: cardKey,
-      margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: ApiObjectBody(

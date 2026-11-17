@@ -32,7 +32,6 @@ class ProjectChoice extends StatelessWidget {
     final units = project.units.isEmpty ? words.projectsNoUnits : project.units.map((unit) => unit.name).join(' · ');
     return Card.outlined(
       key: ProjectsScreen.cardKey(project.id),
-      margin: const EdgeInsets.only(bottom: 12),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         key: ProjectsScreen.cardKey(project.id).body,

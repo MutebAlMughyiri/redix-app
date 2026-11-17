@@ -119,7 +119,6 @@ class _GeneralSettingsScreenState extends State<GeneralSettingsScreen> {
 
   /// One component of the screen, in its own border, as the rows of every list in the app.
   Widget _bordered(List<Widget> parts) => Card.outlined(
-    margin: const EdgeInsets.only(bottom: 8),
     child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: parts),
   );
 

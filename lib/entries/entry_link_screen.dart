@@ -12,6 +12,7 @@ import 'entries_screen.dart';
 import 'project_entries.dart';
 import 'entry_row.dart';
 import '../ui/load_failure.dart';
+import '../ui/screen_message.dart';
 
 /// Where a shared entry's link lands (redix-app #83): the one place that decides, from what the reader may do now, where the entry opens. Waiting, for whoever may decide it, in
 /// Approvals on that entry alone (R7); otherwise on its sheet in القيود, saying where it stands (R8); not found when the reader's lists do not hold it (R9), and why with a way to try
@@ -89,18 +90,16 @@ class _EntryLinkScreenState extends State<EntryLinkScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(),
-    body: Center(
-      child: _failure.isNotEmpty
-          ? LoadFailure(
-              message: _failure,
-              onRetry: () {
-                setState(() => _failure = '');
-                _land();
-              },
-            )
-          : _isNotFound
-          ? Padding(padding: const EdgeInsets.all(24), child: Text(Words.of(context).entriesNotFound, key: EntryLinkScreen.notFoundKey, textAlign: TextAlign.center))
-          : const CircularProgressIndicator(key: EntryLinkScreen.loadingKey),
-    ),
+    body: _failure.isNotEmpty
+        ? LoadFailure(
+            message: _failure,
+            onRetry: () {
+              setState(() => _failure = '');
+              _land();
+            },
+          )
+        : _isNotFound
+        ? ScreenMessage(Words.of(context).entriesNotFound, textKey: EntryLinkScreen.notFoundKey)
+        : const Center(child: CircularProgressIndicator(key: EntryLinkScreen.loadingKey)),
   );
 }

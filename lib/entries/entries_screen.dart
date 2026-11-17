@@ -6,6 +6,7 @@ import '../projects/project.dart';
 import '../ui/api_list_body.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
+import '../ui/section.dart';
 import '../words/words.dart';
 import 'add_entry_screen.dart';
 import 'entry_filter.dart';
@@ -45,6 +46,9 @@ class EntriesScreen extends StatefulWidget {
 
   /// The search field.
   static const searchKey = Key('entries.search');
+
+  /// The section holding the search, the filter chips and the count found (redix-app #96).
+  static const filtersKey = Key('entries.filters');
 
   /// The filter of the kind [kind], `purchase` or `contractorPayment`.
   static Key kindKey(String kind) => Key('entries.kind.$kind');
@@ -126,10 +130,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
     final found = widget.entries.all.where(_filter.keeps).length;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        spacing: 8,
-        children: [
+      child: Section(key: EntriesScreen.filtersKey, [
           SearchBar(
             key: EntriesScreen.searchKey,
             controller: _search,
@@ -158,8 +159,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
             ],
           ),
           Text(words.entriesFound.replaceFirst('{0}', '$found'), key: EntriesScreen.foundKey, style: Theme.of(context).textTheme.bodySmall),
-        ],
-      ),
+      ]),
     );
   }
 

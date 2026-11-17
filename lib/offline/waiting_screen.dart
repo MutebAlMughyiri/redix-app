@@ -10,6 +10,7 @@ import 'outbox.dart';
 import 'pending_entry.dart';
 import '../ui/app_color.dart';
 import '../ui/act_once.dart';
+import '../ui/screen_message.dart';
 
 /// What waits on this phone for the project (UC-029): an entry the network has not taken yet, or one the API refused, which waits for its author.
 class WaitingScreen extends StatelessWidget {
@@ -59,7 +60,7 @@ class WaitingScreen extends StatelessWidget {
         builder: (context, _) {
           final entries = outbox.of(projectId);
           if (entries.isEmpty) {
-            return Center(child: Text(words.offlineEmpty, key: emptyKey));
+            return ScreenMessage(words.offlineEmpty, textKey: emptyKey);
           }
           return ListView(
             padding: const EdgeInsets.all(16),

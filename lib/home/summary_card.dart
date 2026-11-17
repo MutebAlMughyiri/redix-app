@@ -157,7 +157,6 @@ class _SummaryCardState extends State<SummaryCard> {
   @override
   Widget build(BuildContext context) => Card.outlined(
     key: SummaryCard.cardKey,
-    margin: const EdgeInsets.only(bottom: 12),
     child: Padding(padding: const EdgeInsets.all(12), child: ApiObjectBody(object: widget.summary, builder: _figures)),
   );
 }

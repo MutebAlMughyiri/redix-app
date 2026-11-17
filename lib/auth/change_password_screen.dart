@@ -8,6 +8,7 @@ import 'sign_in_screen.dart';
 import '../ui/refusal_text.dart';
 import '../ui/form_button_style.dart';
 import '../ui/act_once.dart';
+import '../ui/section.dart';
 
 /// The change-password screen (UC-003, غيّر كلمة المرور): the current password and the new one twice. While the password is temporary the
 /// router keeps the user here, so the change cannot be skipped (AC-02.1).
@@ -29,6 +30,9 @@ class ChangePasswordScreen extends StatefulWidget {
 
   /// The field that repeats the new password.
   static const confirmKey = Key('changePassword.confirm');
+
+  /// The section holding the three password fields (redix-app #96).
+  static const fieldsKey = Key('changePassword.fields');
 
   /// The save button.
   static const submitKey = Key('changePassword.submit');
@@ -89,19 +93,19 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
             Text(words.changePasswordTitle, key: ChangePasswordScreen.titleKey, style: theme.textTheme.headlineMedium),
             const SizedBox(height: 8),
             Text(words.changePasswordHint, key: ChangePasswordScreen.hintKey, style: theme.textTheme.bodyLarge),
-            const SizedBox(height: 32),
-            TextField(key: ChangePasswordScreen.currentKey, controller: _current, decoration: field(words.changePasswordCurrent), obscureText: true),
-            const SizedBox(height: 16),
-            TextField(key: ChangePasswordScreen.newKey, controller: _new, decoration: field(words.changePasswordNew), obscureText: true),
-            const SizedBox(height: 16),
-            TextField(
-              key: ChangePasswordScreen.confirmKey,
-              controller: _confirm,
-              decoration: field(words.changePasswordConfirm),
-              obscureText: true,
-              onSubmitted: (_) => once(_save)?.call(),
-            ),
             const SizedBox(height: 24),
+            Section(key: ChangePasswordScreen.fieldsKey, [
+              TextField(key: ChangePasswordScreen.currentKey, controller: _current, decoration: field(words.changePasswordCurrent), obscureText: true),
+              TextField(key: ChangePasswordScreen.newKey, controller: _new, decoration: field(words.changePasswordNew), obscureText: true),
+              TextField(
+                key: ChangePasswordScreen.confirmKey,
+                controller: _confirm,
+                decoration: field(words.changePasswordConfirm),
+                obscureText: true,
+                onSubmitted: (_) => once(_save)?.call(),
+              ),
+            ]),
+            const SizedBox(height: 16),
             FilledButton(
               key: ChangePasswordScreen.submitKey,
               onPressed: once(_save),

@@ -37,7 +37,7 @@ import '../suppliers/supplier.dart';
 import '../suppliers/supplier_picker.dart';
 import '../suppliers/suppliers.dart';
 import '../ui/entry_field.dart';
-import '../ui/form_section.dart';
+import '../ui/section.dart';
 import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
 import '../ui/two_fields.dart';
@@ -270,6 +270,9 @@ class AddEntryScreen extends StatefulWidget {
 
   /// The section asking what the entry is for.
   static const forSectionKey = Key('addEntry.forSection');
+
+  /// The section of the invoice: where the entry stands, its file, and what the QR code read (redix-app #96).
+  static const invoiceSectionKey = Key('addEntry.invoiceSection');
 
   /// The section asking the item's own columns.
   static const columnsSectionKey = Key('addEntry.columnsSection');
@@ -740,7 +743,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
       ),
   ];
 
-  Widget _paymentSection(Words words) => FormSection(key: AddEntryScreen.paymentSectionKey, [
+  Widget _paymentSection(Words words) => Section(key: AddEntryScreen.paymentSectionKey, [
     PaymentChoices(choice: _payment, accounts: _accounts, asksPaymentMethod: _table.isExpense, paymentMethods: widget.paymentMethods, onChanged: () => setState(() {}), onRetry: _readListsAgain),
     if (_asks('notes')) _textField(AddEntryScreen.notesKey, _notes, _labelOf('notes', words.expensesNotes), maxLines: 2, errorText: _errorOf('notes', words)),
   ]);
@@ -761,7 +764,9 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     final ownFields = _itemsOwnFields(words);
     return ListenableBuilder(
       listenable: widget.entries,
-      builder: (context, _) => Scaffold(
+      builder: (context, _) {
+        final invoice = _invoiceParts(words);
+        return Scaffold(
       appBar: AppBar(
         title: ScreenTitle(_title, subject: widget.project.name),
         actions: [
@@ -774,16 +779,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (_reading) _standing(words),
-            InvoiceSection(
-              project: widget.project,
-              file: _file.picked,
-              emptyLabel: words.text(_table.fileWordKey),
-              message: _file.message,
-              onCamera: () => _takeFrom(widget.capture.fromCamera),
-              onFiles: () => _takeFrom(widget.capture.fromFiles),
-              isReading: _reading,
-            ),
+            if (invoice.isNotEmpty) Section(key: AddEntryScreen.invoiceSectionKey, invoice),
             IgnorePointer(ignoring: _reading, child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: _entryFields(words, ownFields))),
             const SizedBox(height: 16),
             if (_message.isNotEmpty) ...[
@@ -794,17 +790,15 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
           ],
         ),
       ),
-      ),
+        );
+      },
     );
   }
 
   /// Where an entry read only stands, in its status's color (redix-app #90).
   Widget _standing(Words words) {
     final status = _row.status;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Text(words.text(_row.statusWordKey), key: AddEntryScreen.statusKey, style: TextStyle(color: status.isMarked ? status.color.of(context) : null, fontWeight: FontWeight.w600)),
-    );
+    return Text(words.text(_row.statusWordKey), key: AddEntryScreen.statusKey, style: TextStyle(color: status.isMarked ? status.color.of(context) : null, fontWeight: FontWeight.w600));
   }
 
   /// What an entry read only offers at its bottom (redix-app #90, D3, D4): تعديل, grayed with the reason where it cannot work; اعتماد beside it on a waiting entry, grayed
@@ -882,16 +876,26 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     ],
   ));
 
-  /// What every table asks, under the file: the QR code's reading, what it is for, the item's own columns, the account and notes.
+  /// The invoice's section, from the top: where an entry read only stands, its file, and what the QR code read; none of them, and there is no section.
+  List<Widget> _invoiceParts(Words words) => [
+    if (_reading) _standing(words),
+    if (InvoiceSection.showsIn(widget.project, _file.picked, isReading: _reading))
+      InvoiceSection(
+        file: _file.picked,
+        emptyLabel: words.text(_table.fileWordKey),
+        message: _file.message,
+        onCamera: () => _takeFrom(widget.capture.fromCamera),
+        onFiles: () => _takeFrom(widget.capture.fromFiles),
+        isReading: _reading,
+      ),
+    if (_qrMessage.isNotEmpty) Text(words.text(_qrMessage), key: AddEntryScreen.qrMessageKey),
+    if (!_qr.isNone) IgnorePointer(ignoring: _reading, child: QrSummary(qr: _qr, offerSupplier: _qrSupplierMissing && _table.asksSupplier && widget.project.mayAddSupplier, onAddSupplier: _addSupplierFromQr)),
+  ];
+
+  /// What every table asks, under the invoice: what it is for, the item's own columns, the account and notes.
   List<Widget> _entryFields(Words words, List<Widget> ownFields) => [
-            if (_qrMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(words.text(_qrMessage), key: AddEntryScreen.qrMessageKey),
-              ),
-            if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: _qrSupplierMissing && _table.asksSupplier && widget.project.mayAddSupplier, onAddSupplier: _addSupplierFromQr),
-            FormSection(key: AddEntryScreen.forSectionKey, _whatItIsFor(words)),
-            if (ownFields.isNotEmpty) FormSection(key: AddEntryScreen.columnsSectionKey, ownFields),
+            Section(key: AddEntryScreen.forSectionKey, _whatItIsFor(words)),
+            if (ownFields.isNotEmpty) Section(key: AddEntryScreen.columnsSectionKey, ownFields),
             _paymentSection(words),
   ];
 }

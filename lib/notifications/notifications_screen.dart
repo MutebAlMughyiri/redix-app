@@ -62,12 +62,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       body: ApiListBody(
         list: widget.notifications,
         emptyText: words.notificationsEmpty,
-        itemBuilder: (row) => ListTile(
-          key: NotificationsScreen.rowKey(row.id),
-          leading: Icon(row.isRead ? Icons.notifications_none : Icons.notifications_active, key: NotificationsScreen.rowKey(row.id).icon),
-          title: Text(words.text('notifications.${row.kind}'), key: NotificationsScreen.rowKey(row.id).title, style: row.isRead ? null : const TextStyle(fontWeight: FontWeight.bold)),
-          subtitle: Text('${row.projectName} · ${formatDate(row.at)}', key: NotificationsScreen.rowKey(row.id).subtitle),
-          onTap: () => _open(row),
+        itemBuilder: (row) => Card.outlined(
+          key: NotificationsScreen.rowKey(row.id).card,
+          clipBehavior: Clip.antiAlias,
+          child: ListTile(
+            key: NotificationsScreen.rowKey(row.id),
+            leading: Icon(row.isRead ? Icons.notifications_none : Icons.notifications_active, key: NotificationsScreen.rowKey(row.id).icon),
+            title: Text(words.text('notifications.${row.kind}'), key: NotificationsScreen.rowKey(row.id).title, style: row.isRead ? null : const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text('${row.projectName} · ${formatDate(row.at)}', key: NotificationsScreen.rowKey(row.id).subtitle),
+            onTap: () => _open(row),
+          ),
         ),
       ),
     );

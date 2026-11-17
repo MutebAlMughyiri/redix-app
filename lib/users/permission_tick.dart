@@ -24,7 +24,6 @@ class PermissionTick extends StatelessWidget {
     final change = onChanged;
     return Card.outlined(
       key: key.card,
-      margin: const EdgeInsets.only(bottom: 8),
       child: CheckboxListTile(
         key: key.body,
         controlAffinity: ListTileControlAffinity.leading,

@@ -9,6 +9,7 @@ import 'file_kind.dart';
 import 'invoice_capture.dart';
 import '../words/words.dart';
 import '../ui/act_once.dart';
+import '../ui/screen_message.dart';
 
 /// Opens a file a project keeps (row 92 of the findings, AC-18.1): a picture to zoom into, or any other file, a PDF included, handed to the phone by its name to open (UC-064).
 class AttachmentScreen extends StatefulWidget {
@@ -30,6 +31,9 @@ class AttachmentScreen extends StatefulWidget {
 
   /// The button handing a file that is not a picture to the phone.
   static const openFileKey = Key('attachment.openFile');
+
+  /// The file's name, over the way to open a file that is not a picture (redix-app #96).
+  static const fileNameKey = Key('attachment.fileName');
 
   /// The spinner while the file is read.
   static const loadingKey = Key('attachment.loading');
@@ -76,12 +80,14 @@ class _AttachmentScreenState extends State<AttachmentScreen> {
             return const Center(child: CircularProgressIndicator(key: AttachmentScreen.loadingKey));
           }
           if (file.hasError || (file.data ?? Uint8List(0)).isEmpty) {
-            return Center(child: Text(words.approvalsFileFailed, key: AttachmentScreen.failedKey));
+            return ScreenMessage(words.approvalsFileFailed, textKey: AttachmentScreen.failedKey);
           }
           final bytes = file.requireData;
           if (FileKind.of(widget.contentType) != FileKind.picture) {
-            return Center(
-              child: ActOnce(builder: (once) => FilledButton(key: AttachmentScreen.openFileKey, onPressed: once(() => widget.capture.shareFile(bytes, widget.fileName, widget.contentType)), child: Text(words.approvalsOpenFile, key: AttachmentScreen.openFileKey.label))),
+            return ScreenMessage(
+              widget.fileName,
+              textKey: AttachmentScreen.fileNameKey,
+              action: ActOnce(builder: (once) => FilledButton(key: AttachmentScreen.openFileKey, onPressed: once(() => widget.capture.shareFile(bytes, widget.fileName, widget.contentType)), child: Text(words.approvalsOpenFile, key: AttachmentScreen.openFileKey.label))),
             );
           }
           return InteractiveViewer(maxScale: 6, child: Center(child: Image.memory(bytes, key: AttachmentScreen.pictureKey)));

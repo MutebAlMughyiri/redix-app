@@ -5,6 +5,7 @@ import '../ui/api_list_body.dart';
 import '../ui/part_keys.dart';
 import '../ui/refusal_snack_bar.dart';
 import '../ui/screen_title.dart';
+import '../ui/section.dart';
 import '../words/words.dart';
 import 'account_history.dart';
 import 'accounts.dart';
@@ -38,6 +39,9 @@ class AccountHistoryScreen extends StatefulWidget {
 
   /// The filter showing what the signed-in user did.
   static const mineKey = Key('history.mine');
+
+  /// The section holding the filter chips (redix-app #96).
+  static const filtersKey = Key('accountHistory.filters');
 
   /// The line [id].
   static Key lineKey(int id) => Key('history.line.$id');
@@ -78,7 +82,6 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
 
   Widget _line(AccountHistoryLine line, Words words) => Card.outlined(
     key: AccountHistoryScreen.lineKey(line.id),
-    margin: const EdgeInsets.only(bottom: 8),
     child: ListTile(
       leading: Icon(line.kind.icon, key: AccountHistoryScreen.lineKey(line.id).icon),
       title: Text(line.textIn(words), key: AccountHistoryScreen.lineKey(line.id).title),
@@ -97,7 +100,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
         builder: (context, _) => Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: _filters(words)),
+            Padding(padding: const EdgeInsets.fromLTRB(16, 8, 16, 0), child: Section(key: AccountHistoryScreen.filtersKey, [_filters(words)])),
             Expanded(
               child: ApiListBody(
                 list: history,

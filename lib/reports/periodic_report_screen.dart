@@ -72,7 +72,6 @@ class _PeriodicReportScreenState extends State<PeriodicReportScreen> {
 
   Widget _section(String name, String title, List<Widget> lines) => Card.outlined(
     key: PeriodicReportScreen.sectionKey(name),
-    margin: const EdgeInsets.only(bottom: 12),
     child: Padding(
       padding: const EdgeInsets.all(12),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [Text(title, key: PeriodicReportScreen.sectionKey(name).title, style: Theme.of(context).textTheme.titleSmall), ...lines]),

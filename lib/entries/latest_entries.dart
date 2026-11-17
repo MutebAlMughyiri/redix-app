@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../home/home_screen.dart';
 import '../projects/project.dart';
 import '../ui/part_keys.dart';
+import '../ui/screen_message.dart';
 import '../words/words.dart';
 import 'entries_screen.dart';
 import 'entry_card.dart';
@@ -58,7 +59,7 @@ class LatestEntries extends StatelessWidget {
                 padding: EdgeInsets.all(16),
                 child: Center(child: CircularProgressIndicator(key: HomeScreen.entriesLoadingKey)),
               ),
-            if (!entries.isLoading && entries.all.isEmpty) Text(entries.message.isEmpty ? words.entriesEmpty : words.text(entries.message), key: HomeScreen.entriesEmptyKey(project.id)),
+            if (!entries.isLoading && entries.all.isEmpty) ScreenMessage(entries.message.isEmpty ? words.entriesEmpty : words.text(entries.message), textKey: HomeScreen.entriesEmptyKey(project.id)),
             for (final entry in entries.all.take(latest)) SwipeableEntryCard(project: project, entries: entries, entry: entry, onOpen: onOpen, onRemoved: onRemoved),
             Align(
               alignment: AlignmentDirectional.centerEnd,

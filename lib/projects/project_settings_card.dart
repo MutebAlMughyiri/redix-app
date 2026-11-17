@@ -44,7 +44,6 @@ class ProjectSettingsCard extends StatelessWidget {
     final id = project.id;
     return Card.outlined(
       key: HomeScreen.cardKey(id),
-      margin: const EdgeInsets.only(bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

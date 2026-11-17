@@ -6,6 +6,7 @@ import '../projects/project.dart';
 import '../ui/part_keys.dart';
 import '../ui/picker_field.dart';
 import '../ui/screen_title.dart';
+import '../ui/section.dart';
 import '../words/words.dart';
 import 'quarter_picker.dart';
 import 'report_files.dart';
@@ -55,6 +56,9 @@ class VatStatementScreen extends StatefulWidget {
   /// The choice of the period: a quarter, a half year or custom dates.
   static const modeKey = Key('vat.mode');
 
+  /// The section holding the choice of the period and its dates (redix-app #96).
+  static const periodKey = Key('vatStatement.period');
+
   @override
   State<VatStatementScreen> createState() => _VatStatementScreenState();
 }
@@ -91,50 +95,52 @@ class _VatStatementScreenState extends State<VatStatementScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          SegmentedButton<_Mode>(
-            key: VatStatementScreen.modeKey,
-            showSelectedIcon: false,
-            segments: [
-              ButtonSegment(value: _Mode.quarter, label: Text(words.vatQuarter, key: VatStatementScreen.quarterKey)),
-              ButtonSegment(value: _Mode.halfYear, label: Text(words.vatHalfYear, key: VatStatementScreen.halfYearKey)),
-              ButtonSegment(value: _Mode.custom, label: Text(words.vatCustom, key: VatStatementScreen.customKey)),
-            ],
-            selected: {_mode},
-            onSelectionChanged: (selected) => setState(() => _mode = selected.single),
-          ),
-          const SizedBox(height: 12),
-          switch (_mode) {
-            _Mode.quarter => QuarterPicker(start: _quarter, firstYear: widget.project.startDate.year, onChanged: (start) => setState(() => _quarter = start)),
-            _Mode.halfYear => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              spacing: 4,
-              children: [
-                YearChips(year: _quarter.year, firstYear: widget.project.startDate.year, onChanged: (year) => setState(() => _quarter = DateTime(year, _quarter.month))),
-                Wrap(
-                  spacing: 8,
-                  children: [
-                    ChoiceChip(key: VatStatementScreen.firstHalfKey, label: Text(words.vatH1, key: VatStatementScreen.firstHalfKey.label), selected: !_secondHalf, onSelected: (_) => setState(() => _secondHalf = false)),
-                    ChoiceChip(key: VatStatementScreen.secondHalfKey, label: Text(words.vatH2, key: VatStatementScreen.secondHalfKey.label), selected: _secondHalf, onSelected: (_) => setState(() => _secondHalf = true)),
-                  ],
-                ),
+          Section(key: VatStatementScreen.periodKey, [
+            SegmentedButton<_Mode>(
+              key: VatStatementScreen.modeKey,
+              showSelectedIcon: false,
+              segments: [
+                ButtonSegment(value: _Mode.quarter, label: Text(words.vatQuarter, key: VatStatementScreen.quarterKey)),
+                ButtonSegment(value: _Mode.halfYear, label: Text(words.vatHalfYear, key: VatStatementScreen.halfYearKey)),
+                ButtonSegment(value: _Mode.custom, label: Text(words.vatCustom, key: VatStatementScreen.customKey)),
               ],
+              selected: {_mode},
+              onSelectionChanged: (selected) => setState(() => _mode = selected.single),
             ),
-            _Mode.custom => Column(
-              spacing: 8,
-              children: [
-                PickerField(
-                  key: VatStatementScreen.fromKey,
-                  label: words.vatFrom,
-                  value: formatDate(_from),
-                  onTap: () => _pick(_from, DateTime(widget.project.startDate.year), (date) {
-                    _from = date;
-                    _to = _to.isBefore(date) ? date : _to;
-                  }),
-                ),
-                PickerField(key: VatStatementScreen.toKey, label: words.vatTo, value: formatDate(_to), onTap: () => _pick(_to, _from, (date) => _to = date)),
-              ],
-            ),
-          },
+            switch (_mode) {
+              _Mode.quarter => QuarterPicker(start: _quarter, firstYear: widget.project.startDate.year, onChanged: (start) => setState(() => _quarter = start)),
+              _Mode.halfYear => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 4,
+                children: [
+                  YearChips(year: _quarter.year, firstYear: widget.project.startDate.year, onChanged: (year) => setState(() => _quarter = DateTime(year, _quarter.month))),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      ChoiceChip(key: VatStatementScreen.firstHalfKey, label: Text(words.vatH1, key: VatStatementScreen.firstHalfKey.label), selected: !_secondHalf, onSelected: (_) => setState(() => _secondHalf = false)),
+                      ChoiceChip(key: VatStatementScreen.secondHalfKey, label: Text(words.vatH2, key: VatStatementScreen.secondHalfKey.label), selected: _secondHalf, onSelected: (_) => setState(() => _secondHalf = true)),
+                    ],
+                  ),
+                ],
+              ),
+              _Mode.custom => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                spacing: 8,
+                children: [
+                  PickerField(
+                    key: VatStatementScreen.fromKey,
+                    label: words.vatFrom,
+                    value: formatDate(_from),
+                    onTap: () => _pick(_from, DateTime(widget.project.startDate.year), (date) {
+                      _from = date;
+                      _to = _to.isBefore(date) ? date : _to;
+                    }),
+                  ),
+                  PickerField(key: VatStatementScreen.toKey, label: words.vatTo, value: formatDate(_to), onTap: () => _pick(_to, _from, (date) => _to = date)),
+                ],
+              ),
+            },
+          ]),
           const SizedBox(height: 12),
           if (widget.project.may(Permission.seeAllCapital))
             ReportFileButtons(files: widget.files, address: '/projects/${widget.project.id}/vat-statement?from=$from&to=$to', name: 'vat-$from-$to', kinds: const [ReportFileKind.excel]),

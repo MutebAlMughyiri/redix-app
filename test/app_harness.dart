@@ -1826,8 +1826,10 @@ Future<void> act(WidgetTester tester, FakeApi api, Future<void> Function() actio
 }, () => api.client);
 
 /// The color the frame of the entry [id]'s row is drawn in, which alone says where the entry stands (Muteb, 9 Nov 2026).
+/// It reads the outline the card is drawn with, its own or the theme's, since a plain card leaves its shape to Flutter (redix-app #96).
 AppColor frameOf(WidgetTester tester, String id) {
   final card = find.byKey(EntriesScreen.rowKey(id).card);
-  final side = (tester.widget<Card>(card).shape! as RoundedRectangleBorder).side.color;
+  final drawn = tester.widget<Material>(find.descendant(of: card, matching: find.byType(Material)).first);
+  final side = (drawn.shape! as OutlinedBorder).side.color;
   return AppColor.values.firstWhere((role) => role.of(tester.element(card)) == side);
 }
