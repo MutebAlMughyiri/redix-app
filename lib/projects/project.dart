@@ -52,10 +52,11 @@ class Project {
       units = [for (final unit in json['units'] as List<dynamic>) Unit.fromJson(unit as Map<String, dynamic>)],
       timeZone = json['timeZone'] as String? ?? riyadh,
       utcOffsetMinutes = json['utcOffsetMinutes'] as int? ?? riyadhOffsetMinutes,
-      _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()};
+      _permissions = {...(json['permissions'] as List<dynamic>).cast<String>()},
+      _unseenTables = {...(json['unseenTables'] as List<dynamic>? ?? const []).cast<String>()};
 
   /// No project: what Settings holds when it is opened from the project list, where the signed-in user may do nothing to a project.
-  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.active, rejectionReason = '', description = '', roleName = '', isInactive = false, holdsEntries = false, units = const [], timeZone = riyadh, utcOffsetMinutes = riyadhOffsetMinutes, _permissions = const {};
+  Project.none() : id = '', name = '', startDate = DateTime.utc(1970), status = ProjectStatus.active, rejectionReason = '', description = '', roleName = '', isInactive = false, holdsEntries = false, units = const [], timeZone = riyadh, utcOffsetMinutes = riyadhOffsetMinutes, _permissions = const {}, _unseenTables = const {};
 
   /// The zone of every project whose manager chose none, and of a project kept on the phone before zones came (redix-app #107, D1).
   static const riyadh = 'Asia/Riyadh';
@@ -113,8 +114,17 @@ class Project {
 
   final Set<String> _permissions;
 
+  /// The tables unticked for the signed-in user here, whose entries they do not see (redix-api #106); empty for one kept on the phone before.
+  final Set<String> _unseenTables;
+
   /// Whether the signed-in user holds [permission] in this project.
   bool may(Permission permission) => _permissions.contains(permission.name);
+
+  /// Whether the signed-in user sees the table [tableId], a group or a contract: every one but those unticked for them (redix-api #106 D1, D9).
+  bool seesTable(String tableId) => !_unseenTables.contains(tableId);
+
+  /// True while nothing is unticked for the signed-in user, so the periodic report, its files and the contracts' and VAT statements are theirs (redix-api #106 R7, R12).
+  bool get seesEveryTable => _unseenTables.isEmpty;
 
   /// True once the admin has let it in (BR-34).
   bool get isApproved => status == ProjectStatus.active || status == ProjectStatus.finished;
@@ -157,6 +167,12 @@ class Project {
 
   /// Whether the signed-in user may take a report's Excel and PDF, a finished project's too (redix-api #131).
   bool get mayTakeReportFiles => may(Permission.generateReports);
+
+  /// Whether the signed-in user may open the periodic reports: one document for everyone, for whoever sees every table (redix-api #106 R7).
+  bool get maySeePeriodicReports => maySeeReports && seesEveryTable;
+
+  /// Whether the signed-in user may take the files of a whole document, the contracts' statement among them: for whoever sees every table (redix-api #106 R7, R12).
+  bool get mayTakeWholeFiles => mayTakeReportFiles && seesEveryTable;
 
   /// Whether the signed-in user may change the project's settings now.
   bool get mayManageSettings => !isFinished && may(Permission.manageSettings);

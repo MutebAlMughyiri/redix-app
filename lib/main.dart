@@ -92,6 +92,7 @@ import 'structure/offered_items.dart';
 import 'suppliers/suppliers.dart';
 import 'suppliers/suppliers_screen.dart';
 import 'users/new_user_screen.dart';
+import 'users/table_ticks.dart';
 import 'users/user_permissions_screen.dart';
 import 'users/users.dart';
 import 'users/users_screen.dart';
@@ -189,6 +190,7 @@ class _RedixAppState extends State<RedixApp> {
   late final _capitalOf = _kept((projectId) => Capital(widget.session, projectId));
   late final _membersOf = _kept((projectId) => Members(widget.session, projectId));
   late final _partnersOf = _kept((projectId) => Partners(widget.session, projectId));
+  late final _projectTablesOf = _kept((projectId) => ProjectTables(widget.session, projectId));
   late final _suppliersOf = _kept((projectId) => Suppliers(widget.session, projectId));
   late final _contractsOf = _kept((projectId) => Contracts(widget.session, projectId));
   late final _attachmentsOf = _kept((projectId) => Attachments(widget.session, projectId));
@@ -252,7 +254,13 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: ProjectInfoScreen.path, builder: (context, state) => ProjectInfoScreen(project: state.extra! as Project, projects: _projects, timeZones: _timeZones)),
       GoRoute(
         path: MyPermissionsScreen.path,
-        builder: (context, state) => MyPermissionsScreen(project: state.extra! as Project, projects: _projects, partners: _partnersOf(state.projectId), mine: _myPermissionRequestOf(state.projectId)),
+        builder: (context, state) => MyPermissionsScreen(
+          project: state.extra! as Project,
+          projects: _projects,
+          partners: _partnersOf(state.projectId),
+          tables: _projectTablesOf(state.projectId),
+          mine: _myPermissionRequestOf(state.projectId),
+        ),
       ),
       GoRoute(path: PermissionRequestScreen.path, builder: (context, state) => PermissionRequestScreen(project: state.extra! as Project, mine: _myPermissionRequestOf(state.projectId))),
       GoRoute(path: PermissionRequestsScreen.path, builder: (context, state) => PermissionRequestsScreen(project: state.extra! as Project, requests: _permissionRequestsOf(state.projectId))),
@@ -323,13 +331,15 @@ class _RedixAppState extends State<RedixApp> {
         path: UsersScreen.path,
         builder: (context, state) => UsersScreen(users: _usersOf(state.projectId), projectName: (state.extra! as Project).name),
       ),
-      GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _usersOf(state.projectId), partners: _partnersOf(state.projectId))),
+      GoRoute(path: NewUserScreen.path, builder: (context, state) => NewUserScreen(users: _usersOf(state.projectId), partners: _partnersOf(state.projectId), tables: _projectTablesOf(state.projectId)),
+      ),
       GoRoute(
         path: UserPermissionsScreen.path,
         builder: (context, state) => UserPermissionsScreen(
           userId: state.pathParameters['userId'] ?? '',
           users: _usersOf(state.projectId),
           partners: _partnersOf(state.projectId),
+          tables: _projectTablesOf(state.projectId),
           projectName: state.extra as String? ?? '',
         ),
       ),

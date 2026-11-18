@@ -257,7 +257,7 @@ void main() {
     expect(api.sentUserChanges.single.$2, {'username': 'reem'});
     expect(find.byKey(ChangeDialog.saveKey), findsNothing);
     expect(text(tester, UsersScreen.permissionsLineKey('user-3')), 'en permissions.count');
-    expect(api.users.last['projects'], [{'projectId': 'project-0', 'name': 'غصون 6', 'isInactive': false, 'permissions': ['readProject'], 'partnerIds': <String>[]}]);
+    expect(api.users.last['projects'], [{'projectId': 'project-0', 'name': 'غصون 6', 'isInactive': false, 'permissions': ['readProject'], 'partnerIds': <String>[], 'unseenTables': <String>[]}]);
   });
 
   testWidgets('an unknown username stays in the dialog and says so', (tester) async {

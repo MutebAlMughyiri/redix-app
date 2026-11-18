@@ -320,6 +320,19 @@ class Given {
     await _post('${manager.project}/users/${person.id}/partners/$partnerId', {}, await _tokenOf(manager));
   }
 
+  /// [manager] unticks the table [tableId] for [person], who then no longer sees its entries (redix-api #106).
+  static Future<void> tableUnticked(Person manager, Person person, String tableId) async {
+    await _delete('${manager.project}/users/${person.id}/tables/$tableId', await _tokenOf(manager));
+  }
+
+  /// The id of the category «الجداول» lists the table [tableId] under, as [person] reads them (redix-api #106).
+  static Future<String> categoryOfTable(Person person, String tableId) async {
+    final categories = (await _getList('${person.project}/tables', await _tokenOf(person))).cast<Map<String, dynamic>>();
+    return categories
+        .singleWhere((category) => (category['items'] as List<dynamic>).cast<Map<String, dynamic>>().any((item) => (item['tables'] as List<dynamic>).cast<Map<String, dynamic>>().any((table) => table['id'] == tableId)))['id']
+        as String;
+  }
+
   /// [by] adds a supplier, and its id is answered: approved when [by] keeps the settings, otherwise waiting for approval.
   static Future<String> supplier(Person by, {String name = '', String vatNumber = '', String defaultItemId = ''}) async {
     final made = await _post('${by.project}/suppliers', {'name': name.isEmpty ? 'Supplier ${unique()}' : name, 'vatNumber': vatNumber, if (defaultItemId.isNotEmpty) 'defaultItemId': defaultItemId}, await _tokenOf(by));

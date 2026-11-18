@@ -21,6 +21,8 @@ Each project has its own project manager, who manages its users. Open **Users** 
 
 **Change what someone may do:** tap the three dots on their row, then **Permissions**, and tick each one they need. It is saved at once. Unticking **See the project** takes them out of the project.
 
+**Choose which tables they see:** under **Tables**, on their permissions or on the new-user form, open a category and untick a table, an item's group or a contract, they should not see; an item's tick unticks all its tables at once. What is not ticked, they do not see: not its entries, not its total, not what it moved in the accounts. Someone who does not see every table gets no periodic report, contracts' statement or VAT statement, which are one document for everyone. Everyone sees every table until unticked, a new table included. On **My permissions** each person sees the tables they see.
+
 **Look after a user:** tap the three dots on their row.
 
 | Choice | What it does |
@@ -62,6 +64,8 @@ Each project has its own project manager, who manages its users. Open **Users** 
 4. اضغط **إضافة المستخدم**، ثم أعطه اسم المستخدم وكلمة المرور المؤقتة. عند أول دخول، يطلب منه التطبيق اختيار كلمة مروره.
 
 **لتغيير ما يستطيعه شخص:** اضغط النقاط الثلاث في صفه، ثم **الصلاحيات**، وحدد كل صلاحية يحتاجها. يُحفظ فوراً. وإلغاء **يرى المشروع** يُخرجه من المشروع.
+
+**لاختيار الجداول التي يراها:** تحت **الجداول**، في صلاحياته أو في نموذج المستخدم الجديد، افتح التصنيف وألغِ تحديد الجدول الذي لا يراه، مجموعة البند أو عقدًا؛ وتحديد البند يلغي جداوله كلها معًا. ما لا تُعلَّم عليه لا يراه: لا قيوده ولا مجموعه ولا ما حرّكه من الحسابات. ومن لا يرى كل الجداول لا يصله التقرير الدوري ولا كشف العقود ولا كشف الضريبة، فكل منها وثيقة واحدة للجميع. يرى الجميع كل الجداول حتى يُلغى تحديدها، والجدول الجديد منها. وفي **صلاحياتي** يرى كل شخص الجداول التي يراها.
 
 **العناية بمستخدم:** اضغط النقاط الثلاث في صفه.
 

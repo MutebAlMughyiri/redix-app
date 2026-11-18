@@ -1475,6 +1475,9 @@ mixin WordGetters {
   /// The word `history.thing.supplier`.
   String get historyThingSupplier => text('history.thing.supplier');
 
+  /// The word `history.thing.tableSight`.
+  String get historyThingTableSight => text('history.thing.tableSight');
+
   /// The word `history.thing.timeZone`.
   String get historyThingTimeZone => text('history.thing.timeZone');
 
@@ -1909,6 +1912,9 @@ mixin WordGetters {
 
   /// The word `permissions.mineHint`.
   String get permissionsMineHint => text('permissions.mineHint');
+
+  /// The word `permissions.mineTables`.
+  String get permissionsMineTables => text('permissions.mineTables');
 
   /// The word `permissions.moveMoney`.
   String get permissionsMoveMoney => text('permissions.moveMoney');
@@ -2405,6 +2411,9 @@ mixin WordGetters {
   /// The word `reports.periodic`.
   String get reportsPeriodic => text('reports.periodic');
 
+  /// The word `reports.periodicNotForYou`.
+  String get reportsPeriodicNotForYou => text('reports.periodicNotForYou');
+
   /// The word `reports.previous`.
   String get reportsPrevious => text('reports.previous');
 
@@ -2897,6 +2906,12 @@ mixin WordGetters {
   /// The word `users.save`.
   String get usersSave => text('users.save');
 
+  /// The word `users.tables`.
+  String get usersTables => text('users.tables');
+
+  /// The word `users.tablesHint`.
+  String get usersTablesHint => text('users.tablesHint');
+
   /// The word `users.temporaryPassword`.
   String get usersTemporaryPassword => text('users.temporaryPassword');
 
@@ -2908,6 +2923,9 @@ mixin WordGetters {
 
   /// The word `users.unknownPartner`.
   String get usersUnknownPartner => text('users.unknownPartner');
+
+  /// The word `users.unknownTable`.
+  String get usersUnknownTable => text('users.unknownTable');
 
   /// The word `users.unknownUser`.
   String get usersUnknownUser => text('users.unknownUser');

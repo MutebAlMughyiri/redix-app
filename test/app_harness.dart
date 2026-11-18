@@ -1731,7 +1731,7 @@ class FakeApi {
     final project = projects.singleWhere((project) => project['id'] == projectId);
     final lines = user['projects'] as List<Map<String, Object>>;
     if (!lines.any((line) => line['projectId'] == projectId)) {
-      lines.add({'projectId': projectId, 'name': project['name'] as String, 'isInactive': false, 'permissions': <String>[], 'partnerIds': <String>[]});
+      lines.add({'projectId': projectId, 'name': project['name'] as String, 'isInactive': false, 'permissions': <String>[], 'partnerIds': <String>[], 'unseenTables': <String>[]});
     }
     final line = lines.singleWhere((line) => line['projectId'] == projectId);
     final held = line['permissions']! as List<String>;
@@ -1776,7 +1776,8 @@ class FakeApi {
       give(user, projectId, ['readProject', ...(body['permissions'] as List<dynamic>).cast<String>()]);
       (user['projects'] as List<Map<String, Object>>).singleWhere((line) => line['projectId'] == projectId)
         ..['roleName'] = body['roleName'] as String
-        ..['partnerIds'] = (body['partnerIds'] as List<dynamic>).cast<String>().toList();
+        ..['partnerIds'] = (body['partnerIds'] as List<dynamic>).cast<String>().toList()
+        ..['unseenTables'] = (body['unseenTableIds'] as List<dynamic>).cast<String>().toList();
       return _json(_inProject(user, projectId), 201);
     }
     if (segments[3] == 'existing') {
@@ -1790,6 +1791,12 @@ class FakeApi {
       lines.singleWhere((line) => line['projectId'] == projectId)['roleName'] = body['roleName'] as String;
     } else if (segments.last == 'disable' || segments.last == 'enable') {
       _lineOf(user, projectId)['isInactive'] = segments.last == 'disable';
+    } else if (segments[4] == 'tables') {
+      final unseen = _lineOf(user, projectId)['unseenTables']! as List<String>;
+      unseen.remove(segments[5]);
+      if (request.method == 'DELETE') {
+        unseen.add(segments[5]);
+      }
     } else if (segments[4] == 'partners') {
       if (request.method != 'DELETE') {
         give(user, projectId, ['seeChosenCapital']);
@@ -1948,6 +1955,9 @@ class FakeApi {
     }
     if (segments.length == 3 && segments[2] == 'entry-tables') {
       return _json(entryTablesOf(segments[1]), 200);
+    }
+    if (segments.length == 3 && segments[2] == 'tables') {
+      return _json([for (final category in entryTablesOf(segments[1])) if (category['id'] != 'category-capital') category], 200);
     }
     if (segments.length >= 3 && (segments[2] == 'categories' || segments[2] == 'items')) {
       return _answerStructure(request);

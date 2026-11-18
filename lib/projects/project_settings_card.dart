@@ -110,7 +110,7 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
     final id = project.id;
     final buttons = [
       _button(HomeScreen.contractsKey(id), Icons.description_outlined, words.contractsTitle, ContractsScreen.pathOf(id)),
-      _button(HomeScreen.reportsKey(id), Icons.summarize_outlined, words.reportsTitle, ReportsScreen.pathOf(id), mayOpen: project.maySeeReports),
+      _button(HomeScreen.reportsKey(id), Icons.summarize_outlined, words.reportsTitle, ReportsScreen.pathOf(id), mayOpen: project.maySeePeriodicReports),
       _button(HomeScreen.itemReportsKey(id, SummarySide.expenses), Icons.trending_down, words.summaryExpenses, ItemReportsScreen.pathOf(id, SummarySide.expenses), mayOpen: project.maySeeReports),
       _button(HomeScreen.itemReportsKey(id, SummarySide.revenue), Icons.trending_up, words.summaryRevenue, ItemReportsScreen.pathOf(id, SummarySide.revenue), mayOpen: project.maySeeReports),
       _button(HomeScreen.suppliersKey(id), Icons.storefront_outlined, words.suppliersTitle, SuppliersScreen.pathOf(id)),

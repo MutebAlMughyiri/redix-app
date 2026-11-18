@@ -10,13 +10,15 @@ import '../ui/messages.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'permission_ticks.dart';
+import 'table_ticks.dart';
 import 'user.dart';
 import 'users.dart';
 
-/// What one person may do in one project: a tick for each permission, saved at once, and the partners whose capital they see (redix-api #106). Unticking See the project takes them out of it.
+/// What one person may do in one project: a tick for each permission, saved at once, the partners whose capital they see, and under «الجداول» the tables they see
+/// (redix-api #106). Unticking See the project takes them out of it.
 class UserPermissionsScreen extends StatefulWidget {
-  /// The screen for the person [userId] among [users], choosing among the project's [partners].
-  const UserPermissionsScreen({super.key, required this.userId, required this.users, required this.partners, required this.projectName});
+  /// The screen for the person [userId] among [users], choosing among the project's [partners] and ticking its [tables].
+  const UserPermissionsScreen({super.key, required this.userId, required this.users, required this.partners, required this.tables, required this.projectName});
 
   /// The person.
   final String userId;
@@ -26,6 +28,9 @@ class UserPermissionsScreen extends StatefulWidget {
 
   /// The project's partners, to choose whose capital this person sees.
   final Partners partners;
+
+  /// The project's tables, to tick which this person sees.
+  final ProjectTables tables;
 
   /// The project's name, for the title.
   final String projectName;
@@ -54,6 +59,7 @@ class _UserPermissionsScreenState extends State<UserPermissionsScreen> {
   void initState() {
     super.initState();
     widget.partners.loadOnOpen();
+    widget.tables.loadOnOpen();
   }
 
   @override
@@ -64,7 +70,7 @@ class _UserPermissionsScreenState extends State<UserPermissionsScreen> {
     return Scaffold(
       appBar: AppBar(title: ScreenTitle(words.permissionsTitle, subject: widget.projectName)),
       body: ListenableBuilder(
-        listenable: Listenable.merge([users, widget.partners]),
+        listenable: Listenable.merge([users, widget.partners, widget.tables]),
         builder: (context, _) {
           final matching = users.all.where((user) => user.id == widget.userId);
           if (matching.isEmpty) {
@@ -72,7 +78,7 @@ class _UserPermissionsScreenState extends State<UserPermissionsScreen> {
           }
           final User user = matching.first;
           return RefreshIndicator(
-            onRefresh: users.load,
+            onRefresh: () => Future.wait([users.load(), widget.tables.load()]),
             child: ListView(
               physics: ApiListBody.physics,
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -87,6 +93,13 @@ class _UserPermissionsScreenState extends State<UserPermissionsScreen> {
                   partners: widget.partners.all,
                   chosen: (partner) => user.sees(partner.id),
                   onChooseOf: (partner) => (ticked) => showRefusalOf(context, ticked ? users.choosePartner(user, partner.id) : users.unchoosePartner(user, partner.id)),
+                ),
+                TableTicks(
+                  heading: words.usersTables,
+                  hint: words.usersTablesHint,
+                  categories: widget.tables.all,
+                  sees: user.seesTable,
+                  onChangedOf: (tableIds) => (ticked) => showRefusalOf(context, users.seeTables(user, tableIds, ticked)),
                 ),
               ],
             ),

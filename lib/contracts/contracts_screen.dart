@@ -211,7 +211,7 @@ class _ContractsScreenState extends State<ContractsScreen> {
                     onAmend: () => _ask(contract),
                     mayOpen: project.maySeeReports,
                     onOpen: () => context.push(ItemReportScreen.contractPathOf(project.id, contract.id), extra: project),
-                    mayExport: project.mayTakeReportFiles,
+                    mayExport: project.mayTakeWholeFiles,
                     files: widget.files,
                     address: ItemReportScreen.contractPathOf(project.id, contract.id),
                   ),

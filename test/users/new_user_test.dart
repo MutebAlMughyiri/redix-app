@@ -42,7 +42,7 @@ void main() {
 
     final (path, body) = api.sentUserChanges.single;
     expect(path, '/projects/project-0/users');
-    expect(body, {'displayName': 'نواف', 'username': 'nawaf', 'roleName': '', 'mobile': '0500000000', 'email': 'nawaf@example.com', 'temporaryPassword': 'Temporary-1', 'permissions': ['readProject'], 'partnerIds': <String>[]});
+    expect(body, {'displayName': 'نواف', 'username': 'nawaf', 'roleName': '', 'mobile': '0500000000', 'email': 'nawaf@example.com', 'temporaryPassword': 'Temporary-1', 'permissions': ['readProject'], 'partnerIds': <String>[], 'unseenTableIds': <String>[]});
     expect(find.byKey(NewUserScreen.submitKey), findsNothing);
     expect(tester.widget<Text>(find.byKey(UsersScreen.nameKey('user-1'))).data, 'نواف');
   });

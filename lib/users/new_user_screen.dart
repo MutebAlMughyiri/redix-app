@@ -11,6 +11,7 @@ import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
 import 'permission_ticks.dart';
+import 'table_ticks.dart';
 import 'users.dart';
 import '../ui/form_error.dart';
 import '../ui/form_button_style.dart';
@@ -19,14 +20,18 @@ import '../ui/act_once.dart';
 /// The new user form (UC-007): their name, username, mobile, email, which is required (redix-api #127, AC-07.8), and a temporary password they change at first sign-in (AC-02.1).
 /// A new login is born in a project.
 class NewUserScreen extends StatefulWidget {
-  /// The form, adding to the project's [users], choosing among its [partners] whose capital the new one sees (redix-api #106).
-  const NewUserScreen({super.key, required this.users, required this.partners});
+  /// The form, adding to the project's [users], choosing among its [partners] whose capital the new one sees and ticking which of its [tables] they see
+  /// (redix-api #106).
+  const NewUserScreen({super.key, required this.users, required this.partners, required this.tables});
 
   /// The users the new one joins.
   final Users users;
 
   /// The project's partners.
   final Partners partners;
+
+  /// The project's tables, every one ticked until unticked (redix-api #106 D1).
+  final ProjectTables tables;
 
   /// The screen's route.
   static const path = '/projects/:projectId/users/new';
@@ -78,11 +83,13 @@ class _NewUserScreenState extends State<NewUserScreen> {
   var _message = '';
   final _ticked = {Permission.readProject};
   final _chosen = <String>{};
+  final _unseen = <String>{};
 
   @override
   void initState() {
     super.initState();
     widget.partners.loadOnOpen();
+    widget.tables.loadOnOpen();
   }
 
   /// Ticks or unticks [permission]; a capital tick takes the other, and unticking chosen capital forgets the partners chosen under it (redix-api #106).
@@ -113,7 +120,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
 
   Future<void> _add() async {
     setState(() => _message = '');
-    final refusal = await widget.users.create(_name.text, _username.text, _roleName.text, _mobile.text, _email.text, _password.text, _ticked, _chosen);
+    final refusal = await widget.users.create(_name.text, _username.text, _roleName.text, _mobile.text, _email.text, _password.text, _ticked, _chosen, _unseen);
     if (!mounted) {
       return;
     }
@@ -170,6 +177,16 @@ class _NewUserScreenState extends State<NewUserScreen> {
                   partners: widget.partners.all,
                   chosen: (partner) => _chosen.contains(partner.id),
                   onChooseOf: (partner) => (ticked) => setState(() => ticked ? _chosen.add(partner.id) : _chosen.remove(partner.id)),
+                ),
+              ),
+              ListenableBuilder(
+                listenable: widget.tables,
+                builder: (context, _) => TableTicks(
+                  heading: words.usersTables,
+                  hint: words.usersTablesHint,
+                  categories: widget.tables.all,
+                  sees: (tableId) => !_unseen.contains(tableId),
+                  onChangedOf: (tableIds) => (ticked) => setState(() => ticked ? _unseen.removeAll(tableIds) : _unseen.addAll(tableIds)),
                 ),
               ),
               const SizedBox(height: 24),

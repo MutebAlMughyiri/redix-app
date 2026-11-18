@@ -15,9 +15,9 @@ class Users extends ApiList<User> {
   /// The project these people belong to.
   final String projectId;
 
-  /// Creates a login in this project holding [permissions] and seeing the partners [partnerIds] (redix-api #106), called [roleName] there, reached at [email], which is required
-  /// (redix-api #127, AC-07.8), who must change [temporaryPassword] at first sign-in.
-  Future<String> create(String displayName, String username, String roleName, String mobile, String email, String temporaryPassword, Set<Permission> permissions, Set<String> partnerIds) =>
+  /// Creates a login in this project holding [permissions], seeing the partners [partnerIds] and every table but [unseenTableIds] (redix-api #106), called [roleName] there,
+  /// reached at [email], which is required (redix-api #127, AC-07.8), who must change [temporaryPassword] at first sign-in.
+  Future<String> create(String displayName, String username, String roleName, String mobile, String email, String temporaryPassword, Set<Permission> permissions, Set<String> partnerIds, Set<String> unseenTableIds) =>
       change('/projects/$projectId/users', {
         'displayName': displayName,
         'username': username,
@@ -27,6 +27,7 @@ class Users extends ApiList<User> {
         'temporaryPassword': temporaryPassword,
         'permissions': [for (final permission in permissions) permission.name],
         'partnerIds': [...partnerIds],
+        'unseenTableIds': [...unseenTableIds],
       });
 
   /// Adds someone who already has a login to this project, by their exact [username].
@@ -65,4 +66,16 @@ class Users extends ApiList<User> {
 
   /// Takes the partner [partnerId] from those chosen for [user].
   Future<String> unchoosePartner(User user, String partnerId) => deleteAt('/projects/$projectId/users/${user.id}/partners/$partnerId');
+
+  /// Ticks the tables [tableIds] for [user] when [sees], who then sees their entries, or unticks them (redix-api #106); the first refusal, if any.
+  Future<String> seeTables(User user, List<String> tableIds, bool sees) async {
+    for (final tableId in tableIds) {
+      final path = '/projects/$projectId/users/${user.id}/tables/$tableId';
+      final refusal = sees ? await change(path, {}) : await deleteAt(path);
+      if (refusal.isNotEmpty) {
+        return refusal;
+      }
+    }
+    return '';
+  }
 }

@@ -100,8 +100,12 @@ class TableItem {
 class TableCategory {
   /// The category the API describes in [json].
   TableCategory.fromJson(Map<String, dynamic> json)
-    : name = json['name'] as String,
+    : id = json['id'] as String,
+      name = json['name'] as String,
       items = [for (final item in json['items'] as List<dynamic>) TableItem.fromJson(item as Map<String, dynamic>)];
+
+  /// The category's id.
+  final String id;
 
   /// The category's name.
   final String name;

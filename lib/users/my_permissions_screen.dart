@@ -21,14 +21,15 @@ import 'permission_request_screen.dart';
 import 'permission_requests.dart';
 import 'permission_requests_screen.dart';
 import 'permission_ticks.dart';
+import 'table_ticks.dart';
 
 /// صلاحياتي, from the home (Muteb, 9 Nov 2026): what the signed-in user may do in a project, each permission as the project manager ticked it, and the partners chosen for them
-/// (redix-api #106), read only. Its search keeps the permissions whose name or what it allows holds what was typed (Muteb, 12 Nov 2026). Above them
+/// and the tables they see (redix-api #106), read only. Its search keeps the permissions whose name or what it allows holds what was typed (Muteb, 12 Nov 2026). Above them
 /// stands the person's latest request to change them, waiting, with a way to withdraw it, or decided; «طلب تغيير» asks for another (redix-api #112).
 class MyPermissionsScreen extends StatefulWidget {
   /// The permissions of the signed-in user in [project], read again from [projects] when pulled down, with the [partners] they see and their latest
   /// request, [mine].
-  const MyPermissionsScreen({super.key, required this.project, required this.projects, required this.partners, required this.mine});
+  const MyPermissionsScreen({super.key, required this.project, required this.projects, required this.partners, required this.tables, required this.mine});
 
   /// The screen's route.
   static const path = '/projects/:projectId/my-permissions';
@@ -60,6 +61,9 @@ class MyPermissionsScreen extends StatefulWidget {
   /// The partners the user sees: with chosen capital, those chosen for them.
   final Partners partners;
 
+  /// The project's tables, ticked where the user sees them (redix-api #106 D9).
+  final ProjectTables tables;
+
   /// The person's latest request to change their permissions.
   final MyPermissionRequest mine;
 
@@ -72,6 +76,7 @@ class _MyPermissionsScreenState extends State<MyPermissionsScreen> {
   void initState() {
     super.initState();
     widget.partners.loadOnOpen();
+    widget.tables.loadOnOpen();
     widget.mine.loadOnOpen();
   }
 
@@ -124,12 +129,12 @@ class _MyPermissionsScreenState extends State<MyPermissionsScreen> {
             SearchLine(hint: words.commonSearchIn.fill([words.permissionsMine])),
             Expanded(
               child: ListenableBuilder(
-                listenable: Listenable.merge([projects, widget.partners, widget.mine]),
+                listenable: Listenable.merge([projects, widget.partners, widget.tables, widget.mine]),
                 builder: (context, _) {
                   final latest = projects.latest(widget.project);
                   final typed = ScreenSearch.of(context).typed;
                   return RefreshIndicator(
-                    onRefresh: () => Future.wait([projects.load(), widget.mine.load()]),
+                    onRefresh: () => Future.wait([projects.load(), widget.tables.load(), widget.mine.load()]),
                     child: ListView(
                       physics: ApiListBody.physics,
                       padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -145,6 +150,13 @@ class _MyPermissionsScreenState extends State<MyPermissionsScreen> {
                           chosen: (_) => true,
                           onChooseOf: (_) => null,
                           shows: (permission) => ListSearch.matchesText('${words.text(permission.wordKey)} ${words.text(permission.hintKey)}', typed),
+                        ),
+                        TableTicks(
+                          heading: words.permissionsMineTables,
+                          hint: latest.seesEveryTable ? '' : words.reportsPeriodicNotForYou,
+                          categories: widget.tables.all,
+                          sees: latest.seesTable,
+                          onChangedOf: (_) => null,
                         ),
                       ],
                     ),
