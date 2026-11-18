@@ -19,6 +19,7 @@ import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../words/app_language.dart';
 import '../words/language_switch.dart';
+import '../legal/legal_page.dart';
 import '../words/words.dart';
 import 'default_project_sheet.dart';
 import 'my_email_code_dialog.dart';
@@ -118,6 +119,9 @@ class SharedSettingsScreen extends StatefulWidget {
 
   /// The row that signs out, after asking.
   static const signOutKey = Key('sharedSettings.signOut');
+
+  /// Flutter's own page of the licences of the packages the app ships (redix-api #143 R8).
+  static const licensesKey = Key('legal.licenses');
 
   @override
   State<SharedSettingsScreen> createState() => _SharedSettingsScreenState();
@@ -262,6 +266,9 @@ class _SharedSettingsScreenState extends State<SharedSettingsScreen> {
               ),
             ]),
             _row(SharedSettingsScreen.changePasswordKey, Icons.lock_outline, words.myAccountChangePassword, () => context.push(ChangePasswordScreen.path)),
+            _row(LegalPage.privacy.key, Icons.privacy_tip_outlined, LegalPage.privacy.nameIn(words), LegalPage.privacy.open),
+            _row(LegalPage.terms.key, Icons.description_outlined, LegalPage.terms.nameIn(words), LegalPage.terms.open),
+            _row(SharedSettingsScreen.licensesKey, Icons.info_outline, words.legalLicenses, () => showLicensePage(context: context)),
             _bordered([
               ListTile(
                 key: SharedSettingsScreen.signOutKey,

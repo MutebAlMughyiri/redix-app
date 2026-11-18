@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../format/date_format.dart';
+import '../legal/legal_page.dart';
 import '../auth/sign_in_screen.dart';
 import '../ui/part_keys.dart';
 import '../ui/messages.dart';
@@ -264,6 +265,10 @@ class _NewProjectScreenState extends State<NewProjectScreen> {
                   obscureText: true,
                   decoration: InputDecoration(labelText: words.signInPassword, helperText: words.commonPasswordRules, helperMaxLines: 2),
                 ),
+              ],
+              if (widget.isPublic) ...[
+                const SizedBox(height: 16),
+                const LegalAgreement(),
               ],
               const SizedBox(height: 24),
               ActOnce(builder: (once) => FilledButton(

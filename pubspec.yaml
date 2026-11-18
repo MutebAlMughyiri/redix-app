@@ -27,6 +27,7 @@ dependencies:
   receive_sharing_intent: ^1.9.0
   share_plus: ^13.3.1
   shared_preferences: ^2.5.6
+  url_launcher: ^6.3.3
   uuid: ^4.6.0
 
 dev_dependencies:
@@ -36,6 +37,7 @@ dev_dependencies:
   patrol: ^4.11.0
   flutter_launcher_icons: ^0.14.4
   qr: ^3.0.3
+  url_launcher_platform_interface: ^2.3.2
 flutter_launcher_icons:
   android: true
   ios: true

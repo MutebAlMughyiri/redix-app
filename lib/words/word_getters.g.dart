@@ -1286,6 +1286,18 @@ mixin WordGetters {
   /// The word `home.widgetReadAt`.
   String get homeWidgetReadAt => text('home.widgetReadAt');
 
+  /// The word `legal.agreement`.
+  String get legalAgreement => text('legal.agreement');
+
+  /// The word `legal.licenses`.
+  String get legalLicenses => text('legal.licenses');
+
+  /// The word `legal.privacy`.
+  String get legalPrivacy => text('legal.privacy');
+
+  /// The word `legal.terms`.
+  String get legalTerms => text('legal.terms');
+
   /// The word `myAccount.arabic`.
   String get myAccountArabic => text('myAccount.arabic');
 
