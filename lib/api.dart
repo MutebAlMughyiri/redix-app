@@ -42,8 +42,15 @@ Map<String, dynamic> answerOf(http.Response response) {
   return answer is Map<String, dynamic> ? answer : const {};
 }
 
-/// The word key, under [prefix], of the refusal [answer] names: `prefix.code`, or `prefix.refused` when it names no code.
-String refusalOf(Map<String, dynamic> answer, String prefix) => '$prefix.${answer['code'] as String? ?? 'refused'}';
+/// The codes a bare status carries (redix-api #150 R7): they name what went wrong for the logs and the trace, not a reason a person can act on.
+const statusCodes = {'badRequest', 'signInRequired', 'forbidden', 'notFound', 'unsupportedMediaType', 'tooManyRequests', 'unexpected', 'unavailable', 'failed'};
+
+/// The word key, under [prefix], of the refusal [answer] names: `prefix.code`, or `prefix.refused` when it names no reason of its own - no code,
+/// or a bare status's.
+String refusalOf(Map<String, dynamic> answer, String prefix) {
+  final code = answer['code'] as String? ?? 'refused';
+  return '$prefix.${statusCodes.contains(code) ? 'refused' : code}';
+}
 
 /// The word key of why [response] was refused: asking too often, which a limited route answers with no code of its own, says [tooMany]; any other refusal what [refusalOf] says
 /// under [prefix]. The one place a 429 is told apart.
