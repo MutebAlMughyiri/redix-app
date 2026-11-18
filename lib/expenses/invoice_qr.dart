@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import 'dart:convert';
 
 /// What a Saudi e-invoice's QR code carries (FR-11): the text is base64 of tag, length and value, one after another, tags 1 to 5 being the seller, its VAT number, the time, the total including VAT and the VAT.

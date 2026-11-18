@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 /// A way a project pays, such as شبكة, as the API answers it.
 class PaymentMethod {
   /// The payment method the API describes in [json].

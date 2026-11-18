@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import 'package:flutter/material.dart';
 
 import '../ui/change_dialog.dart';

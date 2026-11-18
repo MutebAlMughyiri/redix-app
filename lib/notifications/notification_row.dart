@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import '../format/date_format.dart';
 
 /// Something a person was told (UC-036): its words come from [kind], in their language.

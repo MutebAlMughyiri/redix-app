@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import 'dart:typed_data';
 
 /// What the camera or the files gave: a file, nothing when the person went back, or why neither.

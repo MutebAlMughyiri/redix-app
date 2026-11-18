@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 /// A partner in a project, as the API answers them. Their own login only says whose account they are; who sees their capital is ticked on people's permissions (redix-api #106).
 class Partner {
   /// The partner the API describes in [json].

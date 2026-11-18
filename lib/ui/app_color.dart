@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import 'package:flutter/material.dart';
 
 /// Every color the app shows, in one place (Muteb, 9 Nov 2026: "create one enum class color to store all colors of the app ... this will help us to unify the colors and

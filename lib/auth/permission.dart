@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 /// What the API says a user may do, named as the API names it. The app shows a control from these, and a project manager ticks them for each person in a project.
 enum Permission {
   /// See the registered projects, and approve or reject them: the admin's, never ticked in a project.

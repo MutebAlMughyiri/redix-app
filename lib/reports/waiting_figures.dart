@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 /// What waits for approval, as two figures (findings row 147): expenses, which lower the surplus once approved, and revenue with partners' money, which raises it.
 class WaitingFigures {
   /// The figures as the API answers them.

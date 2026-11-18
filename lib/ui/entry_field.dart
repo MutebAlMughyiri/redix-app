@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import 'package:flutter/material.dart';
 
 /// One typed field of an entry's form, the same on every kind of entry: text, or a number on the phone's number keyboard, which has a minus sign when it [isSigned]. It answers [onChanged], with [errorText] under it when something is wrong, which is how a text field is told.

@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 /// A date as the app shows it, in both languages: Gregorian dd.MM.yyyy (NFR-04).
 String formatDate(DateTime date) => '${_twoDigits(date.day)}.${_twoDigits(date.month)}.${date.year}';
 

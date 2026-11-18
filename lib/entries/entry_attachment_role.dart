@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 /// What a file is to the entry it is on, named as the API names it, with the word key that names it on the entry's page (redix-app #115, AC-46.10g, D5).
 enum EntryAttachmentRole {
   /// A purchase's invoice.

@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import 'package:flutter/widgets.dart';
 
 /// The keys of the parts inside a keyed element: its label, icon, title, subtitle and the field it is drawn as. Every element and label has a key a test finds it by, never

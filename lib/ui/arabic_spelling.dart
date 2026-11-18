@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import '../format/number_format.dart';
 
 /// The letters a person may write either way, as `ArabicSpelling` on the API treats them: what a search needs when it has no network to ask.

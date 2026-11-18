@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import '../entries/entry_kind.dart';
 import '../entries/entry_row.dart';
 import '../words/words.dart';

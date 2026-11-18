@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import '../api.dart';
 import '../attachments/invoice_capture.dart';
 import '../format/date_format.dart';

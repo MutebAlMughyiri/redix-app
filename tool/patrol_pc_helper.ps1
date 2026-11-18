@@ -1,3 +1,6 @@
+# Copyright 2026 Tech Details. All rights reserved.
+# Use of this file is governed by the LICENSE file at the root of this repository.
+
 # What a Patrol case on the phone cannot do for itself. The Patrol run starts this on the PC, and a case asks it over port 5011 (patrol_test/support/pc.dart).
 # The run names the phone and the file each case's line is kept in, so no path on a PC sits in the repo (redix-api #118).
 param([Parameter(Mandatory)][string]$Device, [Parameter(Mandatory)][string]$Results)

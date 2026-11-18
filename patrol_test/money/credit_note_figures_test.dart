@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import 'package:patrol/patrol.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/reports/item_report_screen.dart';

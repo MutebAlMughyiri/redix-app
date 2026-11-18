@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import 'package:flutter/material.dart';
 
 /// What a kept file is, by its content type, and the icon that shows it: the one owner of "is it a picture or a PDF" for whatever opens or lists a file.

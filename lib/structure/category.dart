@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 /// What an item is for (FR-38), as the API names it, each knowing its word.
 enum ItemType {
   /// Purchases only.

@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 /// What kind of account holds a project's money (FR-22), as the API names it, each knowing its word.
 enum AccountType {
   /// A bank account.

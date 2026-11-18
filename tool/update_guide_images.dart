@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import 'dart:io';
 
 /// Copies the screenshots the last `patrol test` run pulled into `patrol_test/screenshots/` to `docs/guide/images/{tag}.png`,

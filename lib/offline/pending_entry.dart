@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 /// An entry waiting on this phone for the network (UC-029).
 class PendingEntry {
   /// An entry of [ownerId] in [projectId], for the API [route], holding what was entered in [body], with the file [fileName] if it has one that was not sent yet, and the

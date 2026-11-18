@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import '../ui/form_error.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

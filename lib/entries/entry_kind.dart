@@ -1,3 +1,6 @@
+// Copyright 2026 Tech Details. All rights reserved.
+// Use of this file is governed by the LICENSE file at the root of this repository.
+
 import '../auth/permission.dart';
 
 /// What an entry is, named as the API names it, with the word key that names it: the one owner the filter, the entries list and Approvals read (findings row 163).

@@ -1,3 +1,6 @@
+# Copyright 2026 Tech Details. All rights reserved.
+# Use of this file is governed by the LICENSE file at the root of this repository.
+
 # How much of the app the widget tests run: every line of lib, the generated word getters left out, as a report in coverage/report/index.html and a
 # summary printed here. Flutter measures (flutter test --coverage); ReportGenerator, from the repo's tool manifest, reads its lcov file. Flutter measures only
 # the files a test loads, so for the measurement alone a test loading every file of lib is written and then deleted: a file no test opens counts at 0%
