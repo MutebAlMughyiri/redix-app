@@ -1,0 +1,91 @@
+# The test builds, started by hand from Actions (redix-app #118): the APK on Linux, for Firebase App Distribution's testers (App Tester), and
+# the IPA on GitHub's Mac, for TestFlight (D1). Each uploads only when its account's secrets are set; without them it still builds - the APK
+# debug-signed, the iPhone archive unsigned - and keeps what it built as the run's artifact. The run number is every upload's build number (R6).
+#
+# Secrets, once the accounts exist (#118 step 3):
+#   Android:  ANDROID_UPLOAD_KEYSTORE (the .jks, base64), ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD,
+#             FIREBASE_APP_ID, FIREBASE_SERVICE_ACCOUNT (the JSON of a service account allowed to distribute)
+#   iPhone:   APP_STORE_CONNECT_KEY_ID, APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_PRIVATE_KEY (the .p8's text), APPLE_TEAM_ID
+name: Test builds
+
+on:
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    env:
+      SIGNED: ${{ secrets.ANDROID_UPLOAD_KEYSTORE != '' }}
+      DISTRIBUTED: ${{ secrets.FIREBASE_APP_ID != '' && secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+      - run: flutter pub get
+      - name: REDIX's upload key, from the secrets, never in the repo
+        if: env.SIGNED == 'true'
+        run: |
+          echo "${{ secrets.ANDROID_UPLOAD_KEYSTORE }}" | base64 -d > android/upload.jks
+          printf 'storeFile=../upload.jks\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' "${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
+            "${{ secrets.ANDROID_KEY_ALIAS }}" "${{ secrets.ANDROID_KEY_PASSWORD }}" > android/key.properties
+      - run: flutter build apk --release --dart-define-from-file=config/prod.json --build-number=${{ github.run_number }}
+      - name: The APK carries REDIX's upload key
+        if: env.SIGNED == 'true'
+        run: |
+          tools="$ANDROID_HOME/build-tools/$(ls "$ANDROID_HOME/build-tools" | sort -V | tail -1)"
+          "$tools/apksigner" verify --print-certs build/app/outputs/flutter-apk/app-release.apk
+      - name: To the testers, through Firebase App Distribution
+        if: env.DISTRIBUTED == 'true'
+        run: |
+          echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > "$RUNNER_TEMP/firebase.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/firebase.json"
+          npx --yes firebase-tools@14 appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
+            --app "${{ secrets.FIREBASE_APP_ID }}" --groups team --release-notes "REDIX ${{ github.sha }}, run ${{ github.run_number }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: redix-apk-${{ github.run_number }}
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  ios:
+    runs-on: macos-latest
+    env:
+      SIGNED: ${{ secrets.APP_STORE_CONNECT_KEY_ID != '' && secrets.APP_STORE_CONNECT_ISSUER_ID != '' && secrets.APP_STORE_CONNECT_PRIVATE_KEY != '' && secrets.APPLE_TEAM_ID != '' }}
+      KEY_ID: ${{ secrets.APP_STORE_CONNECT_KEY_ID }}
+      ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+      - run: flutter pub get
+      - name: Unsigned, while the App Store Connect key is not set
+        if: env.SIGNED != 'true'
+        run: flutter build ipa --release --no-codesign --dart-define-from-file=config/prod.json --build-number=${{ github.run_number }}
+      - name: Signed by Xcode's cloud signing, with the App Store Connect key
+        if: env.SIGNED == 'true'
+        run: |
+          mkdir -p ~/.appstoreconnect/private_keys
+          echo "${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8
+          /usr/libexec/PlistBuddy -c "Add :teamID string ${{ secrets.APPLE_TEAM_ID }}" ios/ExportOptions.plist
+          flutter build ios --release --no-codesign --dart-define-from-file=config/prod.json --build-number=${{ github.run_number }}
+          auth=(-allowProvisioningUpdates -authenticationKeyPath "$HOME/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER_ID")
+          xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release -archivePath build/ios/archive/Runner.xcarchive \
+            DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}" CODE_SIGN_STYLE=Automatic "${auth[@]}" archive
+          xcodebuild -exportArchive -archivePath build/ios/archive/Runner.xcarchive -exportOptionsPlist ios/ExportOptions.plist -exportPath build/ios/ipa "${auth[@]}"
+      - name: To TestFlight
+        if: env.SIGNED == 'true'
+        run: xcrun altool --upload-app -t ios -f build/ios/ipa/*.ipa --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: redix-ios-${{ github.run_number }}
+          path: |
+            build/ios/ipa
+            build/ios/archive
+          if-no-files-found: ignore
