@@ -1454,6 +1454,9 @@ mixin WordGetters {
   /// The word `history.thing.permission`.
   String get historyThingPermission => text('history.thing.permission');
 
+  /// The word `history.thing.permissionRequest`.
+  String get historyThingPermissionRequest => text('history.thing.permissionRequest');
+
   /// The word `history.thing.person`.
   String get historyThingPerson => text('history.thing.person');
 
@@ -1552,6 +1555,15 @@ mixin WordGetters {
 
   /// The word `notifications.noConnection`.
   String get notificationsNoConnection => text('notifications.noConnection');
+
+  /// The word `notifications.permissionRequestApproved`.
+  String get notificationsPermissionRequestApproved => text('notifications.permissionRequestApproved');
+
+  /// The word `notifications.permissionRequestRejected`.
+  String get notificationsPermissionRequestRejected => text('notifications.permissionRequestRejected');
+
+  /// The word `notifications.permissionRequested`.
+  String get notificationsPermissionRequested => text('notifications.permissionRequested');
 
   /// The word `notifications.projectApproved`.
   String get notificationsProjectApproved => text('notifications.projectApproved');
@@ -1714,6 +1726,102 @@ mixin WordGetters {
 
   /// The word `paymentMethods.unknownAccount`.
   String get paymentMethodsUnknownAccount => text('paymentMethods.unknownAccount');
+
+  /// The word `permissionRequests.alreadyHeld`.
+  String get permissionRequestsAlreadyHeld => text('permissionRequests.alreadyHeld');
+
+  /// The word `permissionRequests.approve`.
+  String get permissionRequestsApprove => text('permissionRequests.approve');
+
+  /// The word `permissionRequests.approved`.
+  String get permissionRequestsApproved => text('permissionRequests.approved');
+
+  /// The word `permissionRequests.approvedDone`.
+  String get permissionRequestsApprovedDone => text('permissionRequests.approvedDone');
+
+  /// The word `permissionRequests.ask`.
+  String get permissionRequestsAsk => text('permissionRequests.ask');
+
+  /// The word `permissionRequests.empty`.
+  String get permissionRequestsEmpty => text('permissionRequests.empty');
+
+  /// The word `permissionRequests.gives`.
+  String get permissionRequestsGives => text('permissionRequests.gives');
+
+  /// The word `permissionRequests.hint`.
+  String get permissionRequestsHint => text('permissionRequests.hint');
+
+  /// The word `permissionRequests.invalidPermission`.
+  String get permissionRequestsInvalidPermission => text('permissionRequests.invalidPermission');
+
+  /// The word `permissionRequests.invalidReason`.
+  String get permissionRequestsInvalidReason => text('permissionRequests.invalidReason');
+
+  /// The word `permissionRequests.lastManager`.
+  String get permissionRequestsLastManager => text('permissionRequests.lastManager');
+
+  /// The word `permissionRequests.listTitle`.
+  String get permissionRequestsListTitle => text('permissionRequests.listTitle');
+
+  /// The word `permissionRequests.loadFailed`.
+  String get permissionRequestsLoadFailed => text('permissionRequests.loadFailed');
+
+  /// The word `permissionRequests.noConnection`.
+  String get permissionRequestsNoConnection => text('permissionRequests.noConnection');
+
+  /// The word `permissionRequests.notHeld`.
+  String get permissionRequestsNotHeld => text('permissionRequests.notHeld');
+
+  /// The word `permissionRequests.nothingAsked`.
+  String get permissionRequestsNothingAsked => text('permissionRequests.nothingAsked');
+
+  /// The word `permissionRequests.projectFinished`.
+  String get permissionRequestsProjectFinished => text('permissionRequests.projectFinished');
+
+  /// The word `permissionRequests.reason`.
+  String get permissionRequestsReason => text('permissionRequests.reason');
+
+  /// The word `permissionRequests.reasonRequired`.
+  String get permissionRequestsReasonRequired => text('permissionRequests.reasonRequired');
+
+  /// The word `permissionRequests.refused`.
+  String get permissionRequestsRefused => text('permissionRequests.refused');
+
+  /// The word `permissionRequests.reject`.
+  String get permissionRequestsReject => text('permissionRequests.reject');
+
+  /// The word `permissionRequests.rejectReason`.
+  String get permissionRequestsRejectReason => text('permissionRequests.rejectReason');
+
+  /// The word `permissionRequests.rejectTitle`.
+  String get permissionRequestsRejectTitle => text('permissionRequests.rejectTitle');
+
+  /// The word `permissionRequests.rejected`.
+  String get permissionRequestsRejected => text('permissionRequests.rejected');
+
+  /// The word `permissionRequests.rejectedDone`.
+  String get permissionRequestsRejectedDone => text('permissionRequests.rejectedDone');
+
+  /// The word `permissionRequests.send`.
+  String get permissionRequestsSend => text('permissionRequests.send');
+
+  /// The word `permissionRequests.sent`.
+  String get permissionRequestsSent => text('permissionRequests.sent');
+
+  /// The word `permissionRequests.takes`.
+  String get permissionRequestsTakes => text('permissionRequests.takes');
+
+  /// The word `permissionRequests.title`.
+  String get permissionRequestsTitle => text('permissionRequests.title');
+
+  /// The word `permissionRequests.waiting`.
+  String get permissionRequestsWaiting => text('permissionRequests.waiting');
+
+  /// The word `permissionRequests.withdraw`.
+  String get permissionRequestsWithdraw => text('permissionRequests.withdraw');
+
+  /// The word `permissionRequests.withdrawn`.
+  String get permissionRequestsWithdrawn => text('permissionRequests.withdrawn');
 
   /// The word `permissions.addSupplier`.
   String get permissionsAddSupplier => text('permissions.addSupplier');

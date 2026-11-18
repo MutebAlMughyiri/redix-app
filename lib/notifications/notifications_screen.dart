@@ -21,6 +21,8 @@ import '../ui/search_scope.dart';
 import '../words/word_fill.dart';
 import '../format/parts_line.dart';
 import '../entries/entry_link_screen.dart';
+import '../users/my_permissions_screen.dart';
+import '../users/permission_requests_screen.dart';
 
 /// What the person was told (UC-036), newest first. Tapping one opens what it is about.
 class NotificationsScreen extends StatefulWidget {
@@ -43,6 +45,14 @@ class NotificationsScreen extends StatefulWidget {
   State<NotificationsScreen> createState() => _NotificationsScreenState();
 }
 
+/// The screen a notification of each kind opens in its project; any other kind opens its entry (UC-036, redix-api #112 R6).
+final _screens = <String, String Function(String projectId)>{
+  'entrySubmitted': ApprovalsScreen.pathOf,
+  'permissionRequested': PermissionRequestsScreen.pathOf,
+  'permissionRequestApproved': MyPermissionsScreen.pathOf,
+  'permissionRequestRejected': MyPermissionsScreen.pathOf,
+};
+
 class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   void initState() {
@@ -58,7 +68,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       context.go(ProjectsScreen.path);
       return;
     }
-    context.push(row.asksForDecision ? ApprovalsScreen.pathOf(row.projectId) : EntryLinkScreen.pathOf(row.projectId, row.entryId), extra: project);
+    context.push((_screens[row.kind] ?? (projectId) => EntryLinkScreen.pathOf(projectId, row.entryId))(row.projectId), extra: project);
   }
 
   @override

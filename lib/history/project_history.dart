@@ -202,7 +202,10 @@ enum HistoryThing {
   roleName,
 
   /// A partner a person sees.
-  partnerSight;
+  partnerSight,
+
+  /// A person's request to change their permissions (redix-api #112).
+  permissionRequest;
 
   /// The key of the word naming it.
   String get wordKey => 'history.thing.$name';

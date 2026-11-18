@@ -191,6 +191,9 @@ class HomeScreen extends StatefulWidget {
   /// The way into the users of the project [id], moved from Settings (Muteb, 9 Nov 2026).
   static Key usersKey(String id) => Key('home.users.$id');
 
+  /// «طلبات الصلاحيات» of the project [id], beside its users, for whoever manages them (redix-api #112 R3).
+  static Key permissionRequestsKey(String id) => Key('home.permissionRequests.$id');
+
   /// The way into the categories and items of the project [id], moved from Settings (Muteb, 9 Nov 2026).
   static Key categoriesKey(String id) => Key('home.categories.$id');
 

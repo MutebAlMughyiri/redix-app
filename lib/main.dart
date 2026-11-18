@@ -105,6 +105,9 @@ import 'ui/app_theme.dart';
 import 'accounts/account_history.dart';
 import 'accounts/account_history_screen.dart';
 import 'users/my_permissions_screen.dart';
+import 'users/permission_request_screen.dart';
+import 'users/permission_requests.dart';
+import 'users/permission_requests_screen.dart';
 import 'entries/searched_entries.dart';
 import 'launcher/launcher_add_entry.dart';
 
@@ -171,6 +174,8 @@ class _RedixAppState extends State<RedixApp> {
   late final _registered = RegisteredProjects(widget.session);
   late final _notifications = Notifications(widget.session);
   late final _usersOf = _kept((projectId) => Users(widget.session, projectId));
+  late final _permissionRequestsOf = _kept((projectId) => PermissionRequests(widget.session, projectId));
+  late final _myPermissionRequestOf = _kept((projectId) => MyPermissionRequest(widget.session, projectId));
   late final _categoriesOf = _kept((projectId) => Categories(widget.session, projectId));
   late final _paymentMethodsOf = _kept((projectId) => PaymentMethods(widget.session, projectId));
   late final _accountsOf = _kept((projectId) => Accounts(widget.session, projectId));
@@ -245,7 +250,12 @@ class _RedixAppState extends State<RedixApp> {
         ),
       ),
       GoRoute(path: ProjectInfoScreen.path, builder: (context, state) => ProjectInfoScreen(project: state.extra! as Project, projects: _projects, timeZones: _timeZones)),
-      GoRoute(path: MyPermissionsScreen.path, builder: (context, state) => MyPermissionsScreen(project: state.extra! as Project, projects: _projects, partners: _partnersOf(state.projectId))),
+      GoRoute(
+        path: MyPermissionsScreen.path,
+        builder: (context, state) => MyPermissionsScreen(project: state.extra! as Project, projects: _projects, partners: _partnersOf(state.projectId), mine: _myPermissionRequestOf(state.projectId)),
+      ),
+      GoRoute(path: PermissionRequestScreen.path, builder: (context, state) => PermissionRequestScreen(project: state.extra! as Project, mine: _myPermissionRequestOf(state.projectId))),
+      GoRoute(path: PermissionRequestsScreen.path, builder: (context, state) => PermissionRequestsScreen(project: state.extra! as Project, requests: _permissionRequestsOf(state.projectId))),
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,

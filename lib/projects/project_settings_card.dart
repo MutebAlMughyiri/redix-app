@@ -20,6 +20,7 @@ import '../suppliers/suppliers_screen.dart';
 import '../ui/app_color.dart';
 import '../ui/part_keys.dart';
 import '../users/my_permissions_screen.dart';
+import '../users/permission_requests_screen.dart';
 import '../users/users_screen.dart';
 import '../words/words.dart';
 import 'project.dart';
@@ -123,6 +124,8 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
       if (project.may(Permission.seeProjectHistory)) _button(HomeScreen.projectHistoryKey(id), Icons.history, words.historyProjectTitle, ProjectHistoryScreen.pathOf(id)),
       _button(HomeScreen.myPermissionsKey(id), Icons.verified_user_outlined, words.permissionsMine, MyPermissionsScreen.pathOf(id)),
       if (project.may(Permission.manageUsers)) _button(HomeScreen.usersKey(id), Icons.group_outlined, words.usersTitle, UsersScreen.pathOf(id)),
+      if (project.may(Permission.manageUsers))
+        _button(HomeScreen.permissionRequestsKey(id), Icons.how_to_reg_outlined, words.permissionRequestsListTitle, PermissionRequestsScreen.pathOf(id)),
       if (project.may(Permission.manageStructure)) _button(HomeScreen.categoriesKey(id), Icons.category_outlined, words.categoriesTitle, CategoriesScreen.pathOf(id)),
       if (project.may(Permission.manageSettings)) _button(HomeScreen.paymentMethodsKey(id), Icons.credit_card_outlined, words.paymentMethodsTitle, PaymentMethodsScreen.pathOf(id)),
       if (project.mayHandFiles) _doing(HomeScreen.loadFileKey(id), Icons.file_upload_outlined, words.projectsLoadFile, project.mayLoadFile ? widget.onLoadFile : null),

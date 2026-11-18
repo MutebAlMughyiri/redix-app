@@ -138,6 +138,14 @@ class Given {
     return (project['permissions'] as List<dynamic>).cast<String>();
   }
 
+  /// [person] asks, in their project, for [gives] and to give up [takes], for [reason] (redix-api #112); the request's id is answered.
+  static Future<String> permissionRequested(Person person, {List<String> gives = const ['moveMoney'], List<String> takes = const [], String reason = 'أنقل المال'}) async =>
+      (await _post('${person.project}/permission-requests', {'gives': gives, 'takes': takes, 'reason': reason}, await _tokenOf(person)))['id'] as String;
+
+  /// The requests waiting in the project of [by], who manages its users.
+  static Future<List<Map<String, dynamic>>> waitingPermissionRequests(Person by) async =>
+      (await _getList('${by.project}/permission-requests', await _tokenOf(by))).cast<Map<String, dynamic>>();
+
   /// [by] writes [roleName] for [person] in the project of [by].
   static Future<void> roleName(Person person, String roleName, {required Person by}) async {
     await _put('${by.project}/users/${person.id}/role-name', {'roleName': roleName}, await _tokenOf(by));

@@ -16,8 +16,8 @@ void main() {
   final first = [HomeScreen.contractsKey(project), HomeScreen.reportsKey(project), HomeScreen.itemReportsKey(project, SummarySide.expenses), HomeScreen.itemReportsKey(project, SummarySide.revenue)];
   final second = [HomeScreen.suppliersKey(project), HomeScreen.accountsKey(project), HomeScreen.partnersKey(project), HomeScreen.vatKey(project)];
   final third = [HomeScreen.approvalsKey(project), HomeScreen.documentsKey(project), HomeScreen.projectInfoKey(project), HomeScreen.myPermissionsKey(project)];
-  final fourth = [HomeScreen.usersKey(project), HomeScreen.categoriesKey(project), HomeScreen.paymentMethodsKey(project), HomeScreen.loadFileKey(project)];
-  final fifth = [HomeScreen.archiveKey(project), HomeScreen.retrieveKey(project)];
+  final fourth = [HomeScreen.usersKey(project), HomeScreen.permissionRequestsKey(project), HomeScreen.categoriesKey(project), HomeScreen.paymentMethodsKey(project)];
+  final fifth = [HomeScreen.loadFileKey(project), HomeScreen.archiveKey(project), HomeScreen.retrieveKey(project)];
 
   /// The app started and the home of a project opened, in [locale], seen with [permissions].
   Future<FakeApi> openHome(WidgetTester tester, {List<String> permissions = managerAndFinance, Locale locale = const Locale('en')}) async {
@@ -82,9 +82,10 @@ void main() {
       expectPage(third, [first, second, fourth, fifth]);
       await swipeProjectSettings(tester);
       expectPage(fourth, [first, second, third, fifth]);
-      expect(isEnabled(tester, HomeScreen.loadFileKey(project)), isTrue, reason: 'redix-api #132: the manager loads a file into a project with no entry');
+      expect(isEnabled(tester, HomeScreen.permissionRequestsKey(project)), isTrue, reason: 'redix-api #112: whoever manages the users decides the requests');
       await swipeProjectSettings(tester);
       expectPage(fifth, [first, second, third, fourth]);
+      expect(isEnabled(tester, HomeScreen.loadFileKey(project)), isTrue, reason: 'redix-api #132: the manager loads a file into a project with no entry');
       expect(isEnabled(tester, HomeScreen.archiveKey(project)), isTrue, reason: 'UC-073: whoever holds «ملفات المشروع» archives the project');
       expect(isEnabled(tester, HomeScreen.retrieveKey(project)), isTrue, reason: 'UC-073: and retrieves an archive over it');
 

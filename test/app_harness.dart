@@ -72,6 +72,12 @@ Map<String, String> wordsIn(String language) => {
     'projects.retrieve.part.attachments', 'projects.retrieve.notAnArchive', 'projects.retrieve.newerArchive',
     'projects.retrieve.archiveDoesNotFit', 'projects.retrieve.noConnection', 'projects.retrieve.refused', 'projects.retrieve.projectFinished', 'history.action.archived',
     'history.action.retrieved', 'permissions.manageProjectFiles', 'permissions.manageProjectFilesHint',
+    'permissionRequests.ask', 'permissionRequests.title', 'permissionRequests.hint', 'permissionRequests.reason', 'permissionRequests.send',
+    'permissionRequests.sent', 'permissionRequests.waiting', 'permissionRequests.approved', 'permissionRequests.withdraw', 'permissionRequests.withdrawn',
+    'permissionRequests.listTitle', 'permissionRequests.empty', 'permissionRequests.loadFailed', 'permissionRequests.approve', 'permissionRequests.reject',
+    'permissionRequests.rejectReason', 'permissionRequests.nothingAsked', 'permissionRequests.lastManager', 'permissionRequests.noConnection',
+    'permissionRequests.refused', 'notifications.permissionRequested', 'notifications.permissionRequestApproved',
+    'notifications.permissionRequestRejected', 'history.thing.permissionRequest',
     'permissions.readProject', 'permissions.readProjectHint', 'permissions.manageUsers', 'permissions.manageUsersHint', 'permissions.seeAllCapital', 'permissions.seeAllCapitalHint', 'permissions.seeChosenCapital', 'permissions.seeChosenCapitalHint', 'permissions.capitalGroup', 'permissions.reportsGroup', 'permissions.manageProject', 'permissions.manageProjectHint', 'permissions.manageStructure', 'permissions.manageStructureHint', 'permissions.manageSettings', 'permissions.manageSettingsHint', 'permissions.addSupplier', 'permissions.addSupplierHint', 'permissions.chargeAnyAccount', 'permissions.chargeAnyAccountHint', 'permissions.recordEntries', 'permissions.recordEntriesHint', 'permissions.manageAnyEntry', 'permissions.manageAnyEntryHint', 'permissions.deleteEntries', 'permissions.deleteEntriesHint', 'permissions.removeApprovedEntries', 'permissions.removeApprovedEntriesHint', 'permissions.attachFiles', 'permissions.attachFilesHint', 'permissions.approveEntries', 'permissions.approveEntriesHint', 'permissions.moveMoney', 'permissions.moveMoneyHint', 'permissions.seeReports', 'permissions.seeReportsHint', 'permissions.generateReports', 'permissions.generateReportsHint',
     'users.addExisting', 'users.unknownUser', 'users.invalidPermission', 'users.lastManager', 'users.unknownPartner', 'users.otherProject',
     'signIn.registerProject', 'register.hint', 'register.sent', 'register.tooManyTries', 'register.invalidName', 'register.invalidUsername',
@@ -147,6 +153,12 @@ Map<String, String> wordsIn(String language) => {
   'projects.loadFileConfirm': '$language projects.loadFileConfirm {0} {1}',
   'projects.archiveFileName': '$language projects.archiveFileName {0} {1}',
   'projects.retrieveConfirm': '$language projects.retrieveConfirm {0} {1}',
+  'permissionRequests.rejected': '$language permissionRequests.rejected {0}',
+  'permissionRequests.gives': '$language permissionRequests.gives {0}',
+  'permissionRequests.takes': '$language permissionRequests.takes {0}',
+  'permissionRequests.rejectTitle': '$language permissionRequests.rejectTitle {0}',
+  'permissionRequests.approvedDone': '$language permissionRequests.approvedDone {0}',
+  'permissionRequests.rejectedDone': '$language permissionRequests.rejectedDone {0}',
   'projects.retrieveTakenBy': '$language projects.retrieveTakenBy {0}',
   'projects.retrieveDone': '$language projects.retrieveDone {0} {1}',
   'projects.retrieve.archiveOfAnotherProject': '$language projects.retrieve.archiveOfAnotherProject {0}',
@@ -724,6 +736,25 @@ class FakeApi {
 
   /// What the API answers a project file's load: once loaded, how many entries in how many tables and the report, and the project then holds entries (D4, D15).
   var projectFileAnswer = (status: 200, body: <String, Object>{'entries': 8, 'tables': 6, 'report': 7});
+
+  /// Every request someone sent to change their permissions (redix-api #112): what it asks and why.
+  final sentPermissionRequests = <Map<String, dynamic>>[];
+
+  /// Every decision on a request and every withdrawal: its address, and what it carried.
+  final permissionDecisions = <(String, Map<String, dynamic>)>[];
+
+  /// The person's latest request, as …/permission-requests/mine answers it: none, or one.
+  var myPermissionRequest = <Map<String, Object>>[];
+
+  /// The requests waiting in the project, as the managers' list answers them.
+  final waitingPermissionRequests = <Map<String, Object>>[];
+
+  /// What asking, withdrawing and deciding answer.
+  var permissionRequestAnswer = (status: 200, body: <String, Object>{});
+
+  /// A request as the API sends it.
+  static Map<String, Object> permissionRequestRow({String id = 'request-0', String displayName = 'سارة', List<String> gives = const ['moveMoney'], List<String> takes = const ['seeReports'], String reason = 'أنقل المال', String status = 'waiting', String rejectionReason = ''}) =>
+      {'id': id, 'userId': 'user-9', 'displayName': displayName, 'gives': gives, 'takes': takes, 'reason': reason, 'askedAt': '2026-11-18T10:00:00Z', 'status': status, 'rejectionReason': rejectionReason};
 
   /// Every archive sent to a retrieve (UC-073): its address with its query, and its file's name.
   final sentArchives = <(String, String)>[];
@@ -2042,6 +2073,24 @@ class FakeApi {
     }
     if (request.method == 'GET' && segments.length == 4 && segments[2] == 'entries' && segments[3] != 'mine') {
       return _json(const {'code': 'notFound'}, 404);
+    }
+    if (segments.length >= 3 && segments[2] == 'permission-requests') {
+      final body = request.body.isEmpty ? <String, dynamic>{} : jsonDecode(request.body) as Map<String, dynamic>;
+      final answer = permissionRequestAnswer;
+      switch ((request.method, segments.length)) {
+        case ('GET', 4):
+          return _json(myPermissionRequest, 200);
+        case ('GET', _):
+          return _json(waitingPermissionRequests, 200);
+        case ('POST', 3):
+          sentPermissionRequests.add(body);
+          return _json(answer.body, answer.status == 200 ? 201 : answer.status);
+      }
+      permissionDecisions.add((request.url.path, body));
+      if (answer.status < 300) {
+        waitingPermissionRequests.removeWhere((row) => row['id'] == segments[3]);
+      }
+      return _json(answer.body, answer.status);
     }
     if (segments.length == 3 && segments[2] == 'retrieve') {
       sentArchives.add((request.url.toString().replaceFirst('${request.url.scheme}://${request.url.authority}', ''), RegExp('filename="([^"]*)"').firstMatch(utf8.decode(request.bodyBytes, allowMalformed: true))?.group(1) ?? ''));
