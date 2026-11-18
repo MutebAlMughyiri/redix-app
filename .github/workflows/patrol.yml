@@ -1,4 +1,4 @@
-# Every Patrol class on an Android emulator, against the Go API built from redix-api's main: nightly, and whenever someone starts it from
+# Every Patrol class, in six groups each on its own Android emulator, against the Go API built from redix-api's main: nightly, and whenever someone starts it from
 # Actions. It runs apart from CI, which checks every push in minutes, because it takes over an hour (Muteb, 18 Nov 2026). The tests stay in
 # this repo beside the widget keys they use, so a renamed key fails the app's own analysis at once.
 name: Patrol
@@ -10,6 +10,19 @@ on:
 
 jobs:
   patrol:
+    # Six groups of folders, each on its own emulator, so a crash ends only its own group's classes (findings row 268: one crash in Contracts
+    # ended the run after 12 of 82). Each failed group keeps the emulator's log, the PC helper's and Patrol's own report.
+    strategy:
+      fail-fast: false
+      matrix:
+        group:
+          - { name: accounts-to-documents, folders: accounts approvals auth contracts documents }
+          - { name: entries, folders: entries }
+          - { name: home-to-sharing, folders: home launcher notifications offline search sharing }
+          - { name: money-partners-reports, folders: money partners reports }
+          - { name: projects, folders: projects }
+          - { name: settings-to-users, folders: settings structure suppliers users }
+    name: patrol (${{ matrix.group.name }})
     runs-on: ubuntu-latest
     env:
       REDIX_Environment: Dev
@@ -66,5 +79,19 @@ jobs:
           working-directory: redix-app
           script: |
             adb reverse tcp:5010 tcp:5010 && adb reverse tcp:5011 tcp:5011
+            nohup adb -s emulator-5554 logcat -v time > "$RUNNER_TEMP/logcat.txt" 2>&1 &
             nohup pwsh -NoProfile -File tool/patrol_pc_helper.ps1 -Device emulator-5554 -Results "$RUNNER_TEMP/patrol-results.log" > "$RUNNER_TEMP/pc-helper.log" 2>&1 &
-            patrol test --device emulator-5554 --dart-define-from-file=config/dev.json --dart-define=TEST_USERNAME=${{ env.REDIX_Admin__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Admin__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd
+            patrol test $(for folder in ${{ matrix.group.folders }}; do printf -- '--target patrol_test/%s ' "$folder"; done) --device emulator-5554 --dart-define-from-file=config/dev.json --dart-define=TEST_USERNAME=${{ env.REDIX_Admin__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Admin__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd
+      - name: What a failed group leaves to read
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: patrol-${{ matrix.group.name }}
+          path: |
+            ${{ runner.temp }}/logcat.txt
+            ${{ runner.temp }}/pc-helper.log
+            ${{ runner.temp }}/patrol-results.log
+            redix-app/build/app/reports/androidTests
+            redix-app/patrol_test/screenshots
+            redix-api/go-backend/api.log
+          if-no-files-found: ignore
