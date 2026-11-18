@@ -2054,11 +2054,20 @@ mixin WordGetters {
   /// The word `projects.loadFile.newerVersion`.
   String get projectsLoadFileNewerVersion => text('projects.loadFile.newerVersion');
 
+  /// The word `projects.loadFile.noConnection`.
+  String get projectsLoadFileNoConnection => text('projects.loadFile.noConnection');
+
   /// The word `projects.loadFile.notAProjectFile`.
   String get projectsLoadFileNotAProjectFile => text('projects.loadFile.notAProjectFile');
 
+  /// The word `projects.loadFile.projectFinished`.
+  String get projectsLoadFileProjectFinished => text('projects.loadFile.projectFinished');
+
   /// The word `projects.loadFile.projectHasEntries`.
   String get projectsLoadFileProjectHasEntries => text('projects.loadFile.projectHasEntries');
+
+  /// The word `projects.loadFile.refused`.
+  String get projectsLoadFileRefused => text('projects.loadFile.refused');
 
   /// The word `projects.loadFile.reportAlreadyIssued`.
   String get projectsLoadFileReportAlreadyIssued => text('projects.loadFile.reportAlreadyIssued');
