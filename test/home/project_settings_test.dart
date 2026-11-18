@@ -17,7 +17,7 @@ void main() {
   final second = [HomeScreen.suppliersKey(project), HomeScreen.accountsKey(project), HomeScreen.partnersKey(project), HomeScreen.vatKey(project)];
   final third = [HomeScreen.approvalsKey(project), HomeScreen.documentsKey(project), HomeScreen.projectInfoKey(project), HomeScreen.myPermissionsKey(project)];
   final fourth = [HomeScreen.usersKey(project), HomeScreen.categoriesKey(project), HomeScreen.paymentMethodsKey(project), HomeScreen.loadFileKey(project)];
-  final fifth = [HomeScreen.exportSettingsKey(project)];
+  final fifth = [HomeScreen.archiveKey(project), HomeScreen.retrieveKey(project)];
 
   /// The app started and the home of a project opened, in [locale], seen with [permissions].
   Future<FakeApi> openHome(WidgetTester tester, {List<String> permissions = managerAndFinance, Locale locale = const Locale('en')}) async {
@@ -85,7 +85,8 @@ void main() {
       expect(isEnabled(tester, HomeScreen.loadFileKey(project)), isTrue, reason: 'redix-api #132: the manager loads a file into a project with no entry');
       await swipeProjectSettings(tester);
       expectPage(fifth, [first, second, third, fourth]);
-      expect(isEnabled(tester, HomeScreen.exportSettingsKey(project)), isFalse, reason: 'redix-app #111: grayed until redix-api #115 builds it');
+      expect(isEnabled(tester, HomeScreen.archiveKey(project)), isTrue, reason: 'UC-073: whoever holds «ملفات المشروع» archives the project');
+      expect(isEnabled(tester, HomeScreen.retrieveKey(project)), isTrue, reason: 'UC-073: and retrieves an archive over it');
 
       await swipeProjectSettings(tester, back: true);
       expectPage(fourth, [first, second, third, fifth]);
@@ -117,14 +118,22 @@ void main() {
     expect(find.byKey(HomeScreen.contractsKey(project)), findsOneWidget);
   });
 
-  testWidgets('the pages keep the permissions: a field supervisor\'s hold no Approvals, Users, Categories or Payment methods, and so one page fewer', (tester) async {
+  testWidgets('the pages keep the permissions: a field supervisor\'s hold no Approvals, Users, Categories, Payment methods or project files, and so two pages fewer', (tester) async {
     await openHome(tester, permissions: field);
 
-    for (final key in [HomeScreen.approvalsKey(project), HomeScreen.usersKey(project), HomeScreen.categoriesKey(project), HomeScreen.paymentMethodsKey(project)]) {
+    for (final key in [
+      HomeScreen.approvalsKey(project),
+      HomeScreen.usersKey(project),
+      HomeScreen.categoriesKey(project),
+      HomeScreen.paymentMethodsKey(project),
+      HomeScreen.loadFileKey(project),
+      HomeScreen.archiveKey(project),
+      HomeScreen.retrieveKey(project),
+    ]) {
       await showProjectSetting(tester, key);
       expect(find.byKey(key), findsNothing, reason: '$key');
     }
-    expect(find.byKey(HomeScreen.settingsDotKey(project, 3)), findsOneWidget);
-    expect(find.byKey(HomeScreen.settingsDotKey(project, 4)), findsNothing);
+    expect(find.byKey(HomeScreen.settingsDotKey(project, 2)), findsOneWidget);
+    expect(find.byKey(HomeScreen.settingsDotKey(project, 3)), findsNothing);
   });
 }

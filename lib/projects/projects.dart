@@ -7,6 +7,7 @@ import '../auth/session.dart';
 import 'project.dart';
 import 'project_file_refusal.dart';
 import '../format/date_format.dart';
+import 'project_archive.dart';
 
 /// The projects (UC-006), and the one way to change them.
 class Projects extends ApiList<Project> {
@@ -67,6 +68,16 @@ class Projects extends ApiList<Project> {
 
   /// What the last project file loaded: how many entries, in how many tables, and the number of the report issued, 0 for none (say only what happened).
   ({int entries, int tables, int report}) get lastLoad => (entries: lastAnswer['entries'] as int? ?? 0, tables: lastAnswer['tables'] as int? ?? 0, report: lastAnswer['report'] as int? ?? 0);
+
+  /// Asks what retrieving the archive [file] over [project] would do, saving nothing (UC-073 AC-73.2). Returns an empty string once answered, what it says being
+  /// [lastRetrieval], otherwise the word key of the refusal under `projects.retrieve`.
+  Future<String> previewRetrieve(Project project, PickedFile file) => sendFile('/projects/${project.id}/retrieve?preview=true', file.name, file.bytes, wordPrefix: 'projects.retrieve');
+
+  /// Retrieves the archive [file] over [project] (UC-073 AC-73.3), sent as every file is, and reads the projects again; answers as [previewRetrieve] does.
+  Future<String> retrieve(Project project, PickedFile file) => sendFile('/projects/${project.id}/retrieve', file.name, file.bytes, wordPrefix: 'projects.retrieve');
+
+  /// What the last retrieve or its preview answered.
+  ArchiveRetrieval get lastRetrieval => ArchiveRetrieval.fromJson(lastAnswer);
 
   /// Every refusal the last project file's load listed, a row's or a part's, in the order the API found them (AC-53.5, D14).
   List<ProjectFileRefusal> get lastRefusals => [for (final row in lastAnswer['rows'] as List<dynamic>? ?? const []) ProjectFileRefusal.fromJson(row as Map<String, dynamic>)];

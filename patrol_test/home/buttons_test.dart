@@ -25,9 +25,9 @@ Future<Person> onTheHomeHolding(PatrolIntegrationTester $, List<Permission> perm
   return member;
 }
 
-/// Checks the button [button] of the home is on no page of the Project settings.
+/// Checks the button [button] of the home is on no page of the Project settings, standing first on «صلاحياتي», which everyone has.
 Future<void> noButton(PatrolIntegrationTester $, Person member, Key button) async {
-  await $.goTo($(HomeScreen.loadFileKey(member.projectId)));
+  await $.goTo($(HomeScreen.myPermissionsKey(member.projectId)));
   expect(await $.anyProjectSettingPage(button), isFalse);
 }
 
@@ -130,10 +130,11 @@ void main() {
       expect($.isEnabled(HomeScreen.addEntryKey(member.projectId)), isFalse);
     });
 
-    phoneCase('redix-api #132, AC-53.2: without «إدارة المشروع» تحميل ملف المشروع is gray', ($) async {
+    phoneCase('UC-073 D10, AC-53.2: without «ملفات المشروع» there is no تحميل ملف المشروع, أرشفة المشروع or استرجاع المشروع', ($) async {
       final member = await onTheHomeHolding($, []);
-      await $.goTo($(HomeScreen.loadFileKey(member.projectId)));
-      expect($.isEnabled(HomeScreen.loadFileKey(member.projectId)), isFalse);
+      await noButton($, member, HomeScreen.loadFileKey(member.projectId));
+      await noButton($, member, HomeScreen.archiveKey(member.projectId));
+      await noButton($, member, HomeScreen.retrieveKey(member.projectId));
     });
   });
 }

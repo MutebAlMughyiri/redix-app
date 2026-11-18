@@ -238,7 +238,19 @@ class _RedixAppState extends State<RedixApp> {
       GoRoute(path: NewProjectScreen.path, builder: (context, state) => NewProjectScreen(projects: _projects)),
       GoRoute(
         path: HomeScreen.path,
-        builder: (context, state) => HomeScreen(projectId: state.projectId, projects: _projects, accounts: _accountsOf(state.projectId), outbox: _outbox, sync: _sync, entries: _newestEntriesOf(state.projectId), notifications: _notifications, summary: _summaryOf(state.projectId), localConfig: widget.localConfig, capture: widget.capture),
+        builder: (context, state) => HomeScreen(
+          projectId: state.projectId,
+          projects: _projects,
+          accounts: _accountsOf(state.projectId),
+          outbox: _outbox,
+          sync: _sync,
+          entries: _newestEntriesOf(state.projectId),
+          notifications: _notifications,
+          summary: _summaryOf(state.projectId),
+          localConfig: widget.localConfig,
+          capture: widget.capture,
+          files: _reportFiles,
+        ),
         routes: [
           GoRoute(
             path: AddEntryScreen.path,

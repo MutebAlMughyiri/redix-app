@@ -62,7 +62,10 @@ enum ReportFileKind {
   excel('xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'reports.excel', Icons.table_chart_outlined, [FileHandling.save, FileHandling.share]),
 
   /// The PDF, printed.
-  print('pdf', 'application/pdf', 'reports.print', Icons.print_outlined, [FileHandling.print]);
+  print('pdf', 'application/pdf', 'reports.print', Icons.print_outlined, [FileHandling.print]),
+
+  /// A project's archive (UC-073).
+  archive('json', 'application/json', 'projects.archive', Icons.archive_outlined, [FileHandling.save, FileHandling.share]);
 
   const ReportFileKind(this.extension, this.mimeType, this.wordKey, this.icon, this.handings);
 

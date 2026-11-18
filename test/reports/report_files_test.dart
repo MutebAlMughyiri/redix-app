@@ -102,7 +102,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.periodicKey(1))));
 
     expect(find.byKey(PeriodicReportScreen.surplusKey), findsOneWidget);
-    for (final kind in ReportFileKind.values) {
+    for (final kind in const [ReportFileKind.pdf, ReportFileKind.excel, ReportFileKind.print]) {
       expect(isEnabled(tester, ReportFileButtons.buttonKey('report-1', kind)), isFalse, reason: kind.name);
     }
     expect(api.sentFileReads, isEmpty);
@@ -118,7 +118,7 @@ void main() {
     expect(isEnabled(tester, ReportsScreen.issueKey), isTrue);
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.periodicKey(1))));
 
-    for (final kind in ReportFileKind.values) {
+    for (final kind in const [ReportFileKind.pdf, ReportFileKind.excel, ReportFileKind.print]) {
       expect(isEnabled(tester, ReportFileButtons.buttonKey('report-1', kind)), isTrue, reason: kind.name);
     }
   });

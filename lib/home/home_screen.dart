@@ -19,9 +19,11 @@ import '../notifications/notifications_bell.dart';
 import '../offline/outbox.dart';
 import '../offline/project_sync.dart';
 import '../offline/waiting_screen.dart';
+import '../reports/report_files.dart';
 import '../reports/summary.dart';
 import 'summary_card.dart';
 import '../projects/project.dart';
+import '../projects/project_archive.dart';
 import '../projects/project_file_loading.dart';
 import '../projects/project_settings_card.dart';
 import '../projects/projects.dart';
@@ -36,11 +38,27 @@ import '../launcher/launcher_add_entry.dart';
 
 /// The home of the open project (UC-010): the project, with what the user's permissions allow in it (AC-36.2). Each later use case adds to it.
 class HomeScreen extends StatefulWidget {
-  /// The home of the project [projectId], one of [projects], with [accounts], its accounts, reaching the phone's files through [capture].
-  const HomeScreen({super.key, required this.projectId, required this.projects, required this.accounts, required this.outbox, required this.sync, required this.entries, required this.notifications, required this.summary, required this.localConfig, required this.capture});
+  /// The home of the project [projectId], one of [projects], with [accounts], its accounts, reaching the phone's files through [capture] and taking files through [files].
+  const HomeScreen({
+    super.key,
+    required this.projectId,
+    required this.projects,
+    required this.accounts,
+    required this.outbox,
+    required this.sync,
+    required this.entries,
+    required this.notifications,
+    required this.summary,
+    required this.localConfig,
+    required this.capture,
+    required this.files,
+  });
 
-  /// The phone's files, which a project file is picked from (UC-071).
+  /// The phone's files, which a project file and an archive are picked from (UC-071, UC-073).
   final InvoiceCapture capture;
+
+  /// How the project's archive reaches the phone, as a report's file does (UC-073).
+  final ReportFiles files;
 
   /// Its figures at a glance.
   final Summary summary;
@@ -179,11 +197,15 @@ class HomeScreen extends StatefulWidget {
   /// The way into the payment methods of the project [id], moved from Settings (Muteb, 9 Nov 2026).
   static Key paymentMethodsKey(String id) => Key('home.paymentMethods.$id');
 
-  /// تحميل ملف المشروع in the project [id]'s settings, where importing its settings was (redix-api #132 D2): gray without إدارة المشروع and once the project holds an entry (D1, D4).
+  /// تحميل ملف المشروع in the project [id]'s settings, where importing its settings was (redix-api #132 D2): for whoever holds «ملفات المشروع», gray once the project holds an
+  /// entry (D1, D4, UC-073 D10).
   static Key loadFileKey(String id) => Key('home.loadFile.$id');
 
-  /// تصدير إعدادات المشروع in the project [id]'s settings, grayed until redix-api #115 builds the export (redix-app #111).
-  static Key exportSettingsKey(String id) => Key('home.exportSettings.$id');
+  /// «أرشفة المشروع» in the project [id]'s settings, where the grayed export of its settings was (UC-073 D10).
+  static Key archiveKey(String id) => Key('home.archive.$id');
+
+  /// «استرجاع المشروع» in the project [id]'s settings (UC-073 D10): gray in a finished project.
+  static Key retrieveKey(String id) => Key('home.retrieve.$id');
 
   /// The heading over the entries of the project [id].
   static Key entriesHeadingKey(String id) => Key('home.entriesHeading.$id');
@@ -241,6 +263,12 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Loads a project file into [project] (UC-071), then reads again what the home shows, which the file filled.
   Future<void> _loadFile(Project project) async {
     await loadProjectFile(context, project, widget.projects, widget.capture);
+    await _readAgain();
+  }
+
+  /// Retrieves an archive over [project] (UC-073), then reads again what the home shows, which the archive replaced.
+  Future<void> _retrieve(Project project) async {
+    await retrieveProject(context, project, widget.projects, widget.capture);
     await _readAgain();
   }
 
@@ -335,7 +363,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             CustodyCard(accounts: widget.accounts),
             LatestEntries(project: project, entries: widget.entries, onOpen: (path) => _open(path, project), onRemoved: widget.summary.load),
-            if (showsDetails) ProjectSettingsCard(key: HomeScreen.cardKey(project.id), project: project, onOpen: (path) => _open(path, project), onLoadFile: () => _loadFile(project)),
+            if (showsDetails)
+              ProjectSettingsCard(
+                key: HomeScreen.cardKey(project.id),
+                project: project,
+                onOpen: (path) => _open(path, project),
+                onLoadFile: () => _loadFile(project),
+                onArchive: () => archiveProject(context, project, widget.files),
+                onRetrieve: () => _retrieve(project),
+              ),
           ],
         ),
       ),

@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/format/date_format.dart';
 import 'package:redix/history/my_history_screen.dart';
 import 'package:redix/history/project_history_screen.dart';
 import 'package:redix/home/home_screen.dart';
@@ -63,6 +64,18 @@ void main() {
       expect(text(tester, ProjectHistoryScreen.lineKey(3999).title), 'en history.action.given en history.thing.permission en permissions.approveEntries · سارة');
       expect(text(tester, ProjectHistoryScreen.lineKey(3998).title), startsWith('en history.action.created en history.thing.transfer · en history.fromTo · '));
       expect(text(tester, ProjectHistoryScreen.lineKey(4000).subtitle), startsWith('متعب · '));
+    });
+
+    testWidgets('UC-073 D9: a project archived and one retrieved, the moment of its archive said as a person reads one', (tester) async {
+      await openProjectHistory(
+        tester,
+        arrange: (api) => api
+          ..addProjectHistoryLine('project-0', 'archived', 'project', name: 'غصون 6', area: 'project')
+          ..addProjectHistoryLine('project-0', 'retrieved', 'project', name: 'غصون 6', area: 'project', about: '2026-11-11T18:15:04Z'),
+      );
+      final archivedAt = momentOf('2026-11-11T18:15:04Z');
+      expect(text(tester, ProjectHistoryScreen.lineKey(4000).title), 'en history.action.archived en history.thing.project غصون 6');
+      expect(text(tester, ProjectHistoryScreen.lineKey(3999).title), 'en history.action.retrieved en history.thing.project غصون 6 · ${formatDate(archivedAt)} ${formatTime(archivedAt)}');
     });
 
     testWidgets('R5, R13: the kind chip asks for one kind of record, and the person chip for «أنا» or one member, keeping the kind', (tester) async {

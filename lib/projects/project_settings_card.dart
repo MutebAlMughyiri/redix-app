@@ -28,11 +28,12 @@ import 'project_info_screen.dart';
 /// The open project's buttons, with what the signed-in user's permissions allow, four to a page, two by two, swiped sideways page by page with dots under them (Muteb,
 /// 11 Nov 2026), going round: on from the last page comes the first, and back from the first the last. The first page holds the four used most: Contracts, Reports, the item reports and Suppliers; then Accounts, Partners, the VAT refund, Approvals and
 /// Documents, then the project's own: More info, the user's own permissions, its users, its categories and items, its payment methods, loading its project file (redix-api
-/// #132), and exporting its settings, grayed until it is built. Nothing is kept: the card opens on its first page. Settings is an icon in the home's top bar. A finished project
+/// #132), archiving it and retrieving an archive over it (UC-073). Nothing is kept: the card opens on its first page. Settings is an icon in the home's top bar. A finished project
 /// says first, in one line, that it is read-only (redix-api 93).
 class ProjectSettingsCard extends StatefulWidget {
-  /// The card of [project], calling [onOpen] with the route of the screen a button opens, and [onLoadFile] to load the project's file.
-  const ProjectSettingsCard({super.key, required this.project, required this.onOpen, required this.onLoadFile});
+  /// The card of [project], calling [onOpen] with the route of the screen a button opens, [onLoadFile] to load a project file, [onArchive] to archive the project and
+  /// [onRetrieve] to retrieve an archive over it.
+  const ProjectSettingsCard({super.key, required this.project, required this.onOpen, required this.onLoadFile, required this.onArchive, required this.onRetrieve});
 
   /// The project this card shows.
   final Project project;
@@ -42,6 +43,12 @@ class ProjectSettingsCard extends StatefulWidget {
 
   /// Loads a project file into the project (UC-071).
   final VoidCallback onLoadFile;
+
+  /// Takes the project's archive (UC-073).
+  final VoidCallback onArchive;
+
+  /// Retrieves an archive over the project (UC-073).
+  final VoidCallback onRetrieve;
 
   /// How many buttons a page holds.
   static const perPage = 4;
@@ -118,8 +125,9 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
       if (project.may(Permission.manageUsers)) _button(HomeScreen.usersKey(id), Icons.group_outlined, words.usersTitle, UsersScreen.pathOf(id)),
       if (project.may(Permission.manageStructure)) _button(HomeScreen.categoriesKey(id), Icons.category_outlined, words.categoriesTitle, CategoriesScreen.pathOf(id)),
       if (project.may(Permission.manageSettings)) _button(HomeScreen.paymentMethodsKey(id), Icons.credit_card_outlined, words.paymentMethodsTitle, PaymentMethodsScreen.pathOf(id)),
-      _doing(HomeScreen.loadFileKey(id), Icons.file_upload_outlined, words.projectsLoadFile, project.mayLoadFile ? widget.onLoadFile : null),
-      _button(HomeScreen.exportSettingsKey(id), Icons.file_download_outlined, words.projectsExportSettings, ''),
+      if (project.mayHandFiles) _doing(HomeScreen.loadFileKey(id), Icons.file_upload_outlined, words.projectsLoadFile, project.mayLoadFile ? widget.onLoadFile : null),
+      if (project.mayHandFiles) _doing(HomeScreen.archiveKey(id), Icons.archive_outlined, words.projectsArchive, widget.onArchive),
+      if (project.mayHandFiles) _doing(HomeScreen.retrieveKey(id), Icons.unarchive_outlined, words.projectsRetrieve, project.mayRetrieve ? widget.onRetrieve : null),
     ];
     final pages = [for (var start = 0; start < buttons.length; start += ProjectSettingsCard.perPage) buttons.skip(start).take(ProjectSettingsCard.perPage).toList()];
     return Card.outlined(

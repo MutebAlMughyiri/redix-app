@@ -105,7 +105,10 @@ void main() {
   });
 
   group('redix-api #106: the partners a new person sees', () {
+    /// The form on a screen tall enough for every tick and both partners, whose send button then needs no scrolling (UC-073 added «ملفات المشروع»'s tick).
     Future<(FakeApi, String, String)> openWithPartners(WidgetTester tester) async {
+      tester.view.physicalSize = const Size(2400, 9000);
+      addTearDown(tester.view.reset);
       late String khaled;
       late String saad;
       final api = await openForm(tester, arrange: (api) {

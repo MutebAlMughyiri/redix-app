@@ -128,11 +128,11 @@ void main() {
       expect($(messageKeyOf('projects.loadFileDone')), findsNothing);
     });
 
-    phoneCase('AC-53.2: someone without «إدارة المشروع» sees the button gray', ($) async {
+    phoneCase('AC-53.2, UC-073 D2: someone without «ملفات المشروع» has no تحميل ملف المشروع', ($) async {
       final member = await Given.member(await Given.manager());
       await $.onTheHome(member);
-      await $.goTo($(HomeScreen.loadFileKey(member.projectId)));
-      expect($.isEnabled(HomeScreen.loadFileKey(member.projectId)), isFalse);
+      await $.goTo($(HomeScreen.myPermissionsKey(member.projectId)));
+      expect(await $.anyProjectSettingPage(HomeScreen.loadFileKey(member.projectId)), isFalse);
     });
   });
 }

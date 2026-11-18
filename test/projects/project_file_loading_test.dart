@@ -33,9 +33,16 @@ void main() {
 
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  testWidgets('AC-53.2, D1: without «إدارة المشروع» تحميل ملف المشروع is gray, never hidden; with it, it works', (tester) async {
+  testWidgets('AC-53.2, UC-073 D2, D10: without «ملفات المشروع» تحميل ملف المشروع is not there, whatever else one holds', (tester) async {
+    final api = FakeApi()..addProject('غصون 6', permissions: [for (final permission in managerAndFinance) if (permission != 'manageProjectFiles') permission]);
+    await openProject(tester, api);
+    await showProjectSetting(tester, loadFile);
+    expect(find.byKey(loadFile), findsNothing);
+  });
+
+  testWidgets('AC-53.2, UC-073 D2: «ملفات المشروع» opens تحميل ملف المشروع without «إدارة المشروع»', (tester) async {
     await onTheHome(tester, permissions: [for (final permission in managerAndFinance) if (permission != 'manageProject') permission]);
-    expect(isEnabled(tester, loadFile), isFalse);
+    expect(isEnabled(tester, loadFile), isTrue);
     expect(text(tester, loadFile.label), 'en projects.loadFile');
   });
 

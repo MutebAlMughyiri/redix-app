@@ -456,6 +456,15 @@ class Given {
   /// The entries of the project of [person], as the API lists them.
   static Future<List<Map<String, dynamic>>> entries(Person person) async => (await _getList('${person.project}/entries', await _tokenOf(person))).cast<Map<String, dynamic>>();
 
+  /// The archive of the project of [manager], as the API hands it (UC-073): a case retrieves it on the phone.
+  static Future<List<int>> archiveOf(Person manager) async {
+    final answer = await http.get(Uri.parse('$_base${manager.project}/archive/json'), headers: {'Authorization': 'Bearer ${await _tokenOf(manager)}'});
+    if (answer.statusCode != 200) {
+      throw StateError('GET archive answered ${answer.statusCode}: ${answer.body}');
+    }
+    return answer.bodyBytes;
+  }
+
   /// The «رقم القيد» the API gave the entry [entryId] of the project of [person] (redix-api #128): a case learns it here and finds it on the phone.
   static Future<int> numberOf(Person person, String entryId) async => (await entries(person)).singleWhere((row) => row['id'] == entryId)['number'] as int;
 

@@ -260,6 +260,13 @@ final List<Gate> _gates = [
   (name: 'An enabled Issue a periodic report', permission: Permission.generateReports, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _enabled(ReportsScreen.issueKey)),
   (name: 'Approvals on the project card', permission: Permission.approveEntries, arrange: _nothing, steps: [_openProject, _swipeTo(HomeScreen.approvalsKey(_project))], control: _key(HomeScreen.approvalsKey(_project))),
   (
+    name: '«تحميل ملف المشروع», «أرشفة المشروع» and «استرجاع المشروع» on the project card (UC-073 D10)',
+    permission: Permission.manageProjectFiles,
+    arrange: _nothing,
+    steps: [_openProject, _swipeTo(HomeScreen.archiveKey(_project))],
+    control: _key(HomeScreen.archiveKey(_project)),
+  ),
+  (
     name: '«سجل المشروع» on the project card (redix-api #86)',
     permission: Permission.seeProjectHistory,
     arrange: _nothing,

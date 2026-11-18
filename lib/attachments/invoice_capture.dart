@@ -98,6 +98,9 @@ class InvoiceCapture {
   /// Opens the phone's files for a project's file, a `.json` kept as it is (UC-071, redix-api #132).
   Future<PickedFile> fromProjectFiles() => _keptAsItIs(() => FilePicker.pickFile(type: FileType.custom, allowedExtensions: const ['json']));
 
+  /// Opens the phone's files for a project's archive, a `.json` kept as it is (UC-073).
+  Future<PickedFile> fromArchives() => _keptAsItIs(() => FilePicker.pickFile(type: FileType.custom, allowedExtensions: const ['json']));
+
   /// The file [pick] chose from the phone's files, kept as it is; none when nothing was chosen, and unreadable when it could not be read.
   static Future<PickedFile> _keptAsItIs(Future<PlatformFile?> Function() pick) async {
     try {

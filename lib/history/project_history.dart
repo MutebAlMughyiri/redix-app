@@ -104,7 +104,13 @@ enum HistoryAction {
   taken(Icons.key_off_outlined),
 
   /// A periodic report was issued.
-  issued(Icons.summarize_outlined);
+  issued(Icons.summarize_outlined),
+
+  /// A project's archive was taken (UC-073).
+  archived(Icons.archive_outlined),
+
+  /// A project was retrieved from an archive, the archive's moment under its line's about (UC-073).
+  retrieved(Icons.unarchive_outlined);
 
   const HistoryAction(this.icon);
 
@@ -262,7 +268,7 @@ class ProjectHistoryLine implements HistoryLine {
   @override
   String textIn(Words words) => partsLine([
     [words.text(action.wordKey), words.text(thing.wordKey), thing.nameIn(words, name)].where((part) => part.isNotEmpty).join(' '),
-    about,
+    action == HistoryAction.retrieved && about.isNotEmpty ? '${formatDate(momentOf(about))} ${formatTime(momentOf(about))}' : about,
     if (nameWas.isNotEmpty) words.historyNameWas.fill([nameWas]),
     if (from.isNotEmpty) words.historyFromTo.fill([from, to]),
     if (amount != 0) formatMoney(amount),

@@ -128,8 +128,14 @@ class Project {
   /// Whether the signed-in user may manage the project now: its units, its name, its documents, and closing it.
   bool get mayManageProject => !isFinished && may(Permission.manageProject);
 
-  /// Whether the signed-in user may load a project file into it now: the manager who created it (D1), into one that holds no entry yet (D4, redix-api #132).
-  bool get mayLoadFile => mayManageProject && !holdsEntries;
+  /// Whether the signed-in user holds «ملفات المشروع», which shows the project's file buttons (UC-073 D10).
+  bool get mayHandFiles => may(Permission.manageProjectFiles);
+
+  /// Whether the signed-in user may load a project file into it now: whoever holds «ملفات المشروع» (D1, UC-073 D2), into one open that holds no entry yet (D4, redix-api #132).
+  bool get mayLoadFile => !isFinished && mayHandFiles && !holdsEntries;
+
+  /// Whether the signed-in user may retrieve an archive over it now: whoever holds «ملفات المشروع», into one not finished (UC-073 R17).
+  bool get mayRetrieve => !isFinished && mayHandFiles;
 
   /// Whether the signed-in user may change the project's structure now.
   bool get mayChangeStructure => !isFinished && may(Permission.manageStructure);

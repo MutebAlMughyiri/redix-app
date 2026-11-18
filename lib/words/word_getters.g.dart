@@ -1211,6 +1211,9 @@ mixin WordGetters {
   /// The word `history.action.approved`.
   String get historyActionApproved => text('history.action.approved');
 
+  /// The word `history.action.archived`.
+  String get historyActionArchived => text('history.action.archived');
+
   /// The word `history.action.attached`.
   String get historyActionAttached => text('history.action.attached');
 
@@ -1249,6 +1252,9 @@ mixin WordGetters {
 
   /// The word `history.action.restored`.
   String get historyActionRestored => text('history.action.restored');
+
+  /// The word `history.action.retrieved`.
+  String get historyActionRetrieved => text('history.action.retrieved');
 
   /// The word `history.action.sent`.
   String get historyActionSent => text('history.action.sent');
@@ -1763,6 +1769,12 @@ mixin WordGetters {
   /// The word `permissions.manageProject`.
   String get permissionsManageProject => text('permissions.manageProject');
 
+  /// The word `permissions.manageProjectFiles`.
+  String get permissionsManageProjectFiles => text('permissions.manageProjectFiles');
+
+  /// The word `permissions.manageProjectFilesHint`.
+  String get permissionsManageProjectFilesHint => text('permissions.manageProjectFilesHint');
+
   /// The word `permissions.manageProjectHint`.
   String get permissionsManageProjectHint => text('permissions.manageProjectHint');
 
@@ -1868,6 +1880,12 @@ mixin WordGetters {
   /// The word `projects.addUnit`.
   String get projectsAddUnit => text('projects.addUnit');
 
+  /// The word `projects.archive`.
+  String get projectsArchive => text('projects.archive');
+
+  /// The word `projects.archiveFileName`.
+  String get projectsArchiveFileName => text('projects.archiveFileName');
+
   /// The word `projects.choose`.
   String get projectsChoose => text('projects.choose');
 
@@ -1900,9 +1918,6 @@ mixin WordGetters {
 
   /// The word `projects.empty`.
   String get projectsEmpty => text('projects.empty');
-
-  /// The word `projects.exportSettings`.
-  String get projectsExportSettings => text('projects.exportSettings');
 
   /// The word `projects.finished`.
   String get projectsFinished => text('projects.finished');
@@ -1996,6 +2011,69 @@ mixin WordGetters {
 
   /// The word `projects.renameUnit`.
   String get projectsRenameUnit => text('projects.renameUnit');
+
+  /// The word `projects.retrieve`.
+  String get projectsRetrieve => text('projects.retrieve');
+
+  /// The word `projects.retrieve.archiveDoesNotFit`.
+  String get projectsRetrieveArchiveDoesNotFit => text('projects.retrieve.archiveDoesNotFit');
+
+  /// The word `projects.retrieve.archiveOfAnotherProject`.
+  String get projectsRetrieveArchiveOfAnotherProject => text('projects.retrieve.archiveOfAnotherProject');
+
+  /// The word `projects.retrieve.newerArchive`.
+  String get projectsRetrieveNewerArchive => text('projects.retrieve.newerArchive');
+
+  /// The word `projects.retrieve.noConnection`.
+  String get projectsRetrieveNoConnection => text('projects.retrieve.noConnection');
+
+  /// The word `projects.retrieve.notAnArchive`.
+  String get projectsRetrieveNotAnArchive => text('projects.retrieve.notAnArchive');
+
+  /// The word `projects.retrieve.part.accounts`.
+  String get projectsRetrievePartAccounts => text('projects.retrieve.part.accounts');
+
+  /// The word `projects.retrieve.part.attachments`.
+  String get projectsRetrievePartAttachments => text('projects.retrieve.part.attachments');
+
+  /// The word `projects.retrieve.part.contracts`.
+  String get projectsRetrievePartContracts => text('projects.retrieve.part.contracts');
+
+  /// The word `projects.retrieve.part.entries`.
+  String get projectsRetrievePartEntries => text('projects.retrieve.part.entries');
+
+  /// The word `projects.retrieve.part.items`.
+  String get projectsRetrievePartItems => text('projects.retrieve.part.items');
+
+  /// The word `projects.retrieve.part.partners`.
+  String get projectsRetrievePartPartners => text('projects.retrieve.part.partners');
+
+  /// The word `projects.retrieve.part.suppliers`.
+  String get projectsRetrievePartSuppliers => text('projects.retrieve.part.suppliers');
+
+  /// The word `projects.retrieve.projectFinished`.
+  String get projectsRetrieveProjectFinished => text('projects.retrieve.projectFinished');
+
+  /// The word `projects.retrieve.refused`.
+  String get projectsRetrieveRefused => text('projects.retrieve.refused');
+
+  /// The word `projects.retrieveAfter`.
+  String get projectsRetrieveAfter => text('projects.retrieveAfter');
+
+  /// The word `projects.retrieveConfirm`.
+  String get projectsRetrieveConfirm => text('projects.retrieveConfirm');
+
+  /// The word `projects.retrieveDone`.
+  String get projectsRetrieveDone => text('projects.retrieveDone');
+
+  /// The word `projects.retrieveNow`.
+  String get projectsRetrieveNow => text('projects.retrieveNow');
+
+  /// The word `projects.retrieveTakenBy`.
+  String get projectsRetrieveTakenBy => text('projects.retrieveTakenBy');
+
+  /// The word `projects.retrieveWhat`.
+  String get projectsRetrieveWhat => text('projects.retrieveWhat');
 
   /// The word `projects.save`.
   String get projectsSave => text('projects.save');

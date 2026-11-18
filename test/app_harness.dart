@@ -66,7 +66,12 @@ Map<String, String> wordsIn(String language) => {
     'changePassword.weakPassword', 'changePassword.noConnection', 'changePassword.refused',
     'myAccount.language', 'myAccount.arabic', 'myAccount.english', 'myAccount.languageNeedsNetwork',
     'permissions.title', 'permissions.hint', 'permissions.count', 'permissions.mine', 'permissions.mineHint', 'projects.loadFile', 'projects.loadFileWhat', 'projects.loadFile.rowsRefused',
-    'projects.loadFile.notAProjectFile', 'projects.loadFile.newerVersion', 'projects.loadFile.projectHasEntries', 'projects.loadFile.attachmentNotInFile', 'projects.exportSettings', 'common.passwordRules',
+    'projects.loadFile.notAProjectFile', 'projects.loadFile.newerVersion', 'projects.loadFile.projectHasEntries', 'projects.loadFile.attachmentNotInFile', 'common.passwordRules',
+    'projects.archive', 'projects.retrieve', 'projects.retrieveNow', 'projects.retrieveAfter', 'projects.retrieveWhat', 'projects.retrieve.part.entries',
+    'projects.retrieve.part.contracts', 'projects.retrieve.part.accounts', 'projects.retrieve.part.suppliers', 'projects.retrieve.part.partners', 'projects.retrieve.part.items',
+    'projects.retrieve.part.attachments', 'projects.retrieve.notAnArchive', 'projects.retrieve.newerArchive',
+    'projects.retrieve.archiveDoesNotFit', 'projects.retrieve.noConnection', 'projects.retrieve.refused', 'projects.retrieve.projectFinished', 'history.action.archived',
+    'history.action.retrieved', 'permissions.manageProjectFiles', 'permissions.manageProjectFilesHint',
     'permissions.readProject', 'permissions.readProjectHint', 'permissions.manageUsers', 'permissions.manageUsersHint', 'permissions.seeAllCapital', 'permissions.seeAllCapitalHint', 'permissions.seeChosenCapital', 'permissions.seeChosenCapitalHint', 'permissions.capitalGroup', 'permissions.reportsGroup', 'permissions.manageProject', 'permissions.manageProjectHint', 'permissions.manageStructure', 'permissions.manageStructureHint', 'permissions.manageSettings', 'permissions.manageSettingsHint', 'permissions.addSupplier', 'permissions.addSupplierHint', 'permissions.chargeAnyAccount', 'permissions.chargeAnyAccountHint', 'permissions.recordEntries', 'permissions.recordEntriesHint', 'permissions.manageAnyEntry', 'permissions.manageAnyEntryHint', 'permissions.deleteEntries', 'permissions.deleteEntriesHint', 'permissions.removeApprovedEntries', 'permissions.removeApprovedEntriesHint', 'permissions.attachFiles', 'permissions.attachFilesHint', 'permissions.approveEntries', 'permissions.approveEntriesHint', 'permissions.moveMoney', 'permissions.moveMoneyHint', 'permissions.seeReports', 'permissions.seeReportsHint', 'permissions.generateReports', 'permissions.generateReportsHint',
     'users.addExisting', 'users.unknownUser', 'users.invalidPermission', 'users.lastManager', 'users.unknownPartner', 'users.otherProject',
     'signIn.registerProject', 'register.hint', 'register.sent', 'register.tooManyTries', 'register.invalidName', 'register.invalidUsername',
@@ -140,6 +145,11 @@ Map<String, String> wordsIn(String language) => {
   'settings.emailConfirm': '$language settings.emailConfirm {0}',
   'home.widgetReadAt': '$language home.widgetReadAt {0}',
   'projects.loadFileConfirm': '$language projects.loadFileConfirm {0} {1}',
+  'projects.archiveFileName': '$language projects.archiveFileName {0} {1}',
+  'projects.retrieveConfirm': '$language projects.retrieveConfirm {0} {1}',
+  'projects.retrieveTakenBy': '$language projects.retrieveTakenBy {0}',
+  'projects.retrieveDone': '$language projects.retrieveDone {0} {1}',
+  'projects.retrieve.archiveOfAnotherProject': '$language projects.retrieve.archiveOfAnotherProject {0}',
   'projects.loadFileDone': '$language projects.loadFileDone {0} {1} {2}',
   'projects.loadFileDoneNoReport': '$language projects.loadFileDoneNoReport {0} {1}',
   'projects.loadFile.reportAlreadyIssued': '$language projects.loadFile.reportAlreadyIssued {0}',
@@ -160,7 +170,7 @@ const keptTemporarySession = '{"accessToken": "kept-access", "refreshToken": "ke
 const admin = ['approveProjects'];
 
 /// What a project manager who also does the finance may do in a project.
-const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier', 'recordEntries', 'deleteEntries', 'attachFiles', 'chargeAnyAccount', 'approveEntries', 'manageAnyEntry', 'moveMoney', 'seeReports', 'generateReports'];
+const managerAndFinance = ['manageUsers', 'readProject', 'seeAllCapital', 'manageProject', 'manageStructure', 'manageSettings', 'addSupplier', 'recordEntries', 'deleteEntries', 'attachFiles', 'chargeAnyAccount', 'approveEntries', 'manageAnyEntry', 'moveMoney', 'seeReports', 'generateReports', 'manageProjectFiles'];
 
 /// What someone in the field may do in a project.
 const field = ['readProject', 'addSupplier', 'recordEntries', 'deleteEntries', 'attachFiles', 'seeReports'];
@@ -284,6 +294,9 @@ class FakeCapture extends InvoiceCapture {
 
   @override
   Future<PickedFile> fromProjectFiles() async => files;
+
+  @override
+  Future<PickedFile> fromArchives() async => files;
 }
 
 /// The phone's own fingerprint or face prompt, as the app's tests see it.
@@ -711,6 +724,20 @@ class FakeApi {
 
   /// What the API answers a project file's load: once loaded, how many entries in how many tables and the report, and the project then holds entries (D4, D15).
   var projectFileAnswer = (status: 200, body: <String, Object>{'entries': 8, 'tables': 6, 'report': 7});
+
+  /// Every archive sent to a retrieve (UC-073): its address with its query, and its file's name.
+  final sentArchives = <(String, String)>[];
+
+  /// What a retrieve and its preview answer.
+  var retrieveAnswer = (
+    status: 200,
+    body: <String, Object>{
+      'archivedAt': '2026-11-11T18:15:04Z',
+      'archivedBy': 'متعب',
+      'now': {'entries': 1056, 'contracts': 37, 'accounts': 4, 'suppliers': 35, 'partners': 7, 'items': 34, 'attachments': 6},
+      'after': {'entries': 1000, 'contracts': 35, 'accounts': 4, 'suppliers': 33, 'partners': 7, 'items': 34, 'attachments': 4},
+    },
+  );
 
   /// What the API answers a reconciliation.
   var moneyAnswer = (status: 200, code: '');
@@ -1948,7 +1975,7 @@ class FakeApi {
       final row = entryRows.where((row) => row['id'] == segments[3]).firstOrNull;
       return _json(row ?? const {'code': 'notFound'}, row == null ? 404 : 200);
     }
-    if (const ['pdf', 'xlsx'].contains(segments.last)) {
+    if (const ['pdf', 'xlsx', 'json'].contains(segments.last)) {
       sentFileReads.add(request.url.toString().replaceFirst('${request.url.scheme}://${request.url.authority}', ''));
       return http.Response.bytes(const [37, 80, 68, 70], 200);
     }
@@ -2015,6 +2042,10 @@ class FakeApi {
     }
     if (request.method == 'GET' && segments.length == 4 && segments[2] == 'entries' && segments[3] != 'mine') {
       return _json(const {'code': 'notFound'}, 404);
+    }
+    if (segments.length == 3 && segments[2] == 'retrieve') {
+      sentArchives.add((request.url.toString().replaceFirst('${request.url.scheme}://${request.url.authority}', ''), RegExp('filename="([^"]*)"').firstMatch(utf8.decode(request.bodyBytes, allowMalformed: true))?.group(1) ?? ''));
+      return _json(retrieveAnswer.body, retrieveAnswer.status);
     }
     if (segments.length == 3 && segments[2] == 'project-file') {
       sentProjectFiles.add((request.url.path, RegExp('filename="([^"]*)"').firstMatch(utf8.decode(request.bodyBytes, allowMalformed: true))?.group(1) ?? ''));
