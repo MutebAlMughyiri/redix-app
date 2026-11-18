@@ -164,6 +164,9 @@ class HomeScreen extends StatefulWidget {
   /// The way into More info of the project [id], moved from Settings (Muteb, 9 Nov 2026).
   static Key projectInfoKey(String id) => Key('home.projectInfo.$id');
 
+  /// The button opening «سجل المشروع» of the project [id], for whoever holds its permission (redix-api #86).
+  static Key projectHistoryKey(String id) => Key('home.projectHistory.$id');
+
   /// The way into what the signed-in user may do in the project [id], read only (Muteb, 9 Nov 2026).
   static Key myPermissionsKey(String id) => Key('home.myPermissions.$id');
 

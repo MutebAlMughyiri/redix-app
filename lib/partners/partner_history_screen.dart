@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 
 import '../history/history_view.dart';
+import '../projects/members.dart';
 import '../projects/project.dart';
 import '../ui/screen_title.dart';
 import '../words/words.dart';
@@ -12,10 +13,10 @@ import 'partner_history.dart';
 import 'partners.dart';
 
 /// السجل, from Partners' title bar (redix-app #101): what was done to the partners the user sees and what moved their capital, newest first, a page at a time; every partner or
-/// one, everyone's lines or the signed-in user's own.
+/// one, everyone's lines or one person's.
 class PartnerHistoryScreen extends StatefulWidget {
-  /// The [history] of [project]'s [partners].
-  const PartnerHistoryScreen({super.key, required this.project, required this.history, required this.partners});
+  /// The [history] of [project]'s [partners], filtered by its [members].
+  const PartnerHistoryScreen({super.key, required this.project, required this.history, required this.partners, required this.members});
 
   /// The project.
   final Project project;
@@ -25,6 +26,9 @@ class PartnerHistoryScreen extends StatefulWidget {
 
   /// Its partners the user sees, one filter each.
   final Partners partners;
+
+  /// Its people, one filter each.
+  final Members members;
 
   /// The screen's route.
   static const path = '/projects/:projectId/partners/history';
@@ -41,8 +45,11 @@ class PartnerHistoryScreen extends StatefulWidget {
   /// The partner [id] alone, in that list.
   static Key partnerKey(String id) => Key('partnerHistory.partner.$id');
 
-  /// The filter showing what the signed-in user did.
-  static const mineKey = Key('partnerHistory.mine');
+  /// The chip opening the list of people, under the search line.
+  static const personChoiceKey = Key('partnerHistory.personChoice');
+
+  /// The person [id] alone in that list; everyone for empty.
+  static Key personKey(String id) => Key('partnerHistory.person.$id');
 
   /// The line [id].
   static Key lineKey(int id) => Key('partnerHistory.line.$id');
@@ -60,6 +67,7 @@ class _PartnerHistoryScreenState extends State<PartnerHistoryScreen> {
     super.initState();
     widget.history.open();
     widget.partners.loadOnOpen();
+    widget.members.loadOnOpen();
   }
 
   @override
@@ -74,16 +82,18 @@ class _PartnerHistoryScreenState extends State<PartnerHistoryScreen> {
           actions: [ListenableBuilder(listenable: history, builder: (context, _) => SearchIcons.andFilters(filtersInUse: history.isFiltered))],
         ),
         body: ListenableBuilder(
-          listenable: Listenable.merge([history, widget.partners]),
+          listenable: Listenable.merge([history, widget.partners, widget.members]),
           builder: (context, _) => HistoryView(
             history: history,
             title: words.partnersHistory,
             choiceLabel: words.historyPartner,
             choices: [for (final partner in widget.partners.all) (partner.id, partner.name)],
+            people: [for (final member in widget.members.all) (member.id, member.displayName)],
             choiceChipKey: PartnerHistoryScreen.partnerChoiceKey,
             allKey: PartnerHistoryScreen.allKey,
             choiceKey: PartnerHistoryScreen.partnerKey,
-            mineKey: PartnerHistoryScreen.mineKey,
+            personChipKey: PartnerHistoryScreen.personChoiceKey,
+            personKey: PartnerHistoryScreen.personKey,
             lineKey: PartnerHistoryScreen.lineKey,
             moreKey: PartnerHistoryScreen.moreKey,
           ),

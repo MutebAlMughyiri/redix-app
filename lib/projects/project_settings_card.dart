@@ -8,6 +8,7 @@ import '../approvals/approvals_screen.dart';
 import '../auth/permission.dart';
 import '../contracts/contracts_screen.dart';
 import '../documents/documents_screen.dart';
+import '../history/project_history_screen.dart';
 import '../home/home_screen.dart';
 import '../partners/partners_screen.dart';
 import '../reports/item_reports_screen.dart';
@@ -112,6 +113,7 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
       if (project.may(Permission.approveEntries)) _button(HomeScreen.approvalsKey(id), Icons.fact_check_outlined, words.approvalsTitle, ApprovalsScreen.pathOf(id)),
       _button(HomeScreen.documentsKey(id), Icons.folder_outlined, words.documentsTitle, DocumentsScreen.pathOf(id)),
       _button(HomeScreen.projectInfoKey(id), Icons.info_outline, words.projectInfoTitle, ProjectInfoScreen.pathOf(id)),
+      if (project.may(Permission.seeProjectHistory)) _button(HomeScreen.projectHistoryKey(id), Icons.history, words.historyProjectTitle, ProjectHistoryScreen.pathOf(id)),
       _button(HomeScreen.myPermissionsKey(id), Icons.verified_user_outlined, words.permissionsMine, MyPermissionsScreen.pathOf(id)),
       if (project.may(Permission.manageUsers)) _button(HomeScreen.usersKey(id), Icons.group_outlined, words.usersTitle, UsersScreen.pathOf(id)),
       if (project.may(Permission.manageStructure)) _button(HomeScreen.categoriesKey(id), Icons.category_outlined, words.categoriesTitle, CategoriesScreen.pathOf(id)),

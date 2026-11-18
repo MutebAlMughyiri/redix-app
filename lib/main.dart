@@ -30,6 +30,10 @@ import 'partners/capital_movements.dart';
 import 'partners/movements_screen.dart';
 import 'partners/partners.dart';
 import 'partners/partners_screen.dart';
+import 'history/my_history.dart';
+import 'history/my_history_screen.dart';
+import 'history/project_history.dart';
+import 'history/project_history_screen.dart';
 import 'partners/partner_history.dart';
 import 'partners/partner_history_screen.dart';
 import 'approvals/approvals.dart';
@@ -164,6 +168,8 @@ class _RedixAppState extends State<RedixApp> {
   late final _historyOf = _kept((projectId) => AccountHistory(widget.session, projectId));
   late final _partnerHistoryOf = _kept((projectId) => PartnerHistory(widget.session, projectId));
   late final _approvalHistoryOf = _kept((projectId) => ApprovalHistory(widget.session, projectId));
+  late final _projectHistoryOf = _kept((projectId) => ProjectHistory(widget.session, projectId));
+  late final _myHistory = MyHistory(widget.session);
   late final _summaryOf = _kept((projectId) => Summary(widget.session, projectId));
   late final _capitalOf = _kept((projectId) => Capital(widget.session, projectId));
   late final _membersOf = _kept((projectId) => Members(widget.session, projectId));
@@ -314,16 +320,31 @@ class _RedixAppState extends State<RedixApp> {
       ),
       GoRoute(
         path: AccountHistoryScreen.path,
-        builder: (context, state) => AccountHistoryScreen(project: state.extra! as Project, history: _historyOf(state.projectId), accounts: _accountsOf(state.projectId)),
+        builder: (context, state) => AccountHistoryScreen(
+          project: state.extra! as Project,
+          history: _historyOf(state.projectId),
+          accounts: _accountsOf(state.projectId),
+          members: _membersOf(state.projectId),
+        ),
       ),
       GoRoute(
         path: ApprovalHistoryScreen.path,
-        builder: (context, state) => ApprovalHistoryScreen(project: state.extra! as Project, history: _approvalHistoryOf(state.projectId)),
+        builder: (context, state) => ApprovalHistoryScreen(project: state.extra! as Project, history: _approvalHistoryOf(state.projectId), members: _membersOf(state.projectId)),
       ),
       GoRoute(
         path: PartnerHistoryScreen.path,
-        builder: (context, state) => PartnerHistoryScreen(project: state.extra! as Project, history: _partnerHistoryOf(state.projectId), partners: _partnersOf(state.projectId)),
+        builder: (context, state) => PartnerHistoryScreen(
+          project: state.extra! as Project,
+          history: _partnerHistoryOf(state.projectId),
+          partners: _partnersOf(state.projectId),
+          members: _membersOf(state.projectId),
+        ),
       ),
+      GoRoute(
+        path: ProjectHistoryScreen.path,
+        builder: (context, state) => ProjectHistoryScreen(project: state.extra! as Project, history: _projectHistoryOf(state.projectId), members: _membersOf(state.projectId)),
+      ),
+      GoRoute(path: MyHistoryScreen.path, builder: (context, state) => MyHistoryScreen(history: _myHistory, name: widget.session.displayName)),
       GoRoute(
         path: ReportsScreen.path,
         builder: (context, state) => ReportsScreen(

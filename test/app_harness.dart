@@ -130,7 +130,7 @@ Map<String, String> wordsIn(String language) => {
                 'capital.pendingEntries',     'reports.save', 'reports.downloaded',
     'reports.surplus',
     'expenses.loadFailed',
-    'expenses.deductionNeedsDescription', 'accounts.custodian', 'accounts.noCustodian', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.counted', 'accounts.history', 'accounts.delete', 'accounts.deleteQuestion', 'accounts.deleteCannotUndo', 'accounts.accountInUse', 'accounts.deleted', 'accounts.banks', 'accounts.custodies', 'transfers.title', 'transfers.button', 'transfers.from', 'transfers.to', 'transfers.balanceNow', 'transfers.amount', 'transfers.date', 'transfers.notes', 'transfers.save', 'transfers.sameAccount', 'transfers.invalidAmount', 'transfers.accountDisabled', 'transfers.insufficientBalance', 'transfers.unknownAccount', 'transfers.invalidNotes', 'transfers.noConnection', 'transfers.refused', 'transfers.projectFinished', 'approvals.accountShort', 'entryShare.accountShort', 'history.account', 'history.partner', 'history.all', 'history.partnerCreated', 'history.partnerChanged', 'history.partnerAccount', 'history.partnerDeleted', 'history.capitalIn', 'history.capitalOut', 'history.mine', 'history.empty', 'history.loadFailed', 'history.unknownAccount', 'history.accountCreated', 'history.accountChanged', 'history.nameWas', 'history.accountDisabled', 'history.accountEnabled', 'history.accountDeleted', 'history.custodianChanged', 'history.transfer', 'history.entryIn', 'history.entryOut', 'history.check', 'history.approvedBy', 'history.more', 'history.entryApproved', 'history.entryRejected', 'approvals.history', 'entries.kind', 'accounts.riyal',
+    'expenses.deductionNeedsDescription', 'accounts.custodian', 'accounts.noCustodian', 'accounts.disable', 'accounts.enable', 'accounts.disabled', 'accounts.myCustody', 'accounts.counted', 'accounts.history', 'accounts.delete', 'accounts.deleteQuestion', 'accounts.deleteCannotUndo', 'accounts.accountInUse', 'accounts.deleted', 'accounts.banks', 'accounts.custodies', 'transfers.title', 'transfers.button', 'transfers.from', 'transfers.to', 'transfers.balanceNow', 'transfers.amount', 'transfers.date', 'transfers.notes', 'transfers.save', 'transfers.sameAccount', 'transfers.invalidAmount', 'transfers.accountDisabled', 'transfers.insufficientBalance', 'transfers.unknownAccount', 'transfers.invalidNotes', 'transfers.noConnection', 'transfers.refused', 'transfers.projectFinished', 'approvals.accountShort', 'entryShare.accountShort', 'history.account', 'history.partner', 'history.all', 'history.partnerCreated', 'history.partnerChanged', 'history.partnerAccount', 'history.partnerDeleted', 'history.capitalIn', 'history.capitalOut', 'history.projectTitle', 'history.myTitle', 'history.person', 'history.kind', 'history.me', 'history.fromTo', 'permissions.seeProjectHistory', 'permissions.seeProjectHistoryHint', 'history.area.entries', 'history.area.accounts', 'history.area.partners', 'history.area.suppliers', 'history.area.structure', 'history.area.project', 'history.area.people', 'history.area.signIn', 'history.area.password', 'history.area.biometrics', 'history.area.details', 'history.action.created', 'history.action.changed', 'history.action.deleted', 'history.action.disabled', 'history.action.enabled', 'history.action.drafted', 'history.action.sent', 'history.action.approved', 'history.action.rejected', 'history.action.restored', 'history.action.registered', 'history.action.closed', 'history.action.attached', 'history.action.given', 'history.action.taken', 'history.action.issued', 'history.thing.entry', 'history.thing.invoice', 'history.thing.file', 'history.thing.account', 'history.thing.custody', 'history.thing.transfer', 'history.thing.reconciliation', 'history.thing.paymentMethod', 'history.thing.partner', 'history.thing.partnerLogin', 'history.thing.supplier', 'history.thing.contract', 'history.thing.contractDocument', 'history.thing.category', 'history.thing.item', 'history.thing.subgroup', 'history.thing.column', 'history.thing.defaultColumn', 'history.thing.project', 'history.thing.unit', 'history.thing.timeZone', 'history.thing.document', 'history.thing.periodicReport', 'history.thing.permission', 'history.thing.person', 'history.thing.roleName', 'history.thing.partnerSight', 'history.login.signIn', 'history.login.signOut', 'history.login.signInFailed', 'history.login.locked', 'history.login.passwordChanged', 'history.login.passwordReset', 'history.login.biometricsOn', 'history.login.biometricsOff', 'history.login.created', 'history.login.changed', 'history.empty', 'history.loadFailed', 'history.unknownAccount', 'history.accountCreated', 'history.accountChanged', 'history.nameWas', 'history.accountDisabled', 'history.accountEnabled', 'history.accountDeleted', 'history.custodianChanged', 'history.transfer', 'history.entryIn', 'history.entryOut', 'history.check', 'history.approvedBy', 'history.more', 'history.entryApproved', 'history.entryRejected', 'approvals.history', 'entries.kind', 'accounts.riyal',
   ])
     key: '$language $key',
   'partners.draftsBy': '$language partners.draftsBy {0}',
@@ -841,6 +841,9 @@ class FakeApi {
     if (path == '/auth/forgot-password' || path == '/auth/reset-with-code' || path.startsWith('/me/email')) {
       return _answerCode(request);
     }
+    if (path == '/me/history') {
+      return _answerMyHistory(request);
+    }
     if (path.endsWith('/sync')) {
       syncs++;
       final since = request.url.queryParameters['since'] ?? '';
@@ -1113,6 +1116,46 @@ class FakeApi {
         .where((line) => _holds(request.url, line['amount']! as num, [line['by'], line['partner'], line['account'], line['nameWas'], line['login']]))
         .take(50)
         .toList();
+    return _json(lines, 200);
+  }
+
+  /// «سجل المشروع» of each project, newest first, as the API answers it (redix-api #86).
+  final projectHistory = <String, List<Map<String, Object>>>{};
+
+  /// Adds a line saying [action] was done to [thing] called [name] to the history of [projectId], newest first, under [area], by the person [byId] called [by].
+  Map<String, Object> addProjectHistoryLine(String projectId, String action, String thing, {String name = '', String area = 'entries', String by = 'متعب', String byId = '', String about = '', String nameWas = '', String from = '', String to = '', double amount = 0}) {
+    final list = projectHistory.putIfAbsent(projectId, () => []);
+    final line = <String, Object>{'id': 4000 - list.length, 'at': '2026-11-18T07:42:00Z', 'by': by, 'byId': byId, 'area': area, 'action': action, 'thing': thing, 'name': name, 'about': about, 'nameWas': nameWas, 'from': from, 'to': to, 'amount': amount};
+    list.add(line);
+    return line;
+  }
+
+  http.Response _answerProjectHistory(http.Request request) {
+    historyReads.add(request.url);
+    final query = request.url.queryParameters;
+    final lines = (projectHistory[request.url.pathSegments[1]] ?? const <Map<String, Object>>[])
+        .where((line) => (query['area'] ?? '').isEmpty || line['area'] == query['area'])
+        .where((line) => (query['by'] ?? '').isEmpty || line['byId'] == query['by'])
+        .where((line) => _holds(request.url, line['amount']! as num, [line['by'], line['name'], line['about'], line['nameWas'], line['from'], line['to']]))
+        .take(50)
+        .toList();
+    return _json(lines, 200);
+  }
+
+  /// «سجلي», newest first, as the API answers it (redix-api #86).
+  final myHistory = <Map<String, Object>>[];
+
+  /// Adds a line saying [kind] happened to the signed-in login, newest first, under [area], by [by].
+  Map<String, Object> addMyHistoryLine(String kind, {String area = 'signIn', String by = 'متعب', String about = ''}) {
+    final line = <String, Object>{'id': 5000 - myHistory.length, 'at': '2026-11-18T07:58:00Z', 'by': by, 'area': area, 'kind': kind, 'about': about};
+    myHistory.add(line);
+    return line;
+  }
+
+  http.Response _answerMyHistory(http.Request request) {
+    historyReads.add(request.url);
+    final query = request.url.queryParameters;
+    final lines = myHistory.where((line) => (query['area'] ?? '').isEmpty || line['area'] == query['area']).where((line) => _holds(request.url, 0, [line['by'], line['about']])).toList();
     return _json(lines, 200);
   }
 
@@ -1868,6 +1911,9 @@ class FakeApi {
     }
     if (segments.length == 4 && segments[2] == 'approvals' && segments[3] == 'history') {
       return _answerApprovalHistory(request);
+    }
+    if (segments.length == 3 && segments[2] == 'history') {
+      return _answerProjectHistory(request);
     }
     if (segments.length >= 3 && segments[2] == 'partners' && segments.last != 'movements') {
       return _answerPartners(request);

@@ -1208,11 +1208,92 @@ mixin WordGetters {
   /// The word `history.accountEnabled`.
   String get historyAccountEnabled => text('history.accountEnabled');
 
+  /// The word `history.action.approved`.
+  String get historyActionApproved => text('history.action.approved');
+
+  /// The word `history.action.attached`.
+  String get historyActionAttached => text('history.action.attached');
+
+  /// The word `history.action.changed`.
+  String get historyActionChanged => text('history.action.changed');
+
+  /// The word `history.action.closed`.
+  String get historyActionClosed => text('history.action.closed');
+
+  /// The word `history.action.created`.
+  String get historyActionCreated => text('history.action.created');
+
+  /// The word `history.action.deleted`.
+  String get historyActionDeleted => text('history.action.deleted');
+
+  /// The word `history.action.disabled`.
+  String get historyActionDisabled => text('history.action.disabled');
+
+  /// The word `history.action.drafted`.
+  String get historyActionDrafted => text('history.action.drafted');
+
+  /// The word `history.action.enabled`.
+  String get historyActionEnabled => text('history.action.enabled');
+
+  /// The word `history.action.given`.
+  String get historyActionGiven => text('history.action.given');
+
+  /// The word `history.action.issued`.
+  String get historyActionIssued => text('history.action.issued');
+
+  /// The word `history.action.registered`.
+  String get historyActionRegistered => text('history.action.registered');
+
+  /// The word `history.action.rejected`.
+  String get historyActionRejected => text('history.action.rejected');
+
+  /// The word `history.action.restored`.
+  String get historyActionRestored => text('history.action.restored');
+
+  /// The word `history.action.sent`.
+  String get historyActionSent => text('history.action.sent');
+
+  /// The word `history.action.taken`.
+  String get historyActionTaken => text('history.action.taken');
+
   /// The word `history.all`.
   String get historyAll => text('history.all');
 
   /// The word `history.approvedBy`.
   String get historyApprovedBy => text('history.approvedBy');
+
+  /// The word `history.area.accounts`.
+  String get historyAreaAccounts => text('history.area.accounts');
+
+  /// The word `history.area.biometrics`.
+  String get historyAreaBiometrics => text('history.area.biometrics');
+
+  /// The word `history.area.details`.
+  String get historyAreaDetails => text('history.area.details');
+
+  /// The word `history.area.entries`.
+  String get historyAreaEntries => text('history.area.entries');
+
+  /// The word `history.area.partners`.
+  String get historyAreaPartners => text('history.area.partners');
+
+  /// The word `history.area.password`.
+  String get historyAreaPassword => text('history.area.password');
+
+  /// The word `history.area.people`.
+  String get historyAreaPeople => text('history.area.people');
+
+  /// The word `history.area.project`.
+  String get historyAreaProject => text('history.area.project');
+
+  /// The word `history.area.signIn`.
+  String get historyAreaSignIn => text('history.area.signIn');
+
+  /// The word `history.area.structure`.
+  String get historyAreaStructure => text('history.area.structure');
+
+  /// The word `history.area.suppliers`.
+  String get historyAreaSuppliers => text('history.area.suppliers');
 
   /// The word `history.capitalIn`.
   String get historyCapitalIn => text('history.capitalIn');
@@ -1241,14 +1322,53 @@ mixin WordGetters {
   /// The word `history.entryRejected`.
   String get historyEntryRejected => text('history.entryRejected');
 
+  /// The word `history.fromTo`.
+  String get historyFromTo => text('history.fromTo');
+
+  /// The word `history.kind`.
+  String get historyKind => text('history.kind');
+
   /// The word `history.loadFailed`.
   String get historyLoadFailed => text('history.loadFailed');
 
-  /// The word `history.mine`.
-  String get historyMine => text('history.mine');
+  /// The word `history.login.biometricsOff`.
+  String get historyLoginBiometricsOff => text('history.login.biometricsOff');
+
+  /// The word `history.login.biometricsOn`.
+  String get historyLoginBiometricsOn => text('history.login.biometricsOn');
+
+  /// The word `history.login.changed`.
+  String get historyLoginChanged => text('history.login.changed');
+
+  /// The word `history.login.created`.
+  String get historyLoginCreated => text('history.login.created');
+
+  /// The word `history.login.locked`.
+  String get historyLoginLocked => text('history.login.locked');
+
+  /// The word `history.login.passwordChanged`.
+  String get historyLoginPasswordChanged => text('history.login.passwordChanged');
+
+  /// The word `history.login.passwordReset`.
+  String get historyLoginPasswordReset => text('history.login.passwordReset');
+
+  /// The word `history.login.signIn`.
+  String get historyLoginSignIn => text('history.login.signIn');
+
+  /// The word `history.login.signInFailed`.
+  String get historyLoginSignInFailed => text('history.login.signInFailed');
+
+  /// The word `history.login.signOut`.
+  String get historyLoginSignOut => text('history.login.signOut');
+
+  /// The word `history.me`.
+  String get historyMe => text('history.me');
 
   /// The word `history.more`.
   String get historyMore => text('history.more');
+
+  /// The word `history.myTitle`.
+  String get historyMyTitle => text('history.myTitle');
 
   /// The word `history.nameWas`.
   String get historyNameWas => text('history.nameWas');
@@ -1267,6 +1387,93 @@ mixin WordGetters {
 
   /// The word `history.partnerDeleted`.
   String get historyPartnerDeleted => text('history.partnerDeleted');
+
+  /// The word `history.person`.
+  String get historyPerson => text('history.person');
+
+  /// The word `history.projectTitle`.
+  String get historyProjectTitle => text('history.projectTitle');
+
+  /// The word `history.thing.account`.
+  String get historyThingAccount => text('history.thing.account');
+
+  /// The word `history.thing.category`.
+  String get historyThingCategory => text('history.thing.category');
+
+  /// The word `history.thing.column`.
+  String get historyThingColumn => text('history.thing.column');
+
+  /// The word `history.thing.contract`.
+  String get historyThingContract => text('history.thing.contract');
+
+  /// The word `history.thing.contractDocument`.
+  String get historyThingContractDocument => text('history.thing.contractDocument');
+
+  /// The word `history.thing.custody`.
+  String get historyThingCustody => text('history.thing.custody');
+
+  /// The word `history.thing.defaultColumn`.
+  String get historyThingDefaultColumn => text('history.thing.defaultColumn');
+
+  /// The word `history.thing.document`.
+  String get historyThingDocument => text('history.thing.document');
+
+  /// The word `history.thing.entry`.
+  String get historyThingEntry => text('history.thing.entry');
+
+  /// The word `history.thing.file`.
+  String get historyThingFile => text('history.thing.file');
+
+  /// The word `history.thing.invoice`.
+  String get historyThingInvoice => text('history.thing.invoice');
+
+  /// The word `history.thing.item`.
+  String get historyThingItem => text('history.thing.item');
+
+  /// The word `history.thing.partner`.
+  String get historyThingPartner => text('history.thing.partner');
+
+  /// The word `history.thing.partnerLogin`.
+  String get historyThingPartnerLogin => text('history.thing.partnerLogin');
+
+  /// The word `history.thing.partnerSight`.
+  String get historyThingPartnerSight => text('history.thing.partnerSight');
+
+  /// The word `history.thing.paymentMethod`.
+  String get historyThingPaymentMethod => text('history.thing.paymentMethod');
+
+  /// The word `history.thing.periodicReport`.
+  String get historyThingPeriodicReport => text('history.thing.periodicReport');
+
+  /// The word `history.thing.permission`.
+  String get historyThingPermission => text('history.thing.permission');
+
+  /// The word `history.thing.person`.
+  String get historyThingPerson => text('history.thing.person');
+
+  /// The word `history.thing.project`.
+  String get historyThingProject => text('history.thing.project');
+
+  /// The word `history.thing.reconciliation`.
+  String get historyThingReconciliation => text('history.thing.reconciliation');
+
+  /// The word `history.thing.roleName`.
+  String get historyThingRoleName => text('history.thing.roleName');
+
+  /// The word `history.thing.subgroup`.
+  String get historyThingSubgroup => text('history.thing.subgroup');
+
+  /// The word `history.thing.supplier`.
+  String get historyThingSupplier => text('history.thing.supplier');
+
+  /// The word `history.thing.timeZone`.
+  String get historyThingTimeZone => text('history.thing.timeZone');
+
+  /// The word `history.thing.transfer`.
+  String get historyThingTransfer => text('history.thing.transfer');
+
+  /// The word `history.thing.unit`.
+  String get historyThingUnit => text('history.thing.unit');
 
   /// The word `history.transfer`.
   String get historyTransfer => text('history.transfer');
@@ -1621,6 +1828,12 @@ mixin WordGetters {
 
   /// The word `permissions.seeChosenCapitalHint`.
   String get permissionsSeeChosenCapitalHint => text('permissions.seeChosenCapitalHint');
+
+  /// The word `permissions.seeProjectHistory`.
+  String get permissionsSeeProjectHistory => text('permissions.seeProjectHistory');
+
+  /// The word `permissions.seeProjectHistoryHint`.
+  String get permissionsSeeProjectHistoryHint => text('permissions.seeProjectHistoryHint');
 
   /// The word `permissions.seeReports`.
   String get permissionsSeeReports => text('permissions.seeReports');

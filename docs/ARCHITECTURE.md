@@ -92,8 +92,12 @@ lib/
     payment_choices.dart    The account an entry moves money through, for any table, and how an expense was paid: an expense offers only what the signed-in user may pay from
     qr_summary.dart         What was read from the invoice's QR code: its five fields, and an offer to add the seller when no supplier holds its number
   history/
-    history_list.dart       A history, newest first, a page at a time: of every thing it covers or one, everyone's lines or the user's own, and those holding what was typed
-    history_view.dart       The one look of a history, the accounts' and the partners': the search line, its filters, the lines and المزيد
+    history_list.dart       A history, newest first, a page at a time: of every thing it covers or one, everyone's lines or one person's, and those holding what was typed
+    history_view.dart       The one look of every history: the search line, its filters (a thing and a person: everyone, «أنا», each member), the lines and المزيد
+    project_history.dart    «سجل المشروع»'s lines (what was done, to what, its name and what else it names) and their kinds, as the HistoryList every history is
+    project_history_screen.dart  «سجل المشروع» from Project settings, for whoever holds seeProjectHistory: every action in the project, filtered by kind and person
+    my_history.dart         «سجلي»'s lines: what happened to one's own login, and who did it
+    my_history_screen.dart  «سجلي» from Settings: one's sign-ins, passwords, fingerprint and details, filtered by kind
   format/
     date_format.dart        A date as the app shows it, in both languages: Gregorian dd.MM.yyyy; a moment the API sends, read in the phone's own time (momentOf)
     number_format.dart      A number as a person types it: no separators, and as few decimals as it needs, at most two, so 15 is 15 and 7.5 is 7.5
@@ -169,7 +173,7 @@ lib/
     payment_method_row.dart One payment method: its name, whether it is disabled and, for whoever keeps the settings, a menu of what can be done to it
     payment_methods.dart    A project's payment methods, and the one way to change them
     payment_methods_screen.dart A project's payment methods: whoever keeps its settings adds, renames, disables and deletes them; one an expense was paid with is only disabled
-    shared_settings_screen.dart    Settings (الإعدادات), one screen: who is signed in, Switch project, the default project, the registered projects for the admin, the language, fingerprint or face, «بريدي», the password change and signing out
+    shared_settings_screen.dart    Settings (الإعدادات), one screen: who is signed in, Switch project, the default project, the registered projects for the admin, the language, fingerprint or face, «بريدي», the password change, «سجلي» and signing out
   sharing/
     attachable_entries.dart The entries of a project a shared file's QR code matches, and the way to put a file on an entry
     share_screen.dart       What opens when a picture or a PDF is shared to the app: put it on any entry the person may handle, found in القيود's list and its search, or start a new entry with it

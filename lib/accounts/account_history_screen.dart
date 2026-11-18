@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../projects/members.dart';
 import '../projects/project.dart';
 import '../history/history_view.dart';
 import '../ui/screen_title.dart';
@@ -12,10 +13,10 @@ import 'account_history.dart';
 import 'accounts.dart';
 
 /// السجل, from Accounts' top bar (redix-app #89, R17): what was done to the project's accounts and what moved their money, newest first, a page at a time; every
-/// account or one, everyone's lines or the signed-in user's own. Each line says what, how much, which accounts, who and when.
+/// account or one, everyone's lines or one person's. Each line says what, how much, which accounts, who and when.
 class AccountHistoryScreen extends StatefulWidget {
-  /// The [history] of [project]'s [accounts].
-  const AccountHistoryScreen({super.key, required this.project, required this.history, required this.accounts});
+  /// The [history] of [project]'s [accounts], filtered by its [members].
+  const AccountHistoryScreen({super.key, required this.project, required this.history, required this.accounts, required this.members});
 
   /// The project.
   final Project project;
@@ -25,6 +26,9 @@ class AccountHistoryScreen extends StatefulWidget {
 
   /// Its accounts, one filter each.
   final Accounts accounts;
+
+  /// Its people, one filter each.
+  final Members members;
 
   /// The screen's route.
   static const path = '/projects/:projectId/accounts/history';
@@ -41,8 +45,11 @@ class AccountHistoryScreen extends StatefulWidget {
   /// The account [id] alone, in that list.
   static Key accountKey(String id) => Key('history.account.$id');
 
-  /// The filter showing what the signed-in user did.
-  static const mineKey = Key('history.mine');
+  /// The chip opening the list of people, under the search line.
+  static const personChoiceKey = Key('history.personChoice');
+
+  /// The person [id] alone in that list; everyone for empty.
+  static Key personKey(String id) => Key('history.person.$id');
 
   /// The line [id].
   static Key lineKey(int id) => Key('history.line.$id');
@@ -60,6 +67,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
     super.initState();
     widget.history.open();
     widget.accounts.loadOnOpen();
+    widget.members.loadOnOpen();
   }
 
   @override
@@ -74,16 +82,18 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
           actions: [ListenableBuilder(listenable: history, builder: (context, _) => SearchIcons.andFilters(filtersInUse: history.isFiltered))],
         ),
         body: ListenableBuilder(
-          listenable: Listenable.merge([history, widget.accounts]),
+          listenable: Listenable.merge([history, widget.accounts, widget.members]),
           builder: (context, _) => HistoryView(
             history: history,
             title: words.accountsHistory,
             choiceLabel: words.historyAccount,
             choices: [for (final account in widget.accounts.all) (account.id, account.name)],
+            people: [for (final member in widget.members.all) (member.id, member.displayName)],
             choiceChipKey: AccountHistoryScreen.accountChoiceKey,
             allKey: AccountHistoryScreen.allKey,
             choiceKey: AccountHistoryScreen.accountKey,
-            mineKey: AccountHistoryScreen.mineKey,
+            personChipKey: AccountHistoryScreen.personChoiceKey,
+            personKey: AccountHistoryScreen.personKey,
             lineKey: AccountHistoryScreen.lineKey,
             moreKey: AccountHistoryScreen.moreKey,
           ),

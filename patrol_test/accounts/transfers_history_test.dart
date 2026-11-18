@@ -254,7 +254,7 @@ void main() {
       expect($(AccountHistoryScreen.lineKey(secondAddedLine)), findsNothing);
     });
 
-    phoneCase('H10: What I did keeps the signed-in person\'s own lines', ($) async {
+    phoneCase('H10, redix-api #86 R13: the person chip\'s «أنا» keeps the signed-in person\'s own lines', ($) async {
       final manager = await Given.manager();
       final mover = await Given.member(manager, permissions: [Permission.moveMoney]);
       final firstName = 'حساب ${Given.unique()}';
@@ -266,7 +266,7 @@ void main() {
       await Given.transferred(manager, first, second, 50);
       await onAccounts($, mover);
       await onHistory($);
-      await $.filterBy(AccountHistoryScreen.mineKey);
+      await $.chooseIn(AccountHistoryScreen.personChoiceKey, AccountHistoryScreen.personKey(mover.id));
       await historySays($, await historyLine(manager, (line) => line['kind'] == 'transfer' && line['amount'] == 100), $.words.historyTransfer.fill([formatMoney(100), firstName, secondName]));
       expect($(AccountHistoryScreen.lineKey(await historyLine(manager, (line) => line['kind'] == 'transfer' && line['amount'] == 50))), findsNothing);
     });

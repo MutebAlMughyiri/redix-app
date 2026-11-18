@@ -46,7 +46,7 @@ typedef Gate = ({String name, Permission permission, void Function(FakeApi api) 
 const _project = 'project-0';
 
 /// Every permission there is: the admin's, and all a person can hold in a project.
-const _every = [...admin, ...managerAndFinance, 'removeApprovedEntries'];
+const _every = [...admin, ...managerAndFinance, 'removeApprovedEntries', 'seeProjectHistory'];
 
 Step _tap(Finder Function(FakeApi api) target) => (tester, api, capture) async {
   await bringIntoView(tester, target(api));
@@ -259,6 +259,13 @@ final List<Gate> _gates = [
   ),
   (name: 'An enabled Issue a periodic report', permission: Permission.generateReports, arrange: _nothing, steps: [_openProject, _tapKey(HomeScreen.reportsKey(_project))], control: _enabled(ReportsScreen.issueKey)),
   (name: 'Approvals on the project card', permission: Permission.approveEntries, arrange: _nothing, steps: [_openProject, _swipeTo(HomeScreen.approvalsKey(_project))], control: _key(HomeScreen.approvalsKey(_project))),
+  (
+    name: '«سجل المشروع» on the project card (redix-api #86)',
+    permission: Permission.seeProjectHistory,
+    arrange: _nothing,
+    steps: [_openProject, _swipeTo(HomeScreen.projectHistoryKey(_project))],
+    control: _key(HomeScreen.projectHistoryKey(_project)),
+  ),
   (
     name: 'Approve, reached from a notification',
     permission: Permission.approveEntries,

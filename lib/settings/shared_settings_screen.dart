@@ -8,6 +8,7 @@ import '../auth/change_password_screen.dart';
 import '../auth/permission.dart';
 import '../auth/session.dart';
 import '../config/local_config.dart';
+import '../history/my_history_screen.dart';
 import '../projects/project.dart';
 import '../projects/projects.dart';
 import '../projects/projects_screen.dart';
@@ -116,6 +117,9 @@ class SharedSettingsScreen extends StatefulWidget {
 
   /// The way into the password change.
   static const changePasswordKey = Key('sharedSettings.changePassword');
+
+  /// The way into «سجلي», one's own login's history (redix-api #86).
+  static const myHistoryKey = Key('sharedSettings.myHistory');
 
   /// The row that signs out, after asking.
   static const signOutKey = Key('sharedSettings.signOut');
@@ -266,6 +270,7 @@ class _SharedSettingsScreenState extends State<SharedSettingsScreen> {
               ),
             ]),
             _row(SharedSettingsScreen.changePasswordKey, Icons.lock_outline, words.myAccountChangePassword, () => context.push(ChangePasswordScreen.path)),
+            _row(SharedSettingsScreen.myHistoryKey, Icons.manage_history, words.historyMyTitle, () => context.push(MyHistoryScreen.path)),
             _row(LegalPage.privacy.key, Icons.privacy_tip_outlined, LegalPage.privacy.nameIn(words), LegalPage.privacy.open),
             _row(LegalPage.terms.key, Icons.description_outlined, LegalPage.terms.nameIn(words), LegalPage.terms.open),
             _row(SharedSettingsScreen.licensesKey, Icons.info_outline, words.legalLicenses, () => showLicensePage(context: context)),

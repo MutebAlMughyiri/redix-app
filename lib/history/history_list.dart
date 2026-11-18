@@ -23,11 +23,13 @@ abstract interface class HistoryLine {
   String whoAndWhenIn(Words words);
 }
 
-/// A history, newest first, a page at a time: of every thing it covers or one, everyone's lines or the signed-in user's own, and only those holding what was typed, as the
-/// API searches them (redix-app #104). The one owner of filtering, searching and paging a history, which the accounts' and the partners' histories both are (redix-app #101).
+/// A history, newest first, a page at a time: of every thing it covers or one, everyone's lines or one person's, and only those holding what was typed, as the API
+/// searches them (redix-app #104). The one owner of filtering, searching and paging a history, which every history is (redix-app #101, redix-api #86).
 abstract class HistoryList<T extends HistoryLine> extends ApiList<T> {
-  /// The history read from [path], filtered by the query parameter [choiceName], seen through [session].
-  HistoryList(Session session, this.path, this.choiceName, T Function(Map<String, dynamic>) fromJson) : super(session, _pathOf(path, choiceName, '', false, '', 0), 'history', fromJson);
+  /// The history read from [path], filtered by the query parameter [choiceName], seen through [_session].
+  HistoryList(this._session, this.path, this.choiceName, T Function(Map<String, dynamic>) fromJson) : super(_session, _pathOf(path, choiceName, '', '', '', 0), 'history', fromJson);
+
+  final Session _session;
 
   /// How many lines a page holds, as the API gives them.
   static const pageSize = 50;
@@ -39,20 +41,23 @@ abstract class HistoryList<T extends HistoryLine> extends ApiList<T> {
   final String choiceName;
 
   var _chosenId = '';
-  var _mine = false;
+  var _by = '';
   var _text = '';
 
-  static String _pathOf(String path, String choiceName, String chosenId, bool mine, String text, int before) =>
-      Uri(path: path, queryParameters: {choiceName: chosenId, 'mine': '$mine', 'before': '$before', if (text.isNotEmpty) 'text': text}).toString();
+  static String _pathOf(String path, String choiceName, String chosenId, String by, String text, int before) =>
+      Uri(path: path, queryParameters: {choiceName: chosenId, if (by.isNotEmpty) 'by': by, 'before': '$before', if (text.isNotEmpty) 'text': text}).toString();
 
   /// The thing whose lines show; empty for every one.
   String get chosenId => _chosenId;
 
-  /// True while only the signed-in user's own lines show.
-  bool get mine => _mine;
+  /// The person whose lines alone show; empty for everyone's.
+  String get by => _by;
+
+  /// The signed-in user, whom the person chip offers as «أنا».
+  String get myId => _session.userId;
 
   /// True while a filter narrows the lines, so the title bar's filter icon says so (redix-app #104, R6).
-  bool get isFiltered => _chosenId.isNotEmpty || _mine;
+  bool get isFiltered => _chosenId.isNotEmpty || _by.isNotEmpty;
 
   /// True while the last page read was full, so another may follow.
   bool get mayHaveMore => all.isNotEmpty && all.length % pageSize == 0;
@@ -60,15 +65,16 @@ abstract class HistoryList<T extends HistoryLine> extends ApiList<T> {
   /// Shows every line from the newest, nothing filtered or typed, as a history screen opens: a search does not outlive its screen.
   Future<void> open() {
     _chosenId = '';
-    _mine = false;
+    _by = '';
     _text = '';
     return _readNewest();
   }
 
-  /// Shows the lines of [chosenId], or of every one when empty, and only the signed-in user's own when [mine], from the newest, still holding what was typed.
-  Future<void> filter(String chosenId, bool mine) {
+  /// Shows the lines of [chosenId], or of every one when empty, and only those the person [by] wrote, or everyone's when empty, from the newest, still holding what
+  /// was typed.
+  Future<void> filter(String chosenId, String by) {
     _chosenId = chosenId;
-    _mine = mine;
+    _by = by;
     return _readNewest();
   }
 
@@ -79,10 +85,10 @@ abstract class HistoryList<T extends HistoryLine> extends ApiList<T> {
   }
 
   Future<void> _readNewest() {
-    pointAt(_pathOf(path, choiceName, _chosenId, _mine, _text, 0));
+    pointAt(_pathOf(path, choiceName, _chosenId, _by, _text, 0));
     return load();
   }
 
   /// Adds the next page after the last line shown; returns an empty string once added, otherwise the word key saying it could not be read.
-  Future<String> more() => loadMore(_pathOf(path, choiceName, _chosenId, _mine, _text, all.last.id));
+  Future<String> more() => loadMore(_pathOf(path, choiceName, _chosenId, _by, _text, all.last.id));
 }

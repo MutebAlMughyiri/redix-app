@@ -463,6 +463,9 @@ class Given {
   /// here and finds it on the phone by its key.
   static Future<List<Map<String, dynamic>>> history(Person person, String path) async => (await _getList('${person.project}/$path', await _tokenOf(person))).cast<Map<String, dynamic>>();
 
+  /// The lines of [person]'s own login, newest first, as «سجلي» reads them (redix-api #86).
+  static Future<List<Map<String, dynamic>>> myHistory(Person person) async => (await _getList('/me/history', await _tokenOf(person))).cast<Map<String, dynamic>>();
+
   /// What [person] was told, newest first, as the API lists it.
   static Future<List<Map<String, dynamic>>> notifications(Person person) async => (await _getList('/notifications', await _tokenOf(person))).cast<Map<String, dynamic>>();
 

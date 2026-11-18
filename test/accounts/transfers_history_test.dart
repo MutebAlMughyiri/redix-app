@@ -193,7 +193,7 @@ void main() {
           ..addHistoryLine('project-0', 'entryOut', amount: 300);
       });
 
-      expect(api.historyReads.single.queryParameters, {'account': '', 'mine': 'false', 'before': '0'});
+      expect(api.historyReads.single.queryParameters, {'account': '', 'before': '0'});
       expect(text(tester, AccountHistoryScreen.lineKey(1000).title), 'en history.check');
       expect(text(tester, AccountHistoryScreen.lineKey(999).title), 'en history.transfer');
       expect(text(tester, AccountHistoryScreen.lineKey(999).subtitle), contains('ريم'));
@@ -226,16 +226,22 @@ void main() {
       expect(text(tester, AccountHistoryScreen.accountChoiceKey.label), 'en history.account: en history.all');
     });
 
-    testWidgets('H10: What I did reads only the signed-in user\'s lines, and the filters stay when nothing is found', (tester) async {
-      final api = await openHistory(tester);
+    testWidgets('H10, redix-api #86 R13: the person chip reads one member\'s lines, the filters stay when nothing is found, and everyone reads every line again', (tester) async {
+      final api = await openHistory(tester, arrange: (api) => api.addMember('user-sara', 'سارة'));
 
       await openFilters(tester, api);
-      await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.mineKey)));
+      await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.personChoiceKey)));
+      await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.personKey('user-sara'))));
 
-      expect(api.historyReads.last.queryParameters['mine'], 'true');
+      expect(api.historyReads.last.queryParameters['by'], 'user-sara');
+      expect(text(tester, AccountHistoryScreen.personChoiceKey.label), 'en history.person: سارة');
       expect(find.byKey(ApiListBody.emptyKey), findsOneWidget);
-      expect(find.byKey(AccountHistoryScreen.mineKey), findsOneWidget);
+      expect(find.byKey(AccountHistoryScreen.personChoiceKey), findsOneWidget);
       expect(find.byKey(AccountHistoryScreen.accountChoiceKey), findsOneWidget);
+
+      await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.personChoiceKey)));
+      await act(tester, api, () => tester.tap(find.byKey(AccountHistoryScreen.personKey(''))));
+      expect(api.historyReads.last.queryParameters.containsKey('by'), isFalse);
     });
 
     testWidgets('redix-app #104: what is typed is asked of the API in Western digits, only the lines holding it show, and choosing an account keeps it', (tester) async {
@@ -253,7 +259,7 @@ void main() {
 
       await searchFor(tester, api, '٥٠٠');
       await chooseAccount(tester, api, AccountHistoryScreen.accountKey(bankId));
-      expect(api.historyReads.last.queryParameters, {'account': bankId, 'mine': 'false', 'before': '0', 'text': '500'});
+      expect(api.historyReads.last.queryParameters, {'account': bankId, 'before': '0', 'text': '500'});
       expect(find.byKey(AccountHistoryScreen.lineKey(1000)), findsOneWidget);
       expect(find.byKey(AccountHistoryScreen.lineKey(999)), findsNothing);
     });
@@ -289,7 +295,7 @@ void main() {
     /// A phone keeping [line] as the page after the first full page of the history, as a read of it with no network answers.
     Future<MemoryStore> storeKeepingTheSecondPage(Map<String, Object> line) async {
       final store = MemoryStore();
-      final secondPage = Uri(path: '/projects/project-0/accounts/history', queryParameters: {'account': '', 'mine': 'false', 'before': '951'}).toString();
+      final secondPage = Uri(path: '/projects/project-0/accounts/history', queryParameters: {'account': '', 'before': '951'}).toString();
       await store.write('copies', secondPage, jsonEncode([line]));
       return store;
     }

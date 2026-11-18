@@ -58,7 +58,10 @@ enum Permission {
   seeReports,
 
   /// «يُصدر التقارير»: issue a project's periodic report and take every report's Excel and PDF, whose capital shows only the partners one sees (redix-api #131).
-  generateReports;
+  generateReports,
+
+  /// «يرى سجل المشروع»: read a project's history, every action in it, each line only for whoever may see its record (redix-api #86).
+  seeProjectHistory;
 
   /// What can be ticked in a project, in this order: every permission but the system's own.
   static List<Permission> get inAProject => values.where((permission) => permission != approveProjects).toList();

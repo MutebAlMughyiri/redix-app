@@ -12,21 +12,24 @@ import '../words/word_fill.dart';
 import '../words/words.dart';
 import 'history_list.dart';
 
-/// The one look of a history (redix-app #101, #104): the shared search line, which the API searches, with its filters folded under the arrow, a chip choosing every thing it
-/// covers or one and a chip for what I did; the lines newest first, and المزيد while more may follow. The accounts' and the partners' history screens each give it their
-/// list, their things and their keys.
+/// The one look of a history (redix-app #101, #104, redix-api #86): the shared search line, which the API searches, with its filters folded under the arrow, a chip
+/// choosing every thing it covers or one and a chip choosing everyone, «أنا» or one person; the lines newest first, and المزيد while more may follow. Every history
+/// screen gives it its list, its things, its people and its keys.
 class HistoryView extends StatelessWidget {
-  /// The view of [history], called [title], whose things are [choices] (id and name), each called a [choiceLabel], each part keyed by its screen.
+  /// The view of [history], called [title], whose things are [choices] (id and name), each called a [choiceLabel], filtered by [people] (id and name), each part keyed by
+  /// its screen.
   const HistoryView({
     super.key,
     required this.history,
     required this.title,
     required this.choiceLabel,
     required this.choices,
+    required this.people,
     required this.choiceChipKey,
     required this.allKey,
     required this.choiceKey,
-    required this.mineKey,
+    required this.personChipKey,
+    required this.personKey,
     required this.lineKey,
     required this.moreKey,
   });
@@ -43,6 +46,9 @@ class HistoryView extends StatelessWidget {
   /// The things to filter by, each its id and its name.
   final List<(String, String)> choices;
 
+  /// The people to filter by, each their id and their name; the signed-in user among them shows as «أنا».
+  final List<(String, String)> people;
+
   /// The chip opening the list of things.
   final Key choiceChipKey;
 
@@ -52,8 +58,11 @@ class HistoryView extends StatelessWidget {
   /// The thing [id], in that list.
   final Key Function(String id) choiceKey;
 
-  /// The chip of what the signed-in user did.
-  final Key mineKey;
+  /// The chip opening the list of people.
+  final Key personChipKey;
+
+  /// The person [id] in that list; empty for everyone.
+  final Key Function(String id) personKey;
 
   /// The line [id].
   final Key Function(int id) lineKey;
@@ -63,6 +72,7 @@ class HistoryView extends StatelessWidget {
 
   List<Widget> _filters(Words words) {
     final values = [('', words.historyAll), ...choices];
+    final everyone = [('', words.historyAll), if (history.myId.isNotEmpty) (history.myId, words.historyMe), ...people.where((person) => person.$1 != history.myId)];
     return [
       FilterLine.choice<(String, String)>(
         key: choiceChipKey,
@@ -71,9 +81,17 @@ class HistoryView extends StatelessWidget {
         chosen: values.firstWhere((value) => value.$1 == history.chosenId, orElse: () => values.first),
         labelOf: (value) => value.$2,
         keyOf: (value) => value.$1.isEmpty ? allKey : choiceKey(value.$1),
-        onChanged: (value) => history.filter(value.$1, history.mine),
+        onChanged: (value) => history.filter(value.$1, history.by),
       ),
-      FilterLine.toggle(key: mineKey, label: words.historyMine, isOn: history.mine, onChanged: (mine) => history.filter(history.chosenId, mine)),
+      FilterLine.choice<(String, String)>(
+        key: personChipKey,
+        label: words.historyPerson,
+        values: everyone,
+        chosen: everyone.firstWhere((person) => person.$1 == history.by, orElse: () => everyone.first),
+        labelOf: (person) => person.$2,
+        keyOf: (person) => personKey(person.$1),
+        onChanged: (person) => history.filter(history.chosenId, person.$1),
+      ),
     ];
   }
 
