@@ -5,9 +5,11 @@ import 'dart:async';
 import 'documents/documents.dart';
 import 'documents/documents_screen.dart';
 
+import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart' as http;
 
 import 'accounts/accounts.dart';
 import 'accounts/accounts_screen.dart';
@@ -22,6 +24,7 @@ import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/forgot_password_screen.dart';
 import 'auth/sign_in_screen.dart';
+import 'config/chucker.dart';
 import 'contracts/contracts.dart';
 import 'contracts/contracts_screen.dart';
 import 'home/home_screen.dart';
@@ -105,9 +108,16 @@ import 'users/my_permissions_screen.dart';
 import 'entries/searched_entries.dart';
 import 'launcher/launcher_add_entry.dart';
 
+/// Starts the app with every call through [callsClient], Chucker's in a build whose config file turns `CHUCKER` on, shown then in a release build
+/// too (qa's).
+Future<void> main() {
+  ChuckerFlutter.showOnRelease = chuckerOn;
+  return http.runWithClient(_start, callsClient);
+}
+
 /// Starts the app with the session and the language kept from an earlier start, if any. An app built without its environment's config
 /// file stops here, rather than calling an address nobody chose.
-Future<void> main() async {
+Future<void> _start() async {
   if (apiBaseUrl.isEmpty) {
     throw StateError('No API address: build with --dart-define-from-file=config/<environment>.json, which sets API_BASE_URL.');
   }
@@ -199,6 +209,7 @@ class _RedixAppState extends State<RedixApp> {
   late final _reportFiles = ReportFiles(widget.session, widget.capture);
 
   late final _router = GoRouter(
+    navigatorKey: ChuckerFlutter.navigatorKey,
     initialLocation: HomeScreen.landingOf(widget.session),
     refreshListenable: widget.session.access,
     redirect: (context, state) => _redirect(state.matchedLocation),

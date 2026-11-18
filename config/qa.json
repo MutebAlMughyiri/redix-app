@@ -2,5 +2,6 @@
   "API_BASE_URL": "http://127.0.0.1:5012",
   "LINK_HOST": "qa.redix.test",
   "APP_ID_SUFFIX": ".qa",
-  "APP_NAME": "REDIX qa"
+  "APP_NAME": "REDIX qa",
+  "CHUCKER": true
 }

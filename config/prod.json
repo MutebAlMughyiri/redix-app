@@ -2,5 +2,6 @@
   "API_BASE_URL": "https://redix.muteb.net:8443",
   "LINK_HOST": "redix.muteb.net",
   "APP_ID_SUFFIX": ".prod",
-  "APP_NAME": "REDIX"
+  "APP_NAME": "REDIX",
+  "CHUCKER": false
 }
