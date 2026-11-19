@@ -32,7 +32,7 @@ void main() {
       final renamed = 'Renamed ${Given.unique()}';
       await $.saveName(renamed);
       await $.says(ProjectInfoScreen.nameKey, renamed);
-      await $.back();
+      await $.tester.pageBack();
       await $.says(HomeScreen.titleKey, renamed);
     });
 

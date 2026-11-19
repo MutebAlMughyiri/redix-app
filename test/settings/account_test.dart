@@ -492,7 +492,7 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
       await pressBack(tester, api);
 
-      api.addMember('user-b', 'B بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني بالمشروع');
+      api.addMember('user-b', 'B بن فلان بن علان الفلاني من قسم الإشراف الميداني بالمشروع');
       final bankAccount = api.addAccount(runningId, 'حساب جارٍ باسم طويل جداً في بنك من البنوك المحلية', balance: 64250.75)['id'] as String;
       final custody = api.addAccount(runningId, 'كاش مع B', type: 'cashCustody', balance: 2750.5, custodianId: 'user-b', custodianName: 'B بن عبدالله', isMine: true)['id'] as String;
       final oldAccount = api.addAccount(runningId, 'حساب قديم', balance: -120.40, isActive: false)['id'] as String;
@@ -534,7 +534,7 @@ void main() {
       expectFits(HomeScreen.custodyKey(custody));
       expectFits(HomeScreen.custodyBalanceKey(custody));
 
-      final partner = api.addPartner(runningId, 'A بن عبدالله بن محمد Z الشريك المؤسس في المشروع', userId: 'user-b', userName: 'B بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني')['id'] as String;
+      final partner = api.addPartner(runningId, 'A بن فلان بن علان Z الشريك المؤسس في المشروع', userId: 'user-b', userName: 'B بن فلان بن علان الفلاني من قسم الإشراف الميداني')['id'] as String;
       final partnerWithNoLogin = api.addPartner(runningId, 'C')['id'] as String;
       await showProjectSetting(tester, HomeScreen.partnersKey(runningId));
       await tester.ensureVisible(projectSettingPages);

@@ -69,7 +69,7 @@ void main() {
       ..reconciliationAnswer = reconciled(9999999.99, 8888888.88, balances: [balanceRow(longName, 9999999.99, 8888888.88)])
       ..capitalTotal = 9999999.99
       ..addMovement(attachmentId: 'attachment-1', amount: -9999999.99);
-    final partner = api.addPartner('project-0', 'A بن عبدالله بن محمد Z الشريك المؤسس في المشروع', userId: 'user-1', userName: 'B بن عبدالله بن محمد العتيبي');
+    final partner = api.addPartner('project-0', 'A بن فلان بن علان Z الشريك المؤسس في المشروع', userId: 'user-1', userName: 'B بن فلان بن علان الفلاني');
     api.addCapitalLine(partner['id']! as String, 9999999.99, 66.6666666667);
     await openProject(tester, api);
 

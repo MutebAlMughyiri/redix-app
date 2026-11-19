@@ -49,11 +49,12 @@ void main() {
 
     phoneCase('Users: what is typed keeps the people whose name holds it', ($) async {
       final manager = await Given.manager();
-      final personB = await Given.member(manager, name: 'B ${Given.unique()}');
+      final nameB = 'B ${Given.unique()}';
+      final personB = await Given.member(manager, name: nameB);
       final sara = await Given.member(manager, name: 'سارة ${Given.unique()}');
       await $.fromTheHome(manager, HomeScreen.usersKey(manager.projectId));
       await $.reach($(UsersScreen.rowKey(sara.id)));
-      await $.searchFor('B');
+      await $.searchFor(nameB);
       await $.gone($(UsersScreen.rowKey(sara.id)));
       await $.reach($(UsersScreen.rowKey(personB.id)));
     });
