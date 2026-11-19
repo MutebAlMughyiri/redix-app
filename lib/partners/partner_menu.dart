@@ -16,7 +16,7 @@ import 'partner.dart';
 import 'partners.dart';
 import 'partners_screen.dart';
 
-/// What can be done to a partner, for whoever keeps the settings: their ⋮ menu, as an account's (Muteb, 11 Nov 2026: no pencil, no red bar). Delete stays in it gray, saying why,
+/// What can be done to a partner, for whoever keeps the settings: their ⋮ menu, as an account's (the owner, 11 Nov 2026: no pencil, no red bar). Delete stays in it gray, saying why,
 /// and whose draft holds them, unless the partner is at zero capital with nothing waiting and no one else's draft (redix-api #100); the person's own drafts naming them are
 /// listed when Delete asks, since they go with them (findings row 199), so Delete also needs Delete entries while there are some (findings row 202).
 class PartnerMenu extends StatelessWidget {

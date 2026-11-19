@@ -2,7 +2,7 @@
 
 # UC-062: Sign out
 
-**What it is for:** leaving a phone: a shared one, or one being handed on (added by Muteb on 5 Nov 2026; numbered last, built after UC-007).
+**What it is for:** leaving a phone: a shared one, or one being handed on (added by the owner on 5 Nov 2026; numbered last, built after UC-007).
 **Who uses it:** every signed-in user.
 **Issue:** redix-app #74; the API side is redix-api #78.
 

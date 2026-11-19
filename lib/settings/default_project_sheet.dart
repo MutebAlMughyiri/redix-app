@@ -9,7 +9,7 @@ import '../projects/projects.dart';
 import '../ui/part_keys.dart';
 import '../words/words.dart';
 
-/// The choice of the default project, from Settings (Muteb, 8 Nov 2026): every project the user may open with a tick, the default one ticked, so none he was made inactive in (redix-api #126 D2). Ticking another moves the default,
+/// The choice of the default project, from Settings (the owner, 8 Nov 2026): every project the user may open with a tick, the default one ticked, so none he was made inactive in (redix-api #126 D2). Ticking another moves the default,
 /// unticking it clears it; the default opens at sign-in (AC-37.1).
 class DefaultProjectSheet extends StatefulWidget {
   /// The sheet choosing among [projects] the default of [session].

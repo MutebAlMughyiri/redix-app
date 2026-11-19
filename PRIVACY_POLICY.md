@@ -5,5 +5,3 @@ what REDIX keeps about a person, why, where, for how long, who can see it, and h
 
 It has one copy, which the API serves, so the page and what the stores link to never differ. Its source is
 `go-backend/internal/legal/privacy.html` in redix-api.
-
-Contact: mtb550@gmail.com

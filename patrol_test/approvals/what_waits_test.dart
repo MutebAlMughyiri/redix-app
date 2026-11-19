@@ -100,11 +100,11 @@ void main() {
 
     phoneCase('R16: Approvals names a partner\'s entry and its kind, and a revenue entry\'s item', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final money = await Given.partnerMoney(manager, partner);
       await Given.revenue(manager);
       await onApprovals($, manager);
-      await $.says(ApprovalsScreen.itemKey(money), 'هيثم');
+      await $.says(ApprovalsScreen.itemKey(money), 'C');
       await $.says(ApprovalsScreen.kindKey(money), $.words.capitalContribution);
     });
 

@@ -51,7 +51,7 @@ class NewUserScreen extends StatefulWidget {
   /// The user's email, where a code reaches them (redix-api #127).
   static const emailKey = Key('newUser.email');
 
-  /// What they are called in this project, beside their username (Muteb, 9 Nov 2026).
+  /// What they are called in this project, beside their username (the owner, 9 Nov 2026).
   static const roleNameKey = Key('newUser.roleName');
 
   /// The temporary password, shown as typed so the project manager can pass it on.

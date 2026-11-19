@@ -17,7 +17,7 @@ import '../support/phone_case.dart';
 import '../support/phone_screens.dart';
 import '../support/steps.dart';
 
-/// Signs [person] in and opens المصروفات, or the [side] given (Muteb, 12 Nov 2026: two screens).
+/// Signs [person] in and opens المصروفات, or the [side] given (the owner, 12 Nov 2026: two screens).
 Future<void> onReports(PatrolIntegrationTester $, Person person, {SummarySide side = SummarySide.expenses}) async {
   await $.fromTheHome(person, HomeScreen.itemReportsKey(person.projectId, side));
   await $.reach($(SearchIcons.searchKey));
@@ -33,7 +33,7 @@ Future<String> openCategory(PatrolIntegrationTester $, Person person, String nam
 
 void main() {
   phoneClass('الإيرادات والمصروفات (UC-049 and UC-053)', () {
-    phoneCase('Muteb, 12 Nov 2026: المصروفات and الإيرادات are two buttons, each opening its own side with no switch', ($) async {
+    phoneCase('the owner, 12 Nov 2026: المصروفات and الإيرادات are two buttons, each opening its own side with no switch', ($) async {
       final manager = await Given.manager();
       final account = await Given.account(manager);
       await Given.entriesApproved(manager, [await Given.entry(manager, accountId: account), await Given.revenue(manager, accountId: account)]);
@@ -76,7 +76,7 @@ void main() {
 
     phoneCase('redix-api #109: رأس المال opens to its item, and its report holds a table per partner', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       await Given.entriesApproved(manager, [await Given.partnerMoney(manager, partner, amount: 500)]);
       await onReports($, manager, side: SummarySide.revenue);
       await openCategory($, manager, 'رأس المال');
@@ -123,8 +123,8 @@ void main() {
     phoneCase('BR-31, redix-api #106: with a chosen partner someone sees only that partner\'s table',($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager, permissions: [Permission.seeReports]);
-      final own = await Given.partner(manager, 'نواف');
-      final other = await Given.partner(manager, 'هيثم');
+      final own = await Given.partner(manager, 'B');
+      final other = await Given.partner(manager, 'C');
       await Given.choosePartner(manager, member, own);
       await Given.entriesApproved(manager, [await Given.partnerMoney(manager, own), await Given.partnerMoney(manager, other)]);
       await onReports($, member, side: SummarySide.revenue);

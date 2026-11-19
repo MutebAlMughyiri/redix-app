@@ -19,7 +19,7 @@ void main() {
   FakeApi apiWithBiometrics() => FakeApi()..usesBiometrics = true;
 
   Future<void> signInWithPassword(WidgetTester tester, FakeApi api) => act(tester, api, () async {
-    await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+    await tester.enterText(find.byKey(SignInScreen.usernameKey), 'b');
     await tester.enterText(find.byKey(SignInScreen.passwordKey), 'secret');
     await tester.tap(find.byKey(SignInScreen.submitKey));
   });
@@ -75,12 +75,12 @@ void main() {
   testWidgets('a pass lands where the person chose to land', (tester) async {
     final api = apiWithBiometrics()
       ..defaultProjectId = 'project-0'
-      ..addProject('غصون 6');
+      ..addProject('مشروع A');
     const kept = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": false, "usesBiometrics": true, "defaultProjectId": "project-0"}';
 
     await pumpRedix(tester, api, stored: {'session': kept}, prompt: FakePrompt());
 
-    expect(tester.widget<Text>(find.byKey(HomeScreen.titleKey)).data, 'غصون 6');
+    expect(tester.widget<Text>(find.byKey(HomeScreen.titleKey)).data, 'مشروع A');
   });
 
   testWidgets('a failed try says so, and the button tries again', (tester) async {

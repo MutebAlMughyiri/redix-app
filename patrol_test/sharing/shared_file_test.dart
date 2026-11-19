@@ -119,12 +119,12 @@ void main() {
 
     phoneCase('R12: a shared file offers New entry and no capital receipt, and goes with a partner picked in Add entry', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       await shareInto($, manager);
       await $.tapOn(ShareScreen.newEntryKey);
       await $.reach($(AddEntryScreen.invoicePictureKey));
       await $.tapOn(AddEntryScreen.tableKey);
-      await $(TablePicker.searchKey).enterText('هيثم');
+      await $(TablePicker.searchKey).enterText('C');
       await $.reach($(TablePicker.optionKey(partner)));
     });
 

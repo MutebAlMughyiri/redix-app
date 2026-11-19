@@ -6,7 +6,7 @@ One Flutter app for Android and iOS, built from Flutter's own pieces: a `Localiz
 
 ```
 lib/
-  api.dart                  The API's address, from the environment's config file: `config/dev.json` for automated runs, `config/qa.json` for Muteb's own testing, `config/prod.json` for a release (redix-api #118); and the one place an answer is read: `jsonOf`, `answerOf`, `refusalOf`, `madeFrom`
+  api.dart                  The API's address, from the environment's config file: `config/dev.json` for automated runs, `config/qa.json` for the owner's own testing, `config/prod.json` for a release (redix-api #118); and the one place an answer is read: `jsonOf`, `answerOf`, `refusalOf`, `madeFrom`
   api_list.dart             A list the API owns, as it last answered, and the way to change it
   api_object.dart           Something the API owns, as it last answered, and the way to change it
   main.dart                 The app: its theme, its languages, and its screens
@@ -294,9 +294,9 @@ Settings such as projects keep nothing on the phone: the API owns every rule, th
 | Rule | Where it lives |
 | --- | --- |
 | No word value in the code; words come from the API | `lib/words/` |
-| No color in a screen: every color is an `AppColor`, named for what it is for and read from the theme, so a design change or a dark mode is made in one file (Muteb, 9 Nov 2026) | `lib/ui/app_color.dart`; `app_color_test` fails on any other file that picks a color |
+| No color in a screen: every color is an `AppColor`, named for what it is for and read from the theme, so a design change or a dark mode is made in one file (the owner, 9 Nov 2026) | `lib/ui/app_color.dart`; `app_color_test` fails on any other file that picks a color |
 | Every element a user sees or acts on has a `Key` constant on its screen, and every label, icon, title, subtitle, card and message has one too: a part inside a keyed element takes its element's key and the part's name (`HomeScreen.accountsKey(id).label`), and a message its word (`messageKeyOf('projects.pendingEntries')`). A test finds an element by its key, never by its text or its place | Each screen, `PartKeys`, `messageKeyOf` |
-| A button that sends something goes through `ActOnce`: the first tap runs its action and the button stays gray until the action ends, so a double tap cannot act twice; buttons that must not run together share one `ActOnce` (Muteb, 10 Nov 2026). `BottomButton` has it built in. A button that only opens a screen needs none, because the new screen covers it from its first frame | `lib/ui/act_once.dart`, `BottomButton` |
+| A button that sends something goes through `ActOnce`: the first tap runs its action and the button stays gray until the action ends, so a double tap cannot act twice; buttons that must not run together share one `ActOnce` (the owner, 10 Nov 2026). `BottomButton` has it built in. A button that only opens a screen needs none, because the new screen covers it from its first frame | `lib/ui/act_once.dart`, `BottomButton` |
 | Light and dark grow from one function, `appThemeOf`, from `AppColor.seed`; Appearance in Shared settings keeps `themeMode_state`, 0 light, 1 dark and 2 the phone's (the default), in `LocalConfig`, which tells `RedixApp` so every screen redraws at once, and on the phone's Flutter redraws with the phone (redix-app #87, #97) | `lib/ui/app_theme.dart`, `LocalConfig`, `SharedSettingsScreen` |
 | A screen's main action is `BottomButton`: one full-width filled button in the `Scaffold`'s `bottomNavigationBar`, its bar keyed `BottomButton.barKey`, a plus unless the action says otherwise; no screen draws a floating button. Adding what is added rarely is `TitleBarAdd`, a plus in the title bar instead (Accounts, Partners, Documents, Payment methods, Users: redix-app #101, #106). Without the permission either shows grayed, never hidden | `lib/ui/bottom_button.dart` |
 | One class to a file: a screen's card, row and dialogs are files of their own | Each feature folder |

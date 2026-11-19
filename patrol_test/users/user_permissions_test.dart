@@ -31,10 +31,10 @@ Future<void> tick(PatrolIntegrationTester $, Permission permission, {required bo
 void main() {
   phoneClass('Tick a person\'s permissions (UC-008)', () {
     phoneCase('the screen names whose permissions these are, and ticks every one they hold', ($) async {
-      final manager = await Given.manager(project: 'غصون 7', manager: 'ريم');
-      final member = await Given.member(manager, name: 'نواف', permissions: [Permission.recordEntries]);
+      final manager = await Given.manager(project: 'مشروع B', manager: 'ريم');
+      final member = await Given.member(manager, name: 'B', permissions: [Permission.recordEntries]);
       await onPermissions($, manager, member.id);
-      await $.says(UserPermissionsScreen.nameKey, 'نواف');
+      await $.says(UserPermissionsScreen.nameKey, 'B');
       await $.goTo($(UserPermissionsScreen.permissionKey(Permission.recordEntries)));
       expect($.isTicked(UserPermissionsScreen.permissionKey(Permission.recordEntries)), isTrue);
       await $.goTo($(UserPermissionsScreen.permissionKey(Permission.approveEntries)));

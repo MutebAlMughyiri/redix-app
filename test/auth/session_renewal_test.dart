@@ -24,7 +24,7 @@ void main() {
   });
 
   testWidgets('redix-api #126 R6: coming back to the screen renews the session, and the project list is read again', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await sendToBackground(tester, api);
     api
@@ -38,7 +38,7 @@ void main() {
   });
 
   testWidgets('redix-api #126 R6: going to the background renews nothing', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     api
       ..refreshes = 0
@@ -52,7 +52,7 @@ void main() {
   });
 
   testWidgets('redix-api #126 R6: a renewal that fails does not read the project list again', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await sendToBackground(tester, api);
     api
@@ -67,7 +67,7 @@ void main() {
   });
 
   testWidgets('redix-api #126 R6: an API that refuses even a renewed token renews once for the refused project list and reads it once more, never renewing and reading in a loop', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await sendToBackground(tester, api);
     api

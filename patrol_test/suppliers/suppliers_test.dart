@@ -39,7 +39,7 @@ Future<String> saveAndFind(PatrolIntegrationTester $, Person person, String name
 void main() {
   phoneClass('Suppliers (UC-017)', () {
     phoneCase('a supplier is added with its VAT number and default item', ($) async {
-      final manager = await Given.manager(project: 'غصون 7');
+      final manager = await Given.manager(project: 'مشروع B');
       final table = await Given.firstPurchaseTable(manager);
       await Given.supplier(manager, name: 'مؤسسة الأفق', vatNumber: Given.vatNumber());
       await onSuppliers($, manager);

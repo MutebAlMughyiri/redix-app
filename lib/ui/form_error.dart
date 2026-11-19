@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import 'refusal_text.dart';
 
-/// A form's error (redix-app #98, Muteb, 12 Nov 2026, D1 = A): the one line above a form's first field saying why it was refused, in the refusal color, brought to the top
+/// A form's error (redix-app #98, the owner, 12 Nov 2026, D1 = A): the one line above a form's first field saying why it was refused, in the refusal color, brought to the top
 /// of the view when it appears or changes, since the form may be scrolled to its buttons (R4). Every form, dialog and sheet shows its error through it, first, so where an
 /// error stands is decided here (D3); what a list action says stays a snack bar (D2).
 class FormError extends StatefulWidget {

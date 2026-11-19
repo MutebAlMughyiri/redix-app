@@ -17,7 +17,7 @@ import '../support/steps.dart';
 
 /// A new manager standing on the New user form, answered.
 Future<Person> onTheForm(PatrolIntegrationTester $) async {
-  final manager = await Given.manager(project: 'غصون 7', manager: 'ريم');
+  final manager = await Given.manager(project: 'مشروع B', manager: 'ريم');
   await $.fromTheHome(manager, HomeScreen.usersKey(manager.projectId));
   await $.tapOn(UsersScreen.newUserKey);
   await $.reach($(NewUserScreen.nameKey));
@@ -25,7 +25,7 @@ Future<Person> onTheForm(PatrolIntegrationTester $) async {
 }
 
 /// Fills in the form, with an email of the username's (redix-api #127).
-Future<void> fillForm(PatrolIntegrationTester $, String username, {String name = 'نواف', String password = 'Temporary-2', String email = ''}) async {
+Future<void> fillForm(PatrolIntegrationTester $, String username, {String name = 'B', String password = 'Temporary-2', String email = ''}) async {
   await $.fill(NewUserScreen.nameKey, name);
   await $.fill(NewUserScreen.usernameKey, username);
   await $.fill(NewUserScreen.mobileKey, '0533333333');
@@ -43,18 +43,18 @@ void main() {
   phoneClass('New user (UC-007 and UC-008)', () {
     phoneCase('a new user is created with a temporary password', ($) async {
       final manager = await onTheForm($);
-      await fillForm($, 'patrol-nawaf-${Given.unique()}');
+      await fillForm($, 'patrol-b-${Given.unique()}');
       await $.picture('new-user');
       await send($);
-      await $.idOf('users.name.', () => Given.userNamed(manager, 'نواف'));
+      await $.idOf('users.name.', () => Given.userNamed(manager, 'B'));
     });
 
     phoneCase('AC-02.1: they sign in and must change it', ($) async {
       final manager = await onTheForm($);
-      final username = 'nawaf-${Given.unique()}';
+      final username = 'b-${Given.unique()}';
       await fillForm($, username);
       await send($);
-      await $.idOf('users.name.', () => Given.userNamed(manager, 'نواف'));
+      await $.idOf('users.name.', () => Given.userNamed(manager, 'B'));
       await $.back();
       await $.signOutFromTheHome(manager.projectId);
       await $.signIn(username, 'Temporary-2');
@@ -63,17 +63,17 @@ void main() {
 
     phoneCase('redix-api #127 AC-07.8: an email that is not one address is refused, and the form stays with what was typed', ($) async {
       await onTheForm($);
-      await fillForm($, 'nawaf-${Given.unique()}', email: 'nawaf');
+      await fillForm($, 'b-${Given.unique()}', email: 'b');
       await send($);
       await $.says(NewUserScreen.messageKey, $.words.usersEmailInvalid);
       await $.goTo($(NewUserScreen.emailKey));
-      expect($.typed(NewUserScreen.emailKey), 'nawaf');
+      expect($.typed(NewUserScreen.emailKey), 'b');
     });
 
     phoneCase('redix-api #127 R9: an email another account holds is refused', ($) async {
       final manager = await onTheForm($);
       final member = await Given.member(manager);
-      await fillForm($, 'nawaf-${Given.unique()}', email: '${member.username}@example.com');
+      await fillForm($, 'b-${Given.unique()}', email: '${member.username}@example.com');
       await send($);
       await $.says(NewUserScreen.messageKey, $.words.usersEmailTaken);
     });
@@ -86,14 +86,14 @@ void main() {
 
     phoneCase('what is ticked goes with the new user, See the project always ticked', ($) async {
       final manager = await onTheForm($);
-      final username = 'nawaf-${Given.unique()}';
+      final username = 'b-${Given.unique()}';
       await fillForm($, username);
       await $.goTo($(NewUserScreen.permissionKey(Permission.readProject)));
       expect($.isTicked(NewUserScreen.permissionKey(Permission.readProject)), isTrue);
       expect($.canTick(NewUserScreen.permissionKey(Permission.readProject)), isFalse);
       await $.tapOn(NewUserScreen.permissionKey(Permission.approveEntries));
       await send($);
-      await $.idOf('users.name.', () => Given.userNamed(manager, 'نواف'));
+      await $.idOf('users.name.', () => Given.userNamed(manager, 'B'));
       expect(await Given.permissionsOf(manager, username), containsAll(['readProject', 'approveEntries']));
     });
 
@@ -115,7 +115,7 @@ void main() {
 
     phoneCase('without a network the form says so', ($) async {
       await onTheForm($);
-      await fillForm($, 'nawaf-${Given.unique()}');
+      await fillForm($, 'b-${Given.unique()}');
       await Pc.cutNetwork();
       await send($);
       await $.says(NewUserScreen.messageKey, $.words.usersNoConnection);

@@ -28,7 +28,7 @@ void main() {
     tester.view.physicalSize = const Size(800, 2000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final api = FakeApi()..addProject('غصون 6', permissions: field);
+    final api = FakeApi()..addProject('مشروع A', permissions: field);
     arrange(api);
     final capture = FakeCapture();
     await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture, locale: Locale(language));
@@ -50,15 +50,15 @@ void main() {
         final opened = await openEntries(tester, (api) => api.addEntry(description: 'الدفعة الأولى', paymentMethodName: 'شبكة'), language: language);
 
         expect(await share(tester, opened, 'entry-0'), [
-          '$language entries.purchases · غصون 6',
+          '$language entries.purchases · مشروع A',
           '$language entryShare.item: بند اللياسة',
-          '$language entryShare.supplier: شركة البواني',
+          '$language entryShare.supplier: شركة A',
           '$language entryShare.amount: 1,150.00',
           '$language entryShare.date: $date',
           '$language entryShare.status: $language entries.pendingApproval',
           '$language entryShare.account: حساب المؤسسة',
           '$language entryShare.paymentMethod: شبكة',
-          '$language entryShare.author: نواف',
+          '$language entryShare.author: B',
           '$language entryShare.description: الدفعة الأولى',
           linkOf('entry-0'),
         ].join('\n'));
@@ -67,10 +67,10 @@ void main() {
     }
 
     for (final (kind, partnerName, lines) in [
-      ('contractorPayment', '', ['en entries.contractorPayments · غصون 6', 'en entryShare.item: بند اللياسة', 'en entryShare.contractor: شركة البواني']),
-      ('revenue', '', ['en categories.tableRevenue · غصون 6', 'en entryShare.item: بند اللياسة']),
-      ('capitalIn', 'سالم', ['en capital.contribution · غصون 6', 'en entryShare.partner: سالم']),
-      ('capitalOut', 'سالم', ['en capital.withdrawal · غصون 6', 'en entryShare.partner: سالم']),
+      ('contractorPayment', '', ['en entries.contractorPayments · مشروع A', 'en entryShare.item: بند اللياسة', 'en entryShare.contractor: شركة A']),
+      ('revenue', '', ['en categories.tableRevenue · مشروع A', 'en entryShare.item: بند اللياسة']),
+      ('capitalIn', 'سالم', ['en capital.contribution · مشروع A', 'en entryShare.partner: سالم']),
+      ('capitalOut', 'سالم', ['en capital.withdrawal · مشروع A', 'en entryShare.partner: سالم']),
     ]) {
       testWidgets('R3, R4: a $kind shares the same way, saying what it is and its table, and leaving out a payment method and notes it does not have', (tester) async {
         final opened = await openEntries(tester, (api) => api.addEntry(kind: kind, partnerName: partnerName, status: 'approved'));
@@ -81,7 +81,7 @@ void main() {
           'en entryShare.date: $date',
           'en entryShare.status: en entries.approved',
           'en entryShare.account: حساب المؤسسة',
-          'en entryShare.author: نواف',
+          'en entryShare.author: B',
           linkOf('entry-0'),
         ].join('\n'));
       });
@@ -95,7 +95,7 @@ void main() {
       tester.view.physicalSize = const Size(800, 2000);
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      final api = FakeApi()..addProject('غصون 6', permissions: permissions);
+      final api = FakeApi()..addProject('مشروع A', permissions: permissions);
       arrange(api);
       await pumpRedix(tester, api, stored: isSignedIn ? {'session': keptSession} : const {});
       await act(tester, api, () async => GoRouter.of(tester.element(find.byKey(isSignedIn ? ProjectsScreen.sharedSettingsKey : SignInScreen.usernameKey))).go(EntryLinkScreen.pathOf(projectId, entryId)));
@@ -151,7 +151,7 @@ void main() {
       expect(find.byKey(ApprovalsScreen.cardKey('entry-0')), findsNothing);
 
       await act(tester, api, () async {
-        await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+        await tester.enterText(find.byKey(SignInScreen.usernameKey), 'b');
         await tester.enterText(find.byKey(SignInScreen.passwordKey), 'secret');
         await tester.tap(find.byKey(SignInScreen.submitKey));
       });
@@ -160,7 +160,7 @@ void main() {
     });
 
     testWidgets('R9: a link that cannot be read says why and offers to try again, never that the entry is gone, and trying again opens it', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance);
+      final api = FakeApi()..addProject('مشروع A', permissions: managerAndFinance);
       api
         ..addEntry()
         ..addPending();
@@ -185,7 +185,7 @@ void main() {
       }, isSignedIn: false);
 
       await act(tester, api, () async {
-        await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+        await tester.enterText(find.byKey(SignInScreen.usernameKey), 'b');
         await tester.enterText(find.byKey(SignInScreen.passwordKey), 'temporary');
         await tester.tap(find.byKey(SignInScreen.submitKey));
       });

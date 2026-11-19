@@ -21,7 +21,7 @@ void main() {
 
   /// Signs in, opens Suppliers holding مؤسسة الأفق and شركة النخيل, and answers the API and their ids.
   Future<(FakeApi, String, String)> onSuppliers(WidgetTester tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     final horizon = api.addSupplier('project-0', 'مؤسسة الأفق', vatNumber: '300000000000003')['id']! as String;
     final palm = api.addSupplier('project-0', 'شركة النخيل', vatNumber: '311111111111113')['id']! as String;
     await openProject(tester, api);
@@ -105,7 +105,7 @@ void main() {
   });
 
   testWidgets('D8, R6: on Contracts the filter icon opens the filters and folds them, without the search line; folded with a filter in use it is filled, with none outlined', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     api
       ..addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000)
       ..addContract('project-0', 'مبلط الجنوبية', value: 34000, paid: 35000);
@@ -130,7 +130,7 @@ void main() {
   });
 
   testWidgets('Categories: while a search holds text every drag handle stays in place, grayed, and drags nothing; cleared, they drag again', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     final finishing = api.addCategory('project-0', 'التشطيب');
     final bone = api.addCategory('project-0', 'العظم')['id']! as String;
     api.addItem(finishing, 'البلاط');

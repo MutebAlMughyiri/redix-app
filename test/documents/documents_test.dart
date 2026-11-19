@@ -29,7 +29,7 @@ void main() {
   };
 
   Future<({FakeApi api, FakeCapture capture})> openDocuments(WidgetTester tester, {List<String> permissions = managerAndFinance, void Function(FakeApi api)? arrange}) async {
-    final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية'], permissions: permissions);
+    final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية'], permissions: permissions);
     arrange?.call(api);
     final capture = FakeCapture();
     await openProject(tester, api, capture: capture);
@@ -191,7 +191,7 @@ void main() {
   });
 
   testWidgets('AC-04.1: a closed project shows its documents with no Add and no Remove', (tester) async {
-    final api = FakeApi()..addProject('غصون 5', status: 'finished', units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع E', status: 'finished', units: ['الفلة الغربية']);
     api.documentRows.add(document('permit', 'رخصة البناء', 'التراخيص'));
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.documentsKey('project-0'));

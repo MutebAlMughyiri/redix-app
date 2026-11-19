@@ -19,7 +19,7 @@ void main() {
   Future<FakeApi> openList(WidgetTester tester) async {
     final api = FakeApi()
       ..permissions = admin
-      ..addRegistered('غصون 8');
+      ..addRegistered('مشروع C');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
     await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.registeredKey)));
@@ -29,7 +29,7 @@ void main() {
   testWidgets('a waiting project shows what is needed to decide', (tester) async {
     await openList(tester);
 
-    expect(text(tester, RegisteredProjectsScreen.nameKey('registered-0')), 'غصون 8');
+    expect(text(tester, RegisteredProjectsScreen.nameKey('registered-0')), 'مشروع C');
     expect(text(tester, RegisteredProjectsScreen.detailsKey('registered-0')), '05.11.2026 · الفلة الغربية');
     expect(text(tester, RegisteredProjectsScreen.managerKey('registered-0')), 'ريم · reem · 0500000000');
   });
@@ -37,7 +37,7 @@ void main() {
   testWidgets('R11: the admin reads the description before deciding', (tester) async {
     final api = FakeApi()
       ..permissions = admin
-      ..addRegistered('غصون 8', description: 'ثلاث فلل في حي الياسمين، التمويل من الشركاء.');
+      ..addRegistered('مشروع C', description: 'ثلاث فلل في حي الياسمين، التمويل من الشركاء.');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
     await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.registeredKey)));
@@ -82,7 +82,7 @@ void main() {
     final api = await openList(tester);
 
     await act(tester, api, () => tester.tap(find.byKey(RegisteredProjectsScreen.rejectKey('registered-0'))));
-    expect(text(tester, ReasonSheet.aboutKey), 'غصون 8');
+    expect(text(tester, ReasonSheet.aboutKey), 'مشروع C');
     await act(tester, api, () async {
       await tester.enterText(find.byKey(ReasonSheet.reasonKey), 'الاسم مكرر');
       await tester.tap(find.byKey(ReasonSheet.sendKey));
@@ -107,7 +107,7 @@ void main() {
   testWidgets('without a network the list says so, and Try again reads it', (tester) async {
     final api = FakeApi()
       ..permissions = admin
-      ..addRegistered('غصون 8');
+      ..addRegistered('مشروع C');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
 

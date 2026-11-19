@@ -20,7 +20,7 @@ import 'item_report_screen.dart';
 import 'category_share.dart';
 import '../ui/row_stripe.dart';
 
-/// المصروفات or الإيرادات (FR-33), each its own screen from Project settings (Muteb, 9 and 12 Nov 2026): every category of its [side] with its total and its share of
+/// المصروفات or الإيرادات (FR-33), each its own screen from Project settings (the owner, 9 and 12 Nov 2026): every category of its [side] with its total and its share of
 /// the side, opening on its items with theirs, each opening its report. The home's card shows the same categories and opens none of them. The search line over them keeps a
 /// category whose name, or an item's, holds what was typed, open on those items, or on all of them when its own name holds it (redix-app #104).
 class ItemReportsScreen extends StatefulWidget {

@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 /// The spinner [whileBusy] shows.
 const busySpinnerKey = Key('busy.spinner');
 
-/// Shows a spinner over the screen while [work] runs, for what may take time: picking, reading or sending a file (Muteb, 11 Nov 2026). Nothing can be tapped meanwhile;
+/// Shows a spinner over the screen while [work] runs, for what may take time: picking, reading or sending a file (the owner, 11 Nov 2026). Nothing can be tapped meanwhile;
 /// the spinner goes once [work] ends, however it ends, and this answers what [work] answered. It removes itself, never what was opened over it, and nothing when a
 /// change of screen took it away already.
 Future<T> whileBusy<T>(BuildContext context, Future<T> work) async {

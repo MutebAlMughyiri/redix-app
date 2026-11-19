@@ -17,14 +17,14 @@ import 'package:redix/ui/screen_title.dart';
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  Future<FakeApi> openProjectUsers(WidgetTester tester, {String nawafEmail = ''}) async {
-    final api = FakeApi()..addProject('غصون 6');
-    final manager = api.addUser('متعب', username: 'muteb');
-    final nawaf = api.addUser('نواف', username: 'nawaf', mobile: '0500000000', email: nawafEmail);
+  Future<FakeApi> openProjectUsers(WidgetTester tester, {String personBEmail = ''}) async {
+    final api = FakeApi()..addProject('مشروع A');
+    final manager = api.addUser('A', username: 'owner');
+    final personB = api.addUser('B', username: 'b', mobile: '0500000000', email: personBEmail);
     final disabled = api.addUser('سالم', username: 'salem');
     api
       ..give(manager, 'project-0', managerAndFinance)
-      ..give(nawaf, 'project-0', field)
+      ..give(personB, 'project-0', field)
       ..give(disabled, 'project-0', reader)
       ..makeUserInactive(disabled, 'project-0');
     await openProject(tester, api);
@@ -40,16 +40,16 @@ void main() {
   testWidgets('a row shows the name, username and mobile; the username alone when there is no mobile', (tester) async {
     await openProjectUsers(tester);
 
-    expect(text(tester, UsersScreen.nameKey('user-1')), 'نواف');
-    expect(text(tester, UsersScreen.detailsKey('user-1')), 'nawaf · 0500000000');
-    expect(text(tester, UsersScreen.detailsKey('user-0')), 'muteb');
+    expect(text(tester, UsersScreen.nameKey('user-1')), 'B');
+    expect(text(tester, UsersScreen.detailsKey('user-1')), 'b · 0500000000');
+    expect(text(tester, UsersScreen.detailsKey('user-0')), 'owner');
   });
 
   testWidgets('the title names the project, and a row in it shows the roles alone', (tester) async {
     await openProjectUsers(tester);
 
     expect(text(tester, ScreenTitle.titleKey), 'en users.title');
-    expect(text(tester, ScreenTitle.subjectKey), 'غصون 6');
+    expect(text(tester, ScreenTitle.subjectKey), 'مشروع A');
     expect(text(tester, UsersScreen.permissionsLineKey('user-0')), 'en permissions.count');
     expect(text(tester, UsersScreen.permissionsLineKey('user-1')), 'en permissions.count');
   });
@@ -81,7 +81,7 @@ void main() {
     final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.disableKey);
-    expect(text(tester, ConfirmDialog.subjectKey), 'نواف');
+    expect(text(tester, ConfirmDialog.subjectKey), 'B');
     expect(text(tester, ConfirmDialog.explanationKey), 'en users.disableExplain');
     expect(api.sentUserChanges, isEmpty);
 
@@ -105,15 +105,15 @@ void main() {
 
   testWidgets('redix-api #126 D1: a person inactive in another project shows active in this one, and offers Disable', (tester) async {
     final api = FakeApi()
-      ..addProject('غصون 6')
-      ..addProject('غصون 7');
-    final manager = api.addUser('متعب', username: 'muteb');
-    final nawaf = api.addUser('نواف', username: 'nawaf');
+      ..addProject('مشروع A')
+      ..addProject('مشروع B');
+    final manager = api.addUser('A', username: 'owner');
+    final personB = api.addUser('B', username: 'b');
     api
       ..give(manager, 'project-0', managerAndFinance)
-      ..give(nawaf, 'project-0', field)
-      ..give(nawaf, 'project-1', field)
-      ..makeUserInactive(nawaf, 'project-1');
+      ..give(personB, 'project-0', field)
+      ..give(personB, 'project-1', field)
+      ..makeUserInactive(personB, 'project-1');
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.usersKey('project-0'));
 
@@ -150,20 +150,20 @@ void main() {
     final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.editKey);
-    expect(tester.widget<TextField>(find.byKey(UsersScreen.editNameKey)).controller!.text, 'نواف');
+    expect(tester.widget<TextField>(find.byKey(UsersScreen.editNameKey)).controller!.text, 'B');
     expect(tester.widget<TextField>(find.byKey(UsersScreen.editMobileKey)).controller!.text, '0500000000');
 
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(UsersScreen.editNameKey), 'نواف الأول');
+      await tester.enterText(find.byKey(UsersScreen.editNameKey), 'B الأول');
       await tester.tap(find.byKey(ChangeDialog.saveKey));
     });
 
     expect(find.byKey(ChangeDialog.saveKey), findsNothing);
-    expect(api.sentUserChanges.first.$2, {'displayName': 'نواف الأول', 'mobile': '0500000000', 'email': ''});
-    expect(text(tester, UsersScreen.nameKey('user-1')), 'نواف الأول');
+    expect(api.sentUserChanges.first.$2, {'displayName': 'B الأول', 'mobile': '0500000000', 'email': ''});
+    expect(text(tester, UsersScreen.nameKey('user-1')), 'B الأول');
   });
 
-  testWidgets('Muteb, 9 Nov 2026: Edit holds the role name in this project, starting from it, sends it alone to the project when the name and mobile stay as they were, so someone also in another project can still be named, and the row shows it beside the username', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: Edit holds the role name in this project, starting from it, sends it alone to the project when the name and mobile stay as they were, so someone also in another project can still be named, and the row shows it beside the username', (tester) async {
     final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.editKey);
@@ -175,25 +175,25 @@ void main() {
 
     final (path, body) = api.sentUserChanges.single;
     expect((path, body['roleName']), ('PUT /projects/project-0/users/user-1/role-name', 'مشرف مالي'));
-    expect(text(tester, UsersScreen.detailsKey('user-1')), 'nawaf · مشرف مالي · 0500000000');
+    expect(text(tester, UsersScreen.detailsKey('user-1')), 'b · مشرف مالي · 0500000000');
 
     await choose(tester, api, 'user-1', UsersScreen.editKey);
     expect(tester.widget<TextField>(find.byKey(UsersScreen.editRoleNameKey)).controller!.text, 'مشرف مالي');
   });
 
   testWidgets('redix-api #127 AC-07.8: Edit starts from the email and sends a changed one with the name and mobile', (tester) async {
-    final api = await openProjectUsers(tester, nawafEmail: 'nawaf@example.com');
+    final api = await openProjectUsers(tester, personBEmail: 'b@example.com');
 
     await choose(tester, api, 'user-1', UsersScreen.editKey);
-    expect(tester.widget<TextField>(find.byKey(UsersScreen.editEmailKey)).controller!.text, 'nawaf@example.com');
+    expect(tester.widget<TextField>(find.byKey(UsersScreen.editEmailKey)).controller!.text, 'b@example.com');
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(UsersScreen.editEmailKey), 'nawaf@redix.sa');
+      await tester.enterText(find.byKey(UsersScreen.editEmailKey), 'b@redix.sa');
       await tester.tap(find.byKey(ChangeDialog.saveKey));
     });
 
     final (path, body) = api.sentUserChanges.single;
     expect(path, 'PUT /users/user-1');
-    expect(body, {'displayName': 'نواف', 'mobile': '0500000000', 'email': 'nawaf@redix.sa'});
+    expect(body, {'displayName': 'B', 'mobile': '0500000000', 'email': 'b@redix.sa'});
   });
 
   testWidgets('redix-api #127 R9: an email another account holds stays in the dialog saying so', (tester) async {
@@ -228,7 +228,7 @@ void main() {
     final api = await openProjectUsers(tester);
 
     await choose(tester, api, 'user-1', UsersScreen.resetPasswordKey);
-    expect(text(tester, UsersScreen.resetNameKey), 'نواف');
+    expect(text(tester, UsersScreen.resetNameKey), 'B');
     expect(text(tester, UsersScreen.resetExplainKey), 'en users.resetExplain');
     expect(tester.widget<TextField>(find.byKey(UsersScreen.resetPasswordFieldKey)).decoration!.helperText, 'en common.passwordRules', reason: 'redix-api #113');
 
@@ -257,7 +257,7 @@ void main() {
     expect(api.sentUserChanges.single.$2, {'username': 'reem'});
     expect(find.byKey(ChangeDialog.saveKey), findsNothing);
     expect(text(tester, UsersScreen.permissionsLineKey('user-3')), 'en permissions.count');
-    expect(api.users.last['projects'], [{'projectId': 'project-0', 'name': 'غصون 6', 'isInactive': false, 'permissions': ['readProject'], 'partnerIds': <String>[], 'unseenTables': <String>[]}]);
+    expect(api.users.last['projects'], [{'projectId': 'project-0', 'name': 'مشروع A', 'isInactive': false, 'permissions': ['readProject'], 'partnerIds': <String>[], 'unseenTables': <String>[]}]);
   });
 
   testWidgets('an unknown username stays in the dialog and says so', (tester) async {
@@ -274,8 +274,8 @@ void main() {
   });
 
   testWidgets('without a network the list says so, and Try again reads it', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
-    api.give(api.addUser('متعب', username: 'muteb'), 'project-0', const ['manageUsers', 'readProject', 'seeAllCapital']);
+    final api = FakeApi()..addProject('مشروع A');
+    api.give(api.addUser('A', username: 'owner'), 'project-0', const ['manageUsers', 'readProject', 'seeAllCapital']);
     await openProject(tester, api);
     api.online = false;
     await scrollAndTap(tester, api, HomeScreen.usersKey('project-0'));

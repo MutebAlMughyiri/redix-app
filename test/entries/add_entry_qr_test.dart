@@ -20,9 +20,9 @@ void main() {
   final picture = PickedFile('invoice.png', '/phone/invoice.png', Uint8List.fromList(onePixelPng));
 
   Future<({FakeApi api, FakeCapture capture})> openExpense(WidgetTester tester, String qrText, {bool hasSupplier = true, List<String> permissions = field}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, units: ['الفلة الغربية']);
     if (hasSupplier) {
-      api.addSupplier('project-0', 'شركة البواني للتجارة', vatNumber: '310823353100003');
+      api.addSupplier('project-0', 'شركة A للتجارة', vatNumber: '300000000000003');
     }
     final capture = FakeCapture()
       ..camera = picture
@@ -41,13 +41,13 @@ void main() {
     await openExpense(tester, madeUpQr());
 
     expect(shown(tester, AddEntryScreen.qrReadKey), 'en expenses.qrRead');
-    expect(shown(tester, AddEntryScreen.qrSellerKey), 'شركة البواني للتجارة');
-    expect(shown(tester, AddEntryScreen.qrVatNumberKey), '310823353100003');
+    expect(shown(tester, AddEntryScreen.qrSellerKey), 'شركة A للتجارة');
+    expect(shown(tester, AddEntryScreen.qrVatNumberKey), '300000000000003');
     expect(shown(tester, AddEntryScreen.qrTimeKey), '26.10.2026 14:25');
     expect(shown(tester, AddEntryScreen.qrAmountsKey), 'en expenses.total 6,000.00');
     expect(typed(tester, AddEntryScreen.amountKey), '6000');
-    expect(shown(tester, AddEntryScreen.supplierKey.label), 'شركة البواني للتجارة');
-    expect(shown(tester, AddEntryScreen.supplierDetailsKey), contains('310823353100003'));
+    expect(shown(tester, AddEntryScreen.supplierKey.label), 'شركة A للتجارة');
+    expect(shown(tester, AddEntryScreen.supplierDetailsKey), contains('300000000000003'));
     expect(shown(tester, AddEntryScreen.dateKey.label), formatDate(DateTime(2026, 10, 26)));
   });
 
@@ -74,13 +74,13 @@ void main() {
     await tester.ensureVisible(find.byKey(AddEntryScreen.qrAddSupplierKey));
     await tester.pumpAndSettle();
     await act(tester, opened.api, () => tester.tap(find.byKey(AddEntryScreen.qrAddSupplierKey)));
-    expect(tester.widget<TextField>(find.byKey(SuppliersScreen.supplierNameKey)).controller!.text, 'شركة البواني للتجارة');
-    expect(tester.widget<TextField>(find.byKey(SuppliersScreen.vatNumberKey)).controller!.text, '310823353100003');
+    expect(tester.widget<TextField>(find.byKey(SuppliersScreen.supplierNameKey)).controller!.text, 'شركة A للتجارة');
+    expect(tester.widget<TextField>(find.byKey(SuppliersScreen.vatNumberKey)).controller!.text, '300000000000003');
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
     expect(find.byKey(AddEntryScreen.qrSupplierMissingKey), findsNothing);
-    expect(shown(tester, AddEntryScreen.supplierDetailsKey), contains('310823353100003'));
+    expect(shown(tester, AddEntryScreen.supplierDetailsKey), contains('300000000000003'));
   });
 
   testWidgets('who cannot add a supplier is told, and offered nothing to tap', (tester) async {
@@ -90,7 +90,7 @@ void main() {
   });
 
   testWidgets('a PDF is not looked at for a QR code, and says nothing about one', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: field, units: ['الفلة الغربية']);
     final capture = FakeCapture()..files = PickedFile('invoice.pdf', '/phone/invoice.pdf', Uint8List.fromList([1, 2, 3]));
     await openProject(tester, api, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
@@ -103,8 +103,8 @@ void main() {
   });
 
   testWidgets('a picture from the files is read too, and going back from the camera keeps what was read', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
-    api.addSupplier('project-0', 'شركة البواني للتجارة', vatNumber: '310823353100003');
+    final api = FakeApi()..addProject('مشروع A', permissions: field, units: ['الفلة الغربية']);
+    api.addSupplier('project-0', 'شركة A للتجارة', vatNumber: '300000000000003');
     final capture = FakeCapture()
       ..files = picture
       ..qrText = madeUpQr();

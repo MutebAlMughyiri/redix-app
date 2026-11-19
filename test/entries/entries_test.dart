@@ -42,7 +42,7 @@ void main() {
     tester.view.physicalSize = const Size(800, 2000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, status: status, units: ['الفلة الغربية']);
     arrange(api);
     await openProject(tester, api, store: store);
     return api;
@@ -75,10 +75,10 @@ void main() {
     }
     expect(find.byKey(EntriesScreen.rowKey('entry-0')), findsNothing);
     expect([for (final shown in ['entry-5', 'entry-4', 'entry-3', 'entry-2', 'entry-1']) rowText(tester, shown).contains('en entries.enteredBy')], [true, true, false, false, false]);
-    expect(rowText(tester, 'entry-2'), isNot(contains('الصورة غير واضحة')), reason: 'Muteb, 9 Nov 2026: the reason shows once the entry is opened');
+    expect(rowText(tester, 'entry-2'), isNot(contains('الصورة غير واضحة')), reason: 'the owner, 9 Nov 2026: the reason shows once the entry is opened');
   });
 
-  testWidgets('Muteb, 9 Nov 2026: a row says where it stands by its frame alone, orange waiting, red rejected, teal a draft and plain once approved, with no status words and no reason', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: a row says where it stands by its frame alone, orange waiting, red rejected, teal a draft and plain once approved, with no status words and no reason', (tester) async {
     await openHome(tester, (api) {
       api
         ..addEntry()
@@ -111,7 +111,7 @@ void main() {
 
   testWidgets('the home shows a spinner under القيود while its entries are first read, and the rows once they come', (tester) async {
     final api = FakeApi()
-      ..addProject('غصون 6', permissions: field, units: ['الفلة الغربية'])
+      ..addProject('مشروع A', permissions: field, units: ['الفلة الغربية'])
       ..addEntry()
       ..heldEntries = Completer<void>();
     await pumpRedix(tester, api, stored: {'session': keptSession});
@@ -136,7 +136,7 @@ void main() {
     expect(find.byKey(HomeScreen.moreEntriesKey('project-0')), findsNothing);
   });
 
-  testWidgets('Muteb, 12 Nov 2026: everyone sees all entries from the start, قيودي off, and قيودي keeps their own', (tester) async {
+  testWidgets('the owner, 12 Nov 2026: everyone sees all entries from the start, قيودي off, and قيودي keeps their own', (tester) async {
     final api = await openEntries(tester, (api) {
       api
         ..addEntry()
@@ -155,7 +155,7 @@ void main() {
     expect(api.entryQueries.last['mine'], ['true']);
   });
 
-  testWidgets('Muteb, 9 Nov 2026: whoever approves finds اعتماد beside Edit on a waiting entry read only, and approving it there approves it and goes back to the list', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: whoever approves finds اعتماد beside Edit on a waiting entry read only, and approving it there approves it and goes back to the list', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(), permissions: managerAndFinance);
     await openActions(tester, api, 'entry-0');
     expect(tester.widget<Text>(find.byKey(AddEntryScreen.approveKey.label)).data, 'en approvals.approve');
@@ -203,7 +203,7 @@ void main() {
     expect(find.byKey(AddEntryScreen.shareKey), findsNothing);
   });
 
-  testWidgets('Muteb, 9 Nov 2026: without Approve entries, اعتماد on a waiting entry shows grayed', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: without Approve entries, اعتماد on a waiting entry shows grayed', (tester) async {
     final field_ = await openEntries(tester, (api) => api.addEntry());
     await openActions(tester, field_, 'entry-0');
 
@@ -211,7 +211,7 @@ void main() {
     expect(field_.sentApprovals, isEmpty);
   });
 
-  testWidgets('Muteb, 9 Nov 2026: اعتماد on a draft or an approved entry is not offered, even to whoever approves', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: اعتماد on a draft or an approved entry is not offered, even to whoever approves', (tester) async {
     final api = await openEntries(tester, (api) => api..addEntry(status: 'draft')..addEntry(status: 'approved'), permissions: managerAndFinance);
     await openActions(tester, api, 'entry-0');
     expect(find.byKey(AddEntryScreen.approveKey), findsNothing);
@@ -221,7 +221,7 @@ void main() {
     expect(find.byKey(AddEntryScreen.approveKey), findsNothing);
   });
 
-  testWidgets('Muteb, 9 Nov 2026: an approval the API refuses for that entry says why, and the entry stays open', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: an approval the API refuses for that entry says why, and the entry stays open', (tester) async {
     final api = await openEntries(tester, (api) => api..addEntry()..approvalFailures['entry-0'] = 'entryNotPending', permissions: managerAndFinance);
     await openActions(tester, api, 'entry-0');
 
@@ -286,7 +286,7 @@ void main() {
     expect(find.byKey(AddEntryScreen.removeKey), findsNothing);
   });
 
-  testWidgets('Muteb, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the entries again', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the entries again', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry());
     expect(find.byIcon(Icons.refresh), findsNothing);
 
@@ -317,7 +317,7 @@ void main() {
     expect(api.sentEntryChanges.length, 1);
   });
 
-  testWidgets('redix-api #119 (Muteb, 12 Nov 2026): حذف on the page asks in place, with no window, and إلغاء brings the buttons back, sending nothing', (tester) async {
+  testWidgets('redix-api #119 (the owner, 12 Nov 2026): حذف on the page asks in place, with no window, and إلغاء brings the buttons back, sending nothing', (tester) async {
     final api = await openEntries(tester, (api) => api.addEntry(status: 'approved'), permissions: [...managerAndFinance, 'removeApprovedEntries']);
     await openActions(tester, api, 'entry-0');
 
@@ -554,7 +554,7 @@ void main() {
         api
           ..addColumn('/projects/project-0/items/${item['id']}/columns', 'نوع القيد', key: 'entryType', dataType: 'list', isCore: true, choices: [FakeApi.choice('choice-purchase', 'شراء', sign: 'plus'), FakeApi.choice('choice-creditNote', 'مرتجع', sign: 'minus')])
           ..addColumn('/projects/project-0/items/${item['id']}/columns', 'الوصف', key: 'description', isCore: true);
-        final supplier = api.addSupplier('project-0', 'شركة البواني', vatNumber: '300000000000003');
+        final supplier = api.addSupplier('project-0', 'شركة A', vatNumber: '300000000000003');
         final method = api.addPaymentMethod('project-0', 'شبكة');
         final account = api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true);
         api
@@ -577,7 +577,7 @@ void main() {
 
     String typed(WidgetTester tester, Key key) => tester.widget<TextField>(find.byKey(key)).controller!.text;
 
-    testWidgets('redix-app #90 (Muteb, 9 Nov 2026: "let me show all entered details en read mode"): a tap opens the entry read only, its photo and every value as it was filled, with no way to type or take another file', (tester) async {
+    testWidgets('redix-app #90 (the owner, 9 Nov 2026: "let me show all entered details en read mode"): a tap opens the entry read only, its photo and every value as it was filled, with no way to type or take another file', (tester) async {
       await openRejected(tester, change: false);
 
       expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en entries.numberOf 1');
@@ -1031,7 +1031,7 @@ void main() {
     });
 
     testWidgets('redix-app #104: the entries come a page at a time, as many as chosen in Settings, and Show more reads as many again', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
+      final api = FakeApi()..addProject('مشروع A', permissions: field, units: ['الفلة الغربية']);
       for (var entry = 0; entry < 7; entry++) {
         api.addEntry();
       }
@@ -1049,7 +1049,7 @@ void main() {
     });
 
     testWidgets('redix-app #104: Show more asks for as many again with what was typed and chosen still asked', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
+      final api = FakeApi()..addProject('مشروع A', permissions: field, units: ['الفلة الغربية']);
       for (var entry = 0; entry < 7; entry++) {
         api.addEntry();
       }
@@ -1076,7 +1076,7 @@ void main() {
         ..addEntry(number: 318, isMine: false, kind: 'revenue', status: 'approved');
     });
 
-    expect(text(tester, EntriesScreen.detailsKey('entry-0')), startsWith('en entries.numberOf 312 · شركة البواني'));
+    expect(text(tester, EntriesScreen.detailsKey('entry-0')), startsWith('en entries.numberOf 312 · شركة A'));
     expect(text(tester, EntriesScreen.detailsKey('entry-1')), startsWith('en entries.numberOf 318 · '));
   });
 
@@ -1090,10 +1090,10 @@ void main() {
 
   testWidgets('redix-api #128, AC-54.7: an entry waiting on the phone shows no «رقم القيد», and shows the one the API gave once it is kept there', (tester) async {
     final api = FakeApi()
-      ..addProject('غصون 6', permissions: field, units: ['الفلة الغربية'])
+      ..addProject('مشروع A', permissions: field, units: ['الفلة الغربية'])
       ..entryAnswer = (status: 503, body: const {});
     final store = MemoryStore();
-    await store.write('outbox', 'entry-9', '{"ownerId":"user-signed-in","projectId":"project-0","route":"entries","body":{"id":"entry-9","amount":9,"date":"2026-11-05"},"fileName":"","refusal":"","title":"بند اللياسة","details":"شركة البواني"}');
+    await store.write('outbox', 'entry-9', '{"ownerId":"user-signed-in","projectId":"project-0","route":"entries","body":{"id":"entry-9","amount":9,"date":"2026-11-05"},"fileName":"","refusal":"","title":"بند اللياسة","details":"شركة A"}');
     await openProject(tester, api, store: store);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
 
@@ -1112,7 +1112,7 @@ void main() {
 
   testWidgets('AC-16.2: an offline change that arrives after approval says it was not applied', (tester) async {
     final api = FakeApi()
-      ..addProject('غصون 6', permissions: field, units: ['الفلة الغربية'])
+      ..addProject('مشروع A', permissions: field, units: ['الفلة الغربية'])
       ..entryAnswer = (status: 409, body: const {'code': 'entryApproved'});
     final store = MemoryStore();
     await store.write('outbox', 'entry-0', '{"ownerId":"user-signed-in","projectId":"project-0","route":"entries/entry-0","body":{"id":"entry-0","amount":9},"fileName":"","refusal":""}');

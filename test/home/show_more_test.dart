@@ -21,7 +21,7 @@ void main() {
 
   /// The home of a project holding [entries] entries, on a phone that keeps [preferences].
   Future<FakeApi> openHome(WidgetTester tester, int entries, {Map<String, Object> preferences = const {}}) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     for (var entry = 0; entry < entries; entry++) {
       api.addEntry();
     }

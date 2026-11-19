@@ -14,7 +14,7 @@ import 'newest_entries.dart';
 import '../ui/row_stripe.dart';
 
 /// The project's entries on its home (UC-037, redix-app #84): the newest by anyone, as many at a time as this phone shows, a spinner while they are first read, a search beside the
-/// heading, and Show more for as many again (redix-app #105). It counts nothing: each row says where it stands (Muteb, 7 Nov 2026).
+/// heading, and Show more for as many again (redix-app #105). It counts nothing: each row says where it stands (the owner, 7 Nov 2026).
 class LatestEntries extends StatelessWidget {
   /// The entries of [project], in [entries], calling [onOpen] with the route of what is tapped, so the home reads its figures again on coming back, and [onRemoved] once a swipe removes one (findings row 189).
   const LatestEntries({super.key, required this.project, required this.entries, required this.onOpen, required this.onRemoved});

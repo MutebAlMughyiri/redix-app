@@ -515,7 +515,7 @@ class _RedixAppState extends State<RedixApp> {
     projectAccounts: _accountsOf(projectId),
   );
 
-  /// The report at the route's own address, an item's or one contract's, whose API address is the same (Muteb, 12 Nov 2026).
+  /// The report at the route's own address, an item's or one contract's, whose API address is the same (the owner, 12 Nov 2026).
   ItemReportScreen _itemReportScreen(BuildContext context, GoRouterState state) => ItemReportScreen(
     project: state.extra! as Project,
     address: state.uri.path,

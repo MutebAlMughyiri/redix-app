@@ -28,7 +28,7 @@ void main() {
 
   FakeApi apiWithDefault() => FakeApi()
     ..defaultProjectId = 'project-0'
-    ..addProject('غصون 6', permissions: field);
+    ..addProject('مشروع A', permissions: field);
 
   group('the words', () {
     for (final language in ['ar', 'en']) {

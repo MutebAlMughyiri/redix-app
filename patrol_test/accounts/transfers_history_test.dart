@@ -115,7 +115,7 @@ void main() {
       await $.says(AccountsScreen.balanceKey(bank), '700.00');
     });
 
-    phoneCase('Muteb, 10 Nov 2026: two purchases that each fit but not together are both noted with the whole gap', ($) async {
+    phoneCase('the owner, 10 Nov 2026: two purchases that each fit but not together are both noted with the whole gap', ($) async {
       final manager = await Given.manager();
       final bankName = 'حساب ${Given.unique()}';
       final bank = await Given.account(manager, name: bankName);
@@ -213,7 +213,7 @@ void main() {
       final manager = await Given.manager();
       final name = 'حساب ${Given.unique()}';
       final account = await Given.account(manager, name: name);
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       await Given.entriesApproved(manager, [await Given.partnerMoney(manager, partner, amount: 5000, accountId: account)]);
       final reader = await Given.member(manager);
       final partnerMoney = await historyLine(manager, (line) => line['kind'] == 'entryIn' && line['entryKind'] == 'capitalIn');

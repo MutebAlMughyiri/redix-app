@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:netoscope/netoscope.dart';
 
-/// Whether this build keeps every call to the API in Netoscope, opened from its floating button (Muteb, 18 and 19 Nov 2026, redix-app #119):
+/// Whether this build keeps every call to the API in Netoscope, opened from its floating button (the owner, 18 and 19 Nov 2026, redix-app #119):
 /// `NETWORK_INSPECTOR` in the build's config file, true in qa's and false in dev's and prod's, so any build turns it on or off in its own file.
 const networkInspectorOn = bool.fromEnvironment('NETWORK_INSPECTOR');
 

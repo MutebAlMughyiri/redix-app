@@ -22,7 +22,7 @@ import '../app_harness.dart';
 const _vatNumber = '300000000000003';
 
 String _qrText({double total = 6000}) {
-  final fields = ['شركة البواني', _vatNumber, '2026-10-26T10:00:00Z', '$total', '782.61'];
+  final fields = ['شركة A', _vatNumber, '2026-10-26T10:00:00Z', '$total', '782.61'];
   final bytes = <int>[];
   for (var tag = 0; tag < fields.length; tag++) {
     final value = utf8.encode(fields[tag]);
@@ -43,7 +43,7 @@ void main() {
     tester.platformDispatcher.textScaleFactorTestValue = textScale;
     addTearDown(tester.view.reset);
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, units: ['الفلة الغربية']);
     api.addItem(api.addCategory('project-0', 'التشطيب'), 'اللياسة');
     arrange(api);
     final capture = FakeCapture()..qrText = qrText;
@@ -66,7 +66,7 @@ void main() {
     expect(listed(), ['entry-1']);
   });
 
-  testWidgets('findings row 211 (Muteb, 13 Nov 2026): the shared picture\'s preview is a quarter of the screen\'s height, never a fixed number', (tester) async {
+  testWidgets('findings row 211 (the owner, 13 Nov 2026): the shared picture\'s preview is a quarter of the screen\'s height, never a fixed number', (tester) async {
     await share(tester, (api) {});
 
     expect(tester.getSize(find.byKey(ShareScreen.pictureKey)).height, 2400 / 4);
@@ -91,7 +91,7 @@ void main() {
   });
 
   testWidgets('with more than one project, the person chooses, and the list is the project chosen', (tester) async {
-    final (:api, capture: _) = await share(tester, (api) => api.addProject('غصون 7', permissions: field, units: ['الفلة']));
+    final (:api, capture: _) = await share(tester, (api) => api.addProject('مشروع B', permissions: field, units: ['الفلة']));
 
     expect(find.byKey(ShareScreen.projectKey('project-0')), findsOneWidget);
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.projectKey('project-1'))));

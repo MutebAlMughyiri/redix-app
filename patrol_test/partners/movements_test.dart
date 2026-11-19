@@ -19,12 +19,12 @@ void main() {
   phoneClass('A partner\'s movements (UC-040)', () {
     phoneCase('a partner opens to their movements, each with its receipt', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'متعب');
+      final partner = await Given.partner(manager, 'A');
       final account = await Given.account(manager);
       await $.onAddEntry(manager);
       await $.tapOn(AddEntryScreen.cameraKey);
       await $.reach($(AddEntryScreen.invoicePictureKey));
-      await $.pickTable(partner, search: 'متعب');
+      await $.pickTable(partner, search: 'A');
       await $.fill(AddEntryScreen.amountKey, '500');
       await $.tapOn(PaymentChoices.accountKey(account));
       await $.sendEntry();
@@ -39,7 +39,7 @@ void main() {
 
     phoneCase('redix-api #119: whoever holds the removal swipes a movement away, and it leaves the list', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'متعب');
+      final partner = await Given.partner(manager, 'A');
       final entry = await Given.partnerMoney(manager, partner);
       await Given.entriesApproved(manager, [entry]);
       await Given.ticked(manager, [Permission.removeApprovedEntries], by: manager);
@@ -51,7 +51,7 @@ void main() {
 
     phoneCase('redix-api #119: without the removal a movement shows no red bar, even to whoever approves', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'متعب');
+      final partner = await Given.partner(manager, 'A');
       final entry = await Given.partnerMoney(manager, partner);
       await Given.entriesApproved(manager, [entry]);
       await $.fromTheHome(manager, HomeScreen.partnersKey(manager.projectId));

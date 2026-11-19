@@ -23,7 +23,7 @@ void main() {
   phoneClass('An account\'s balance (UC-015 and UC-040)', () {
     phoneCase('redix-app #89: a balance is what came in less what went out, from nothing', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final account = await Given.account(manager);
       final contract = await Given.contract(manager, value: 1000);
       await Given.entriesApproved(manager, [
@@ -39,7 +39,7 @@ void main() {
 
     phoneCase('BR-10: nothing that waits moves it, whatever its kind', ($) async {
       final money = await aProjectWithMoney();
-      final partner = await Given.partner(money.manager, 'هيثم');
+      final partner = await Given.partner(money.manager, 'C');
       final contract = await Given.contract(money.manager, value: 1000);
       await Given.entry(money.manager, amount: 100, accountId: money.account);
       await Given.revenue(money.manager, amount: 300, accountId: money.account);
@@ -51,7 +51,7 @@ void main() {
 
     phoneCase('AC-50.1: a removal puts it back, whatever was removed', ($) async {
       final money = await aProjectWithMoney();
-      final partner = await Given.partner(money.manager, 'هيثم');
+      final partner = await Given.partner(money.manager, 'C');
       final contract = await Given.contract(money.manager, value: 1000);
       final entries = [
         await Given.entry(money.manager, amount: 100, accountId: money.account),

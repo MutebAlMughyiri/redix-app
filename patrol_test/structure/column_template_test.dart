@@ -15,7 +15,7 @@ import '../support/steps.dart';
 
 /// A new manager standing on the columns template that an item of theirs shares.
 Future<({Person manager, String itemId})> onTemplate(PatrolIntegrationTester $) async {
-  final manager = await Given.manager(project: 'غصون 7');
+  final manager = await Given.manager(project: 'مشروع B');
   final bone = await Given.aCategoryAndItem(manager);
   await $.fromTheHome(manager, HomeScreen.categoriesKey(manager.projectId));
   await $.tapOn(CategoriesScreen.categoryTileKey(bone.categoryId));

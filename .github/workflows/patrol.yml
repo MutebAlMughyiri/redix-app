@@ -1,5 +1,5 @@
 # Every Patrol class, in six groups each on its own Android emulator, against the Go API built from redix-api's main: nightly, and whenever someone starts it from
-# Actions. It runs apart from CI, which checks every push in minutes, because it takes over an hour (Muteb, 18 Nov 2026). The tests stay in
+# Actions. It runs apart from CI, which checks every push in minutes, because it takes over an hour (the owner, 18 Nov 2026). The tests stay in
 # this repo beside the widget keys they use, so a renamed key fails the app's own analysis at once.
 name: Patrol
 

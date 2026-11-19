@@ -20,7 +20,7 @@ void main() {
 
   /// A project with شبكة and the disabled سداد, opened as far as its payment methods.
   Future<({FakeApi api, String card, String sadad})> openMethods(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
-    final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions);
+    final api = FakeApi()..addProject('مشروع A', status: status, permissions: permissions);
     final card = api.addPaymentMethod('project-0', 'شبكة');
     final sadad = api.addPaymentMethod('project-0', 'سداد', isActive: false);
     await openProject(tester, api);
@@ -61,7 +61,7 @@ void main() {
 
   /// A project with a bank account and a custody, and شبكة paying from [paysFrom] of them, opened as far as its payment methods.
   Future<({FakeApi api, String card, String bank, String custody})> openWithAccounts(WidgetTester tester, {List<String> paysFrom = const ['bank', 'custody']}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance);
+    final api = FakeApi()..addProject('مشروع A', permissions: managerAndFinance);
     final bank = api.addAccount('project-0', 'حساب المؤسسة')['id']! as String;
     final custody = api.addAccount('project-0', 'عهدتي', type: 'cashCustody')['id']! as String;
     final named = {'bank': bank, 'custody': custody};
@@ -172,7 +172,7 @@ void main() {
   });
 
   testWidgets('without manageSettings there is no way in', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
+    final api = FakeApi()..addProject('مشروع A', permissions: ['readProject']);
     await openProject(tester, api);
 
     await showProjectSetting(tester, HomeScreen.paymentMethodsKey('project-0'));

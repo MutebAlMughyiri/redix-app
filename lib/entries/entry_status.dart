@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../ui/app_color.dart';
 
-/// Where an entry stands, named as the API names it (findings row 163), and the color that says so: a row shows its status by its frame's color alone (Muteb, 9 Nov 2026).
+/// Where an entry stands, named as the API names it (findings row 163), and the color that says so: a row shows its status by its frame's color alone (the owner, 9 Nov 2026).
 enum EntryStatus {
   /// Saved by who entered it, and seen by nobody's inbox; its frame is the app's own color.
   draft(AppColor.brand),

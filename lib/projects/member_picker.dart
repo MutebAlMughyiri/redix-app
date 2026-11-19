@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../ui/part_keys.dart';
 import 'members.dart';
 
-/// Chooses someone in a project, or nobody, from a dropdown list of the project's people only (BR-33), each name in full (Muteb, 11 Nov 2026: a list, not radio buttons).
+/// Chooses someone in a project, or nobody, from a dropdown list of the project's people only (BR-33), each name in full (the owner, 11 Nov 2026: a list, not radio buttons).
 class MemberPicker extends StatelessWidget {
   /// The choice labelled [label] among [members], showing [userId] and answering [onChanged], where [nobody] names an empty choice. The [currentId] called [currentName] stays on offer even if they have left the project; both are empty when there is none.
   const MemberPicker({

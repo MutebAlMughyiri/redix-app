@@ -17,7 +17,7 @@ void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   Future<FakeApi> openInbox(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance, String status = 'active', FakeCapture? capture}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, status: status);
     arrange(api);
     await openProject(tester, api, capture: capture);
     await showProjectSetting(tester, HomeScreen.approvalsKey('project-0'));
@@ -28,7 +28,7 @@ void main() {
   }
 
   testWidgets('only whoever decides entries has a way in', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: field);
+    final api = FakeApi()..addProject('مشروع A', permissions: field);
     await openProject(tester, api);
 
     await showProjectSetting(tester, HomeScreen.approvalsKey('project-0'));
@@ -43,7 +43,7 @@ void main() {
     });
 
     expect(tester.getTopLeft(find.byKey(ApprovalsScreen.cardKey('entry-0'))).dy, lessThan(tester.getTopLeft(find.byKey(ApprovalsScreen.cardKey('entry-1'))).dy));
-    expect((text(tester, ApprovalsScreen.supplierKey('entry-0')), text(tester, ApprovalsScreen.supplierKey('entry-1'))), ('شركة البواني', 'شركة البواني'));
+    expect((text(tester, ApprovalsScreen.supplierKey('entry-0')), text(tester, ApprovalsScreen.supplierKey('entry-1'))), ('شركة A', 'شركة A'));
     expect(text(tester, ApprovalsScreen.amountKey('entry-0')), '1,150.00');
     expect(text(tester, ApprovalsScreen.descriptionKey('entry-1')), 'شراء من السوق');
     expect(find.byKey(ApprovalsScreen.fileKey('entry-0')), findsOneWidget);
@@ -110,11 +110,11 @@ void main() {
   testWidgets('R16: an entry of a partner waits named after the partner and its kind, and a revenue entry after its item', (tester) async {
     await openInbox(tester, (api) {
       api
-        ..addPending(kind: 'capitalOut', amount: 300, partnerName: 'نواف')
+        ..addPending(kind: 'capitalOut', amount: 300, partnerName: 'B')
         ..addPending(kind: 'revenue', amount: 140);
     });
 
-    expect(tester.widget<Text>(find.byKey(ApprovalsScreen.itemKey('entry-0'))).data, 'نواف');
+    expect(tester.widget<Text>(find.byKey(ApprovalsScreen.itemKey('entry-0'))).data, 'B');
     expect(tester.widget<Text>(find.byKey(ApprovalsScreen.kindKey('entry-0'))).data, 'en capital.withdrawal');
     expect(tester.widget<Text>(find.byKey(ApprovalsScreen.itemKey('entry-1'))).data, 'بند اللياسة');
     expect(tester.widget<Text>(find.byKey(ApprovalsScreen.kindKey('entry-1'))).data, 'en categories.tableRevenue');
@@ -124,7 +124,7 @@ void main() {
     final api = await openInbox(tester, (api) {
       api
         ..addPending()
-        ..addPending(kind: 'capitalIn', partnerName: 'نواف')
+        ..addPending(kind: 'capitalIn', partnerName: 'B')
         ..addPending(kind: 'revenue');
     });
     expect(find.byKey(ApprovalsScreen.kindKey('entry-0')), findsNothing);

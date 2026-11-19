@@ -12,7 +12,7 @@ import '../support/phone_case.dart';
 import '../support/steps.dart';
 
 void main() {
-  phoneClass('Project settings, four to a page, swiped round (Muteb, 11 Nov 2026)', () {
+  phoneClass('Project settings, four to a page, swiped round (the owner, 11 Nov 2026)', () {
     phoneCase('the card opens on the four used most; a swipe shows the next four; after the last page comes the first again', ($) async {
       final manager = await Given.manager();
       final id = manager.projectId;
@@ -28,7 +28,7 @@ void main() {
       await $.swipeProjectSettings();
       expect($(HomeScreen.suppliersKey(id)), findsOneWidget);
       expect($(HomeScreen.accountsKey(id)), findsOneWidget);
-      expect($.tester.widget<TextButton>(find.byKey(HomeScreen.vatKey(id))).onPressed, isNull, reason: 'Muteb, 12 Nov 2026: grayed until the next release');
+      expect($.tester.widget<TextButton>(find.byKey(HomeScreen.vatKey(id))).onPressed, isNull, reason: 'the owner, 12 Nov 2026: grayed until the next release');
       expect($(HomeScreen.contractsKey(id)), findsNothing);
 
       for (var page = 2; page <= 5; page++) {

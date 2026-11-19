@@ -149,16 +149,16 @@ class HomeScreen extends StatefulWidget {
   /// The way to the reports of the project [id].
   static Key reportsKey(String id) => Key('home.reports.$id');
 
-  /// The way into the item reports of the project [id] (Muteb, 9 Nov 2026).
+  /// The way into the item reports of the project [id] (the owner, 9 Nov 2026).
   static Key itemReportsKey(String id, SummarySide side) => Key('home.itemReports.${side.name}.$id');
 
-  /// The way into the VAT refund of the project [id] (Muteb, 9 Nov 2026).
+  /// The way into the VAT refund of the project [id] (the owner, 9 Nov 2026).
   static Key vatKey(String id) => Key('home.vat.$id');
 
-  /// What the signed-in user is called in the project, under its name (Muteb, 9 Nov 2026).
+  /// What the signed-in user is called in the project, under its name (the owner, 9 Nov 2026).
   static const roleNameKey = Key('home.roleName');
 
-  /// The way into the settings of the project [id]: a gear in the top bar (Muteb, 8 and 9 Nov 2026).
+  /// The way into the settings of the project [id]: a gear in the top bar (the owner, 8 and 9 Nov 2026).
   static Key sharedSettingsKey(String id) => Key('home.sharedSettings.$id');
 
   /// The way to what waits for a decision in the project [id].
@@ -179,25 +179,25 @@ class HomeScreen extends StatefulWidget {
   /// The way into the documents of the project [id].
   static Key documentsKey(String id) => Key('home.documents.$id');
 
-  /// The way into More info of the project [id], moved from Settings (Muteb, 9 Nov 2026).
+  /// The way into More info of the project [id], moved from Settings (the owner, 9 Nov 2026).
   static Key projectInfoKey(String id) => Key('home.projectInfo.$id');
 
   /// The button opening «سجل المشروع» of the project [id], for whoever holds its permission (redix-api #86).
   static Key projectHistoryKey(String id) => Key('home.projectHistory.$id');
 
-  /// The way into what the signed-in user may do in the project [id], read only (Muteb, 9 Nov 2026).
+  /// The way into what the signed-in user may do in the project [id], read only (the owner, 9 Nov 2026).
   static Key myPermissionsKey(String id) => Key('home.myPermissions.$id');
 
-  /// The way into the users of the project [id], moved from Settings (Muteb, 9 Nov 2026).
+  /// The way into the users of the project [id], moved from Settings (the owner, 9 Nov 2026).
   static Key usersKey(String id) => Key('home.users.$id');
 
   /// «طلبات الصلاحيات» of the project [id], beside its users, for whoever manages them (redix-api #112 R3).
   static Key permissionRequestsKey(String id) => Key('home.permissionRequests.$id');
 
-  /// The way into the categories and items of the project [id], moved from Settings (Muteb, 9 Nov 2026).
+  /// The way into the categories and items of the project [id], moved from Settings (the owner, 9 Nov 2026).
   static Key categoriesKey(String id) => Key('home.categories.$id');
 
-  /// The way into the payment methods of the project [id], moved from Settings (Muteb, 9 Nov 2026).
+  /// The way into the payment methods of the project [id], moved from Settings (the owner, 9 Nov 2026).
   static Key paymentMethodsKey(String id) => Key('home.paymentMethods.$id');
 
   /// تحميل ملف المشروع in the project [id]'s settings, where importing its settings was (redix-api #132 D2): for whoever holds «ملفات المشروع», gray once the project holds an

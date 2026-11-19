@@ -11,7 +11,7 @@ import '../ui/search_scope.dart';
 import '../words/words.dart';
 import 'approval_history.dart';
 
-/// السجل, from the title bar of بانتظار الاعتماد (Muteb, 12 Nov 2026): what was approved and rejected, by whom and when, newest first, a page at a time; every kind of entry or
+/// السجل, from the title bar of بانتظار الاعتماد (the owner, 12 Nov 2026): what was approved and rejected, by whom and when, newest first, a page at a time; every kind of entry or
 /// one, as Approvals' filter offers them, and everyone's decisions or one person's. Every history looks the same (redix-app #101).
 class ApprovalHistoryScreen extends StatefulWidget {
   /// The approval [history] of [project], filtered by its [members].

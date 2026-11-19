@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'part_keys.dart';
 import 'act_once.dart';
 
-/// A screen's main action: one full-width filled button at its bottom, the same on every screen (Muteb, 8 Nov 2026; issue #85). A screen with two main actions, as
+/// A screen's main action: one full-width filled button at its bottom, the same on every screen (the owner, 8 Nov 2026; issue #85). A screen with two main actions, as
 /// Accounts' Transfer and Update (redix-app #89, D21), gives the second as [second]: it sits beside the first, tonal, and the two never run together.
 class BottomButton extends StatelessWidget {
   /// The button keyed [buttonKey], saying [label] beside [icon], and [second] beside it when it has one.

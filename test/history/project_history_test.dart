@@ -38,7 +38,7 @@ void main() {
   }
 
   Future<FakeApi> openProjectHistory(WidgetTester tester, {void Function(FakeApi api)? arrange}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: const ['readProject', 'seeProjectHistory']);
+    final api = FakeApi()..addProject('مشروع A', permissions: const ['readProject', 'seeProjectHistory']);
     arrange?.call(api);
     await openAsTheUser(tester, api);
     await scrollAndTap(tester, api, HomeScreen.projectHistoryKey('project-0'));
@@ -56,30 +56,30 @@ void main() {
       await openProjectHistory(
         tester,
         arrange: (api) => api
-          ..addProjectHistoryLine('project-0', 'changed', 'account', name: 'الراجحي', area: 'accounts', nameWas: 'الأهلي')
+          ..addProjectHistoryLine('project-0', 'changed', 'account', name: 'بنك A', area: 'accounts', nameWas: 'الأهلي')
           ..addProjectHistoryLine('project-0', 'given', 'permission', name: 'approveEntries', area: 'people', about: 'سارة')
-          ..addProjectHistoryLine('project-0', 'created', 'transfer', area: 'accounts', from: 'الراجحي', to: 'الصندوق', amount: 5000),
+          ..addProjectHistoryLine('project-0', 'created', 'transfer', area: 'accounts', from: 'بنك A', to: 'الصندوق', amount: 5000),
       );
-      expect(text(tester, ProjectHistoryScreen.lineKey(4000).title), 'en history.action.changed en history.thing.account الراجحي · en history.nameWas');
+      expect(text(tester, ProjectHistoryScreen.lineKey(4000).title), 'en history.action.changed en history.thing.account بنك A · en history.nameWas');
       expect(text(tester, ProjectHistoryScreen.lineKey(3999).title), 'en history.action.given en history.thing.permission en permissions.approveEntries · سارة');
       expect(text(tester, ProjectHistoryScreen.lineKey(3998).title), startsWith('en history.action.created en history.thing.transfer · en history.fromTo · '));
-      expect(text(tester, ProjectHistoryScreen.lineKey(4000).subtitle), startsWith('متعب · '));
+      expect(text(tester, ProjectHistoryScreen.lineKey(4000).subtitle), startsWith('A · '));
     });
 
     testWidgets('UC-073 D9: a project archived and one retrieved, the moment of its archive said as a person reads one', (tester) async {
       await openProjectHistory(
         tester,
         arrange: (api) => api
-          ..addProjectHistoryLine('project-0', 'archived', 'project', name: 'غصون 6', area: 'project')
-          ..addProjectHistoryLine('project-0', 'retrieved', 'project', name: 'غصون 6', area: 'project', about: '2026-11-11T18:15:04Z'),
+          ..addProjectHistoryLine('project-0', 'archived', 'project', name: 'مشروع A', area: 'project')
+          ..addProjectHistoryLine('project-0', 'retrieved', 'project', name: 'مشروع A', area: 'project', about: '2026-11-11T18:15:04Z'),
       );
       final archivedAt = momentOf('2026-11-11T18:15:04Z');
-      expect(text(tester, ProjectHistoryScreen.lineKey(4000).title), 'en history.action.archived en history.thing.project غصون 6');
-      expect(text(tester, ProjectHistoryScreen.lineKey(3999).title), 'en history.action.retrieved en history.thing.project غصون 6 · ${formatDate(archivedAt)} ${formatTime(archivedAt)}');
+      expect(text(tester, ProjectHistoryScreen.lineKey(4000).title), 'en history.action.archived en history.thing.project مشروع A');
+      expect(text(tester, ProjectHistoryScreen.lineKey(3999).title), 'en history.action.retrieved en history.thing.project مشروع A · ${formatDate(archivedAt)} ${formatTime(archivedAt)}');
     });
 
     testWidgets('R5, R13: the kind chip asks for one kind of record, and the person chip for «أنا» or one member, keeping the kind', (tester) async {
-      final api = await openProjectHistory(tester, arrange: (api) => api..addMember('user-sara', 'سارة')..addMember(api.userId, 'متعب'));
+      final api = await openProjectHistory(tester, arrange: (api) => api..addMember('user-sara', 'سارة')..addMember(api.userId, 'A'));
       await openFilters(tester, api);
       await choose(tester, api, ProjectHistoryScreen.kindChoiceKey, ProjectHistoryScreen.kindKey('accounts'));
       expect(api.historyReads.last.queryParameters['area'], 'accounts');
@@ -96,7 +96,7 @@ void main() {
 
     testWidgets('R9: Shared settings opens «سجلي», whose lines say what happened to one\'s login and who did it, filtered by its own kinds', (tester) async {
       final api = FakeApi()
-        ..addProject('غصون 6')
+        ..addProject('مشروع A')
         ..addMyHistoryLine('passwordReset', area: 'password', by: 'محمد')
         ..addMyHistoryLine('changed', area: 'details', about: 'sara@example.com');
       await openAsTheUser(tester, api);

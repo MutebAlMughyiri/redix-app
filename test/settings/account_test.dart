@@ -59,13 +59,13 @@ void main() {
 
   SwitchListTile biometricsSwitch(WidgetTester tester) => tester.widget<SwitchListTile>(find.byKey(SharedSettingsScreen.biometricsKey));
 
-  testWidgets('Muteb, 9 Nov 2026: Settings shows who is signed in at its top, their name over the name they sign in with', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: Settings shows who is signed in at its top, their name over the name they sign in with', (tester) async {
     final api = FakeApi();
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await openSettingsFromList(tester, api);
 
-    expect(text(tester, SharedSettingsScreen.whoKey.title), 'متعب المغيري');
-    expect(text(tester, SharedSettingsScreen.whoKey.subtitle), 'muteb');
+    expect(text(tester, SharedSettingsScreen.whoKey.title), 'A Z');
+    expect(text(tester, SharedSettingsScreen.whoKey.subtitle), 'owner');
   });
 
   testWidgets('turning on fingerprint or face asks first, then tells the server', (tester) async {
@@ -152,7 +152,7 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(language == 'ar' ? LanguageSwitch.arabicKey : LanguageSwitch.englishKey)));
   }
 
-  testWidgets('UC-004 (Muteb, 9 Nov 2026): Settings shows the Arabic and English choice itself, the language in use chosen, with no row to open first', (tester) async {
+  testWidgets('UC-004 (the owner, 9 Nov 2026): Settings shows the Arabic and English choice itself, the language in use chosen, with no row to open first', (tester) async {
     final api = FakeApi();
     await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
@@ -272,7 +272,7 @@ void main() {
   });
 
   testWidgets("the next user on this phone never sees the last user's projects, even for a moment", (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsOneWidget);
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
@@ -280,7 +280,7 @@ void main() {
     api.projects.clear();
 
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'b');
       await tester.enterText(find.byKey(SignInScreen.passwordKey), 'secret');
       await tester.tap(find.byKey(SignInScreen.submitKey));
       for (var frame = 0; frame < 20; frame++) {
@@ -298,14 +298,14 @@ void main() {
 
     api.permissions = [];
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'b');
       await tester.enterText(find.byKey(SignInScreen.passwordKey), 'secret');
       await tester.tap(find.byKey(SignInScreen.submitKey));
     });
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
 
     expect(find.byKey(SharedSettingsScreen.registeredKey), findsNothing);
-    expect(text(tester, SharedSettingsScreen.whoKey.subtitle), 'muteb');
+    expect(text(tester, SharedSettingsScreen.whoKey.subtitle), 'owner');
   });
 
   for (final (language, textDirection) in [('ar', TextDirection.rtl), ('en', TextDirection.ltr)]) {
@@ -323,10 +323,10 @@ void main() {
       final api = FakeApi()
         ..mustChangePassword = true
         ..permissions = admin;
-      final running = api.addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الجنوبية']);
-      final finished = api.addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
-      final manager = api.addUser('متعب', username: 'muteb');
-      final field_ = api.addUser('نواف', username: 'nawaf', mobile: '0500000000');
+      final running = api.addProject('مشروع A', units: ['الفلة الغربية', 'الفلة الجنوبية']);
+      final finished = api.addProject('مشروع E', status: 'finished', units: ['الفلة الشرقية']);
+      final manager = api.addUser('A', username: 'owner');
+      final field_ = api.addUser('B', username: 'b', mobile: '0500000000');
       final disabled = api.addUser('سالم', username: 'salem');
       for (final (user, permissions) in [(manager, managerAndFinance), (field_, field), (disabled, reader)]) {
         api.give(user, running['id'] as String, permissions);
@@ -336,7 +336,7 @@ void main() {
       [SignInScreen.logoKey, SignInScreen.titleKey, SignInScreen.usernameKey, SignInScreen.passwordKey, SignInScreen.submitKey, SignInScreen.registerKey].forEach(expectFits);
 
       await act(tester, api, () async {
-        await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+        await tester.enterText(find.byKey(SignInScreen.usernameKey), 'b');
         await tester.enterText(find.byKey(SignInScreen.passwordKey), 'temporary');
         await tester.tap(find.byKey(SignInScreen.submitKey));
       });
@@ -492,9 +492,9 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
       await pressBack(tester, api);
 
-      api.addMember('user-nawaf', 'نواف بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني بالمشروع');
+      api.addMember('user-b', 'B بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني بالمشروع');
       final bankAccount = api.addAccount(runningId, 'حساب جارٍ باسم طويل جداً في بنك من البنوك المحلية', balance: 64250.75)['id'] as String;
-      final custody = api.addAccount(runningId, 'كاش مع نواف', type: 'cashCustody', balance: 2750.5, custodianId: 'user-nawaf', custodianName: 'نواف بن عبدالله', isMine: true)['id'] as String;
+      final custody = api.addAccount(runningId, 'كاش مع B', type: 'cashCustody', balance: 2750.5, custodianId: 'user-b', custodianName: 'B بن عبدالله', isMine: true)['id'] as String;
       final oldAccount = api.addAccount(runningId, 'حساب قديم', balance: -120.40, isActive: false)['id'] as String;
       await showProjectSetting(tester, HomeScreen.accountsKey(runningId));
       await tester.ensureVisible(projectSettingPages);
@@ -520,7 +520,7 @@ void main() {
         ChangeDialog.saveKey,
       ].forEach(expectFits);
       await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.custodianKey.field)));
-      expect(tester.getRect(find.byKey(MemberPicker.optionKey('user-nawaf'))).width, lessThanOrEqualTo(360));
+      expect(tester.getRect(find.byKey(MemberPicker.optionKey('user-b'))).width, lessThanOrEqualTo(360));
       await act(tester, api, () => tester.tap(find.byKey(MemberPicker.optionKey(''))));
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
       await tester.ensureVisible(find.byKey(AccountsScreen.menuKey(custody)));
@@ -534,8 +534,8 @@ void main() {
       expectFits(HomeScreen.custodyKey(custody));
       expectFits(HomeScreen.custodyBalanceKey(custody));
 
-      final partner = api.addPartner(runningId, 'متعب بن عبدالله بن محمد المغيري الشريك المؤسس في المشروع', userId: 'user-nawaf', userName: 'نواف بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني')['id'] as String;
-      final partnerWithNoLogin = api.addPartner(runningId, 'هيثم')['id'] as String;
+      final partner = api.addPartner(runningId, 'A بن عبدالله بن محمد Z الشريك المؤسس في المشروع', userId: 'user-b', userName: 'B بن عبدالله بن محمد العتيبي من قسم الإشراف الميداني')['id'] as String;
+      final partnerWithNoLogin = api.addPartner(runningId, 'C')['id'] as String;
       await showProjectSetting(tester, HomeScreen.partnersKey(runningId));
       await tester.ensureVisible(projectSettingPages);
       await tester.pumpAndSettle();
@@ -698,7 +698,7 @@ void main() {
 
       await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
       [SharedSettingsScreen.whoKey, SharedSettingsScreen.switchProjectKey, SharedSettingsScreen.defaultProjectKey, SharedSettingsScreen.registeredKey].forEach(expectFits);
-      api.addRegistered('غصون 8');
+      api.addRegistered('مشروع C');
       await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.registeredKey)));
       [
         RegisteredProjectsScreen.detailsKey('registered-0'),

@@ -13,7 +13,7 @@ import '../app_harness.dart';
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  Future<FakeApi> openSettings(WidgetTester tester, {String email = 'muteb@example.com', Locale locale = const Locale('en')}) async {
+  Future<FakeApi> openSettings(WidgetTester tester, {String email = 'owner@example.com', Locale locale = const Locale('en')}) async {
     final api = FakeApi()..email = email;
     await pumpRedix(tester, api, stored: {'session': keptSession}, locale: locale);
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
@@ -38,43 +38,43 @@ void main() {
     await openSettings(tester);
 
     expect(text(tester, SharedSettingsScreen.myEmailKey.title), 'en settings.myEmail');
-    expect(text(tester, SharedSettingsScreen.myEmailKey.subtitle), 'muteb@example.com');
+    expect(text(tester, SharedSettingsScreen.myEmailKey.subtitle), 'owner@example.com');
   });
 
   testWidgets('redix-api #127 AC-10.4, AC-02.10: a new address is sent a code in the phone\'s language, the code makes it the email, and Settings shows it', (tester) async {
     final api = await openSettings(tester, locale: const Locale('ar'));
 
-    await askCode(tester, api, ' muteb@redix.sa ');
+    await askCode(tester, api, ' owner@redix.sa ');
     final (askPath, asked, language) = api.sentCodeRequests.single;
-    expect([askPath, asked, language], ['/me/email', {'email': 'muteb@redix.sa'}, 'ar']);
-    expect(text(tester, SharedSettingsScreen.myEmailSentToKey), 'ar settings.emailConfirm muteb@redix.sa');
-    expect(text(tester, SharedSettingsScreen.myEmailKey.subtitle), 'muteb@example.com', reason: 'the old address holds until the code is entered');
+    expect([askPath, asked, language], ['/me/email', {'email': 'owner@redix.sa'}, 'ar']);
+    expect(text(tester, SharedSettingsScreen.myEmailSentToKey), 'ar settings.emailConfirm owner@redix.sa');
+    expect(text(tester, SharedSettingsScreen.myEmailKey.subtitle), 'owner@example.com', reason: 'the old address holds until the code is entered');
 
     await enterCode(tester, api, ' 482913 ');
 
     final (confirmPath, confirmed, _) = api.sentCodeRequests.last;
     expect([confirmPath, confirmed], ['/me/email/confirm', {'code': '482913'}]);
     expect(find.byKey(SharedSettingsScreen.myEmailCodeKey), findsNothing);
-    expect(text(tester, SharedSettingsScreen.myEmailKey.subtitle), 'muteb@redix.sa');
+    expect(text(tester, SharedSettingsScreen.myEmailKey.subtitle), 'owner@redix.sa');
   });
 
   testWidgets('redix-api #127 AC-10.4: a wrong code stays in the dialog saying so, and the old address stays', (tester) async {
     final api = await openSettings(tester);
     api.codeAnswers['/me/email/confirm'] = (status: 400, code: 'codeWrong');
-    await askCode(tester, api, 'muteb@redix.sa');
+    await askCode(tester, api, 'owner@redix.sa');
 
     await enterCode(tester, api, '000000');
 
     expect(text(tester, ChangeDialog.messageKey), 'en auth.codeWrong');
     expect(find.byKey(SharedSettingsScreen.myEmailCodeKey), findsOneWidget);
     await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.cancelKey)));
-    expect(text(tester, SharedSettingsScreen.myEmailKey.subtitle), 'muteb@example.com');
+    expect(text(tester, SharedSettingsScreen.myEmailKey.subtitle), 'owner@example.com');
   });
 
   testWidgets('redix-api #127: a lost network says the same word in both steps', (tester) async {
     final api = await openSettings(tester);
     api.unreachable.add('/me/email');
-    await askCode(tester, api, 'muteb@redix.sa');
+    await askCode(tester, api, 'owner@redix.sa');
     final asking = text(tester, ChangeDialog.messageKey);
     api.unreachable.clear();
     await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
@@ -100,7 +100,7 @@ void main() {
     final api = await openSettings(tester);
     api.codeAnswers['/me/email'] = (status: 429, code: '');
 
-    await askCode(tester, api, 'muteb@redix.sa');
+    await askCode(tester, api, 'owner@redix.sa');
     expect(text(tester, ChangeDialog.messageKey), 'en auth.tooManyRequests');
 
     api.codeAnswers['/me/email'] = (status: 202, code: '');

@@ -5,7 +5,7 @@ description: In the REDIX app, a size is a part of the screen or follows the pho
 
 # Size by the screen and the font
 
-> Brought from the Testin project, 12 November 2026, where Muteb wrote: *"Our design must be based on screen dimensions by percentage, so it shows perfect on all screens, and if the font value is bigger."*
+> Brought from the Testin project, 12 November 2026, where the owner wrote: *"Our design must be based on screen dimensions by percentage, so it shows perfect on all screens, and if the font value is bigger."*
 
 REDIX runs on small and large phones, on Android, iPhone and Huawei, and the user can raise the phone's text size. A box written as a number of pixels is right on the phone it was tried on and wrong on the others: too tall on a small screen, too short for large text, cutting a word.
 

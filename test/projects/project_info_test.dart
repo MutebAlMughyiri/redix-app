@@ -47,14 +47,14 @@ void main() {
 
   group("the project's time zone (redix-app #107)", () {
     testWidgets("R2: More info names the zone the project's today is counted in, by its city and how far it is ahead of UTC", (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
 
       expect(text(tester, ProjectInfoScreen.timeZoneKey), 'en projects.timeZone: en timeZone.riyadh (UTC+3)');
     });
 
     testWidgets("D3: whoever manages the project chooses another zone from the API's list, and the line follows", (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
 
       await tap(tester, api, ProjectInfoScreen.timeZoneMenuKey);
@@ -72,10 +72,10 @@ void main() {
 
   group('what More info shows', () {
     testWidgets('R1: the start date, status and units in order, which the home no longer shows', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', startDate: '2026-03-01', units: ['الفلة الغربية', 'الفلة الجنوبية']);
+      final api = FakeApi()..addProject('مشروع A', startDate: '2026-03-01', units: ['الفلة الغربية', 'الفلة الجنوبية']);
       await openInfo(tester, api);
 
-      expect(text(tester, ProjectInfoScreen.nameKey), 'غصون 6');
+      expect(text(tester, ProjectInfoScreen.nameKey), 'مشروع A');
       expect(text(tester, ProjectInfoScreen.detailsKey), 'en projects.startDate 01.03.2026');
       expect(text(tester, ProjectInfoScreen.statusKey.label), 'en projects.active');
       expect(text(tester, ProjectInfoScreen.unitKey('project-0-unit-0')), 'الفلة الغربية');
@@ -87,14 +87,14 @@ void main() {
     });
 
     testWidgets('a project with no units says so', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
 
       expect(text(tester, ProjectInfoScreen.noUnitsKey), 'en projects.noUnits');
     });
 
     testWidgets('whoever manages an open project has Rename, Add unit, a unit menu, the description and Close', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
+      final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية']);
       await openInfo(tester, api);
 
       for (final key in [ProjectInfoScreen.nameMenuKey, ProjectInfoScreen.timeZoneMenuKey, ProjectInfoScreen.addUnitKey, ProjectInfoScreen.unitMenuKey('project-0-unit-0'), ProjectInfoScreen.descriptionKey, ProjectInfoScreen.saveDescriptionKey, ProjectInfoScreen.closeKey]) {
@@ -103,7 +103,7 @@ void main() {
     });
 
     testWidgets('R8: a reader reads the project and its description, and can change nothing', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية'], description: 'فيلتان سكنيتان في حي النرجس.', permissions: reader);
+      final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية'], description: 'فيلتان سكنيتان في حي النرجس.', permissions: reader);
       await openInfo(tester, api);
 
       expect(text(tester, ProjectInfoScreen.unitKey('project-0-unit-0')), 'الفلة الغربية');
@@ -113,14 +113,14 @@ void main() {
     });
 
     testWidgets('R10: with no description, a reader reads "No description yet."', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', permissions: field);
+      final api = FakeApi()..addProject('مشروع A', permissions: field);
       await openInfo(tester, api);
 
       expect(text(tester, ProjectInfoScreen.descriptionTextKey), 'en projectInfo.noDescription');
     });
 
     testWidgets('AC-04.1: a finished project shows read-only, and offers no change even to its manager', (tester) async {
-      final api = FakeApi()..addProject('غصون 5', status: 'finished', startDate: '2024-01-15', units: ['الفلة الشرقية'], description: 'فيلا واحدة.');
+      final api = FakeApi()..addProject('مشروع E', status: 'finished', startDate: '2024-01-15', units: ['الفلة الشرقية'], description: 'فيلا واحدة.');
       await openInfo(tester, api);
 
       expect(text(tester, ProjectInfoScreen.statusKey.label), 'en projects.finished');
@@ -133,7 +133,7 @@ void main() {
 
   group('the description', () {
     testWidgets('R3, R12: Save keeps what was typed, says "Description saved." and keeps the text on the page', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
 
       await tester.enterText(find.byKey(ProjectInfoScreen.descriptionKey), 'فيلتان سكنيتان في حي النرجس.\nالتسليم ديسمبر 2027.');
@@ -147,7 +147,7 @@ void main() {
     });
 
     testWidgets('the description kept starts the field, and saving it empty clears it', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', description: 'فيلتان');
+      final api = FakeApi()..addProject('مشروع A', description: 'فيلتان');
       await openInfo(tester, api);
       expect(typed(tester, ProjectInfoScreen.descriptionKey), 'فيلتان');
 
@@ -159,7 +159,7 @@ void main() {
     });
 
     testWidgets('R10: the field takes at most 2,000 characters and counts them', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
 
       await tester.enterText(find.byKey(ProjectInfoScreen.descriptionKey), 'و' * 2001);
@@ -170,7 +170,7 @@ void main() {
     });
 
     testWidgets('R14: a refusal says why and keeps what was typed', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
 
       api.projectAnswer = (status: 400, code: 'invalidDescription');
@@ -183,7 +183,7 @@ void main() {
     });
 
     testWidgets('R14: with no network it says so and keeps what was typed', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
 
       api.online = false;
@@ -195,42 +195,42 @@ void main() {
     });
 
     testWidgets('R14: reading the project again never replaces what is being typed', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', description: 'فيلتان');
+      final api = FakeApi()..addProject('مشروع A', description: 'فيلتان');
       await openInfo(tester, api);
       await tester.enterText(find.byKey(ProjectInfoScreen.descriptionKey), 'ثلاث فلل');
 
       await tap(tester, api, ProjectInfoScreen.nameMenuKey);
 
       await tap(tester, api, ProjectInfoScreen.renameKey);
-      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), 'غصون السادس');
+      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), 'المشروع السادس');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
-      expect(text(tester, ProjectInfoScreen.nameKey), 'غصون السادس');
+      expect(text(tester, ProjectInfoScreen.nameKey), 'المشروع السادس');
       expect(typed(tester, ProjectInfoScreen.descriptionKey), 'ثلاث فلل');
     });
   });
 
   group('the name (BR-38)', () {
     testWidgets('whoever manages the project renames it, starting from its name, and More info and the home follow', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
 
       await tap(tester, api, ProjectInfoScreen.nameMenuKey);
 
       await tap(tester, api, ProjectInfoScreen.renameKey);
-      expect(typed(tester, OneFieldDialog.fieldKey), 'غصون 6');
-      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), 'غصون السادس');
+      expect(typed(tester, OneFieldDialog.fieldKey), 'مشروع A');
+      await tester.enterText(find.byKey(OneFieldDialog.fieldKey), 'المشروع السادس');
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
       expect(api.sentProjectChanges.single.$1, 'PUT /projects/project-0');
-      expect(api.sentProjectChanges.single.$2, {'name': 'غصون السادس'});
-      expect(text(tester, ProjectInfoScreen.nameKey), 'غصون السادس');
+      expect(api.sentProjectChanges.single.$2, {'name': 'المشروع السادس'});
+      expect(text(tester, ProjectInfoScreen.nameKey), 'المشروع السادس');
       await backHome(tester, api);
-      expect(text(tester, HomeScreen.titleKey), 'غصون السادس');
+      expect(text(tester, HomeScreen.titleKey), 'المشروع السادس');
     });
 
     testWidgets('a refused name stays in the dialog with its reason', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
       await tap(tester, api, ProjectInfoScreen.nameMenuKey);
       await tap(tester, api, ProjectInfoScreen.renameKey);
@@ -240,13 +240,13 @@ void main() {
       await act(tester, api, () => tester.tap(find.byKey(ChangeDialog.saveKey)));
 
       expect(text(tester, ChangeDialog.messageKey), 'en projects.invalidName');
-      expect(text(tester, ProjectInfoScreen.nameKey), 'غصون 6');
+      expect(text(tester, ProjectInfoScreen.nameKey), 'مشروع A');
     });
   });
 
   group('units', () {
     testWidgets('R2: Add unit adds to the end of an active project', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
+      final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية']);
       await openInfo(tester, api);
 
       await tap(tester, api, ProjectInfoScreen.addUnitKey);
@@ -260,7 +260,7 @@ void main() {
     });
 
     testWidgets('BR-37: a unit name the project already has stays in the dialog with its reason', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
+      final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية']);
       await openInfo(tester, api);
       await tap(tester, api, ProjectInfoScreen.addUnitKey);
 
@@ -273,7 +273,7 @@ void main() {
     });
 
     testWidgets('BR-38: a unit is renamed from its menu, starting from its name', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
+      final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية']);
       await openInfo(tester, api);
 
       await chooseInUnitMenu(tester, api, 'project-0-unit-0', ProjectInfoScreen.renameUnitKey);
@@ -287,7 +287,7 @@ void main() {
     });
 
     testWidgets('BR-37: a name another unit holds stays in the rename dialog with its reason', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الشرقية']);
+      final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية', 'الفلة الشرقية']);
       await openInfo(tester, api);
       await chooseInUnitMenu(tester, api, 'project-0-unit-0', ProjectInfoScreen.renameUnitKey);
 
@@ -299,7 +299,7 @@ void main() {
     });
 
     testWidgets('BR-38, redix-api #102: a unit is removed by a swipe that asks in the row (redix-api #119), and its menu keeps Rename only', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الشرقية']);
+      final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية', 'الفلة الشرقية']);
       await openInfo(tester, api);
       expect(find.byKey(ProjectInfoScreen.unitRowKey('project-0-unit-0').bar), findsOneWidget);
 
@@ -312,7 +312,7 @@ void main() {
     });
 
     testWidgets('BR-38: without manageProject nothing offers a unit rename or deletion', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية'], permissions: field);
+      final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية'], permissions: field);
       await openInfo(tester, api);
 
       expect(find.byKey(ProjectInfoScreen.unitKey('project-0-unit-0')), findsOneWidget);
@@ -322,7 +322,7 @@ void main() {
     });
 
     testWidgets('redix-api #102 R7: a refused unit comes back when swiped, saying why', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
+      final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية']);
       await openInfo(tester, api);
       api.projectAnswer = (status: 409, code: 'projectFinished');
 
@@ -335,11 +335,11 @@ void main() {
 
   group('closing (AC-04.1, BR-35)', () {
     testWidgets('closing asks first, says what it means, and Cancel changes nothing', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
 
       await tap(tester, api, ProjectInfoScreen.closeKey);
-      expect(text(tester, ConfirmDialog.subjectKey), 'غصون 6');
+      expect(text(tester, ConfirmDialog.subjectKey), 'مشروع A');
       expect(text(tester, ConfirmDialog.explanationKey), 'en projects.closeExplain');
       await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.cancelKey)));
 
@@ -348,7 +348,7 @@ void main() {
     });
 
     testWidgets('closing makes it finished: the page turns read-only and the home says so', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
 
       await tap(tester, api, ProjectInfoScreen.closeKey);
@@ -362,7 +362,7 @@ void main() {
     });
 
     testWidgets('BR-35: a project with entries waiting for approval stays open and says why', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
       await tap(tester, api, ProjectInfoScreen.closeKey);
 
@@ -375,7 +375,7 @@ void main() {
     });
 
     testWidgets('closing without a network says so, and the project stays as it was', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
       await tap(tester, api, ProjectInfoScreen.closeKey);
 
@@ -388,7 +388,7 @@ void main() {
 
     testWidgets('a project someone else closed shows its refusal, and the page reads it again', (tester) async {
       final api = FakeApi();
-      final project = api.addProject('غصون 6');
+      final project = api.addProject('مشروع A');
       await openInfo(tester, api);
       await tap(tester, api, ProjectInfoScreen.closeKey);
 
@@ -402,7 +402,7 @@ void main() {
     });
 
     testWidgets('a refusal with no code shows the general word, never a raw key', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openInfo(tester, api);
       await tap(tester, api, ProjectInfoScreen.closeKey);
 
@@ -415,8 +415,8 @@ void main() {
 
   testWidgets('More info of a second project shows that project, not the first', (tester) async {
     final api = FakeApi()
-      ..addProject('غصون 6', units: ['الفلة الغربية'])
-      ..addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
+      ..addProject('مشروع A', units: ['الفلة الغربية'])
+      ..addProject('مشروع E', status: 'finished', units: ['الفلة الشرقية']);
     await openProject(tester, api);
     await act(tester, api, () => tester.pageBack());
     await tester.ensureVisible(find.byKey(ProjectsScreen.cardKey('project-1')));
@@ -424,7 +424,7 @@ void main() {
 
     await openProjectInfo(tester, api, projectId: 'project-1');
 
-    expect(text(tester, ProjectInfoScreen.nameKey), 'غصون 5');
+    expect(text(tester, ProjectInfoScreen.nameKey), 'مشروع E');
     expect(find.byKey(ProjectInfoScreen.unitKey('project-1-unit-0')), findsOneWidget);
     expect(find.byKey(ProjectInfoScreen.unitKey('project-0-unit-0')), findsNothing);
   });

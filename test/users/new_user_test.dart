@@ -14,9 +14,9 @@ import '../app_harness.dart';
 
 void main() {
   Future<FakeApi> openForm(WidgetTester tester, {void Function(FakeApi api)? arrange}) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     arrange?.call(api);
-    api.give(api.addUser('متعب', username: 'muteb'), 'project-0', managerAndFinance);
+    api.give(api.addUser('A', username: 'owner'), 'project-0', managerAndFinance);
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.usersKey('project-0'));
     await act(tester, api, () => tester.tap(find.byKey(UsersScreen.newUserKey)));
@@ -24,10 +24,10 @@ void main() {
   }
 
   Future<void> fillAndSubmit(WidgetTester tester, FakeApi api) => act(tester, api, () async {
-    await tester.enterText(find.byKey(NewUserScreen.nameKey), 'نواف');
-    await tester.enterText(find.byKey(NewUserScreen.usernameKey), 'nawaf');
+    await tester.enterText(find.byKey(NewUserScreen.nameKey), 'B');
+    await tester.enterText(find.byKey(NewUserScreen.usernameKey), 'b');
     await tester.enterText(find.byKey(NewUserScreen.mobileKey), '0500000000');
-    await tester.enterText(find.byKey(NewUserScreen.emailKey), 'nawaf@example.com');
+    await tester.enterText(find.byKey(NewUserScreen.emailKey), 'b@example.com');
     await tester.enterText(find.byKey(NewUserScreen.passwordKey), 'Temporary-1');
     await tester.ensureVisible(find.byKey(NewUserScreen.submitKey));
     await tester.tap(find.byKey(NewUserScreen.submitKey));
@@ -42,9 +42,9 @@ void main() {
 
     final (path, body) = api.sentUserChanges.single;
     expect(path, '/projects/project-0/users');
-    expect(body, {'displayName': 'نواف', 'username': 'nawaf', 'roleName': '', 'mobile': '0500000000', 'email': 'nawaf@example.com', 'temporaryPassword': 'Temporary-1', 'permissions': ['readProject'], 'partnerIds': <String>[], 'unseenTableIds': <String>[]});
+    expect(body, {'displayName': 'B', 'username': 'b', 'roleName': '', 'mobile': '0500000000', 'email': 'b@example.com', 'temporaryPassword': 'Temporary-1', 'permissions': ['readProject'], 'partnerIds': <String>[], 'unseenTableIds': <String>[]});
     expect(find.byKey(NewUserScreen.submitKey), findsNothing);
-    expect(tester.widget<Text>(find.byKey(UsersScreen.nameKey('user-1'))).data, 'نواف');
+    expect(tester.widget<Text>(find.byKey(UsersScreen.nameKey('user-1'))).data, 'B');
   });
 
   testWidgets('redix-api #127 AC-07.8: the form asks for the email, which is sent with the new person', (tester) async {
@@ -53,7 +53,7 @@ void main() {
     expect(tester.widget<TextField>(find.byKey(NewUserScreen.emailKey)).decoration!.labelText, 'en users.email');
     await fillAndSubmit(tester, api);
 
-    expect(api.sentUserChanges.single.$2['email'], 'nawaf@example.com');
+    expect(api.sentUserChanges.single.$2['email'], 'b@example.com');
   });
 
   testWidgets('redix-api #127 AC-07.8, R9: an email the API refuses keeps the form open saying why, with what was typed', (tester) async {
@@ -63,18 +63,18 @@ void main() {
     await fillAndSubmit(tester, api);
 
     expect(tester.widget<Text>(find.byKey(NewUserScreen.messageKey)).data, 'en users.emailTaken');
-    expect(typed(tester, NewUserScreen.emailKey), 'nawaf@example.com');
+    expect(typed(tester, NewUserScreen.emailKey), 'b@example.com');
     expect(find.byKey(NewUserScreen.submitKey), findsOneWidget);
   });
 
-  testWidgets('Muteb, 9 Nov 2026: a role name typed beside the username is sent with the new user, and the list shows it beside the username', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: a role name typed beside the username is sent with the new user, and the list shows it beside the username', (tester) async {
     final api = await openForm(tester);
 
     await tester.enterText(find.byKey(NewUserScreen.roleNameKey), 'مشرف ميداني');
     await fillAndSubmit(tester, api);
 
     expect(api.sentUserChanges.single.$2['roleName'], 'مشرف ميداني');
-    expect(tester.widget<Text>(find.byKey(UsersScreen.detailsKey('user-1'))).data, 'nawaf · مشرف ميداني · 0500000000');
+    expect(tester.widget<Text>(find.byKey(UsersScreen.detailsKey('user-1'))).data, 'b · مشرف ميداني · 0500000000');
   });
 
   testWidgets('what is ticked is sent with the new user, and See the project is always ticked', (tester) async {
@@ -155,8 +155,8 @@ void main() {
     final api = await openForm(tester);
 
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(NewUserScreen.nameKey), 'نواف');
-      await tester.enterText(find.byKey(NewUserScreen.usernameKey), 'nawaf');
+      await tester.enterText(find.byKey(NewUserScreen.nameKey), 'B');
+      await tester.enterText(find.byKey(NewUserScreen.usernameKey), 'b');
       await tester.enterText(find.byKey(NewUserScreen.mobileKey), '٠٥٠٠٠٠٠٠٠٠');
       await tester.enterText(find.byKey(NewUserScreen.passwordKey), 'Temporary-1');
       await tester.ensureVisible(find.byKey(NewUserScreen.submitKey));
@@ -198,8 +198,8 @@ void main() {
 
     expect(tester.widget<Text>(find.byKey(NewUserScreen.messageKey)).data, 'en users.usernameTaken');
     expectErrorAbove(tester, NewUserScreen.messageKey, NewUserScreen.nameKey);
-    expect(typed(tester, NewUserScreen.nameKey), 'نواف');
-    expect(typed(tester, NewUserScreen.usernameKey), 'nawaf');
+    expect(typed(tester, NewUserScreen.nameKey), 'B');
+    expect(typed(tester, NewUserScreen.usernameKey), 'b');
     expect(typed(tester, NewUserScreen.passwordKey), 'Temporary-1');
   });
 
@@ -210,6 +210,6 @@ void main() {
     await fillAndSubmit(tester, api);
 
     expect(tester.widget<Text>(find.byKey(NewUserScreen.messageKey)).data, 'en users.noConnection');
-    expect(typed(tester, NewUserScreen.usernameKey), 'nawaf');
+    expect(typed(tester, NewUserScreen.usernameKey), 'b');
   });
 }

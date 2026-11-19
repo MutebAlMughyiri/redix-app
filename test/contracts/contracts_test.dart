@@ -28,7 +28,7 @@ void main() {
 
   /// A project with a contract running, one overrun and one of open value, opened as far as its contracts.
   Future<({FakeApi api, String running, String overrun, String open, String contractor, String item})> openContracts(WidgetTester tester, {bool hasPayments = false, String status = 'active', List<String> permissions = managerAndFinance}) async {
-    final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', status: status, permissions: permissions, units: ['الفلة الغربية']);
     final contractor = api.addSupplier('project-0', 'شركة النخيل', vatNumber: '300000000000003');
     final item = api.addItem(api.addCategory('project-0', 'التشطيب'), 'البلاط');
     final running = api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000, hasPayments: hasPayments);
@@ -62,7 +62,7 @@ void main() {
 
   Future<FakeCapture> openAmendWithFiles(WidgetTester tester, PickedFile picked) async {
     final capture = FakeCapture()..files = picked;
-    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: managerAndFinance, units: ['الفلة الغربية']);
     final contract = api.addContract('project-0', 'مبلط الغربية', value: 34000);
     contract['documents'] = [
       {'id': 'kept-document', 'fileName': 'العقد.pdf'},
@@ -81,7 +81,7 @@ void main() {
   final pdf = PickedFile('ملحق.pdf', '/phone/ملحق.pdf', Uint8List.fromList([0x25, 0x50, 0x44, 0x46]));
 
   testWidgets('BR-10: what waits for approval shows beside what was paid, and leaves the remaining alone', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: managerAndFinance, units: ['الفلة الغربية']);
     final contract = api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000, pending: 2000);
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
@@ -165,7 +165,7 @@ void main() {
   });
 
   testWidgets('an open-value contract has nothing to remain, so what waits stands alone', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: managerAndFinance, units: ['الفلة الغربية']);
     final contract = api.addContract('project-0', 'دهان داخلي', isOpenValue: true, paid: 12000, pending: 500);
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
@@ -187,7 +187,7 @@ void main() {
   });
 
   testWidgets('a contract with nothing paid has not started', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     final contract = api.addContract('project-0', 'الدرابزين', value: 19000, unitPrice: 380, quantity: 50)['id'] as String;
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
@@ -217,7 +217,7 @@ void main() {
   });
 
   testWidgets('a filter that keeps no contract says there are none rather than showing a blank page', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000);
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
@@ -394,7 +394,7 @@ void main() {
   });
 
   testWidgets('a project with no contracts says so', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
     await tester.ensureVisible(projectSettingPages);
@@ -425,7 +425,7 @@ void main() {
   });
 
   testWidgets('a list that cannot be read says so', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.contractsKey('project-0'));
     await tester.ensureVisible(projectSettingPages);
@@ -436,7 +436,7 @@ void main() {
     expect(text(tester, ApiListBody.messageKey), 'en contracts.loadFailed');
   });
 
-  testWidgets('Muteb, 12 Nov 2026: tapping a contract opens its own table, read from that contract\'s report', (tester) async {
+  testWidgets('the owner, 12 Nov 2026: tapping a contract opens its own table, read from that contract\'s report', (tester) async {
     final opened = await openContracts(tester);
 
     await act(tester, opened.api, () => tester.tap(find.byKey(ContractsScreen.nameKey(opened.running))));
@@ -455,7 +455,7 @@ void main() {
     expect(opened.api.itemReportReads, isEmpty);
   });
 
-  testWidgets('Muteb, 12 Nov 2026, redix-api #131: a contract\'s ⋮ holds its PDF and Excel for whoever holds «يُصدر التقارير», seeing all capital or not, and Contracts holds no file buttons of its own', (tester) async {
+  testWidgets('the owner, 12 Nov 2026, redix-api #131: a contract\'s ⋮ holds its PDF and Excel for whoever holds «يُصدر التقارير», seeing all capital or not, and Contracts holds no file buttons of its own', (tester) async {
     final opened = await openContracts(tester, permissions: [for (final permission in managerAndFinance) if (permission != 'seeAllCapital') permission]);
     expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)), findsNothing);
 

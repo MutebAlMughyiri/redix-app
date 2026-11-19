@@ -86,7 +86,7 @@ class CategoriesScreen extends StatefulWidget {
   /// The button that renames the category [id].
   static Key renameCategoryKey(String id) => Key('categories.rename.$id');
 
-  /// The ⋮ menu of the category [id], holding its rename and disable or enable (Muteb, 9 Nov 2026).
+  /// The ⋮ menu of the category [id], holding its rename and disable or enable (the owner, 9 Nov 2026).
   static Key categoryMenuKey(String id) => Key('categories.categoryMenu.$id');
 
   /// The button that disables the category [id].

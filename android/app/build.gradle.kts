@@ -11,7 +11,7 @@ plugins {
 }
 
 // REDIX's upload key (redix-app #118): android/key.properties, written from GitHub's secrets by the test-builds workflow, never in the repo.
-// Without it, as on Muteb's PC, a release build is signed with the debug key and never leaves the PC; the workflow checks the key before it uploads.
+// Without it, as on the owner's PC, a release build is signed with the debug key and never leaves the PC; the workflow checks the key before it uploads.
 val uploadKeyFile = rootProject.file("key.properties")
 val uploadKey = Properties().apply { if (uploadKeyFile.exists()) uploadKeyFile.inputStream().use { load(it) } }
 

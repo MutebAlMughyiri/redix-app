@@ -4,7 +4,7 @@
 import 'package:flutter/widgets.dart';
 
 /// The keys of the parts inside a keyed element: its label, icon, title, subtitle and the field it is drawn as. Every element and label has a key a test finds it by, never
-/// its position (Muteb, 7 Nov 2026); a part's key is made from its element's, so the two cannot drift. It reads a widget's own `key` too, which a widget that has parts
+/// its position (the owner, 7 Nov 2026); a part's key is made from its element's, so the two cannot drift. It reads a widget's own `key` too, which a widget that has parts
 /// requires.
 extension PartKeys on Key? {
   /// The key of the element's label.

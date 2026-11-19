@@ -161,7 +161,7 @@ extension Steps on PatrolIntegrationTester {
   }
 
   /// Signs [person] in and opens the screen at [path] from the project's home, as a Project settings button would, for a screen whose button is grayed until a later
-  /// release while its work stays (Muteb, 12 Nov 2026): the VAT refund.
+  /// release while its work stays (the owner, 12 Nov 2026): the VAT refund.
   Future<void> openPathFromTheHome(Person person, String path) async {
     await onTheHome(person);
     final card = find.byKey(HomeScreen.cardKey(person.projectId));
@@ -293,7 +293,7 @@ extension Steps on PatrolIntegrationTester {
     await pumpAndSettle();
   }
 
-  /// The pages of the home's Project settings, four buttons each, swiped sideways and going round (Muteb, 11 Nov 2026).
+  /// The pages of the home's Project settings, four buttons each, swiped sideways and going round (the owner, 11 Nov 2026).
   Finder get projectSettingPages => keyedBy(HomeScreen.settingsPagesKey);
 
   /// What brings [finder] into view: the Project settings' card for one of their buttons, since scrolling the button would also turn the pages; else [finder] itself.

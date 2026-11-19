@@ -27,7 +27,7 @@ void main() {
     await pumpRedix(tester, api);
 
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'b');
       await tester.enterText(find.byKey(SignInScreen.passwordKey), 'temporary');
       await tester.tap(find.byKey(SignInScreen.submitKey));
     });
@@ -40,7 +40,7 @@ void main() {
     await pumpRedix(tester, api);
 
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'b');
       await tester.enterText(find.byKey(SignInScreen.passwordKey), 'temporary');
       await tester.tap(find.byKey(SignInScreen.submitKey));
     });

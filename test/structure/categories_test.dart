@@ -34,7 +34,7 @@ void main() {
 
   /// A project with العظم (الحفر, الحديد) and التشطيب, opened as far as its categories.
   Future<({FakeApi api, String bone, String finishing, String digging, String steel})> openCategories(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
-    final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions);
+    final api = FakeApi()..addProject('مشروع A', status: status, permissions: permissions);
     final bone = api.addCategory('project-0', 'العظم');
     final finishing = api.addCategory('project-0', 'التشطيب');
     final digging = api.addItem(bone, 'الحفر');
@@ -226,7 +226,7 @@ void main() {
 
   /// A project whose item الحفر holds مواد and دفان and a contract with مقاول الحفر, opened as far as its tables.
   Future<({FakeApi api, String item, String general, List<String> ids})> openTables(WidgetTester tester, {String status = 'active'}) async {
-    final api = FakeApi()..addProject('غصون 6', status: status);
+    final api = FakeApi()..addProject('مشروع A', status: status);
     final bone = api.addCategory('project-0', 'العظم');
     final item = api.addItem(bone, 'الحفر', subgroups: ['مواد', 'دفان']);
     api.contractTables[item['id'] as String] = [
@@ -257,7 +257,7 @@ void main() {
   });
 
   testWidgets('a sub-table added here is offered in إضافة قيد as its table and sheet, and takes a purchase', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance);
+    final api = FakeApi()..addProject('مشروع A', permissions: managerAndFinance);
     final bone = api.addCategory('project-0', 'تكلفة العظم');
     final item = api.addItem(bone, 'دفعات العظم');
     final method = api.addPaymentMethod('project-0', 'تحويل');
@@ -291,7 +291,7 @@ void main() {
   });
 
   testWidgets('an item that takes no purchases offers no sub-table to add, since a sub-table holds purchases', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance);
+    final api = FakeApi()..addProject('مشروع A', permissions: managerAndFinance);
     final bone = api.addCategory('project-0', 'تكلفة العظم');
     final item = api.addItem(bone, 'دفعات العظم', type: 'contractorPayments');
     await openProject(tester, api);
@@ -423,7 +423,7 @@ void main() {
   });
 
   testWidgets('a list that cannot be read offers to try again', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProject(tester, api);
     api.online = false;
     await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
@@ -432,7 +432,7 @@ void main() {
   });
 
   testWidgets('a project with no categories says so', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));
 
@@ -453,7 +453,7 @@ void main() {
   });
 
   testWidgets('without the permission there is no way in', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
+    final api = FakeApi()..addProject('مشروع A', permissions: ['readProject']);
     await openProject(tester, api);
 
     await showProjectSetting(tester, HomeScreen.categoriesKey('project-0'));
@@ -467,13 +467,13 @@ void main() {
     }
 
     Future<void> submit(WidgetTester tester, FakeApi api) => act(tester, api, () async {
-      await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+      await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'مشروع B');
       await tester.ensureVisible(find.byKey(NewProjectScreen.submitKey));
       await tester.tap(find.byKey(NewProjectScreen.submitKey));
     });
 
     testWidgets('copies from the default template unless told otherwise', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       await openNewProject(tester, api);
 
       await submit(tester, api);
@@ -483,9 +483,9 @@ void main() {
 
     testWidgets('AC-05.2: can copy from an approved earlier project, and offers no other', (tester) async {
       final api = FakeApi()
-        ..addProject('غصون 6')
-        ..addProject('غصون 5', status: 'finished')
-        ..addProject('غصون 9', status: 'pendingApproval');
+        ..addProject('مشروع A')
+        ..addProject('مشروع E', status: 'finished')
+        ..addProject('مشروع D', status: 'pendingApproval');
       await openNewProject(tester, api);
 
       await tester.ensureVisible(find.byKey(NewProjectScreen.structureSourceKey));
@@ -499,8 +499,8 @@ void main() {
     });
 
     testWidgets('redix-api #126 D2: offers no project the user was made inactive in, and still offers one he is active in', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
-      api.makeInactive(api.addProject('غصون 7'));
+      final api = FakeApi()..addProject('مشروع A');
+      api.makeInactive(api.addProject('مشروع B'));
       await openNewProject(tester, api);
 
       await tester.ensureVisible(find.byKey(NewProjectScreen.structureSourceKey));
@@ -512,7 +512,7 @@ void main() {
 
     testWidgets('says when the earlier project cannot be copied', (tester) async {
       final api = FakeApi()
-        ..addProject('غصون 6')
+        ..addProject('مشروع A')
         ..projectAnswer = (status: 400, code: 'unknownSource');
       await openNewProject(tester, api);
 

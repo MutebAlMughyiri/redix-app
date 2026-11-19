@@ -11,9 +11,9 @@ import '../support/steps.dart';
 void main() {
   phoneClass('Title and role name (UC-010)', () {
     phoneCase('the title names the open project', ($) async {
-      final manager = await Given.manager(project: 'غصون 7', manager: 'ريم');
+      final manager = await Given.manager(project: 'مشروع B', manager: 'ريم');
       await $.onTheHome(manager);
-      await $.says(HomeScreen.titleKey, 'غصون 7');
+      await $.says(HomeScreen.titleKey, 'مشروع B');
       await $.picture('home');
     });
 

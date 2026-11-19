@@ -20,7 +20,7 @@ class _PhoneCase {
 
 var _cases = <_PhoneCase>[];
 
-/// One business use case: its cases run one after another in the one open app, each signing out with the real button before the next signs in (Muteb, 9 Nov 2026: "dont close and kill app every time").
+/// One business use case: its cases run one after another in the one open app, each signing out with the real button before the next signs in (the owner, 9 Nov 2026: "dont close and kill app every time").
 /// A case that fails leaves a picture and its reason on the PC, and the next case still runs.
 void phoneClass(String name, void Function() register) {
   final cases = _cases = <_PhoneCase>[];

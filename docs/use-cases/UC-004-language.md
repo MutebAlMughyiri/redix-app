@@ -8,7 +8,7 @@
 
 ## Screen
 
-The language of [Settings](../guide/settings.md) (`SharedSettingsScreen`): a heading and the Arabic and English switch, `LanguageSwitch`, shown at once, the same switch as on the sign-in screen (Muteb, 9 Nov 2026: "make languages same before we move it to be inside a button"). The radio choice of 8 Nov 2026 is gone.
+The language of [Settings](../guide/settings.md) (`SharedSettingsScreen`): a heading and the Arabic and English switch, `LanguageSwitch`, shown at once, the same switch as on the sign-in screen (the owner, 9 Nov 2026: "make languages same before we move it to be inside a button"). The radio choice of 8 Nov 2026 is gone.
 
 | Element | `Key` | Does |
 | --- | --- | --- |
@@ -26,7 +26,7 @@ The language of [Settings](../guide/settings.md) (`SharedSettingsScreen`): a hea
 
 | Rule | Code | Test |
 | --- | --- | --- |
-| Settings shows the Arabic and English switch itself, the language in use chosen, with no row to open first | `SharedSettingsScreen`, `LanguageSwitch`, `Words.languageName` | `settings/account_test.dart`: UC-004 (Muteb, 9 Nov 2026) |
+| Settings shows the Arabic and English switch itself, the language in use chosen, with no row to open first | `SharedSettingsScreen`, `LanguageSwitch`, `Words.languageName` | `settings/account_test.dart`: UC-004 (the owner, 9 Nov 2026) |
 | Choosing a language switches every screen to its words and direction | `AppLanguage.choose`, `RedixApp` (`locale`) | `settings/account_test.dart`: choosing English on an Arabic phone; `patrol_test/settings/language_test.dart` against the real API |
 | The choice is kept on the phone and used at the next start | `AppLanguage.restore` | `settings/account_test.dart`: the chosen language is kept |
 | The phone keeps the words of one language only: the new one replaces the old | `Words.load` | `words_test.dart`: the phone keeps only the language in use |
@@ -36,7 +36,7 @@ The language of [Settings](../guide/settings.md) (`SharedSettingsScreen`): a hea
 
 ## Appearance (redix-app #87, #97)
 
-Under the language, Appearance (المظهر) offers System, Light or Dark (النظام · فاتح · داكن), drawn as the language's choice is, words only (Muteb, 10 Nov 2026). Every Settings row sits in its own frame, `Card.outlined` (Muteb, 10 Nov 2026: "i like borders for each component").
+Under the language, Appearance (المظهر) offers System, Light or Dark (النظام · فاتح · داكن), drawn as the language's choice is, words only (the owner, 10 Nov 2026). Every Settings row sits in its own frame, `Card.outlined` (the owner, 10 Nov 2026: "i like borders for each component").
 
 | Element | `Key` | Does |
 | --- | --- | --- |

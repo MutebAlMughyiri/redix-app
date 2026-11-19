@@ -44,10 +44,10 @@ void main() {
 
     phoneCase('redix-app #83 R3: every kind shares the same way, leaving out a line it has nothing for', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final entry = await Given.partnerMoney(manager, partner, amount: 700);
       final text = await sharedTextOf($, manager, entry);
-      expect(text, allOf(contains('هيثم'), contains('700.00')));
+      expect(text, allOf(contains('C'), contains('700.00')));
       expect(text, isNot(contains($.words.entrySharePaymentMethod)));
     });
 

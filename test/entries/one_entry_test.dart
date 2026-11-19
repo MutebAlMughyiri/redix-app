@@ -28,10 +28,10 @@ void main() {
     tester.view.physicalSize = const Size(900, 2600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة']);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, units: ['الفلة']);
     api.addItem(api.addCategory('project-0', 'التشطيب'), 'البلاط', type: 'purchases');
     final refund = api.addItem(api.addCategory('project-0', 'الإيرادات'), 'استرداد الضريبة', type: 'vatRefund');
-    final partner = api.addPartner('project-0', 'نواف');
+    final partner = api.addPartner('project-0', 'B');
     api.addColumn('/projects/project-0/items/${partner['itemId']}/columns', 'نوع الحركة', key: 'movementType', dataType: 'list', isCore: true, choices: [FakeApi.choice('choice-contribution', 'إضافة مبلغ', sign: 'plus'), FakeApi.choice('choice-withdrawal', 'سحب مبلغ', sign: 'minus')]);
     final account = api.addAccount('project-0', 'حساب المؤسسة');
     final capture = FakeCapture();
@@ -57,11 +57,11 @@ void main() {
       expect(text(tester, TablePicker.optionKey(refund).subtitle), 'en categories.tableRevenue');
       expect(find.byKey(TablePicker.categoryKey('رأس المال')), findsOneWidget);
       expect(text(tester, TablePicker.itemKey('item-capital').title), 'رأس المال');
-      expect(text(tester, TablePicker.optionKey(partner).title), 'نواف');
+      expect(text(tester, TablePicker.optionKey(partner).title), 'B');
       expect(text(tester, TablePicker.optionKey(partner).subtitle), 'en categories.tableCapital');
     });
 
-    testWidgets('redix-api #109 (Muteb, 8 Nov 2026: "راس المال" found nothing): the search finds رأس المال by its name in either spelling, with every partner under it', (tester) async {
+    testWidgets('redix-api #109 (the owner, 8 Nov 2026: "راس المال" found nothing): the search finds رأس المال by its name in either spelling, with every partner under it', (tester) async {
       final (:api, capture: _, :refund, :partner, account: _) = await openAddEntry(tester);
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.tableKey)));
 
@@ -118,11 +118,11 @@ void main() {
 
       await act(tester, api, () => tester.tap(find.byKey(AddEntryScreen.sendKey)));
       final id = api.sentEntries.single['id']! as String;
-      api.addEntry(id: id, kind: 'capitalIn', partnerName: 'نواف', amount: 1000);
+      api.addEntry(id: id, kind: 'capitalIn', partnerName: 'B', amount: 1000);
       await act(tester, api, () => tester.tap(find.byKey(messageKeyOf('expenses.sent').icon)));
 
       final lines = capture.sharedTexts.single.split('\n');
-      expect((lines.first, lines[1], lines.last), ('en capital.contribution · غصون 6', 'en entryShare.partner: نواف', 'https://redix.test/projects/project-0/entries/$id/open'));
+      expect((lines.first, lines[1], lines.last), ('en capital.contribution · مشروع A', 'en entryShare.partner: B', 'https://redix.test/projects/project-0/entries/$id/open'));
     });
 
     testWidgets('R7, redix-api #129: «سحب مبلغ» of «نوع الحركة» makes it a withdrawal', (tester) async {
@@ -140,7 +140,7 @@ void main() {
       expect((api.sentEntries.single['columnValues'] as Map<String, dynamic>)['movementType'], 'choice-withdrawal');
     });
 
-    testWidgets('Muteb, 8 Nov 2026: a contribution is one amount and is sent as it is, its receipt optional like every entry\'s, with no cash switch and no second amount', (tester) async {
+    testWidgets('the owner, 8 Nov 2026: a contribution is one amount and is sent as it is, its receipt optional like every entry\'s, with no cash switch and no second amount', (tester) async {
       final (:api, capture: _, refund: _, :partner, :account) = await openAddEntry(tester);
       await pick(tester, api, partner);
 
@@ -156,7 +156,7 @@ void main() {
       expect(text(tester, messageKeyOf('expenses.sent').label), 'en expenses.sent');
     });
 
-    testWidgets('Muteb, 8 Nov 2026: Add entry never opens the camera by itself, and the photo stays where it was when a table is picked', (tester) async {
+    testWidgets('the owner, 8 Nov 2026: Add entry never opens the camera by itself, and the photo stays where it was when a table is picked', (tester) async {
       final (:api, :capture, refund: _, :partner, account: _) = await openAddEntry(tester);
       expect(capture.cameraOpened, 0);
       capture.camera = picture();
@@ -202,7 +202,7 @@ void main() {
       expect(tester.widget<TextField>(find.byKey(AddEntryScreen.descriptionKey)).controller!.text, 'استرداد الربع الثالث');
     });
 
-    testWidgets('R8, D6 (Muteb, 9 Nov 2026, reversing redix-api #101 D9): revenue is saved as a draft, as an expense is', (tester) async {
+    testWidgets('R8, D6 (the owner, 9 Nov 2026, reversing redix-api #101 D9): revenue is saved as a draft, as an expense is', (tester) async {
       final (:api, capture: _, :refund, partner: _, :account) = await openAddEntry(tester);
       await pick(tester, api, refund);
       await tester.enterText(find.byKey(AddEntryScreen.amountKey), '140');
@@ -247,12 +247,12 @@ void main() {
       final (:api, capture: _, refund: _, partner: _, account: _) = await openAddEntry(tester);
       api
         ..addEntry(kind: 'revenue', status: 'approved', itemName: 'استرجاع ضرائب', amount: 140)
-        ..addEntry(kind: 'capitalOut', status: 'pendingApproval', itemName: '', partnerName: 'نواف', amount: 300);
+        ..addEntry(kind: 'capitalOut', status: 'pendingApproval', itemName: '', partnerName: 'B', amount: 300);
       await act(tester, api, () => tester.pageBack());
 
       expect(text(tester, EntriesScreen.rowKey('entry-0').title), 'استرجاع ضرائب');
       expect(text(tester, EntriesScreen.detailsKey('entry-0')), startsWith('en entries.numberOf 1 · en categories.tableRevenue'), reason: 'redix-api #128, D5: the number leads the details line');
-      expect(text(tester, EntriesScreen.rowKey('entry-1').title), 'نواف');
+      expect(text(tester, EntriesScreen.rowKey('entry-1').title), 'B');
       expect(text(tester, EntriesScreen.detailsKey('entry-1')), startsWith('en entries.numberOf 2 · en capital.withdrawal'));
     });
 
@@ -273,8 +273,8 @@ void main() {
     });
 
     testWidgets('R12: a shared file offers New entry and no capital receipt, and goes with a partner picked in Add entry', (tester) async {
-      final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة']);
-      final partner = api.addPartner('project-0', 'نواف')['id']! as String;
+      final api = FakeApi()..addProject('مشروع A', permissions: managerAndFinance, units: ['الفلة']);
+      final partner = api.addPartner('project-0', 'B')['id']! as String;
       final account = api.addAccount('project-0', 'حساب المؤسسة')['id']! as String;
       final capture = FakeCapture();
       await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
@@ -298,13 +298,13 @@ void main() {
     tester.view.physicalSize = const Size(900, 2600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة']);
-    final added = api.addPartner('project-0', 'نواف');
+    final api = FakeApi()..addProject('مشروع A', permissions: managerAndFinance, units: ['الفلة']);
+    final added = api.addPartner('project-0', 'B');
     final partner = added['id']! as String;
     api.addColumn('/projects/project-0/items/${added['itemId']}/columns', 'نوع الحركة', key: 'movementType', dataType: 'list', isCore: true, choices: [FakeApi.choice('choice-contribution', 'إضافة مبلغ', sign: 'plus'), FakeApi.choice('choice-withdrawal', 'سحب مبلغ', sign: 'minus')]);
     final account = api.addAccount('project-0', 'حساب المؤسسة')['id']! as String;
     api
-      ..addEntry(kind: 'capitalOut', status: 'rejected', rejectionReason: 'أرفق الإيصال', itemName: '', partnerName: 'نواف', amount: 300)
+      ..addEntry(kind: 'capitalOut', status: 'rejected', rejectionReason: 'أرفق الإيصال', itemName: '', partnerName: 'B', amount: 300)
       ..entryDetails['entry-0'] = {
         'tableId': partner,
         'entry': {'id': 'entry-0', 'kind': 'capitalOut', 'status': 'rejected', 'entryDate': '2026-11-05', 'amount': 300, 'accountId': account, 'description': 'سحب', 'columnValues': '{"movementType":"choice-withdrawal"}'},

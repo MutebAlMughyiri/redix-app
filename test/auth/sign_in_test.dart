@@ -14,7 +14,7 @@ void main() {
   String message(WidgetTester tester) => tester.widget<Text>(find.byKey(SignInScreen.messageKey)).data!;
 
   Future<void> signIn(WidgetTester tester, FakeApi api) => act(tester, api, () async {
-    await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+    await tester.enterText(find.byKey(SignInScreen.usernameKey), 'b');
     await tester.enterText(find.byKey(SignInScreen.passwordKey), 'secret');
     await tester.tap(find.byKey(SignInScreen.submitKey));
   });

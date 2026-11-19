@@ -15,7 +15,7 @@ import '../support/steps.dart';
 /// A new manager, their account and an approved bill of [amount] from a supplier, standing on Add entry as a credit note for that supplier, «مرتجع» chosen in «نوع القيد», which
 /// names no bill (redix-api #119 D4, #129).
 Future<({Person manager, String account, String bill, String supplier})> onCreditNote(PatrolIntegrationTester $, {num amount = 500}) async {
-  final manager = await Given.manager(project: 'غصون 7');
+  final manager = await Given.manager(project: 'مشروع B');
   final account = await Given.account(manager, name: 'حساب المؤسسة');
   final supplier = await Given.supplier(manager, name: 'مورد الميدان');
   final bill = await Given.entry(manager, amount: amount, accountId: account, supplierId: supplier);

@@ -12,7 +12,7 @@ import '../support/search_steps.dart';
 import '../support/steps.dart';
 
 void main() {
-  phoneClass('صلاحياتي (Muteb, 9 Nov 2026)', () {
+  phoneClass('صلاحياتي (the owner, 9 Nov 2026)', () {
     phoneCase('it shows what I hold, ticked', ($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager, permissions: [Permission.recordEntries]);
@@ -31,7 +31,7 @@ void main() {
       expect($.canTick(MyPermissionsScreen.permissionKey(Permission.recordEntries)), isFalse);
     });
 
-    phoneCase('Muteb, 12 Nov 2026: its search keeps the permissions whose name holds what was typed', ($) async {
+    phoneCase('the owner, 12 Nov 2026: its search keeps the permissions whose name holds what was typed', ($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager, permissions: [Permission.recordEntries]);
       await $.fromTheHome(member, HomeScreen.myPermissionsKey(member.projectId));

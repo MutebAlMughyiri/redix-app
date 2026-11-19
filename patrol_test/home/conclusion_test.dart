@@ -100,7 +100,7 @@ void main() {
 
     phoneCase('BR-06: revenue opens its categories in the structure\'s order, رأس المال first, adding up to the revenue', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'متعب');
+      final partner = await Given.partner(manager, 'A');
       await Given.entriesApproved(manager, [await Given.partnerMoney(manager, partner, amount: 500), await Given.revenue(manager, amount: 300)]);
       await $.onTheHome(manager);
       await $.says(SummaryCard.revenueKey, '800.00');

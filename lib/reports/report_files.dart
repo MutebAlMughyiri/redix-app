@@ -116,7 +116,7 @@ class ReportFiles {
 }
 
 /// Gets the report file of [kind] at [address], named [name], through [files], and hands it on: at once when the kind is handed one way, as printing is, otherwise after
-/// asking whether to save or share it. The one way a button or a menu choice gets a report's file (Muteb, 12 Nov 2026: a contract's ⋮ holds its PDF and Excel).
+/// asking whether to save or share it. The one way a button or a menu choice gets a report's file (the owner, 12 Nov 2026: a contract's ⋮ holds its PDF and Excel).
 Future<void> handReportFile(BuildContext context, ReportFiles files, String address, String name, ReportFileKind kind) async {
   Future<void> run(FileHandling handing) => showRefusalOf(context, whileBusy(context, files.hand(address, name, kind, handing)));
   if (kind.handings.length == 1) {

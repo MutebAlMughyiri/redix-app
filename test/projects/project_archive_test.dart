@@ -22,13 +22,13 @@ void main() {
   const project = 'project-0';
   final archive = HomeScreen.archiveKey(project);
   final retrieve = HomeScreen.retrieveKey(project);
-  final madeUpArchive = PickedFile('غصون 6 - أرشيف.json', '/phone/archive.json', Uint8List.fromList(utf8.encode('{"format": "redix.archive"}')));
+  final madeUpArchive = PickedFile('مشروع A - أرشيف.json', '/phone/archive.json', Uint8List.fromList(utf8.encode('{"format": "redix.archive"}')));
   final archivedAt = momentOf('2026-11-11T18:15:04Z');
   final when = '${formatDate(archivedAt)} ${formatTime(archivedAt)}';
 
   /// The home of a project in [status], seen with [permissions], [button] brought into view, the archive to retrieve picked from the phone's files.
   Future<FakeApi> onTheHome(WidgetTester tester, Key button, {List<String> permissions = managerAndFinance, String status = 'active'}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, status: status);
     await openProject(tester, api, capture: FakeCapture()..files = madeUpArchive);
     await showProjectSetting(tester, button);
     await bringIntoView(tester, find.byKey(button));
@@ -40,7 +40,7 @@ void main() {
   /// The archive's name the button gives it at [at].
   String nameAt(DateTime at) {
     String two(int value) => value.toString().padLeft(2, '0');
-    return 'en projects.archiveFileName غصون 6 ${at.year}-${two(at.month)}-${two(at.day)} ${two(at.hour)}.${two(at.minute)}';
+    return 'en projects.archiveFileName مشروع A ${at.year}-${two(at.month)}-${two(at.day)} ${two(at.hour)}.${two(at.minute)}';
   }
 
   testWidgets('AC-73.1: «أرشفة المشروع» asks whether to save or share, and takes the archive as JSON from its address, named for the project and the moment', (tester) async {
@@ -60,10 +60,10 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(retrieve)));
 
-    expect(api.sentArchives, [('/projects/$project/retrieve?preview=true', 'غصون 6 - أرشيف.json')]);
-    expect(text(tester, ConfirmDialog.titleKey), 'en projects.retrieveConfirm غصون 6 $when');
+    expect(api.sentArchives, [('/projects/$project/retrieve?preview=true', 'مشروع A - أرشيف.json')]);
+    expect(text(tester, ConfirmDialog.titleKey), 'en projects.retrieveConfirm مشروع A $when');
     expect(text(tester, ConfirmDialog.explanationKey), [
-      'en projects.retrieveTakenBy متعب',
+      'en projects.retrieveTakenBy A',
       'en projects.retrieve.part.entries: en projects.retrieveNow 1056 · en projects.retrieveAfter 1000',
       'en projects.retrieve.part.contracts: en projects.retrieveNow 37 · en projects.retrieveAfter 35',
       'en projects.retrieve.part.accounts: en projects.retrieveNow 4 · en projects.retrieveAfter 4',
@@ -84,17 +84,17 @@ void main() {
     api.retrieveAnswer = (status: 200, body: {'archivedAt': '2026-11-11T18:15:04Z', 'after': {'entries': 998}});
     await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.confirmKey)));
 
-    expect(api.sentArchives.last, ('/projects/$project/retrieve', 'غصون 6 - أرشيف.json'));
+    expect(api.sentArchives.last, ('/projects/$project/retrieve', 'مشروع A - أرشيف.json'));
     expect(text(tester, messageKeyOf('projects.retrieveDone').label), 'en projects.retrieveDone $when 998');
   });
 
   testWidgets('R12: another project\'s archive is refused in the bar, naming that project, and nothing is asked', (tester) async {
     final api = await onTheHome(tester, retrieve);
-    api.retrieveAnswer = (status: 409, body: {'code': 'archiveOfAnotherProject', 'project': 'غصزن 7'});
+    api.retrieveAnswer = (status: 409, body: {'code': 'archiveOfAnotherProject', 'project': 'مشروع B'});
 
     await act(tester, api, () => tester.tap(find.byKey(retrieve)));
 
-    expect(text(tester, messageKeyOf('projects.retrieve.archiveOfAnotherProject').label), 'en projects.retrieve.archiveOfAnotherProject غصزن 7');
+    expect(text(tester, messageKeyOf('projects.retrieve.archiveOfAnotherProject').label), 'en projects.retrieve.archiveOfAnotherProject مشروع B');
     expect(find.byKey(ConfirmDialog.dialogKey), findsNothing);
   });
 
@@ -109,7 +109,7 @@ void main() {
   });
 
   testWidgets('a person who picks nothing is asked nothing and sends nothing', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProject(tester, api, capture: FakeCapture());
     await showProjectSetting(tester, retrieve);
     await bringIntoView(tester, find.byKey(retrieve));
@@ -128,7 +128,7 @@ void main() {
   });
 
   testWidgets('D10: without «ملفات المشروع» neither «أرشفة المشروع» nor «استرجاع المشروع» is there', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: [for (final permission in managerAndFinance) if (permission != 'manageProjectFiles') permission]);
+    final api = FakeApi()..addProject('مشروع A', permissions: [for (final permission in managerAndFinance) if (permission != 'manageProjectFiles') permission]);
     await openProject(tester, api);
 
     for (final key in [archive, retrieve]) {

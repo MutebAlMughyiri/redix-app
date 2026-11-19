@@ -10,13 +10,13 @@ import '../app_harness.dart';
 void main() {
   final words = Words({'history.custodianChanged': '{0} is now held by {1}', 'accounts.noCustodian': 'nobody'});
 
-  AccountHistoryLine custodianLine(String custodian) => AccountHistoryLine.fromJson(FakeApi().addHistoryLine('project-0', 'custodianChanged', account: 'كاش مع نواف', custodian: custodian));
+  AccountHistoryLine custodianLine(String custodian) => AccountHistoryLine.fromJson(FakeApi().addHistoryLine('project-0', 'custodianChanged', account: 'كاش مع B', custodian: custodian));
 
   test('redix-app #89: a custodian line names the account and who holds it now', () {
-    expect(custodianLine('نواف').textIn(words), 'كاش مع نواف is now held by نواف');
+    expect(custodianLine('B').textIn(words), 'كاش مع B is now held by B');
   });
 
   test('redix-app #89: a custodian line whose account nobody holds now says so', () {
-    expect(custodianLine('').textIn(words), 'كاش مع نواف is now held by nobody');
+    expect(custodianLine('').textIn(words), 'كاش مع B is now held by nobody');
   });
 }

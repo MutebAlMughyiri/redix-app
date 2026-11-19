@@ -23,7 +23,7 @@ void main() {
 
   /// The home of a project seen with [permissions], its file to load picked from the phone's files.
   Future<(FakeApi, FakeCapture)> onTheHome(WidgetTester tester, {List<String> permissions = managerAndFinance}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions);
     final capture = FakeCapture()..files = madeUpFile;
     await openProject(tester, api, capture: capture);
     await showProjectSetting(tester, loadFile);
@@ -34,7 +34,7 @@ void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
   testWidgets('AC-53.2, UC-073 D2, D10: without «ملفات المشروع» تحميل ملف المشروع is not there, whatever else one holds', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: [for (final permission in managerAndFinance) if (permission != 'manageProjectFiles') permission]);
+    final api = FakeApi()..addProject('مشروع A', permissions: [for (final permission in managerAndFinance) if (permission != 'manageProjectFiles') permission]);
     await openProject(tester, api);
     await showProjectSetting(tester, loadFile);
     expect(find.byKey(loadFile), findsNothing);
@@ -47,7 +47,7 @@ void main() {
   });
 
   testWidgets('AC-53.3, D4, D15: once the API says the project holds an entry the button is gray', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     api.projects.single['holdsEntries'] = true;
     await openProject(tester, api);
     await showProjectSetting(tester, loadFile);
@@ -60,7 +60,7 @@ void main() {
 
     await act(tester, api, () => tester.tap(find.byKey(loadFile)));
 
-    expect(text(tester, ConfirmDialog.titleKey), 'en projects.loadFileConfirm مشروع الاختبار.json غصون 6');
+    expect(text(tester, ConfirmDialog.titleKey), 'en projects.loadFileConfirm مشروع الاختبار.json مشروع A');
     expect(text(tester, ConfirmDialog.explanationKey), 'en projects.loadFileWhat');
     await act(tester, api, () => tester.tap(find.byKey(ConfirmDialog.cancelKey)));
     expect(api.sentProjectFiles, isEmpty);

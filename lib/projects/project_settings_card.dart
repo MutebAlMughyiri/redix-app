@@ -26,7 +26,7 @@ import '../words/words.dart';
 import 'project.dart';
 import 'project_info_screen.dart';
 
-/// The open project's buttons, with what the signed-in user's permissions allow, four to a page, two by two, swiped sideways page by page with dots under them (Muteb,
+/// The open project's buttons, with what the signed-in user's permissions allow, four to a page, two by two, swiped sideways page by page with dots under them (the owner,
 /// 11 Nov 2026), going round: on from the last page comes the first, and back from the first the last. The first page holds the four used most: Contracts, Reports, the item reports and Suppliers; then Accounts, Partners, the VAT refund, Approvals and
 /// Documents, then the project's own: More info, the user's own permissions, its users, its categories and items, its payment methods, loading its project file (redix-api
 /// #132), archiving it and retrieving an archive over it (UC-073). Nothing is kept: the card opens on its first page. Settings is an icon in the home's top bar. A finished project
@@ -116,7 +116,7 @@ class _ProjectSettingsCardState extends State<ProjectSettingsCard> {
       _button(HomeScreen.suppliersKey(id), Icons.storefront_outlined, words.suppliersTitle, SuppliersScreen.pathOf(id)),
       _button(HomeScreen.accountsKey(id), Icons.account_balance_wallet_outlined, words.accountsTitle, AccountsScreen.pathOf(id)),
       _button(HomeScreen.partnersKey(id), Icons.handshake_outlined, words.partnersTitle, PartnersScreen.pathOf(id)),
-      // Grayed until the next release works on it (Muteb, 12 Nov 2026); VatStatementScreen and its route stay as they are.
+      // Grayed until the next release works on it (the owner, 12 Nov 2026); VatStatementScreen and its route stay as they are.
       _button(HomeScreen.vatKey(id), Icons.receipt_long_outlined, words.vatTitle, '', mayOpen: project.maySeeReports),
       if (project.may(Permission.approveEntries)) _button(HomeScreen.approvalsKey(id), Icons.fact_check_outlined, words.approvalsTitle, ApprovalsScreen.pathOf(id)),
       _button(HomeScreen.documentsKey(id), Icons.folder_outlined, words.documentsTitle, DocumentsScreen.pathOf(id)),

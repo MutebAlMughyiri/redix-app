@@ -11,7 +11,7 @@ import '../history/history_list.dart';
 import '../words/word_fill.dart';
 import '../words/words.dart';
 
-/// What a line of the approval history says was decided, each knowing its word and its icon (Muteb, 12 Nov 2026).
+/// What a line of the approval history says was decided, each knowing its word and its icon (the owner, 12 Nov 2026).
 enum ApprovalHistoryKind {
   /// An entry was approved.
   approved('history.entryApproved', Icons.done_all),
@@ -78,7 +78,7 @@ class ApprovalHistoryLine implements HistoryLine {
   String whoAndWhenIn(Words words) => partsLine([kind == ApprovalHistoryKind.approved ? words.historyApprovedBy.fill([by]) : by, '${formatDate(at)} ${formatTime(at)}']);
 }
 
-/// A project's approval history, newest first, a page at a time (Muteb, 12 Nov 2026): every decision or those on one kind of entry, everyone's or the signed-in user's own.
+/// A project's approval history, newest first, a page at a time (the owner, 12 Nov 2026): every decision or those on one kind of entry, everyone's or the signed-in user's own.
 class ApprovalHistory extends HistoryList<ApprovalHistoryLine> {
   /// The approval history of the project [projectId], read through [session].
   ApprovalHistory(Session session, String projectId) : super(session, '/projects/$projectId/approvals/history', 'kind', ApprovalHistoryLine.fromJson);

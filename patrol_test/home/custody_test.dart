@@ -11,7 +11,7 @@ import '../support/steps.dart';
 void main() {
   phoneClass('My custody on the home (UC-015)', () {
     phoneCase('AC-22.1: a custodian sees their custody on the home', ($) async {
-      final manager = await Given.manager(project: 'غصون 7', manager: 'ريم');
+      final manager = await Given.manager(project: 'مشروع B', manager: 'ريم');
       final custody = await Given.account(manager, name: 'كاش مع مدير المشروع', custodian: manager);
       await Given.funded(manager, custody, 2750);
       await $.onTheHome(manager);

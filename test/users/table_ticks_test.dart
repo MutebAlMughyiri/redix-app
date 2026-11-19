@@ -15,16 +15,16 @@ import '../app_harness.dart';
 void main() {
   late String general, columns, finishing;
 
-  /// A project whose item الحديد has its general group and «الأعمدة», and whose item التشطيب has its own, with نواف in it.
+  /// A project whose item الحديد has its general group and «الأعمدة», and whose item التشطيب has its own, with B in it.
   FakeApi project() {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     final skeleton = api.addCategory('project-0', 'العظم');
     final subgroups = api.addItem(skeleton, 'الحديد', type: 'purchases', subgroups: ['الأعمدة'])['subgroups']! as List<Map<String, Object>>;
     general = subgroups.first['id']! as String;
     columns = subgroups.last['id']! as String;
     finishing = (api.addItem(api.addCategory('project-0', 'التشطيب'), 'الدهان', type: 'purchases')['subgroups']! as List<Map<String, Object>>).single['id']! as String;
-    final manager = api.addUser('متعب', username: 'muteb');
-    final user = api.addUser('نواف', username: 'nawaf');
+    final manager = api.addUser('A', username: 'owner');
+    final user = api.addUser('B', username: 'b');
     api
       ..give(manager, 'project-0', managerAndFinance)
       ..give(user, 'project-0', reader);

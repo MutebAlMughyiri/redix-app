@@ -3,7 +3,7 @@
 
 import 'package:flutter/material.dart';
 
-/// Every color the app shows, in one place (Muteb, 9 Nov 2026: "create one enum class color to store all colors of the app ... this will help us to unify the colors and
+/// Every color the app shows, in one place (the owner, 9 Nov 2026: "create one enum class color to store all colors of the app ... this will help us to unify the colors and
 /// unify design and ease of mantinance and change the design later"). A screen never picks a color of its own: it names what the color is for, and this says which color
 /// that is, taken from the theme so that a light and a dark mode both follow (redix-app #87). Changing a color here changes it on every screen that uses it.
 enum AppColor {
@@ -88,6 +88,6 @@ enum AppColor {
 
   static Color _primary(ColorScheme colors) => colors.primary;
 
-  /// Orange 900 on the light ground, where 700 read at 2.6:1, and 700 on the dark one (findings row 191, Muteb, 12 Nov 2026).
+  /// Orange 900 on the light ground, where 700 read at 2.6:1, and 700 on the dark one (findings row 191, the owner, 12 Nov 2026).
   static Color _orange(ColorScheme colors) => colors.brightness == Brightness.light ? Colors.orange.shade900 : Colors.orange.shade700;
 }

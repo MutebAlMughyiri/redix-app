@@ -4,7 +4,7 @@
 import 'attachments.dart';
 import 'picked_file.dart';
 
-/// An entry's file, the same for every entry (Muteb, 8 Nov 2026): the file picked, why it could not be, and its id once the API keeps it, so it is kept once however often the
+/// An entry's file, the same for every entry (the owner, 8 Nov 2026): the file picked, why it could not be, and its id once the API keeps it, so it is kept once however often the
 /// entry is sent.
 class EntryFile {
   /// The file picked; none until one is.

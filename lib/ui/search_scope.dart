@@ -107,7 +107,7 @@ class _SearchHeld extends InheritedNotifier<ScreenSearch> {
   final ScreenSearch search;
 }
 
-/// The search icon in a screen's title bar, showing the search line and, tapped again, hiding it (Muteb, 12 Nov 2026); and on a screen with filters the filter icon
+/// The search icon in a screen's title bar, showing the search line and, tapped again, hiding it (the owner, 12 Nov 2026); and on a screen with filters the filter icon
 /// beside it, filled while a filter is in use, so a narrowed list says so with its lines closed (redix-app #104, D7, D8, R6).
 class SearchIcons extends StatelessWidget {
   /// The search icon alone.

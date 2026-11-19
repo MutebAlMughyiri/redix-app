@@ -74,7 +74,7 @@ void main() {
       expect(await Given.waitingIds(manager), isEmpty);
     });
 
-    phoneCase('Muteb, 12 Nov 2026: السجل in the title bar lists what was approved, and its search finds it by its amount', ($) async {
+    phoneCase('the owner, 12 Nov 2026: السجل in the title bar lists what was approved, and its search finds it by its amount', ($) async {
       final manager = await Given.manager();
       final amount = 1000 + DateTime.now().millisecond;
       await Given.entriesApproved(manager, [await Given.entry(manager, amount: amount)]);

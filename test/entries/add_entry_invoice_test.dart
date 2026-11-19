@@ -17,7 +17,7 @@ void main() {
   final picture = PickedFile('invoice.png', '/phone/invoice.png', Uint8List.fromList(onePixelPng));
 
   Future<({FakeApi api, FakeCapture capture})> openExpense(WidgetTester tester, {PickedFile? camera}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: field, units: ['الفلة الغربية']);
     final capture = FakeCapture()..camera = camera ?? PickedFile.none();
     await openProject(tester, api, capture: capture);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.addEntryKey('project-0'))));
@@ -27,7 +27,7 @@ void main() {
     return (api: api, capture: capture);
   }
 
-  testWidgets('FR-10 (Muteb, 8 Nov 2026): the camera opens only when asked, and the picture it gives stays on the screen', (tester) async {
+  testWidgets('FR-10 (the owner, 8 Nov 2026): the camera opens only when asked, and the picture it gives stays on the screen', (tester) async {
     final opened = await openExpense(tester);
     expect(opened.capture.cameraOpened, 0);
 

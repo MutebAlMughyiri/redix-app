@@ -8,7 +8,7 @@
 
 ## Screens
 
-No screen of its own. On `AddEntryScreen`, «نوع القيد», the purchase's list column of «شراء» (+) and «مرتجع» (−), whose sign decides the total's direction (redix-api #129): choosing «مرتجع» makes the purchase a credit note. It is typed as a plain amount, and the API keeps it negative: its own row with a minus amount, naming no bill (Muteb, 12 Nov 2026, redix-api #119 D4), so nothing is asked about a bill and nothing caps it. A saved purchase whose «نوع القيد» is «مرتجع» opens with it chosen and its plain amount.
+No screen of its own. On `AddEntryScreen`, «نوع القيد», the purchase's list column of «شراء» (+) and «مرتجع» (−), whose sign decides the total's direction (redix-api #129): choosing «مرتجع» makes the purchase a credit note. It is typed as a plain amount, and the API keeps it negative: its own row with a minus amount, naming no bill (the owner, 12 Nov 2026, redix-api #119 D4), so nothing is asked about a bill and nothing caps it. A saved purchase whose «نوع القيد» is «مرتجع» opens with it chosen and its plain amount.
 
 A deduction needs no switch of its own: it is a negative amount, and it says why in its description, «الوصف» (D14, redix-api #129). The amount's keyboard offers the minus sign, and `parseNumber` reads it with either digits.
 

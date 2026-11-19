@@ -46,10 +46,10 @@ void main() {
     final api = FakeApi();
     await openForgotPassword(tester, api, locale: const Locale('ar'));
 
-    await askCode(tester, api, ' muteb@example.com ');
+    await askCode(tester, api, ' owner@example.com ');
 
     final sent = api.sentCodeRequests.single;
-    expect([sent.$1, sent.$2, sent.$3], ['/auth/forgot-password', {'login': 'muteb@example.com'}, 'ar']);
+    expect([sent.$1, sent.$2, sent.$3], ['/auth/forgot-password', {'login': 'owner@example.com'}, 'ar']);
   });
 
   testWidgets('redix-api #127 AC-02.7: once asked, one sentence says a code went to the email if the account has one, then the code and the new password are asked; not before', (tester) async {
@@ -58,7 +58,7 @@ void main() {
     expect(find.byKey(ForgotPasswordScreen.sentKey), findsNothing);
     expect(find.byKey(ForgotPasswordScreen.codeKey), findsNothing);
 
-    await askCode(tester, api, 'muteb');
+    await askCode(tester, api, 'owner');
 
     expect(text(tester, ForgotPasswordScreen.sentKey), 'en auth.codeSent');
     expect(find.byKey(ForgotPasswordScreen.codeKey), findsOneWidget);
@@ -68,12 +68,12 @@ void main() {
   testWidgets('redix-api #127 AC-02.6: the code and a new password typed twice change it, back on sign-in saying so', (tester) async {
     final api = FakeApi();
     await openForgotPassword(tester, api);
-    await askCode(tester, api, 'muteb');
+    await askCode(tester, api, 'owner');
 
     await reset(tester, api);
 
     final sent = api.sentCodeRequests.last;
-    expect([sent.$1, sent.$2], ['/auth/reset-with-code', {'login': 'muteb', 'code': '482913', 'newPassword': 'Remembered-2'}]);
+    expect([sent.$1, sent.$2], ['/auth/reset-with-code', {'login': 'owner', 'code': '482913', 'newPassword': 'Remembered-2'}]);
     expect(find.byKey(SignInScreen.usernameKey), findsOneWidget);
     expect(text(tester, messageKeyOf('auth.passwordReset').label), 'en auth.passwordReset');
   });
@@ -81,7 +81,7 @@ void main() {
   testWidgets('redix-api #127: new passwords that differ send nothing and say so', (tester) async {
     final api = FakeApi();
     await openForgotPassword(tester, api);
-    await askCode(tester, api, 'muteb');
+    await askCode(tester, api, 'owner');
 
     await reset(tester, api, again: 'Remembered-3');
 
@@ -93,7 +93,7 @@ void main() {
   testWidgets('redix-api #127 AC-02.8: a wrong or spent code, and a weak password, are refused with their words and the screen stays', (tester) async {
     final api = FakeApi()..codeAnswers['/auth/reset-with-code'] = (status: 400, code: 'codeWrong');
     await openForgotPassword(tester, api);
-    await askCode(tester, api, 'muteb');
+    await askCode(tester, api, 'owner');
 
     await reset(tester, api);
     expect(text(tester, ForgotPasswordScreen.messageKey), 'en auth.codeWrong');
@@ -108,7 +108,7 @@ void main() {
     final api = FakeApi()..codeAnswers['/auth/forgot-password'] = (status: 429, code: '');
     await openForgotPassword(tester, api);
 
-    await askCode(tester, api, 'muteb');
+    await askCode(tester, api, 'owner');
 
     expect(text(tester, ForgotPasswordScreen.messageKey), 'en auth.tooManyRequests');
     expect(find.byKey(ForgotPasswordScreen.codeKey), findsNothing);
@@ -119,7 +119,7 @@ void main() {
     await openForgotPassword(tester, api);
 
     api.online = false;
-    await askCode(tester, api, 'muteb');
+    await askCode(tester, api, 'owner');
 
     expect(text(tester, ForgotPasswordScreen.messageKey), 'en auth.noConnection');
     expect(find.byKey(ForgotPasswordScreen.sentKey), findsNothing);

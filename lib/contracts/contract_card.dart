@@ -16,7 +16,7 @@ import '../ui/labelled_figure.dart';
 import '../ui/app_color.dart';
 import '../ui/row_menu.dart';
 
-/// One contract: its contractor, item and unit, how it stands, its value, paid and remaining, with a bar of how much is paid. Tapped, it opens its own table (Muteb, 12 Nov
+/// One contract: its contractor, item and unit, how it stands, its value, paid and remaining, with a bar of how much is paid. Tapped, it opens its own table (the owner, 12 Nov
 /// 2026) for whoever holds «يرى التقارير». Its ⋮ holds what can be done to it, for whoever keeps the settings, and its PDF and Excel, gray with the reason for whoever
 /// does not hold «يُصدر التقارير» (redix-api #131: gray, never hidden).
 class ContractCard extends StatelessWidget {

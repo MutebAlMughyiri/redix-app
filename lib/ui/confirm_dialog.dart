@@ -37,7 +37,7 @@ class ConfirmDialog extends StatelessWidget {
   /// What going ahead does.
   final VoidCallback onConfirm;
 
-  /// Whether going ahead destroys something, a delete, a retrieve over the project or closing it, so its button is red (Muteb, 19 Nov 2026).
+  /// Whether going ahead destroys something, a delete, a retrieve over the project or closing it, so its button is red (the owner, 19 Nov 2026).
   final bool destroys;
 
   /// What the question is about.

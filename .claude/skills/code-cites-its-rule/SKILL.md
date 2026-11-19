@@ -13,11 +13,11 @@ REDIX's business is written down before it is built: the BRS numbers every rule 
 
 ## 1. The doc comment names the rule
 
-REDIX code carries doc comments (`public_member_api_docs` is on), and the rule goes in them, with the date and Muteb's word when the rule came from him:
+REDIX code carries doc comments (`public_member_api_docs` is on), and the rule goes in them, with the date and the owner's word when the rule came from him:
 
 ```dart
-/// The one way a row is removed (Muteb, 8 Nov 2026, redix-api #102) ... The swipe does not remove: the row asks in place,
-/// حذف and إلغاء inside it, never a window over the screen (Muteb, 12 Nov 2026, redix-api #119).
+/// The one way a row is removed (the owner, 8 Nov 2026, redix-api #102) ... The swipe does not remove: the row asks in place,
+/// حذف and إلغاء inside it, never a window over the screen (the owner, 12 Nov 2026, redix-api #119).
 class SwipeToRemove extends StatefulWidget {
 ```
 
@@ -46,7 +46,7 @@ A comment naming a rule the BRS or the use case page does not hold is worse than
 
 ## When there is no rule yet
 
-Write the rule first. When the business is unclear or two rules disagree, stop: it is an open question for Muteb, never a guess in code (`redix-code-standard`). A rule that cannot be written in one plain sentence usually means the design is wrong.
+Write the rule first. When the business is unclear or two rules disagree, stop: it is an open question for the owner, never a guess in code (`redix-code-standard`). A rule that cannot be written in one plain sentence usually means the design is wrong.
 
 ## When a method carries no rule
 

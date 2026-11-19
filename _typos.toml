@@ -11,7 +11,7 @@ extend-exclude = [
 # The Testin project, named in the skills brought from it.
 Testin = "Testin"
 testin = "testin"
-# Muteb's own words, quoted as he typed them.
+# The owner's own words, quoted as he typed them.
 poin = "poin"
 disabel = "disabel"
 conclution = "conclution"

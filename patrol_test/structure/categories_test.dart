@@ -20,7 +20,7 @@ String detailsOf(PatrolIntegrationTester $, String id) => $.tester.widget<Text>(
 void main() {
   phoneClass('Categories (UC-012)', () {
     phoneCase('a category is added', ($) async {
-      final manager = await Given.manager(project: 'غصون 7');
+      final manager = await Given.manager(project: 'مشروع B');
       await $.fromTheHome(manager, HomeScreen.categoriesKey(manager.projectId));
       await $.tapOn(CategoriesScreen.addCategoryKey);
       await $.saveName('تكاليف إدارية');

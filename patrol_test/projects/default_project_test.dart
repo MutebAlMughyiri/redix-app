@@ -38,7 +38,7 @@ Future<void> tick(PatrolIntegrationTester $, String projectId, {required bool ti
 void main() {
   phoneClass('The default project (UC-010)', () {
     phoneCase('AC-37.1: the star makes a project the default', ($) async {
-      final manager = await Given.manager(project: 'غصون 7', units: ['الفلة الشرقية', 'الفلة الشمالية']);
+      final manager = await Given.manager(project: 'مشروع B', units: ['الفلة الشرقية', 'الفلة الشمالية']);
       await $.onTheList(manager);
       expect(starOf($, manager.projectId), Icons.star_border);
       await $(ProjectsScreen.starKey(manager.projectId)).tap();
@@ -48,7 +48,7 @@ void main() {
     });
 
     phoneCase('Default project in Settings ticks the default', ($) async {
-      final manager = await Given.manager(project: 'غصون 7');
+      final manager = await Given.manager(project: 'مشروع B');
       await $.onTheList(manager);
       await openSheet($, manager.projectId);
       expect(isTicked($, manager.projectId), isFalse);
@@ -120,7 +120,7 @@ void main() {
       expect($(HomeScreen.titleKey), findsNothing);
     });
 
-    phoneCase('Switch project from a default opens the list, with the back arrow to Settings (Muteb, 11 Nov 2026)', ($) async {
+    phoneCase('Switch project from a default opens the list, with the back arrow to Settings (the owner, 11 Nov 2026)', ($) async {
       final manager = await Given.manager();
       await Given.defaultProject(manager);
       await $.startApp();

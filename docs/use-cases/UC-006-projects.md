@@ -17,7 +17,7 @@
 | Switch project | `SharedSettingsScreen.switchProjectKey` | Goes to the list (UC-010) |
 | Default project | `SharedSettingsScreen.defaultProjectKey` | Chooses the project sign-in opens |
 
-More info opens from a project's home (`HomeScreen.projectInfoKey`), for everyone in it (Muteb, 9 Nov 2026).
+More info opens from a project's home (`HomeScreen.projectInfoKey`), for everyone in it (the owner, 9 Nov 2026).
 
 [More info](../guide/projects.md#more-info), `ProjectInfoScreen` at `/projects/:projectId/info`, reading the project live from the app's list:
 

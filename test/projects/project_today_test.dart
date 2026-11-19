@@ -9,7 +9,7 @@ import '../app_harness.dart';
 
 void main() {
   Project projectIn(Map<String, Object> zone) => Project.fromJson({
-    'id': 'project-0', 'name': 'غصون 6', 'startDate': '2026-11-01', 'status': 'active', 'rejectionReason': '', 'description': '', 'isInactive': false,
+    'id': 'project-0', 'name': 'مشروع A', 'startDate': '2026-11-01', 'status': 'active', 'rejectionReason': '', 'description': '', 'isInactive': false,
     'holdsEntries': false, 'units': <Object>[], 'permissions': <Object>[], ...zone,
   });
 

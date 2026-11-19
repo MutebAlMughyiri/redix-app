@@ -14,7 +14,7 @@ import '../support/phone_case.dart';
 import '../support/steps.dart';
 
 void main() {
-  phoneClass('The role name (Muteb, 9 Nov 2026)', () {
+  phoneClass('The role name (the owner, 9 Nov 2026)', () {
     phoneCase('a role name typed in Users is kept per person per project, and shows on the home and in Settings', ($) async {
       final manager = await Given.manager();
       final member = await Given.member(manager);
@@ -46,14 +46,14 @@ void main() {
 
     phoneCase('changing only the role name leaves the name and mobile as they were', ($) async {
       final manager = await Given.manager();
-      final member = await Given.member(manager, name: 'نواف', mobile: '0533333333');
+      final member = await Given.member(manager, name: 'B', mobile: '0533333333');
       await $.fromTheHome(manager, HomeScreen.usersKey(manager.projectId));
       await $.reach($(UsersScreen.nameKey(member.id)));
       await $.menuChoice(UsersScreen.menuKey(member.id), UsersScreen.editKey);
       await $.fill(UsersScreen.editRoleNameKey, 'مشرف');
       await $(ChangeDialog.saveKey).tap();
       await $.gone($(UsersScreen.editRoleNameKey));
-      await $.says(UsersScreen.nameKey(member.id), 'نواف');
+      await $.says(UsersScreen.nameKey(member.id), 'B');
       await $.says(UsersScreen.detailsKey(member.id), '${member.username} · مشرف · 0533333333');
     });
 

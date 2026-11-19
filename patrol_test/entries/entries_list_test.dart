@@ -37,7 +37,7 @@ Future<void> findNumber(PatrolIntegrationTester $, int number) async {
 
 void main() {
   phoneClass('The list of entries (UC-033)', () {
-    phoneCase('Muteb, 12 Nov 2026: everyone sees all entries from the start, and قيودي keeps their own', ($) async {
+    phoneCase('the owner, 12 Nov 2026: everyone sees all entries from the start, and قيودي keeps their own', ($) async {
       final manager = await Given.manager();
       final account = await Given.account(manager);
       final member = await Given.member(manager, permissions: [Permission.recordEntries, Permission.chargeAnyAccount]);
@@ -54,7 +54,7 @@ void main() {
     phoneCase('redix-api #110: القيود lists every kind: expenses, revenue and partners\' money, each saying what it is', ($) async {
       final manager = await Given.manager();
       final account = await Given.account(manager);
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final purchase = await Given.entry(manager, accountId: account);
       final revenue = await Given.revenue(manager, accountId: account);
       final money = await Given.partnerMoney(manager, partner, accountId: account);

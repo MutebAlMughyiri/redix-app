@@ -4,7 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// The checks both test folders make of what a screen shows, in one copy (findings row 226, Muteb, 16 Nov 2026): the widget tests reach them through app_harness.dart, and the
+// The checks both test folders make of what a screen shows, in one copy (findings row 226, the owner, 16 Nov 2026): the widget tests reach them through app_harness.dart, and the
 // phone's cases through patrol_test/support/steps.dart, so a fix to one check reaches both.
 
 /// Whether what holds the focus, the field the keyboard types into, sits inside the element keyed [key].

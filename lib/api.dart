@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 /// The API's address, from the environment's config file: `--dart-define-from-file=config/dev.json` for automated runs, `config/qa.json` for
-/// Muteb's own testing, `config/prod.json` for a release (redix-api #118). Empty when the app was built without one.
+/// The owner's own testing, `config/prod.json` for a release (redix-api #118). Empty when the app was built without one.
 const apiBaseUrl = String.fromEnvironment('API_BASE_URL');
 
 /// The host a shared entry's link names (redix-app #83), from the environment's config file like [apiBaseUrl]: the go-live domain in `config/prod.json`; `redix.test`

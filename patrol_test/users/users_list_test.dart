@@ -19,10 +19,10 @@ import '../support/steps.dart';
 void main() {
   phoneClass('The people of a project (UC-007 and UC-008)', () {
     phoneCase('everyone added shows, each row with the whole menu', ($) async {
-      final manager = await Given.manager(project: 'غصون 7', manager: 'ريم');
-      final member = await Given.member(manager, name: 'نواف', mobile: '0533333333');
+      final manager = await Given.manager(project: 'مشروع B', manager: 'ريم');
+      final member = await Given.member(manager, name: 'B', mobile: '0533333333');
       await $.fromTheHome(manager, HomeScreen.usersKey(manager.projectId));
-      await $.says(UsersScreen.nameKey(member.id), 'نواف');
+      await $.says(UsersScreen.nameKey(member.id), 'B');
       await $.picture('users');
       await $.tapOn(UsersScreen.menuKey(member.id));
       for (final key in [UsersScreen.editKey, UsersScreen.permissionsKey, UsersScreen.resetPasswordKey, UsersScreen.disableKey]) {
@@ -31,8 +31,8 @@ void main() {
     });
 
     phoneCase('the people show in Arabic too', ($) async {
-      final manager = await Given.manager(project: 'غصون 7', manager: 'ريم');
-      await Given.member(manager, name: 'نواف', mobile: '0533333333');
+      final manager = await Given.manager(project: 'مشروع B', manager: 'ريم');
+      await Given.member(manager, name: 'B', mobile: '0533333333');
       await $.onTheList(manager);
       await $(ProjectsScreen.sharedSettingsKey).tap();
       await $.goTo($(LanguageSwitch.arabicKey));
@@ -41,7 +41,7 @@ void main() {
       await $.tapOn(SharedSettingsScreen.switchProjectKey);
       await $.openProject(manager.projectId);
       await $.tapOn(HomeScreen.usersKey(manager.projectId));
-      await $.idOf('users.name.', () => Given.userNamed(manager, 'نواف'));
+      await $.idOf('users.name.', () => Given.userNamed(manager, 'B'));
       await $.picture('users-arabic');
     });
 

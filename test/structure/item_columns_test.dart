@@ -28,7 +28,7 @@ void main() {
 
   /// The tiles item of a project, opened as far as its own columns: a core date, a unit that is not core, and a custom area.
   Future<({FakeApi api, String date, String unit, String area})> openColumns(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
-    final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions);
+    final api = FakeApi()..addProject('مشروع A', status: status, permissions: permissions);
     final finishing = api.addCategory('project-0', 'التشطيب');
     api.addItem(finishing, 'البلاط');
     final date = api.addColumn(itemPath, 'التاريخ', dataType: 'date', isCore: true, isRequired: true, showInReports: true);
@@ -306,7 +306,7 @@ void main() {
   });
 
   testWidgets('a list that cannot be read offers to try again', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     api.addItem(api.addCategory('project-0', 'التشطيب'), 'البلاط');
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.categoriesKey('project-0'));

@@ -1,11 +1,11 @@
 ---
 name: redix-review
-description: What "review" means in the REDIX app - Muteb's own review of a change before it is committed - simple, clean, well structured, no customization, named and cited from the business, then the checks in order. Read it whenever he says "review", "our review", "review then commit" or "redix review", and before committing any change to redix-app.
+description: What "review" means in the REDIX app - the owner's own review of a change before it is committed - simple, clean, well structured, no customization, named and cited from the business, then the checks in order. Read it whenever he says "review", "our review", "review then commit" or "redix review", and before committing any change to redix-app.
 ---
 
 # REDIX review (app)
 
-> Brought from the Testin project, 12 November 2026, where Muteb defined it: *"our review ... simple code, clean, well-structured, no customization and every thing based on business. no redundant as possible unless it required to make code simpler. rules and use cases added to each method and class."*
+> Brought from the Testin project, 12 November 2026, where the owner defined it: *"our review ... simple code, clean, well-structured, no customization and every thing based on business. no redundant as possible unless it required to make code simpler. rules and use cases added to each method and class."*
 
 A review is not a bug hunt. It takes a change that already works and makes it **simpler without changing what it does**, then commits it. What a user sees stays exactly as tested on the phone; only the shape of the code moves.
 
@@ -38,9 +38,9 @@ In this order.
 
 1. `flutter analyze`: zero issues. Never `dart format` on the repo's files.
 2. `flutter test`: every widget test.
-3. On the phone: build and install with `adb install -r`; Muteb tests by hand, and the change is fixed and reinstalled until he says ok. Never `adb shell monkey`, never touch the phone's rotation.
-4. Patrol, the classes the change touches: `patrol test` on the phone (on Muteb's PC, `C:\Users\mtb\REDIX\.night\patrol.ps1 -Package @('entries')`). The full run (`run-all.ps1`) comes before a push.
+3. On the phone: build and install with `adb install -r`; the owner tests by hand, and the change is fixed and reinstalled until he says ok. Never `adb shell monkey`, never touch the phone's rotation.
+4. Patrol, the classes the change touches: `patrol test` on the phone (on the owner's PC, `C:\Users\mtb\REDIX\.night\patrol.ps1 -Package @('entries')`). The full run (`run-all.ps1`) comes before a push.
 
 ## Reporting it
 
-One short table of what the review changed and why, then the checks and their results (a run in one line: "batch 5 ended 13:05: 103 pass, 0 fail, 0 skip"), then any finding left as a finding. Commit on `main`, one commit per use case, ending with the `Co-Authored-By` line and no session link. Push only when Muteb says push.
+One short table of what the review changed and why, then the checks and their results (a run in one line: "batch 5 ended 13:05: 103 pass, 0 fail, 0 skip"), then any finding left as a finding. Commit on `main`, one commit per use case, ending with the `Co-Authored-By` line and no session link. Push only when the owner says push.

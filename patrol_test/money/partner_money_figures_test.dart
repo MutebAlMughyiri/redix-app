@@ -30,10 +30,10 @@ void main() {
   phoneClass('A partner\'s money in the figures (BR-05 and BR-06)', () {
     phoneCase('BR-06: a contribution entered on the phone waits and moves nothing, and approving it raises the capital, the revenue, the surplus and the account', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final account = await Given.account(manager);
       await $.onAddEntry(manager);
-      await $.pickTable(partner, search: 'هيثم');
+      await $.pickTable(partner, search: 'C');
       await $.fill(AddEntryScreen.amountKey, '5000');
       await $.tapOn(PaymentChoices.accountKey(account));
       await $.sendEntry();
@@ -53,7 +53,7 @@ void main() {
 
     phoneCase('BR-05: a withdrawal lowers the capital, the revenue, the surplus and the account', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final account = await Given.account(manager);
       await approvedMoney(manager, partner, 1000, accountId: account);
       await approvedMoney(manager, partner, 300, withdrawal: true, accountId: account);
@@ -67,7 +67,7 @@ void main() {
 
     phoneCase('BR-10: money waiting leaves the partner\'s balance alone', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       await approvedMoney(manager, partner, 1000);
       await Given.partnerMoney(manager, partner, amount: 500);
       await onPartners($, manager);
@@ -79,7 +79,7 @@ void main() {
 
     phoneCase('a withdrawal waiting shows as less revenue waiting', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       await approvedMoney(manager, partner, 1000);
       await Given.partnerMoney(manager, partner, amount: 700, withdrawal: true);
       await $.onTheHome(manager);
@@ -89,7 +89,7 @@ void main() {
 
     phoneCase('BR-10: rejected money counts nowhere', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       await approvedMoney(manager, partner, 1000);
       await Given.entryRejected(manager, await Given.partnerMoney(manager, partner, amount: 500));
       await onPartners($, manager);
@@ -101,7 +101,7 @@ void main() {
 
     phoneCase('AC-50.1: a removed withdrawal puts the balance, the surplus and the account back', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final account = await Given.account(manager);
       await approvedMoney(manager, partner, 1000, accountId: account);
       await Given.entryRemoved(manager, await approvedMoney(manager, partner, 300, withdrawal: true, accountId: account));
@@ -114,8 +114,8 @@ void main() {
 
     phoneCase('each partner\'s share is their balance over the total', ($) async {
       final manager = await Given.manager();
-      final first = await Given.partner(manager, 'هيثم');
-      final second = await Given.partner(manager, 'نواف');
+      final first = await Given.partner(manager, 'C');
+      final second = await Given.partner(manager, 'B');
       await approvedMoney(manager, first, 1000);
       await approvedMoney(manager, second, 3000);
       await onPartners($, manager);
@@ -126,8 +126,8 @@ void main() {
 
     phoneCase('a withdrawal changes every partner\'s share', ($) async {
       final manager = await Given.manager();
-      final first = await Given.partner(manager, 'هيثم');
-      final second = await Given.partner(manager, 'نواف');
+      final first = await Given.partner(manager, 'C');
+      final second = await Given.partner(manager, 'B');
       await approvedMoney(manager, first, 1000);
       await approvedMoney(manager, second, 3000);
       await approvedMoney(manager, second, 1000, withdrawal: true);

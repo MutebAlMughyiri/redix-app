@@ -12,7 +12,7 @@ Decided at app start and at sign-in, and nowhere else:
 
 | State | Lands on |
 | --- | --- |
-| A default, still with access: a default always opens directly (Muteb, 8 Nov 2026) | That project's home |
+| A default, still with access: a default always opens directly (the owner, 8 Nov 2026) | That project's home |
 | Anything else | The list |
 
 ## Screens

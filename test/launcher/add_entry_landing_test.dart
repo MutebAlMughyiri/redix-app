@@ -16,10 +16,10 @@ import '../app_harness.dart';
 void main() {
   const keptWithDefault = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": false, "defaultProjectId": "project-0"}';
 
-  /// The API holding غصون 6, where the signed-in user holds [permissions], their default project unless [hasDefault] is false.
+  /// The API holding مشروع A, where the signed-in user holds [permissions], their default project unless [hasDefault] is false.
   FakeApi apiWith({List<String> permissions = field, bool hasDefault = true}) => FakeApi()
     ..defaultProjectId = hasDefault ? 'project-0' : ''
-    ..addProject('غصون 6', permissions: permissions);
+    ..addProject('مشروع A', permissions: permissions);
 
   /// Follows `/add-entry` from the screen keyed [from], as a tap on the icon's menu or the widget does with the app open.
   Future<void> follow(WidgetTester tester, FakeApi api, Key from) =>
@@ -33,7 +33,7 @@ void main() {
 
     expect(find.byKey(AddEntryScreen.tableKey), findsOneWidget);
     await pressBack(tester, api);
-    expect(tester.widget<Text>(find.byKey(HomeScreen.titleKey)).data, 'غصون 6');
+    expect(tester.widget<Text>(find.byKey(HomeScreen.titleKey)).data, 'مشروع A');
   });
 
   testWidgets('redix-app #86 AC-86.1: started by the link, before the projects are read, the app still lands on Add entry in the default project', (tester) async {
@@ -87,11 +87,11 @@ void main() {
     expect(find.byKey(AddEntryScreen.tableKey), findsNothing);
 
     await act(tester, api, () async {
-      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'nawaf');
+      await tester.enterText(find.byKey(SignInScreen.usernameKey), 'b');
       await tester.enterText(find.byKey(SignInScreen.passwordKey), 'secret');
       await tester.tap(find.byKey(SignInScreen.submitKey));
     });
-    expect(tester.widget<Text>(find.byKey(HomeScreen.titleKey)).data, 'غصون 6');
+    expect(tester.widget<Text>(find.byKey(HomeScreen.titleKey)).data, 'مشروع A');
     expect(find.byKey(AddEntryScreen.tableKey), findsNothing);
   });
 }

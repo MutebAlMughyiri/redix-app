@@ -28,10 +28,10 @@ import 'my_email_dialog.dart';
 import '../format/parts_line.dart';
 import '../ui/refusal_text.dart';
 
-/// Settings (الإعدادات), all on one screen (Muteb, 9 Nov 2026): who is signed in, the way back to the project list, the default project, the registered projects for the
+/// Settings (الإعدادات), all on one screen (the owner, 9 Nov 2026): who is signed in, the way back to the project list, the default project, the registered projects for the
 /// admin, the language (UC-004), the appearance (redix-app #87, #97), how many entries the home shows at a time (redix-app #105), signing in with fingerprint or face (UC-011), «بريدي», the
 /// user's own email changed with a code to the new address (redix-api #127, AC-10.4), the way to change the password (UC-003), and signing out
-/// (UC-062), each in its own border (Muteb, 10 Nov 2026: "i like borders for each component"). A project's own screens open from its home.
+/// (UC-062), each in its own border (the owner, 10 Nov 2026: "i like borders for each component"). A project's own screens open from its home.
 class SharedSettingsScreen extends StatefulWidget {
   /// The screen for the user signed in through [session], opened from [project], whose [projects] the default is chosen among, switching [language] and the mode kept in
   /// [localConfig].

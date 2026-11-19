@@ -23,34 +23,34 @@ void main() {
   const keptDirect = '{"accessToken": "kept-access", "refreshToken": "kept-refresh", "mustChangePassword": false, "defaultProjectId": "project-0"}';
 
   testWidgets('a card opens its home, whose title names it, and back returns to the list', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openHome(tester, api);
 
-    expect(text(tester, HomeScreen.titleKey), 'غصون 6');
+    expect(text(tester, HomeScreen.titleKey), 'مشروع A');
 
     await act(tester, api, () => tester.pageBack());
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
 
-  testWidgets('Muteb, 9 Nov 2026: the role name typed for the signed-in user shows under the project name, and nothing shows where none was typed', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: the role name typed for the signed-in user shows under the project name, and nothing shows where none was typed', (tester) async {
     final api = FakeApi()
-      ..addProject('غصون 6', roleName: 'مدير المشروع')
-      ..addProject('غصون 7');
+      ..addProject('مشروع A', roleName: 'مدير المشروع')
+      ..addProject('مشروع B');
     await openHome(tester, api);
 
-    expect(text(tester, HomeScreen.titleKey), 'غصون 6');
+    expect(text(tester, HomeScreen.titleKey), 'مشروع A');
     expect(text(tester, HomeScreen.roleNameKey), 'مدير المشروع');
 
     await act(tester, api, () => tester.pageBack());
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-1'))));
-    expect(text(tester, HomeScreen.titleKey), 'غصون 7');
+    expect(text(tester, HomeScreen.titleKey), 'مشروع B');
     expect(find.byKey(HomeScreen.roleNameKey), findsNothing);
   });
 
   testWidgets('the buttons follow the permissions in the open project', (tester) async {
     final api = FakeApi()
-      ..addProject('غصون 6')
-      ..addProject('غصون 7', permissions: ['readProject']);
+      ..addProject('مشروع A')
+      ..addProject('مشروع B', permissions: ['readProject']);
     await openHome(tester, api);
     await showProjectSetting(tester, HomeScreen.usersKey('project-0'));
     expect(find.byKey(HomeScreen.usersKey('project-0')), findsOneWidget);
@@ -67,18 +67,18 @@ void main() {
   testWidgets('AC-37.1: with a default, the app opens that project at start, with no back arrow', (tester) async {
     final api = FakeApi()
       ..defaultProjectId = 'project-0'
-      ..addProject('غصون 6');
+      ..addProject('مشروع A');
 
     await pumpRedix(tester, api, stored: {'session': keptDirect});
 
-    expect(text(tester, HomeScreen.titleKey), 'غصون 6');
+    expect(text(tester, HomeScreen.titleKey), 'مشروع A');
     expect(GoRouter.of(tester.element(find.byKey(HomeScreen.titleKey))).canPop(), isFalse, reason: 'nothing behind the home, so no back arrow');
   });
 
   testWidgets('Switch project reaches the list from a project opened directly, and stays there', (tester) async {
     final api = FakeApi()
       ..defaultProjectId = 'project-0'
-      ..addProject('غصون 6');
+      ..addProject('مشروع A');
     await pumpRedix(tester, api, stored: {'session': keptDirect});
 
     await openSettings(tester, api);
@@ -89,7 +89,7 @@ void main() {
   });
 
   testWidgets('a project gone while open returns to the list', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openHome(tester, api);
 
     await openSettings(tester, api);
@@ -100,7 +100,7 @@ void main() {
   });
 
   testWidgets('redix-api #126 R4: made inactive in the open project, the project list replaces its screens at the next renewal, the project gray on it', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openHome(tester, api);
     await openProjectInfo(tester, api);
     await sendToBackground(tester, api);
@@ -115,7 +115,7 @@ void main() {
   });
 
   testWidgets('redix-api #126 R4: still active in the open project, a renewal leaves its screens where they were', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openHome(tester, api);
     await openProjectInfo(tester, api);
     await sendToBackground(tester, api);
@@ -129,7 +129,7 @@ void main() {
 
   testWidgets('with no network and nothing kept the home says so, and Try again reads it', (tester) async {
     final store = MemoryStore();
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
 
     api.online = false;
@@ -143,7 +143,7 @@ void main() {
   });
 
   testWidgets('R1: the home shows no start date, status or units, only its buttons', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية']);
     await openHome(tester, api);
 
     for (final key in [ProjectInfoScreen.detailsKey, ProjectInfoScreen.statusKey, ProjectInfoScreen.unitKey('project-0-unit-0'), ProjectInfoScreen.noUnitsKey, HomeScreen.finishedKey('project-0')]) {
@@ -156,7 +156,7 @@ void main() {
 
   testWidgets('entries that cannot be read say so on the home, never that there are none', (tester) async {
     final api = FakeApi()
-      ..addProject('غصون 6')
+      ..addProject('مشروع A')
       ..addEntry(status: 'approved')
       ..unreachable.add('/projects/project-0/entries');
 
@@ -166,13 +166,13 @@ void main() {
   });
 
   testWidgets('a project with no entries says so on the home', (tester) async {
-    await openProject(tester, FakeApi()..addProject('غصون 6'));
+    await openProject(tester, FakeApi()..addProject('مشروع A'));
 
     expect(text(tester, HomeScreen.entriesEmptyKey('project-0')), 'en entries.empty');
   });
 
   testWidgets('R13: a finished project stays listed, and its home says in one line that it is finished and read-only', (tester) async {
-    final api = FakeApi()..addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']);
+    final api = FakeApi()..addProject('مشروع E', status: 'finished', units: ['الفلة الشرقية']);
     await openHome(tester, api);
 
     expect(tester.widget<Text>(find.byKey(HomeScreen.finishedKey('project-0').title)).data, 'en projects.finished · en projects.readOnly');
@@ -180,7 +180,7 @@ void main() {
   });
 
   testWidgets('a reader or a field supervisor has More info and their permissions on the home, and nothing that changes the project', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: reader);
+    final api = FakeApi()..addProject('مشروع A', permissions: reader);
     await openHome(tester, api);
 
     await showProjectSetting(tester, HomeScreen.projectInfoKey('project-0'));
@@ -196,7 +196,7 @@ void main() {
   });
 
   testWidgets('whoever only manages users has Users, and More info offers them no change', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: ['manageUsers', 'readProject', 'seeAllCapital']);
+    final api = FakeApi()..addProject('مشروع A', permissions: ['manageUsers', 'readProject', 'seeAllCapital']);
     await openHome(tester, api);
 
     await showProjectSetting(tester, HomeScreen.usersKey('project-0'));
@@ -207,7 +207,7 @@ void main() {
   });
 
   testWidgets('whoever manages the project but not its users has Add unit and Close in More info, but no Users', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: ['readProject', 'seeAllCapital', 'manageProject']);
+    final api = FakeApi()..addProject('مشروع A', permissions: ['readProject', 'seeAllCapital', 'manageProject']);
     await openHome(tester, api);
 
     await showProjectSetting(tester, HomeScreen.usersKey('project-0'));
@@ -218,7 +218,7 @@ void main() {
   });
 
   testWidgets('Users stays on a finished project, and the list is read again on coming back', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', status: 'finished', permissions: ['manageUsers', 'readProject']);
+    final api = FakeApi()..addProject('مشروع A', status: 'finished', permissions: ['manageUsers', 'readProject']);
     await openHome(tester, api);
 
     await scrollAndTap(tester, api, HomeScreen.usersKey('project-0'));

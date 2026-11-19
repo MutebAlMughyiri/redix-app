@@ -9,9 +9,9 @@ import 'app_color.dart';
 import 'part_keys.dart';
 import 'messages.dart';
 
-/// The one way a row is removed (Muteb, 8 Nov 2026, redix-api #102), and the one frame of a row that can be: an outlined card. Where [mayRemove] is true a red bar lies inside
+/// The one way a row is removed (the owner, 8 Nov 2026, redix-api #102), and the one frame of a row that can be: an outlined card. Where [mayRemove] is true a red bar lies inside
 /// the card along its end edge (redix-app #88), and the row is swiped from that edge toward its start, which turns with the language, past 40% of its width; red with a bin and
-/// the word Remove shows behind it while it moves. The swipe does not remove: the row asks in place, حذف and إلغاء inside it, never a window over the screen (Muteb, 12 Nov
+/// the word Remove shows behind it while it moves. The swipe does not remove: the row asks in place, حذف and إلغاء inside it, never a window over the screen (the owner, 12 Nov
 /// 2026, redix-api #119); إلغاء, or a tap anywhere else, puts it back. حذف removes it through [onRemove]; a refusal shows and the row stays. Where the removal can be undone,
 /// the bar at the bottom offers تراجع through [onUndo] for [undoTime]. Where [mayRemove] is false the card has no bar and does not move.
 class SwipeToRemove extends StatefulWidget {

@@ -23,7 +23,7 @@ void main() {
     tester.view.physicalSize = const Size(900, 2600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة']);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, units: ['الفلة']);
     arrange(api);
     final capture = FakeCapture();
     await openProject(tester, api, capture: capture);
@@ -63,13 +63,13 @@ void main() {
     tester.view.physicalSize = const Size(360, 640);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final api = FakeApi()..addProject('مشروع غصون السادس في شمال مدينة الرياض بالمملكة', permissions: managerAndFinance, units: ['الفلة']);
+    final api = FakeApi()..addProject('مشروع A السادس في شمال مدينة الرياض بالمملكة', permissions: managerAndFinance, units: ['الفلة']);
     api
       ..addAccount('project-0', longName, balance: 9999999.99)
       ..reconciliationAnswer = reconciled(9999999.99, 8888888.88, balances: [balanceRow(longName, 9999999.99, 8888888.88)])
       ..capitalTotal = 9999999.99
       ..addMovement(attachmentId: 'attachment-1', amount: -9999999.99);
-    final partner = api.addPartner('project-0', 'متعب بن عبدالله بن محمد المغيري الشريك المؤسس في المشروع', userId: 'user-1', userName: 'نواف بن عبدالله بن محمد العتيبي');
+    final partner = api.addPartner('project-0', 'A بن عبدالله بن محمد Z الشريك المؤسس في المشروع', userId: 'user-1', userName: 'B بن عبدالله بن محمد العتيبي');
     api.addCapitalLine(partner['id']! as String, 9999999.99, 66.6666666667);
     await openProject(tester, api);
 
@@ -104,7 +104,7 @@ void main() {
       expect(tester.widget<Text>(find.byKey(ReconciliationCard.differenceKey)).data, '(99.25)');
     });
 
-    testWidgets('Muteb, 9 Nov 2026: there is no Refresh button, and pulling the actual balances down reads them again', (tester) async {
+    testWidgets('the owner, 9 Nov 2026: there is no Refresh button, and pulling the actual balances down reads them again', (tester) async {
       final (:api, capture: _) = await openBalances(tester, (api) {
         api
           ..addAccount('project-0', 'حساب')
@@ -135,12 +135,12 @@ void main() {
       late String bankId;
       late String cashId;
       await openBalances(tester, (api) {
-        bankId = api.addAccount('project-0', 'الراجحي', balance: 800)['id']! as String;
+        bankId = api.addAccount('project-0', 'بنك A', balance: 800)['id']! as String;
         cashId = api.addAccount('project-0', 'عهدة الموقع', type: 'cashCustody', balance: 200)['id']! as String;
         api.reconciliationAnswer = reconciled(1000, 900.75, balances: [balanceRow(bankId, 800, 700.75), balanceRow(cashId, 200, 200)]);
       });
 
-      expect(tester.widget<Text>(find.byKey(AccountsScreen.nameKey(bankId))).data, 'الراجحي');
+      expect(tester.widget<Text>(find.byKey(AccountsScreen.nameKey(bankId))).data, 'بنك A');
       expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(bankId))).data, '800.00');
       expect(details(tester, bankId), 'en accounts.typeBank · en accounts.counted');
       expect(tester.widget<Text>(find.byKey(AccountsScreen.balanceKey(cashId))).data, '200.00');
@@ -154,7 +154,7 @@ void main() {
       late String checkedId;
       late String addedId;
       final (:api, capture: _) = await openBalances(tester, (api) {
-        checkedId = api.addAccount('project-0', 'الراجحي')['id']! as String;
+        checkedId = api.addAccount('project-0', 'بنك A')['id']! as String;
         addedId = api.addAccount('project-0', 'عهدة جديدة', type: 'cashCustody')['id']! as String;
         api.reconciliationAnswer = reconciled(1000, 700, balances: [balanceRow(checkedId, 1000, 700), balanceRow(addedId, 0, 0, wasChecked: false)]);
       });
@@ -238,7 +238,7 @@ void main() {
     testWidgets('AC-27.1: each partner shows their balance and a share with ten decimals, under the total', (tester) async {
       late String partner;
       await openPartners(tester, (api) {
-        partner = api.addPartner('project-0', 'متعب')['id']! as String;
+        partner = api.addPartner('project-0', 'A')['id']! as String;
         api
           ..capitalTotal = 3000
           ..addCapitalLine(partner, 2000, 66.6666666667);
@@ -249,10 +249,10 @@ void main() {
       expect(tester.widget<Text>(find.byKey(PartnersScreen.balanceKey(partner))).data, '2,000.00');
     });
 
-    testWidgets('Muteb, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the capital above the partners again', (tester) async {
+    testWidgets('the owner, 9 Nov 2026: there is no Refresh button, and pulling the list down reads the capital above the partners again', (tester) async {
       late String partner;
       final (:api, capture: _) = await openPartners(tester, (api) {
-        partner = api.addPartner('project-0', 'متعب')['id']! as String;
+        partner = api.addPartner('project-0', 'A')['id']! as String;
         api
           ..capitalTotal = 3000
           ..addCapitalLine(partner, 3000, 100);
@@ -280,7 +280,7 @@ void main() {
     testWidgets('a partner opens to their movements, each with its receipt', (tester) async {
       late String partner;
       final (:api, capture: _) = await openPartners(tester, (api) {
-        partner = api.addPartner('project-0', 'متعب')['id']! as String;
+        partner = api.addPartner('project-0', 'A')['id']! as String;
         api
           ..addMovement(attachmentId: 'attachment-1')
           ..addMovement(movementName: 'سحب مبلغ', amount: -50, cashReason: 'نقداً');
@@ -298,7 +298,7 @@ void main() {
     testWidgets('redix-api #119: a movement swiped away comes back from the bar, and the capital is read again', (tester) async {
       late String partner;
       final (:api, capture: _) = await openPartners(tester, (api) {
-        partner = api.addPartner('project-0', 'متعب')['id']! as String;
+        partner = api.addPartner('project-0', 'A')['id']! as String;
         api.addMovement();
       }, permissions: [...managerAndFinance, 'removeApprovedEntries']);
       await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.nameKey(partner))));
@@ -315,7 +315,7 @@ void main() {
     testWidgets('redix-api #119: whoever holds the removal swipes a movement away, and the capital is read again', (tester) async {
       late String partner;
       final (:api, capture: _) = await openPartners(tester, (api) {
-        partner = api.addPartner('project-0', 'متعب')['id']! as String;
+        partner = api.addPartner('project-0', 'A')['id']! as String;
         api.addMovement();
       }, permissions: [...managerAndFinance, 'removeApprovedEntries']);
       await act(tester, api, () => tester.tap(find.byKey(PartnersScreen.nameKey(partner))));

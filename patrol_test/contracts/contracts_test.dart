@@ -53,7 +53,7 @@ Future<void> pickItem(PatrolIntegrationTester $, Person person, String name) asy
 void main() {
   phoneClass('Contracts (UC-020)', () {
     phoneCase('a fixed-value contract is added with its contractor, item and value', ($) async {
-      final manager = await Given.manager(project: 'غصون 7');
+      final manager = await Given.manager(project: 'مشروع B');
       final supplier = await Given.supplier(manager, name: 'مبلط الغربية', vatNumber: Given.vatNumber());
       await onContracts($, manager);
       await $.tapOn(ContractsScreen.addKey);
@@ -205,7 +205,7 @@ void main() {
       await $.says(ContractsScreen.documentKey((await Given.contractDocumentIds(manager, contract.id)).single), madeUpDocumentName);
     });
 
-    phoneCase('AC-31.1, Muteb, 12 Nov 2026: a contract\'s ⋮ saves its own workbook in the phone\'s Download folder', ($) async {
+    phoneCase('AC-31.1, the owner, 12 Nov 2026: a contract\'s ⋮ saves its own workbook in the phone\'s Download folder', ($) async {
       final manager = await Given.manager();
       final contract = await Given.contract(manager);
       await onContracts($, manager);
@@ -219,7 +219,7 @@ void main() {
       await Pc.expectDownloaded(contract.contractor);
     });
 
-    phoneCase('Muteb, 12 Nov 2026: tapping a contract opens its own table, with its payments and what remains', ($) async {
+    phoneCase('the owner, 12 Nov 2026: tapping a contract opens its own table, with its payments and what remains', ($) async {
       final manager = await Given.manager();
       final contract = await Given.contract(manager, value: 1000);
       await Given.entriesApproved(manager, [await Given.contractorPayment(manager, contract, amount: 400)]);

@@ -13,8 +13,8 @@ void main() {
     final qr = InvoiceQr.parse(madeUpQr());
 
     expect(qr.isNone, isFalse);
-    expect(qr.sellerName, 'شركة البواني للتجارة');
-    expect(qr.vatNumber, '310823353100003');
+    expect(qr.sellerName, 'شركة A للتجارة');
+    expect(qr.vatNumber, '300000000000003');
     expect(qr.issuedAt.year, 2026);
     expect(qr.issuedAt.month, 10);
     expect(qr.issuedAt.day, 26);
@@ -48,7 +48,7 @@ void main() {
   });
 
   test('AC-11.2: a code missing a field, or with an amount or a date that is none, is no QR code', () {
-    expect(InvoiceQr.parse(tlv({1: 'شركة', 2: '310823353100003', 3: '2026-10-26T14:25:00Z', 4: '6000.00'})).isNone, isTrue);
+    expect(InvoiceQr.parse(tlv({1: 'شركة', 2: '300000000000003', 3: '2026-10-26T14:25:00Z', 4: '6000.00'})).isNone, isTrue);
     expect(InvoiceQr.parse(madeUpQr(total: 'كثير')).isNone, isTrue);
     expect(InvoiceQr.parse(madeUpQr(vat: '')).isNone, isTrue);
     expect(InvoiceQr.parse(madeUpQr(time: 'أمس')).isNone, isTrue);

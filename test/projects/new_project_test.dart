@@ -34,27 +34,27 @@ void main() {
     final api = FakeApi();
     await openForm(tester, api);
 
-    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'مشروع B');
     await addUnit(tester, api, 'الفلة الشرقية');
     await addUnit(tester, api, 'الفلة الشمالية');
     await submit(tester, api);
 
     final (path, body) = api.sentProjectChanges.single;
     expect(path, '/projects');
-    expect(body['name'], 'غصون 7');
+    expect(body['name'], 'مشروع B');
     expect(body['units'], ['الفلة الشرقية', 'الفلة الشمالية']);
     expect(body['partners'], isEmpty);
     expect(find.byKey(NewProjectScreen.submitKey), findsNothing);
-    expect(tester.widget<Text>(find.byKey(ProjectsScreen.nameKey('project-0'))).data, 'غصون 7');
+    expect(tester.widget<Text>(find.byKey(ProjectsScreen.nameKey('project-0'))).data, 'مشروع B');
     expect(tester.widget<Text>(find.byKey(ProjectsScreen.detailsKey('project-0'))).data, 'الفلة الشرقية · الفلة الشمالية');
   });
 
-  testWidgets('redix-api #109 (Muteb, 8 Nov 2026: "we can declare the partners once create the project"): the partners declared, the one still typed last, go with the project, and a swipe takes one off', (tester) async {
+  testWidgets('redix-api #109 (the owner, 8 Nov 2026: "we can declare the partners once create the project"): the partners declared, the one still typed last, go with the project, and a swipe takes one off', (tester) async {
     final api = FakeApi();
     await openForm(tester, api);
 
-    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
-    for (final partner in ['متعب', 'نواف']) {
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'مشروع B');
+    for (final partner in ['A', 'B']) {
       await act(tester, api, () async {
         await tester.enterText(find.byKey(NewProjectScreen.partnerNameKey), partner);
         await tester.pump();
@@ -62,21 +62,21 @@ void main() {
         await tester.tap(find.byKey(NewProjectScreen.addPartnerKey));
       });
     }
-    expect(tester.widget<Text>(find.byKey(NewProjectScreen.partnerKey(1).title)).data, 'نواف');
+    expect(tester.widget<Text>(find.byKey(NewProjectScreen.partnerKey(1).title)).data, 'B');
     await swipeToRemove(tester, api, NewProjectScreen.partnerKey(1));
     await tester.enterText(find.byKey(NewProjectScreen.partnerNameKey), 'ريم');
     await submit(tester, api);
 
     final (_, body) = api.sentProjectChanges.single;
     expect(body['units'], isEmpty);
-    expect(body['partners'], ['متعب', 'ريم']);
+    expect(body['partners'], ['A', 'ريم']);
   });
 
   testWidgets('a unit typed but not yet added goes with the project', (tester) async {
     final api = FakeApi();
     await openForm(tester, api);
 
-    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'مشروع B');
     await addUnit(tester, api, 'الفلة الشرقية');
     await tester.enterText(find.byKey(NewProjectScreen.unitNameKey), 'الفلة الشمالية');
     await submit(tester, api);
@@ -88,7 +88,7 @@ void main() {
     final api = FakeApi();
     await openForm(tester, api);
 
-    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'مشروع B');
     await tester.enterText(find.byKey(NewProjectScreen.descriptionKey), 'ثلاث فلل في حي الياسمين.');
     await submit(tester, api);
 
@@ -100,7 +100,7 @@ void main() {
     final api = FakeApi();
     await openForm(tester, api);
 
-    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'مشروع B');
     await submit(tester, api);
 
     expect(api.sentProjectChanges.single.$2['description'], '');
@@ -123,7 +123,7 @@ void main() {
     final api = FakeApi();
     await openForm(tester, api);
 
-    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'مشروع B');
     await submit(tester, api);
 
     expect(api.sentProjectChanges.single.$2['units'], isEmpty);
@@ -134,7 +134,7 @@ void main() {
     final api = FakeApi();
     await openForm(tester, api);
 
-    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'مشروع B');
     await addUnit(tester, api, 'الفلة الشرقية');
     await addUnit(tester, api, 'الفلة الشمالية');
     expect(find.byKey(NewProjectScreen.unitKey(0).bar), findsOneWidget);
@@ -191,13 +191,13 @@ void main() {
   testWidgets('without a network the form says so, and nothing typed is lost', (tester) async {
     final api = FakeApi();
     await openForm(tester, api);
-    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'مشروع B');
 
     api.online = false;
     await submit(tester, api);
 
     expect(tester.widget<Text>(find.byKey(NewProjectScreen.messageKey)).data, 'en projects.noConnection');
-    expect(tester.widget<TextField>(find.byKey(NewProjectScreen.nameKey)).controller!.text, 'غصون 7');
+    expect(tester.widget<TextField>(find.byKey(NewProjectScreen.nameKey)).controller!.text, 'مشروع B');
   });
 
   testWidgets('the start date is today until changed, sent as a date and shown as dd.MM.yyyy', (tester) async {
@@ -216,7 +216,7 @@ void main() {
     final picked = DateTime(today.year, today.month, 15);
     expect(startDateShown(tester), formatDate(picked));
 
-    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 7');
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'مشروع B');
     await submit(tester, api);
     expect(api.sentProjectChanges.single.$2['startDate'], picked.toIso8601String().substring(0, 10));
   });

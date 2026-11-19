@@ -29,7 +29,7 @@ void main() {
     PickedFile? camera,
     void Function(FakeApi api)? arrange,
   }) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: units);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, units: units);
     final category = api.addCategory('project-0', 'التشطيب');
     final item = api.addItem(category, 'البلاط', subgroups: ['مواد']);
     final otherItem = api.addItem(category, 'الجبس');
@@ -264,7 +264,7 @@ void main() {
     await act(tester, opened.api, () => tester.tap(find.byKey(messageKeyOf('expenses.sent').icon)));
 
     final lines = opened.capture.sharedTexts.single.split('\n');
-    expect((lines.first, lines[1], lines.last), ('en entries.purchases · غصون 6', 'en entryShare.item: البلاط', 'https://redix.test/projects/project-0/entries/$entryId/open'));
+    expect((lines.first, lines[1], lines.last), ('en entries.purchases · مشروع A', 'en entryShare.item: البلاط', 'https://redix.test/projects/project-0/entries/$entryId/open'));
   });
 
   testWidgets('findings row 207: a sent entry has the home read its entries once, on coming back, and Share still finds it', (tester) async {
@@ -538,7 +538,7 @@ void main() {
   });
 
   testWidgets('a list that cannot be read says so, and Try again reads it', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: field, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: field, units: ['الفلة الغربية']);
     final custody = api.addAccount('project-0', 'عهدتي', type: 'cashCustody', isMine: true)['id']! as String;
     await openProject(tester, api, capture: FakeCapture());
     await tester.ensureVisible(find.byKey(HomeScreen.addEntryKey('project-0')));
@@ -632,13 +632,13 @@ void main() {
   });
 
   testWidgets('who holds no recordEntries has no way in', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: ['readProject'], units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: ['readProject'], units: ['الفلة الغربية']);
     await openProject(tester, api);
     expect(isEnabled(tester, HomeScreen.addEntryKey('project-0')), isFalse);
   });
 
   testWidgets('a finished project offers no new expense', (tester) async {
-    final api = FakeApi()..addProject('غصون 5', status: 'finished', permissions: field, units: ['الفلة الشرقية']);
+    final api = FakeApi()..addProject('مشروع E', status: 'finished', permissions: field, units: ['الفلة الشرقية']);
     await openProject(tester, api);
 
     expect(isEnabled(tester, HomeScreen.addEntryKey('project-0')), isFalse);

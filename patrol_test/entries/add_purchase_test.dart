@@ -19,7 +19,7 @@ import '../support/steps.dart';
 
 /// A new manager, an account and the first purchase table, standing on Add entry with the table picked.
 Future<({Person manager, String account, ({String category, String itemId, String itemName, String tableId}) table})> onPurchase(PatrolIntegrationTester $) async {
-  final manager = await Given.manager(project: 'غصون 7');
+  final manager = await Given.manager(project: 'مشروع B');
   final account = await Given.account(manager, name: 'حساب المؤسسة');
   final table = await Given.firstPurchaseTable(manager);
   await $.onAddEntry(manager);
@@ -202,7 +202,7 @@ void main() {
 
     phoneCase('R7: only tables taking a purchase or a contractor payment are offered', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'متعب');
+      final partner = await Given.partner(manager, 'A');
       final member = await Given.member(manager, permissions: [Permission.recordEntries]);
       await $.onAddEntry(member);
       await $.tapOn(AddEntryScreen.tableKey);

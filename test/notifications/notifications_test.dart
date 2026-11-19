@@ -15,7 +15,7 @@ import '../app_harness.dart';
 
 void main() {
   Future<FakeApi> openList(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = field}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions);
     arrange(api);
     await pumpRedix(tester, api, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(NotificationsBell.buttonKey)));
@@ -23,7 +23,7 @@ void main() {
   }
 
   testWidgets('the bell counts what was not seen', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     api
       ..addNotification()
       ..addNotification(isRead: true);
@@ -37,7 +37,7 @@ void main() {
     await openList(tester, (api) => api.addNotification(kind: 'entryRejected'));
 
     expect(tester.widget<Text>(find.byKey(NotificationsScreen.rowKey('notification-0').title)).data, 'en notifications.entryRejected');
-    expect(tester.widget<Text>(find.byKey(NotificationsScreen.rowKey('notification-0').subtitle)).data, contains('غصون 6'));
+    expect(tester.widget<Text>(find.byKey(NotificationsScreen.rowKey('notification-0').subtitle)).data, contains('مشروع A'));
   });
 
   testWidgets('with nothing told the list says so', (tester) async {

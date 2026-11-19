@@ -13,7 +13,7 @@ import '../support/steps.dart';
 
 /// A new manager, an account and a contract of [value], standing on Add entry with the contract's table picked.
 Future<({Person manager, String account, MadeContract contract})> onPayment(PatrolIntegrationTester $, {num value = 34000, bool openValue = false}) async {
-  final manager = await Given.manager(project: 'غصون 7');
+  final manager = await Given.manager(project: 'مشروع B');
   final account = await Given.account(manager, name: 'حساب المؤسسة');
   final contract = await Given.contract(manager, value: value, openValue: openValue, contractor: 'مبلط الغربية');
   await $.onAddEntry(manager);

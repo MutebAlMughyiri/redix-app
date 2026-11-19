@@ -49,7 +49,7 @@ class ContractsScreen extends StatefulWidget {
   /// The phone's files.
   final InvoiceCapture capture;
 
-  /// The way to the contracts report's PDF and Excel, for whoever sees all capital (moved from Reports, Muteb, 9 Nov 2026).
+  /// The way to the contracts report's PDF and Excel, for whoever sees all capital (moved from Reports, the owner, 9 Nov 2026).
   final ReportFiles files;
 
   /// The screen's route.
@@ -139,7 +139,7 @@ class ContractsScreen extends StatefulWidget {
   /// The menu of the contract [id].
   static Key menuKey(String id) => Key('contracts.menu.$id');
 
-  /// The file of [kind] of a contract, in its ⋮ (Muteb, 12 Nov 2026): its PDF or its Excel.
+  /// The file of [kind] of a contract, in its ⋮ (the owner, 12 Nov 2026): its PDF or its Excel.
   static Key fileKey(ReportFileKind kind) => Key('contracts.file.${kind.name}');
 
   /// The heading over the documents, in the dialog.

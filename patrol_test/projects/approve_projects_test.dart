@@ -35,7 +35,7 @@ void main() {
   phoneClass('Approve or reject a registered project (UC-066)', () {
     phoneCase('R11: the admin reads the project\'s description before deciding', ($) async {
       await Given.nothingWaiting();
-      final manager = await Given.registered(project: 'غصون 7', manager: 'ريم', mobile: '0511111111', description: 'ثلاث فلل في حي الياسمين.', units: ['الفلة الشرقية', 'الفلة الشمالية']);
+      final manager = await Given.registered(project: 'مشروع B', manager: 'ريم', mobile: '0511111111', description: 'ثلاث فلل في حي الياسمين.', units: ['الفلة الشرقية', 'الفلة الشمالية']);
       await onRegisteredProjects($);
       await $.says(RegisteredProjectsScreen.descriptionKey(manager.projectId), 'ثلاث فلل في حي الياسمين.');
       await $.picture('registered-projects');

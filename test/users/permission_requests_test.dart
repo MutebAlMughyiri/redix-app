@@ -28,7 +28,7 @@ void main() {
 
   /// صلاحياتي of a project seen with [permissions].
   Future<FakeApi> onMyPermissions(WidgetTester tester, {List<String> permissions = sara, void Function(FakeApi api)? arrange}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions);
     arrange?.call(api);
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.myPermissionsKey(project));
@@ -103,7 +103,7 @@ void main() {
 
   /// «طلبات الصلاحيات» of a manager, one request waiting.
   Future<FakeApi> onRequests(WidgetTester tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     api.waitingPermissionRequests.add(FakeApi.permissionRequestRow());
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.permissionRequestsKey(project));
@@ -134,7 +134,7 @@ void main() {
   });
 
   testWidgets('R3: without «إدارة المستخدمين» the card has no «طلبات الصلاحيات»', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: sara);
+    final api = FakeApi()..addProject('مشروع A', permissions: sara);
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.permissionRequestsKey(project));
 
@@ -143,7 +143,7 @@ void main() {
 
   for (final (kind, screen) in [('permissionRequested', PermissionRequestsScreen), ('permissionRequestRejected', MyPermissionsScreen)]) {
     testWidgets('R6: the notice $kind opens $screen', (tester) async {
-      final api = FakeApi()..addProject('غصون 6');
+      final api = FakeApi()..addProject('مشروع A');
       api.addNotification(kind: kind);
       await openProject(tester, api);
       await act(tester, api, () => tester.tap(find.byKey(NotificationsBell.buttonKey)));

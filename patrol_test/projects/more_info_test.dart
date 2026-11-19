@@ -24,7 +24,7 @@ void main() {
     });
 
     phoneCase('R3: whoever manages the project saves a description', ($) async {
-      final manager = await Given.manager(project: 'غصون 7', units: ['الفلة الشرقية', 'الفلة الشمالية'], description: 'ثلاث فلل في حي الياسمين.');
+      final manager = await Given.manager(project: 'مشروع B', units: ['الفلة الشرقية', 'الفلة الشمالية'], description: 'ثلاث فلل في حي الياسمين.');
       await $.onMoreInfo(manager);
       expect($.typed(ProjectInfoScreen.descriptionKey), 'ثلاث فلل في حي الياسمين.');
       await $.fill(ProjectInfoScreen.descriptionKey, 'ثلاث فلل في حي الياسمين، التسليم ديسمبر 2027.');

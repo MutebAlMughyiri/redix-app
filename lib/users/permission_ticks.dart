@@ -15,7 +15,7 @@ import 'permission_tick.dart';
 class PermissionTicks extends StatelessWidget {
   /// The ticks, each keyed [keyOf], ticked as [holds] says, changed through [onChangedOf]; the [partners] under the chosen-capital tick ticked as [chosen] says, changed through [onChooseOf].
   /// A function that answers null leaves that tick read-only.
-  /// Only the permissions [shows] keeps are drawn, every one unless a search narrows them (صلاحياتي, Muteb, 12 Nov 2026).
+  /// Only the permissions [shows] keeps are drawn, every one unless a search narrows them (صلاحياتي, the owner, 12 Nov 2026).
   const PermissionTicks({
     super.key,
     required this.keyOf,

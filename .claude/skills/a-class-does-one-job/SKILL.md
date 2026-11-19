@@ -5,7 +5,7 @@ description: Before adding a method, a function or a widget to an existing class
 
 # A class does one job, and its name says which
 
-> Brought from the Testin project, 12 November 2026, at Muteb's word: *"let us also bring our skills that in testin project ... skills like every class do one job"*.
+> Brought from the Testin project, 12 November 2026, at the owner's word: *"let us also bring our skills that in testin project ... skills like every class do one job"*.
 
 A class, or a Dart file of top-level functions, earns its name by doing one job. The failure this catches is not a bad class. It is a good one that quietly took on a second job, one convenient function at a time, until its name stopped describing it. Nothing breaks when that happens, which is why it survives review.
 

@@ -36,9 +36,9 @@ void main() {
       await $.menuChoice(UsersScreen.menuKey(people.member.id), UsersScreen.editKey);
       await $.reach($(UsersScreen.editNameKey));
       expect($.typed(UsersScreen.editNameKey), people.member.displayName);
-      await $.fill(UsersScreen.editNameKey, 'نواف الأول');
+      await $.fill(UsersScreen.editNameKey, 'B الأول');
       await $(ChangeDialog.saveKey).tap();
-      await $.says(UsersScreen.nameKey(people.member.id), 'نواف الأول');
+      await $.says(UsersScreen.nameKey(people.member.id), 'B الأول');
     });
 
     phoneCase('redix-api #127 AC-07.8: Edit starts from the email and changes it', ($) async {

@@ -61,10 +61,10 @@ void main() {
       await $.tapOn(NewProjectScreen.addUnitKey);
       await $.fill(NewProjectScreen.unitNameKey, 'الفلة الشمالية');
       await $.tapOn(NewProjectScreen.addUnitKey);
-      final password = await fillProjectAndManager($, 'غصون 7', 'patrol-reem');
+      final password = await fillProjectAndManager($, 'مشروع B', 'patrol-reem');
       await $.picture('register-project');
       await send($);
-      final id = await signInToFind($, 'patrol-reem', password, 'غصون 7');
+      final id = await signInToFind($, 'patrol-reem', password, 'مشروع B');
       await $.says(ProjectsScreen.statusKey(id).label, $.words.projectsPending);
     });
 
@@ -101,9 +101,9 @@ void main() {
       final project = 'Project ${Given.unique()}';
       final username = 'manager-${Given.unique()}';
       await openForm($);
-      await $.fill(NewProjectScreen.partnerNameKey, 'متعب');
+      await $.fill(NewProjectScreen.partnerNameKey, 'A');
       await $.tapOn(NewProjectScreen.addPartnerKey);
-      await $.fill(NewProjectScreen.partnerNameKey, 'نواف');
+      await $.fill(NewProjectScreen.partnerNameKey, 'B');
       final password = await fillProjectAndManager($, project, username);
       await send($);
       final id = await signInToFind($, username, password, project);
@@ -112,8 +112,8 @@ void main() {
       await $.restartApp();
       await $.openProject(id);
       await $.tapOn(HomeScreen.partnersKey(id));
-      await $.idOf('partners.name.', () => Given.partnerNamed(registrant, 'متعب'));
-      await $.idOf('partners.name.', () => Given.partnerNamed(registrant, 'نواف'));
+      await $.idOf('partners.name.', () => Given.partnerNamed(registrant, 'A'));
+      await $.idOf('partners.name.', () => Given.partnerNamed(registrant, 'B'));
       expect($(PartnersScreen.addKey), findsOneWidget);
     });
 
@@ -143,7 +143,7 @@ void main() {
     });
 
     phoneCase('a waiting project offers its manager nothing: no star, no opening', ($) async {
-      final manager = await Given.registered(project: 'غصون 7', manager: 'ريم');
+      final manager = await Given.registered(project: 'مشروع B', manager: 'ريم');
       await $.onTheList(manager);
       await $.reach($(ProjectsScreen.statusKey(manager.projectId)));
       expect($(ProjectsScreen.starKey(manager.projectId)), findsNothing);

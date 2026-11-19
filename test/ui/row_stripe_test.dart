@@ -23,7 +23,7 @@ void main() {
 
   /// The home of a project, drawn light or dark as [brightness] says, after [arrange] filled the API.
   Future<FakeApi> openHome(WidgetTester tester, Brightness brightness, void Function(FakeApi api) arrange) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     arrange(api);
     await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: {'themeMode_state': brightness == Brightness.dark ? 1 : 0});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));

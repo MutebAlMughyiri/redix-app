@@ -76,7 +76,7 @@ class PendingApproval {
   /// What its account holds now (redix-app #89).
   final double accountBalance;
 
-  /// What waits to leave its account, this entry among it: every entry taking money out of it that waits for approval (Muteb, 10 Nov 2026).
+  /// What waits to leave its account, this entry among it: every entry taking money out of it that waits for approval (the owner, 10 Nov 2026).
   final double accountWaiting;
 
   /// How much more what waits on its account takes than the account holds; zero when it covers all of it. Nothing blocks it, but the inbox notes it (R5).

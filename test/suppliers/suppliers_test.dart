@@ -20,7 +20,7 @@ void main() {
 
   /// A project with one approved supplier and one pending, opened as far as its register.
   Future<({FakeApi api, String approved, String pending})> openSuppliers(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
-    final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions);
+    final api = FakeApi()..addProject('مشروع A', status: status, permissions: permissions);
     final tiling = api.addCategory('project-0', 'التشطيب');
     api.addItem(tiling, 'البلاط');
     final approved = api.addSupplier('project-0', 'شركة النخيل', vatNumber: vatNumber, defaultItemName: 'اللياسة');
@@ -185,7 +185,7 @@ void main() {
   });
 
   testWidgets('a project with no suppliers says so', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.suppliersKey('project-0'));
     await tester.ensureVisible(projectSettingPages);
@@ -210,7 +210,7 @@ void main() {
   });
 
   testWidgets('a list that cannot be read says so', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.suppliersKey('project-0'));
     await tester.ensureVisible(projectSettingPages);

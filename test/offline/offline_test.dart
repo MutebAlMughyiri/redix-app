@@ -40,13 +40,13 @@ void main() {
   }
 
   Future<FakeApi> openHome(WidgetTester tester, MemoryStore store) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProject(tester, api, store: store);
     return api;
   }
 
   testWidgets('a list read once answers from what was kept when the network is gone (FR-16)', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await pumpRedix(tester, api, stored: {'session': keptSession});
 
     api.online = false;
@@ -58,7 +58,7 @@ void main() {
   testWidgets('redix-api #126: a project list an earlier version kept, with no isInactive, answers as nothing kept when the network is gone, and the next read comes from the API', (tester) async {
     final api = FakeApi()..online = false;
     final store = MemoryStore();
-    await store.write('copies', '/projects', jsonEncode([{...api.addProject('غصون 6')}..remove('isInactive')]));
+    await store.write('copies', '/projects', jsonEncode([{...api.addProject('مشروع A')}..remove('isInactive')]));
     await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: keptWords('en'), store: store);
 
     expect(tester.widget<Text>(find.byKey(ApiListBody.messageKey)).data, 'en projects.loadFailed');
@@ -73,7 +73,7 @@ void main() {
   testWidgets('redix-api #126: a project list kept with a status this version does not know answers as nothing kept when the network is gone, and the spinner stops', (tester) async {
     final api = FakeApi()..online = false;
     final store = MemoryStore();
-    await store.write('copies', '/projects', jsonEncode([{...api.addProject('غصون 6'), 'status': 'archived'}]));
+    await store.write('copies', '/projects', jsonEncode([{...api.addProject('مشروع A'), 'status': 'archived'}]));
     await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: keptWords('en'), store: store);
 
     expect(tester.takeException(), isNull);
@@ -88,7 +88,7 @@ void main() {
   testWidgets('redix-api #126: a project list kept in the shape this version reads answers when the network is gone', (tester) async {
     final api = FakeApi()..online = false;
     final store = MemoryStore();
-    await store.write('copies', '/projects', jsonEncode([api.addProject('غصون 6')]));
+    await store.write('copies', '/projects', jsonEncode([api.addProject('مشروع A')]));
     await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: keptWords('en'), store: store);
 
     expect(find.byKey(ProjectsScreen.cardKey('project-0')), findsOneWidget);
@@ -97,7 +97,7 @@ void main() {
 
   testWidgets('signing out forgets what was kept of the lists, because the next user must not see it', (tester) async {
     final store = MemoryStore();
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     final session = await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
     expect(await store.namesIn('copies'), isNotEmpty);
 
@@ -109,7 +109,7 @@ void main() {
   testWidgets('opening a project keeps every list the sync answers, at the address its own read asks', (tester) async {
     final store = MemoryStore();
     final api = FakeApi()
-      ..addProject('غصون 6')
+      ..addProject('مشروع A')
       ..syncLists = const {
         '/projects/project-0/suppliers': [
           {'id': 'kept-supplier'},
@@ -125,7 +125,7 @@ void main() {
     final store = MemoryStore();
     await store.write('copies', '/projects/project-0/stamp', 'stamp-1');
     final api = FakeApi()
-      ..addProject('غصون 6')
+      ..addProject('مشروع A')
       ..syncLists = const {
         '/projects/project-0/suppliers': [
           {'id': 'would-be-sent-again'},
@@ -139,7 +139,7 @@ void main() {
   testWidgets('without a network the sync changes nothing that was kept', (tester) async {
     final store = MemoryStore();
     await store.write('copies', '/projects/project-0/suppliers', '[{"id":"kept-before"}]');
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
 
     api.online = false;
@@ -179,7 +179,7 @@ void main() {
 
   testWidgets('what waits survives a sign-out, and goes when its author signs in again', (tester) async {
     final store = await storeHolding([pending('entry-1', refusal: 'expenses.unknownSupplier')]);
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     final session = await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
 
     await act(tester, api, session.signOut);
@@ -190,7 +190,7 @@ void main() {
   testWidgets('an entry the API refuses waits for its author, saying why, and is not tried again', (tester) async {
     final store = await storeHolding([pending('entry-1')]);
     final api = FakeApi()
-      ..addProject('غصون 6')
+      ..addProject('مشروع A')
       ..entryAnswer = (status: 400, body: const {'code': 'unknownSupplier'});
     await openProject(tester, api, store: store);
     await act(tester, api, () => tester.pump(Outbox.tryEvery));
@@ -244,7 +244,7 @@ void main() {
   testWidgets('an answer the server could not give leaves it waiting, to be tried again', (tester) async {
     final store = await storeHolding([pending('entry-1')]);
     final api = FakeApi()
-      ..addProject('غصون 6')
+      ..addProject('مشروع A')
       ..entryAnswer = (status: 503, body: const <String, dynamic>{});
     await openProject(tester, api, store: store);
     await act(tester, api, () => tester.pump(Outbox.tryEvery));
@@ -255,7 +255,7 @@ void main() {
 
   Future<FakeApi> openWaiting(WidgetTester tester, MemoryStore store, {int answer = 503}) async {
     final api = FakeApi()
-      ..addProject('غصون 6')
+      ..addProject('مشروع A')
       ..entryAnswer = (status: answer, body: const <String, dynamic>{});
     await openProject(tester, api, store: store);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.waitingKey('project-0'))));
@@ -308,7 +308,7 @@ void main() {
 
   testWidgets('with no network a typed search looks in what was kept, whichever way the name is spelled', (tester) async {
     final store = MemoryStore();
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     final session = await pumpRedix(tester, api, stored: {'session': keptSession}, store: store);
     final kept = [api.addSupplier('project-0', 'مؤسسة أحمد', vatNumber: '300000000000003'), api.addSupplier('project-0', 'شركة النخيل')];
     await store.write('copies', '/projects/project-0/suppliers/search?text=', jsonEncode(kept));

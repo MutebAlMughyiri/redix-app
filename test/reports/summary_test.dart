@@ -64,7 +64,7 @@ void main() {
     tester.view.physicalSize = const Size(900, 2600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة']);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, units: ['الفلة']);
     arrange(api);
     await openProject(tester, api);
     return api;
@@ -111,7 +111,7 @@ void main() {
     expect(frameOf(tester, 'entry-0'), AppColor.frame);
   });
 
-  testWidgets('Muteb, 9 Nov 2026: the home has no Refresh button, and pulling it down reads the latest entries again', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: the home has no Refresh button, and pulling it down reads the latest entries again', (tester) async {
     final api = await openHome(tester, (api) {
       api.summaryAnswer = figures();
       api.addEntry();
@@ -131,7 +131,7 @@ void main() {
     expect(find.byKey(SummaryCard.pendingKey), findsNothing);
   });
 
-  /// Opens المصروفات or الإيرادات, [side], from the home's buttons (Muteb, 9 and 12 Nov 2026).
+  /// Opens المصروفات or الإيرادات, [side], from the home's buttons (the owner, 9 and 12 Nov 2026).
   Future<void> openSide(WidgetTester tester, FakeApi api, SummarySide side) => scrollAndTap(tester, api, HomeScreen.itemReportsKey('project-0', side));
 
   testWidgets('the categories show only once a tile is tapped: expenses opens the expense categories, revenue the revenue ones, each with its total', (tester) async {
@@ -154,7 +154,7 @@ void main() {
     expect(find.byKey(SummaryCard.categoryKey('category-9')), findsNothing);
   });
 
-  testWidgets("Muteb, 9 Nov 2026: a category on the home opens nothing; its items and their reports are on المصروفات and الإيرادات", (tester) async {
+  testWidgets("the owner, 9 Nov 2026: a category on the home opens nothing; its items and their reports are on المصروفات and الإيرادات", (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
     await act(tester, api, () => tester.tap(find.byKey(SummaryCard.expensesKey)));
 
@@ -167,7 +167,7 @@ void main() {
     expect(text(tester, HomeScreen.itemReportsKey('project-0', SummarySide.revenue).label), 'en summary.revenue');
   });
 
-  testWidgets('Muteb, 12 Nov 2026: المصروفات and الإيرادات are two screens, each its own side\'s categories, with no switch between them', (tester) async {
+  testWidgets('the owner, 12 Nov 2026: المصروفات and الإيرادات are two screens, each its own side\'s categories, with no switch between them', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
     await openSide(tester, api, SummarySide.expenses);
 
@@ -323,7 +323,7 @@ void main() {
                 {'key': 'custom.colour', 'name': 'اللون', 'dataType': 'text'},
               ],
               'rows': [
-                {'entryId': 'entry-1', 'date': '2026-10-01', 'amount': 1000, 'isOutsideContract': false, 'values': ['بلاط أرضيات', 'البواني', '2026-10-01', '50', 'أبيض']},
+                {'entryId': 'entry-1', 'date': '2026-10-01', 'amount': 1000, 'isOutsideContract': false, 'values': ['بلاط أرضيات', 'شركة A', '2026-10-01', '50', 'أبيض']},
               ],
             },
           ],
@@ -340,7 +340,7 @@ void main() {
     expect(tester.widget<Text>(find.byKey(ItemReportScreen.subgroupTotalKey('subgroup-1'))).data, '1,000.00');
     final details = text(tester, ItemReportScreen.rowKey('entry-1').subtitle);
     expect(details, contains('اللون: أبيض'));
-    expect(details, contains('المورد: البواني'), reason: 'redix-api #129 R1: each of its table\'s columns shows, a list by its choice');
+    expect(details, contains('المورد: شركة A'), reason: 'redix-api #129 R1: each of its table\'s columns shows, a list by its choice');
     expect(details, contains('سعر الحبة: 50.00'), reason: 'an amount shows as money');
     expect(text(tester, ItemReportScreen.rowKey('entry-1').title), 'بلاط أرضيات', reason: 'redix-api #129 D1: «الوصف» is the row\'s title, not one of its details');
     expect(find.textContaining('الوصف:'), findsNothing);
@@ -349,7 +349,7 @@ void main() {
     expect(text(tester, ItemReportScreen.contractKey('contract-1')), contains('(500.00)'));
   });
 
-  testWidgets('Muteb, 9 Nov 2026: Reports holds the periodic reports alone; the home opens the item reports and the VAT refund, and Contracts no files of its own', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: Reports holds the periodic reports alone; the home opens the item reports and the VAT refund, and Contracts no files of its own', (tester) async {
     final api = await openHome(tester, (api) => api.summaryAnswer = figures());
     await showProjectSetting(tester, HomeScreen.vatKey('project-0'));
     expect(tester.widget<Text>(find.byKey(HomeScreen.vatKey('project-0').label)).data, 'en vat.title');
@@ -369,6 +369,6 @@ void main() {
     await tester.ensureVisible(projectSettingPages);
     await scrollAndTap(tester, api, HomeScreen.contractsKey('project-0'));
     expect(find.byKey(ContractsScreen.addKey), findsOneWidget);
-    expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)), findsNothing, reason: 'Muteb, 12 Nov 2026: each contract holds its own files in its ⋮');
+    expect(find.byKey(ReportFileButtons.buttonKey('contracts', ReportFileKind.pdf)), findsNothing, reason: 'the owner, 12 Nov 2026: each contract holds its own files in its ⋮');
   });
 }

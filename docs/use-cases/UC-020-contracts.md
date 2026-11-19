@@ -56,7 +56,7 @@ The project's home, `HomeScreen`:
 | Rule | Code | Test in `test/contracts/contracts_test.dart` |
 | --- | --- | --- |
 | Each contract shows its contractor, item and figures (FR-07); a contract belongs to the project, not a unit (redix-api #96) | `ContractCard` | `each contract shows its contractor, item and figures` |
-| What waits shows beside what was paid, with what remains once it is approved, the figure Add entry works from (Muteb, 10 Nov 2026); an open value has none. The remaining itself counts only what was approved (BR-10) | `ContractCard` | `BR-10: what waits for approval shows beside what was paid, and leaves the remaining alone`, `an open-value contract has nothing to remain, so what waits stands alone` |
+| What waits shows beside what was paid, with what remains once it is approved, the figure Add entry works from (the owner, 10 Nov 2026); an open value has none. The remaining itself counts only what was approved (BR-10) | `ContractCard` | `BR-10: what waits for approval shows beside what was paid, and leaves the remaining alone`, `an open-value contract has nothing to remain, so what waits stands alone` |
 | It shows what remains, and how it stands (AC-07.1) | `ContractCard`, `Contract.standingWordKey` | `AC-07.1: a contract shows what remains of it, and how it stands` |
 | An overrun shows in brackets, with an alert (AC-07.1) | `ContractCard`, `formatMoney` | `AC-07.1: an overrun shows its remaining in brackets, with an alert` |
 | An open-value contract has no remaining and no alert (AC-07.2) | `ContractCard` | `AC-07.2: an open-value contract adds up, with no remaining and no alert` |
@@ -75,7 +75,7 @@ The project's home, `HomeScreen`:
 | A project with no contracts says so | `ApiListBody` | `a project with no contracts says so` |
 | Without keeping the settings there is nothing to change: a contract's ⋮ holds its files alone | `Project.mayManageSettings` | `without keeping the settings the contracts show with nothing to change: a contract's ⋮ holds its files alone` |
 | redix-api #131: without «يرى التقارير» a contract opens no table, its report being a report | `ContractCard.mayOpen`, `Project.maySeeReports` | `redix-api #131: without «يرى التقارير» a contract shows and opens no table, its report being a report` |
-| redix-api #131: a contract's ⋮ holds its PDF and Excel for whoever holds «يُصدر التقارير», seeing all capital or not; gray, saying why, for anyone else | `ContractCard.mayExport`, `Project.mayTakeReportFiles`, `rowMenuItem` | `Muteb, 12 Nov 2026, redix-api #131: a contract's ⋮ holds its PDF and Excel for whoever holds «يُصدر التقارير» …`, `redix-api #131: without «يُصدر التقارير» a contract's ⋮ shows its PDF and Excel gray, saying why …` |
+| redix-api #131: a contract's ⋮ holds its PDF and Excel for whoever holds «يُصدر التقارير», seeing all capital or not; gray, saying why, for anyone else | `ContractCard.mayExport`, `Project.mayTakeReportFiles`, `rowMenuItem` | `the owner, 12 Nov 2026, redix-api #131: a contract's ⋮ holds its PDF and Excel for whoever holds «يُصدر التقارير» …`, `redix-api #131: without «يُصدر التقارير» a contract's ⋮ shows its PDF and Excel gray, saying why …` |
 | A finished project shows them with nothing to change (AC-04.1) | `Project.mayManageSettings` | `a finished project shows its contracts with nothing to change` |
 | A list that cannot be read says so | `ApiListBody` | `a list that cannot be read says so` |
 | It fits 360 points wide in both languages (AC-N03) | `ContractsScreen`, `ContractDialog` | `AC-N03` in `test/settings/account_test.dart` |

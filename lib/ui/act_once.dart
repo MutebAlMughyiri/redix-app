@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 /// What a tap does; it ends when the work does, and a tap that opens a screen ends when that screen closes.
 typedef TapAction = FutureOr<void> Function();
 
-/// One action at a time for the buttons [builder] makes (Muteb, 10 Nov 2026): the first tap runs, and every button made with `once` stays gray until that action ends, so a double tap cannot act twice.
+/// One action at a time for the buttons [builder] makes (the owner, 10 Nov 2026): the first tap runs, and every button made with `once` stays gray until that action ends, so a double tap cannot act twice.
 class ActOnce extends StatefulWidget {
   /// Buttons made by [builder], each passing its action through `once` as its `onPressed` or `onTap`.
   const ActOnce({super.key, required this.builder});

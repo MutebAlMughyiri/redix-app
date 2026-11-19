@@ -12,11 +12,11 @@ import 'package:redix/ui/screen_title.dart';
 
 import '../app_harness.dart';
 
-/// Muteb, 12 Nov 2026: "add history feature for wait approval feature": السجل from the title bar of بانتظار الاعتماد, as the accounts' and the partners' histories are.
+/// The owner, 12 Nov 2026: "add history feature for wait approval feature": السجل from the title bar of بانتظار الاعتماد, as the accounts' and the partners' histories are.
 void main() {
   /// Opens بانتظار الاعتماد of a project whose approval history [arrange] fills, then its السجل.
   Future<FakeApi> openHistory(WidgetTester tester, void Function(FakeApi api) arrange) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     arrange(api);
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.approvalsKey('project-0'));

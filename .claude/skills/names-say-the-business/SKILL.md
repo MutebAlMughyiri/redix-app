@@ -1,11 +1,11 @@
 ---
 name: names-say-the-business
-description: Every class, widget, function, field, variable, key, word key and test in the REDIX app is named with the business word from the glossary, in full - an entry is an entry, a capital movement a capital movement, never a shortened or generic name. Use when adding or renaming anything in redix-app, when writing a test name, a doc comment, an issue or a message to Muteb, and when a name says data, item, list or value where a business word belongs.
+description: Every class, widget, function, field, variable, key, word key and test in the REDIX app is named with the business word from the glossary, in full - an entry is an entry, a capital movement a capital movement, never a shortened or generic name. Use when adding or renaming anything in redix-app, when writing a test name, a doc comment, an issue or a message to the owner, and when a name says data, item, list or value where a business word belongs.
 ---
 
 # Names say the business word, in full
 
-> Brought from the Testin project, 12 November 2026. In Testin Muteb wrote: *"correct name will allow me and contributors to understand easily and any name should match our correct names in business."*
+> Brought from the Testin project, 12 November 2026. In Testin the owner wrote: *"correct name will allow me and contributors to understand easily and any name should match our correct names in business."*
 
 ## The one owner of the words
 
@@ -29,7 +29,7 @@ Measured 12 November 2026: no `final`, `var` or typed local or field in `lib/` i
 
 **What may stay short:** Dart's and Flutter's own idioms (`e` in a catch, `i` in a loop, `context`), and a package's import prefix written as its own README writes it (`http`, `img`).
 
-## Every sentence to Muteb too
+## Every sentence to the owner too
 
 Chats, designs, `AskUserQuestion` briefs and issues use the same words as the code and the screens: an entry (قيد) not "a record", a custody (عهدة) not "a balance", a project not "a site". A word the glossary does not hold is added to the glossary first.
 

@@ -28,7 +28,7 @@ Future<void> onTables(PatrolIntegrationTester $, Person manager, String category
 
 /// A new manager with a new item that takes purchases, in a new category.
 Future<({Person manager, String category, String item, String itemName})> newItem({String type = 'purchases'}) async {
-  final manager = await Given.manager(project: 'غصون 7');
+  final manager = await Given.manager(project: 'مشروع B');
   final category = await Given.category(manager, 'Category ${Given.unique()}');
   final itemName = 'البلاط ${Given.unique()}';
   return (manager: manager, category: category, item: await Given.item(manager, category, itemName, type: type), itemName: itemName);

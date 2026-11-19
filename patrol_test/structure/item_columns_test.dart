@@ -27,7 +27,7 @@ import '../support/steps.dart';
 
 /// A new manager with a new item in a new category, standing on its columns.
 Future<({Person manager, String category, String categoryName, String item, String itemName})> onColumns(PatrolIntegrationTester $) async {
-  final manager = await Given.manager(project: 'غصون 7');
+  final manager = await Given.manager(project: 'مشروع B');
   final categoryName = 'Category ${Given.unique()}';
   final itemName = 'Item ${Given.unique()}';
   final category = await Given.category(manager, categoryName);

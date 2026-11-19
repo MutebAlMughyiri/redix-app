@@ -67,7 +67,7 @@ class ApprovalsScreen extends StatefulWidget {
   /// The filter showing contractor payments.
   static const contractorPaymentsKey = Key('approvals.contractorPayments');
 
-  /// السجل in the title bar: what was approved and rejected (Muteb, 12 Nov 2026).
+  /// السجل in the title bar: what was approved and rejected (the owner, 12 Nov 2026).
   static const historyKey = Key('approvals.history');
 
   /// The button approving what is selected.

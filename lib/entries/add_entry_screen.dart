@@ -98,7 +98,7 @@ class AddEntryScreen extends StatefulWidget {
   /// True to open [editingId] read only, as it was filled, until تعديل turns it into the form (redix-app #90).
   final bool isReading;
 
-  /// The file it starts with, shared from another app (UC-046); none otherwise. The camera opens only when asked (Muteb, 8 Nov 2026).
+  /// The file it starts with, shared from another app (UC-046); none otherwise. The camera opens only when asked (the owner, 8 Nov 2026).
   final PickedFile sharedFile;
 
   /// Why it was rejected; empty otherwise.
@@ -138,7 +138,7 @@ class AddEntryScreen extends StatefulWidget {
   /// recorded one is shared from it.
   final OpenedEntry opened;
 
-  /// The entries waiting for a decision, through which an entry read only is approved (Muteb, 9 Nov 2026).
+  /// The entries waiting for a decision, through which an entry read only is approved (the owner, 9 Nov 2026).
   final Approvals approvals;
 
   /// Reads again what the project's lists and figures show, after an approved entry removed here is brought back from the bar (redix-api #119).
@@ -288,10 +288,10 @@ class AddEntryScreen extends StatefulWidget {
   /// The button sending a draft read only for approval.
   static const sendDraftKey = Key('addEntry.sendDraft');
 
-  /// The button removing an approved entry softly, which reads حذف (Muteb, 9 Nov 2026; redix-api #119).
+  /// The button removing an approved entry softly, which reads حذف (the owner, 9 Nov 2026; redix-api #119).
   static const removeKey = Key('addEntry.remove');
 
-  /// The button approving an entry read only that waits, beside تعديل; grayed for whoever may not approve (Muteb, 9 Nov 2026).
+  /// The button approving an entry read only that waits, beside تعديل; grayed for whoever may not approve (the owner, 9 Nov 2026).
   static const approveKey = Key('addEntry.approve');
 
   /// The title bar's button sharing an entry read only (redix-app #83).
@@ -744,7 +744,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   }
 
   /// What an entry read only offers at its bottom (redix-app #90, D3, D4): تعديل, grayed with the reason where it cannot work; اعتماد beside it on a waiting entry, grayed
-  /// for whoever may not approve (Muteb, 9 Nov 2026); a draft's إرسال للاعتماد; and حذف, which removes an approved entry softly, for whoever holds that permission (redix-api #119).
+  /// for whoever may not approve (the owner, 9 Nov 2026); a draft's إرسال للاعتماد; and حذف, which removes an approved entry softly, for whoever holds that permission (redix-api #119).
   Widget _readingActions(Words words) {
     final row = _row;
     final mayChange = row.allows(widget.project, row.kind.recordedWith);

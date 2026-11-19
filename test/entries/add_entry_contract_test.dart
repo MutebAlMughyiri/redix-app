@@ -19,7 +19,7 @@ import '../app_harness.dart';
 void main() {
   /// A project with a contract of 34,000 with 30,000 paid, a disabled one and one of open value, opened as far as a new payment.
   Future<({FakeApi api, FakeCapture capture, String running, String disabled, String open, String method})> openPayment(WidgetTester tester, {void Function(FakeApi api)? arrange, double pending = 0, List<String> permissions = field}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, units: ['الفلة الغربية']);
     final running = api.addContract('project-0', 'مبلط الغربية', value: 34000, paid: 30000, pending: pending);
     final disabled = api.addContract('project-0', 'مبلط قديم', value: 1000, isActive: false);
     final open = api.addContract('project-0', 'دهان داخلي', isOpenValue: true, paid: 12000);
@@ -220,14 +220,14 @@ void main() {
   });
 
   testWidgets('who holds no recordEntries has no way in', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: ['readProject'], units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: ['readProject'], units: ['الفلة الغربية']);
     await openProject(tester, api);
 
     expect(isEnabled(tester, HomeScreen.addEntryKey('project-0')), isFalse);
   });
 
   testWidgets('a finished project offers no new payment', (tester) async {
-    final api = FakeApi()..addProject('غصون 5', status: 'finished', permissions: field, units: ['الفلة الشرقية']);
+    final api = FakeApi()..addProject('مشروع E', status: 'finished', permissions: field, units: ['الفلة الشرقية']);
     await openProject(tester, api);
 
     expect(isEnabled(tester, HomeScreen.addEntryKey('project-0')), isFalse);

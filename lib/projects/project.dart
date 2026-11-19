@@ -100,7 +100,7 @@ class Project {
   /// What the project is, as its manager wrote it; empty for none (redix-api 93).
   final String description;
 
-  /// What the signed-in user is called in this project, typed by whoever manages its users (Muteb, 9 Nov 2026); empty when nothing was typed.
+  /// What the signed-in user is called in this project, typed by whoever manages its users (the owner, 9 Nov 2026); empty when nothing was typed.
   final String roleName;
 
   /// True once a manager made the signed-in user inactive in this project: he keeps his place, permissions and entries there, and cannot open it (redix-api #126 D1).

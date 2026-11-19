@@ -22,10 +22,10 @@ Future<void> askToClose(PatrolIntegrationTester $) async {
 void main() {
   phoneClass('Close a project (UC-006)', () {
     phoneCase('closing asks first and says what it means', ($) async {
-      final manager = await Given.manager(project: 'غصون 7');
+      final manager = await Given.manager(project: 'مشروع B');
       await $.onMoreInfo(manager);
       await askToClose($);
-      await $.says(ConfirmDialog.subjectKey, 'غصون 7');
+      await $.says(ConfirmDialog.subjectKey, 'مشروع B');
       await $.says(ConfirmDialog.explanationKey, $.words.projectsCloseExplain);
       await $.picture('close-project');
     });

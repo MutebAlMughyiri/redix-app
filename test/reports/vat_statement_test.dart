@@ -15,7 +15,7 @@ void main() {
     tester.view.physicalSize = const Size(900, 2600);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة'], startDate: '2025-01-01');
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, units: ['الفلة'], startDate: '2025-01-01');
     arrange(api);
     await openProject(tester, api);
     return api;

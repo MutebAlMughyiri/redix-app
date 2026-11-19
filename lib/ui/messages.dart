@@ -7,7 +7,7 @@ import '../words/word_fill.dart';
 import '../words/words.dart';
 import 'part_keys.dart';
 
-/// The key of the SnackBar saying the word [wordKey]: every message has its own key, made from what it says, so a test finds it by key (Muteb, 7 Nov 2026).
+/// The key of the SnackBar saying the word [wordKey]: every message has its own key, made from what it says, so a test finds it by key (the owner, 7 Nov 2026).
 Key messageKeyOf(String wordKey) => Key('message.$wordKey');
 
 /// Shows the word [wordKey] in a SnackBar through [messenger], keyed by [messageKeyOf], with [values] in its `{0}`, `{1}` and on when it has them, and an action named

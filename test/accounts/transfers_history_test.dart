@@ -27,10 +27,10 @@ void main() {
     tester.view.physicalSize = const Size(900, 2400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions);
-    api.addMember('user-nawaf', 'نواف');
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions);
+    api.addMember('user-b', 'B');
     final bank = api.addAccount('project-0', 'حساب المؤسسة', balance: 1000);
-    final custody = api.addAccount('project-0', 'كاش مع نواف', type: 'cashCustody', balance: 200, custodianId: 'user-nawaf', custodianName: 'نواف');
+    final custody = api.addAccount('project-0', 'كاش مع B', type: 'cashCustody', balance: 200, custodianId: 'user-b', custodianName: 'B');
     arrange?.call(api);
     await openProject(tester, api, store: store);
     await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
@@ -189,7 +189,7 @@ void main() {
       final api = await openHistory(tester, permissions: const ['readProject'], arrange: (api) {
         api
           ..addHistoryLine('project-0', 'check', amount: 1200)
-          ..addHistoryLine('project-0', 'transfer', by: 'ريم', amount: 500, otherAccount: 'كاش مع نواف')
+          ..addHistoryLine('project-0', 'transfer', by: 'ريم', amount: 500, otherAccount: 'كاش مع B')
           ..addHistoryLine('project-0', 'entryOut', amount: 300);
       });
 
@@ -249,11 +249,11 @@ void main() {
       final api = await openHistory(tester, arrange: (api) {
         bankId = api.accounts['project-0']!.first['id']! as String;
         api
-          ..addHistoryLine('project-0', 'transfer', accountId: bankId, by: 'ريم', amount: 500, otherAccount: 'كاش مع نواف')
+          ..addHistoryLine('project-0', 'transfer', accountId: bankId, by: 'ريم', amount: 500, otherAccount: 'كاش مع B')
           ..addHistoryLine('project-0', 'entryOut', amount: 300);
       });
 
-      await searchFor(tester, api, 'نواف');
+      await searchFor(tester, api, 'B');
       expect(find.byKey(AccountHistoryScreen.lineKey(1000)), findsOneWidget);
       expect(find.byKey(AccountHistoryScreen.lineKey(999)), findsNothing);
 
@@ -267,7 +267,7 @@ void main() {
     testWidgets('redix-app #104, D4: a search does not outlive its screen; History opens again with every line', (tester) async {
       final api = await openHistory(tester, arrange: (api) => api.addHistoryLine('project-0', 'entryOut', amount: 300));
 
-      await searchFor(tester, api, 'نواف');
+      await searchFor(tester, api, 'B');
       expect(find.byKey(AccountHistoryScreen.lineKey(1000)), findsNothing);
       await act(tester, api, () => tester.pageBack());
       await act(tester, api, () => tester.tap(find.byKey(AccountsScreen.historyKey)));

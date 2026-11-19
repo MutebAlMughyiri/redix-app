@@ -9,7 +9,7 @@ import 'package:redix/reports/summary.dart';
 
 import '../app_harness.dart';
 
-/// Muteb, 11 Nov 2026: the home's Project settings come four to a page, two by two, swiped sideways with dots under them; the first page holds the four used most.
+/// The owner, 11 Nov 2026: the home's Project settings come four to a page, two by two, swiped sideways with dots under them; the first page holds the four used most.
 /// Nothing is kept: the card opens on its first page. Since 12 Nov المصروفات and الإيرادات are two buttons there, and الموردون opens the second page.
 void main() {
   const project = 'project-0';
@@ -21,7 +21,7 @@ void main() {
 
   /// The app started and the home of a project opened, in [locale], seen with [permissions].
   Future<FakeApi> openHome(WidgetTester tester, {List<String> permissions = managerAndFinance, Locale locale = const Locale('en')}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions);
     await pumpRedix(tester, api, locale: locale, stored: {'session': keptSession});
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey(project))));
     return api;
@@ -76,7 +76,7 @@ void main() {
       await swipeProjectSettings(tester);
       expectPage(second, [first, third, fourth, fifth]);
       expect(pageShown(tester, 5), 1);
-      expect(isEnabled(tester, HomeScreen.vatKey(project)), isFalse, reason: 'Muteb, 12 Nov 2026: grayed until the next release');
+      expect(isEnabled(tester, HomeScreen.vatKey(project)), isFalse, reason: 'the owner, 12 Nov 2026: grayed until the next release');
 
       await swipeProjectSettings(tester);
       expectPage(third, [first, second, fourth, fifth]);

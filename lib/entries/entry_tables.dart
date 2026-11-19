@@ -71,7 +71,7 @@ class EntryTable {
   /// The word key naming its entries' file.
   String get fileWordKey => isPartner ? 'capital.receiptHint' : isRevenue ? 'revenue.file' : asksContract ? 'contractorPayments.receipt' : 'attachments.invoicePhoto';
 
-  /// What a field shows of it: the table, then its sheet, the item, in brackets, as الجلاي (دفعات العظم) (Muteb, 7 Nov 2026); the item's own table is its name alone.
+  /// What a field shows of it: the table, then its sheet, the item, in brackets, as الجلاي (دفعات العظم) (the owner, 7 Nov 2026); the item's own table is its name alone.
   String get label => isNamedAfterItem ? itemName : '$name ($itemName)';
 
   /// True for the item's own table, named after it, which shows as its item's row; a partner's table shows under رأس المال as a contract's does under its item (redix-api #109).

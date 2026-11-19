@@ -5,7 +5,7 @@ description: Before building any surface or service of a REDIX app feature - a m
 
 # Use what the platform has
 
-> Brought from the Testin project, 12 November 2026, where Muteb wrote: *"use exist idea tools is better that customize new thing."* REDIX's own form of it: *"No customizations or workarounds, as we follow the business."* (Muteb, 1 November 2026, `redix-code-standard`).
+> Brought from the Testin project, 12 November 2026, where the owner wrote: *"use exist idea tools is better that customize new thing."* REDIX's own form of it: *"No customizations or workarounds, as we follow the business."* (the owner, 1 November 2026, `redix-code-standard`).
 
 A user already knows the phone: its message bar, its sheets, its share, its keyboard. A feature that uses the platform's own widget is learned the moment it appears, follows the phone's theme and text size, and is maintained by Flutter. A feature that builds its own copy is a second thing to learn and a part REDIX maintains forever.
 
@@ -41,7 +41,7 @@ Reach for these; never build beside them.
 
 ## A worked case
 
-Removing an entry first asked in a window over the screen. Muteb, 12 November 2026: *"it is old way to show confirmation pop up"*. The answer was not a custom widget: `Dismissible`'s own `confirmDismiss` asks the row to show its question, and the bar's own `SnackBarAction` offers تراجع. Two platform hooks, one owner (`SwipeToRemove`), no window.
+Removing an entry first asked in a window over the screen. The owner, 12 November 2026: *"it is old way to show confirmation pop up"*. The answer was not a custom widget: `Dismissible`'s own `confirmDismiss` asks the row to show its question, and the bar's own `SnackBarAction` offers تراجع. Two platform hooks, one owner (`SwipeToRemove`), no window.
 
 ## What this does not mean
 

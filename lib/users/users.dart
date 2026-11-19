@@ -34,7 +34,7 @@ class Users extends ApiList<User> {
   Future<String> addExisting(String username) => change('/projects/$projectId/users/existing', {'username': username});
 
   /// Changes what was changed of [user]: the name, mobile and email (redix-api #127, AC-07.8), which every project they are in shares, then what they are called in this project,
-  /// [roleName] (Muteb, 9 Nov 2026). A part left as it was is not sent, so a role name is never refused for a name nobody changed. Returns the first refusal.
+  /// [roleName] (the owner, 9 Nov 2026). A part left as it was is not sent, so a role name is never refused for a name nobody changed. Returns the first refusal.
   Future<String> edit(User user, String displayName, String mobile, String email, String roleName) async {
     final detailsChanged = displayName.trim() != user.displayName || westernDigits(mobile).trim() != user.mobile || email.trim() != user.email;
     final refusal = detailsChanged ? await put('/users/${user.id}', {'displayName': displayName, 'mobile': westernDigits(mobile), 'email': email}) : '';

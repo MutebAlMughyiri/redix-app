@@ -225,7 +225,7 @@ Map<String, Object> issuedReport() => {
   'pendingRevenueAmount': 0,
   'capitalTotal': 1000,
   'partners': [
-    {'name': 'متعب', 'balance': 1000, 'sharePercent': 100},
+    {'name': 'A', 'balance': 1000, 'sharePercent': 100},
   ],
 };
 
@@ -628,10 +628,10 @@ class FakeApi {
       'entryDate': '2026-11-05',
       'amount': amount,
       'itemName': itemName,
-      'supplierName': kind == 'purchase' || kind == 'contractorPayment' ? 'شركة البواني' : '',
+      'supplierName': kind == 'purchase' || kind == 'contractorPayment' ? 'شركة A' : '',
       'supplierVatNumber': supplierVatNumber,
       'invoiceNumber': '2617',
-      'authorName': 'نواف',
+      'authorName': 'B',
       'isMine': isMine,
       'partnerName': partnerName,
       'description': description,
@@ -677,14 +677,14 @@ class FakeApi {
       'entryDate': '2026-11-05',
       'amount': amount,
       'itemName': 'بند اللياسة',
-      'supplierName': 'شركة البواني',
+      'supplierName': 'شركة A',
       'invoiceNumber': '2617',
       'accountName': 'حساب المؤسسة',
       'description': description,
       'attachmentId': attachmentId,
       'contentType': contentType,
       'fileName': fileName,
-      'authorName': 'نواف',
+      'authorName': 'B',
       'partnerName': partnerName,
       'accountBalance': accountBalance,
       'accountWaiting': accountWaiting,
@@ -708,7 +708,7 @@ class FakeApi {
   };
 
   /// What an item's report answers.
-  /// The addresses item reports were read at: an item's, or one contract's (Muteb, 12 Nov 2026).
+  /// The addresses item reports were read at: an item's, or one contract's (the owner, 12 Nov 2026).
   final itemReportReads = <String>[];
 
   var itemReportAnswer = <String, Object>{'itemName': 'البلاط', 'categoryName': 'التشطيب', 'total': 0, 'subgroups': <Map<String, Object>>[], 'contracts': <Map<String, Object>>[]};
@@ -764,7 +764,7 @@ class FakeApi {
     status: 200,
     body: <String, Object>{
       'archivedAt': '2026-11-11T18:15:04Z',
-      'archivedBy': 'متعب',
+      'archivedBy': 'A',
       'now': {'entries': 1056, 'contracts': 37, 'accounts': 4, 'suppliers': 35, 'partners': 7, 'items': 34, 'attachments': 6},
       'after': {'entries': 1000, 'contracts': 35, 'accounts': 4, 'suppliers': 33, 'partners': 7, 'items': 34, 'attachments': 4},
     },
@@ -830,7 +830,7 @@ class FakeApi {
       'id': 'notification-${notificationRows.length}',
       'kind': kind,
       'projectId': 'project-0',
-      'projectName': 'غصون 6',
+      'projectName': 'مشروع A',
       'entryId': entryId,
       'at': '2026-11-05T10:00:00Z',
       'isRead': isRead,
@@ -942,7 +942,7 @@ class FakeApi {
     }
     final expiresAt = accessTokenLifetime == Duration.zero ? '' : ', "accessTokenExpiresAt": "${serverNow.add(accessTokenLifetime).toIso8601String()}"';
     final body = status == 200
-        ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}"$expiresAt, "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "usesBiometrics": $usesBiometrics, "userId": "$userId", "username": "muteb", "displayName": "متعب المغيري", "email": "$email"}'
+        ? '{"accessToken": "new-access", "refreshToken": "new-refresh-${_issued++}"$expiresAt, "mustChangePassword": $mustChangePassword, "permissions": ${jsonEncode(permissions)}, "defaultProjectId": "$defaultProjectId", "usesBiometrics": $usesBiometrics, "userId": "$userId", "username": "owner", "displayName": "A Z", "email": "$email"}'
         : code.isEmpty
         ? ''
         : '{"code": "$code"}';
@@ -1123,7 +1123,7 @@ class FakeApi {
   final historyReads = <Uri>[];
 
   /// Adds a line of [kind] to the history of [projectId], newest first, naming the account [accountId] for the account filter.
-  Map<String, Object> addHistoryLine(String projectId, String kind, {String accountId = '', String by = 'متعب', String account = 'حساب المؤسسة', String otherAccount = '', double amount = 0, String entryKind = 'purchase', String nameWas = '', String custodian = ''}) {
+  Map<String, Object> addHistoryLine(String projectId, String kind, {String accountId = '', String by = 'A', String account = 'حساب المؤسسة', String otherAccount = '', double amount = 0, String entryKind = 'purchase', String nameWas = '', String custodian = ''}) {
     final list = accountHistory.putIfAbsent(projectId, () => []);
     final line = <String, Object>{
       'id': 1000 - list.length,
@@ -1159,7 +1159,7 @@ class FakeApi {
   final partnerHistory = <String, List<Map<String, Object>>>{};
 
   /// Adds a line of [kind] to the partner history of [projectId], newest first, naming [partnerId] for the partner filter.
-  Map<String, Object> addPartnerHistoryLine(String projectId, String kind, {String partnerId = '', String by = 'متعب', String partner = 'خالد', String account = '', double amount = 0, String nameWas = '', String login = ''}) {
+  Map<String, Object> addPartnerHistoryLine(String projectId, String kind, {String partnerId = '', String by = 'A', String partner = 'خالد', String account = '', double amount = 0, String nameWas = '', String login = ''}) {
     final list = partnerHistory.putIfAbsent(projectId, () => []);
     final line = <String, Object>{'id': 2000 - list.length, 'at': '2026-11-10T11:05:00Z', 'by': by, 'kind': kind, 'partner': partner, 'account': account, 'amount': amount, 'nameWas': nameWas, 'login': login, 'partnerId': partnerId};
     list.add(line);
@@ -1181,7 +1181,7 @@ class FakeApi {
   final projectHistory = <String, List<Map<String, Object>>>{};
 
   /// Adds a line saying [action] was done to [thing] called [name] to the history of [projectId], newest first, under [area], by the person [byId] called [by].
-  Map<String, Object> addProjectHistoryLine(String projectId, String action, String thing, {String name = '', String area = 'entries', String by = 'متعب', String byId = '', String about = '', String nameWas = '', String from = '', String to = '', double amount = 0}) {
+  Map<String, Object> addProjectHistoryLine(String projectId, String action, String thing, {String name = '', String area = 'entries', String by = 'A', String byId = '', String about = '', String nameWas = '', String from = '', String to = '', double amount = 0}) {
     final list = projectHistory.putIfAbsent(projectId, () => []);
     final line = <String, Object>{'id': 4000 - list.length, 'at': '2026-11-18T07:42:00Z', 'by': by, 'byId': byId, 'area': area, 'action': action, 'thing': thing, 'name': name, 'about': about, 'nameWas': nameWas, 'from': from, 'to': to, 'amount': amount};
     list.add(line);
@@ -1204,7 +1204,7 @@ class FakeApi {
   final myHistory = <Map<String, Object>>[];
 
   /// Adds a line saying [kind] happened to the signed-in login, newest first, under [area], by [by].
-  Map<String, Object> addMyHistoryLine(String kind, {String area = 'signIn', String by = 'متعب', String about = ''}) {
+  Map<String, Object> addMyHistoryLine(String kind, {String area = 'signIn', String by = 'A', String about = ''}) {
     final line = <String, Object>{'id': 5000 - myHistory.length, 'at': '2026-11-18T07:58:00Z', 'by': by, 'area': area, 'kind': kind, 'about': about};
     myHistory.add(line);
     return line;
@@ -1217,11 +1217,11 @@ class FakeApi {
     return _json(lines, 200);
   }
 
-  /// The approval history of each project, newest first, as the API answers it (Muteb, 12 Nov 2026).
+  /// The approval history of each project, newest first, as the API answers it (the owner, 12 Nov 2026).
   final approvalHistory = <String, List<Map<String, Object>>>{};
 
   /// Adds a decision of [kind], approved or rejected, to the approval history of [projectId], newest first, on an entry of [entryKind] for the kind filter.
-  Map<String, Object> addApprovalHistoryLine(String projectId, String kind, {String entryKind = 'purchase', String by = 'متعب', String item = 'البلاط', String party = 'شركة النخيل', double amount = 1150, String reason = ''}) {
+  Map<String, Object> addApprovalHistoryLine(String projectId, String kind, {String entryKind = 'purchase', String by = 'A', String item = 'البلاط', String party = 'شركة النخيل', double amount = 1150, String reason = ''}) {
     final list = approvalHistory.putIfAbsent(projectId, () => []);
     final line = <String, Object>{'id': 3000 - list.length, 'at': '2026-11-12T09:30:00Z', 'by': by, 'kind': kind, 'item': item, 'party': party, 'amount': amount, 'reason': reason, 'entryKind': entryKind};
     list.add(line);
@@ -2257,7 +2257,7 @@ List<String> idsKeyedBy(Key Function(String id) keyOf) {
   return [for (final element in keyedBy(keyOf).evaluate()) (element.widget.key! as ValueKey<String>).value.substring(start.length)];
 }
 
-/// The pages of the home's Project settings, four buttons each (Muteb, 11 Nov 2026).
+/// The pages of the home's Project settings, four buttons each (the owner, 11 Nov 2026).
 final projectSettingPages = keyedBy(HomeScreen.settingsPagesKey);
 
 /// Swipes the home's Project settings one page on, as a person does: toward the start of the reading line, so in Arabic the next page comes from the left; back a page
@@ -2296,7 +2296,7 @@ void expectErrorAbove(WidgetTester tester, Key errorKey, Key fieldKey) {
 }
 
 /// Opens the screen at [path] from the open project's home, as a Project settings button would, for a screen whose button is grayed until a later release while its
-/// work stays (Muteb, 12 Nov 2026): the VAT refund.
+/// work stays (the owner, 12 Nov 2026): the VAT refund.
 Future<void> openFromTheHome(WidgetTester tester, FakeApi api, String path, {String projectId = 'project-0'}) {
   final card = find.byKey(HomeScreen.cardKey(projectId));
   final project = tester.widget<ProjectSettingsCard>(card).project;
@@ -2359,7 +2359,7 @@ Future<void> swipeToRemove(WidgetTester tester, FakeApi api, Key rowKey) async {
   await act(tester, api, () => tester.tap(find.byKey(rowKey.confirm)));
 }
 
-/// Opens More info from the home of the open project [projectId] (redix-api 93; Muteb, 9 Nov 2026).
+/// Opens More info from the home of the open project [projectId] (redix-api 93; the owner, 9 Nov 2026).
 Future<void> openProjectInfo(WidgetTester tester, FakeApi api, {String projectId = 'project-0'}) =>
     scrollAndTap(tester, api, HomeScreen.projectInfoKey(projectId));
 
@@ -2395,7 +2395,7 @@ Future<void> chooseMember(WidgetTester tester, FakeApi api, Key pickerKey, Strin
   await act(tester, api, () => tester.tap(find.byKey(MemberPicker.optionKey(userId).title).hitTestable()));
 }
 
-/// The color the frame of the entry [id]'s row is drawn in, which alone says where the entry stands (Muteb, 9 Nov 2026).
+/// The color the frame of the entry [id]'s row is drawn in, which alone says where the entry stands (the owner, 9 Nov 2026).
 AppColor frameOf(WidgetTester tester, String id) {
   final card = find.byKey(EntriesScreen.rowKey(id).card);
   final side = (tester.widget<Card>(card).shape! as RoundedRectangleBorder).side.color;

@@ -111,14 +111,14 @@ void main() {
 
     phoneCase('redix-api #110: every kind of entry opens in Add entry to change or fix', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final entry = await Given.partnerMoney(manager, partner, amount: 700);
       await Given.entryRejected(manager, entry);
       await $.onTheEntry(manager, entry);
       await $.tapOn(AddEntryScreen.changeKey);
       await $.reach($(AddEntryScreen.amountKey));
       expect($.typed(AddEntryScreen.amountKey), '700');
-      await $.saysContaining(AddEntryScreen.tableKey.field.label, 'هيثم');
+      await $.saysContaining(AddEntryScreen.tableKey.field.label, 'C');
     });
 
     phoneCase('redix-app #90: whoever approves finds اعتماد on a waiting entry, and it approves it', ($) async {

@@ -16,7 +16,7 @@ Color? _filledWith(WidgetTester tester) => tester.widget<FilledButton>(find.byKe
 
 void main() {
   testWidgets('findings row 276: closing a project, which destroys, asks with a red button', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: ['readProject', 'manageProject']);
+    final api = FakeApi()..addProject('مشروع A', permissions: ['readProject', 'manageProject']);
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.projectInfoKey('project-0'));
 
@@ -26,7 +26,7 @@ void main() {
   });
 
   testWidgets('findings row 276: signing out, which destroys nothing, asks with the theme\'s own button', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProject(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(HomeScreen.sharedSettingsKey('project-0'))));
     await tester.ensureVisible(find.byKey(SharedSettingsScreen.signOutKey));

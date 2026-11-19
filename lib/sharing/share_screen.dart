@@ -269,7 +269,7 @@ class _ShareScreenState extends State<ShareScreen> {
           children: [
             // The search line is pinned under the header, so it stays once the picture scrolls away, and the body is the list alone, which any height
             // only shows fewer rows of: with the keyboard up, the picture and the QR summary above and the chosen entry below left a search line in
-            // the body 43 px on a Pixel 6 (findings row 268; Muteb, 19 Nov 2026: "Pin the search").
+            // the body 43 px on a Pixel 6 (findings row 268; the owner, 19 Nov 2026: "Pin the search").
             Expanded(
               child: NestedScrollView(
                 headerSliverBuilder: (context, _) => [

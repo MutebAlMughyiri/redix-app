@@ -32,7 +32,7 @@ enum ItemType {
   /// True for a revenue type: its entries are money coming in, on the revenue side of the summary (FR-38).
   bool get isRevenue => index >= sale.index;
 
-  /// True for a type that takes purchases, which alone has sub-tables (Muteb, 7 Nov 2026).
+  /// True for a type that takes purchases, which alone has sub-tables (the owner, 7 Nov 2026).
   bool get takesPurchases => this == purchases || this == both;
 }
 

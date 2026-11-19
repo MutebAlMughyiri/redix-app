@@ -24,9 +24,9 @@ void main() {
     });
 
     phoneCase('Arabic names show as typed', ($) async {
-      final manager = await Given.manager(project: 'غصون 7', units: ['الفلة الشرقية', 'الفلة الشمالية']);
+      final manager = await Given.manager(project: 'مشروع B', units: ['الفلة الشرقية', 'الفلة الشمالية']);
       await $.onTheList(manager);
-      await $.says(ProjectsScreen.nameKey(manager.projectId), 'غصون 7');
+      await $.says(ProjectsScreen.nameKey(manager.projectId), 'مشروع B');
       await $(ProjectsScreen.sharedSettingsKey).tap();
       await $.goTo($(LanguageSwitch.arabicKey));
       await $(LanguageSwitch.arabicKey).tap();

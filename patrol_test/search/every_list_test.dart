@@ -49,18 +49,18 @@ void main() {
 
     phoneCase('Users: what is typed keeps the people whose name holds it', ($) async {
       final manager = await Given.manager();
-      final nawaf = await Given.member(manager, name: 'نواف ${Given.unique()}');
+      final personB = await Given.member(manager, name: 'B ${Given.unique()}');
       final sara = await Given.member(manager, name: 'سارة ${Given.unique()}');
       await $.fromTheHome(manager, HomeScreen.usersKey(manager.projectId));
       await $.reach($(UsersScreen.rowKey(sara.id)));
-      await $.searchFor('نواف');
+      await $.searchFor('B');
       await $.gone($(UsersScreen.rowKey(sara.id)));
-      await $.reach($(UsersScreen.rowKey(nawaf.id)));
+      await $.reach($(UsersScreen.rowKey(personB.id)));
     });
 
     phoneCase('A partner\'s movements: an amount typed keeps the movements of that amount', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'متعب');
+      final partner = await Given.partner(manager, 'A');
       final small = await Given.partnerMoney(manager, partner, amount: 500);
       final large = await Given.partnerMoney(manager, partner, amount: 730);
       await Given.entriesApproved(manager, [small, large]);

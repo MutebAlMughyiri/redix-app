@@ -23,8 +23,8 @@ import 'permission_requests_screen.dart';
 import 'permission_ticks.dart';
 import 'table_ticks.dart';
 
-/// صلاحياتي, from the home (Muteb, 9 Nov 2026): what the signed-in user may do in a project, each permission as the project manager ticked it, and the partners chosen for them
-/// and the tables they see (redix-api #106), read only. Its search keeps the permissions whose name or what it allows holds what was typed (Muteb, 12 Nov 2026). Above them
+/// صلاحياتي, from the home (the owner, 9 Nov 2026): what the signed-in user may do in a project, each permission as the project manager ticked it, and the partners chosen for them
+/// and the tables they see (redix-api #106), read only. Its search keeps the permissions whose name or what it allows holds what was typed (the owner, 12 Nov 2026). Above them
 /// stands the person's latest request to change them, waiting, with a way to withdraw it, or decided; «طلب تغيير» asks for another (redix-api #112).
 class MyPermissionsScreen extends StatefulWidget {
   /// The permissions of the signed-in user in [project], read again from [projects] when pulled down, with the [partners] they see and their latest

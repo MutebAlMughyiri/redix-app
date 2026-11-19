@@ -17,7 +17,7 @@ import '../reports/category_share.dart';
 
 /// The project's figures at a glance (UC-049): what waits for approval, the surplus, the completion (UC-063), the reconciliation difference, and the revenue and expenses
 /// totals, each opening to its categories with their totals, رأس المال among them (redix-api #109). A category opens nothing: its items and their reports are on
-/// الإيرادات والمصروفات, from the home's buttons (Muteb, 9 Nov 2026).
+/// الإيرادات والمصروفات, from the home's buttons (the owner, 9 Nov 2026).
 class SummaryCard extends StatefulWidget {
   /// The card of [summary] in [project], calling [onApprovals] for what waits.
   const SummaryCard({super.key, required this.project, required this.summary, required this.onApprovals});
@@ -99,8 +99,8 @@ class _SummaryCardState extends State<SummaryCard> {
     ),
   );
 
-  /// The categories of the side opened, each with its total and its share of the side, with no heading over them: the tile tapped already names the side (Muteb, 8 Nov
-  /// 2026). None opens: their items are on الإيرادات والمصروفات (Muteb, 9 Nov 2026).
+  /// The categories of the side opened, each with its total and its share of the side, with no heading over them: the tile tapped already names the side (the owner, 8 Nov
+  /// 2026). None opens: their items are on الإيرادات والمصروفات (the owner, 9 Nov 2026).
   Widget _categories(SummarySide side, SummaryFigures figures) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [

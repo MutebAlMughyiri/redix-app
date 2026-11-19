@@ -86,7 +86,7 @@ void main() {
     addTearDown(tester.view.reset);
     final api = FakeApi()
       ..permissions = permissions
-      ..addProject('غصون 6', permissions: permissions, units: ['الفلة']);
+      ..addProject('مشروع A', permissions: permissions, units: ['الفلة']);
     action.arrange(api);
     final capture = FakeCapture();
     await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);
@@ -176,7 +176,7 @@ void main() {
     tester.view.physicalSize = const Size(400, 800);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final api = FakeApi()..addProject('غصون 6', permissions: _every, units: ['الفلة']);
+    final api = FakeApi()..addProject('مشروع A', permissions: _every, units: ['الفلة']);
     var last = '';
     for (var index = 0; index < 30; index++) {
       last = api.addSupplier(_project, 'مورد $index')['id']! as String;

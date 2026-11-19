@@ -19,11 +19,11 @@ void main() {
   phoneClass('Drafts (UC-033 and UC-028)', () {
     phoneCase('a partner\'s draft is saved, then sent from القيود', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final account = await Given.account(manager);
       await $.onAddEntry(manager);
       await $.tapOn(AddEntryScreen.tableKey);
-      await $(TablePicker.searchKey).enterText('هيثم');
+      await $(TablePicker.searchKey).enterText('C');
       await $.tapOn(TablePicker.optionKey(partner));
       await $.pumpAndSettle();
       await $.fill(AddEntryScreen.amountKey, '700');

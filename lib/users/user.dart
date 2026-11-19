@@ -42,7 +42,7 @@ class User {
   /// True once made inactive in this project, which they then cannot open; their permissions and entries here stay (redix-api #126 D1).
   final bool isInactive;
 
-  /// What they are called in this project (Muteb, 9 Nov 2026); empty when nothing was typed.
+  /// What they are called in this project (the owner, 9 Nov 2026); empty when nothing was typed.
   final String roleName;
 
   /// What they may do in this project, by the API's names.

@@ -58,7 +58,7 @@ class SwipeableEntryCard extends StatelessWidget {
 }
 
 /// An entry on a list: what it was for, how much, and who entered it when someone else did, its details line led by its «رقم القيد» (redix-api #128, D5). Where it stands is its
-/// frame's color alone; its page says the rest, a rejection's reason included (Muteb, 9 Nov 2026).
+/// frame's color alone; its page says the rest, a rejection's reason included (the owner, 9 Nov 2026).
 class EntryCard extends StatelessWidget {
   /// The tile of [entry], calling [onTap], marked as the one chosen when [isChosen], as the share screen marks where a file goes (redix-app #115).
   const EntryCard({super.key, required this.entry, required this.onTap, this.isChosen = false});

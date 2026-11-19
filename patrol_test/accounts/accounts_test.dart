@@ -51,7 +51,7 @@ void main() {
     });
 
     phoneCase('a cash account is added with its custodian', ($) async {
-      final manager = await Given.manager(project: 'غصون 7', manager: 'ريم');
+      final manager = await Given.manager(project: 'مشروع B', manager: 'ريم');
       await Given.funded(manager, await Given.account(manager, name: 'حساب المؤسسة'), 64250.75);
       await onAccounts($, manager);
       await $.tapOn(AccountsScreen.addKey);

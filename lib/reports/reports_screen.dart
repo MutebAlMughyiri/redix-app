@@ -17,7 +17,7 @@ import 'periodic_report_screen.dart';
 import 'periodic_reports.dart';
 
 /// A project's periodic reports (FR-29 to FR-32): the next one and those issued before. The VAT refund and the item reports open from the home, and the contracts and the
-/// partners have their own screens there (Muteb, 9 Nov 2026).
+/// partners have their own screens there (the owner, 9 Nov 2026).
 class ReportsScreen extends StatefulWidget {
   /// The periodic reports of [project], from [periodicReports] and [nextReport].
   const ReportsScreen({super.key, required this.project, required this.periodicReports, required this.nextReport});
@@ -28,7 +28,7 @@ class ReportsScreen extends StatefulWidget {
   /// The address of the screen for the project [projectId].
   static String pathOf(String projectId) => '/projects/$projectId/reports';
 
-  /// The button issuing the next periodic report: the screen's bottom button, grayed for whoever does not move money (Muteb, 9 Nov 2026).
+  /// The button issuing the next periodic report: the screen's bottom button, grayed for whoever does not move money (the owner, 9 Nov 2026).
   static const issueKey = Key('reports.issue');
 
   /// The line saying no report was issued yet.

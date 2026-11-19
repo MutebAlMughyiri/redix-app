@@ -18,12 +18,12 @@ import '../app_harness.dart';
 
 void main() {
   Future<FakeApi> openScreen(WidgetTester tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     api
       ..addPartner('project-0', 'خالد')
       ..addPartner('project-0', 'سعد');
-    final manager = api.addUser('متعب', username: 'muteb');
-    final user = api.addUser('نواف', username: 'nawaf');
+    final manager = api.addUser('A', username: 'owner');
+    final user = api.addUser('B', username: 'b');
     api
       ..give(manager, 'project-0', managerAndFinance)
       ..give(user, 'project-0', reader);
@@ -63,9 +63,9 @@ void main() {
   testWidgets('the screen says whose permissions these are, and ticks every one a project can give, with what they hold ticked', (tester) async {
     await openScreen(tester);
 
-    expect(tester.widget<Text>(find.byKey(UserPermissionsScreen.nameKey)).data, 'نواف');
+    expect(tester.widget<Text>(find.byKey(UserPermissionsScreen.nameKey)).data, 'B');
     expect(tester.widget<Text>(find.byKey(ScreenTitle.titleKey)).data, 'en permissions.title');
-    expect(tester.widget<Text>(find.byKey(ScreenTitle.subjectKey)).data, 'غصون 6');
+    expect(tester.widget<Text>(find.byKey(ScreenTitle.subjectKey)).data, 'مشروع A');
     for (final permission in Permission.inAProject) {
       expect(find.byKey(UserPermissionsScreen.permissionKey(permission)), findsOneWidget);
     }

@@ -24,7 +24,7 @@ import '../app_harness.dart';
 
 void main() {
   Future<({FakeApi api, FakeCapture capture})> openReports(WidgetTester tester, void Function(FakeApi api) arrange, {List<String> permissions = managerAndFinance}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة']);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, units: ['الفلة']);
     arrange(api);
     final capture = FakeCapture();
     await openProject(tester, api, capture: capture);
@@ -36,7 +36,7 @@ void main() {
     final (:api, capture: _) = await openReports(tester, (api) {});
 
     expect(find.byKey(ReportsScreen.noneIssuedKey), findsOneWidget);
-    expect(find.descendant(of: find.byKey(BottomButton.barKey), matching: find.byKey(ReportsScreen.issueKey)), findsOneWidget, reason: 'Muteb, 9 Nov 2026: issuing is the bottom button of the screen');
+    expect(find.descendant(of: find.byKey(BottomButton.barKey), matching: find.byKey(ReportsScreen.issueKey)), findsOneWidget, reason: 'the owner, 9 Nov 2026: issuing is the bottom button of the screen');
     await act(tester, api, () => tester.tap(find.byKey(ReportsScreen.issueKey)));
     expect(tester.widget<Text>(find.byKey(ConfirmDialog.titleKey)).data, 'en reports.issueQuestion');
 
@@ -124,7 +124,7 @@ void main() {
   });
 
   testWidgets('redix-api #131: a finished project issues nothing, and «يُصدر التقارير» still takes its files', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', status: 'finished', units: ['الفلة']);
+    final api = FakeApi()..addProject('مشروع A', status: 'finished', units: ['الفلة']);
     api
       ..periodicRows.add({'number': 1, 'issuedAt': '2026-11-05T20:00:00Z', 'expenses': 140})
       ..periodicAnswer = issuedReport();

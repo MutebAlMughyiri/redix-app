@@ -23,7 +23,7 @@ import '../ui/amount_line.dart';
 import '../ui/row_stripe.dart';
 
 /// Everything spent on one item (UC-050): a table per subgroup, then each contract with its value, paid and remaining; or one contract's table alone, as Contracts opens it
-/// (Muteb, 12 Nov 2026). The search line over them keeps the rows holding what was typed, and every row of a subgroup or contract whose own name holds it (redix-app #104);
+/// (the owner, 12 Nov 2026). The search line over them keeps the rows holding what was typed, and every row of a subgroup or contract whose own name holds it (redix-app #104);
 /// the totals stay the item's.
 class ItemReportScreen extends StatefulWidget {
   /// The report at [address], an item's or a contract's, of [project], read through [report].

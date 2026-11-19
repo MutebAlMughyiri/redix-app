@@ -2,7 +2,7 @@
 
 # UC-072: Add an entry from the app's icon and the home-screen widget
 
-**What it is for:** reaching Add entry without opening the project first (Muteb, 8 and 15 Nov 2026): holding REDIX's icon offers «إضافة قيد», and a home-screen widget does the same, with the latest entries under its button.
+**What it is for:** reaching Add entry without opening the project first (the owner, 8 and 15 Nov 2026): holding REDIX's icon offers «إضافة قيد», and a home-screen widget does the same, with the latest entries under its button.
 **Who uses it:** everyone who records entries; anyone else lands where the app would let them.
 **Issue:** redix-app #86 "Add entry from the app icon's long press, and home-screen widgets for Add entry and the capital", revision 2 of its design. The API holds only its one word, `home.widgetReadAt`.
 

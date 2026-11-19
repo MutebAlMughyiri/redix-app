@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/ui/app_color.dart';
 
-/// One owner of every color (Muteb, 9 Nov 2026: "create one enum class color to store all colors of the app").
+/// One owner of every color (the owner, 9 Nov 2026: "create one enum class color to store all colors of the app").
 void main() {
-  test('Muteb, 9 Nov 2026: every color the app shows is an AppColor; no other file picks a color of its own', () {
+  test('the owner, 9 Nov 2026: every color the app shows is an AppColor; no other file picks a color of its own', () {
     final picksAColor = RegExp(r'colorScheme\.|Colors\.|Color\(0x');
     final strays = [
       for (final file in Directory('lib').listSync(recursive: true).whereType<File>())

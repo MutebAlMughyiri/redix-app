@@ -22,7 +22,7 @@ import 'package:redix/ui/api_list_body.dart';
 
 void main() {
   testWidgets('AC-43.1: the title over what was used most shows only while nothing is typed, and only once something was used', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', units: ['الفلة الغربية']);
     final supplier = api.addSupplier('project-0', 'شركة النخيل', vatNumber: '300000000000003', timesUsed: 3);
     api.addCategory('project-0', 'التشطيب');
     await openProject(tester, api);
@@ -51,7 +51,7 @@ void main() {
 
   /// A register with two suppliers, the picker open on it for someone with [permissions] in a project of [status]; what it answers lands in the record's list.
   Future<({FakeApi api, Project project, Suppliers suppliers, String palm, String oasis, List<Supplier> picked})> openPicker(WidgetTester tester, {List<String> permissions = managerAndFinance, String status = 'active'}) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, status: status);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, status: status);
     final project = Project.fromJson(jsonDecode(jsonEncode(api.projects.single)) as Map<String, dynamic>);
     final palm = api.addSupplier('project-0', 'شركة النخيل', vatNumber: vatNumber, defaultItemName: 'البلاط');
     final oasis = api.addSupplier('project-0', 'مؤسسة الواحة');

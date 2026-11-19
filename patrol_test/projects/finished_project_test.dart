@@ -108,11 +108,11 @@ void main() {
     });
 
     phoneCase('partners offer nothing to change', ($) async {
-      final manager = await Given.manager(partners: ['متعب']);
+      final manager = await Given.manager(partners: ['A']);
       await Given.closed(manager);
       await $.onTheHome(manager);
       await $.tapOn(HomeScreen.partnersKey(manager.projectId));
-      await $.idOf('partners.name.', () => Given.partnerNamed(manager, 'متعب'));
+      await $.idOf('partners.name.', () => Given.partnerNamed(manager, 'A'));
       expect($.isEnabled(PartnersScreen.addKey), isFalse);
       expect($(keyedBy(PartnersScreen.menuKey)), findsNothing);
     });
@@ -127,7 +127,7 @@ void main() {
       expect($(keyedBy(SuppliersScreen.menuKey)), findsNothing);
     });
 
-    phoneCase('contracts offer nothing to change: a contract\'s ⋮ holds its files alone (Muteb, 12 Nov 2026)', ($) async {
+    phoneCase('contracts offer nothing to change: a contract\'s ⋮ holds its files alone (the owner, 12 Nov 2026)', ($) async {
       final manager = await Given.manager();
       final contract = await Given.contract(manager);
       await Given.closed(manager);

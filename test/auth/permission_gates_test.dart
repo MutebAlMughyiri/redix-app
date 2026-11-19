@@ -73,13 +73,13 @@ void _nothing(FakeApi api) {}
 
 Finder Function(FakeApi api) _key(Key key) => (_) => find.byKey(key);
 
-/// The button keyed [key] in its working state: a screen's add button shows grayed without the permission rather than hidden (Muteb, 8 Nov 2026; issue #85), as do the
+/// The button keyed [key] in its working state: a screen's add button shows grayed without the permission rather than hidden (the owner, 8 Nov 2026; issue #85), as do the
 /// reports' buttons, a menu's choices among them, and a contract's card (redix-api #131).
 Finder Function(FakeApi api) _enabled(Key key) => (_) => find.byWidgetPredicate((widget) => widget.key == key && works(widget));
 
 String _first(List<Map<String, Object>>? rows) => rows!.first['id']! as String;
 
-/// Opens the ⋮ of the project's first contract, which holds what keeping the settings allows and its files, gray without «يُصدر التقارير» (Muteb, 12 Nov 2026; redix-api #131).
+/// Opens the ⋮ of the project's first contract, which holds what keeping the settings allows and its files, gray without «يُصدر التقارير» (the owner, 12 Nov 2026; redix-api #131).
 Future<void> _openContractMenu(WidgetTester tester, FakeApi api, FakeCapture capture) => _tapKey(ContractsScreen.menuKey(_first(api.contracts[_project])))(tester, api, capture);
 
 final _summaryWithAnItem = <String, Object>{
@@ -148,7 +148,7 @@ final List<Gate> _gates = [
   (
     name: 'Edit a partner',
     permission: Permission.manageSettings,
-    arrange: (api) => api.addPartner(_project, 'متعب'),
+    arrange: (api) => api.addPartner(_project, 'A'),
     steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project))],
     control: (api) => find.byKey(PartnersScreen.menuKey(_first(api.partners[_project]))),
   ),
@@ -156,7 +156,7 @@ final List<Gate> _gates = [
   (
     name: 'A supplier\'s menu',
     permission: Permission.manageSettings,
-    arrange: (api) => api.addSupplier(_project, 'شركة البواني للتجارة'),
+    arrange: (api) => api.addSupplier(_project, 'شركة A للتجارة'),
     steps: [_openProject, _tapKey(HomeScreen.suppliersKey(_project))],
     control: (api) => find.byKey(SuppliersScreen.menuKey(_first(api.suppliers[_project]))),
   ),
@@ -314,7 +314,7 @@ final List<Gate> _gates = [
     name: 'Swipe away a capital movement (redix-api #119)',
     permission: Permission.removeApprovedEntries,
     arrange: (api) => api
-      ..addPartner(_project, 'متعب')
+      ..addPartner(_project, 'A')
       ..addMovement(),
     steps: [_openProject, _tapKey(HomeScreen.partnersKey(_project)), _tap((api) => find.byKey(PartnersScreen.nameKey(_first(api.partners[_project]))))],
     control: _key(MovementsScreen.rowKey('movement-0').bar),
@@ -338,7 +338,7 @@ final List<Gate> _gates = [
   (
     name: 'A partner in Add entry\'s table list',
     permission: Permission.moveMoney,
-    arrange: (api) => api.addPartner(_project, 'متعب'),
+    arrange: (api) => api.addPartner(_project, 'A'),
     steps: [_openProject, _tapKey(HomeScreen.addEntryKey(_project)), _tapKey(AddEntryScreen.tableKey)],
     control: (api) => find.byKey(TablePicker.optionKey(api.partners[_project]!.single['id']! as String)),
   ),
@@ -358,7 +358,7 @@ void main() {
     addTearDown(tester.view.reset);
     final api = FakeApi()
       ..permissions = permissions
-      ..addProject('غصون 6', permissions: permissions, units: ['الفلة']);
+      ..addProject('مشروع A', permissions: permissions, units: ['الفلة']);
     gate.arrange(api);
     final capture = FakeCapture();
     await pumpRedix(tester, api, stored: {'session': keptSession}, capture: capture);

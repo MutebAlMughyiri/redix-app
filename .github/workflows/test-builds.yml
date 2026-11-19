@@ -1,11 +1,11 @@
 # The test builds, started by hand from Actions (redix-app #118): the APK on Linux, for Firebase App Distribution's testers (App Tester), and
 # the IPA on GitHub's Mac, for TestFlight (D1). The build chosen - prod, qa or dev - is its own app, com.techdetails.redix and .qa and .dev
-# beside it, and goes to its own group of testers, prod, qa or dev (Muteb, 19 Nov 2026). The APK uploads only once it carries REDIX's upload
+# beside it, and goes to its own group of testers, prod, qa or dev (the owner, 19 Nov 2026). The APK uploads only once it carries REDIX's upload
 # key; without the secrets it still builds, debug-signed, and keeps what it built as the run's artifact. The run number is every upload's build
 # number (R6), and its version is 1.0 and that number, so each build reads 1.0.1, 1.0.2 and on; the testers read what it changes as its release
-# notes (Muteb, 19 Nov 2026). Each build talks to its own server: prod to the one config/prod.json names, qa and dev to the instances beside it,
+# notes (the owner, 19 Nov 2026). Each build talks to its own server: prod to the one config/prod.json names, qa and dev to the instances beside it,
 # qa.redix.muteb.net:8444 and dev.redix.muteb.net:8445 (redix-api #145 R25), which this workflow sets, so config/qa.json and dev.json keep
-# naming the servers on Muteb's PC, which his own builds and Patrol use (Muteb, 19 Nov 2026: "The workflow sets it").
+# naming the servers on the owner's PC, which his own builds and Patrol use (the owner, 19 Nov 2026: "The workflow sets it").
 #
 # Secrets:
 #   Android:  ANDROID_UPLOAD_KEY (the .jks, base64, alias upload), ANDROID_UPLOAD_KEY_PASSWORD (the store's and the key's),

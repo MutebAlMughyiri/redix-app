@@ -24,8 +24,8 @@ void main() {
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
   }
 
-  testWidgets('Muteb, 8 and 9 Nov 2026: the home opens Settings from a gear in its top bar, colored by the theme, and the project card has no Settings button', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+  testWidgets('the owner, 8 and 9 Nov 2026: the home opens Settings from a gear in its top bar, colored by the theme, and the project card has no Settings button', (tester) async {
+    final api = FakeApi()..addProject('مشروع A');
     await openProject(tester, api);
 
     final icon = find.byKey(HomeScreen.sharedSettingsKey('project-0'));
@@ -55,19 +55,19 @@ void main() {
     expect(find.byKey(SharedSettingsScreen.registeredKey), findsNothing);
   });
 
-  testWidgets('Muteb, 9 Nov 2026: opened from a project, Settings shows the role name typed there beside the username; from the project list, the username alone', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', roleName: 'مدير المشروع');
+  testWidgets('the owner, 9 Nov 2026: opened from a project, Settings shows the role name typed there beside the username; from the project list, the username alone', (tester) async {
+    final api = FakeApi()..addProject('مشروع A', roleName: 'مدير المشروع');
     await openProject(tester, api);
     await harness.openSettings(tester, api);
 
-    expect(tester.widget<Text>(find.byKey(SharedSettingsScreen.whoKey.subtitle)).data, 'muteb · مدير المشروع');
+    expect(tester.widget<Text>(find.byKey(SharedSettingsScreen.whoKey.subtitle)).data, 'owner · مدير المشروع');
 
     await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.switchProjectKey)));
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.sharedSettingsKey)));
-    expect(tester.widget<Text>(find.byKey(SharedSettingsScreen.whoKey.subtitle)).data, 'muteb');
+    expect(tester.widget<Text>(find.byKey(SharedSettingsScreen.whoKey.subtitle)).data, 'owner');
   });
 
-  testWidgets('Muteb, 9 Nov 2026: Settings shows the account itself, with no My account or language row to open first', (tester) async {
+  testWidgets('the owner, 9 Nov 2026: Settings shows the account itself, with no My account or language row to open first', (tester) async {
     await openSettings(tester, FakeApi());
 
     for (final key in [SharedSettingsScreen.whoKey, SharedSettingsScreen.languageKey, LanguageSwitch.choiceKey, SharedSettingsScreen.biometricsKey, SharedSettingsScreen.changePasswordKey, SharedSettingsScreen.signOutKey]) {
@@ -99,10 +99,10 @@ void main() {
 
   Future<FakeApi> openDefaultProject(WidgetTester tester) async {
     final api = FakeApi()
-      ..addProject('غصون 6')
-      ..addProject('غصون 7')
-      ..addProject('غصون 8', status: 'pendingApproval')
-      ..addProject('غصون 9', status: 'rejected');
+      ..addProject('مشروع A')
+      ..addProject('مشروع B')
+      ..addProject('مشروع C', status: 'pendingApproval')
+      ..addProject('مشروع D', status: 'rejected');
     await openSettings(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.defaultProjectKey)));
     return api;
@@ -119,8 +119,8 @@ void main() {
   });
 
   testWidgets('redix-api #126 D2: Default project offers no tick for a project the user was made inactive in, and keeps the tick of one he is active in', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
-    api.makeInactive(api.addProject('غصون 7'));
+    final api = FakeApi()..addProject('مشروع A');
+    api.makeInactive(api.addProject('مشروع B'));
     await openSettings(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(SharedSettingsScreen.defaultProjectKey)));
 
@@ -162,8 +162,8 @@ void main() {
     expect((isTicked(tester, 'project-0'), isTicked(tester, 'project-1')), (false, false));
   });
 
-  testWidgets("Muteb, 9 Nov 2026: a project's More info, permissions, users, categories and items, and payment methods open from its home, beside loading its project file (redix-api #132), and Settings holds none of them", (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+  testWidgets("the owner, 9 Nov 2026: a project's More info, permissions, users, categories and items, and payment methods open from its home, beside loading its project file (redix-api #132), and Settings holds none of them", (tester) async {
+    final api = FakeApi()..addProject('مشروع A');
     await openProject(tester, api);
 
     for (final key in [HomeScreen.projectInfoKey('project-0'), HomeScreen.myPermissionsKey('project-0'), HomeScreen.usersKey('project-0'), HomeScreen.categoriesKey('project-0'), HomeScreen.paymentMethodsKey('project-0')]) {
@@ -180,8 +180,8 @@ void main() {
     }
   });
 
-  testWidgets('Muteb, 9 Nov 2026: صلاحياتي on the home shows every permission, those the person holds ticked, and none can be changed there', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: field);
+  testWidgets('the owner, 9 Nov 2026: صلاحياتي on the home shows every permission, those the person holds ticked, and none can be changed there', (tester) async {
+    final api = FakeApi()..addProject('مشروع A', permissions: field);
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.myPermissionsKey('project-0'));
     expect(tester.widget<Text>(find.byKey(HomeScreen.myPermissionsKey('project-0').label)).data, 'en permissions.mine');
@@ -197,7 +197,7 @@ void main() {
   });
 
   testWidgets('redix-api #106: صلاحياتي of a person seeing chosen partners shows them ticked, and none can be unticked there', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: [...field, 'seeChosenCapital']);
+    final api = FakeApi()..addProject('مشروع A', permissions: [...field, 'seeChosenCapital']);
     final khaled = api.addPartner('project-0', 'خالد')['id']! as String;
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.myPermissionsKey('project-0'));
@@ -209,8 +209,8 @@ void main() {
     expect(tick.onChanged, isNull);
   });
 
-  testWidgets('Muteb, 12 Nov 2026: صلاحياتي is searched: what was typed keeps the permissions whose name or what it allows holds it, the capital heading over a capital tick kept', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: field);
+  testWidgets('the owner, 12 Nov 2026: صلاحياتي is searched: what was typed keeps the permissions whose name or what it allows holds it, the capital heading over a capital tick kept', (tester) async {
+    final api = FakeApi()..addProject('مشروع A', permissions: field);
     await openProject(tester, api);
     await scrollAndTap(tester, api, HomeScreen.myPermissionsKey('project-0'));
 

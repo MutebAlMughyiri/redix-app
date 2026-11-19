@@ -31,7 +31,7 @@ void main() {
   testWidgets('without a network the list says so, and Try again reads it', (tester) async {
     final api = FakeApi()
       ..online = false
-      ..addProject('غصون 6');
+      ..addProject('مشروع A');
     await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: keptWords('en'));
     expect(text(tester, ApiListBody.messageKey), 'en projects.loadFailed');
 
@@ -42,16 +42,16 @@ void main() {
   });
 
   testWidgets('Arabic names show as typed', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProjects(tester, api);
 
-    expect(text(tester, ProjectsScreen.nameKey('project-0')), 'غصون 6');
+    expect(text(tester, ProjectsScreen.nameKey('project-0')), 'مشروع A');
   });
 
   testWidgets('an expired access token is renewed once for each list read at once, and the session stays open', (tester) async {
     final api = FakeApi()
       ..refreshStatus = 500
-      ..addProject('غصون 6');
+      ..addProject('مشروع A');
     await pumpRedix(tester, api, stored: {'session': keptSession});
     api
       ..expiredAccessTokens.add('kept-access')
@@ -73,7 +73,7 @@ void main() {
   });
 
   testWidgets('a project waiting for approval says so, does not open and has no star', (tester) async {
-    final api = FakeApi()..addProject('غصون 8', status: 'pendingApproval', permissions: []);
+    final api = FakeApi()..addProject('مشروع C', status: 'pendingApproval', permissions: []);
     await openProjects(tester, api);
 
     expect(status(tester, 'project-0'), 'en projects.pending');
@@ -84,7 +84,7 @@ void main() {
   });
 
   testWidgets('a rejected project says why, does not open and has no star', (tester) async {
-    final api = FakeApi()..addProject('غصون 9', status: 'rejected', rejectionReason: 'الاسم مكرر', permissions: []);
+    final api = FakeApi()..addProject('مشروع D', status: 'rejected', rejectionReason: 'الاسم مكرر', permissions: []);
     await openProjects(tester, api);
 
     expect(status(tester, 'project-0'), 'en projects.rejected');
@@ -97,8 +97,8 @@ void main() {
 
   testWidgets('a card keeps its margins in Arabic, and on a waiting project with no star', (tester) async {
     final api = FakeApi()
-      ..addProject('غصون 6')
-      ..addProject('غصون 8', status: 'pendingApproval', permissions: []);
+      ..addProject('مشروع A')
+      ..addProject('مشروع C', status: 'pendingApproval', permissions: []);
     await pumpRedix(tester, api, locale: const Locale('ar'), stored: {'session': keptSession});
 
     final card = tester.getRect(find.byKey(ProjectsScreen.cardKey('project-0')));
@@ -109,7 +109,7 @@ void main() {
   });
 
   testWidgets('sign-in lands on the list, with no change buttons on it', (tester) async {
-    await openProjects(tester, FakeApi()..addProject('غصون 6'));
+    await openProjects(tester, FakeApi()..addProject('مشروع A'));
 
     expect(text(tester, ProjectsScreen.titleKey), 'en projects.choose');
     expect(text(tester, ProjectsScreen.hintKey), 'en projects.chooseHint');
@@ -117,23 +117,23 @@ void main() {
   });
 
   testWidgets('a card shows its units, roles and status', (tester) async {
-    await openProjects(tester, FakeApi()..addProject('غصون 6', units: ['الفلة الغربية', 'الفلة الجنوبية']));
+    await openProjects(tester, FakeApi()..addProject('مشروع A', units: ['الفلة الغربية', 'الفلة الجنوبية']));
 
     expect(text(tester, ProjectsScreen.detailsKey('project-0')), 'الفلة الغربية · الفلة الجنوبية');
     expect(status(tester, 'project-0'), 'en projects.active');
   });
 
   testWidgets('a finished project says it is read-only', (tester) async {
-    await openProjects(tester, FakeApi()..addProject('غصون 5', status: 'finished', units: ['الفلة الشرقية']));
+    await openProjects(tester, FakeApi()..addProject('مشروع E', status: 'finished', units: ['الفلة الشرقية']));
 
     expect(text(tester, ProjectsScreen.detailsKey('project-0')), 'en projects.readOnly');
     expect(status(tester, 'project-0'), 'en projects.finished');
   });
 
-  /// Two projects of the signed-in user, made inactive in the second, غصون 7 (redix-api #126).
+  /// Two projects of the signed-in user, made inactive in the second, مشروع B (redix-api #126).
   FakeApi activeAndInactive() {
-    final api = FakeApi()..addProject('غصون 6');
-    api.makeInactive(api.addProject('غصون 7'));
+    final api = FakeApi()..addProject('مشروع A');
+    api.makeInactive(api.addProject('مشروع B'));
     return api;
   }
 
@@ -167,13 +167,13 @@ void main() {
     expect(find.byKey(ProjectsScreen.starKey('project-0')), findsOneWidget);
 
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
-    expect(text(tester, HomeScreen.titleKey), 'غصون 6');
+    expect(text(tester, HomeScreen.titleKey), 'مشروع A');
   });
 
   IconData star(WidgetTester tester, String id) => (tester.widget<IconButton>(find.byKey(ProjectsScreen.starKey(id))).icon as Icon).icon!;
 
   testWidgets('AC-37.1: the star makes a project the default, which opens at sign-in, and a message says so', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProjects(tester, api);
 
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.starKey('project-0'))));
@@ -186,8 +186,8 @@ void main() {
 
   testWidgets('the star on another project moves the default there', (tester) async {
     final api = FakeApi()
-      ..addProject('غصون 6')
-      ..addProject('غصون 7');
+      ..addProject('مشروع A')
+      ..addProject('مشروع B');
     await openProjects(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.starKey('project-0'))));
 
@@ -199,7 +199,7 @@ void main() {
   });
 
   testWidgets('the star on the default clears it, so sign-in shows the list', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProjects(tester, api);
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.starKey('project-0'))));
 
@@ -211,7 +211,7 @@ void main() {
   });
 
   testWidgets('a refused star says why, says nothing of a default, and stays empty', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProjects(tester, api);
     api.projectAnswer = (status: 403, code: '');
 
@@ -223,7 +223,7 @@ void main() {
   });
 
   testWidgets('a star without a network says so', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
+    final api = FakeApi()..addProject('مشروع A');
     await openProjects(tester, api);
 
     api.online = false;

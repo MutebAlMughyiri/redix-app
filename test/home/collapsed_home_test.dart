@@ -20,7 +20,7 @@ void main() {
     tester.view.physicalSize = const Size(800, 4000);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    final api = FakeApi()..addProject('غصون 6', permissions: permissions, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: permissions, units: ['الفلة الغربية']);
     await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: preferences);
     await act(tester, api, () => tester.tap(find.byKey(ProjectsScreen.cardKey('project-0'))));
     return api;
@@ -132,7 +132,7 @@ void main() {
   });
 
   testWidgets('R10: a collapsed home never shows the summary as it opens', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: managerAndFinance, units: ['الفلة الغربية']);
+    final api = FakeApi()..addProject('مشروع A', permissions: managerAndFinance, units: ['الفلة الغربية']);
     await pumpRedix(tester, api, stored: {'session': keptSession}, preferences: {stateKey: 0});
     await tester.tap(find.byKey(ProjectsScreen.cardKey('project-0')));
     await tester.pump();

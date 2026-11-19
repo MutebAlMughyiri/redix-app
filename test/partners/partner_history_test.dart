@@ -16,18 +16,18 @@ void main() {
   });
 
   PartnerHistoryLine lineOf(String kind, {String nameWas = '', String login = ''}) =>
-      PartnerHistoryLine.fromJson(FakeApi().addPartnerHistoryLine('project-0', kind, partner: 'متعب', nameWas: nameWas, login: login));
+      PartnerHistoryLine.fromJson(FakeApi().addPartnerHistoryLine('project-0', kind, partner: 'A', nameWas: nameWas, login: login));
 
   test('redix-app #101: a renamed partner\'s line names the partner and the name they had', () {
-    expect(lineOf('partnerChanged', nameWas: 'متعب المغيري').textIn(words), 'renamed متعب, was متعب المغيري');
+    expect(lineOf('partnerChanged', nameWas: 'A Z').textIn(words), 'renamed A, was A Z');
   });
 
   test('redix-app #101: a partner\'s line with no earlier name says only who', () {
-    expect(lineOf('partnerChanged').textIn(words), 'renamed متعب');
+    expect(lineOf('partnerChanged').textIn(words), 'renamed A');
   });
 
   test('redix-app #101: a partner given a login names it, and one left with none says so', () {
-    expect(lineOf('partnerAccount', login: 'mutab').textIn(words), 'متعب signs in as mutab');
-    expect(lineOf('partnerAccount').textIn(words), 'متعب signs in as no login');
+    expect(lineOf('partnerAccount', login: 'a').textIn(words), 'A signs in as a');
+    expect(lineOf('partnerAccount').textIn(words), 'A signs in as no login');
   });
 }

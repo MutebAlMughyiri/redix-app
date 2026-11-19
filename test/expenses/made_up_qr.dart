@@ -9,5 +9,5 @@ String tlv(Map<int, String> fields) => base64.encode([
 ]);
 
 /// The QR code of a made-up invoice.
-String madeUpQr({String seller = 'شركة البواني للتجارة', String vatNumber = '310823353100003', String time = '2026-10-26T14:25:00Z', String total = '6000.00', String vat = '782.61'}) =>
+String madeUpQr({String seller = 'شركة A للتجارة', String vatNumber = '300000000000003', String time = '2026-10-26T14:25:00Z', String total = '6000.00', String vat = '782.61'}) =>
     tlv({1: seller, 2: vatNumber, 3: time, 4: total, 5: vat});

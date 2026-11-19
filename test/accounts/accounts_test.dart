@@ -17,13 +17,13 @@ import 'package:redix/ui/api_list_body.dart';
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  /// A project with a bank account and نواف's custody, opened as far as its accounts.
+  /// A project with a bank account and B's custody, opened as far as its accounts.
   Future<({FakeApi api, String bank, String custody})> openAccounts(WidgetTester tester, {String status = 'active', List<String> permissions = managerAndFinance}) async {
-    final api = FakeApi()..addProject('غصون 6', status: status, permissions: permissions);
-    api.addMember('user-nawaf', 'نواف');
-    api.addMember('user-fawaz', 'فواز');
+    final api = FakeApi()..addProject('مشروع A', status: status, permissions: permissions);
+    api.addMember('user-b', 'B');
+    api.addMember('user-d', 'D');
     final bank = api.addAccount('project-0', 'حساب المؤسسة', balance: 64250.75);
-    final custody = api.addAccount('project-0', 'كاش مع نواف', type: 'cashCustody', balance: 2750, custodianId: 'user-nawaf', custodianName: 'نواف');
+    final custody = api.addAccount('project-0', 'كاش مع B', type: 'cashCustody', balance: 2750, custodianId: 'user-b', custodianName: 'B');
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
     await tester.ensureVisible(projectSettingPages);
@@ -51,7 +51,7 @@ void main() {
     expect(text(tester, AccountsScreen.nameKey(opened.bank)), 'حساب المؤسسة');
     expect(text(tester, AccountsScreen.detailsKey(opened.bank)), 'en accounts.typeBank');
     expect(text(tester, AccountsScreen.balanceKey(opened.bank)), '64,250.75');
-    expect(text(tester, AccountsScreen.detailsKey(opened.custody)), 'en accounts.typeCashCustody · نواف');
+    expect(text(tester, AccountsScreen.detailsKey(opened.custody)), 'en accounts.typeCashCustody · B');
     expect(text(tester, AccountsScreen.balanceKey(opened.custody)), '2,750.00');
   });
 
@@ -73,10 +73,10 @@ void main() {
 
     await act(tester, opened.api, () => tester.tap(find.byKey(AccountsScreen.addKey)));
     await act(tester, opened.api, () => tester.tap(find.byKey(AccountsScreen.typeKey(AccountType.cashCustody))));
-    await chooseCustodian(tester, opened.api, 'user-fawaz');
-    await save(tester, opened.api, name: 'كاش مع فواز');
+    await chooseCustodian(tester, opened.api, 'user-d');
+    await save(tester, opened.api, name: 'كاش مع D');
 
-    expect(opened.api.sentSettingsChanges.single.$2, {'type': 'cashCustody', 'name': 'كاش مع فواز', 'custodianId': 'user-fawaz'});
+    expect(opened.api.sentSettingsChanges.single.$2, {'type': 'cashCustody', 'name': 'كاش مع D', 'custodianId': 'user-d'});
   });
 
   testWidgets('a refusal stays in the dialog with its reason', (tester) async {
@@ -107,14 +107,14 @@ void main() {
 
     await chooseInMenu(tester, opened.api, opened.custody, AccountsScreen.editKey);
 
-    expect(tester.widget<TextField>(find.byKey(AccountsScreen.accountNameKey)).controller!.text, 'كاش مع نواف');
+    expect(tester.widget<TextField>(find.byKey(AccountsScreen.accountNameKey)).controller!.text, 'كاش مع B');
     expect(find.byKey(AccountsScreen.typeKey(AccountType.bank)), findsNothing);
-    await chooseCustodian(tester, opened.api, 'user-fawaz');
-    await save(tester, opened.api, name: 'كاش مع فواز');
+    await chooseCustodian(tester, opened.api, 'user-d');
+    await save(tester, opened.api, name: 'كاش مع D');
 
     expect(opened.api.sentSettingsChanges.single.$1, 'PUT /projects/project-0/accounts/${opened.custody}');
-    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'كاش مع فواز', 'custodianId': 'user-fawaz'});
-    expect(text(tester, AccountsScreen.detailsKey(opened.custody)), 'en accounts.typeCashCustody · فواز');
+    expect(opened.api.sentSettingsChanges.single.$2, {'name': 'كاش مع D', 'custodianId': 'user-d'});
+    expect(text(tester, AccountsScreen.detailsKey(opened.custody)), 'en accounts.typeCashCustody · D');
     expect(text(tester, AccountsScreen.balanceKey(opened.custody)), '2,750.00');
   });
 
@@ -129,8 +129,8 @@ void main() {
   });
 
   testWidgets('a custodian who left the project stays on offer until changed', (tester) async {
-    final api = FakeApi()..addProject('غصون 6');
-    final custody = api.addAccount('project-0', 'كاش مع هيثم', type: 'cashCustody', custodianId: 'user-gone', custodianName: 'هيثم');
+    final api = FakeApi()..addProject('مشروع A');
+    final custody = api.addAccount('project-0', 'كاش مع C', type: 'cashCustody', custodianId: 'user-gone', custodianName: 'C');
     await openProject(tester, api);
     await showProjectSetting(tester, HomeScreen.accountsKey('project-0'));
     await tester.ensureVisible(projectSettingPages);
@@ -138,7 +138,7 @@ void main() {
 
     await chooseInMenu(tester, api, custody['id'] as String, AccountsScreen.editKey);
 
-    expect(text(tester, MemberPicker.optionKey('user-gone').label), 'هيثم');
+    expect(text(tester, MemberPicker.optionKey('user-gone').label), 'C');
   });
 
   testWidgets('disabling says so on the row, and enable brings it back', (tester) async {
@@ -171,9 +171,9 @@ void main() {
   });
 
   testWidgets('a custodian sees their custody on the home, and nobody else does (AC-22.1)', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
-    final mine = api.addAccount('project-0', 'كاش مع نواف', type: 'cashCustody', balance: 2750, custodianId: 'user-nawaf', custodianName: 'نواف', isMine: true);
-    final theirs = api.addAccount('project-0', 'كاش مع فواز', type: 'cashCustody', balance: 40, custodianId: 'user-fawaz', custodianName: 'فواز');
+    final api = FakeApi()..addProject('مشروع A', permissions: ['readProject']);
+    final mine = api.addAccount('project-0', 'كاش مع B', type: 'cashCustody', balance: 2750, custodianId: 'user-b', custodianName: 'B', isMine: true);
+    final theirs = api.addAccount('project-0', 'كاش مع D', type: 'cashCustody', balance: 40, custodianId: 'user-d', custodianName: 'D');
     await openProject(tester, api);
 
     expect(text(tester, HomeScreen.custodyBalanceKey(mine['id'] as String)), '2,750.00 en accounts.riyal');
@@ -181,8 +181,8 @@ void main() {
   });
 
   testWidgets('a disabled custody leaves the home', (tester) async {
-    final api = FakeApi()..addProject('غصون 6', permissions: ['readProject']);
-    final mine = api.addAccount('project-0', 'كاش مع نواف', type: 'cashCustody', custodianId: 'user-nawaf', custodianName: 'نواف', isMine: true, isActive: false);
+    final api = FakeApi()..addProject('مشروع A', permissions: ['readProject']);
+    final mine = api.addAccount('project-0', 'كاش مع B', type: 'cashCustody', custodianId: 'user-b', custodianName: 'B', isMine: true, isActive: false);
     await openProject(tester, api);
 
     expect(find.byKey(HomeScreen.custodyKey(mine['id'] as String)), findsNothing);

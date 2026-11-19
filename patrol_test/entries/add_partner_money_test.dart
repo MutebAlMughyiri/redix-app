@@ -16,12 +16,12 @@ import '../support/steps.dart';
 void main() {
   phoneClass('Add a partner\'s money (UC-040)', () {
     phoneCase('redix-api #110: a partner\'s contribution is sent for approval from Add entry', ($) async {
-      final manager = await Given.manager(project: 'غصون 7');
-      final partner = await Given.partner(manager, 'هيثم');
+      final manager = await Given.manager(project: 'مشروع B');
+      final partner = await Given.partner(manager, 'C');
       final account = await Given.account(manager, name: 'حساب المؤسسة');
       await $.onAddEntry(manager);
       await $.tapOn(AddEntryScreen.tableKey);
-      await $(TablePicker.searchKey).enterText('هيثم');
+      await $(TablePicker.searchKey).enterText('C');
       await $.tapOn(TablePicker.optionKey(partner));
       await $.pumpAndSettle();
       await $.fill(AddEntryScreen.amountKey, '5000');
@@ -34,10 +34,10 @@ void main() {
 
     phoneCase('redix-api #110, #129: with «سحب مبلغ» chosen in «نوع الحركة», it is a withdrawal', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final account = await Given.account(manager);
       await $.onAddEntry(manager);
-      await $.pickTable(partner, search: 'هيثم');
+      await $.pickTable(partner, search: 'C');
       await $.fill(AddEntryScreen.amountKey, '700');
       await $.tapOn(AddEntryScreen.columnKey('movementType'));
       await $.tapOn(AddEntryScreen.columnOptionKey('movementType', Given.withdrawalChoiceId).label);
@@ -49,7 +49,7 @@ void main() {
 
     phoneCase('R5: رأس المال is found by its name, in either spelling', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       await $.onAddEntry(manager);
       await $.tapOn(AddEntryScreen.tableKey);
       await $(TablePicker.searchKey).enterText('راس المال');
@@ -58,10 +58,10 @@ void main() {
 
     phoneCase('a receipt is optional, and the amount is one figure', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final account = await Given.account(manager);
       await $.onAddEntry(manager);
-      await $.pickTable(partner, search: 'هيثم');
+      await $.pickTable(partner, search: 'C');
       await $.fill(AddEntryScreen.amountKey, '700');
       await $.tapOn(PaymentChoices.accountKey(account));
       await $.sendEntry();
@@ -70,7 +70,7 @@ void main() {
 
     phoneCase('R9: without moveMoney no partner table is offered', ($) async {
       final manager = await Given.manager();
-      final partner = await Given.partner(manager, 'هيثم');
+      final partner = await Given.partner(manager, 'C');
       final member = await Given.member(manager, permissions: [Permission.recordEntries]);
       await $.onAddEntry(member);
       await $.tapOn(AddEntryScreen.tableKey);

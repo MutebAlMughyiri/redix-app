@@ -22,9 +22,9 @@ void main() {
   }
 
   Future<void> fillAndSend(WidgetTester tester, FakeApi api, {String mobile = '0500000000'}) => act(tester, api, () async {
-    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'غصون 8');
+    await tester.enterText(find.byKey(NewProjectScreen.nameKey), 'مشروع C');
     await tester.enterText(find.byKey(NewProjectScreen.unitNameKey), 'الفلة الغربية');
-    await tester.enterText(find.byKey(NewProjectScreen.partnerNameKey), 'متعب');
+    await tester.enterText(find.byKey(NewProjectScreen.partnerNameKey), 'A');
     await tester.enterText(find.byKey(NewProjectScreen.managerNameKey), 'ريم');
     await tester.enterText(find.byKey(NewProjectScreen.usernameKey), 'reem');
     await tester.enterText(find.byKey(NewProjectScreen.mobileKey), mobile);
@@ -70,9 +70,9 @@ void main() {
 
     final (path, body) = api.sentRegistrations.single;
     expect(path, '/projects/register');
-    expect(body['name'], 'غصون 8');
+    expect(body['name'], 'مشروع C');
     expect(body['units'], ['الفلة الغربية']);
-    expect(body['partners'], ['متعب'], reason: 'redix-api #109: the partners are declared when the project is registered');
+    expect(body['partners'], ['A'], reason: 'redix-api #109: the partners are declared when the project is registered');
     expect((body['displayName'], body['username'], body['mobile'], body['password']), ('ريم', 'reem', '0500000000', 'Chosen-pass-1'));
     expect(find.byKey(SignInScreen.usernameKey), findsOneWidget);
     expect(tester.widget<Text>(find.byKey(messageKeyOf('register.sent').label)).data, 'en register.sent');
@@ -125,6 +125,6 @@ void main() {
     await fillAndSend(tester, api);
 
     expect(tester.widget<Text>(find.byKey(NewProjectScreen.messageKey)).data, 'en register.noConnection');
-    expect(typed(tester, NewProjectScreen.nameKey), 'غصون 8');
+    expect(typed(tester, NewProjectScreen.nameKey), 'مشروع C');
   });
 }
