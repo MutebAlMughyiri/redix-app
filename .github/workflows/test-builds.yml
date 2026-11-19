@@ -3,7 +3,9 @@
 # beside it, and goes to its own group of testers, prod, qa or dev (Muteb, 19 Nov 2026). The APK uploads only once it carries REDIX's upload
 # key; without the secrets it still builds, debug-signed, and keeps what it built as the run's artifact. The run number is every upload's build
 # number (R6), and its version is 1.0 and that number, so each build reads 1.0.1, 1.0.2 and on; the testers read what it changes as its release
-# notes (Muteb, 19 Nov 2026).
+# notes (Muteb, 19 Nov 2026). Each build talks to its own server: prod to the one config/prod.json names, qa and dev to the instances beside it,
+# qa.redix.muteb.net:8444 and dev.redix.muteb.net:8445 (redix-api #145 R25), which this workflow sets, so config/qa.json and dev.json keep
+# naming the servers on Muteb's PC, which his own builds and Patrol use (Muteb, 19 Nov 2026: "The workflow sets it").
 #
 # Secrets:
 #   Android:  ANDROID_UPLOAD_KEY (the .jks, base64, alias upload), ANDROID_UPLOAD_KEY_PASSWORD (the store's and the key's),
@@ -35,14 +37,16 @@ jobs:
       DISTRIBUTED: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
     steps:
       - uses: actions/checkout@v7
-      - name: A tester's phone can reach the build's API - never none, never this PC's (R7, R13)
+      - name: The build's server, which a tester's phone reaches, never a PC's (R7, R13), and its links' host
         run: |
-          address=$(jq -r .API_BASE_URL "config/$BUILD.json")
-          case "$address" in
-            "" | *127.0.0.1* | *localhost*)
-              echo "::error::config/$BUILD.json's API_BASE_URL is '$address', which a tester's phone cannot reach"
-              exit 1 ;;
+          case "$BUILD" in
+            prod) server=$(jq -r .API_BASE_URL config/prod.json) ;;
+            qa) server=https://qa.redix.muteb.net:8444 ;;
+            dev) server=https://dev.redix.muteb.net:8445 ;;
           esac
+          host=${server#https://}
+          jq --arg server "$server" --arg host "${host%%:*}" '.API_BASE_URL = $server | .LINK_HOST = $host' "config/$BUILD.json" > "$RUNNER_TEMP/build.json"
+          echo "$BUILD talks to $server"
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
@@ -60,7 +64,7 @@ jobs:
         run: |
           echo "$KEY" | base64 -d > android/upload.jks
           printf 'storeFile=../upload.jks\nstorePassword=%s\nkeyAlias=upload\nkeyPassword=%s\n' "$PASSWORD" "$PASSWORD" > android/key.properties
-      - run: flutter build apk --release --dart-define-from-file=config/$BUILD.json --build-name=1.0.$GITHUB_RUN_NUMBER --build-number=$GITHUB_RUN_NUMBER
+      - run: flutter build apk --release --dart-define-from-file=$RUNNER_TEMP/build.json --build-name=1.0.$GITHUB_RUN_NUMBER --build-number=$GITHUB_RUN_NUMBER
       - name: The APK carries REDIX's upload key, or nothing is sent (R4)
         if: env.SIGNED == 'true'
         env:
