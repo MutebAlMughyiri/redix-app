@@ -25,10 +25,10 @@ import '../ui/bottom_button.dart';
 import '../ui/busy.dart';
 import '../ui/form_error.dart';
 import '../ui/labelled_chips.dart';
-import '../ui/list_search.dart';
 import '../ui/messages.dart';
 import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
+import '../ui/search_line.dart';
 import '../ui/search_scope.dart';
 import '../words/word_fill.dart';
 import '../words/words.dart';
@@ -267,15 +267,32 @@ class _ShareScreenState extends State<ShareScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // The search line is pinned under the header, so it stays once the picture scrolls away, and the body is the list alone, which any height
+            // only shows fewer rows of: with the keyboard up, the picture and the QR summary above and the chosen entry below left a search line in
+            // the body 43 px on a Pixel 6 (findings row 268; Muteb, 19 Nov 2026: "Pin the search").
             Expanded(
               child: NestedScrollView(
-                headerSliverBuilder: (context, _) => [SliverToBoxAdapter(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: header))],
-                body: ApiListBody<EntryRow>(
-                  list: entries,
-                  emptyText: words.entriesEmpty,
-                  keeps: (entry) => !matched.contains(entry.id),
-                  search: ListSearch.onApi(hint: words.shareSearchEntries),
-                  itemBuilder: _card,
+                headerSliverBuilder: (context, _) => [
+                  SliverToBoxAdapter(child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: header)),
+                  SliverOverlapAbsorber(
+                    handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                    sliver: PinnedHeaderSliver(child: Material(child: SearchLine(hint: words.shareSearchEntries, waits: true))),
+                  ),
+                ],
+                body: Builder(
+                  builder: (context) => ApiListBody<EntryRow>(
+                    list: entries,
+                    emptyText: words.entriesEmpty,
+                    keeps: (entry) => !matched.contains(entry.id),
+                    itemBuilder: _card,
+                    listOf: (items) => CustomScrollView(
+                      physics: ApiListBody.physics,
+                      slivers: [
+                        SliverOverlapInjector(handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
+                        SliverPadding(padding: ApiListBody.padding, sliver: SliverList.list(children: items)),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),

@@ -155,6 +155,24 @@ void main() {
     expect(find.byKey(ShareScreen.supplierDiffersKey), findsOneWidget);
   });
 
+  testWidgets('findings row 268: with the keyboard up and an entry chosen, scrolling back to the picture squeezes nothing, and the search stays over the list', (tester) async {
+    final (:api, capture: _) = await share(tester, (api) => api.addEntry(id: 'entry-1', status: 'approved', amount: 5000, supplierVatNumber: '300000000000099'),
+        qrText: _qrText(), screen: const Size(411, 914));
+    tester.view.viewInsets = const FakeViewPadding(bottom: 280);
+    addTearDown(tester.view.resetViewInsets);
+    final row = find.byKey(EntriesScreen.rowKey('entry-1'), skipOffstage: false);
+    await tester.ensureVisible(row);
+    await tester.pumpAndSettle();
+    await act(tester, api, () => tester.tap(row));
+
+    expect(tester.getRect(find.byKey(SearchLine.searchKey)).bottom, lessThanOrEqualTo(tester.getRect(row).top));
+    await tester.drag(row, const Offset(0, 900));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(ShareScreen.pictureKey).hitTestable(), findsOneWidget);
+  });
+
   testWidgets('R3, D3: what is typed in the search is asked of the API, with only the entries that take a file', (tester) async {
     final (:api, capture: _) = await share(tester, (api) {
       api
