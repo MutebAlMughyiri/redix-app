@@ -110,7 +110,7 @@ void main() {
       await onReports($, member);
       await $.tapOn(ReportsScreen.periodicKey(1));
       await $.reach($(PeriodicReportScreen.surplusKey));
-      for (final kind in ReportFileKind.values) {
+      for (final kind in const [ReportFileKind.pdf, ReportFileKind.excel, ReportFileKind.print]) {
         await $.reach($(ReportFileButtons.buttonKey('report-1', kind)));
         expect($.isEnabled(ReportFileButtons.buttonKey('report-1', kind)), isFalse, reason: kind.name);
       }
