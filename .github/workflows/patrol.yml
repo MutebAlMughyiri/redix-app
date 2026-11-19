@@ -11,18 +11,24 @@ on:
 jobs:
   patrol:
     # Six groups of folders, each on its own emulator, so a crash ends only its own group's classes (findings row 268: one crash in Contracts
-    # ended the run after 12 of 82). Each failed group keeps the emulator's log, the PC helper's and Patrol's own report.
+    # ended the run after 12 of 82). Every folder of patrol_test but support is in one group. Each failed group keeps the emulator's log, the
+    # PC helper's and Patrol's own report.
+    # Each group runs on a phone 411 points wide, the size of the ones REDIX runs on, and on one 360 wide with the real words, the narrowest
+    # AC-N03 names (findings row 21): the same Pixel 6 screen, at the density that makes it that wide.
     strategy:
       fail-fast: false
       matrix:
         group:
           - { name: accounts-to-documents, folders: accounts approvals auth contracts documents }
           - { name: entries, folders: entries }
-          - { name: home-to-sharing, folders: home launcher notifications offline search sharing }
+          - { name: history-to-sharing, folders: history home launcher notifications offline search sharing }
           - { name: money-partners-reports, folders: money partners reports }
           - { name: projects, folders: projects }
           - { name: settings-to-users, folders: settings structure suppliers users }
-    name: patrol (${{ matrix.group.name }})
+        phone:
+          - { width: 411, density: 420 }
+          - { width: 360, density: 480 }
+    name: patrol (${{ matrix.group.name }}, ${{ matrix.phone.width }})
     runs-on: ubuntu-latest
     env:
       REDIX_Environment: Dev
@@ -71,7 +77,10 @@ jobs:
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
+      # The longest group takes 45 minutes. Once, after its tests had ended, the emulator never shut down and held the job for four hours with
+      # nothing kept to read; past this limit the step fails and the next step keeps the logs.
       - uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 75
         with:
           api-level: 35
           arch: x86_64
@@ -89,6 +98,7 @@ jobs:
           script: |
             adb shell settings put global hide_error_dialogs 1
             adb shell am force-stop com.google.android.apps.nexuslauncher
+            adb shell wm density ${{ matrix.phone.density }}
             adb reverse tcp:5010 tcp:5010 && adb reverse tcp:5011 tcp:5011
             nohup adb -s emulator-5554 logcat -v time > "$RUNNER_TEMP/logcat.txt" 2>&1 &
             nohup pwsh -NoProfile -File tool/patrol_pc_helper.ps1 -Device emulator-5554 -Results "$RUNNER_TEMP/patrol-results.log" > "$RUNNER_TEMP/pc-helper.log" 2>&1 &
@@ -97,7 +107,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: patrol-${{ matrix.group.name }}
+          name: patrol-${{ matrix.group.name }}-${{ matrix.phone.width }}
           path: |
             ${{ runner.temp }}/logcat.txt
             ${{ runner.temp }}/pc-helper.log

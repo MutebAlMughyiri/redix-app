@@ -32,7 +32,7 @@ The language of [Settings](../guide/settings.md) (`SharedSettingsScreen`): a hea
 | The phone keeps the words of one language only: the new one replaces the old | `Words.load` | `words_test.dart`: the phone keeps only the language in use |
 | Without a network the language stays and the app says switching needs a network | `AppLanguage.choose` | `settings/account_test.dart`: without a network |
 | Until a language is chosen the app follows the phone, Arabic for any other language | `AppLanguage.locale` (empty choice) | `widget_test.dart`: a phone in another language gets Arabic |
-| AC-N03: on a screen 360 points wide, every screen is right to left in Arabic and left to right in English, with nothing off the screen | Each screen | `settings/account_test.dart`: AC-N03, once per language |
+| AC-N03: on a screen 360 points wide, every screen is right to left in Arabic and left to right in English, with nothing off the screen | Each screen | `settings/account_test.dart`: AC-N03, once per language, with the test's words; with the real words, every Patrol class on a phone 360 points wide (`.github/workflows/patrol.yml`, findings row 21) |
 
 ## Appearance (redix-app #87, #97)
 
