@@ -2,7 +2,8 @@
 # the IPA on GitHub's Mac, for TestFlight (D1). The build chosen - prod, qa or dev - is its own app, com.techdetails.redix and .qa and .dev
 # beside it, and goes to its own group of testers, prod, qa or dev (Muteb, 19 Nov 2026). The APK uploads only once it carries REDIX's upload
 # key; without the secrets it still builds, debug-signed, and keeps what it built as the run's artifact. The run number is every upload's build
-# number (R6).
+# number (R6), and its version is 1.0 and that number, so each build reads 1.0.1, 1.0.2 and on; the testers read what it changes as its release
+# notes (Muteb, 19 Nov 2026).
 #
 # Secrets:
 #   Android:  ANDROID_UPLOAD_KEY (the .jks, base64, alias upload), ANDROID_UPLOAD_KEY_PASSWORD (the store's and the key's),
@@ -19,12 +20,17 @@ on:
         type: choice
         options: [prod, qa, dev]
         default: prod
+      changes:
+        description: What this build changes, which the testers read in App Tester
+        type: string
+        required: true
 
 jobs:
   android:
     runs-on: ubuntu-latest
     env:
       BUILD: ${{ inputs.build }}
+      CHANGES: ${{ inputs.changes }}
       SIGNED: ${{ secrets.ANDROID_UPLOAD_KEY != '' }}
       DISTRIBUTED: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
     steps:
@@ -54,7 +60,7 @@ jobs:
         run: |
           echo "$KEY" | base64 -d > android/upload.jks
           printf 'storeFile=../upload.jks\nstorePassword=%s\nkeyAlias=upload\nkeyPassword=%s\n' "$PASSWORD" "$PASSWORD" > android/key.properties
-      - run: flutter build apk --release --dart-define-from-file=config/$BUILD.json --build-number=$GITHUB_RUN_NUMBER
+      - run: flutter build apk --release --dart-define-from-file=config/$BUILD.json --build-name=1.0.$GITHUB_RUN_NUMBER --build-number=$GITHUB_RUN_NUMBER
       - name: The APK carries REDIX's upload key, or nothing is sent (R4)
         if: env.SIGNED == 'true'
         env:
@@ -78,7 +84,7 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/firebase.json"
           case "$BUILD" in prod) app="$APP_ID_PROD" ;; qa) app="$APP_ID_QA" ;; dev) app="$APP_ID_DEV" ;; esac
           npx --yes firebase-tools@15.37.0 appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
-            --app "$app" --groups "$BUILD" --release-notes "REDIX $BUILD, ${GITHUB_SHA::7}, run $GITHUB_RUN_NUMBER"
+            --app "$app" --groups "$BUILD" --release-notes "REDIX $BUILD 1.0.$GITHUB_RUN_NUMBER: $CHANGES"
       - uses: actions/upload-artifact@v4
         with:
           name: redix-${{ inputs.build }}-apk-${{ github.run_number }}
@@ -101,14 +107,14 @@ jobs:
       - run: flutter pub get
       - name: Unsigned, while the App Store Connect key is not set
         if: env.SIGNED != 'true'
-        run: flutter build ipa --release --no-codesign --dart-define-from-file=config/prod.json --build-number=${{ github.run_number }}
+        run: flutter build ipa --release --no-codesign --dart-define-from-file=config/prod.json --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }}
       - name: Signed by Xcode's cloud signing, with the App Store Connect key
         if: env.SIGNED == 'true'
         run: |
           mkdir -p ~/.appstoreconnect/private_keys
           echo "${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8
           /usr/libexec/PlistBuddy -c "Add :teamID string ${{ secrets.APPLE_TEAM_ID }}" ios/ExportOptions.plist
-          flutter build ios --release --no-codesign --dart-define-from-file=config/prod.json --build-number=${{ github.run_number }}
+          flutter build ios --release --no-codesign --dart-define-from-file=config/prod.json --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }}
           auth=(-allowProvisioningUpdates -authenticationKeyPath "$HOME/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER_ID")
           xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release -archivePath build/ios/archive/Runner.xcarchive \
             DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}" CODE_SIGN_STYLE=Automatic "${auth[@]}" archive
