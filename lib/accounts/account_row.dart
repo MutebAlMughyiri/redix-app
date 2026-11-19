@@ -87,6 +87,7 @@ class AccountMenu extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (_) => ConfirmDialog(
+        destroys: true,
         title: words.accountsDeleteQuestion,
         subject: account.name,
         explanation: words.accountsDeleteCannotUndo,

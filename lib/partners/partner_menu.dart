@@ -41,6 +41,7 @@ class PartnerMenu extends StatelessWidget {
     showDialog<void>(
       context: context,
       builder: (_) => ConfirmDialog(
+        destroys: true,
         title: words.partnersDeleteQuestion,
         subject: partner.name,
         explanation: [

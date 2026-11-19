@@ -110,6 +110,7 @@ Future<void> retrieveProject(BuildContext context, Project project, Projects pro
   await showDialog<void>(
     context: context,
     builder: (_) => ConfirmDialog(
+        destroys: true,
       title: words.projectsRetrieveConfirm.fill([project.name, preview.when]),
       explanation: [
         words.projectsRetrieveTakenBy.fill([preview.archivedBy]),

@@ -7,9 +7,11 @@ import '../words/words.dart';
 import 'part_keys.dart';
 import 'app_color.dart';
 
-/// Asks before a change that deserves a second thought: what it applies to, what it means, and a red button to go ahead.
+/// Asks before a change that deserves a second thought: what it applies to, what it means, and a button to go ahead, red when going ahead destroys
+/// something (findings row 276).
 class ConfirmDialog extends StatelessWidget {
-  /// The question [title] about [subject], explained by [explanation]. The [confirmLabel] button closes the dialog and calls [onConfirm].
+  /// The question [title] about [subject], explained by [explanation]. The [confirmLabel] button closes the dialog and calls [onConfirm]; it is
+  /// red when it [destroys].
   const ConfirmDialog({
     super.key,
     required this.title,
@@ -17,6 +19,7 @@ class ConfirmDialog extends StatelessWidget {
     required this.explanation,
     required this.confirmLabel,
     required this.onConfirm,
+    this.destroys = false,
   });
 
   /// The question.
@@ -33,6 +36,9 @@ class ConfirmDialog extends StatelessWidget {
 
   /// What going ahead does.
   final VoidCallback onConfirm;
+
+  /// Whether going ahead destroys something, a delete, a retrieve over the project or closing it, so its button is red (Muteb, 19 Nov 2026).
+  final bool destroys;
 
   /// What the question is about.
   static const subjectKey = Key('confirm.subject');
@@ -73,7 +79,7 @@ class ConfirmDialog extends StatelessWidget {
         TextButton(key: cancelKey, onPressed: navigator.pop, child: Text(Words.of(context).commonCancel, key: cancelKey.label)),
         FilledButton(
           key: confirmKey,
-          style: FilledButton.styleFrom(backgroundColor: AppColor.refusal.of(context)),
+          style: destroys ? FilledButton.styleFrom(backgroundColor: AppColor.refusal.of(context)) : null,
           onPressed: () {
             navigator.pop();
             onConfirm();

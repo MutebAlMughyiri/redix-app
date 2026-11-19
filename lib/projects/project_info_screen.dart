@@ -201,6 +201,7 @@ class _ProjectInfoScreenState extends State<ProjectInfoScreen> {
     showDialog<void>(
       context: context,
       builder: (_) => ConfirmDialog(
+        destroys: true,
         title: words.projectsCloseQuestion,
         subject: project.name,
         explanation: words.projectsCloseExplain,
