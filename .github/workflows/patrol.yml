@@ -79,8 +79,12 @@ jobs:
           # A phone the size of the ones REDIX runs on, 411 x 914: with no profile the emulator is 320 x 640, where dialogs sit under the keyboard and
           # the share screen overflows (findings row 268).
           profile: pixel_6
+          # Room enough that its own launcher keeps up: with less it stalled, and its "isn't responding" dialog covered the screens (row 268).
+          cores: 4
+          ram-size: 4096M
           working-directory: redix-app
           script: |
+            adb shell settings put global hide_error_dialogs 1
             adb reverse tcp:5010 tcp:5010 && adb reverse tcp:5011 tcp:5011
             nohup adb -s emulator-5554 logcat -v time > "$RUNNER_TEMP/logcat.txt" 2>&1 &
             nohup pwsh -NoProfile -File tool/patrol_pc_helper.ps1 -Device emulator-5554 -Results "$RUNNER_TEMP/patrol-results.log" > "$RUNNER_TEMP/pc-helper.log" 2>&1 &

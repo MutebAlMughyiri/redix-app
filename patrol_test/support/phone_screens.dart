@@ -15,7 +15,6 @@ const _phoneScreenTimeout = Duration(seconds: 30);
 
 const _notepadPackage = 'com.huawei.notepad';
 const _noteBody = '$_notepadPackage:id/notetext_textview';
-const _shareSheetFileName = 'android:id/content_preview_filename';
 const _pickerRow = 'android:id/title';
 
 /// Keeps [bytes] as [name] in the app's own folder on the phone, the one place both the app and the PC can reach, and answers its path.
@@ -45,9 +44,10 @@ extension PhoneScreens on PatrolIntegrationTester {
     return text;
   }
 
-  /// The phone's share sheet opens on a file whose name holds [namePart], and the person backs out of it.
+  /// The phone's share sheet opens on a file whose name holds [namePart], and the person backs out of it. The name is found as text, which every
+  /// phone's share sheet shows, whichever app draws the sheet (findings row 268: Android 15's is not the system's own).
   Future<void> shareSheetOffers(String namePart) async {
-    await _android.waitUntilVisible(AndroidSelector(resourceName: _shareSheetFileName, textContains: namePart), timeout: _phoneScreenTimeout);
+    await _android.waitUntilVisible(AndroidSelector(textContains: namePart), timeout: _phoneScreenTimeout);
     await _android.pressBack();
     await pumpAndSettle();
   }
