@@ -55,9 +55,9 @@ flutter_launcher_icons:
 patrol:
   app_name: REDIX
   android:
-    package_name: redix.dev
+    package_name: com.techdetails.redix.dev
   ios:
-    bundle_id: redix.prod
+    bundle_id: com.techdetails.redix
 
 flutter:
   uses-material-design: true

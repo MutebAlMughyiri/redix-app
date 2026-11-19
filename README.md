@@ -25,7 +25,7 @@ Each environment has a config file in `config/`, passed when building or running
 | qa, Muteb's own testing (the API's `QA`) | `config/qa.json` | `http://127.0.0.1:5012` |
 | prod, the published app (the API's `Prod`) | `config/prod.json` | The server's public address, over `https`; empty until the server is published, so a prod build stops at start saying so |
 
-Each environment's file also names its app: dev installs as `redix.dev`, "REDIX dev", with links on `dev.redix.test`; qa as `redix.qa`, "REDIX qa", on `qa.redix.test`. Both can be on one phone, and prod as `redix.prod`, "REDIX". Patrol always builds dev, so a run never touches the qa app (redix-app #95). The activity keeps the code's own package: start an app with `adb shell am start -n redix.qa/redix.MainActivity`.
+Each environment's file also names its app, under the company's prefix (redix-app #118 D2): dev installs as `com.techdetails.redix.dev`, "REDIX dev", with links on `dev.redix.test`; qa as `com.techdetails.redix.qa`, "REDIX qa", on `qa.redix.test`. Both can be on one phone, and prod as `com.techdetails.redix`, "REDIX". Patrol always builds dev, so a run never touches the qa app (redix-app #95). The activity keeps the code's own package: start an app with `adb shell am start -n com.techdetails.redix.qa/redix.MainActivity`.
 
 On a phone, `127.0.0.1` is the phone itself; `adb reverse tcp:5010 tcp:5010` routes it to the developer's machine, on the emulator and on a phone plugged in by USB alike. Run it once after the emulator or phone connects. A release build only talks `https`: Android and iOS block plain `http` outside debug builds. An app built without a config file stops at start with a message naming the flag.
 

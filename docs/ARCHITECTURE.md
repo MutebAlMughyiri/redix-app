@@ -301,7 +301,7 @@ Settings such as projects keep nothing on the phone: the API owns every rule, th
 | A screen's main action is `BottomButton`: one full-width filled button in the `Scaffold`'s `bottomNavigationBar`, its bar keyed `BottomButton.barKey`, a plus unless the action says otherwise; no screen draws a floating button. Adding what is added rarely is `TitleBarAdd`, a plus in the title bar instead (Accounts, Partners, Documents, Payment methods, Users: redix-app #101, #106). Without the permission either shows grayed, never hidden | `lib/ui/bottom_button.dart` |
 | One class to a file: a screen's card, row and dialogs are files of their own | Each feature folder |
 | Every public class and member has a doc comment | The lint `public_member_api_docs` |
-| The environment's config file (`--dart-define-from-file=config/dev.json`, `config/qa.json` or `config/prod.json`, named as the API's environments `Dev`, `QA` and `Prod`) decides the API's address and, through `build.gradle.kts`, the app's id, its name and its link host; none is built in, and without the file the app is `redix.prod`, REDIX, `redix.test`, the production names (redix-app #95) | `apiBaseUrl`, `config/`, `build.gradle.kts` |
+| The environment's config file (`--dart-define-from-file=config/dev.json`, `config/qa.json` or `config/prod.json`, named as the API's environments `Dev`, `QA` and `Prod`) decides the API's address and, through `build.gradle.kts`, the app's id, its name and its link host; none is built in, and without the file the app is `com.techdetails.redix`, REDIX, `redix.test`, the production names (redix-app #95, #118 D2) | `apiBaseUrl`, `config/`, `build.gradle.kts` |
 
 ## Tests
 
