@@ -29,6 +29,18 @@ Each environment's file also names its app, under the company's prefix (redix-ap
 
 On a phone, `127.0.0.1` is the phone itself; `adb reverse tcp:5010 tcp:5010` routes it to the developer's machine, on the emulator and on a phone plugged in by USB alike. Run it once after the emulator or phone connects. A release build only talks `https`: Android and iOS block plain `http` outside debug builds. An app built without a config file stops at start with a message naming the flag.
 
+## Test builds
+
+**Actions → Test builds → Run workflow** builds one version for testers and sends it to its own group of Firebase App Distribution, where each tester installs it with App Tester (redix-app #118). The iPhone half, for TestFlight, waits for the Apple organization account.
+
+| Build | App | Group | Its API |
+| --- | --- | --- | --- |
+| prod | `com.techdetails.redix`, "REDIX" | `prod` | `config/prod.json`: the server's public address |
+| qa | `com.techdetails.redix.qa`, "REDIX qa" | `qa` | the server's qa instance (redix-api #145), once it exists |
+| dev | `com.techdetails.redix.dev`, "REDIX dev" | `dev` | the server's dev instance (redix-api #145), once it exists |
+
+The workflow refuses a build whose `API_BASE_URL` a tester's phone cannot reach - none, or this PC's `127.0.0.1` - before it builds anything, so qa and dev wait for their instances on the server. It signs the APK with REDIX's upload key, checks the APK's certificate against the key's fingerprint, and sends nothing that does not carry it; the run number is the build number. The keys live in GitHub's secrets and in Muteb's own backup, never in this repository.
+
 ## Words and languages
 
 Every word the app shows lives in the REDIX database (the `TranslationKeys` and `Translations` tables of the API). The app's code holds no word, only its key.
