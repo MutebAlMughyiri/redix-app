@@ -33,7 +33,7 @@ void main() {
       await Given.defaultProject(manager);
       await onTheDefaultHome($, manager);
       await Pc.tapTheWidget(addEntryLink);
-      await $.reach($(AddEntryScreen.tableKey));
+      await $(AddEntryScreen.tableKey).waitUntilExists();
       expect($.canGoBack, isTrue);
     });
 
@@ -41,7 +41,7 @@ void main() {
       final manager = await Given.manager();
       await $.onTheHome(manager);
       await Pc.tapTheWidget(addEntryLink);
-      await $.reach($(ProjectsScreen.cardKey(manager.projectId)));
+      await $(ProjectsScreen.cardKey(manager.projectId)).waitUntilExists();
       expect($(AddEntryScreen.tableKey), findsNothing);
     });
 

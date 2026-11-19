@@ -425,9 +425,11 @@ extension Steps on PatrolIntegrationTester {
     await takeNativeScreenshot(name);
   }
 
-  /// Goes back a screen with the phone's own back, the keyboard closed first, since while it is open back only closes it.
+  /// Goes back a screen with the phone's own back, the keyboard closed first and gone, since while it is open, or still closing as on Android 15,
+  /// back only closes it (findings row 268).
   Future<void> back() async {
     await SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+    await until(() => tester.view.viewInsets.bottom == 0);
     await pumpAndSettle();
     await platform.android.pressBack();
     await pumpAndSettle();

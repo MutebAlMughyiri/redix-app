@@ -23,6 +23,20 @@ class FolderStore extends LocalStore {
 
   Future<File> _file(String folder, String name) async => File('${(await _folder(folder)).path}/${base64Url.encode(utf8.encode(name))}');
 
+  /// Each file's last write, which the next write of that file waits for: two writes of one copy at once, as a list's load and a project's sync
+  /// make, filled one `.new` file together, mixed the two and lost the copy (findings row 268).
+  static final _lastWrites = <String, Future<void>>{};
+
+  /// Writes [file] whole, through its `.new` file that [fill] writes, once the file's last write has ended.
+  Future<void> _replace(File file, Future<File> Function(File temporary) fill) {
+    final write = (_lastWrites[file.path] ?? Future<void>.value()).then((_) async {
+      final written = await fill(File('${file.path}.new'));
+      await written.rename(file.path);
+    });
+    _lastWrites[file.path] = write.then((_) {}, onError: (Object _) {});
+    return write;
+  }
+
   @override
   Future<String> read(String folder, String name) async {
     final file = await _file(folder, name);
@@ -30,11 +44,8 @@ class FolderStore extends LocalStore {
   }
 
   @override
-  Future<void> write(String folder, String name, String text) async {
-    final file = await _file(folder, name);
-    final written = await File('${file.path}.new').writeAsString(text, flush: true);
-    await written.rename(file.path);
-  }
+  Future<void> write(String folder, String name, String text) async =>
+      _replace(await _file(folder, name), (temporary) => temporary.writeAsString(text, flush: true));
 
   @override
   Future<Uint8List> readBytes(String folder, String name) async {
@@ -43,11 +54,8 @@ class FolderStore extends LocalStore {
   }
 
   @override
-  Future<void> writeBytes(String folder, String name, List<int> bytes) async {
-    final file = await _file(folder, name);
-    final written = await File('${file.path}.new').writeAsBytes(bytes, flush: true);
-    await written.rename(file.path);
-  }
+  Future<void> writeBytes(String folder, String name, List<int> bytes) async =>
+      _replace(await _file(folder, name), (temporary) => temporary.writeAsBytes(bytes, flush: true));
 
   @override
   Future<void> delete(String folder, String name) async {

@@ -327,6 +327,20 @@ void main() {
     expect(search.all, isEmpty);
   });
 
+  test('findings row 268: two writes of one copy at once leave one of them whole, never the two mixed', () async {
+    final root = await Directory.systemTemp.createTemp('redix-store');
+    addTearDown(() => root.delete(recursive: true));
+    final store = FolderStore(() async => root);
+    final long = 'x' * 5000;
+    const short = 'y';
+
+    for (var round = 0; round < 20; round++) {
+      await Future.wait([store.write('copies', 'accounts', long), store.write('copies', 'accounts', short)]);
+      expect(await store.read('copies', 'accounts'), anyOf(long, short));
+    }
+    expect(await store.namesIn('copies'), ['accounts']);
+  });
+
   test('the folder keeps any name, reads back what it was given, and forgets on request', () async {
     final root = await Directory.systemTemp.createTemp('redix-store');
     addTearDown(() => root.delete(recursive: true));
