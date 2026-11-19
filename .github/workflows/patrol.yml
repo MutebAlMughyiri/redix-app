@@ -76,6 +76,9 @@ jobs:
           api-level: 35
           arch: x86_64
           target: google_apis
+          # A phone the size of the ones REDIX runs on, 411 x 914: with no profile the emulator is 320 x 640, where dialogs sit under the keyboard and
+          # the share screen overflows (findings row 268).
+          profile: pixel_6
           working-directory: redix-app
           script: |
             adb reverse tcp:5010 tcp:5010 && adb reverse tcp:5011 tcp:5011
