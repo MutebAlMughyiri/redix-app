@@ -23,13 +23,13 @@ import '../support/steps.dart';
 /// The link a shared [entry] of the project of [person] carries, on the host of the environment the app was built for.
 String linkOf(Person person, String entry) => 'https://$linkHost${EntryLinkScreen.pathOf(person.projectId, entry)}';
 
-/// Signs [person] in, opens the entry [entry], taps Share, sends it to Notepad, and answers the text Notepad received.
+/// Signs [person] in, opens the entry [entry], taps Share, and answers the text the phone's share sheet was given, found by the entry's link.
 Future<String> sharedTextOf(PatrolIntegrationTester $, Person person, String entry) async {
   await $.onTheHome(person);
   await $.tapOn(EntriesScreen.rowKey(entry));
   await $.reach($(AddEntryScreen.statusKey));
   await $.tapToThePhone(AddEntryScreen.shareKey);
-  return $.textSharedToNotepad();
+  return $.sharedText(linkOf(person, entry));
 }
 
 void main() {

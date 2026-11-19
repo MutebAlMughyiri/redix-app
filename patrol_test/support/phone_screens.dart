@@ -34,8 +34,22 @@ extension PhoneScreens on PatrolIntegrationTester {
     await this(key).tap(settlePolicy: SettlePolicy.noSettle);
   }
 
+  /// The text the app handed to the phone's share sheet, which holds [part]. Android's own sheet shows it above its apps, and the person backs
+  /// out (the CI emulator, findings row 268); HUAWEI's shows only the apps, so there it goes to Notepad.
+  Future<String> sharedText(String part) async {
+    if (await Pc.hasNotepad()) {
+      return _textSharedToNotepad();
+    }
+    final shown = AndroidSelector(textContains: part);
+    await _android.waitUntilVisible(shown, timeout: _phoneScreenTimeout);
+    final text = (await _android.getNativeViews(shown)).roots.first.text ?? '';
+    await _android.pressBack();
+    await pumpAndSettle();
+    return text;
+  }
+
   /// In the phone's share sheet, sends the text to Notepad and answers what Notepad received. Cancel closes it with no note kept.
-  Future<String> textSharedToNotepad() async {
+  Future<String> _textSharedToNotepad() async {
     await _android.tap(const AndroidSelector(text: 'Notepad'), timeout: _phoneScreenTimeout);
     await _android.waitUntilVisible(const AndroidSelector(resourceName: _noteBody), timeout: _phoneScreenTimeout);
     final text = await _textOf(_noteBody);
@@ -52,9 +66,10 @@ extension PhoneScreens on PatrolIntegrationTester {
     await pumpAndSettle();
   }
 
-  /// The phone's print screen opens, and the person backs out of it.
+  /// The phone's print screen opens, and the person backs out of it. Its printer choice is found by the word printer, which every Android
+  /// version's says: "Select printer" on Android 10, "Select a printer" on Android 15 (findings row 268).
   Future<void> printScreenOpens() async {
-    await _android.waitUntilVisible(const AndroidSelector(text: 'Select printer', applicationPackage: 'com.android.printspooler'), timeout: _phoneScreenTimeout);
+    await _android.waitUntilVisible(const AndroidSelector(textContains: 'printer', applicationPackage: 'com.android.printspooler'), timeout: _phoneScreenTimeout);
     await _android.pressBack();
     await pumpAndSettle();
   }

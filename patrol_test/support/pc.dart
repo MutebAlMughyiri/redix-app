@@ -37,6 +37,9 @@ class Pc {
   /// Closes Notepad with nothing saved, so a case leaves no note on the phone.
   static Future<void> closeNotepad() => _ask('notepad/close');
 
+  /// Whether the phone has HUAWEI's Notepad, to send a shared text to: the CI emulator has none (findings row 268).
+  static Future<bool> hasNotepad() async => await _status('notepad/installed') == 200;
+
   /// Throws unless a file whose name starts with [start] reached the phone's Download folder in the last two minutes, and removes what it found so the case leaves nothing behind.
   static Future<void> expectDownloaded(String start) => _ask('downloaded?${Uri.encodeComponent(start)}');
 
@@ -44,9 +47,11 @@ class Pc {
   static Future<void> note(String line) => _ask('note?${Uri.encodeComponent(line.length > 1500 ? line.substring(0, 1500) : line)}');
 
   static Future<void> _ask(String what) async {
-    final answer = await http.get(Uri.parse('http://127.0.0.1:5011/$what'));
-    if (answer.statusCode != 200) {
-      throw StateError('The PC answered ${answer.statusCode} to $what');
+    final status = await _status(what);
+    if (status != 200) {
+      throw StateError('The PC answered $status to $what');
     }
   }
+
+  static Future<int> _status(String what) async => (await http.get(Uri.parse('http://127.0.0.1:5011/$what'))).statusCode;
 }

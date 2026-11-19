@@ -47,6 +47,7 @@ while ($true) {
       $phoneMode = ''
     }
     '/notepad/close' { adb -s $Device shell am force-stop com.huawei.notepad 2>&1 | Out-Null }
+    '/notepad/installed' { if (-not ((adb -s $Device shell pm path com.huawei.notepad 2>&1) -match '^package:')) { $answer = '404 Not Found' } }
     '/downloaded' {
       $start = [uri]::UnescapeDataString($query)
       $found = @(adb -s $Device shell "find /sdcard/Download -maxdepth 1 -name '$start*' -mmin -2" 2>&1 | Where-Object { "$_" -like '/sdcard/*' })

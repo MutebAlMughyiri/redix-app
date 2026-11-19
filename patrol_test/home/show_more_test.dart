@@ -35,6 +35,7 @@ void main() {
       expect(entriesShown(entries), 5);
 
       await $.tapOn(HomeScreen.moreEntriesKey(manager.projectId));
+      await $.reach($(EntriesScreen.rowKey(entries.first)));
 
       expect(entriesShown(entries), 7);
       expect($(HomeScreen.moreEntriesKey(manager.projectId)), findsNothing);

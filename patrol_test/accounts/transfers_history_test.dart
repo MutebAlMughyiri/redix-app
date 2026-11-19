@@ -251,7 +251,7 @@ void main() {
       await $.chooseIn(AccountHistoryScreen.accountChoiceKey, AccountHistoryScreen.accountKey(first));
       await $.saysContaining(AccountHistoryScreen.accountChoiceKey.label, firstName);
       await historySays($, transferLine, transfer);
-      expect($(AccountHistoryScreen.lineKey(secondAddedLine)), findsNothing);
+      await $.gone($(AccountHistoryScreen.lineKey(secondAddedLine)));
     });
 
     phoneCase('H10, redix-api #86 R13: the person chip\'s «أنا» keeps the signed-in person\'s own lines', ($) async {

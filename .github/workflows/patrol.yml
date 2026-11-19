@@ -83,8 +83,12 @@ jobs:
           cores: 4
           ram-size: 4096M
           working-directory: redix-app
+          # The launcher can hang once while the emulator boots, before this script runs, and its "isn't responding" dialog then stays for the whole
+          # run, taking the Back presses and covering the phone's screens (row 268). hide_error_dialogs keeps any later one away, and stopping the
+          # launcher closes one already shown; it starts again by itself.
           script: |
             adb shell settings put global hide_error_dialogs 1
+            adb shell am force-stop com.google.android.apps.nexuslauncher
             adb reverse tcp:5010 tcp:5010 && adb reverse tcp:5011 tcp:5011
             nohup adb -s emulator-5554 logcat -v time > "$RUNNER_TEMP/logcat.txt" 2>&1 &
             nohup pwsh -NoProfile -File tool/patrol_pc_helper.ps1 -Device emulator-5554 -Results "$RUNNER_TEMP/patrol-results.log" > "$RUNNER_TEMP/pc-helper.log" 2>&1 &
