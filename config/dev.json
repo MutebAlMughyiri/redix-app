@@ -3,5 +3,5 @@
   "LINK_HOST": "dev.redix.test",
   "APP_ID_SUFFIX": ".dev",
   "APP_NAME": "REDIX dev",
-  "CHUCKER": false
+  "NETWORK_INSPECTOR": false
 }

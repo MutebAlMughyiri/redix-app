@@ -8,7 +8,6 @@ environment:
   sdk: ^3.13.7
 
 dependencies:
-  chucker_flutter: ^1.9.2
   cunning_document_scanner: ^3.1.0
   file_picker: ^13.3.3
   file_saver: ^0.7.0
@@ -22,6 +21,7 @@ dependencies:
   http: ^1.6.0
   image: ^4.12.0
   mobile_scanner: ^7.5.0
+  netoscope: ^0.2.4
   path_provider: ^2.1.6
   printing: ^5.15.1
   quick_actions: ^1.1.1
@@ -31,10 +31,6 @@ dependencies:
   url_launcher: ^6.3.3
   uuid: ^4.6.0
 
-# chucker_flutter 1.9.2 asks share_plus ^12; its one call, SharePlus.instance.share(ShareParams(...)), is unchanged in 13, which the app
-# uses. Drop this once chucker_flutter takes 13 (redix-api #76).
-dependency_overrides:
-  share_plus: ^13.3.1
 
 dev_dependencies:
   flutter_test:

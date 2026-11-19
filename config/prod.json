@@ -3,5 +3,5 @@
   "LINK_HOST": "redix.muteb.net",
   "APP_ID_SUFFIX": "",
   "APP_NAME": "REDIX",
-  "CHUCKER": false
+  "NETWORK_INSPECTOR": false
 }

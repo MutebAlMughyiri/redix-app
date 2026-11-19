@@ -5,7 +5,6 @@ import 'dart:async';
 import 'documents/documents.dart';
 import 'documents/documents_screen.dart';
 
-import 'package:chucker_flutter/chucker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +23,7 @@ import 'auth/change_password_screen.dart';
 import 'auth/session.dart';
 import 'auth/forgot_password_screen.dart';
 import 'auth/sign_in_screen.dart';
-import 'config/chucker.dart';
+import 'config/network_inspector.dart';
 import 'contracts/contracts.dart';
 import 'contracts/contracts_screen.dart';
 import 'home/home_screen.dart';
@@ -112,12 +111,9 @@ import 'users/permission_requests_screen.dart';
 import 'entries/searched_entries.dart';
 import 'launcher/launcher_add_entry.dart';
 
-/// Starts the app with every call through [callsClient], Chucker's in a build whose config file turns `CHUCKER` on, shown then in a release build
-/// too (qa's).
-Future<void> main() {
-  ChuckerFlutter.showOnRelease = chuckerOn;
-  return http.runWithClient(_start, callsClient);
-}
+/// Starts the app with every call through [callsClient], which keeps each in Netoscope in a build whose config file turns
+/// `NETWORK_INSPECTOR` on (qa's).
+Future<void> main() => http.runWithClient(_start, callsClient);
 
 /// Starts the app with the session and the language kept from an earlier start, if any. An app built without its environment's config
 /// file stops here, rather than calling an address nobody chose.
@@ -216,7 +212,7 @@ class _RedixAppState extends State<RedixApp> {
   late final _reportFiles = ReportFiles(widget.session, widget.capture);
 
   late final _router = GoRouter(
-    navigatorKey: ChuckerFlutter.navigatorKey,
+    navigatorKey: inspectorNavigatorKey,
     initialLocation: HomeScreen.landingOf(widget.session),
     refreshListenable: widget.session.access,
     redirect: (context, state) => _redirect(state.matchedLocation),
@@ -630,9 +626,9 @@ class _RedixAppState extends State<RedixApp> {
         theme: appThemeOf(Brightness.light),
         darkTheme: appThemeOf(Brightness.dark),
         themeMode: widget.localConfig.themeMode,
-        builder: (context, child) => Words.of(context).isEmpty
-            ? NoWordsScreen(onRetry: _reloadWords)
-            : child ?? const SizedBox.shrink(),
+        builder: (context, child) => withInspectorButton(
+          Words.of(context).isEmpty ? NoWordsScreen(onRetry: _reloadWords) : child ?? const SizedBox.shrink(),
+        ),
       ),
     );
   }

@@ -3,5 +3,5 @@
   "LINK_HOST": "qa.redix.test",
   "APP_ID_SUFFIX": ".qa",
   "APP_NAME": "REDIX qa",
-  "CHUCKER": true
+  "NETWORK_INSPECTOR": true
 }
