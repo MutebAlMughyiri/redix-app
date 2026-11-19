@@ -67,15 +67,8 @@ class Users extends ApiList<User> {
   /// Takes the partner [partnerId] from those chosen for [user].
   Future<String> unchoosePartner(User user, String partnerId) => deleteAt('/projects/$projectId/users/${user.id}/partners/$partnerId');
 
-  /// Ticks the tables [tableIds] for [user] when [sees], who then sees their entries, or unticks them (redix-api #106); the first refusal, if any.
-  Future<String> seeTables(User user, List<String> tableIds, bool sees) async {
-    for (final tableId in tableIds) {
-      final path = '/projects/$projectId/users/${user.id}/tables/$tableId';
-      final refusal = sees ? await change(path, {}) : await deleteAt(path);
-      if (refusal.isNotEmpty) {
-        return refusal;
-      }
-    }
-    return '';
-  }
+  /// Ticks the tables [tableIds] for [user] when [sees], who then sees their entries, or unticks them (redix-api #106), all an item's in one
+  /// request (findings row 280).
+  Future<String> seeTables(User user, List<String> tableIds, bool sees) =>
+      change('/projects/$projectId/users/${user.id}/tables', {'seen': sees, 'tableIds': tableIds});
 }

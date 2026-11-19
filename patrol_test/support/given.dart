@@ -322,7 +322,7 @@ class Given {
 
   /// [manager] unticks the table [tableId] for [person], who then no longer sees its entries (redix-api #106).
   static Future<void> tableUnticked(Person manager, Person person, String tableId) async {
-    await _delete('${manager.project}/users/${person.id}/tables/$tableId', await _tokenOf(manager));
+    await _post('${manager.project}/users/${person.id}/tables', {'seen': false, 'tableIds': [tableId]}, await _tokenOf(manager));
   }
 
   /// The id of the category «الجداول» lists the table [tableId] under, as [person] reads them (redix-api #106).

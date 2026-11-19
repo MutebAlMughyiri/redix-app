@@ -70,25 +70,23 @@ void main() {
 
     await tap(tester, api, TableTicks.tableKey(columns));
 
-    expect(api.sentUserChanges.last.$1, 'DELETE /projects/project-0/users/user-1/tables/$columns');
+    expect(api.sentUserChanges.last.$1, '/projects/project-0/users/user-1/tables');
+    expect(api.sentUserChanges.last.$2, {'seen': false, 'tableIds': [columns]});
     expect((ticked(tester, TableTicks.tableKey(columns)), ticked(tester, TableTicks.itemKey(_itemOf(api, 'الحديد')))), (false, null));
 
     await tap(tester, api, TableTicks.tableKey(columns));
 
-    expect(api.sentUserChanges.last.$1, '/projects/project-0/users/user-1/tables/$columns');
+    expect(api.sentUserChanges.last.$2, {'seen': true, 'tableIds': [columns]});
     expect(ticked(tester, TableTicks.itemKey(_itemOf(api, 'الحديد'))), isTrue);
   });
 
-  testWidgets("D8: an item's tick unticks all its tables at once", (tester) async {
+  testWidgets("D8, findings row 280: an item's tick unticks all its tables in one request", (tester) async {
     final api = await openPermissions(tester);
     await unfold(tester, api, api.categories['project-0']!.first['id']! as String);
 
     await tap(tester, api, TableTicks.itemKey(_itemOf(api, 'الحديد')));
 
-    expect(api.sentUserChanges.map((change) => change.$1).toList(), [
-      'DELETE /projects/project-0/users/user-1/tables/$general',
-      'DELETE /projects/project-0/users/user-1/tables/$columns',
-    ]);
+    expect(api.sentUserChanges.single.$2, {'seen': false, 'tableIds': [general, columns]});
     expect((ticked(tester, TableTicks.tableKey(general)), ticked(tester, TableTicks.tableKey(columns))), (false, false));
   });
 

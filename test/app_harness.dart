@@ -1793,9 +1793,11 @@ class FakeApi {
       _lineOf(user, projectId)['isInactive'] = segments.last == 'disable';
     } else if (segments[4] == 'tables') {
       final unseen = _lineOf(user, projectId)['unseenTables']! as List<String>;
-      unseen.remove(segments[5]);
-      if (request.method == 'DELETE') {
-        unseen.add(segments[5]);
+      for (final tableId in (body['tableIds'] as List<dynamic>).cast<String>()) {
+        unseen.remove(tableId);
+        if (body['seen'] != true) {
+          unseen.add(tableId);
+        }
       }
     } else if (segments[4] == 'partners') {
       if (request.method != 'DELETE') {
