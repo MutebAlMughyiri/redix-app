@@ -66,15 +66,6 @@ jobs:
         run: |
           echo "$KEY" | base64 -d > android/upload.jks
           printf 'storeFile=../upload.jks\nstorePassword=%s\nkeyAlias=upload\nkeyPassword=%s\n' "$PASSWORD" "$PASSWORD" > android/key.properties
-      # The NDK Flutter's Gradle plugin names, from GitHub's cache: downloaded, it took 93 of the build's 347 seconds (run 44771949280).
-      - name: The NDK Flutter builds with
-        id: ndk
-        run: |
-          echo "path=$ANDROID_HOME/ndk/$(sed -n 's/.*val ndkVersion: String = "\(.*\)"/\1/p' "$FLUTTER_ROOT/packages/flutter_tools/gradle/src/main/kotlin/FlutterExtension.kt")" >> "$GITHUB_OUTPUT"
-      - uses: actions/cache@v6
-        with:
-          path: ${{ steps.ndk.outputs.path }}
-          key: ${{ steps.ndk.outputs.path }}
       # One processor, 64-bit ARM: every phone of the last years, the HUAWEI among them, in an APK of 48 MB, not the 94 MB the 32-bit ARM
       # and x86 builds beside it made; the build itself is 8 seconds shorter (runs 44770451611 and 44771949280).
       - run: flutter build apk --release --target-platform android-arm64 --dart-define-from-file=$RUNNER_TEMP/build.json --build-number=$GITHUB_RUN_NUMBER
