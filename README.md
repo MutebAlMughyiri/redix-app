@@ -88,4 +88,4 @@ The last line copies the screenshots the Patrol tests took into the user guide's
 
 `flutter test` runs the widget tests, with the API replaced by a fake. `patrol test` runs the real app end to end on a running emulator (`patrol_cli`: `dart pub global activate patrol_cli`), so the API must be running too: `REDIX_Environment=Dev go run ./cmd/server` in redix-api's `go-backend`.
 
-CI runs all three on every push. Its Patrol job checks out redix-api with the `REDIX_API_TOKEN` secret (a fine-grained token with read access to redix-api), starts the Go API as Dev on a fresh SQLite file, then runs Patrol on an Android emulator.
+CI runs the analyzer and the widget tests on every push, and Patrol every night and on demand (`patrol.yml`): it checks out redix-api, which is public, starts the Go API as Dev on a fresh SQLite file, then runs Patrol on an Android emulator.
