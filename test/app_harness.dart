@@ -48,7 +48,7 @@ DateTime riyadhToday({Duration behind = Duration.zero}) {
 
 Map<String, String> wordsIn(String language) => {
   for (final key in [
-    'app.title',
+    'app.title', 'app.version',
     'legal.privacy', 'legal.terms', 'legal.licenses', 'legal.agreement',
     'entries.share', 'entries.notFound', 'approvals.showAll', 'entryShare.item', 'entryShare.partner', 'entryShare.supplier', 'entryShare.contractor', 'entryShare.amount',
     'entryShare.date', 'entryShare.status', 'entryShare.account', 'entryShare.paymentMethod', 'entryShare.author', 'entryShare.description',

@@ -27,6 +27,7 @@ import 'my_email_code_dialog.dart';
 import 'my_email_dialog.dart';
 import '../format/parts_line.dart';
 import '../ui/refusal_text.dart';
+import '../ui/app_version.dart';
 
 /// Settings (الإعدادات), all on one screen (the owner, 9 Nov 2026): who is signed in, the way back to the project list, the default project, the registered projects for the
 /// admin, the language (UC-004), the appearance (redix-app #87, #97), how many entries the home shows at a time (redix-app #105), signing in with fingerprint or face (UC-011), «بريدي», the
@@ -284,6 +285,7 @@ class _SharedSettingsScreenState extends State<SharedSettingsScreen> {
                 onTap: _askToSignOut,
               ),
             ]),
+            const AppVersion(),
           ],
         ),
       ),

@@ -14,6 +14,7 @@ import 'forgot_password_screen.dart';
 import 'session.dart';
 import '../ui/form_button_style.dart';
 import '../ui/act_once.dart';
+import '../ui/app_version.dart';
 
 /// The sign-in screen (UC-002, تسجيل الدخول): username and password, or a fingerprint or face on a phone that uses them (UC-011), with the language choice at the top so it can be read before signing in (UC-004). A refusal shows as one line that never says which field was wrong (AC-01.2). «نسيت كلمة المرور؟» opens the reset by a code to the account's email (redix-api #127, AC-02.6).
 class SignInScreen extends StatefulWidget {
@@ -106,6 +107,7 @@ class _SignInScreenState extends State<SignInScreen> {
     final words = Words.of(context);
     final theme = Theme.of(context);
     return ActOnce(builder: (once) => Scaffold(
+      bottomNavigationBar: const SafeArea(child: AppVersion()),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),

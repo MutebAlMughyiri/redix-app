@@ -110,6 +110,9 @@ mixin WordGetters {
   /// The word `app.title`.
   String get appTitle => text('app.title');
 
+  /// The word `app.version`.
+  String get appVersion => text('app.version');
+
   /// The word `approvals.accountShort`.
   String get approvalsAccountShort => text('approvals.accountShort');
 

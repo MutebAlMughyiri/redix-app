@@ -25,6 +25,7 @@
 | My email | Everyone | Your email, where a forgotten password's code goes. See below |
 | Change password | Everyone | Opens the password change; the back arrow returns here |
 | Sign out | Everyone | Leaves this phone, after you confirm |
+| Version 1.0.0 | Everyone | The version of REDIX on this phone, at the foot of the list; nothing to tap |
 
 **My email:** tap it, type the new address and tap **Send the code**. A code goes to the new address; type it and tap **Save**. Only then does the new address replace the old one. The admin, and whoever registered a project, set their email here.
 
@@ -49,6 +50,7 @@
 | بريدي | الجميع | بريدك، وإليه يصل رمز كلمة المرور المنسية. انظر أدناه |
 | تغيير كلمة المرور | الجميع | يفتح تغيير كلمة المرور؛ وسهم الرجوع يعيدك إلى هنا |
 | تسجيل الخروج | الجميع | يغادر هذا الجوال بعد أن تؤكّد |
+| الإصدار 1.0.0 | الجميع | إصدار REDIX على هذا الجوال، في آخر القائمة؛ لا يُضغط |
 
 **بريدي:** اضغطه، واكتب العنوان الجديد، واضغط **أرسل الرمز**. يصل رمز إلى العنوان الجديد؛ اكتبه واضغط **حفظ**. وعندها فقط يحل العنوان الجديد محل القديم. ومسؤول النظام ومن سجّل مشروعًا يضعان بريدهما هنا.
 
