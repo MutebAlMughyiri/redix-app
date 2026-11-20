@@ -54,7 +54,8 @@ jobs:
           export REDIX_Typst__Path="$RUNNER_TEMP/typst-x86_64-unknown-linux-musl/typst"
           export REDIX_Jwt__SigningKey="$(openssl rand -base64 64 | tr -d '\n')"
           export REDIX_Database__Path="$RUNNER_TEMP/RedixDev.db"
-          go build -o "$RUNNER_TEMP/redix-server" ./cmd/server
+          # The API writes its JSON with encoding/json/v2, an experiment in Go 1.27 (redix-api #125, #155).
+          GOEXPERIMENT=jsonv2 go build -o "$RUNNER_TEMP/redix-server" ./cmd/server
           nohup "$RUNNER_TEMP/redix-server" > api.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://localhost:5010/health && break; sleep 2; done
       - uses: actions/setup-java@v5
