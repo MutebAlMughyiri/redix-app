@@ -41,7 +41,6 @@ jobs:
       - uses: actions/checkout@v7
         with:
           repository: MutebAlMughyiri/redix-api
-          token: ${{ secrets.REDIX_API_TOKEN }}
           path: redix-api
       - uses: actions/setup-go@v7
         with:
