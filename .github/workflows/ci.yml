@@ -8,8 +8,8 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: No typo, in code, docs or words (redix-api #125); the words right as written are in _typos.toml
-        uses: crate-ci/typos@v1.51.1
-      - uses: actions/setup-java@v5
+        uses: crate-ci/typos@v1.52.2
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 21

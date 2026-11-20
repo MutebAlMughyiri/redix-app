@@ -50,7 +50,7 @@ jobs:
           host=${server#https://}
           jq --arg server "$server" --arg host "${host%%:*}" '.API_BASE_URL = $server | .LINK_HOST = $host' "config/$BUILD.json" > "$RUNNER_TEMP/build.json"
           echo "$BUILD talks to $server"
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 21
