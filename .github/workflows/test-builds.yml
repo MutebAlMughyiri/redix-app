@@ -1,8 +1,9 @@
 # The test builds, started by hand from Actions (redix-app #118): the APK on Linux, for Firebase App Distribution's testers (App Tester), and
 # the IPA on GitHub's Mac, for TestFlight (D1). The build chosen - prod, qa or dev - is its own app, com.techdetails.redix and .qa and .dev
 # beside it, and goes to its own group of testers, prod, qa or dev (the owner, 19 Nov 2026). The APK uploads only once it carries REDIX's upload
-# key; without the secrets it still builds, debug-signed, and keeps what it built as the run's artifact. The run number is every upload's build
-# number (R6), and its version is 1.0 and that number, so each build reads 1.0.1, 1.0.2 and on; the testers read what it changes as its release
+# key; without the secrets it still builds, debug-signed, and keeps what it built as the run's artifact. Every upload's build number is 100 and the
+# run number (R6) - above the builds made by hand on the PC before this workflow, the last 1.0.7, which Android would otherwise call newer and
+# refuse to replace - and its version is 1.0 and that number, so each build reads 1.0.106, 1.0.107 and on; the testers read what it changes as its release
 # notes (the owner, 19 Nov 2026). Each build talks to its own server: prod to the one config/prod.json names, qa and dev to the instances beside it,
 # qa.redix.muteb.net:8444 and dev.redix.muteb.net:8445 (redix-api #145 R25), which this workflow sets, so config/qa.json and dev.json keep
 # naming the servers on the owner's PC, which his own builds and Patrol use (the owner, 19 Nov 2026: "The workflow sets it").
@@ -37,6 +38,8 @@ jobs:
       DISTRIBUTED: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
     steps:
       - uses: actions/checkout@v7
+      - name: The build number, above every build made by hand (R6)
+        run: echo "NUMBER=$((100 + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
       - name: The build's server, which a tester's phone reaches, never a PC's (R7, R13), and its links' host
         run: |
           case "$BUILD" in
@@ -68,7 +71,7 @@ jobs:
           printf 'storeFile=../upload.jks\nstorePassword=%s\nkeyAlias=upload\nkeyPassword=%s\n' "$PASSWORD" "$PASSWORD" > android/key.properties
       # One processor, 64-bit ARM: every phone of the last years, the HUAWEI among them; the 32-bit ARM and x86 builds a plain APK adds took
       # two-thirds of the build's six minutes (run 44770451611). Gradle and Flutter come from GitHub's cache, not downloaded each run.
-      - run: flutter build apk --release --target-platform android-arm64 --dart-define-from-file=$RUNNER_TEMP/build.json --build-name=1.0.$GITHUB_RUN_NUMBER --build-number=$GITHUB_RUN_NUMBER
+      - run: flutter build apk --release --target-platform android-arm64 --dart-define-from-file=$RUNNER_TEMP/build.json --build-name=1.0.$NUMBER --build-number=$NUMBER
       - name: The APK carries REDIX's upload key, or nothing is sent (R4)
         if: env.SIGNED == 'true'
         env:
@@ -92,10 +95,10 @@ jobs:
           export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/firebase.json"
           case "$BUILD" in prod) app="$APP_ID_PROD" ;; qa) app="$APP_ID_QA" ;; dev) app="$APP_ID_DEV" ;; esac
           npx --yes firebase-tools@15.37.0 appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
-            --app "$app" --groups "$BUILD" --release-notes "REDIX $BUILD 1.0.$GITHUB_RUN_NUMBER: $CHANGES"
+            --app "$app" --groups "$BUILD" --release-notes "REDIX $BUILD 1.0.$NUMBER: $CHANGES"
       - uses: actions/upload-artifact@v4
         with:
-          name: redix-${{ inputs.build }}-apk-${{ github.run_number }}
+          name: redix-${{ inputs.build }}-apk-${{ env.NUMBER }}
           path: build/app/outputs/flutter-apk/app-release.apk
 
   ios:
@@ -108,6 +111,8 @@ jobs:
       ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
     steps:
       - uses: actions/checkout@v7
+      - name: The build number, above every build made by hand (R6)
+        run: echo "NUMBER=$((100 + GITHUB_RUN_NUMBER))" >> "$GITHUB_ENV"
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
@@ -115,14 +120,14 @@ jobs:
       - run: flutter pub get
       - name: Unsigned, while the App Store Connect key is not set
         if: env.SIGNED != 'true'
-        run: flutter build ipa --release --no-codesign --dart-define-from-file=config/prod.json --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }}
+        run: flutter build ipa --release --no-codesign --dart-define-from-file=config/prod.json --build-name=1.0.$NUMBER --build-number=$NUMBER
       - name: Signed by Xcode's cloud signing, with the App Store Connect key
         if: env.SIGNED == 'true'
         run: |
           mkdir -p ~/.appstoreconnect/private_keys
           echo "${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8
           /usr/libexec/PlistBuddy -c "Add :teamID string ${{ secrets.APPLE_TEAM_ID }}" ios/ExportOptions.plist
-          flutter build ios --release --no-codesign --dart-define-from-file=config/prod.json --build-name=1.0.${{ github.run_number }} --build-number=${{ github.run_number }}
+          flutter build ios --release --no-codesign --dart-define-from-file=config/prod.json --build-name=1.0.$NUMBER --build-number=$NUMBER
           auth=(-allowProvisioningUpdates -authenticationKeyPath "$HOME/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER_ID")
           xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release -archivePath build/ios/archive/Runner.xcarchive \
             DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}" CODE_SIGN_STYLE=Automatic "${auth[@]}" archive
@@ -132,7 +137,7 @@ jobs:
         run: xcrun altool --upload-app -t ios -f build/ios/ipa/*.ipa --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID"
       - uses: actions/upload-artifact@v4
         with:
-          name: redix-ios-${{ github.run_number }}
+          name: redix-ios-${{ env.NUMBER }}
           path: |
             build/ios/ipa
             build/ios/archive
