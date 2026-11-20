@@ -5,7 +5,8 @@
 # one for the three apps and raised there by hand by semantic versioning; the build number, which Android and Apple order builds by, is the
 # run number, so it only goes up (R6; the owner, 20 Nov 2026). The testers read what a build changes as its release notes (the owner, 19 Nov 2026). Each build talks to its own server: prod to the one config/prod.json names, qa and dev to the instances beside it,
 # qa.redix.muteb.net:8444 and dev.redix.muteb.net:8445 (redix-api #145 R25), which this workflow sets, so config/qa.json and dev.json keep
-# naming the servers on the owner's PC, which his own builds and Patrol use (the owner, 19 Nov 2026: "The workflow sets it").
+# naming the servers on the owner's PC, which his own builds and Patrol use (the owner, 19 Nov 2026: "The workflow sets it"), and the PC's own
+# apps, .qa.local and .dev.local, whose ".local" this workflow drops, so a phone holds a tester's app and the PC's side by side (redix-api #76 row 284).
 #
 # Secrets:
 #   Android:  ANDROID_UPLOAD_KEY (the .jks, base64, alias upload), ANDROID_UPLOAD_KEY_PASSWORD (the store's and the key's),
@@ -37,7 +38,7 @@ jobs:
       DISTRIBUTED: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
     steps:
       - uses: actions/checkout@v7
-      - name: The build's server, which a tester's phone reaches, never a PC's (R7, R13), and its links' host
+      - name: The build's server, which a tester's phone reaches, never a PC's (R7, R13), its links' host, and its app without the PC's ".local"
         run: |
           case "$BUILD" in
             prod) server=$(jq -r .API_BASE_URL config/prod.json) ;;
@@ -45,7 +46,7 @@ jobs:
             dev) server=https://dev.redix.muteb.net:8445 ;;
           esac
           host=${server#https://}
-          jq --arg server "$server" --arg host "${host%%:*}" '.API_BASE_URL = $server | .LINK_HOST = $host' "config/$BUILD.json" > "$RUNNER_TEMP/build.json"
+          jq --arg server "$server" --arg host "${host%%:*}" '.API_BASE_URL = $server | .LINK_HOST = $host | .APP_ID_SUFFIX |= sub("[.]local$"; "") | .APP_NAME |= sub(" local$"; "")' "config/$BUILD.json" > "$RUNNER_TEMP/build.json"
           echo "$BUILD talks to $server"
       - uses: actions/setup-java@v6
         with:

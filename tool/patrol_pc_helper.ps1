@@ -5,7 +5,7 @@
 # The run names the phone and the file each case's line is kept in, so no path on a PC sits in the repo (redix-api #118).
 param([Parameter(Mandatory)][string]$Device, [Parameter(Mandatory)][string]$Results)
 # The app Patrol runs: always dev (redix-app #95). Its activity keeps the code's own package, redix.
-$App = 'com.techdetails.redix.dev'
+$App = 'com.techdetails.redix.dev.local'
 # The phone's own dark mode as it was before a case first changed it, so /phone/restore puts back whatever the owner chose (redix-app #97); empty while nothing changed it.
 $phoneMode = ''
 
