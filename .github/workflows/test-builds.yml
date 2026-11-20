@@ -74,7 +74,7 @@ jobs:
         id: ndk
         run: |
           echo "path=$ANDROID_HOME/ndk/$(sed -n 's/.*val ndkVersion: String = "\(.*\)"/\1/p' "$FLUTTER_ROOT/packages/flutter_tools/gradle/src/main/kotlin/FlutterExtension.kt")" >> "$GITHUB_OUTPUT"
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: ${{ steps.ndk.outputs.path }}
           key: ${{ steps.ndk.outputs.path }}
@@ -105,7 +105,7 @@ jobs:
           case "$BUILD" in prod) app="$APP_ID_PROD" ;; qa) app="$APP_ID_QA" ;; dev) app="$APP_ID_DEV" ;; esac
           npx --yes firebase-tools@15.37.0 appdistribution:distribute build/app/outputs/flutter-apk/app-release.apk \
             --app "$app" --groups "$BUILD" --release-notes "REDIX $BUILD 1.0.$NUMBER: $CHANGES"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: redix-${{ inputs.build }}-apk-${{ env.NUMBER }}
           path: build/app/outputs/flutter-apk/app-release.apk
@@ -144,7 +144,7 @@ jobs:
       - name: To TestFlight
         if: env.SIGNED == 'true'
         run: xcrun altool --upload-app -t ios -f build/ios/ipa/*.ipa --apiKey "$KEY_ID" --apiIssuer "$ISSUER_ID"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: redix-ios-${{ env.NUMBER }}
           path: |
