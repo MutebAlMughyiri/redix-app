@@ -39,7 +39,7 @@ On a phone, `127.0.0.1` is the phone itself; `adb reverse tcp:5010 tcp:5010` rou
 | qa | `com.techdetails.redix.qa`, "REDIX qa" | `qa` | the server's qa instance, `https://qa.redix.muteb.net:8444` (redix-api #145) |
 | dev | `com.techdetails.redix.dev`, "REDIX dev" | `dev` | the server's dev instance, `https://dev.redix.muteb.net:8445` (redix-api #145) |
 
-The workflow refuses a build whose `API_BASE_URL` a tester's phone cannot reach - none, or this PC's `127.0.0.1` - before it builds anything. It builds for 64-bit ARM alone, every phone of the last years, and signs the APK with REDIX's upload key, checks the APK's certificate against the key's fingerprint, and sends nothing that does not carry it; the build number is 100 and the run number, so every build is above the ones once made by hand on the PC (the last, 1.0.7) and installs as an update. The keys live in GitHub's secrets and in the owner's own backup, never in this repository.
+The workflow refuses a build whose `API_BASE_URL` a tester's phone cannot reach - none, or this PC's `127.0.0.1` - before it builds anything. It builds for 64-bit ARM alone, every phone of the last years, and signs the APK with REDIX's upload key, checks the APK's certificate against the key's fingerprint, and sends nothing that does not carry it; the version is `pubspec.yaml`'s, one for the three apps, raised there by hand by semantic versioning (1.0.1 a fix, 1.1.0 a feature); the build number is the run number, so each build is above the one before and installs as an update. A tester reads both, `1.0.0 (8)`. The keys live in GitHub's secrets and in the owner's own backup, never in this repository.
 
 ## Words and languages
 
