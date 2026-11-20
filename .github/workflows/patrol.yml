@@ -43,7 +43,7 @@ jobs:
           repository: MutebAlMughyiri/redix-api
           token: ${{ secrets.REDIX_API_TOKEN }}
           path: redix-api
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v7
         with:
           go-version-file: redix-api/go-backend/go.mod
           cache-dependency-path: redix-api/go-backend/go.sum
@@ -58,7 +58,7 @@ jobs:
           GOEXPERIMENT=jsonv2 go build -o "$RUNNER_TEMP/redix-server" ./cmd/server
           nohup "$RUNNER_TEMP/redix-server" > api.log 2>&1 &
           for i in $(seq 1 60); do curl -sf http://localhost:5010/health && break; sleep 2; done
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: 21
@@ -106,7 +106,7 @@ jobs:
             patrol test $(for folder in ${{ matrix.group.folders }}; do printf -- '--target patrol_test/%s ' "$folder"; done) --device emulator-5554 --dart-define-from-file=config/dev.json --dart-define=TEST_USERNAME=${{ env.REDIX_Admin__Username }} --dart-define=TEST_PASSWORD=${{ env.REDIX_Admin__Password }} --dart-define=TEST_NEW_PASSWORD=Ci-chosen-passw0rd
       - name: What a failed group leaves to read
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: patrol-${{ matrix.group.name }}-${{ matrix.phone.width }}
           path: |
