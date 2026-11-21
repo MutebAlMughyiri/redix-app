@@ -69,7 +69,7 @@ jobs:
           printf 'storeFile=../upload.jks\nstorePassword=%s\nkeyAlias=upload\nkeyPassword=%s\n' "$PASSWORD" "$PASSWORD" > android/key.properties
       # One processor, 64-bit ARM: every phone of the last years, the HUAWEI among them, in an APK of 48 MB, not the 94 MB the 32-bit ARM
       # and x86 builds beside it made; the build itself is 8 seconds shorter (runs 44770451611 and 44771949280).
-      - run: flutter build apk --release --target-platform android-arm64 --dart-define-from-file=$RUNNER_TEMP/build.json --build-number=$GITHUB_RUN_NUMBER
+      - run: flutter build apk --release --target-platform android-arm64 --dart-define-from-file=$RUNNER_TEMP/build.json --dart-define=COMMIT=${GITHUB_SHA::7} --build-number=$GITHUB_RUN_NUMBER
       - name: The APK carries REDIX's upload key, or nothing is sent (R4)
         if: env.SIGNED == 'true'
         env:
@@ -116,14 +116,14 @@ jobs:
       - run: flutter pub get
       - name: Unsigned, while the App Store Connect key is not set
         if: env.SIGNED != 'true'
-        run: flutter build ipa --release --no-codesign --dart-define-from-file=config/prod.json --build-number=$GITHUB_RUN_NUMBER
+        run: flutter build ipa --release --no-codesign --dart-define-from-file=config/prod.json --dart-define=COMMIT=${GITHUB_SHA::7} --build-number=$GITHUB_RUN_NUMBER
       - name: Signed by Xcode's cloud signing, with the App Store Connect key
         if: env.SIGNED == 'true'
         run: |
           mkdir -p ~/.appstoreconnect/private_keys
           echo "${{ secrets.APP_STORE_CONNECT_PRIVATE_KEY }}" > ~/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8
           /usr/libexec/PlistBuddy -c "Add :teamID string ${{ secrets.APPLE_TEAM_ID }}" ios/ExportOptions.plist
-          flutter build ios --release --no-codesign --dart-define-from-file=config/prod.json --build-number=$GITHUB_RUN_NUMBER
+          flutter build ios --release --no-codesign --dart-define-from-file=config/prod.json --dart-define=COMMIT=${GITHUB_SHA::7} --build-number=$GITHUB_RUN_NUMBER
           auth=(-allowProvisioningUpdates -authenticationKeyPath "$HOME/.appstoreconnect/private_keys/AuthKey_$KEY_ID.p8" -authenticationKeyID "$KEY_ID" -authenticationKeyIssuerID "$ISSUER_ID")
           xcodebuild -workspace ios/Runner.xcworkspace -scheme Runner -configuration Release -archivePath build/ios/archive/Runner.xcarchive \
             DEVELOPMENT_TEAM="${{ secrets.APPLE_TEAM_ID }}" CODE_SIGN_STYLE=Automatic "${auth[@]}" archive

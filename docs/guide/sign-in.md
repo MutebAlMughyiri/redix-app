@@ -25,7 +25,7 @@ If you turned on fingerprint or face in [Settings](settings.md), the app asks fo
 
 Forgot your password? Tap **Forgot your password?** under **Sign in**: a code goes to your email, and you choose a new password with it. See [Forgot password](forgot-password.md). Your project manager can still set a temporary one for you.
 
-At the foot of the screen, **Version 1.0.0** says which version of REDIX this phone runs. Give it when you report a problem.
+At the foot of the screen, **Version 1.0.0 (abc1234)** says which version of REDIX this phone runs, and the build it came from. Give both when you report a problem.
 
 ## العربية
 
@@ -48,4 +48,4 @@ At the foot of the screen, **Version 1.0.0** says which version of REDIX this ph
 
 نسيت كلمة المرور؟ اضغط **نسيت كلمة المرور؟** تحت **دخول**: يصل رمز إلى بريدك، وتختار به كلمة مرور جديدة. انظر [نسيت كلمة المرور](forgot-password.md). ويبقى بوسع مدير مشروعك أن يضع لك كلمة مؤقتة.
 
-في أسفل الشاشة يبيّن **الإصدار 1.0.0** إصدار REDIX على هذا الجوال. اذكره عند الإبلاغ عن مشكلة.
+في أسفل الشاشة يبيّن **الإصدار 1.0.0 (abc1234)** إصدار REDIX على هذا الجوال والبناء الذي جاء منه. اذكرهما عند الإبلاغ عن مشكلة.

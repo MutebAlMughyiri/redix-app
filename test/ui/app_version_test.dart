@@ -9,7 +9,8 @@ import 'package:redix/ui/app_version.dart';
 
 import '../app_harness.dart';
 
-/// The word before the version, then the version's three numbers and nothing after them: never the build number (redix-app #124 R3, R4).
+/// The word before the version, then the version's three numbers: never the build number (redix-app #124 R3, R4). A test build passes no
+/// commit, so nothing follows them.
 final versionLine = matches(RegExp(r'^en app\.version \d+\.\d+\.\d+$'));
 
 void main() {
@@ -27,5 +28,10 @@ void main() {
 
     expect(tester.widget<Text>(find.byKey(AppVersion.lineKey)).data, versionLine);
     expect(tester.getTopLeft(find.byKey(AppVersion.lineKey)).dy, greaterThan(tester.getTopLeft(find.byKey(SharedSettingsScreen.signOutKey)).dy));
+  });
+
+  test('R5: the line carries the commit the build was made from, kept whole inside Arabic', () {
+    expect(AppVersion.lineOf('الإصدار', '1.0.0', 'abc1234'), 'الإصدار 1.0.0 \u2068(abc1234)\u2069');
+    expect(AppVersion.lineOf('الإصدار', '1.0.0', ''), 'الإصدار 1.0.0');
   });
 }
