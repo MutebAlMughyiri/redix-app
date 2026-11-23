@@ -2,6 +2,9 @@
 // Use of this file is governed by the LICENSE file at the root of this repository.
 
 import '../auth/permission.dart';
+import '../format/date_format.dart';
+import '../words/word_fill.dart';
+import '../words/words.dart';
 
 /// A person in a project, as the API answers them. The rules live in the API; the app only draws what it is told.
 class User {
@@ -12,6 +15,7 @@ class User {
       displayName = json['displayName'] as String,
       mobile = json['mobile'] as String,
       email = json['email'] as String,
+      lastSeenAt = momentOf(json['lastSeenAt'] as String),
       isInactive = (json['projects'] as List<dynamic>).cast<Map<String, dynamic>>().any((line) => line['isInactive'] as bool),
       roleName = [for (final line in (json['projects'] as List<dynamic>).cast<Map<String, dynamic>>()) line['roleName'] as String? ?? ''].firstOrNull ?? '',
       _permissions = {
@@ -38,6 +42,12 @@ class User {
 
   /// Where a code reaches the user, which their manager typed and may change (redix-api #127, AC-07.8); empty while none is set.
   final String email;
+
+  /// When they last signed in, on a phone or the web: their latest device's last sight; the API's "never" until they first do (redix-api #182).
+  final DateTime lastSeenAt;
+
+  /// Their last sign-in as the Users screen says it, «آخر دخول 23.11.2026 14:05», or that they have not signed in yet (redix-api #182).
+  String lastSeenIn(Words words) => isNever(lastSeenAt) ? words.usersNeverSignedIn : words.usersLastSeen.fill(['${formatDate(lastSeenAt)} ${formatTime(lastSeenAt)}']);
 
   /// True once made inactive in this project, which they then cannot open; their permissions and entries here stay (redix-api #126 D1).
   final bool isInactive;

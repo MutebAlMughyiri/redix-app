@@ -3,6 +3,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:redix/format/date_format.dart';
 import 'package:redix/users/users_screen.dart';
 import 'package:redix/home/home_screen.dart';
 
@@ -17,10 +18,10 @@ import 'package:redix/ui/screen_title.dart';
 void main() {
   String text(WidgetTester tester, Key key) => tester.widget<Text>(find.byKey(key)).data!;
 
-  Future<FakeApi> openProjectUsers(WidgetTester tester, {String personBEmail = ''}) async {
+  Future<FakeApi> openProjectUsers(WidgetTester tester, {String personBEmail = '', String personBLastSeenAt = '1900-01-01T00:00:00Z'}) async {
     final api = FakeApi()..addProject('مشروع A');
     final manager = api.addUser('A', username: 'owner');
-    final personB = api.addUser('B', username: 'b', mobile: '0500000000', email: personBEmail);
+    final personB = api.addUser('B', username: 'b', mobile: '0500000000', email: personBEmail, lastSeenAt: personBLastSeenAt);
     final disabled = api.addUser('سالم', username: 'salem');
     api
       ..give(manager, 'project-0', managerAndFinance)
@@ -43,6 +44,14 @@ void main() {
     expect(text(tester, UsersScreen.nameKey('user-1')), 'B');
     expect(text(tester, UsersScreen.detailsKey('user-1')), 'b · 0500000000');
     expect(text(tester, UsersScreen.detailsKey('user-0')), 'owner');
+  });
+
+  testWidgets("redix-api #182: a row says when the person last signed in, in the phone's own time, or that they have not signed in yet", (tester) async {
+    await openProjectUsers(tester, personBLastSeenAt: '2026-11-23T11:05:00Z');
+
+    final seen = DateTime.parse('2026-11-23T11:05:00Z').toLocal();
+    expect(text(tester, UsersScreen.lastSeenKey('user-1')), 'en users.lastSeen ${formatDate(seen)} ${formatTime(seen)}');
+    expect(text(tester, UsersScreen.lastSeenKey('user-0')), 'en users.neverSignedIn');
   });
 
   testWidgets('the title names the project, and a row in it shows the roles alone', (tester) async {

@@ -2327,6 +2327,9 @@ mixin WordGetters {
   /// The word `registered.title`.
   String get registeredTitle => text('registered.title');
 
+  /// The word `reports.categoryAndItem`.
+  String get reportsCategoryAndItem => text('reports.categoryAndItem');
+
   /// The word `reports.contractValue`.
   String get reportsContractValue => text('reports.contractValue');
 
@@ -2338,6 +2341,9 @@ mixin WordGetters {
 
   /// The word `reports.downloaded`.
   String get reportsDownloaded => text('reports.downloaded');
+
+  /// The word `reports.entriesCount`.
+  String get reportsEntriesCount => text('reports.entriesCount');
 
   /// The word `reports.excel`.
   String get reportsExcel => text('reports.excel');
@@ -2366,6 +2372,12 @@ mixin WordGetters {
   /// The word `reports.itemTotal`.
   String get reportsItemTotal => text('reports.itemTotal');
 
+  /// The word `reports.itemsCount`.
+  String get reportsItemsCount => text('reports.itemsCount');
+
+  /// The word `reports.lastEntry`.
+  String get reportsLastEntry => text('reports.lastEntry');
+
   /// The word `reports.loadFailed`.
   String get reportsLoadFailed => text('reports.loadFailed');
 
@@ -2378,6 +2390,12 @@ mixin WordGetters {
   /// The word `reports.noneIssued`.
   String get reportsNoneIssued => text('reports.noneIssued');
 
+  /// The word `reports.ofItem`.
+  String get reportsOfItem => text('reports.ofItem');
+
+  /// The word `reports.ofSide`.
+  String get reportsOfSide => text('reports.ofSide');
+
   /// The word `reports.openValue`.
   String get reportsOpenValue => text('reports.openValue');
 
@@ -2389,6 +2407,12 @@ mixin WordGetters {
 
   /// The word `reports.partners`.
   String get reportsPartners => text('reports.partners');
+
+  /// The word `reports.path`.
+  String get reportsPath => text('reports.path');
+
+  /// The word `reports.payments`.
+  String get reportsPayments => text('reports.payments');
 
   /// The word `reports.pdf`.
   String get reportsPdf => text('reports.pdf');
@@ -2429,8 +2453,20 @@ mixin WordGetters {
   /// The word `reports.surplus`.
   String get reportsSurplus => text('reports.surplus');
 
+  /// The word `reports.table`.
+  String get reportsTable => text('reports.table');
+
+  /// The word `reports.tables`.
+  String get reportsTables => text('reports.tables');
+
+  /// The word `reports.tablesCount`.
+  String get reportsTablesCount => text('reports.tablesCount');
+
   /// The word `reports.title`.
   String get reportsTitle => text('reports.title');
+
+  /// The word `reports.total`.
+  String get reportsTotal => text('reports.total');
 
   /// The word `revenue.amount`.
   String get revenueAmount => text('revenue.amount');
@@ -2849,6 +2885,9 @@ mixin WordGetters {
   /// The word `users.lastManager`.
   String get usersLastManager => text('users.lastManager');
 
+  /// The word `users.lastSeen`.
+  String get usersLastSeen => text('users.lastSeen');
+
   /// The word `users.loadFailed`.
   String get usersLoadFailed => text('users.loadFailed');
 
@@ -2860,6 +2899,9 @@ mixin WordGetters {
 
   /// The word `users.nameHint`.
   String get usersNameHint => text('users.nameHint');
+
+  /// The word `users.neverSignedIn`.
+  String get usersNeverSignedIn => text('users.neverSignedIn');
 
   /// The word `users.new`.
   String get usersNew => text('users.new');

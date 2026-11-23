@@ -99,6 +99,9 @@ class UsersScreen extends StatefulWidget {
   /// How many permissions the user [id] holds in this project.
   static Key permissionsLineKey(String id) => Key('users.permissionsLine.$id');
 
+  /// A row's last sign-in line (redix-api #182).
+  static Key lastSeenKey(String id) => Key('users.lastSeen.$id');
+
   /// The badge of the user [id], when inactive in this project.
   static Key statusKey(String id) => Key('users.status.$id');
 

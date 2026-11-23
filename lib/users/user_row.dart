@@ -77,6 +77,7 @@ class UserRow extends StatelessWidget {
           children: [
             Text(partsLine([user.username, user.roleName, user.mobile]), key: UsersScreen.detailsKey(user.id)),
             Text(words.permissionsCount.fill(['${user.permissionCount}']), key: UsersScreen.permissionsLineKey(user.id)),
+            Text(user.lastSeenIn(words), key: UsersScreen.lastSeenKey(user.id)),
           ],
         ),
         trailing: rowMenu(UsersScreen.menuKey(user.id), [

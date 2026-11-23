@@ -14,3 +14,6 @@ String _twoDigits(int number) => number.toString().padLeft(2, '0');
 
 /// A moment the API sends, which it marks UTC, as the phone's own time: when a history line, a file, a notification or a report happened.
 DateTime momentOf(String sent) => DateTime.parse(sent).toLocal();
+
+/// Whether [moment] is the API's "not happened", 1 January 1900 as it sends it, however the phone's own time moves it.
+bool isNever(DateTime moment) => moment.year <= 1900;

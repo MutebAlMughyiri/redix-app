@@ -144,6 +144,8 @@ Map<String, String> wordsIn(String language) => {
   ])
     key: '$language $key',
   'partners.draftsBy': '$language partners.draftsBy {0}',
+  'users.lastSeen': '$language users.lastSeen {0}',
+  'users.neverSignedIn': '$language users.neverSignedIn',
   'entries.numberOf': '$language entries.numberOf {0}',
   'share.attached': '$language share.attached {0}',
   'entries.numberFilterSet': '$language entries.numberFilterSet {0}',
@@ -1703,13 +1705,14 @@ class FakeApi {
   }
 
   /// Adds a user to what the API holds.
-  Map<String, Object> addUser(String displayName, {required String username, String mobile = '', String email = ''}) {
+  Map<String, Object> addUser(String displayName, {required String username, String mobile = '', String email = '', String lastSeenAt = '1900-01-01T00:00:00Z'}) {
     final user = <String, Object>{
       'id': 'user-${users.length}',
       'username': username,
       'displayName': displayName,
       'mobile': mobile,
       'email': email,
+      'lastSeenAt': lastSeenAt,
       'mustChangePassword': false,
       'projects': <Map<String, Object>>[],
     };
