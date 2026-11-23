@@ -78,7 +78,6 @@ import 'projects/project.dart';
 import 'settings/payment_methods.dart';
 import 'settings/payment_methods_screen.dart';
 import 'settings/shared_settings_screen.dart';
-import 'sharing/attachable_entries.dart';
 import 'sharing/share_screen.dart';
 import 'structure/categories.dart';
 import 'structure/categories_screen.dart';
@@ -202,7 +201,6 @@ class _RedixAppState extends State<RedixApp> {
   late final _periodicReportsOf = _kept((projectId) => PeriodicReports(widget.session, projectId));
   late final _nextReportOf = _kept((projectId) => NextReport(widget.session, projectId));
   late final _documentsOf = _kept((projectId) => Documents(widget.session, projectId));
-  late final _attachableOf = _kept((projectId) => AttachableEntries(widget.session, projectId));
   late final _entryTablesOf = _kept((projectId) => EntryTables(widget.session, projectId));
   final _offeredItemLists = <String, OfferedItems>{};
   final _periodicReports = <String, PeriodicReport>{};
@@ -223,10 +221,8 @@ class _RedixAppState extends State<RedixApp> {
         path: ShareScreen.path,
         builder: (context, state) => ShareScreen(
           file: _shared,
-          capture: widget.capture,
           projects: _projects,
           entriesOf: _shareEntriesOf,
-          matchesOf: _attachableOf,
           attachmentsOf: _attachmentsOf,
           onDone: _letGoOfShared,
         ),

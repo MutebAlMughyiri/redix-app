@@ -21,11 +21,9 @@ import '../contracts/contract.dart';
 import '../contracts/contracts.dart';
 import '../expenses/column_value_field.dart';
 import '../expenses/entry_date.dart';
-import '../expenses/invoice_qr.dart';
 import '../expenses/invoice_section.dart';
 import '../expenses/payment_choice.dart';
 import '../expenses/payment_choices.dart';
-import '../expenses/qr_summary.dart';
 import '../format/date_format.dart';
 import '../format/number_format.dart';
 import '../format/parts_line.dart';
@@ -34,7 +32,6 @@ import '../settings/payment_methods.dart';
 import '../structure/column_label.dart';
 import '../structure/columns.dart';
 import '../structure/item_column.dart';
-import '../suppliers/quick_add_supplier_dialog.dart';
 import '../suppliers/supplier.dart';
 import '../suppliers/supplier_picker.dart';
 import '../suppliers/suppliers.dart';
@@ -174,30 +171,6 @@ class AddEntryScreen extends StatefulWidget {
   /// The line of the file [attachmentId] on an entry read only, which opens it (redix-app #115, AC-46.10g).
   static Key fileKey(String attachmentId) => Key('addEntry.file.$attachmentId');
 
-  /// The title over what the QR code holds.
-  static const qrReadKey = Key('addEntry.qrRead');
-
-  /// The seller the QR code names.
-  static const qrSellerKey = Key('addEntry.qrSeller');
-
-  /// The seller's VAT number in the QR code.
-  static const qrVatNumberKey = Key('addEntry.qrVatNumber');
-
-  /// When the QR code says the invoice was issued.
-  static const qrTimeKey = Key('addEntry.qrTime');
-
-  /// The total the QR code holds.
-  static const qrAmountsKey = Key('addEntry.qrAmounts');
-
-  /// The line that says the QR code's seller is not in the register.
-  static const qrSupplierMissingKey = Key('addEntry.qrSupplierMissing');
-
-  /// The button that adds the QR code's seller to the register.
-  static const qrAddSupplierKey = Key('addEntry.qrAddSupplier');
-
-  /// The line that says the QR code could not be read.
-  static const qrMessageKey = Key('addEntry.qrMessage');
-
   /// Why the entry being changed was rejected.
   static const rejectionKey = Key('addEntry.rejection');
 
@@ -297,9 +270,6 @@ class AddEntryScreen extends StatefulWidget {
   /// The title bar's button sharing an entry read only (redix-app #83).
   static const shareKey = Key('addEntry.share');
 
-  /// The card of what the invoice's QR code says.
-  static const qrSummaryKey = Key('addEntry.qrSummary');
-
   @override
   State<AddEntryScreen> createState() => _AddEntryScreenState();
 }
@@ -310,9 +280,6 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
   final _description = TextEditingController();
   final _columnValues = <String, String>{};
   final _file = EntryFile();
-  var _qr = InvoiceQr.none();
-  var _qrMessage = '';
-  var _qrSupplierMissing = false;
   var _table = EntryTable.none();
   var _columns = <ItemColumn>[];
   var _columnsMessage = '';
@@ -396,60 +363,7 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     if (!mounted) {
       return;
     }
-    setState(() {
-      _file.take(file);
-      if (!file.isNone) {
-        _qr = InvoiceQr.none();
-        _qrMessage = '';
-        _qrSupplierMissing = false;
-      }
-    });
-    if (!file.isNone && !file.isPdf) {
-      await _readQr(file);
-    }
-  }
-
-  /// Fills the date, the total and a purchase's supplier from the file's QR code (redix-api #96, D21).
-  Future<void> _readQr(PickedFile file) async {
-    final qr = InvoiceQr.parse(await whileBusy(context, widget.capture.qrTextOf(file)));
-    if (!mounted) {
-      return;
-    }
-    if (qr.isNone) {
-      setState(() => _qrMessage = 'expenses.qrUnreadable');
-      return;
-    }
-    setState(() {
-      _qr = qr;
-      _amount.text = formatPlain(qr.total);
-      _date = qr.issuedAt;
-    });
-    final search = widget.suppliers.search;
-    await search.find(qr.vatNumber);
-    if (!mounted) {
-      return;
-    }
-    final holders = search.all.where((supplier) => supplier.vatNumber == qr.vatNumber).toList();
-    setState(() {
-      _useSupplier(holders.isEmpty ? _supplier : holders.first);
-      _qrSupplierMissing = holders.isEmpty;
-    });
-  }
-
-  Future<void> _addSupplierFromQr() async {
-    await showDialog<void>(
-      context: context,
-      builder: (_) => QuickAddSupplierDialog(
-        project: widget.project,
-        suppliers: widget.suppliers,
-        typed: _qr.vatNumber,
-        name: _qr.sellerName,
-        onPicked: (supplier) => setState(() {
-          _useSupplier(supplier);
-          _qrSupplierMissing = false;
-        }),
-      ),
-    );
+    setState(() => _file.take(file));
   }
 
   /// Puts the entry in [table], reading its item's columns when the item changes, whatever its side: revenue and a partner's money have theirs too (redix-api #129).
@@ -865,14 +779,8 @@ class _AddEntryScreenState extends State<AddEntryScreen> {
     ],
   ));
 
-  /// What every table asks, under the file: the QR code's reading, what it is for, the item's own columns, the account and notes.
+  /// What every table asks, under the file: what it is for, the item's own columns, the account and notes.
   List<Widget> _entryFields(Words words, List<Widget> ownFields) => [
-            if (_qrMessage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8),
-                child: Text(words.text(_qrMessage), key: AddEntryScreen.qrMessageKey),
-              ),
-            if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: _qrSupplierMissing && _table.asksSupplier && widget.project.mayAddSupplier, onAddSupplier: _addSupplierFromQr),
             FormSection(key: AddEntryScreen.forSectionKey, _whatItIsFor(words)),
             if (ownFields.isNotEmpty) FormSection(key: AddEntryScreen.columnsSectionKey, ownFields),
             _paymentSection(words),

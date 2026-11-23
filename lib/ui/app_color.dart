@@ -37,7 +37,7 @@ enum AppColor {
   /// The ground of an odd row among rows one under another, the scheme's next tone after the page's: a shade darker in light, a shade lighter in dark (redix-app #108).
   oddRow(_surfaceContainerLow),
 
-  /// The ground of what is active or the user's own: an active project's chip, my custody, the QR code's reading.
+  /// The ground of what is active or the user's own: an active project's chip, my custody.
   activeSurface(_primaryContainer),
 
   /// The ground of what needs a look: what waits, on the summary.

@@ -85,12 +85,10 @@ lib/
   expenses/
     column_value_field.dart The field of one custom column, drawn from what the column holds: a required one is marked
     entry_date.dart         Asks for an entry's date in project, from current: within its period and not in the future
-    invoice_qr.dart         What a Saudi e-invoice's QR code carries: the text is base64 of tag, length and value, one after another, tags 1 to 5 being the seller, its VAT number, the time, the total including VAT and the VAT
     invoice_section.dart    The file of a new expense, its invoice or its receipt: its picture, and the ways to take it again or pick it from the phone's files
     original_invoice_picker.dart The field that links a credit note to the bill it returns, which it needs (D13), opening a sheet of what that supplier's bills have left to return
     payment_choice.dart     What a person chose to pay an entry from, and how
     payment_choices.dart    The account an entry moves money through, for any table, and how an expense was paid: an expense offers only what the signed-in user may pay from
-    qr_summary.dart         What was read from the invoice's QR code: its five fields, and an offer to add the seller when no supplier holds its number
   history/
     history_list.dart       A history, newest first, a page at a time: of every thing it covers or one, everyone's lines or one person's, and those holding what was typed
     history_view.dart       The one look of every history: the search line, its filters (a thing and a person: everyone, «أنا», each member), the lines and المزيد
@@ -175,7 +173,6 @@ lib/
     payment_methods_screen.dart A project's payment methods: whoever keeps its settings adds, renames, disables and deletes them; one an expense was paid with is only disabled
     shared_settings_screen.dart    Settings (الإعدادات), one screen: who is signed in, Switch project, the default project, the registered projects for the admin, the language, fingerprint or face, «بريدي», the password change, «سجلي» and signing out
   sharing/
-    attachable_entries.dart The entries of a project a shared file's QR code matches, and the way to put a file on an entry
     share_screen.dart       What opens when a picture or a PDF is shared to the app: put it on any entry the person may handle, found in القيود's list and its search, or start a new entry with it
   structure/
     add_column_dialog.dart  Asks for a new column: its name, its type, which never changes after, the choices of a list, whether entry requires it, and whether it prints

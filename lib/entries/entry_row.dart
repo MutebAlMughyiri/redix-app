@@ -21,7 +21,6 @@ class EntryRow {
       amount = 0,
       itemName = '',
       supplierName = '',
-      supplierVatNumber = '',
       invoiceNumber = '',
       authorName = '',
       isMine = false,
@@ -45,7 +44,6 @@ class EntryRow {
       amount = (json['amount'] as num).toDouble(),
       itemName = json['itemName'] as String,
       supplierName = json['supplierName'] as String,
-      supplierVatNumber = json['supplierVatNumber'] as String,
       invoiceNumber = json['invoiceNumber'] as String,
       authorName = json['authorName'] as String,
       isMine = json['isMine'] as bool,
@@ -82,8 +80,6 @@ class EntryRow {
   /// Its supplier, or its contract's contractor.
   final String supplierName;
 
-  /// That supplier's VAT number, which a shared bill's QR code is compared with (AC-49.3); empty when none.
-  final String supplierVatNumber;
 
   /// Its invoice's number; empty when it has none.
   final String invoiceNumber;

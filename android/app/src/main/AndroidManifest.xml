@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
-    <!-- mobile_scanner declares the camera, but REDIX only reads a QR code from a picture. A declared camera never granted stops the invoice scanner's camera app
-         on a phone without Google Play services (the HUAWEI, 8 Nov 2026); the camera app needs no permission of REDIX's own. -->
+    <!-- REDIX never asks for the camera, whatever a package declares: a declared camera never granted stops the invoice scanner's camera app on a phone
+         without Google Play services (the HUAWEI, 8 Nov 2026); the camera app needs no permission of REDIX's own. -->
     <uses-permission android:name="android.permission.CAMERA" tools:node="remove"/>
     <application
         android:label="${appName}"

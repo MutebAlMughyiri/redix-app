@@ -17,8 +17,8 @@ import 'vat_number_field.dart';
 
 /// Asks for a missing supplier's name and VAT number, without leaving what is being entered (UC-019). A number another supplier holds names that supplier, and offers it instead.
 class QuickAddSupplierDialog extends StatefulWidget {
-  /// The dialog adding to [suppliers] of [project], starting from what the search held in [typed] or the seller [name] of an invoice's QR code, and calling [onPicked] with the supplier to go on with.
-  const QuickAddSupplierDialog({super.key, required this.project, required this.suppliers, required this.typed, this.name = '', required this.onPicked});
+  /// The dialog adding to [suppliers] of [project], starting from what the search held in [typed], and calling [onPicked] with the supplier to go on with.
+  const QuickAddSupplierDialog({super.key, required this.project, required this.suppliers, required this.typed, required this.onPicked});
 
   /// The project the supplier joins.
   final Project project;
@@ -28,9 +28,6 @@ class QuickAddSupplierDialog extends StatefulWidget {
 
   /// What the search held: digits start the VAT number, anything else the name.
   final String typed;
-
-  /// The name to start from, when something other than the search knows it; empty otherwise.
-  final String name;
 
   /// Called with the supplier added, or the one offered instead.
   final ValueChanged<Supplier> onPicked;
@@ -42,7 +39,7 @@ class QuickAddSupplierDialog extends StatefulWidget {
 class _QuickAddSupplierDialogState extends State<QuickAddSupplierDialog> {
   late final _typed = westernDigits(widget.typed.trim());
   late final _isNumber = RegExp(r'^\d+$').hasMatch(_typed);
-  late final _name = TextEditingController(text: widget.name.isNotEmpty ? widget.name : (_isNumber ? '' : _typed));
+  late final _name = TextEditingController(text: _isNumber ? '' : _typed);
   late final _vatNumber = TextEditingController(text: _isNumber ? _typed : '');
   var _holder = Supplier.none();
 

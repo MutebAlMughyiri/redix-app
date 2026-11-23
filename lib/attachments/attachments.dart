@@ -51,6 +51,18 @@ class Attachments {
   /// Sends a document's [file], any file, to the API (findings row 138). Returns an empty string once kept, otherwise the word key of the refusal.
   Future<String> keepDocument(PickedFile file) => _keep('/projects/$projectId/attachments/document', file);
 
+  /// Puts the file [attachmentId] on the entry [entryId], beside any it has, and changes nothing else (redix-app #115 D1, D15). Returns an empty string once attached,
+  /// otherwise the word key of the refusal, a share screen's word.
+  Future<String> attach(String entryId, String attachmentId) async {
+    try {
+      final response = await _session.post('/projects/$projectId/entries/$entryId/invoice', {'attachmentId': attachmentId});
+      return response.statusCode < 300 ? '' : refusalOf(answerOf(response), 'share');
+    } on Exception catch (error) {
+      debugPrint('File not attached: $error');
+      return 'share.noConnection';
+    }
+  }
+
   Future<String> _keep(String path, PickedFile file) async {
     _kept = Attachment.none();
     try {

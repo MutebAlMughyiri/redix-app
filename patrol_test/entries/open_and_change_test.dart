@@ -63,6 +63,7 @@ void main() {
       await $.pickTable(table.tableId);
       await $.tapOn(AddEntryScreen.cameraKey);
       await $.reach($(AddEntryScreen.invoicePictureKey));
+      await $.fill(AddEntryScreen.amountKey, '1075');
       await $.choosePayment(manager, account);
       await $.saveDraft();
       await $.messageShows('expenses.saved');

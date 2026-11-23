@@ -7,20 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../attachments/attachments.dart';
-import '../attachments/invoice_capture.dart';
 import '../attachments/picked_file.dart';
 import '../entries/add_entry_screen.dart';
 import '../entries/entry_card.dart';
 import '../entries/entry_row.dart';
 import '../entries/searched_entries.dart';
-import '../expenses/invoice_qr.dart';
-import '../expenses/qr_summary.dart';
-import '../format/number_format.dart';
 import '../projects/project.dart';
 import '../projects/projects.dart';
 import '../ui/act_once.dart';
 import '../ui/api_list_body.dart';
-import '../ui/app_color.dart';
 import '../ui/bottom_button.dart';
 import '../ui/busy.dart';
 import '../ui/form_error.dart';
@@ -30,16 +25,13 @@ import '../ui/part_keys.dart';
 import '../ui/screen_title.dart';
 import '../ui/search_line.dart';
 import '../ui/search_scope.dart';
-import '../words/word_fill.dart';
 import '../words/words.dart';
-import 'attachable_entries.dart';
 
 /// What opens when a picture or a PDF is shared to the app (UC-038, FR-49): put it on any entry the person may handle, an approved one too, beside the files it has (UC-039,
-/// redix-app #115), found in القيود's own list and its search, the one the file's QR code matches pinned first (AC-49.2); or start a new entry with it (UC-046).
+/// redix-app #115), found in القيود's own list and its search; or start a new entry with it (UC-046). No QR code is read (findings row 303).
 class ShareScreen extends StatefulWidget {
-  /// The screen holding [file], read through [capture], in one of [projects]: their entries listed by [entriesOf], the QR code's match read and the file attached by
-  /// [matchesOf], the file kept by [attachmentsOf].
-  const ShareScreen({super.key, required this.file, required this.capture, required this.projects, required this.entriesOf, required this.matchesOf, required this.attachmentsOf, required this.onDone});
+  /// The screen holding [file], in one of [projects]: their entries listed by [entriesOf], the file kept and put on an entry by [attachmentsOf].
+  const ShareScreen({super.key, required this.file, required this.projects, required this.entriesOf, required this.attachmentsOf, required this.onDone});
 
   /// The address of the screen.
   static const path = '/share';
@@ -49,12 +41,6 @@ class ShareScreen extends StatefulWidget {
 
   /// The line saying there is no project to enter in.
   static const noProjectKey = Key('share.noProject');
-
-  /// The line saying the amounts differ.
-  static const amountDiffersKey = Key('share.amountDiffers');
-
-  /// The line saying the supplier differs.
-  static const supplierDiffersKey = Key('share.supplierDiffers');
 
   /// The button attaching it.
   static const attachKey = Key('share.attach');
@@ -67,9 +53,6 @@ class ShareScreen extends StatefulWidget {
 
   /// The choice of the project [id].
   static Key projectKey(String id) => Key('share.project.$id');
-
-  /// The line over the entry [id] the QR code matches, pinned over the list.
-  static Key matchingKey(String id) => Key('share.matching.$id');
 
   /// The choice of the project the file goes to.
   static const projectChoiceKey = Key('share.projectChoice');
@@ -86,19 +69,13 @@ class ShareScreen extends StatefulWidget {
   /// The shared file.
   final PickedFile file;
 
-  /// The phone's barcode reader.
-  final InvoiceCapture capture;
-
   /// The projects to choose from.
   final Projects projects;
 
   /// A project's entries, as القيود lists and searches them (redix-app #115 D3).
   final SearchedEntries Function(String projectId) entriesOf;
 
-  /// What in a project the QR code matches, and the way to put the file on an entry.
-  final AttachableEntries Function(String projectId) matchesOf;
-
-  /// Where a project keeps files.
+  /// Where a project keeps files, and puts one on an entry.
   final Attachments Function(String projectId) attachmentsOf;
 
   /// Called when the file was used, or the person left.
@@ -109,7 +86,6 @@ class ShareScreen extends StatefulWidget {
 }
 
 class _ShareScreenState extends State<ShareScreen> {
-  var _qr = InvoiceQr.none();
   var _projectId = '';
   var _listedProjectId = '';
   var _chosen = '';
@@ -120,26 +96,12 @@ class _ShareScreenState extends State<ShareScreen> {
     super.initState();
     widget.projects.addListener(_listOnceProjectsCome);
     widget.projects.loadOnOpen();
-    if (!widget.file.isPdf) {
-      unawaited(_readQr());
-    }
   }
 
   @override
   void dispose() {
     widget.projects.removeListener(_listOnceProjectsCome);
     super.dispose();
-  }
-
-  Future<void> _readQr() async {
-    final qr = InvoiceQr.parse(await widget.capture.qrTextOf(widget.file));
-    if (!mounted) {
-      return;
-    }
-    setState(() => _qr = qr);
-    if (_listedProjectId.isNotEmpty) {
-      await _findMatches(_listedProjectId);
-    }
   }
 
   List<Project> get _open => widget.projects.all.where((project) => project.mayEnterExpenses && project.mayAttachFiles).toList();
@@ -153,20 +115,10 @@ class _ShareScreenState extends State<ShareScreen> {
     }
   }
 
-  /// Lists [project]'s entries a file can go on, and reads what the QR code matches there (D3, D4).
+  /// Lists [project]'s entries a file can go on (D3).
   void _list(Project project) {
     _listedProjectId = project.id;
     widget.entriesOf(project.id).open();
-    unawaited(_findMatches(project.id));
-  }
-
-  /// Reads what the QR code matches in the project [projectId] and chooses the first, as AC-49.2 asks.
-  Future<void> _findMatches(String projectId) async {
-    final matches = widget.matchesOf(projectId);
-    await matches.findFor(_qr);
-    if (mounted && matches.all.isNotEmpty && _listedProjectId == projectId) {
-      setState(() => _chosen = matches.all.first.id);
-    }
   }
 
   void _chooseProject(Project project) {
@@ -183,7 +135,7 @@ class _ShareScreenState extends State<ShareScreen> {
     final attachments = widget.attachmentsOf(_project.id);
     var refusal = await whileBusy(context, attachments.keep(widget.file));
     if (refusal.isEmpty) {
-      refusal = await widget.matchesOf(_project.id).attach(entry.id, attachments.kept.id);
+      refusal = await attachments.attach(entry.id, attachments.kept.id);
     }
     if (!mounted) {
       return;
@@ -205,40 +157,14 @@ class _ShareScreenState extends State<ShareScreen> {
 
   Widget _card(EntryRow entry) => EntryCard(entry: entry, isChosen: entry.id == _chosen, onTap: () => setState(() => _chosen = entry.id));
 
-  /// What differs between the QR code and the chosen [entry] (AC-49.3).
-  List<Widget> _differences(EntryRow entry) {
-    final words = Words.of(context);
-    final style = TextStyle(color: AppColor.refusal.of(context));
-    return [
-      if (!_qr.isNone && _qr.total != entry.amount) Text(words.shareAmountDiffers.fill([formatMoney(_qr.total), formatMoney(entry.amount)]), key: ShareScreen.amountDiffersKey, style: style),
-      if (!_qr.isNone && _qr.vatNumber != entry.supplierVatNumber) Text(words.shareSupplierDiffers, key: ShareScreen.supplierDiffersKey, style: style),
-    ];
-  }
-
-  /// The entries the QR code matches, pinned over the list, each saying so (D4).
-  List<Widget> _pinned(List<EntryRow> matches) {
-    final words = Words.of(context);
-    return [
-      for (final entry in matches) ...[
-        Padding(
-          padding: const EdgeInsetsDirectional.only(start: 16, end: 16, top: 8),
-          child: Text(words.shareMatches, key: ShareScreen.matchingKey(entry.id), style: TextStyle(color: AppColor.brand.of(context))),
-        ),
-        _card(entry),
-      ],
-    ];
-  }
-
   Widget _body() {
     final words = Words.of(context);
     final project = _project;
     final entries = widget.entriesOf(project.id);
-    final matches = widget.matchesOf(project.id);
     return ListenableBuilder(
-      listenable: Listenable.merge([entries, matches]),
+      listenable: entries,
       builder: (context, _) {
-        final matched = {for (final entry in matches.all) entry.id};
-        final chosen = [...matches.all, ...entries.all].where((entry) => entry.id == _chosen).take(1);
+        final chosen = entries.all.where((entry) => entry.id == _chosen).take(1);
         final header = [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -248,7 +174,6 @@ class _ShareScreenState extends State<ShareScreen> {
               children: [
                 if (_message.isNotEmpty) FormError(text: words.text(_message), textKey: ShareScreen.messageKey),
                 if (widget.file.isPdf) ListTile(key: ShareScreen.fileKey, leading: Icon(Icons.picture_as_pdf_outlined, key: ShareScreen.fileKey.icon), title: Text(widget.file.name, key: ShareScreen.fileKey.title)) else SizedBox(height: MediaQuery.sizeOf(context).height * 0.25, child: Image.memory(widget.file.bytes, key: ShareScreen.pictureKey, fit: BoxFit.contain)),
-                if (!_qr.isNone) QrSummary(qr: _qr, offerSupplier: false, onAddSupplier: () {}),
                 if (_open.length > 1)
                   LabelledChips(
                     key: ShareScreen.projectChoiceKey,
@@ -262,13 +187,12 @@ class _ShareScreenState extends State<ShareScreen> {
               ],
             ),
           ),
-          ..._pinned(matches.all),
         ];
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // The search line is pinned under the header, so it stays once the picture scrolls away, and the body is the list alone, which any height
-            // only shows fewer rows of: with the keyboard up, the picture and the QR summary above and the chosen entry below left a search line in
+            // only shows fewer rows of: with the keyboard up, the picture above and the chosen entry below left a search line in
             // the body 43 px on a Pixel 6 (findings row 268; the owner, 19 Nov 2026: "Pin the search").
             Expanded(
               child: NestedScrollView(
@@ -283,7 +207,6 @@ class _ShareScreenState extends State<ShareScreen> {
                   builder: (context) => ApiListBody<EntryRow>(
                     list: entries,
                     emptyText: words.entriesEmpty,
-                    keeps: (entry) => !matched.contains(entry.id),
                     itemBuilder: _card,
                     listOf: (items) => CustomScrollView(
                       physics: ApiListBody.physics,
@@ -303,7 +226,6 @@ class _ShareScreenState extends State<ShareScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: 8,
                   children: [
-                    ..._differences(entry),
                     ActOnce(builder: (once) => FilledButton(key: ShareScreen.attachKey, onPressed: once(() => _attach(entry)), child: Text(words.shareAttach, key: ShareScreen.attachKey.label))),
                   ],
                 ),

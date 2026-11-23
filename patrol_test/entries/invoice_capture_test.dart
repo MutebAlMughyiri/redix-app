@@ -4,7 +4,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:redix/entries/add_entry_screen.dart';
 import 'package:redix/home/home_screen.dart';
-import 'package:redix/ui/part_keys.dart';
 
 import '../support/entry_steps.dart';
 import '../support/given.dart';
@@ -14,7 +13,7 @@ import '../support/phone_screens.dart';
 import '../support/steps.dart';
 
 void main() {
-  phoneClass('Invoice picture and QR code (UC-021 and UC-024)', () {
+  phoneClass('Invoice picture (UC-021)', () {
     phoneCase('FR-10: the camera opens only when asked, and its picture stays on the screen', ($) async {
       final manager = await Given.manager();
       await $.onAddEntry(manager);
@@ -23,37 +22,11 @@ void main() {
       await $.reach($(AddEntryScreen.invoicePictureKey));
     });
 
-    phoneCase('AC-11.1: a QR code fills the total', ($) async {
-      final manager = await Given.manager();
-      await $.onAddEntry(manager);
-      await $.tapOn(AddEntryScreen.cameraKey);
-      await $.reach($(AddEntryScreen.qrReadKey));
-      expect($.typed(AddEntryScreen.amountKey), '1075');
-    });
-
-    phoneCase('a supplier not in the register is offered a quick add', ($) async {
-      final manager = await Given.manager();
-      await $.onAddEntry(manager);
-      await $.tapOn(AddEntryScreen.cameraKey);
-      await $.reach($(AddEntryScreen.qrSupplierMissingKey));
-      await $.reach($(AddEntryScreen.qrAddSupplierKey));
-    });
-
-    phoneCase('D21: a QR code fills the date and chooses the supplier with that number', ($) async {
-      final manager = await Given.manager();
-      await Given.supplier(manager, name: 'شركة النخيل', vatNumber: madeUpSellerVatNumber);
-      await $.onAddEntry(manager);
-      await $.tapOn(AddEntryScreen.cameraKey);
-      await $.reach($(AddEntryScreen.qrReadKey));
-      await $.says(AddEntryScreen.supplierKey.label, 'شركة النخيل');
-    });
-
-    phoneCase('a picture chosen from the files is read too', ($) async {
+    phoneCase('a picture chosen from the files stays on the screen', ($) async {
       final manager = await Given.manager();
       await $.onAddEntry(manager);
       await $.pickFromThePhone(AddEntryScreen.filesKey, madeUpPictureName, madeUpPicture());
-      await $.reach($(AddEntryScreen.qrReadKey));
-      expect($.typed(AddEntryScreen.amountKey), '1075');
+      await $.reach($(AddEntryScreen.invoicePictureKey));
     });
 
     phoneCase('going back keeps what was there', ($) async {
@@ -67,22 +40,11 @@ void main() {
       expect($(AddEntryScreen.invoicePictureKey), findsOneWidget);
     });
 
-    phoneCase('AC-11.2: a picture with no code shows the message, and the fields stay open', ($) async {
-      final manager = await Given.manager();
-      CameraWithAPicture.noCode = true;
-      await $.onAddEntry(manager);
-      await $.tapOn(AddEntryScreen.cameraKey);
-      await $.says(AddEntryScreen.qrMessageKey, $.words.expensesQrUnreadable);
-      await $.fill(AddEntryScreen.amountKey, '100');
-    });
-
-    phoneCase('a PDF is not read for a code', ($) async {
+    phoneCase('a PDF chosen from the files shows its name', ($) async {
       final manager = await Given.manager();
       await $.onAddEntry(manager);
       await $.pickFromThePhone(AddEntryScreen.filesKey, madeUpPdfName, madeUpPdf);
       await $.says(AddEntryScreen.invoiceNameKey, madeUpPdfName);
-      expect($(AddEntryScreen.qrMessageKey), findsNothing);
-      expect($(AddEntryScreen.qrReadKey), findsNothing);
     });
 
     phoneCase('with no camera permission the message says so, and the files stay offered', ($) async {
@@ -103,6 +65,7 @@ void main() {
       await $.pickTable(table.tableId);
       await $.tapOn(AddEntryScreen.cameraKey);
       await $.reach($(AddEntryScreen.invoicePictureKey));
+      await $.fill(AddEntryScreen.amountKey, '1075');
       await $.choosePayment(manager, account);
       await $.sendEntry();
       await $.messageShows('expenses.sent');
@@ -112,6 +75,7 @@ void main() {
       await $.pickTable(table.tableId);
       await $.tapOn(AddEntryScreen.cameraKey);
       await $.reach($(AddEntryScreen.invoicePictureKey));
+      await $.fill(AddEntryScreen.amountKey, '1075');
       await $.choosePayment(manager, account);
       await $.sendEntry();
       await $.reach($(AddEntryScreen.messageKey));

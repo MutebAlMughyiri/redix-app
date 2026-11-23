@@ -1139,18 +1139,6 @@ mixin WordGetters {
   /// The word `expenses.projectFinished`.
   String get expensesProjectFinished => text('expenses.projectFinished');
 
-  /// The word `expenses.qrAddSupplier`.
-  String get expensesQrAddSupplier => text('expenses.qrAddSupplier');
-
-  /// The word `expenses.qrRead`.
-  String get expensesQrRead => text('expenses.qrRead');
-
-  /// The word `expenses.qrSupplierMissing`.
-  String get expensesQrSupplierMissing => text('expenses.qrSupplierMissing');
-
-  /// The word `expenses.qrUnreadable`.
-  String get expensesQrUnreadable => text('expenses.qrUnreadable');
-
   /// The word `expenses.reasonRequired`.
   String get expensesReasonRequired => text('expenses.reasonRequired');
 
@@ -2459,9 +2447,6 @@ mixin WordGetters {
   /// The word `settings.myEmail`.
   String get settingsMyEmail => text('settings.myEmail');
 
-  /// The word `share.amountDiffers`.
-  String get shareAmountDiffers => text('share.amountDiffers');
-
   /// The word `share.attach`.
   String get shareAttach => text('share.attach');
 
@@ -2476,9 +2461,6 @@ mixin WordGetters {
 
   /// The word `share.loadFailed`.
   String get shareLoadFailed => text('share.loadFailed');
-
-  /// The word `share.matches`.
-  String get shareMatches => text('share.matches');
 
   /// The word `share.newExpense`.
   String get shareNewExpense => text('share.newExpense');
@@ -2500,9 +2482,6 @@ mixin WordGetters {
 
   /// The word `share.searchEntries`.
   String get shareSearchEntries => text('share.searchEntries');
-
-  /// The word `share.supplierDiffers`.
-  String get shareSupplierDiffers => text('share.supplierDiffers');
 
   /// The word `share.title`.
   String get shareTitle => text('share.title');
@@ -2977,4 +2956,31 @@ mixin WordGetters {
 
   /// The word `vat.to`.
   String get vatTo => text('vat.to');
+
+  /// The word `web.close`.
+  String get webClose => text('web.close');
+
+  /// The word `web.collapse`.
+  String get webCollapse => text('web.collapse');
+
+  /// The word `web.home`.
+  String get webHome => text('web.home');
+
+  /// The word `web.pickFromMenu`.
+  String get webPickFromMenu => text('web.pickFromMenu');
+
+  /// The word `web.showMenu`.
+  String get webShowMenu => text('web.showMenu');
+
+  /// The word `web.sideMenu`.
+  String get webSideMenu => text('web.sideMenu');
+
+  /// The word `web.statusBar`.
+  String get webStatusBar => text('web.statusBar');
+
+  /// The word `web.topBar`.
+  String get webTopBar => text('web.topBar');
+
+  /// The word `web.view`.
+  String get webView => text('web.view');
 }

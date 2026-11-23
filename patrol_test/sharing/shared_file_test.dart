@@ -1,7 +1,6 @@
 // Copyright 2026 Tech Details. All rights reserved.
 // Use of this file is governed by the LICENSE file at the root of this repository.
 
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:patrol/patrol.dart';
 import 'package:redix/auth/permission.dart';
@@ -18,12 +17,11 @@ import '../support/made_up_invoice.dart';
 import '../support/pc.dart';
 import '../support/phone_case.dart';
 import '../support/phone_screens.dart';
-import '../support/search_steps.dart';
 import '../support/steps.dart';
 
-/// Shares the picture of a made-up invoice with its QR code into the app, as another app's share sheet does.
+/// Shares the picture of a made-up invoice into the app, as another app's share sheet does.
 Future<void> shareTheInvoice(PatrolIntegrationTester $) async {
-  await Pc.shareIntoTheApp(await keptInTheAppsFolder('made-up-shared-invoice.png', pictureOfQr(madeUpInvoiceQr)), 'image/png');
+  await Pc.shareIntoTheApp(await keptInTheAppsFolder('made-up-shared-invoice.png', pictureOfAnInvoice()), 'image/png');
   await $.pumpAndSettle();
 }
 
@@ -66,27 +64,6 @@ void main() {
       await $.reach($(ShareScreen.projectKey(other.projectId)));
     });
 
-    phoneCase('AC-49.2, D4: the entry the QR code matches is pinned over the list and chosen', ($) async {
-      final manager = await Given.manager();
-      final seller = await Given.supplier(manager, name: 'شركة النخيل', vatNumber: madeUpSellerVatNumber);
-      final match = await Given.entry(manager, amount: 1075, supplierId: seller);
-      await shareInto($, manager);
-      await $.reach($(ShareScreen.matchingKey(match)));
-      await $.reach($(ShareScreen.attachKey));
-      expect($.tester.widget<ListTile>(find.byKey(EntriesScreen.rowKey(match))).selected, isTrue);
-      expect($(ShareScreen.amountDiffersKey), findsNothing);
-    });
-
-    phoneCase('AC-49.3, R3: an entry found by the search and chosen shows what differs from the QR code', ($) async {
-      final manager = await Given.manager();
-      final supplier = await Given.supplier(manager, name: 'مؤسسة البلاط ${Given.unique()}');
-      final entry = await Given.entry(manager, amount: 500, supplierId: supplier);
-      await shareInto($, manager);
-      await $.searchFor('البلاط');
-      await $.tapOn(EntriesScreen.rowKey(entry));
-      await $.reach($(ShareScreen.amountDiffersKey));
-    });
-
     phoneCase('AC-46.10a, D15: a file goes on an approved entry, which stays approved', ($) async {
       final manager = await Given.manager();
       final entry = await Given.entry(manager);
@@ -109,12 +86,11 @@ void main() {
       expect($(EntriesScreen.rowKey(theirs)), findsNothing);
     });
 
-    phoneCase('UC-046: a new expense opens with the shared file and its QR code', ($) async {
+    phoneCase('UC-046: a new expense opens with the shared file', ($) async {
       final manager = await Given.manager();
       await shareInto($, manager);
       await $.tapOn(ShareScreen.newEntryKey);
       await $.reach($(AddEntryScreen.invoicePictureKey));
-      await $.reach($(AddEntryScreen.qrReadKey));
     });
 
     phoneCase('R12: a shared file offers New entry and no capital receipt, and goes with a partner picked in Add entry', ($) async {

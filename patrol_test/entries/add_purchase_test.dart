@@ -41,7 +41,8 @@ void main() {
     phoneCase('R10: a purchase on an item\'s general table is sent for approval', ($) async {
       final made = await onPurchase($);
       await $.tapOn(AddEntryScreen.cameraKey);
-      await $.reach($(AddEntryScreen.qrReadKey));
+      await $.reach($(AddEntryScreen.invoicePictureKey));
+      await $.fill(AddEntryScreen.amountKey, '1075');
       await $.picture('add-expense');
       await $.choosePayment(made.manager, made.account);
       await $.picture('add-expense-payment');
@@ -131,6 +132,7 @@ void main() {
       final made = await onPurchase($);
       await $.tapOn(AddEntryScreen.cameraKey);
       await $.reach($(AddEntryScreen.invoicePictureKey));
+      await $.fill(AddEntryScreen.amountKey, '1075');
       await $.choosePayment(made.manager, made.account);
       await $.saveDraft();
       await $.messageShows('expenses.saved');

@@ -1,7 +1,6 @@
 // Copyright 2026 Tech Details. All rights reserved.
 // Use of this file is governed by the LICENSE file at the root of this repository.
 
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -19,25 +18,10 @@ import 'package:redix/ui/search_line.dart';
 
 import '../app_harness.dart';
 
-const _vatNumber = '300000000000003';
-
-String _qrText({double total = 6000}) {
-  final fields = ['شركة A', _vatNumber, '2026-10-26T10:00:00Z', '$total', '782.61'];
-  final bytes = <int>[];
-  for (var tag = 0; tag < fields.length; tag++) {
-    final value = utf8.encode(fields[tag]);
-    bytes
-      ..add(tag + 1)
-      ..add(value.length)
-      ..addAll(value);
-  }
-  return base64.encode(bytes);
-}
-
 PickedFile _picture() => PickedFile('invoice.png', '', Uint8List.fromList(onePixelPng));
 
 void main() {
-  Future<({FakeApi api, FakeCapture capture})> share(WidgetTester tester, void Function(FakeApi api) arrange, {String qrText = '', PickedFile? file, List<String> permissions = field, bool signedIn = true, Size screen = const Size(800, 2400), double textScale = 1}) async {
+  Future<({FakeApi api, FakeCapture capture})> share(WidgetTester tester, void Function(FakeApi api) arrange, {PickedFile? file, List<String> permissions = field, bool signedIn = true, Size screen = const Size(800, 2400), double textScale = 1}) async {
     tester.view.physicalSize = screen;
     tester.view.devicePixelRatio = 1;
     tester.platformDispatcher.textScaleFactorTestValue = textScale;
@@ -46,7 +30,7 @@ void main() {
     final api = FakeApi()..addProject('مشروع A', permissions: permissions, units: ['الفلة الغربية']);
     api.addItem(api.addCategory('project-0', 'التشطيب'), 'اللياسة');
     arrange(api);
-    final capture = FakeCapture()..qrText = qrText;
+    final capture = FakeCapture();
     await pumpRedix(tester, api, stored: signedIn ? {'session': keptSession} : const {}, capture: capture);
     capture.share(file ?? _picture());
     await act(tester, api, () async {});
@@ -108,56 +92,27 @@ void main() {
     expect(find.byKey(ProjectsScreen.titleKey), findsOneWidget);
   });
 
-  testWidgets('AC-49.2, D4: the entry the QR code matches is pinned over the list, saying so, and chosen; the list does not hold it twice', (tester) async {
+  testWidgets('findings row 254: on a small phone with large text the picture scrolls away, so the list still has room', (tester) async {
     final (:api, capture: _) = await share(tester, (api) {
       api
-        ..addEntry(id: 'entry-other')
-        ..addMatch(id: 'entry-match', supplierVatNumber: _vatNumber);
-    }, qrText: _qrText());
-
-    expect(tester.widget<Text>(find.byKey(ShareScreen.matchingKey('entry-match'))).data, 'en share.matches');
-    expect(find.byKey(ShareScreen.matchingKey('entry-other')), findsNothing);
-    expect(find.byKey(EntriesScreen.rowKey('entry-match')), findsOneWidget);
-    expect(tester.widget<ListTile>(find.byKey(EntriesScreen.rowKey('entry-match'))).selected, isTrue);
-    expect(find.byKey(ShareScreen.attachKey), findsOneWidget);
-    expect(find.byKey(ShareScreen.amountDiffersKey), findsNothing);
-    expect(find.byKey(ShareScreen.supplierDiffersKey), findsNothing);
-    expect(api.sentReads, contains('/projects/project-0/entries/attachable'));
-  });
-
-  testWidgets('findings row 254: on a small phone with large text the picture, the QR code and the pinned match scroll away, so the list still has room', (tester) async {
-    final (:api, capture: _) = await share(tester, (api) {
-      api
-        ..addEntry(id: 'entry-other')
-        ..addMatch(id: 'entry-match', supplierVatNumber: _vatNumber);
-    }, qrText: _qrText(), screen: const Size(360, 640), textScale: 2);
+        ..addEntry(id: 'entry-before')
+        ..addEntry(id: 'entry-other');
+    }, screen: const Size(360, 640), textScale: 2);
 
     await act(tester, api, () => tester.drag(find.byType(NestedScrollView), const Offset(0, -600)));
 
     expect(tester.getRect(find.byKey(EntriesScreen.rowKey('entry-other'))).overlaps(tester.getRect(find.byType(NestedScrollView))), isTrue);
   });
 
-  testWidgets('without a QR code nothing is pinned or chosen, the API is not asked for a match, and the attach button waits', (tester) async {
-    final (:api, capture: _) = await share(tester, (api) => api.addEntry(id: 'entry-1'));
+  testWidgets('findings row 303: nothing is chosen until the person chooses an entry, and the attach button waits', (tester) async {
+    await share(tester, (api) => api.addEntry(id: 'entry-1'));
 
     expect(find.byKey(ShareScreen.attachKey), findsNothing);
-    expect(api.sentReads, isNot(contains('/projects/project-0/entries/attachable')));
     expect(listed(), ['entry-1']);
   });
 
-  testWidgets('AC-49.3: choosing an entry from the list shows what differs from the QR code', (tester) async {
-    final (:api, capture: _) = await share(tester, (api) => api.addEntry(id: 'entry-1', status: 'approved', amount: 5000, supplierVatNumber: '300000000000099'), qrText: _qrText());
-
-    await act(tester, api, () => tester.tap(find.byKey(EntriesScreen.rowKey('entry-1'))));
-
-    expect(tester.widget<ListTile>(find.byKey(EntriesScreen.rowKey('entry-1'))).selected, isTrue);
-    expect(find.byKey(ShareScreen.amountDiffersKey), findsOneWidget);
-    expect(find.byKey(ShareScreen.supplierDiffersKey), findsOneWidget);
-  });
-
   testWidgets('findings row 268: with the keyboard up and an entry chosen, scrolling back to the picture squeezes nothing, and the search stays over the list', (tester) async {
-    final (:api, capture: _) = await share(tester, (api) => api.addEntry(id: 'entry-1', status: 'approved', amount: 5000, supplierVatNumber: '300000000000099'),
-        qrText: _qrText(), screen: const Size(411, 914));
+    final (:api, capture: _) = await share(tester, (api) => api.addEntry(id: 'entry-1', status: 'approved', amount: 5000), screen: const Size(411, 914));
     tester.view.viewInsets = const FakeViewPadding(bottom: 280);
     addTearDown(tester.view.resetViewInsets);
     final row = find.byKey(EntriesScreen.rowKey('entry-1'), skipOffstage: false);
@@ -214,13 +169,12 @@ void main() {
     expect(find.byKey(ShareScreen.pictureKey), findsOneWidget);
   });
 
-  testWidgets('UC-046: a new expense opens with the shared file and its QR code, not the camera', (tester) async {
-    final (:api, :capture) = await share(tester, (api) {}, qrText: _qrText());
+  testWidgets('UC-046: a new expense opens with the shared file, not the camera', (tester) async {
+    final (:api, :capture) = await share(tester, (api) {});
 
     await act(tester, api, () => tester.tap(find.byKey(ShareScreen.newEntryKey)));
 
     expect(capture.cameraOpened, 0);
     expect(find.byKey(AddEntryScreen.invoicePictureKey), findsOneWidget);
-    expect(find.byKey(AddEntryScreen.qrReadKey), findsOneWidget);
   });
 }
