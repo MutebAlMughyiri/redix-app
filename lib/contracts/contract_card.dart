@@ -65,7 +65,7 @@ class ContractCard extends StatelessWidget {
   /// What waits for approval and, unless the value is open, what remains once it is approved: the figure Add entry works from.
   String _waitingLine(Words words) {
     final waiting = '${words.contractsPending} ${formatMoney(contract.pending)}';
-    return contract.isOpenValue ? waiting : '$waiting · ${formatMoney(contract.remainingAfter(0))} ${words.contractsAfterApproval}';
+    return contract.isOpenValue ? waiting : '$waiting · ${formatMoney(contract.remainingAfterApproval)} ${words.contractsAfterApproval}';
   }
 
   String _terms() => partsLine([

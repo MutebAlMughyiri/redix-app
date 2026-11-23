@@ -1371,13 +1371,34 @@ class FakeApi {
       'quantity': quantity,
       'notes': notes,
       'paid': paid,
-      'remaining': isOpenValue ? 0.0 : value - paid,
-      'isOverrun': !isOpenValue && paid > value,
       'isActive': isActive,
       'documents': <Map<String, String>>[],
     };
+    _figure(contract);
     contracts.putIfAbsent(projectId, () => []).add(contract);
     return contract;
+  }
+
+  /// Works out what the API answers of [contract] from its value, what was paid and waits, and whether it is active: what remains, now and
+  /// once approved, whether it is overrun, and the word of how it stands (findings row 297).
+  void _figure(Map<String, Object> contract) {
+    final value = contract['value']! as double;
+    final isOpenValue = contract['isOpenValue']! as bool;
+    final paid = contract['paid']! as double;
+    final pending = contract['pending']! as double;
+    final isOverrun = !isOpenValue && paid > value;
+    final standing = switch ((contract['isActive']! as bool, isOverrun, isOpenValue, paid)) {
+      (false, _, _, _) => 'disabled',
+      (_, true, _, _) => 'overrun',
+      (_, _, true, _) => 'openValue',
+      (_, _, _, 0) => 'notStarted',
+      _ => 'running',
+    };
+    contract
+      ..['remaining'] = isOpenValue ? 0.0 : value - paid
+      ..['remainingAfterApproval'] = isOpenValue ? 0.0 : value - paid - pending
+      ..['isOverrun'] = isOverrun
+      ..['standingWordKey'] = 'contracts.$standing';
   }
 
   http.Response _answerContracts(http.Request request) {
@@ -1403,22 +1424,16 @@ class FakeApi {
           notes: body['notes'] as String,
         );
       case [final id, 'disable']:
-        list.singleWhere((row) => row['id'] == id)['isActive'] = false;
+        _figure(list.singleWhere((row) => row['id'] == id)..['isActive'] = false);
       case [final id, 'enable']:
-        list.singleWhere((row) => row['id'] == id)['isActive'] = true;
+        _figure(list.singleWhere((row) => row['id'] == id)..['isActive'] = true);
       case [final id]:
-        final contract = list.singleWhere((row) => row['id'] == id);
-        final value = body['value'] as double;
-        final isOpenValue = body['isOpenValue'] as bool;
-        final paid = contract['paid']! as double;
-        contract
-          ..['value'] = value
-          ..['isOpenValue'] = isOpenValue
-          ..['remaining'] = isOpenValue ? 0.0 : value - paid
-          ..['isOverrun'] = !isOpenValue && paid > value
+        _figure(list.singleWhere((row) => row['id'] == id)
+          ..['value'] = body['value'] as double
+          ..['isOpenValue'] = body['isOpenValue'] as bool
           ..['unitPrice'] = body['unitPrice'] as double
           ..['quantity'] = body['quantity'] as double
-          ..['notes'] = body['notes'] as String;
+          ..['notes'] = body['notes'] as String);
     }
     return _json({}, 200);
   }

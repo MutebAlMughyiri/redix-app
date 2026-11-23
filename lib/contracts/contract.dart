@@ -23,12 +23,14 @@ class Contract {
       paid = (json['paid'] as num).toDouble(),
       pending = (json['pending'] as num).toDouble(),
       remaining = (json['remaining'] as num).toDouble(),
+      remainingAfterApproval = (json['remainingAfterApproval'] as num).toDouble(),
       isOverrun = json['isOverrun'] as bool,
+      standingWordKey = json['standingWordKey'] as String,
       isActive = json['isActive'] as bool,
       documents = [for (final document in json['documents'] as List<dynamic>) Attachment.fromJson(document as Map<String, dynamic>)];
 
   /// No contract, for the dialog that adds one.
-  Contract.none() : documents = [], id = '', itemId = '', supplierId = '', hasPayments = false, supplierName = '', itemName = '', value = 0, isOpenValue = false, unitPrice = 0, quantity = 0, notes = '', paid = 0, pending = 0, remaining = 0, isOverrun = false, isActive = true;
+  Contract.none() : documents = [], id = '', itemId = '', supplierId = '', hasPayments = false, supplierName = '', itemName = '', value = 0, isOpenValue = false, unitPrice = 0, quantity = 0, notes = '', paid = 0, pending = 0, remaining = 0, remainingAfterApproval = 0, isOverrun = false, standingWordKey = '', isActive = true;
 
   /// The contract's id; empty for a contract not added yet.
   final String id;
@@ -72,8 +74,14 @@ class Contract {
   /// The value less what was paid, below zero once overrun; 0 for an open-value contract.
   final double remaining;
 
+  /// What will remain once what waits for approval is approved, as the API works it out (findings row 297); 0 for an open-value contract.
+  final double remainingAfterApproval;
+
   /// Whether what was paid goes beyond the value, which shows an alert.
   final bool isOverrun;
+
+  /// The key of the word that says how it stands, as the API decides it (findings row 297).
+  final String standingWordKey;
 
   /// False once disabled.
   final bool isActive;
@@ -81,25 +89,12 @@ class Contract {
   /// The documents it carries, in the order they were kept.
   final List<Attachment> documents;
 
-  /// What would remain after [payment], with what waits for approval counted too; 0 for an open-value contract. The API answers the same when it is saved.
-  double remainingAfter(double payment) => isOpenValue ? 0 : value - paid - pending - payment;
+  /// What would remain after the [payment] being typed, once what waits is approved too; 0 for an open-value contract. The API answers the same
+  /// when it is saved.
+  double remainingAfter(double payment) => isOpenValue ? 0 : remainingAfterApproval - payment;
 
-  /// Whether [payment], with what waits for approval, goes beyond the value.
-  bool isOverrunBy(double payment) => !isOpenValue && paid + pending + payment > value;
-
-  /// The key of the word that says how it stands.
-  String get standingWordKey {
-    if (!isActive) {
-      return 'contracts.disabled';
-    }
-    if (isOverrun) {
-      return 'contracts.overrun';
-    }
-    if (isOpenValue) {
-      return 'contracts.openValue';
-    }
-    return paid == 0 ? 'contracts.notStarted' : 'contracts.running';
-  }
+  /// Whether the [payment] being typed, with what waits for approval, goes beyond the value.
+  bool isOverrunBy(double payment) => remainingAfter(payment) < 0;
 
   /// How much of the bar is filled, from 0 to 1: all of it for an open-value contract, which has nothing to reach.
   double get progress => isOpenValue || value == 0 ? 1 : min(1, paid / value);
